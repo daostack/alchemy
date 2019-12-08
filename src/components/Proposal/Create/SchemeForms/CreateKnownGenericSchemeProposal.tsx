@@ -14,6 +14,7 @@ import { isValidUrl } from "lib/util";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+import { exportFormValues, getInitialFormValues } from "lib/proposal.util";
 
 interface IStateProps {
   daoAvatarAddress: string;
@@ -61,10 +62,11 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     }
 
     const actions = props.genericSchemeInfo.actions();
+    const initialActionId = getInitialFormValues({ currentActionId: ""}).currentActionId
     this.state = {
       actions,
-      currentAction:  actions[0],
-      tags: new Array<string>(),
+      currentAction: initialActionId ? actions.find(action => action.id === initialActionId) : actions[0],
+      tags: getInitialFormValues({ tags: []}).tags,
     };
   }
 
@@ -190,7 +192,16 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
   private onTagsChange = (tags: any[]): void => {
     this.setState({tags});
   }
-
+  
+  public exportFormValues(values: IFormValues, tags: string[]) {
+    values = {
+      ...values, 
+      currentActionId: this.state.currentAction.id
+    };
+    exportFormValues(values, tags);
+    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
+  }
+  
   public render(): RenderOutput {
     const { handleClose, daoAvatarAddress } = this.props;
     const arc = getArc();
@@ -230,7 +241,6 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
         }
       }
     }));
-
     return (
       <div className={css.createWrapperWithSidebar}>
         <div className={css.sidebar}>
@@ -251,7 +261,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
         <div className={css.formWrapper}>
           <Formik
-            initialValues={initialFormValues}
+            initialValues={getInitialFormValues(initialFormValues)}
             // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues): void => {
               const errors: any = {};
@@ -367,7 +377,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   </label>
 
                   <div className={css.tagSelectorContainer}>
-                    <TagsSelector onChange={this.onTagsChange}></TagsSelector>
+                    <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
                   </div>
 
                   <label htmlFor="urlInput">
@@ -409,6 +419,9 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   <div className={css.createProposalActions}>
                     <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                       Cancel
+                    </button>
+                    <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={() => this.exportFormValues(values, this.state.tags)}>
+                      Export proposal
                     </button>
                     <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                       Submit proposal
