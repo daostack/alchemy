@@ -157,8 +157,8 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
-                <TrainingTooltip placement="bottom" overlay={"Pending proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
-                  <span>Pending Proposals ({scheme.numberOfPreBoostedProposals})</span>
+                <TrainingTooltip placement="bottom" overlay={"Pending boosting proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
+                  <span>Pending Boosting Proposals ({scheme.numberOfPreBoostedProposals})</span>
                 </TrainingTooltip>
                 {proposalsPreBoosted.length === 0
                   ?

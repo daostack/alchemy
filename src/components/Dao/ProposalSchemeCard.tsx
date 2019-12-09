@@ -51,7 +51,7 @@ const ProposalSchemeCard = (props: IProps) => {
           </TrainingTooltip> : headerHtml
         }
         <div>
-          <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
+          <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending Boosting</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
         </div>
         {proposals.length === 0 ?
           <div className={css.loading}>

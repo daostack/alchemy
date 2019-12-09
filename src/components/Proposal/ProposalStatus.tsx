@@ -54,7 +54,7 @@ export default class ProposalStatus extends React.Component<IProps, null> {
                     <div className={classNames({
                       [css.status]: true,
                       [css.pending]: true,
-                    })}><img src="/assets/images/Icon/pending.svg" />Pending</div> :
+                    })}><img src="/assets/images/Icon/pending.svg" />Pending Boosting</div> :
 
                     (proposalState.stage === IProposalStage.Boosted) ?
                       <div className={classNames({
