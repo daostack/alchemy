@@ -9,7 +9,6 @@ import { ConnectedRouter } from "react-router-redux";
 import { ThroughProvider } from "react-through";
 import { sleep } from "lib/util";
 import Error404 from "components/Errors/Error404";
-import PdfFile from "components/Shared/PdfFile";
 import { history, default as store } from "./configureStore";
 import * as css from "./layouts/App.scss";
 
@@ -30,8 +29,10 @@ export class App extends React.Component<{}, {
     };
   }
 
-  private getPdfHtml = (filename: string) => {
-    return <PdfFile fileUrl={filename}></PdfFile>;
+                
+  private getPdfHtml = (filename: string): any => {
+    window.location.href = `${window.location.protocol}//${window.location.host}/assets/${filename}`;
+    return null;
   }
 
   private CookiePolicy = () => {
