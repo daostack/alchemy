@@ -15,17 +15,12 @@ import * as css from "./layouts/App.scss";
 export class App extends React.Component<{}, {
   arcIsInitialized: boolean;
   retryingArc: boolean;
-  // PDF stuff
-  numPages: null;
-  pageNumber: number;
 }> {
   constructor(props: {}) {
     super(props);
     this.state = {
       arcIsInitialized: false,
       retryingArc: false,
-      numPages: null,
-      pageNumber: 1,
     };
   }
 
