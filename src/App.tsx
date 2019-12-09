@@ -9,29 +9,29 @@ import { ConnectedRouter } from "react-router-redux";
 import { ThroughProvider } from "react-through";
 import { sleep } from "lib/util";
 import Error404 from "components/Errors/Error404";
-import { Document, Page } from "react-pdf/dist/entry.webpack";
+import PdfFile from "components/Shared/PdfFile";
 import { history, default as store } from "./configureStore";
 import * as css from "./layouts/App.scss";
 
 export class App extends React.Component<{}, {
   arcIsInitialized: boolean;
   retryingArc: boolean;
+  // PDF stuff
+  numPages: null;
+  pageNumber: number;
 }> {
   constructor(props: {}) {
     super(props);
     this.state = {
       arcIsInitialized: false,
       retryingArc: false,
+      numPages: null,
+      pageNumber: 1,
     };
   }
 
   private getPdfHtml = (filename: string) => {
-    return <div className={css.pdfContainer}>
-      <Document file={`${window.location.protocol}//${window.location.host}/assets/${filename}`}
-        className="reactPdfDocument"
-        loading="Loading...">
-        <Page pageNumber={1}></Page></Document>
-    </div>;
+    return <PdfFile fileUrl={filename}></PdfFile>;
   }
 
   private CookiePolicy = () => {
