@@ -236,10 +236,13 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       if (genericSchemeInfo) {
         name = genericSchemeInfo.specs.name;
       } else {
-        name = "Generic Scheme";
+        // Adding the address is a bit long for a title
+        // name = `Blockchain Interaction (${contractToCall})`;
+        name = `Blockchain Interaction`;
       }
     } else {
-      name = "Generic Scheme";
+      // this should never happen...
+      name = `Blockchain Interaction`;
     }
   } else if (scheme.name === "ContributionReward") {
     name ="Funding and Voting Power"
