@@ -4,7 +4,7 @@ import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { formatTokens, humanProposalTitle } from "lib/util";
+import { formatTokens, humanProposalTitle, schemeName } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -139,7 +139,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
           {closingTime(proposalState).format("MMM D, YYYY")}
         </td>
         <td className={css.scheme}>
-          {proposalState.queue.name.replace(/([A-Z])/g, " $1")}
+          {schemeName(proposalState.scheme)}
         </td>
         <td className={css.title}>
           <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposalState)}</Link>

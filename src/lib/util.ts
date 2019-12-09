@@ -241,6 +241,8 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
     } else {
       name = "Generic Scheme";
     }
+  } else if (scheme.name === "ContributionReward") {
+    name ="Funding and Voting Power"
   } else if (scheme.name) {
     // add spaces before capital letters to approximate a human-readable title
     name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;
