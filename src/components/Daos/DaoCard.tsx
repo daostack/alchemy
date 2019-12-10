@@ -43,10 +43,6 @@ const DaoCard = (props: IProps) => {
         </div>
 
         <div className={"clearfix " + css.daoInfoContainer}>
-          <div className={css.daoInfoTitle}>
-              Statistics
-          </div>
-
           <table className={css.daoInfoContainer}>
             <tbody>
               <tr>
