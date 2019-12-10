@@ -94,11 +94,11 @@ class FeedPage extends React.Component<IProps, null> {
       .map((event) => { event.from = "proposal"; eventIds[event.id] = true; return event; });
 
     const eventsByUser = (data[1] as any[])
-      .filter((event) => ["NewProposal", "ProposalStageChange", "VoteFlip", "Stake", "Vote"].includes(event.type) && !eventIds.hasOwnProperty(event.id))
+      .filter((event) => ["NewProposal", "ProposalStageChange", "VoteFlip", "Stake", "Vote"].includes(event.type) && !Object.prototype.hasOwnProperty.call(eventIds, event.id))
       .map((event) => { event.from = "user"; eventIds[event.id] = true; return event; });
 
     const eventsByDao = (data[2] as any[])
-      .filter((event) => ["NewProposal", "NewReputationHolder", "ProposalStageChange", "VoteFlip"].includes(event.type) && !eventIds.hasOwnProperty(event.id))
+      .filter((event) => ["NewProposal", "NewReputationHolder", "ProposalStageChange", "VoteFlip"].includes(event.type) && !Object.prototype.hasOwnProperty.call(eventIds, event.id))
       .map((event) => { event.from = "dao"; eventIds[event.id] = true; return event; });
 
     const events = eventsByProposal.concat(eventsByUser).concat(eventsByDao).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
