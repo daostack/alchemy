@@ -158,19 +158,19 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
           { isAddActive ?
             <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")} data-test-id="tab-AddScheme">
               <span></span>
-              Add Scheme
+              Add Plugin
             </button>
             : "" }
           { isAddActive ?
             <button className={editSchemeButtonClass} onClick={this.handleTabClick("editScheme")} data-test-id="tab-EditScheme">
               <span></span>
-              Edit Scheme
+              Edit Plugin
             </button>
             : "" }
           { isRemoveActive ?
             <button className={removeSchemeButtonClass} onClick={this.handleTabClick("removeScheme")} data-test-id="tab-RemoveScheme">
               <span></span>
-            Remove Scheme
+            Remove Plugin
             </button>
             : "" }
         </div>
@@ -245,11 +245,11 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                 <Form noValidate>
                   <label className={css.description}>What to Expect</label>
                   { (currentTab === "addScheme") ?
-                    <div className={css.description}>Propose to add a new scheme to the DAO. If this scheme is a universal scheme, you must also supply its param hash configuration.</div> :
+                    <div className={css.description}>Propose to add a new plugin to the DAO. If this plugin is a universal scheme, you must also supply its param hash configuration.</div> :
                     (currentTab === "editScheme") ?
-                      <div className={css.description}>Propose to edit a schemes&apos; param hash configuration.</div> :
+                      <div className={css.description}>Propose to edit param hash configuration of a plugin.</div> :
                       (currentTab === "removeScheme") ?
-                        <div className={css.description}>Propose to remove a scheme from the DAO.</div> : ""
+                        <div className={css.description}>Propose to remove a plugin from the DAO.</div> : ""
                   }
                   <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
                     <label htmlFor="titleInput">
@@ -319,14 +319,14 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                       </label>
                       <Field
                         id="schemeToAddInput"
-                        placeholder="Enter scheme address"
+                        placeholder="Enter plugin address"
                         name="schemeToAdd"
                       />
                     </div>
 
                     <div className={css.editSchemeSelectContainer}>
                       <label htmlFor="schemeToEditInput">
-                        Scheme
+                        Plugin
                         <ErrorMessage name="schemeToEdit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         <div className={css.requiredMarker}>*</div>
                       </label>
@@ -337,7 +337,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         className={css.schemeSelect}
                         defaultValue=""
                       >
-                        <option value="">Select a scheme...</option>
+                        <option value="">Select a plugin...</option>
                         {schemes.map((scheme, _i) => {
                           return <option key={`edit_scheme_${scheme.staticState.address}`} value={scheme.staticState.address}>{schemeNameAndAddress(scheme.staticState.address)}</option>;
                         })}
@@ -364,7 +364,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                       <div className={css.permissionCheckbox}>
                         <Field id="registerOtherSchemesInput" type="checkbox" name="permissions.registerSchemes" />
                         <label htmlFor="registerOtherSchemesInput">
-                          Register other schemes
+                          Register other plugins
                         </label>
                       </div>
 
@@ -401,7 +401,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                   <div className={css.removeSchemeFields}>
                     <div className={css.removeSchemeSelectContainer}>
                       <label htmlFor="schemeToRemoveInput">
-                        Scheme
+                        Plugin
                         <ErrorMessage name="schemeToRemove">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         <div className={css.requiredMarker}>*</div>
                       </label>
@@ -412,7 +412,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         className={css.schemeSelect}
                         defaultValue=""
                       >
-                        <option value="">Select a scheme...</option>
+                        <option value="">Select a plugin...</option>
                         {schemes.map((scheme, _i) => {
                           return <option key={`remove_scheme_${scheme.staticState.address}`} value={scheme.staticState.address}>{schemeNameAndAddress(scheme.staticState.address)}</option>;
                         })}

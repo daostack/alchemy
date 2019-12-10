@@ -127,7 +127,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
                       })
                     }></span>
                     <img src="/assets/images/Icon/menu/holders.svg" />
-                  Reputation Holders
+                    DAO Members
                   </Link>
                 </TrainingTooltip>
               </li>

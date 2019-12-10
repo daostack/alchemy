@@ -238,14 +238,16 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       } else {
         // Adding the address is a bit long for a title
         // name = `Blockchain Interaction (${contractToCall})`;
-        name = `Blockchain Interaction`;
+        name = "Blockchain Interaction";
       }
     } else {
       // this should never happen...
-      name = `Blockchain Interaction`;
+      name = "Blockchain Interaction";
     }
   } else if (scheme.name === "ContributionReward") {
-    name ="Funding and Voting Power"
+    name ="Funding and Voting Power";
+  } else if (scheme.name === "SchemeRegistrar") {
+    name ="Plugin Manager";
   } else if (scheme.name) {
     // add spaces before capital letters to approximate a human-readable title
     name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;

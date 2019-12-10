@@ -57,7 +57,7 @@ class CreateProposalPage extends React.Component<IProps, null> {
       handleClose: this.handleClose.bind(this),
       scheme,
     };
-    let schemeTitle = schemeName(scheme)
+    const schemeTitle = schemeName(scheme);
 
     if (scheme.name === "ContributionReward") {
       createSchemeComponent = <CreateContributionRewardProposal {...props}  />;

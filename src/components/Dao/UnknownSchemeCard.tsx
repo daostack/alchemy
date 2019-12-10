@@ -15,7 +15,7 @@ export default (props: IExternalProps) => {
     (
       <div className={css.wrapper} data-test-id={"schemeCard-unknown"}>
         <div className={css.body}>
-          <h2>{schemes.length} Unsupported Schemes</h2>
+          <h2>{schemes.length} Unsupported Plugins</h2>
         </div>
         <table><tbody>
           { schemes.map((scheme: Scheme) => <SubscribedUnknownSchemeRow key={scheme.id} scheme={scheme} />) }

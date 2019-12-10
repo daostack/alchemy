@@ -53,7 +53,7 @@ const DaoCard = (props: IProps) => {
                 <td></td>
                 <td><div className={css.daoInfo}>
                   <b>{daoState.memberCount || "0"}</b>
-                  <span>Reputation Holders</span>
+                  <span>DAO Members</span>
                 </div>
                 </td>
                 <td><div className={css.daoInfo}>

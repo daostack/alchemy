@@ -61,7 +61,7 @@ class DaoHistoryPage extends React.Component<IProps, null> {
                 <tr className={css.proposalHistoryTableHeader}>
                   <th>Proposed by</th>
                   <th>End date</th>
-                  <th>Scheme</th>
+                  <th>Plugin</th>
                   <th>Title</th>
                   <th>Votes</th>
                   <th>Predictions</th>
