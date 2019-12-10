@@ -538,3 +538,13 @@ export function ethErrorHandler() {
     return of(returnValueOnError);
   });
 }
+
+/**
+ * @param arr The array to search
+ * @param value The value to remove
+ */
+export function arrayRemove(arr: any[], value: any) {
+  return arr.filter(function(ele){
+    return ele !== value;
+  });
+}
