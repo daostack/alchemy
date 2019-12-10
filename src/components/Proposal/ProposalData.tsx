@@ -32,6 +32,7 @@ interface IStateProps {
 }
 
 type SubscriptionData = [IProposalState, Vote[], Stake[], IRewardState, IMemberState, BN, BN, BN];
+type IPreProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 interface IInjectedProposalProps {
@@ -48,7 +49,7 @@ interface IInjectedProposalProps {
   votes: Vote[];
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IProps => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IPreProps => {
   const proposalState = ownProps.data ? ownProps.data[0] : null;
 
   return {
@@ -102,7 +103,7 @@ class ProposalData extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedProposalData = connect(mapStateToProps)(ProposalData);
+const ConnectedProposalData = connect(mapStateToProps, null)(ProposalData);
 
 export default withSubscription({
   wrappedComponent: ConnectedProposalData,

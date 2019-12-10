@@ -94,6 +94,7 @@ export class App extends React.Component<{}, {
                 <Route path="/privacy-policy" component={this.PrivacyPolicy}/>
                 <Route path="/" exact component={AppContainer}/>
                 <Route path="/dao" component={AppContainer}/>
+                <Route path="/daos" component={AppContainer}/>
                 <Route path="/profile" component={AppContainer}/>
                 <Route path="/redemptions" component={AppContainer}/>
                 <Route component={Error404} />
