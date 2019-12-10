@@ -21,6 +21,7 @@ import DaoSchemesPage from "./DaoSchemesPage";
 import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
 import DaoSidebar from "./DaoSidebar";
+import DaoWiki from "./DaoWiki";
 import * as css from "./Dao.scss";
 
 type IExternalProps = RouteComponentProps<any>;
@@ -85,6 +86,9 @@ class DaoContainer extends React.Component<IProps, null> {
               render={(props) => <DaoMembersPage {...props} daoState={daoState} />} />
             <Route exact path="/dao/:daoAvatarAddress/discussion"
               render={(props) => <DaoDiscussionPage {...props} dao={daoState} />} />
+
+            <Route exact path="/dao/:daoAvatarAddres/wiki" 
+              render={(props) => <DaoWiki {...props} dao={daoState}/>} />
 
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={(props) =>

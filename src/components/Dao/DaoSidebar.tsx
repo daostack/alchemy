@@ -158,6 +158,24 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
                   DAO Wall
                 </Link>
               </li>
+              <li>
+                <Link to={"/dao/" + dao.address + "/wiki"} onClick={this.handleCloseMenu()}>
+                  <span className={
+                    classNames({
+                      [css.menuDot]: true,
+                      //TODO: change this with updated proposal notification
+                      [css.red]: hasNewPosts,
+                    })} />
+                  <span className={
+                    classNames({
+                      [css.notification]: true,
+                      [css.discussionNotification]: true,
+                    })}></span>
+                  {{/* TODO: change this with book icon */}}
+                  <img src="/assets/images/Icon/menu/chat.svg" />
+                  Wiki
+                </Link>
+              </li>
             </ul>
           </div>
           <div className={css.daoHoldings}>
