@@ -141,6 +141,7 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     padding: 21px 26px;
     max-height: 325px;
+    overflow: hidden;
 
     .proposalItem {
       .daoName {
@@ -148,6 +149,12 @@
 
         a {
           color: #004799;
+        }
+      }
+
+      .proposalDescription {
+        img {
+          max-width: 100%;
         }
       }
     }

@@ -58,13 +58,15 @@ const ProposalFeedItem = (props: IProps) => {
         <h3>Proposal {humanProposalTitle(event.proposal)}</h3>
       </Link>
 
-      { event.proposal.description ?
-        <ReactMarkdown source={event.proposal.description.slice(0, 600)}
-          renderers={{link: (props: { href: string; children: React.ReactNode }) => {
-            return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
-          }}}
-        />
-        : "" }
+      <div className={css.proposalDescription}>
+        { event.proposal.description ?
+          <ReactMarkdown source={event.proposal.description.slice(0, 600)}
+            renderers={{link: (props: { href: string; children: React.ReactNode }) => {
+              return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
+            }}}
+          />
+          : "" }
+      </div>
 
       {event.proposal.description && event.proposal.description.length > 600 ?
         <Link to={`/dao/${dao.address}/proposal/${event.proposal.id}`}>Show full details &gt;</Link>
