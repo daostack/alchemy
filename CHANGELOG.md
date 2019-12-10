@@ -6,6 +6,17 @@
   - Features Added
   - Bugs Fixed
 
+## 2019-12-03
+
+  - Features Added
+  - Bugs Fixed
+    - the proposal detail page now gets updates automatically if data changes
+    - rewards do not crash anymore when token address is null
+    - some UI fixes
+    - refactor all UNSAFE_ methods
+
+## 2019-12-03
+
 ## 2019-11-25
   - Features Added
     - prevent redemptions when nothing will happen due to insufficient DAO resources.  Warn on partial redemptions.
@@ -14,9 +25,11 @@
   - Bugs Fixed
     - update DAO total rep when it changes, so rep percentages remain correct
     - go to error page on non-existent DAOs
+    - eliminate rerendering of Disqus component on the proposal details apge
     - refactor arrow functions
     - eliminate empty tooltips
     - eliminate duplicate confirmation notifications
+
 
 ### 2019-11-12
   - Features added

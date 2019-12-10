@@ -16,7 +16,7 @@ import * as queryString from "query-string";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
-import { matchPath, Route, RouteComponentProps, Switch } from "react-router-dom";
+import { matchPath,Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification, INotification } from "reducers/notifications";
@@ -95,7 +95,7 @@ class AppContainer extends React.Component<IProps, IState> {
     }
   }
 
-  public async UNSAFE_componentWillMount(): Promise<void> {
+  public async componentDidMount (): Promise<void> {
     /**
      * Heads up that there is a chance this cached account may differ from an account
      * that the user has already selected in a provider but have
@@ -161,7 +161,6 @@ class AppContainer extends React.Component<IProps, IState> {
     </div>;
   }
 
-
   public render(): RenderOutput {
 
     const {
@@ -218,8 +217,9 @@ class AppContainer extends React.Component<IProps, IState> {
           { hasAcceptedCookies ? "" :
             <div className={css.cookieDisclaimerContainer}>
               <div className={css.cookieDisclaimer}>
-                <div className={css.body}>This website stores cookies on your computer. These cookies are used to collect information about how you interact with our website. We use this information for analytics in order to improve our website.</div>
-                <div className={css.accept}><a href="#" onClick={this.handleAccept} className={css.blueButton} data-test-id="acceptCookiesButton"><img src="/assets/images/Icon/v-white-thick.svg"></img>Accept</a></div>
+                <div className={css.body}>Alchemy stores cookies on your device to enhance platform experience and analyze platform usage. Please read the&nbsp;
+                  <Link to="/cookie-policy" target="_blank" rel="noopener noreferrer">Cookie Policy</Link> for more information.</div>
+                <div className={css.accept}><a href="#" onClick={this.handleAccept} className={css.blueButton} data-test-id="acceptCookiesButton"><img src="/assets/images/Icon/v-white-thick.svg"></img>I Accept</a></div>
               </div>
             </div>
           }

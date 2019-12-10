@@ -533,7 +533,7 @@ body {
   position: fixed;
   bottom: 50px;
   background-color: rgba(255,255,255,1);
-  left: 260px;
+  left: 20px;
   width: 290px;
   height: auto;
   text-align: left;
@@ -636,6 +636,10 @@ body {
       width: 80%;
       flex-grow: 2;
       flex-basis: content;
+
+      a {
+        color: $accent-2;
+      }
     }
 
     .accept {
