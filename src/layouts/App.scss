@@ -702,7 +702,7 @@ body {
 
 @media only screen and (max-width: 425px) {
   .contentWrapper {
-    margin: 0;
+    margin: 0 !important;
   }
 
   .pendingTransactions {
