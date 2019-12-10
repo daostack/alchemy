@@ -7,6 +7,7 @@ import { getArc, enableWalletProvider } from "arc";
 import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import Reputation from "components/Account/Reputation";
+import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { Field, Formik, FormikProps } from "formik";
 import { copyToClipboard, ethErrorHandler, formatTokens } from "lib/util";
@@ -212,6 +213,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
                         }
                       </div>
                     </div>
+                    { editing ? "" : <div className={css.followButton}><FollowButton id={accountAddress} type="users" /></div> }
                     {Object.keys(accountProfile.socialURLs).length === 0 ? " " :
                       <div className={css.socialLogins}>
                         <h3>Social Verification</h3>

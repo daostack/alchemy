@@ -194,6 +194,10 @@ a.detailView {
   .profileContent {
     display: block;
     position: relative;
+
+    .followButton {
+      margin-top: 10px;
+    }
   }
 
   .userAvatarContainer {
