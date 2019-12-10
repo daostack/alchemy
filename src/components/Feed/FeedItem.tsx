@@ -68,19 +68,25 @@ const FeedItem = (props: IProps) => {
       content = <UserFeedItem event={event} />;
       break;
     case "ProposalStageChange":
-      title = daoTitle(event, ` - proposal stage changed to ${eventData.stage}`);
+      title = event.from === "dao"
+        ? daoTitle(event, ` - proposal is ${eventData.stage}`)
+        : `Proposal is ${eventData.stage}`;
       icon = <img src="/assets/images/Icon/Info.svg" />;
       content = <ProposalFeedItem event={event} />;
       break;
     case "VoteFlip": {
       const voteFlipForAgainst = eventData.outcome === "Pass" ? "Pass" : "Fail";
-      title = `${voteFlipForAgainst} is now in the lead`;
+      title = event.from === "dao"
+        ? daoTitle(event, `Vote Flip - ${voteFlipForAgainst} is now in the lead`)
+        : `Vote Flip - ${voteFlipForAgainst} is now in the lead`;
       icon = <img src="/assets/images/Icon/Info.svg" />;
       content = <ProposalFeedItem event={event} />;
       break;
     }
     case "NewProposal":
-      title = accountTitle(event, userProfile, "submitted a new proposal");
+      title = event.from === "dao"
+        ? daoTitle(event, "has a new proposal")
+        : accountTitle(event, userProfile, "submitted a new proposal");
       icon = <img src="/assets/images/Icon/circle-plus.svg" />;
       content = <ProposalFeedItem event={event} />;
       break;

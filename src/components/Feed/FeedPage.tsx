@@ -83,10 +83,25 @@ class FeedPage extends React.Component<IProps, null> {
       return this.renderEmptyFeed();
     }
 
-    const eventsByDao = data[0] as any[];
-    const eventsByProposal = data[1] as any[];
-    const eventsByUser = data[2] as any[];
-    const events = eventsByDao.concat(eventsByProposal).concat(eventsByUser).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
+    // Create the feed
+    // Prioritize events from followed proposals, then users, then DAOs.
+    //   For example if the same event appears from following a Proposal and a DAO we will show the Proposal version
+    // Manually filter out events types we don't care about since the subgraph doesn't tell us which events to care about for each followed entity
+    // Sort by timestamp in descending order to show most recent first
+    const eventIds: { [key: string]: boolean } = {};
+    const eventsByProposal = (data[0] as any[])
+      .filter((event) => ["ProposalStageChange", "VoteFlip"].includes(event.type))
+      .map((event) => { event.from = "proposal"; eventIds[event.id] = true; return event; });
+
+    const eventsByUser = (data[1] as any[])
+      .filter((event) => ["NewProposal", "ProposalStageChange", "VoteFlip", "Stake", "Vote"].includes(event.type) && !eventIds.hasOwnProperty(event.id))
+      .map((event) => { event.from = "user"; eventIds[event.id] = true; return event; });
+
+    const eventsByDao = (data[2] as any[])
+      .filter((event) => ["NewProposal", "NewReputationHolder", "ProposalStageChange", "VoteFlip"].includes(event.type) && !eventIds.hasOwnProperty(event.id))
+      .map((event) => { event.from = "dao"; eventIds[event.id] = true; return event; });
+
+    const events = eventsByProposal.concat(eventsByUser).concat(eventsByDao).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
 
     if (events.length === 0) {
       return this.renderEmptyFeed();
@@ -152,53 +167,51 @@ const getFeedObservable = (props: IStateProps, existingData?: SubscriptionData) 
     timestamp
   }`;
 
-  let daosString = "";
-  let proposalsString = "";
-  let usersString = "";
-  let daosQuery = of(null);
   let proposalsQuery = of(null);
   let usersQuery = of(null);
+  let daosQuery = of(null);
 
+  const now = (Date.now() / 1000).toFixed(0);
   if (currentAccountProfile.follows.proposals && currentAccountProfile.follows.proposals.length > 0) {
-    proposalsString = currentAccountProfile.follows.proposals.map((proposal) => "\"" + proposal + "\"").join(",");
-    const skip = existingData ? existingData[1].length : 0;
-    proposalsQuery = arc.getObservable(gql`query feedProposals
+    const proposalsString = currentAccountProfile.follows.proposals.map((proposal) => "\"" + proposal + "\"").join(",");
+    const earliestTimestamp = existingData ? existingData[0].reduce((curTimestamp, event) => event.timestamp < curTimestamp ? event.timestamp : curTimestamp, now) : now;
+    proposalsQuery = arc.getObservable(gql`
       {
-        events(first: ${PAGE_SIZE}, orderBy: timestamp, orderDirection: desc, skip: ${skip}, where: {
-          proposal_in: [ ${proposalsString} ]
+        events(first: ${PAGE_SIZE}, orderBy: timestamp, orderDirection: desc, where: {
+          proposal_in: [ ${proposalsString} ],
+          timestamp_lt: ${earliestTimestamp}
         }) ${queryData}
       }`);
   }
 
   if (currentAccountProfile.follows.users && currentAccountProfile.follows.users.length > 0) {
-    usersString = currentAccountProfile.follows.users.map((user) => "\"" + user + "\"").join(",");
-    const skip = existingData ? existingData[2].length : 0;
-    usersQuery = arc.getObservable(gql`query feedUsers
+    const usersString = currentAccountProfile.follows.users.map((user) => "\"" + user + "\"").join(",");
+    const earliestTimestamp = existingData ? existingData[1].reduce((curTimestamp, event) => event.timestamp < curTimestamp ? event.timestamp : curTimestamp, now) : now;
+    usersQuery = arc.getObservable(gql`
       {
-        events(first: ${PAGE_SIZE}, orderBy: timestamp, orderDirection: desc, skip: ${skip}, where: {
-          user_in: [ ${usersString} ]
-          ${proposalsString ? `, proposal_not_in: [ ${proposalsString} ]` : ""}
+        events(first: ${PAGE_SIZE}, orderBy: timestamp, orderDirection: desc, where: {
+          user_in: [ ${usersString} ],
+          timestamp_lt: ${earliestTimestamp}
         }) ${queryData}
       }
     `);
   }
 
   if (currentAccountProfile.follows.daos && currentAccountProfile.follows.daos.length > 0) {
-    daosString = currentAccountProfile.follows.daos.map((daoAvatarAddress) => "\"" + daoAvatarAddress + "\"").join(",");
-    const skip = existingData ? existingData[0].length : 0;
-    daosQuery = arc.getObservable(gql`query feedDaos
+    const daosString = currentAccountProfile.follows.daos.map((daoAvatarAddress) => "\"" + daoAvatarAddress + "\"").join(",");
+    const earliestTimestamp = existingData ? existingData[2].reduce((curTimestamp, event) => event.timestamp < curTimestamp ? event.timestamp : curTimestamp, now) : now;
+    daosQuery = arc.getObservable(gql`
       {
-        events(first: ${PAGE_SIZE}, orderBy: timestamp, orderDirection: desc, skip: ${skip}, where: {
-          dao_in: [ ${daosString} ]
-          ${usersString ? `, user_not_in: [ ${usersString} ]` : ""}
-          ${proposalsString ? `, proposal_not_in: [ ${proposalsString} ]` : ""}
+        events(first: ${PAGE_SIZE}, orderBy: timestamp, orderDirection: desc, where: {
+          dao_in: [ ${daosString} ],
+          timestamp_lt: ${earliestTimestamp}
         }) ${queryData}
       }
     `);
   }
 
-  return combineLatest(daosQuery, proposalsQuery, usersQuery, (daoEvents, proposalEvents, userEvents) => {
-    return [daoEvents ? daoEvents.data.events : [], proposalEvents ? proposalEvents.data.events : [], userEvents ? userEvents.data.events : []];
+  return combineLatest(proposalsQuery, usersQuery, daosQuery, (proposalEvents, userEvents, daoEvents) => {
+    return [proposalEvents ? proposalEvents.data.events : [], userEvents ? userEvents.data.events : [], daoEvents ? daoEvents.data.events : []];
   });
 };
 
