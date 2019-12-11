@@ -2,6 +2,7 @@ import { IDAOState, IMemberState } from "@daostack/client";
 import { getArc } from "arc";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
+import FollowButton from "components/Shared/FollowButton";
 import Loading from "components/Shared/Loading";
 import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -44,6 +45,8 @@ const UserFeedItem = (props: IProps) => {
         &nbsp;<span>with</span>&nbsp;
         <span className={css.reputation}><Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={member.reputation} /></span>
       </div>
+
+      <div className={css.followButton}><FollowButton id={event.user} type="users" /></div>
 
       <div className={css.bio}>
         Bio: {profile ? profile.description : "N/A"}

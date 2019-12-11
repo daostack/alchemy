@@ -3,6 +3,7 @@ import { IDAOState } from "@daostack/client";
 import { getArc } from "arc";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
+import FollowButton from "components/Shared/FollowButton";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { humanProposalTitle } from "lib/util";
@@ -57,6 +58,8 @@ const ProposalFeedItem = (props: IProps) => {
       <Link to={`/dao/${dao.address}/proposal/${event.proposal.id}`}>
         <h3>Proposal {humanProposalTitle(event.proposal)}</h3>
       </Link>
+
+      <div className={css.followButton}><FollowButton id={event.proposal.id} type="proposals" /></div>
 
       <div className={css.proposalDescription}>
         { event.proposal.description ?
