@@ -15,20 +15,18 @@ div.outer {
   overflow: hidden;
 
   .pageContentWrapper {
-    border-collapse: collapse;
-    height: 100%;
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
 
     .pageSubComponentWrapper {
       z-index: 0;
-      position: relative;
       padding-top:30px;
       padding-left:40px;
       padding-right:40px;
-      max-height: calc(100vh - 120px);
-      flex-grow: 1;
+      flex: 1 0 auto;
+      height: calc(100vh - 120px);
     }
 
     .noticeWrapper {
@@ -149,8 +147,7 @@ div.outer {
 }
 
 .membersContainer {
-  margin: 10px auto;
-  max-width: 980px;
+  height: 100%;
 
   table {
     width: 100%;

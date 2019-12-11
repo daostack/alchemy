@@ -7,23 +7,24 @@
 }
 
 .schemeContainer {
-  padding-bottom: 150px;
-  position: relative;
-}
+  height: 100%; 
+  display: flex;
+  flex-direction: column;
 
-.tabContent {
-  overflow-y: auto;
-  height: calc(100vh - 200px);
-}
+  .tabContent {
+    overflow: auto;
+    padding-bottom: 20px;
+  }
 
-.schemeName {
-  font-size: 28px;
-  color: #689ad6;
-  padding: 0;
-  margin: 0;
-  padding-bottom: 15px;
-  background-color: #e5ebf2;
-  padding-top: 10px;
+  .schemeName {
+    font-size: 28px;
+    color: #689ad6;
+    padding: 0;
+    margin: 0;
+    padding-bottom: 15px;
+    background-color: #e5ebf2;
+    padding-top: 10px;
+  }
 }
 
 a.createProposal {
