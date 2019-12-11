@@ -3,9 +3,6 @@
   "description": "",
   "scripts": {},
   "env": {
-    "API_URL": {
-      "required": true
-    },
     "NODE_ENV": {
       "required": true
     },

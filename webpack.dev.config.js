@@ -89,7 +89,6 @@ module.exports = merge(baseConfig, {
 
     new webpack.DefinePlugin({
       'process.env': {
-        'API_URL': JSON.stringify(process.env.API_URL || "http://127.0.0.1:3001"),
         'BASE_URL': JSON.stringify(process.env.BASE_URL || "http://127.0.0.1:3000"),
         'DISQUS_SITE': JSON.stringify(process.env.DISQUS_SITE || 'daostack-alchemy'),
         'NODE_ENV': JSON.stringify(process.env.NODE_ENV || "development"),
