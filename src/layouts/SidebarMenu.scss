@@ -85,6 +85,11 @@
     }
   }
 
+  .followButton {
+    margin-top: 15px;
+    margin-left: 20px;
+  }
+
   .daoNavigation {
     font-family: "Open Sans";
 
@@ -169,7 +174,7 @@
     position: relative;
     left: 15px;
     top: 17px;
-    padding: 10px;
+    padding: 0 10px 10px 10px;
     font-weight: normal;
     color: rgba(255,255,255,.5);
   }

@@ -7,6 +7,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
+import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as GeoPattern from "geopattern";
 import { ethErrorHandler, formatTokens, getExchangesList, supportedTokens } from "lib/util";
@@ -101,6 +102,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   : <p>Anyone can make a proposal to the DAO! Click the button on the top right.</p>
           }
         </div>
+        <div className={css.followButton}><FollowButton id={dao.address} type="daos" style="white" /></div>
         <div className={css.daoNavigation}>
           <span className={css.daoNavHeading}><b>Menu</b></span>
           <ul>
