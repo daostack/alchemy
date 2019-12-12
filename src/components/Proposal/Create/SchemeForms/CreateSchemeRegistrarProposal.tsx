@@ -132,7 +132,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
   
   loadCurrentTab(){
     let initialCurrentTab = getInitialFormValues({ schemeToAdd: "", schemeToEdit: "", schemeToRemove: ""});
-    
+    console.log(initialCurrentTab);
     if(initialCurrentTab.schemeToAdd) {
       initialCurrentTab = "addScheme";
     }
