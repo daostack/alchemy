@@ -15,7 +15,7 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as arcActions from "actions/arcActions";
 
 import { isValidUrl } from "lib/util";
-import { exportFormValues, getInitialFormValues } from "lib/proposalUtils";
+import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import * as css from "../CreateProposal.scss";
@@ -68,11 +68,11 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     }
 
     const actions = props.genericSchemeInfo.actions();
-    const initialActionId = getInitialFormValues({ currentActionId: ""}).currentActionId;
+    const initialActionId = importUrlValues({ currentActionId: ""}).currentActionId;
     this.state = {
       actions,
       currentAction: initialActionId ? actions.find(action => action.id === initialActionId) : actions[0],
-      tags: getInitialFormValues({ tags: []}).tags,
+      tags: importUrlValues({ tags: []}).tags,
     };
   }
 
@@ -199,12 +199,13 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     this.setState({tags});
   }
   
-  public exportFormValues(values: IFormValues, tags: string[]) {
+  public exportFormValues(values: IFormValues) {
     values = {
       ...values, 
       currentActionId: this.state.currentAction.id,
+      ...this.state,
     };
-    exportFormValues(values, tags);
+    exportUrl(values);
     this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
   }
   
@@ -220,7 +221,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       title: "",
       url: "",
     };
-
+    
     actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
       if (typeof(field.defaultValue) !== "undefined") {
         if (field.defaultValue === "_avatar") {
@@ -267,7 +268,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
         <div className={css.formWrapper}>
           <Formik
-            initialValues={getInitialFormValues(initialFormValues)}
+            initialValues={importUrlValues(initialFormValues)}
             // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues): void => {
               const errors: any = {};
@@ -426,7 +427,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                     <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                       Cancel
                     </button>
-                    <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={() => this.exportFormValues(values, this.state.tags)}>
+                    <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={() => this.exportFormValues(values)}>
                       Export proposal
                     </button>
                     <button className={css.submitProposal} type="submit" disabled={isSubmitting}>

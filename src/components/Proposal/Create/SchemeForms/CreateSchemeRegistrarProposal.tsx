@@ -13,7 +13,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as arcActions from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { schemeNameAndAddress, isValidUrl, GetSchemeIsActiveActions, getSchemeIsActive } from "lib/util";
-import { getInitialFormValues, exportFormValues } from "lib/proposalUtils";
+import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
@@ -69,8 +69,9 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
     this.state = {
       currentTab: this.loadCurrentTab(),
-      tags: getInitialFormValues({tags: []}).tags,
+      tags: new Array<string>(),
     };
+    this.state = importUrlValues(this.state);
   }
   
   
@@ -125,14 +126,17 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.setState({tags});
   }
 
-  public exportFormValues(values: IFormValues, tags: string[]) {
-    exportFormValues(values, tags);
+  public exportFormValues(values: IFormValues) {
+    values = {
+      ...values,
+      ...this.state,
+    };
+    exportUrl(values);
     this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
   }
   
   loadCurrentTab(){
-    let initialCurrentTab = getInitialFormValues({ schemeToAdd: "", schemeToEdit: "", schemeToRemove: ""});
-    console.log(initialCurrentTab);
+    let initialCurrentTab = importUrlValues({ schemeToAdd: "", schemeToEdit: "", schemeToRemove: ""});
     if(initialCurrentTab.schemeToAdd) {
       initialCurrentTab = "addScheme";
     }
@@ -222,7 +226,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
         <div className={schemeRegistrarFormClass}>
           <Formik
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            initialValues={getInitialFormValues(initialFormValues)}
+            initialValues={importUrlValues(initialFormValues)}
             // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues) => {
               const errors: any = {};
@@ -368,7 +372,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         name="schemeToEdit"
                         component="select"
                         className={css.schemeSelect}
-                        defaultValue={getInitialFormValues(initialFormValues)}
+                        defaultValue={importUrlValues(initialFormValues)}
                       >
                         <option value="">Select a scheme...</option>
                         {schemes.map((scheme, _i) => {
@@ -443,7 +447,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         name="schemeToRemove"
                         component="select"
                         className={css.schemeSelect}
-                        defaultValue={getInitialFormValues(initialFormValues).schemeToRemove}
+                        defaultValue={importUrlValues(initialFormValues).schemeToRemove}
                       >
                         <option value="">Select a scheme...</option>
                         {schemes.map((scheme, _i) => {
@@ -458,7 +462,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                       Cancel
                     </button>
                     <TrainingTooltip overlay="Export proposal" placement="top">
-                      <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={() => this.exportFormValues(values, this.state.tags)}>
+                      <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={() => this.exportFormValues(values)}>
                         Export proposal
                       </button>
                     </TrainingTooltip>

@@ -1,11 +1,11 @@
 import { copyToClipboard } from "./util";
-import * as cloneDeep from "clone-deep";
+
+const cloneDeep = require("clone-deep");
 
 export function importUrlValues<Values>(defaultValues: Values) {
   const { search } = window.location;
   const params = new URLSearchParams(search);
   const initialFormValues: any = cloneDeep([defaultValues])[0];
-
   for (const prop in defaultValues) {
     const paramValue = params.get(prop);
     if (paramValue) {
@@ -41,13 +41,15 @@ export const exportUrl = (values: any) => {
     if (values[key] === undefined) {
       return "";
     }
-    if(typeof values[key] === "object" ) {
+    if (typeof values[key] === "object") {
       return key + "=" + JSON.stringify(values[key]);
     }
     return key + "=" + values[key];
   };
 
-  const queryString = Object.keys(values).map(setQueryString).join("&");
+  const queryString = Object.keys(values)
+    .map(setQueryString)
+    .join("&");
   const { origin, pathname } = window.location;
   const url = origin + pathname + "?" + queryString;
   copyToClipboard(url);
