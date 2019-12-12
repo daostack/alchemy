@@ -13,7 +13,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as arcActions from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { schemeNameAndAddress, isValidUrl, GetSchemeIsActiveActions, getSchemeIsActive } from "lib/util";
-import { getInitialFormValues, exportFormValues } from "lib/proposal.util";
+import { getInitialFormValues, exportFormValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 

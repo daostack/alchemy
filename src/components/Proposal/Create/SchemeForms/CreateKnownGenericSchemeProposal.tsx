@@ -15,7 +15,7 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as arcActions from "actions/arcActions";
 
 import { isValidUrl } from "lib/util";
-import { exportFormValues, getInitialFormValues } from "lib/proposal.util";
+import { exportFormValues, getInitialFormValues } from "lib/proposalUtils";
 
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import * as css from "../CreateProposal.scss";

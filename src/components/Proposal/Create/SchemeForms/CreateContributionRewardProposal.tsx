@@ -12,10 +12,9 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as arcActions from "actions/arcActions";
 import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
 import { showNotification, NotificationStatus } from "reducers/notifications";
-import { exportFormValues, getInitialFormValues } from "lib/proposal.util";
+import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
-
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -101,12 +100,11 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     this.state = { 
       tags: new Array<string>(),
     };
+
+    // Populating the state with URL parameters
+    this.state = importUrlValues(this.state);
   }
-  
-  componentDidMount(){
-    this.loadInitialTagFormValues();
-  }
-  
+
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
@@ -139,22 +137,15 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
   }
   
   // Exports data from form to a shareable url.
-  public exportFormValues(values: IFormValues, tags: string[]) {
-    exportFormValues(values, tags);
+  public exportFormValues(values: IFormValues) {
+    exportUrl({ ...values, ...this.state });
     this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
   }
 
   private onTagsChange = () => (tags: string[]): void => {
     this.setState({ tags });
   }
-    
-  private loadInitialTagFormValues() {
-    const tags = getInitialFormValues({tags: []}).tags;
-    if(tags){
-      this.setState({ tags });
-    }
-  }
-  
+
   public render(): RenderOutput {
     const { data, daoAvatarAddress, handleClose } = this.props;
 
@@ -176,12 +167,12 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       title: "",
       url: "",
     };
-    
+
     return (
       <div className={css.contributionReward}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={getInitialFormValues(initialFormValues)}
+          initialValues={importUrlValues(initialFormValues)}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
@@ -311,7 +302,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                     name="beneficiary"
                     onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                     onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                    defaultValue={getInitialFormValues(initialFormValues).beneficiary}
+                    defaultValue={importUrlValues(initialFormValues).beneficiary}
                   />
                 </div>
 
@@ -400,7 +391,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                   Cancel
                 </button>
                 <TrainingTooltip overlay="Export proposal" placement="top">
-                  <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={() => this.exportFormValues(values, this.state.tags)}>
+                  <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={() => this.exportFormValues(values)}>
                     Export proposal
                   </button>
                 </TrainingTooltip>
