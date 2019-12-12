@@ -64,7 +64,7 @@ class ThreeboxModal extends React.Component<IProps, IState> {
             </div>
           </div>
           <div className={css.footer}>
-            <span><input type="checkbox" onChange={this.handleClickDontShow} value="1" checked={this.state.dontShowAgain} />Don't show this again</span>
+            <span><input type="checkbox" onChange={this.handleClickDontShow} value="1" checked={this.state.dontShowAgain} />Don&apos;t show this again</span>
             <button className={css.cancelButton} onClick={this.props.closeHandler}>
               Cancel
             </button>
