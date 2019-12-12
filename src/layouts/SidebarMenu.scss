@@ -397,7 +397,7 @@
       transition: all .25s ease;
 
       .daoName {
-        padding: 20px 20px 23px 20px;
+        padding: 20px 20px 10px 20px;
       }
 
       .daoName a span {
@@ -410,6 +410,9 @@
         font-size: 13px;
       }
 
+      .followButton {
+        margin-top: 5px;
+      }
       .daoNavigation li a {
         padding: 4px 23px 4px 8px;
       }
@@ -436,7 +439,7 @@
   }
 
   .daoNavHeading {
-    margin-top: -40px;
+    margin-top: -5px;
   }
 
   .daoHoldings ul li {
