@@ -1,11 +1,11 @@
 import { copyToClipboard } from "./util";
+import * as cloneDeep from "clone-deep";
 
-// TODO Need to use something like lodash for deep cloning.
-export function getInitialFormValues<Values>(defaultValues: Values) {
+export function importUrlValues<Values>(defaultValues: Values) {
   const { search } = window.location;
   const params = new URLSearchParams(search);
-  // Warning, seem comment 1. below
-  const initialFormValues: any = { ...defaultValues };
+  const initialFormValues: any = cloneDeep([defaultValues])[0];
+
   for (const prop in defaultValues) {
     const paramValue = params.get(prop);
     if (paramValue) {
@@ -32,23 +32,23 @@ export function getInitialFormValues<Values>(defaultValues: Values) {
       }
     }
   }
-  return initialFormValues;
 
-  // 1. Warning, this is not a deep clone, only shallow.
-  // Will be problematic if Values has a nested object,
-  // as it will get overwritten. Use something like lodash
-  // to do a deep clone here.
+  return initialFormValues;
 }
 
-export const exportFormValues = (values: any, tags: string[]) => {
+export const exportUrl = (values: any) => {
   const setQueryString = (key: string) => {
-    if(typeof values[key] === "object"){
+    if (values[key] === undefined) {
+      return "";
+    }
+    if(typeof values[key] === "object" ) {
       return key + "=" + JSON.stringify(values[key]);
     }
     return key + "=" + values[key];
   };
+
   const queryString = Object.keys(values).map(setQueryString).join("&");
   const { origin, pathname } = window.location;
-  const url = origin + pathname + "?" + queryString + "&tags=" + JSON.stringify(tags);
+  const url = origin + pathname + "?" + queryString;
   copyToClipboard(url);
 };
