@@ -8,6 +8,7 @@ import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import Reputation from "components/Account/Reputation";
 import FollowButton from "components/Shared/FollowButton";
+import ThreeboxModal from "components/Shared/ThreeboxModal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { Field, Formik, FormikProps } from "formik";
 import { copyToClipboard, ethErrorHandler, formatTokens } from "lib/util";
@@ -29,6 +30,7 @@ interface IStateProps {
   accountProfile?: IProfileState;
   currentAccountAddress: string;
   daoAvatarAddress: string;
+  threeBox: any;
 }
 
 interface IDispatchProps {
@@ -51,6 +53,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
     accountProfile: state.profiles[accountAddress],
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress,
+    threeBox: state.profiles.threeBox,
   };
 };
 
@@ -65,10 +68,24 @@ interface IFormValues {
   name: string;
 }
 
-class AccountProfilePage extends React.Component<IProps, null> {
+interface IState {
+  description: string;
+  name: string;
+  showThreeBoxModal: boolean;
+}
+
+class AccountProfilePage extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
+
+    const accountProfile = props.accountProfile;
+
+    this.state = {
+      description: accountProfile ? accountProfile.description || "" : "",
+      name: accountProfile ? accountProfile.name || "" : "",
+      showThreeBoxModal: false,
+    };
   }
 
   public async componentDidMount(): Promise<void> {
@@ -84,13 +101,27 @@ class AccountProfilePage extends React.Component<IProps, null> {
     e.preventDefault();
   }
 
+  public doUpdateProfile = async() => {
+    const { currentAccountAddress, updateProfile } = this.props;
+    await updateProfile(currentAccountAddress, this.state.name, this.state.description);
+  }
+
   public handleFormSubmit = async (values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> => {
     const { currentAccountAddress, showNotification, updateProfile } = this.props;
 
-    if (!await enableWalletProvider({ showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification })) { setSubmitting(false); return; }
 
-    await updateProfile(currentAccountAddress, values.name, values.description);
+    if (this.props.threeBox || parseInt(localStorage.getItem("dontShowThreeboxModal"))) {
+      await updateProfile(currentAccountAddress, values.name, values.description);
+    } else {
+      this.setState({ showThreeBoxModal: true,  description: values.description, name: values.name });
+    }
+
     setSubmitting(false);
+  }
+
+  private closeThreeboxModal = (_e: any): void => {
+    this.setState({ showThreeBoxModal: false });
   }
 
   public render(): RenderOutput {
@@ -116,6 +147,10 @@ class AccountProfilePage extends React.Component<IProps, null> {
         <BreadcrumbsItem to={`/profile/${accountAddress}`}>
           {editing ? (accountProfile && accountProfile.name ? "Edit 3Box Profile" : "Set 3Box Profile") : "View 3Box Profile"}
         </BreadcrumbsItem>
+
+        {this.state.showThreeBoxModal ?
+          <ThreeboxModal action={this.doUpdateProfile} closeHandler={this.closeThreeboxModal} />
+          : ""}
 
         <div className={profileContainerClass} data-test-id="profile-container">
           { editing && (!accountProfile || !accountProfile.name) ? <div className={css.setupProfile}>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
