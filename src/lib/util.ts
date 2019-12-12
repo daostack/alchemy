@@ -5,7 +5,9 @@ import {
   IContributionReward,
   IProposalState,
   IRewardState,
-  ISchemeState } from "@daostack/client";
+  ISchemeState,
+  utils
+} from "@daostack/client";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
@@ -389,6 +391,89 @@ export function hasGpRewards(reward: IRewardState) {
     }
   }
   return false;
+}
+
+/**
+ * Returns an object describing ContributionReward non-zero, unredeemed reward amounts for the CR beneficiary, optionally
+ * filtered by whether the DAO has the funds to pay the rewards.
+ * @param  reward unredeemed CR rewards
+ * @param daoBalances
+ */
+export function getDaoDebt(proposals: IProposalState[], daoBalances: { [key: string]: BN|null } = {}): AccountClaimableRewardsType {
+  const result: AccountClaimableRewardsType = {};
+
+  let ethReward, externalTokenReward, rewards;
+
+  let supportedExternalTokens = supportedTokens()
+
+  result["ETH"] = new BN(0)
+  for (let proposal of proposals) {
+
+    // Calculate CR Debt
+    if (proposal.contributionReward && proposal.contributionReward.externalToken !== utils.NULL_ADDRESS ) {
+      rewards = proposal.contributionReward
+
+      // ETH Reward
+      ethReward = new BN(rewards.ethReward);
+      if ( !ethReward.isZero() &&
+        rewards.alreadyRedeemedEthPeriods < rewards.periods
+      ){
+        console.log(proposal.title)
+        let EthReward = Number(utils.fromWei(proposal.contributionReward.ethReward))
+        console.log("EthReward : ", EthReward)
+        console.log(proposal.executionState)
+        console.log(proposal.winningOutcome)
+        result["ETH"].iadd(ethReward);
+      }
+
+      externalTokenReward = new BN(rewards.externalTokenReward);
+      if ( !supportedExternalTokens[rewards.externalToken])
+      {
+        console.log("Skipping:", rewards.externalToken)
+        continue
+      }
+
+      if ( !externalTokenReward.isZero() &&
+        rewards.alreadyRedeemedExternalTokenPeriods < rewards.periods
+      ){
+        // find token symbol here
+        let tokenSymbol = supportedExternalTokens[rewards.externalToken].symbol
+        if (!result[tokenSymbol]) {
+          result[tokenSymbol] = new BN(0)
+        }
+        result[tokenSymbol].iadd(externalTokenReward);
+      }
+    }
+  }
+    
+      /*
+    //console.log(proposal.contributionReward.beneficiary)
+    if (!proposal.contributionReward) {
+      continue
+    }
+    if (!(proposal.contributionReward.alreadyRedeemedEthPeriods || proposal.contributionReward.alreadyRedeemedExternalTokenPeriods)) {
+
+      let EthReward = Number(utils.fromWei(proposal.contributionReward.ethReward))
+      let TokenReward = Number(utils.fromWei(proposal.contributionReward.externalTokenReward))
+      totalEthDebt += EthReward
+      totalTokenDebt += TokenReward
+      if ( EthReward > 0 || TokenReward > 0) {
+        console.log(proposal.title)
+        if (EthReward > 0)
+          console.log("EthReward : ", EthReward)
+        if (TokenReward > 0)
+          console.log("TokenReward : ", TokenReward)
+        console.log('******************************************************')
+      }
+    }
+  }
+
+  console.log("Total ETH debt : ", totalEthDebt)
+  console.log("Total Token debt : ",totalTokenDebt)
+  }
+       */
+
+  return result
 }
 
 /**

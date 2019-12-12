@@ -8,12 +8,13 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import gql from "graphql-tag";
 import * as GeoPattern from "geopattern";
-import { ethErrorHandler, formatTokens, getExchangesList, supportedTokens } from "lib/util";
+import { ethErrorHandler, formatTokens, getExchangesList, supportedTokens, getDaoDebt } from "lib/util";
 import * as queryString from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
-import { first } from "rxjs/operators";
+import {  map, first } from "rxjs/operators";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import { combineLatest, of, from } from "rxjs";
@@ -181,6 +182,14 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
             })}
           </ul>
         </div>
+        <div className={css.daoHoldings}>
+          <span className={css.daoNavHeading}>
+            <b>DAO Debt</b>
+          </span>
+          <ul>
+            <SubscribedDaoDebt dao={dao} />
+          </ul>
+        </div>
       </div>
     );
   }
@@ -261,6 +270,89 @@ const SubscribedEthBalance = withSubscription({
   createObservable: (props: IEthProps) => {
     const arc = getArc();
     return arc.dao(props.dao.address).ethBalance().pipe(ethErrorHandler());
+  },
+});
+
+/***** DAO Debt *****/
+interface IDebtProps extends ISubscriptionProps<any> {
+  dao: IDAOState;
+}
+
+const DaoDebt = (props: IDebtProps) => {
+  const { data, error, isLoading } = props;
+
+  if (isLoading || error || (data === null)) {
+    return null;
+  }
+
+  let result = getDaoDebt(data)
+
+  return (
+    <>
+      {Object.keys(result).map((sym) => {
+          return (
+            <li key={"Debt_" + sym}> 
+              <strong> - {formatTokens(result[sym])} </strong> {sym}
+            </li>
+          );
+        })
+      }
+    </>
+  );
+}
+
+const SubscribedDaoDebt = withSubscription({
+  wrappedComponent: DaoDebt,
+  checkForUpdate: (oldProps: IDebtProps, newProps: IDebtProps) => {
+    return oldProps.dao.address !== newProps.dao.address;
+  },
+  createObservable: async (props: IDebtProps) => {
+    //const daoState = props.dao;
+
+    const arc = getArc();
+    const query = gql`query
+    {
+      proposals(
+        where: {
+          dao: "${props.dao.address}",
+          accountsWithUnclaimedRewards_not: []
+          executionState_in: ["BoostedTimeOut", "BoostedBarCrossed", "QueueBarCrossed"]
+        }
+        orderBy: executedAt
+        orderDirection: desc
+        first: 1000, 
+        skip: 0
+      ){
+        title
+        executionState
+        winningOutcome
+        accountsWithUnclaimedRewards
+        gpRewards(
+          where: {
+            tokensForStakerRedeemedAt: 0
+            tokensForStaker_not: null
+          }
+        ){
+          daoBountyForStaker
+          tokensForStaker
+          beneficiary
+        }
+        contributionReward{
+          alreadyRedeemedEthPeriods
+          alreadyRedeemedExternalTokenPeriods
+          beneficiary
+          ethReward
+          externalTokenReward
+          externalToken
+          periods
+        }
+      }
+    }`
+
+    const proposals = arc.getObservable(query, { subscribe: true }).
+      pipe(map((result: any) => result.data.proposals));
+
+    return proposals;
   },
 });
 
