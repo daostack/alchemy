@@ -285,21 +285,20 @@ const DaoDebt = (props: IDebtProps) => {
     return null;
   }
 
-  let result = getDaoDebt(data)
+  const result = getDaoDebt(data);
 
   return (
     <>
       {Object.keys(result).map((sym) => {
-          return (
-            <li key={"Debt_" + sym}> 
-              <strong> - {formatTokens(result[sym])} </strong> {sym}
-            </li>
-          );
-        })
-      }
+        return (
+          <li key={"Debt_" + sym}> 
+            <strong> - {formatTokens(result[sym])} </strong> {sym}
+          </li>
+        );
+      })}
     </>
   );
-}
+};
 
 const SubscribedDaoDebt = withSubscription({
   wrappedComponent: DaoDebt,
@@ -333,7 +332,7 @@ const SubscribedDaoDebt = withSubscription({
           periods
         }
       }
-    }`
+    }`;
 
     const proposals = arc.getObservable(query, { subscribe: true }).
       pipe(map((result: any) => result.data.proposals));

@@ -212,9 +212,9 @@
   height: 270px;
   left: 0;
   width: 100%;
-  border-top: 2px solid rgba(78, 137, 208, 1.000);
+  border-top: 1px solid rgba(78, 137, 208, 1.000);
   transition: all .25s ease;
-  padding-top: 20px;
+  padding-top: 10px;
 
   ul {
     width: 100%;
@@ -233,7 +233,7 @@
       a {
         color: rgba(196, 215, 236, 1.000);
         text-decoration: none;
-        padding: 5px 0 5px 30px;
+        padding: 0px 0 0px 30px;
         width: auto;
         display: block;
         font-family: "Open Sans";
@@ -312,17 +312,17 @@
     }
 
     li.daoStack {
-      padding-top: 10px;
+      padding-top: 4px;
 
       a {
         color: white;
         font-family: "AccordBold";
-        font-size: 11px;
+        font-size: 10px;
       }
 
       img {
-        margin-top: -3px;
-        top: 5px;
+        margin-top: -5px;
+        top: 3px;
         position: relative;
       }
     }
@@ -441,7 +441,7 @@
   .siteLinksWrapper {
     position: relative;
     height: auto;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
 
     ul li {
       height: auto;

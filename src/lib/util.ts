@@ -6,7 +6,7 @@ import {
   IProposalState,
   IRewardState,
   ISchemeState,
-  utils
+  utils,
 } from "@daostack/client";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import { of } from "rxjs";
@@ -394,24 +394,24 @@ export function hasGpRewards(reward: IRewardState) {
 }
 
 /**
- * Returns an object describing ContributionReward non-zero, unredeemed reward amounts for the CR beneficiary, optionally
- * filtered by whether the DAO has the funds to pay the rewards.
- * @param  reward unredeemed CR rewards
- * @param daoBalances
+ * Returns an object describing non-zero, unredeemed Contribution reward amounts for the current dao
+ * @param proposals list of proposal with unclaimed rewards
  */
-export function getDaoDebt(proposals: IProposalState[], daoBalances: { [key: string]: BN|null } = {}): AccountClaimableRewardsType {
+export function getDaoDebt(proposals: IProposalState[]): AccountClaimableRewardsType {
   const result: AccountClaimableRewardsType = {};
 
-  let ethReward, externalTokenReward, rewards;
+  let ethReward;
+  let externalTokenReward;
+  let rewards;
 
-  let supportedExternalTokens = supportedTokens()
+  const supportedExternalTokens = supportedTokens();
 
-  result["ETH"] = new BN(0)
-  for (let proposal of proposals) {
+  result["ETH"] = new BN(0);
+  for (const proposal of proposals) {
 
     // Calculate CR Debt
     if (proposal.contributionReward && proposal.contributionReward.externalToken !== utils.NULL_ADDRESS ) {
-      rewards = proposal.contributionReward
+      rewards = proposal.contributionReward;
 
       // ETH Reward
       ethReward = new BN(rewards.ethReward);
@@ -424,23 +424,24 @@ export function getDaoDebt(proposals: IProposalState[], daoBalances: { [key: str
       externalTokenReward = new BN(rewards.externalTokenReward);
       if ( !supportedExternalTokens[rewards.externalToken])
       {
-        continue
+        continue;
       }
 
+      // External Token Debt
       if ( !externalTokenReward.isZero() &&
         rewards.alreadyRedeemedExternalTokenPeriods < rewards.periods
       ){
         // find token symbol here
-        let tokenSymbol = supportedExternalTokens[rewards.externalToken].symbol
+        const tokenSymbol = supportedExternalTokens[rewards.externalToken].symbol;
         if (!result[tokenSymbol]) {
-          result[tokenSymbol] = new BN(0)
+          result[tokenSymbol] = new BN(0);
         }
         result[tokenSymbol].iadd(externalTokenReward);
       }
     }
   }
     
-  return result
+  return result;
 }
 
 /**
