@@ -23,6 +23,7 @@ interface IDispatchProps {
 }
 
 interface IStateProps {
+  currentAccountAddress: string;
   currentAccountProfile: IProfileState;
   threeBox: any;
 }
@@ -42,6 +43,7 @@ const mapDispatchToProps = {
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
     ...ownProps,
+    currentAccountAddress: state.web3.currentAccountAddress,
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     threeBox: state.profiles.threeBox,
   };
@@ -61,8 +63,8 @@ class FollowButton extends React.Component<IProps, IState> {
   public doFollow = async () => {
     this.setState({ pendingFollow: true });
 
-    const { toggleFollow, currentAccountProfile } = this.props;
-    await toggleFollow(currentAccountProfile.ethereumAccountAddress, this.props.type, this.props.id);
+    const { toggleFollow, currentAccountAddress } = this.props;
+    await toggleFollow(currentAccountAddress, this.props.type, this.props.id);
     this.setState({ pendingFollow: false });
   }
 

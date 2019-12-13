@@ -76,6 +76,20 @@ export function getProfile(accountAddress: string) {
   };
 }
 
+export function threeBoxLogout() {
+  return async (dispatch: any, _getState: any) => {
+    const state = _getState();
+    if (state.profiles.threeBox) {
+      state.profiles.threeBox.logout();
+      dispatch({
+        type: ActionTypes.SAVE_THREEBOX,
+        sequence: AsyncActionSequence.Success,
+        payload: { threeBox: null, threeBoxSpace: null },
+      });
+    }
+  };
+}
+
 export type UpdateProfileAction = IAsyncAction<"UPDATE_PROFILE", { accountAddress: string }, { description: string; name: string; socialURLs?: any }>;
 
 export function updateProfile(accountAddress: string, name: string, description: string) {
@@ -90,8 +104,8 @@ export function updateProfile(accountAddress: string, name: string, description:
     let threeBox;
 
     try {
-      if (state.threeBox) {
-        threeBox = state.threeBox;
+      if (state.profiles.threeBox) {
+        threeBox = state.profiles.threeBox;
       } else {
         const web3Provider = await getWeb3Provider();
         threeBox = await Box.openBox(accountAddress, web3Provider);
@@ -135,8 +149,8 @@ export function toggleFollow(accountAddress: string, type: FollowType, id: strin
     let threeBoxSpace;
 
     try {
-      if (state.threeBox) {
-        threeBox = state.threeBox;
+      if (state.profiles.threeBox) {
+        threeBox = state.profiles.threeBox;
       } else {
         const web3Provider = await getWeb3Provider();
         threeBox = await Box.openBox(accountAddress, web3Provider);
@@ -144,8 +158,8 @@ export function toggleFollow(accountAddress: string, type: FollowType, id: strin
 
       await threeBox.syncDone;
 
-      if (state.threeBoxSpace) {
-        threeBoxSpace = state.threeBoxSpace;
+      if (state.profiles.threeBoxSpace) {
+        threeBoxSpace = state.profiles.threeBoxSpace;
       } else {
         threeBoxSpace = await threeBox.openSpace("DAOstack") ;
       }

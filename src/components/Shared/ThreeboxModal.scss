@@ -5,7 +5,7 @@
   top: 50%;
   transform: translate(-50%,-50%);
   transition: all .25s ease;
-  border-radius: 15px 15px 0 0;
+  border-radius: 15px 15px 15px 15px;
   z-index: 99999999999999999;
   font-family: OpenSans;
 }
@@ -57,6 +57,7 @@
   background: white;
   text-align: right;
   position: relative;
+  border-radius: 0 0 15px 15px;
 
   span {
     font-size: 11px;
@@ -97,5 +98,14 @@
     left: 0;
     transform: none;
     width: 100%;
+    border-radius: 0;
+  }
+
+  .header {
+    border-radius: 0;
+  }
+
+  .footer {
+    border-radius: 0;
   }
 }

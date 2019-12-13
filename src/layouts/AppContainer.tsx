@@ -1,5 +1,6 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
+import { threeBoxLogout } from "actions/profilesActions";
 import * as web3Actions from "actions/web3Actions";
 import * as classNames from "classnames";
 import AccountProfilePage from "components/Account/AccountProfilePage";
@@ -33,6 +34,7 @@ interface IStateProps {
   currentAccountAddress: string;
   daoAvatarAddress: string;
   sortedNotifications: INotificationsState;
+  threeBox: any;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IStateProps & IExternalProps => {
@@ -47,6 +49,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IStatePro
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
     sortedNotifications: sortedNotifications()(state),
+    threeBox: state.profiles.threeBox,
   };
 };
 
@@ -54,12 +57,14 @@ interface IDispatchProps {
   dismissNotification: typeof dismissNotification;
   setCurrentAccount: typeof web3Actions.setCurrentAccount;
   showNotification: typeof showNotification;
+  threeBoxLogout: typeof threeBoxLogout;
 }
 
 const mapDispatchToProps = {
   dismissNotification,
   setCurrentAccount: web3Actions.setCurrentAccount,
   showNotification,
+  threeBoxLogout,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps;
@@ -125,6 +130,9 @@ class AppContainer extends React.Component<IProps, IState> {
         } else {
           uncacheWeb3Info();
           gotoReadonly(this.props.showNotification);
+
+          // TODO: save the threebox for each profile separately so we dont have to logout here
+          this.props.threeBoxLogout();
         }
       });
   }

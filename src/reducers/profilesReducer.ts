@@ -5,7 +5,8 @@ import { AsyncActionSequence } from "actions/async";
 export enum ActionTypes {
   GET_PROFILE_DATA = "GET_PROFILE_DATA",
   UPDATE_PROFILE = "UPDATE_PROFILE",
-  FOLLOW_ITEM = "FOLLOW_ITEM"
+  FOLLOW_ITEM = "FOLLOW_ITEM",
+  SAVE_THREEBOX = "SAVE_THREEBOX",
 }
 
 export type FollowType = "daos" | "proposals" | "users";
@@ -50,12 +51,12 @@ const initialState: IProfilesState = { threeBox: null, threeBoxSpace: null };
 const profilesReducer = (state = initialState, action: any) => {
   const { payload, meta } = action;
 
-  if (payload && payload.threeBox) {
+  if (payload && Object.prototype.hasOwnProperty.call(payload, "threeBox")) {
     state = update(state, { threeBox: { $set: payload.threeBox } });
     delete payload.threeBox;
   }
 
-  if (payload && payload.threeBoxSpace) {
+  if (payload && Object.prototype.hasOwnProperty.call(payload, "threeBoxSpace")) {
     state = update(state, { threeBoxSpace: { $set: payload.threeBoxSpace } });
     delete payload.threeBoxSpace;
   }
