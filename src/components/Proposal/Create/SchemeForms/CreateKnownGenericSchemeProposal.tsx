@@ -76,7 +76,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
     // Search for payable feilds in Standard Bounties, add to send as ETH
     for (const field of currentAction.getFields()) {
-      if (["_depositAmount", "_amount"].indexOf(field.name) >= 0) {
+      if (["_depositAmount", "_amount"].includes(field.name)) {
         ethToSend = ethToSend.add(new BN(values[field.name]));
       }
     }
