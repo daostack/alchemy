@@ -90,3 +90,12 @@
   content: "";
   clear: right;
 }
+
+@media only screen and (max-width: 425px) {
+  .modalWindow {
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+  }
+}
