@@ -418,18 +418,12 @@ export function getDaoDebt(proposals: IProposalState[], daoBalances: { [key: str
       if ( !ethReward.isZero() &&
         rewards.alreadyRedeemedEthPeriods < rewards.periods
       ){
-        console.log(proposal.title)
-        let EthReward = Number(utils.fromWei(proposal.contributionReward.ethReward))
-        console.log("EthReward : ", EthReward)
-        console.log(proposal.executionState)
-        console.log(proposal.winningOutcome)
         result["ETH"].iadd(ethReward);
       }
 
       externalTokenReward = new BN(rewards.externalTokenReward);
       if ( !supportedExternalTokens[rewards.externalToken])
       {
-        console.log("Skipping:", rewards.externalToken)
         continue
       }
 
@@ -446,33 +440,6 @@ export function getDaoDebt(proposals: IProposalState[], daoBalances: { [key: str
     }
   }
     
-      /*
-    //console.log(proposal.contributionReward.beneficiary)
-    if (!proposal.contributionReward) {
-      continue
-    }
-    if (!(proposal.contributionReward.alreadyRedeemedEthPeriods || proposal.contributionReward.alreadyRedeemedExternalTokenPeriods)) {
-
-      let EthReward = Number(utils.fromWei(proposal.contributionReward.ethReward))
-      let TokenReward = Number(utils.fromWei(proposal.contributionReward.externalTokenReward))
-      totalEthDebt += EthReward
-      totalTokenDebt += TokenReward
-      if ( EthReward > 0 || TokenReward > 0) {
-        console.log(proposal.title)
-        if (EthReward > 0)
-          console.log("EthReward : ", EthReward)
-        if (TokenReward > 0)
-          console.log("TokenReward : ", TokenReward)
-        console.log('******************************************************')
-      }
-    }
-  }
-
-  console.log("Total ETH debt : ", totalEthDebt)
-  console.log("Total Token debt : ",totalTokenDebt)
-  }
-       */
-
   return result
 }
 

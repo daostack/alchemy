@@ -317,30 +317,16 @@ const SubscribedDaoDebt = withSubscription({
           dao: "${props.dao.address}",
           accountsWithUnclaimedRewards_not: []
           executionState_in: ["BoostedTimeOut", "BoostedBarCrossed", "QueueBarCrossed"]
+          winningOutcome: Pass
         }
         orderBy: executedAt
         orderDirection: desc
         first: 1000, 
         skip: 0
       ){
-        title
-        executionState
-        winningOutcome
-        accountsWithUnclaimedRewards
-        gpRewards(
-          where: {
-            tokensForStakerRedeemedAt: 0
-            tokensForStaker_not: null
-          }
-        ){
-          daoBountyForStaker
-          tokensForStaker
-          beneficiary
-        }
         contributionReward{
           alreadyRedeemedEthPeriods
           alreadyRedeemedExternalTokenPeriods
-          beneficiary
           ethReward
           externalTokenReward
           externalToken
