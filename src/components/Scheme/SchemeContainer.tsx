@@ -1,6 +1,6 @@
 import * as H from "history";
-import { first } from "rxjs/operators";
-import { Address, IProposalStage, IDAOState, ISchemeState } from "@daostack/client";
+import { first, mergeMap, filter, toArray } from "rxjs/operators";
+import { Address, IProposalStage, IDAOState, ISchemeState, IProposalState, Proposal, IProposalOutcome } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
@@ -15,6 +15,7 @@ import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Competitions from "components/Scheme/ContributionRewardExtRewarders/Competitions";
+import { combineLatest, from } from "rxjs";
 import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
@@ -34,7 +35,7 @@ interface IStateProps {
   schemeId: Address;
 }
 
-type IProps = IExternalProps & IDispatchProps & IStateProps & ISubscriptionProps<ISchemeState>;
+type IProps = IExternalProps & IDispatchProps & IStateProps & ISubscriptionProps<[ISchemeState, Array<IProposalState>]>;
 
 const mapStateToProps = (_state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const match = ownProps.match;
@@ -63,20 +64,23 @@ class SchemeContainer extends React.Component<IProps, null> {
     this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
   };
 
-  private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} daoState={this.props.daoState} scheme={this.props.data} />;
-  private schemeProposalsPageHtml = (isActive: boolean) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data} />;
-  private contributionsRewardExtPageHtml = (props: any) => <Competitions {...props} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data} />;
+  private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} daoState={this.props.daoState} scheme={this.props.data[0]} />;
+  private schemeProposalsPageHtml = (isActive: boolean) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} />;
+  private contributionsRewardExtPageHtml = (props: any) => <Competitions {...props} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} proposals={this.props.data[1]} />;
 
   public render(): RenderOutput {
     const { schemeId, daoState } = this.props;
     const daoAvatarAddress = daoState.address;
-    const schemeState = this.props.data;
+    const schemeState = this.props.data[0];
+    const approvedProposals = this.props.data[1];
 
     if (schemeState.name === "ReputationFromToken") {
       return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
     }
 
     const isActive = getSchemeIsActive(schemeState);
+    // FAKE - this will come from matching rewarder with json
+    const isCrExt = (schemeState.name === "ContributionReward");
 
     const proposalsTabClass = classNames({
       [css.proposals]: true,
@@ -104,7 +108,7 @@ class SchemeContainer extends React.Component<IProps, null> {
           <div className={css.schemeMenu}>
             <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
             <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
-              <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Info</Link>
+              <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Information</Link>
             </TrainingTooltip>
             <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
               <a className={
@@ -115,13 +119,17 @@ class SchemeContainer extends React.Component<IProps, null> {
               data-test-id="createProposal"
               href="javascript:void(0)"
               onClick={isActive ? this.handleNewProposal : null}
-              >+ New proposal</a>
+              >
+                { 
+                // FAKE -- "Competition" will come from json
+                }
+              + New { isCrExt ? "Competition" : "Proposal"}</a>
             </TrainingTooltip>
             {
               // FAKE - will be determined whether to render, the name and tooltip of the tab, by mapping `ContributionRewardExt.rewarder` to a json file
-              (schemeState.name === "ContributionReward") ?
+              isCrExt ?
                 <TrainingTooltip placement="top" overlay={"Work with approved competitions"}>
-                  <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/crx/`}>Competitions (n)</Link>
+                  <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/crx/`}>Competitions ({approvedProposals.length})</Link>
                 </TrainingTooltip>
                 : ""
             }
@@ -132,7 +140,7 @@ class SchemeContainer extends React.Component<IProps, null> {
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info" render={this.schemeInfoPageHtml} />
           {
             // FAKE - will be determined whether to render by mapping `ContributionRewardExt.rewarder` to a json file
-            (schemeState.name === "ContributionReward") ?
+            isCrExt ?
               <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/crx" render={this.contributionsRewardExtPageHtml} />
               : ""
           }
@@ -155,10 +163,17 @@ const SubscribedSchemeContainer = withSubscription({
     // TODO: this may NOT be the best place to do this - we'd like to do this higher up
 
     // eslint-disable-next-line @typescript-eslint/camelcase
-    await props.daoState.dao.proposals({where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted]}}, { fetchAllData: true }).pipe(first()).toPromise();
+    const proposals = await props.daoState.dao.proposals({where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted]}}, { fetchAllData: true }).pipe(first()).toPromise();
     // end cache priming
 
-    return scheme.state();
+    return combineLatest(
+      scheme.state(),
+      from(proposals).pipe(
+        mergeMap((proposal: Proposal): Promise<IProposalState> => proposal.state().pipe(first()).toPromise()),
+        filter((proposal: IProposalState) => proposal.winningOutcome === IProposalOutcome.Pass ),
+        toArray()
+      )
+    );
   },
 });
 

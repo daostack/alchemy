@@ -69,21 +69,10 @@ a.createProposal {
     color: #fff;
   }
 
-  .proposals {
-    padding: 10px 30px;
-  }
-
-  .info {
-    padding: 10px 50px;
-  }
-
-  .crx {
-    /* TODO: this left/right padding may not be appropriate for all CrX rewarder contracts. */
-    padding: 10px 26px;
-  }
-
   .proposals, .info, .crx {
     border-bottom: 2px solid rgba(34, 128, 254, 0);
+    /* TODO: for .crx this left/right padding may not be appropriate for all CrX rewarder contracts. */
+    padding: 10px 24px;
   }
     
   .proposals.active, .info.active, .crx.active {

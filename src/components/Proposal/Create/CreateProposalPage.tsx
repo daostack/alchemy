@@ -1,6 +1,6 @@
 import { ISchemeState } from "@daostack/client";
 import { getArc } from "arc";
-import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
+// import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
 import CreateKnownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateKnownGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "components/Proposal/Create/SchemeForms/CreateSchemeRegistrarProposal";
 import CreateUnknownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateUnknownGenericSchemeProposal";
@@ -13,6 +13,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { RouteComponentProps } from "react-router-dom";
+import CreateContributionRewardExProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardExProposal";
 import * as css from "./CreateProposal.scss";
 
 type IExternalProps = RouteComponentProps<any>;
@@ -58,7 +59,9 @@ class CreateProposalPage extends React.Component<IProps, null> {
     };
 
     if (schemeName === "ContributionReward") {
-      createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
+      // FAKE
+      //createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
+      createSchemeComponent = <CreateContributionRewardExProposal {...props}  />;
     } else if (schemeName === "SchemeRegistrar") {
       createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
     } else if (schemeName === "GenericScheme") {
