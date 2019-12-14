@@ -246,7 +246,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
   } else if (scheme.name) {
     // FAKE - this will need to be driven by mapping `ContributionRewardExt.rewarder` to a json file
     if (scheme.name === "ContributionReward") {
-      name = "Competitions";
+      name = "Competition";
     } else {
       // add spaces before capital letters to approximate a human-readable title
       name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;

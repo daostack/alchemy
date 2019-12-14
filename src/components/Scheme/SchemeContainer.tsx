@@ -121,7 +121,7 @@ class SchemeContainer extends React.Component<IProps, null> {
               // FAKE - will be determined whether to render, the name and tooltip of the tab, by mapping `ContributionRewardExt.rewarder` to a json file
               (schemeState.name === "ContributionReward") ?
                 <TrainingTooltip placement="top" overlay={"Work with approved competitions"}>
-                  <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/crx/`}>Competitions</Link>
+                  <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/crx/`}>Competitions (n)</Link>
                 </TrainingTooltip>
                 : ""
             }
