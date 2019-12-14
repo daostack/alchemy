@@ -70,20 +70,27 @@ a.createProposal {
   }
 
   .proposals {
-     padding: 10px 30px;
-     border-bottom: 2px solid rgba(34, 128, 254, 0);
+    padding: 10px 30px;
   }
 
   .info {
     padding: 10px 50px;
-    border-bottom: 2px solid rgba(34, 128, 254, 0);
   }
 
-  .proposals.active, .info.active {
+  .crx {
+    /* TODO: this left/right padding may not be appropriate for all CrX rewarder contracts. */
+    padding: 10px 26px;
+  }
+
+  .proposals, .info, .crx {
+    border-bottom: 2px solid rgba(34, 128, 254, 0);
+  }
+    
+  .proposals.active, .info.active, .crx.active {
      border-bottom: 2px solid rgba(34, 128, 254, 1);
   }
 
-  .info:hover, .proposals:hover {
+  .proposals:hover, .info:hover, .crx:hover {
      border-bottom: 2px solid rgba(34, 128, 254, .5);
   }
 }

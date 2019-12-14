@@ -1,0 +1,80 @@
+.loading {
+  width: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%)
+}
+
+.schemeInfoContainer {
+  background-color: rgba(252, 253, 255, 1.000);
+  color: rgba(78, 97, 118, 1.000);
+  font-size: 11px;
+  font-family: "Open Sans";
+  font-weight: normal;
+  margin: 30px auto;
+  border-radius: 0 14px 14px 14px;
+  min-width: 340px;
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    font-family: "AccordBold";
+    border-bottom: 1px solid #e9eef4;
+    padding: 15px;
+  }
+
+  .infoCardContent {
+    padding: 15px;
+    width: 100%;
+  }
+
+  th {
+    text-align: left;
+    min-width: 75px;
+  }
+}
+
+.ellipsis {
+  position: relative;
+  width: 75%;
+
+  span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  img {
+    position: absolute;
+    right: -15px;
+    top:0;
+    cursor: pointer;
+  }
+}
+
+.timeSection {
+  display: inline-block;
+
+  strong {
+  	font-weight: normal;
+  	font-family: $body-font;
+  }
+
+  .colon {
+    display: inline-block;
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+
+.ellipsis {
+  position: relative;
+  width: 35%;
+}
+}

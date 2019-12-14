@@ -187,6 +187,7 @@ export const KNOWN_SCHEME_NAMES = [
   "ReputationFromToken",
   "SchemeRegistrar",
   "UGenericScheme",
+  "Competition",
 ];
 
 export const PROPOSAL_SCHEME_NAMES = [
@@ -194,6 +195,7 @@ export const PROPOSAL_SCHEME_NAMES = [
   "GenericScheme",
   "SchemeRegistrar",
   "UGenericScheme",
+  "Competition",
 ];
 
 /**
@@ -242,8 +244,13 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       name = "Generic Scheme";
     }
   } else if (scheme.name) {
-    // add spaces before capital letters to approximate a human-readable title
-    name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;
+    // FAKE - this will need to be driven by mapping `ContributionRewardExt.rewarder` to a json file
+    if (scheme.name === "ContributionReward") {
+      name = "Competitions";
+    } else {
+      // add spaces before capital letters to approximate a human-readable title
+      name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;
+    }
   } else {
     name = fallback;
   }

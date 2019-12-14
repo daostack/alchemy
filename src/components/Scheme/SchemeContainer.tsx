@@ -14,6 +14,7 @@ import { showNotification } from "reducers/notifications";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
+import Competitions from "components/Scheme/ContributionRewardExtRewarders/Competitions";
 import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
@@ -62,8 +63,9 @@ class SchemeContainer extends React.Component<IProps, null> {
     this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
   };
 
-  private schemeInfoPageHtml = (daoState: IDAOState) => (props: any) => <SchemeInfoPage {...props} daoState={daoState} scheme={this.props.data} />;
-  private schemeProposalsPageHtml = (isActive: boolean, daoState: IDAOState) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data} />;
+  private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} daoState={this.props.daoState} scheme={this.props.data} />;
+  private schemeProposalsPageHtml = (isActive: boolean) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data} />;
+  private contributionsRewardExtPageHtml = (props: any) => <Competitions {...props} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data} />;
 
   public render(): RenderOutput {
     const { schemeId, daoState } = this.props;
@@ -78,15 +80,20 @@ class SchemeContainer extends React.Component<IProps, null> {
 
     const proposalsTabClass = classNames({
       [css.proposals]: true,
-      [css.active]: !this.props.location.pathname.includes("info"),
+      [css.active]: !this.props.location.pathname.includes("info") && !this.props.location.pathname.includes("crx"),
     });
     const infoTabClass = classNames({
       [css.info]: true,
       [css.active]: this.props.location.pathname.includes("info"),
     });
+    const crxTabClass = classNames({
+      [css.crx]: true,
+      [css.active]: this.props.location.pathname.includes("crx"),
+    });
 
     return (
       <div className={css.schemeContainer}>
+      
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeName(schemeState, schemeState.address)}</BreadcrumbsItem>
 
         <Sticky enabled top={50} innerZ={10000}>
@@ -110,15 +117,26 @@ class SchemeContainer extends React.Component<IProps, null> {
               onClick={isActive ? this.handleNewProposal : null}
               >+ New proposal</a>
             </TrainingTooltip>
+            {
+              // FAKE - will be determined whether to render, the name and tooltip of the tab, by mapping `ContributionRewardExt.rewarder` to a json file
+              (schemeState.name === "ContributionReward") ?
+                <TrainingTooltip placement="top" overlay={"Work with approved competitions"}>
+                  <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/crx/`}>Competitions</Link>
+                </TrainingTooltip>
+                : ""
+            }
           </div>
         </Sticky>
 
         <Switch>
-          <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info"
-            render={this.schemeInfoPageHtml(daoState)} />
-
-          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-            render={this.schemeProposalsPageHtml(isActive, daoState)} />
+          <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info" render={this.schemeInfoPageHtml} />
+          {
+            // FAKE - will be determined whether to render by mapping `ContributionRewardExt.rewarder` to a json file
+            (schemeState.name === "ContributionReward") ?
+              <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/crx" render={this.contributionsRewardExtPageHtml} />
+              : ""
+          }
+          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId" render={this.schemeProposalsPageHtml(isActive)} />
         </Switch>
       </div>
     );

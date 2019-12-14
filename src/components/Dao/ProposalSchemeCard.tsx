@@ -35,6 +35,7 @@ const ProposalSchemeCard = (props: IProps) => {
   
   switch(schemeState.name) {
     case "ContributionReward":
+    case "ContributionRewardExt":
       trainingTooltipMessage = "Use this scheme to reward users (rep and/or funds) for their contributions to the DAO";
       break;
     case "SchemeRegistrar":
