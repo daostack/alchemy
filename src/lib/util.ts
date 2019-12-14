@@ -410,25 +410,27 @@ export function getDaoDebt(proposals: IProposalState[]): AccountClaimableRewards
   for (const proposal of proposals) {
 
     // Calculate CR Debt
-    if (proposal.contributionReward && proposal.contributionReward.externalToken !== utils.NULL_ADDRESS ) {
+    if (proposal.contributionReward) {
       rewards = proposal.contributionReward;
 
-      // ETH Reward
       ethReward = new BN(rewards.ethReward);
+      externalTokenReward = new BN(rewards.externalTokenReward);
+
+      // Exclude incorrect proposal which cannot be redeemed
+      if (!externalTokenReward.isZero() && rewards.externalToken === utils.NULL_ADDRESS) {
+        continue;
+      }
+
+      // ETH Reward
       if ( !ethReward.isZero() &&
         rewards.alreadyRedeemedEthPeriods < rewards.periods
       ){
         result["ETH"].iadd(ethReward);
       }
 
-      externalTokenReward = new BN(rewards.externalTokenReward);
-      if ( !supportedExternalTokens[rewards.externalToken])
-      {
-        continue;
-      }
-
       // External Token Debt
-      if ( !externalTokenReward.isZero() &&
+      if ( supportedExternalTokens[rewards.externalToken] &&
+        !externalTokenReward.isZero() &&
         rewards.alreadyRedeemedExternalTokenPeriods < rewards.periods
       ){
         // find token symbol here

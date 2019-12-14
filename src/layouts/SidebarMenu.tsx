@@ -306,7 +306,6 @@ const SubscribedDaoDebt = withSubscription({
     return oldProps.dao.address !== newProps.dao.address;
   },
   createObservable: async (props: IDebtProps) => {
-    //const daoState = props.dao;
 
     const arc = getArc();
     const query = gql`query
