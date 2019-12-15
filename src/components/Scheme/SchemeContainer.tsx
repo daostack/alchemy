@@ -16,6 +16,7 @@ import { connect } from "react-redux";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Competitions from "components/Scheme/ContributionRewardExtRewarders/Competitions";
 import { combineLatest, from } from "rxjs";
+import { ICrxRewarderProps, getCrxRewarderConfig } from "crxRegistry";
 import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
@@ -66,7 +67,19 @@ class SchemeContainer extends React.Component<IProps, null> {
 
   private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} daoState={this.props.daoState} scheme={this.props.data[0]} />;
   private schemeProposalsPageHtml = (isActive: boolean) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} />;
-  private contributionsRewardExtPageHtml = (props: any) => <Competitions {...props} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} proposals={this.props.data[1]} />;
+  private contributionsRewardExtPageHtml = (crxRewarderConfig: ICrxRewarderProps) => (props: any) => 
+  {
+    if (!crxRewarderConfig) {
+      return null;
+    }
+
+    switch(crxRewarderConfig.contractName) {
+      case "Competition":
+        return <Competitions {...props} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} proposals={this.props.data[1]} />;
+      default:
+        throw new Error(`Unknown ContributionRewardExt rewarder name: ${crxRewarderConfig.contractName}`);
+    }
+  };
 
   public render(): RenderOutput {
     const { schemeId, daoState } = this.props;
@@ -79,8 +92,7 @@ class SchemeContainer extends React.Component<IProps, null> {
     }
 
     const isActive = getSchemeIsActive(schemeState);
-    // FAKE - this will come from matching rewarder with json
-    const isCrExt = (schemeState.name === "ContributionReward");
+    const crxRewarderConfig = getCrxRewarderConfig(schemeState);
 
     const proposalsTabClass = classNames({
       [css.proposals]: true,
@@ -120,16 +132,12 @@ class SchemeContainer extends React.Component<IProps, null> {
               href="javascript:void(0)"
               onClick={isActive ? this.handleNewProposal : null}
               >
-                { 
-                // FAKE -- "Competition" will come from json
-                }
-              + New { isCrExt ? "Competition" : "Proposal"}</a>
+              + New { `${crxRewarderConfig ? crxRewarderConfig.contractName : schemeState.name } `}Proposal</a>
             </TrainingTooltip>
             {
-              // FAKE - will be determined whether to render, the name and tooltip of the tab, by mapping `ContributionRewardExt.rewarder` to a json file
-              isCrExt ?
-                <TrainingTooltip placement="top" overlay={"Work with approved competitions"}>
-                  <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/crx/`}>Competitions ({approvedProposals.length})</Link>
+              crxRewarderConfig ?
+                <TrainingTooltip placement="top" overlay={crxRewarderConfig.shortDescription}>
+                  <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/crx/`}>{crxRewarderConfig.friendlyName} ({approvedProposals.length})</Link>
                 </TrainingTooltip>
                 : ""
             }
@@ -139,9 +147,8 @@ class SchemeContainer extends React.Component<IProps, null> {
         <Switch>
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info" render={this.schemeInfoPageHtml} />
           {
-            // FAKE - will be determined whether to render by mapping `ContributionRewardExt.rewarder` to a json file
-            isCrExt ?
-              <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/crx" render={this.contributionsRewardExtPageHtml} />
+            crxRewarderConfig ?
+              <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/crx" render={this.contributionsRewardExtPageHtml(crxRewarderConfig)} />
               : ""
           }
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId" render={this.schemeProposalsPageHtml(isActive)} />

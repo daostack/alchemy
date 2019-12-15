@@ -14,6 +14,7 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { RouteComponentProps } from "react-router-dom";
 import CreateContributionRewardExProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardExProposal";
+import { ICrxRewarderProps, getCrxRewarderConfig } from "crxRegistry";
 import * as css from "./CreateProposal.scss";
 
 type IExternalProps = RouteComponentProps<any>;
@@ -58,10 +59,16 @@ class CreateProposalPage extends React.Component<IProps, null> {
       scheme,
     };
 
+    let crxRewarderConfig: ICrxRewarderProps;
+    
     if (schemeName === "ContributionReward") {
       // FAKE
-      //createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
-      createSchemeComponent = <CreateContributionRewardExProposal {...props}  />;
+      // createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
+      createSchemeComponent = <CreateContributionRewardExProposal {...props} rewarder={crxRewarderConfig} />;
+      // FAKE -- we'll do this if (schemeName === "ContributionRewardExt")
+      crxRewarderConfig = getCrxRewarderConfig(scheme);
+      // FAKE this will automatically come from the scheme
+      schemeName = "ContributionRewardExt";
     } else if (schemeName === "SchemeRegistrar") {
       createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
     } else if (schemeName === "GenericScheme") {

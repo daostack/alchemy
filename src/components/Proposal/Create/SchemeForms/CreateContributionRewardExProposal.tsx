@@ -10,10 +10,12 @@ import Select from "react-select";
 import { showNotification } from "reducers/notifications";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
+import { ICrxRewarderProps } from "crxRegistry";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
 interface IExternalProps {
+  rewarder: ICrxRewarderProps;
   scheme: ISchemeState;
   daoAvatarAddress: string;
   handleClose: () => any;
@@ -217,7 +219,7 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <label className={css.description}>What to Expect</label>
-              <div className={css.description}>This proposal can send eth / erc20 token, mint new DAO tokens ({dao.tokenSymbol}) and mint / slash reputation in the DAO. Each proposal can have one of each of these actions. e.g. 100 rep for completing a project + 0.05 ETH for covering expenses.</div>
+              <div className={css.description}>This proposal can send to multiple beneficiaries eth / erc20 token, mint new DAO tokens ({dao.tokenSymbol}) and mint / slash reputation in the DAO. Each proposal can have one of each of these actions. e.g. 100 rep for completing a project + 0.05 ETH for covering expenses.</div>
               <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
                 <label htmlFor="titleInput">
                 Title

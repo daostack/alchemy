@@ -21,9 +21,6 @@ export default class SchemeCompetitions extends React.Component<IProps, null> {
     const daoAvatarAddress = daoState.address;
 
     return <div>
-      { 
-      // FAKE -- "Competitions" should come from the crx json file 
-      }
       <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/crx`}>Competitions</BreadcrumbsItem>
       <h3 style={{marginTop:60}}>grid of cards, one per approved competition, plus a &quot;New Competition Proposal&quot; card</h3>
       {
