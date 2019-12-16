@@ -89,12 +89,19 @@ plugins: [
       chunkFilename: "[id].[hash].css",
       modules: true
     }),
-    new webpack.DefinePlugin({
-      'process.env': {
-        'BASE_URL': JSON.stringify(process.env.BASE_URL || "https://alchemy.daostack.io"),
-        'DISQUS_SITE': JSON.stringify(process.env.DISQUS_SITE || 'daostack-alchemy'),
-        'NODE_ENV': JSON.stringify(process.env.NODE_ENV) || JSON.stringify("production")
-      },
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: "production", 
+      BASE_URL: "https://alchemy.daostack.io",
+      DISQUS_SITE: 'daostack-alchemy',
+      ARC_GRAPHQLHTTPPROVIDER: "",
+      ARC_GRAPHQLWSPROVIDER : "",
+      ARC_WEB3PROVIDER : "",
+      ARC_WEB3PROVIDERREAD : "",
+      ARC_IPFSPROVIDER: "",
+      ARC_IPFSPROVIDER_HOST : "",
+      ARC_IPFSPROVIDER_PORT : "",
+      ARC_IPFSPROVIDER_PROTOCOL : "",
+      ARC_IPFSPROVIDER_API_PATH : "",
     }),
     new CopyWebpackPlugin([
       { from: 'src/assets', to: 'assets' }
