@@ -14,7 +14,7 @@ import { showNotification } from "reducers/notifications";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-import Competitions from "components/Scheme/ContributionRewardExtRewarders/Competitions";
+import Competitions from "components/Scheme/ContributionRewardExtRewarders/Competition/List";
 import { combineLatest, from } from "rxjs";
 import { ICrxRewarderProps, getCrxRewarderConfig } from "crxRegistry";
 import ReputationFromToken from "./ReputationFromToken";

@@ -95,13 +95,12 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.state = { 
       tags: new Array<string>(),
     };
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
+  public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }

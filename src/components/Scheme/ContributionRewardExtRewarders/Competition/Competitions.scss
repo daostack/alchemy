@@ -1,0 +1,56 @@
+.competitionCards {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  padding-top: 30px;
+}
+
+.competitionCardContainer {
+  border-radius: 0 15px 15px 15px;
+  box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
+  background-color: $white;
+  padding: 20px;
+  overflow: hidden;
+  transition: all .25s ease;
+  vertical-align: top;
+  height: auto;
+
+  .status {
+    display: block;
+  }
+
+  .creatorCountdown {
+    display: block;
+
+    .createdBy {
+      display: inline-block;
+    }
+
+    .countdown {
+      display: inline-block;
+    }
+  }
+
+  .description {
+    .detailLink {
+      display: block;
+
+      .name{
+        display: inline-block;
+      }
+      
+      img {
+        display: inline-block;
+      }
+    }
+  }
+
+  .rewards {
+    display: block;
+
+    .transferType {
+      display: inline-block;
+    }
+  }
+}

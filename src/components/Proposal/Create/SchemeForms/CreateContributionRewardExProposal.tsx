@@ -96,13 +96,12 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
 
   constructor(props: IProps) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.state = { 
       tags: new Array<string>(),
     };
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
+  public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     // if (!values.rewardSplit.startsWith("0x")) { values.rewardSplit = "0x" + values.rewardSplit; }
