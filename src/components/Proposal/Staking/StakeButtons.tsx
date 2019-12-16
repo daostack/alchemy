@@ -5,7 +5,6 @@ import { enableWalletProvider } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import { formatTokens } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -219,7 +218,7 @@ class StakeButtons extends React.Component<IProps, IState> {
             currentAccountGens={currentAccountGens}
             dao={dao}
             proposal={proposal}
-            secondaryHeader={"> " + formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " for boost!"}
+           
           /> : ""
         }
 

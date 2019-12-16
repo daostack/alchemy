@@ -291,6 +291,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                           onChange={this.stakeOnChange}
                           placeholder="0"
                         />
+                        <div className={css.xToBoost}>{formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " needed to boost this proposal"}</div>
                         <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
                         <div className={css.yourBalance}>
                           <div>Your balance: {formatTokens(currentAccountGens)} GEN</div>

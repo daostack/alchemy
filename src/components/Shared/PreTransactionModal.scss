@@ -157,6 +157,15 @@
   left: -10px;
 }
 
+.xToBoost {
+  color: rgba(80, 97, 118, 1.000);
+  font-size: 11px;
+  position: absolute;
+  top: 40px;
+  width: 180px;
+  text-align: right;
+}
+
 .preTransactionBottom {
   padding: 20px 0;
   border-top: $gray-border-2;
