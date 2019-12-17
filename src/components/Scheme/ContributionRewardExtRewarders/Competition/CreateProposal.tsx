@@ -144,6 +144,11 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
     }
     const dao = data;
     const arc = getArc();
+    const halfs: string[] = ["00", "30"];
+    const timeSlots: Object[] = [];
+    for(let i = 0; i < 24; i++){
+        timeSlots.push({ value: i + ":" + halfs[i%2], label: i + ":" + halfs[i%2]});
+    }
 
     const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
@@ -279,26 +284,6 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
               />
 
               <div className={css.clearfix}>
-                <div>
-                  <TrainingTooltip overlay="Percentage distribution of rewards to beneficiaries" placement="right">
-                    <label htmlFor="rewardSplit">
-                    Winner Reward Distribution (%)
-                      <ErrorMessage name="rewardSplit">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      <div className={css.requiredMarker}>*</div>
-                    </label>
-                  </TrainingTooltip>
-              
-                  <Field
-                    id="rewardSplit"
-                    maxLength={120}
-                    placeholder={"Reward split (like: \"30,10,60\", summing to 100)"}
-                    name="rewardSplit"
-                    type="number[]"
-                    className={touched.rewardSplit && errors.rewardSplit ? css.error : null}
-                  />
-
-                </div>
-
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
                     ETH Reward
@@ -372,6 +357,159 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
                     type="number"
                     className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
                   />
+                </div>
+
+                <div>
+                  <TrainingTooltip overlay="Number of winnders of this competition" placement="right">
+                    <label htmlFor="numWinnersInput">
+                    Number of winners
+                      <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <div className={css.requiredMarker}>*</div>
+                    </label>
+                  </TrainingTooltip>
+              
+                  <Field
+                    id="numWinnersInput"
+                    maxLength={120}
+                    placeholder={"How many winners will this competition have"}
+                    name="numWinners"
+                    type="number"
+                    className={touched.numWinners && errors.numWinners ? css.error : null}
+                  />
+                </div>
+
+                <div>
+                  <TrainingTooltip overlay="Percentage distribution of rewards to beneficiaries" placement="right">
+                    <label htmlFor="rewardSplitInput">
+                    Winner reward distribution (%)
+                      <ErrorMessage name="rewardSplit">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <div className={css.requiredMarker}>*</div>
+                    </label>
+                  </TrainingTooltip>
+              
+                  <Field
+                    id="rewardSplitInput"
+                    maxLength={120}
+                    placeholder={"Reward split (like: \"30,10,60\", summing to 100)"}
+                    name="rewardSplit"
+                    type="number[]"
+                    className={touched.rewardSplit && errors.rewardSplit ? css.error : null}
+                  />
+                </div>
+
+                <div>
+                  <TrainingTooltip overlay="Number of beneficiaries each members can vote for" placement="right">
+                    <label htmlFor="numVotesInput">
+                    Number of votes
+                      <ErrorMessage name="numVotes">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <div className={css.requiredMarker}>*</div>
+                    </label>
+                  </TrainingTooltip>
+              
+                  <Field
+                    id="numVotesInput"
+                    maxLength={120}
+                    placeholder={"How many beneficiaries can a member vote for"}
+                    name="numVotes"
+                    type="number"
+                    className={touched.numVotes && errors.numVotes ? css.error : null}
+                  />
+                </div>
+
+                <div className={css.date}>
+                  <img src="/assets/images/Icon/down.svg" className={css.downV}/>
+                  <label htmlFor="compStartDate">
+                    Competition start time
+                    <ErrorMessage name="compStartDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  </label>
+                  <Field
+                    id="compStartDateInput"
+                    name="compStartDate"
+                    type="date"
+                    className={touched.startTime && errors.startTime ? css.error : null}
+                  />
+                  <div className={css.timeSelect}>
+                    <Field
+                      id="compStartTimeInput"
+                      name="compStartTime"
+                      type="time"
+                      component={SelectField}
+                      className={css.timeSelect}
+                      options={timeSlots}
+                    />
+                  </div>
+                </div>
+
+                <div className={css.date}>
+                  <img src="/assets/images/Icon/down.svg" className={css.downV}/>
+                  <label htmlFor="compEndDate">
+                    Competition end time
+                    <ErrorMessage name="compEndDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  </label>
+                  <Field
+                    id="compEndDateInput"
+                    name="compEndDate"
+                    type="date"
+                    className={touched.endDate && errors.endDate ? css.error : null}
+                  />
+                  <div className={css.timeSelect}>
+                    <Field
+                      id="compEndTimeInput"
+                      name="compEndTime"
+                      type="time"
+                      component={SelectField}
+                      className={css.timeSelect}
+                      options={timeSlots}
+                    />
+                  </div>
+                </div>
+
+                <div className={css.date}>
+                  <img src="/assets/images/Icon/down.svg" className={css.downV}/>
+                  <label htmlFor="voteStartDate">
+                    Competition start time
+                    <ErrorMessage name="voteStartDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  </label>
+                  <Field
+                    id="voteStartDateInput"
+                    name="voteStartDate"
+                    type="date"
+                    className={touched.startTime && errors.startTime ? css.error : null}
+                  />
+                  <div className={css.timeSelect}>
+                    <Field
+                      id="voteStartTimeInput"
+                      name="voteStartTime"
+                      type="time"
+                      component={SelectField}
+                      className={css.timeSelect}
+                      options={timeSlots}
+                    />
+                  </div>
+                </div>
+
+                <div className={css.date}>
+                  <img src="/assets/images/Icon/down.svg" className={css.downV}/>
+                  <label htmlFor="voteEndDate">
+                    Competition end time
+                    <ErrorMessage name="voteEndDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  </label>
+                  <Field
+                    id="voteEndDateInput"
+                    name="voteEndDate"
+                    type="date"
+                    className={touched.endDate && errors.endDate ? css.error : null}
+                  />
+                  <div className={css.timeSelect}>
+                    <Field
+                      id="voteEndTimeInput"
+                      name="voteEndTime"
+                      type="time"
+                      component={SelectField}
+                      className={css.timeSelect}
+                      options={timeSlots}
+                    />
+                  </div>
                 </div>
 
                 {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
