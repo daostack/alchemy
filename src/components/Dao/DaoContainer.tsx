@@ -69,6 +69,12 @@ class DaoContainer extends React.Component<IProps, null> {
       currentAccountAddress={this.props.currentAccountAddress}
       proposalId={routeProps.match.params.proposalId}
     />;
+  private competitionProposalRoute = (routeProps: any) =>
+    <ProposalDetailsPage {...routeProps}
+      daoState={this.props.data}
+      currentAccountAddress={this.props.currentAccountAddress}
+      proposalId={routeProps.match.params.proposalId}
+    />;
 
   private schemeRoute = (routeProps: any) => <SchemeContainer {...routeProps} daoState={this.props.data} currentAccountAddress={this.props.currentAccountAddress} />;
   private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} daoState={this.props.data} />;
