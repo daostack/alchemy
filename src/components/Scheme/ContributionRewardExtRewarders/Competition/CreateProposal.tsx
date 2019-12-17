@@ -14,6 +14,8 @@ import { ICrxRewarderProps } from "crxRegistry";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 
+import { checkTotalPercent } from "lib/util";
+
 interface IExternalProps {
   rewarder: ICrxRewarderProps;
   scheme: ISchemeState;
@@ -179,7 +181,13 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
 
             const nonNegative = (name: string): void => {
               if ((values as any)[name] < 0) {
-                errors[name] = "Please enter a non-negative reward";
+                errors[name] = "Please enter a non-negative value";
+              }
+            };
+
+            const nonZero = (name: string): void => {
+              if ((values as any)[name] != 0) {
+                errors[name] = "Please enter a non-zero value";
               }
             };
 
@@ -187,9 +195,17 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
               errors.title = "Title is too long (max 120 characters)";
             }
 
-            // if (!arc.web3.utils.isAddress(values.rewardSplit)) {
-            //   errors.rewardSplit = "Invalid address";
-            // }
+            const split = values.rewardSplit.split(",");
+
+            // Check rewardSplit add upto 100
+            if (values.rewardSplit !== "") {
+              if (!checkTotalPercent(split))
+                errors.rewardSplit = "Please provide reward split summing upto 100";
+            }
+
+            if (split.length != values.numWinners) {
+              errors.numWinners = "Number of winners should match the winner distribution";
+            }
 
             if (!isValidUrl(values.url)) {
               errors.url = "Invalid URL";
@@ -198,10 +214,24 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
             nonNegative("ethReward");
             nonNegative("externalTokenReward");
             nonNegative("nativeTokenReward");
+            nonNegative("numWinners");
+            nonNegative("numVotes");
+
+            nonZero("numWinners");
+            nonZero("numVotes");
 
             require("description");
             require("title");
-            require("rewardSplit");
+            require("numWinners");
+            require("numVotes");
+            require("compStartDate");
+            require("compEndDate");
+            require("compStartTime");
+            require("compEndTime");
+            require("voteStartDate");
+            require("voteEndDate");
+            require("voteStartTime");
+            require("voteEndTime");
 
             if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
               errors.rewards = "Please select at least some reward";
@@ -283,6 +313,63 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
                 className={touched.url && errors.url ? css.error : null}
               />
 
+                <div>
+                  <TrainingTooltip overlay="Number of winnders of this competition" placement="right">
+                    <label htmlFor="numWinnersInput">
+                    Number of winners
+                      <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <div className={css.requiredMarker}>*</div>
+                    </label>
+                  </TrainingTooltip>
+              
+                  <Field
+                    id="numWinnersInput"
+                    maxLength={120}
+                    placeholder={"How many winners will this competition have"}
+                    name="numWinners"
+                    type="number"
+                    className={touched.numWinners && errors.numWinners ? css.error : null}
+                  />
+                </div>
+
+                <div>
+                  <TrainingTooltip overlay="Percentage distribution of rewards to beneficiaries" placement="right">
+                    <label htmlFor="rewardSplitInput">
+                    Winner reward distribution (%)
+                      <ErrorMessage name="rewardSplit">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <div className={css.requiredMarker}>*</div>
+                    </label>
+                  </TrainingTooltip>
+              
+                  <Field
+                    id="rewardSplitInput"
+                    maxLength={120}
+                    placeholder={"Reward split (like: \"30,10,60\", summing to 100)"}
+                    name="rewardSplit"
+                    type="number[]"
+                    className={touched.rewardSplit && errors.rewardSplit ? css.error : null}
+                  />
+                </div>
+
+                <div>
+                  <TrainingTooltip overlay="Number of beneficiaries each members can vote for" placement="right">
+                    <label htmlFor="numVotesInput">
+                    Number of votes
+                      <ErrorMessage name="numVotes">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <div className={css.requiredMarker}>*</div>
+                    </label>
+                  </TrainingTooltip>
+              
+                  <Field
+                    id="numVotesInput"
+                    maxLength={120}
+                    placeholder={"How many beneficiaries can a member vote for"}
+                    name="numVotes"
+                    type="number"
+                    className={touched.numVotes && errors.numVotes ? css.error : null}
+                  />
+                </div>
+
               <div className={css.clearfix}>
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
@@ -356,63 +443,6 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
                     name="nativeTokenReward"
                     type="number"
                     className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
-                  />
-                </div>
-
-                <div>
-                  <TrainingTooltip overlay="Number of winnders of this competition" placement="right">
-                    <label htmlFor="numWinnersInput">
-                    Number of winners
-                      <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      <div className={css.requiredMarker}>*</div>
-                    </label>
-                  </TrainingTooltip>
-              
-                  <Field
-                    id="numWinnersInput"
-                    maxLength={120}
-                    placeholder={"How many winners will this competition have"}
-                    name="numWinners"
-                    type="number"
-                    className={touched.numWinners && errors.numWinners ? css.error : null}
-                  />
-                </div>
-
-                <div>
-                  <TrainingTooltip overlay="Percentage distribution of rewards to beneficiaries" placement="right">
-                    <label htmlFor="rewardSplitInput">
-                    Winner reward distribution (%)
-                      <ErrorMessage name="rewardSplit">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      <div className={css.requiredMarker}>*</div>
-                    </label>
-                  </TrainingTooltip>
-              
-                  <Field
-                    id="rewardSplitInput"
-                    maxLength={120}
-                    placeholder={"Reward split (like: \"30,10,60\", summing to 100)"}
-                    name="rewardSplit"
-                    type="number[]"
-                    className={touched.rewardSplit && errors.rewardSplit ? css.error : null}
-                  />
-                </div>
-
-                <div>
-                  <TrainingTooltip overlay="Number of beneficiaries each members can vote for" placement="right">
-                    <label htmlFor="numVotesInput">
-                    Number of votes
-                      <ErrorMessage name="numVotes">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      <div className={css.requiredMarker}>*</div>
-                    </label>
-                  </TrainingTooltip>
-              
-                  <Field
-                    id="numVotesInput"
-                    maxLength={120}
-                    placeholder={"How many beneficiaries can a member vote for"}
-                    name="numVotes"
-                    type="number"
-                    className={touched.numVotes && errors.numVotes ? css.error : null}
                   />
                 </div>
 

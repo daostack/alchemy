@@ -22,6 +22,19 @@ export function getExchangesList() {
   return exchangesList;
 }
 
+export function checkTotalPercent(split: any) {
+  let sum = 0;
+  for (let p of split) {
+    try {
+      sum += Number(p)
+    } catch (err) {
+      console.warn(`Invalid percentage value passed: "${p}": ${err.message}`);
+    }
+  }
+  return (sum === 100.0);
+
+}
+
 export function copyToClipboard(value: any) {
   const el = document.createElement("textarea");
   el.value = value;
