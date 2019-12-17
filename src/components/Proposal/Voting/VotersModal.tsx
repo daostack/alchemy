@@ -30,7 +30,7 @@ class VoteRow extends React.Component<IVoteRowProps, null> {
       <div className={css.voteRow}>
         <div className={css.voteRowContainer}>
           <div className={css.account}>
-            <AccountImage accountAddress={voteState.voter} />
+            <AccountImage accountAddress={voteState.voter} profile={accountProfile} width={18} />
             <span className={css.accountAddress}>
               <AccountProfileName accountAddress={voteState.voter} accountProfile={accountProfile} daoAvatarAddress={dao.address} />
             </span>

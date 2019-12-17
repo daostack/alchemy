@@ -1,4 +1,5 @@
 import { IDAOState, Member } from "@daostack/client";
+import { getProfile } from "actions/profilesActions";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
@@ -21,8 +22,6 @@ interface IStateProps {
   profiles: IProfilesState;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]>;
-
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
     ...ownProps,
@@ -30,9 +29,27 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
   };
 };
 
+interface IDispatchProps {
+  getProfile: typeof getProfile;
+}
+
+const mapDispatchToProps = {
+  getProfile,
+};
+
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]> & IDispatchProps;
+
 const PAGE_SIZE = 100;
 
 class DaoMembersPage extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    this.props.data.forEach((member) => {
+      if (!this.props.profiles[member.staticState.address]) {
+        this.props.getProfile(member.staticState.address);
+      }
+    });
+  }
 
   public render(): RenderOutput {
     const { data } = this.props;
@@ -50,7 +67,7 @@ class DaoMembersPage extends React.Component<IProps, null> {
         <Sticky enabled top={50} innerZ={10000}>
           <h2>Reputation Holders</h2>
         </Sticky>
-        <table>
+        <table className={css.memberHeaderTable}>
           <tbody className={css.memberTable + " " + css.memberTableHeading}>
             <tr>
               <td className={css.memberAvatar}></td>
@@ -111,4 +128,4 @@ const SubscribedDaoMembersPage = withSubscription({
   },
 });
 
-export default connect(mapStateToProps)(SubscribedDaoMembersPage);
+export default connect(mapStateToProps, mapDispatchToProps)(SubscribedDaoMembersPage);

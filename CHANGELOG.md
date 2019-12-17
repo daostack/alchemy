@@ -6,6 +6,21 @@
   - Features Added
   - Bugs Fixed
 
+## 2019-12-10
+  - Features Added
+    - Use 3box profiles 
+    - Create a Feed of events
+    - add new cookie policy and privacy policy 
+  - Bugs Fixed
+    - do not error on bad token address
+    - convert deprecated React methods
+    - various UI cleanups and fixes
+    - add subscriptions for votes, stakes and rewards on the proposal page
+    - ignore externalTokenReward when address is null
+    - change old dai to sai, add new dai
+    - better position notifications 
+    - shorten token dropdown menu
+
 ## 2019-12-03
 
   - Features Added

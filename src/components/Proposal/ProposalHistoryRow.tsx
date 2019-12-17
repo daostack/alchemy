@@ -52,6 +52,7 @@ const mapDispatchToProps = {
 };
 
 interface IState {
+  isMobile: boolean;
   preRedeemModalOpen: boolean;
 }
 
@@ -61,8 +62,24 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
+      isMobile: false,
       preRedeemModalOpen: false,
     };
+  }
+
+  public componentDidMount() {
+    window.addEventListener("resize", this.updateWindowDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateWindowDimensions);
+  }
+
+  private updateWindowDimensions = (_e: any) => {
+    const nowMobile = window.innerWidth <= 425;
+    if (nowMobile !== this.state.isMobile) {
+      this.setState({ isMobile: nowMobile });
+    }
   }
 
   public render(): RenderOutput {
@@ -132,7 +149,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     return (
       <tr className={proposalClass}>
         <td className={css.proposalCreator}>
-          <AccountPopup accountAddress={proposalState.proposer} daoState={daoState} historyView/>
+          <AccountPopup accountAddress={proposalState.proposer} daoState={daoState} width={this.state.isMobile ? 12 : 40} />
           <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} historyView/>
         </td>
         <td className={css.endDate}>
