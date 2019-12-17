@@ -22,14 +22,13 @@ export default class SchemeInfo extends React.Component<IProps, null> {
     const daoAvatarAddress = daoState.address;
 
     const duration = (durationSeconds: number): any => {
-
       if (!durationSeconds) {
         return "";
       }
 
       const duration = moment.duration(durationSeconds * 1000);
 
-      const days = duration.days() ? <strong>{duration.days()}d</strong> : "";
+      const days = duration.asDays() ? <strong>{duration.asDays()}d</strong> : "";
       const hours = duration.hours() ? <strong>{duration.hours()}h</strong> : "";
       const minutes = duration.minutes() ? <strong>{duration.minutes()}m</strong> : "";
       const seconds = duration.seconds() ? <strong>{duration.seconds()}s</strong> : "";
