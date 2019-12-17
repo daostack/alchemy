@@ -40,7 +40,7 @@ class CompetitionDetails extends React.Component<IProps, null> {
       <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>{humanProposalTitle(proposalState)}</BreadcrumbsItem>
 
       <div className={css.competitionDetailsContainer}>
-      Details!
+      Competition Proposal Details!
       </div>
     </React.Fragment>;
   }
