@@ -22,6 +22,26 @@ export function getExchangesList() {
   return exchangesList;
 }
 
+export function checkTotalPercent(split: any) {
+  let sum = 0;
+  for (const p of split) {
+    try {
+      sum += Number(p);
+    } catch (err) {
+      console.warn(`Invalid percentage value passed: "${p}": ${err.message}`);
+    }
+  }
+  return (sum === 100.0);
+
+}
+
+export function getUnixTimestamp(date = "", time = "") {
+  if (!date || !time) {
+    return moment().unix();
+  }
+  return moment(date + " " + time).unix();
+}
+
 export function copyToClipboard(value: any) {
   const el = document.createElement("textarea");
   el.value = value;

@@ -13,7 +13,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { RouteComponentProps } from "react-router-dom";
-import CreateContributionRewardExProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardExProposal";
+import CreateContributionRewardExProposal from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateProposal";
 import { ICrxRewarderProps, getCrxRewarderConfig } from "crxRegistry";
 import * as css from "./CreateProposal.scss";
 
