@@ -55,7 +55,7 @@ class CompetitionCard extends React.Component<IProps, null> {
         <div className={css.countdown}>Suggestions open in 24h</div>
       </div>
       <div className={css.description}>
-        <Link className={css.detailLink} to={"/dao/" + daoState.address + "/proposal/" + proposalState.id} data-test-id="proposal-title">
+        <Link className={css.detailLink} to={"/dao/" + daoState.address +  "/crx/proposal/" + proposalState.id} data-test-id="proposal-title">
           <div className={css.name}>{humanProposalTitle(proposalState)}</div>
           <img src="/assets/images/Icon/Open.svg" />
         </Link>

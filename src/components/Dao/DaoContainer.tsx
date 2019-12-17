@@ -16,6 +16,7 @@ import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { Subscription } from "rxjs";
+import DetailsPageRouter from "components/Scheme/ContributionRewardExtRewarders/DetailsPageRouter";
 import DaoDiscussionPage from "./DaoDiscussionPage";
 import DaoSchemesPage from "./DaoSchemesPage";
 import DaoHistoryPage from "./DaoHistoryPage";
@@ -69,10 +70,10 @@ class DaoContainer extends React.Component<IProps, null> {
       currentAccountAddress={this.props.currentAccountAddress}
       proposalId={routeProps.match.params.proposalId}
     />;
-  private competitionProposalRoute = (routeProps: any) =>
-    <ProposalDetailsPage {...routeProps}
+  private daoCrxProposalRoute = (routeProps: any) =>
+    <DetailsPageRouter {...routeProps}
       daoState={this.props.data}
-      currentAccountAddress={this.props.currentAccountAddress}
+      // currentAccountAddress={this.props.currentAccountAddress}
       proposalId={routeProps.match.params.proposalId}
     />;
 
@@ -109,10 +110,14 @@ class DaoContainer extends React.Component<IProps, null> {
               render={this.daoProposalRoute}
             />
 
+            <Route exact path="/dao/:daoAvatarAddress/crx/proposal/:proposalId"
+              render={this.daoCrxProposalRoute} />
+
             <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
               render={this.schemeRoute} />
 
             <Route path="/dao/:daoAvatarAddress" render={this.daoSchemesRoute} />
+
           </Switch>
 
           <ModalRoute

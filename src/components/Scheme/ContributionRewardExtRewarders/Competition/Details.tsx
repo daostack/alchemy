@@ -1,11 +1,11 @@
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { IRootState } from "reducers";
+import { IProfileState } from "reducers/profilesReducer";
+import { IDAOState, IProposalState } from "@daostack/client";
+import { schemeName, humanProposalTitle } from "lib/util";
+import { connect } from "react-redux";
 import * as css from "./Competitions.scss";
-import { IRootState } from 'reducers';
-import { IProfileState } from 'reducers/profilesReducer';
-import { IDAOState, IProposalState } from '@daostack/client';
-import { schemeName, humanProposalTitle } from 'lib/util';
-import { connect } from 'react-redux';
 
 interface IStateProps {
   creatorProfile: IProfileState;
@@ -40,6 +40,7 @@ class CompetitionDetails extends React.Component<IProps, null> {
       <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>{humanProposalTitle(proposalState)}</BreadcrumbsItem>
 
       <div className={css.competitionDetailsContainer}>
+      Details!
       </div>
     </React.Fragment>;
   }

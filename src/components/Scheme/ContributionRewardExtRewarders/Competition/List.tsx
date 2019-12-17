@@ -15,7 +15,6 @@ interface IProps {
 
 export default class CompetitionsList extends React.Component<IProps, null> {
 
-
   public render(): RenderOutput {
     const { daoState, scheme, proposals} = this.props;
     const daoAvatarAddress = daoState.address;
@@ -30,6 +29,7 @@ export default class CompetitionsList extends React.Component<IProps, null> {
           })
         }
       </div>
+
     </React.Fragment>;
   }
 }

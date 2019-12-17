@@ -67,20 +67,7 @@ class SchemeContainer extends React.Component<IProps, null> {
 
   private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} daoState={this.props.daoState} scheme={this.props.data[0]} />;
   private schemeProposalsPageHtml = (isActive: boolean) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} />;
-  private contributionsRewardExtPageHtml = (crxRewarderConfig: ICrxRewarderProps) => (props: any) => 
-  {
-    if (!crxRewarderConfig) {
-      return null;
-    }
-
-    switch(crxRewarderConfig.contractName) {
-      case "Competition":
-        return <Competitions {...props} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} proposals={this.props.data[1]} />;
-      default:
-        throw new Error(`Unknown ContributionRewardExt rewarder name: ${crxRewarderConfig.contractName}`);
-    }
-  };
-  private contributionsRewardExtDetailsPageHtml = (crxRewarderConfig: ICrxRewarderProps) => (props: any) => 
+  private contributionsRewardExtTabHtml = (crxRewarderConfig: ICrxRewarderProps) => (props: any) => 
   {
     if (!crxRewarderConfig) {
       return null;
@@ -161,9 +148,7 @@ class SchemeContainer extends React.Component<IProps, null> {
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info" render={this.schemeInfoPageHtml} />
           {
             crxRewarderConfig ?
-              <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/crx" render={this.contributionsRewardExtPageHtml(crxRewarderConfig)} />
-              : ""
-              <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/crx" render={this.contributionsRewardExtPageHtml(crxRewarderConfig)} />
+              <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/crx" render={this.contributionsRewardExtTabHtml(crxRewarderConfig)} />
               : ""
           }
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId" render={this.schemeProposalsPageHtml(isActive)} />
