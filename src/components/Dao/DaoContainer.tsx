@@ -72,7 +72,7 @@ class DaoContainer extends React.Component<IProps, null> {
     />;
   private daoCrxProposalRoute = (routeProps: any) =>
     <DetailsPageRouter {...routeProps}
-      daoState={this.props.data}
+      daoState={this.props.data[0]}
       // currentAccountAddress={this.props.currentAccountAddress}
       proposalId={routeProps.match.params.proposalId}
     />;

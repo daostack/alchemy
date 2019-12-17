@@ -36,11 +36,12 @@ class CompetitionDetails extends React.Component<IProps, null> {
     const { daoState, proposalState } = this.props;
 
     return <React.Fragment>
-      <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
-      <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>{humanProposalTitle(proposalState)}</BreadcrumbsItem>
+      <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}/crx`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
+      <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/crx/proposal/${proposalState.id}`}>{humanProposalTitle(proposalState)}</BreadcrumbsItem>
 
       <div className={css.competitionDetailsContainer}>
-      Competition Proposal Details!
+        <div className={css.status}>Open for Suggestions</div>
+        <div className={css.status}>Go to Proposal</div>
       </div>
     </React.Fragment>;
   }

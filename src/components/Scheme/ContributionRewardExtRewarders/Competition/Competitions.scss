@@ -19,18 +19,14 @@
 
   .status {
     display: block;
+}
+
+  .createdBy {
+    display: inline-block;
   }
 
-  .creatorCountdown {
-    display: block;
-
-    .createdBy {
-      display: inline-block;
-    }
-
-    .countdown {
-      display: inline-block;
-    }
+  .countdown {
+    display: inline-block;
   }
 
   .description {

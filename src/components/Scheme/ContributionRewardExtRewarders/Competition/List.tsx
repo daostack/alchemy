@@ -25,7 +25,6 @@ export default class CompetitionsList extends React.Component<IProps, null> {
         {
           proposals.map((proposal: IProposalState) => {
             return <Card key={proposal.id} proposalState={proposal} daoState={daoState}></Card>;
-          // (<Link key={proposal.id} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal)}</Link>);
           })
         }
       </div>
