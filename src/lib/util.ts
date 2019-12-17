@@ -24,9 +24,9 @@ export function getExchangesList() {
 
 export function checkTotalPercent(split: any) {
   let sum = 0;
-  for (let p of split) {
+  for (const p of split) {
     try {
-      sum += Number(p)
+      sum += Number(p);
     } catch (err) {
       console.warn(`Invalid percentage value passed: "${p}": ${err.message}`);
     }
@@ -35,11 +35,11 @@ export function checkTotalPercent(split: any) {
 
 }
 
-export function getUnixTimestamp(date: string = '', time: string = '') {
+export function getUnixTimestamp(date = "", time = "") {
   if (!date || !time) {
     return moment().unix();
   }
-  return moment(date + ' ' + time).unix()
+  return moment(date + " " + time).unix();
 }
 
 export function copyToClipboard(value: any) {

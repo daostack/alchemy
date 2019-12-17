@@ -155,9 +155,9 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
     const dao = data;
     const arc = getArc();
     const halfs: string[] = ["00", "30"];
-    const timeSlots: Object[] = [];
+    const timeSlots: Record<string, string>[] = [];
     for(let i = 0; i < 24; i++){
-        timeSlots.push({ value: i.toString().padStart(2, "0") + ":" + halfs[i%2], label: i.toString().padStart(2,"0") + ":" + halfs[i%2]});
+      timeSlots.push({ value: i.toString().padStart(2, "0") + ":" + halfs[i%2], label: i.toString().padStart(2,"0") + ":" + halfs[i%2]});
     }
 
     const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
@@ -194,7 +194,7 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
             };
 
             const nonZero = (name: string): void => {
-              if ((values as any)[name] == 0) {
+              if ((values as any)[name] === 0) {
                 errors[name] = "Please enter a non-zero value";
               }
             };
@@ -207,7 +207,7 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
             if (values.rewardSplit !== "") {
               const split = values.rewardSplit.split(",");
 
-              if (split.length != values.numWinners) {
+              if (split.length !== values.numWinners) {
                 errors.numWinners = "Number of winners should match the winner distribution";
               }
 
@@ -218,9 +218,9 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
             // Check Valid Date and Time for Competition Start and End
             // Check Valid Date and Time for Vote Start and End
             if (values.compStartTime && values.compStartDate && values.voteStartTime && values.voteStartDate) {
-              const compStart = getUnixTimestamp(values.compStartDate, values.compStartTime)
-              const voteStart = getUnixTimestamp(values.voteStartDate, values.voteStartTime)
-              const now = getUnixTimestamp()
+              const compStart = getUnixTimestamp(values.compStartDate, values.compStartTime);
+              const voteStart = getUnixTimestamp(values.voteStartDate, values.voteStartTime);
+              const now = getUnixTimestamp();
               if (compStart < now) {
                 errors.compStartDate = "Competion start date and time can't be in past";
                 errors.compStartTime = "Competion start date and time can't be in past";
@@ -229,8 +229,8 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
                 errors.voteStartDate = "Vote start date and time can't be in past";
                 errors.voteStartTime = "Vote start date and time can't be in past";
               }
-              const compEnd = getUnixTimestamp(values.compEndDate, values.compEndTime)
-              const voteEnd = getUnixTimestamp(values.voteEndDate, values.voteEndTime)
+              const compEnd = getUnixTimestamp(values.compEndDate, values.compEndTime);
+              const voteEnd = getUnixTimestamp(values.voteEndDate, values.voteEndTime);
               if (compEnd < compStart) {
                 errors.compEndDate = "Competion end date and time can't be before start";
                 errors.compEndTime = "Competion end date and time can't be in past";
@@ -348,62 +348,62 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
                 className={touched.url && errors.url ? css.error : null}
               />
 
-                <div>
-                  <TrainingTooltip overlay="Number of winnders of this competition" placement="right">
-                    <label htmlFor="numWinnersInput">
-                    Number of winners
-                      <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      <div className={css.requiredMarker}>*</div>
-                    </label>
-                  </TrainingTooltip>
-              
-                  <Field
-                    id="numWinnersInput"
-                    maxLength={120}
-                    placeholder={"How many winners will this competition have"}
-                    name="numWinners"
-                    type="number"
-                    className={touched.numWinners && errors.numWinners ? css.error : null}
-                  />
-                </div>
+              <div>
+                <TrainingTooltip overlay="Number of winnders of this competition" placement="right">
+                  <label htmlFor="numWinnersInput">
+                  Number of winners
+                    <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    <div className={css.requiredMarker}>*</div>
+                  </label>
+                </TrainingTooltip>
+            
+                <Field
+                  id="numWinnersInput"
+                  maxLength={120}
+                  placeholder={"How many winners will this competition have"}
+                  name="numWinners"
+                  type="number"
+                  className={touched.numWinners && errors.numWinners ? css.error : null}
+                />
+              </div>
 
-                <div>
-                  <TrainingTooltip overlay="Percentage distribution of rewards to beneficiaries" placement="right">
-                    <label htmlFor="rewardSplitInput">
-                    Winner reward distribution (%)
-                      <ErrorMessage name="rewardSplit">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      <div className={css.requiredMarker}>*</div>
-                    </label>
-                  </TrainingTooltip>
-              
-                  <Field
-                    id="rewardSplitInput"
-                    maxLength={120}
-                    placeholder={"Reward split (like: \"30,10,60\", summing to 100)"}
-                    name="rewardSplit"
-                    type="number[]"
-                    className={touched.rewardSplit && errors.rewardSplit ? css.error : null}
-                  />
-                </div>
+              <div>
+                <TrainingTooltip overlay="Percentage distribution of rewards to beneficiaries" placement="right">
+                  <label htmlFor="rewardSplitInput">
+                  Winner reward distribution (%)
+                    <ErrorMessage name="rewardSplit">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    <div className={css.requiredMarker}>*</div>
+                  </label>
+                </TrainingTooltip>
+            
+                <Field
+                  id="rewardSplitInput"
+                  maxLength={120}
+                  placeholder={"Reward split (like: \"30,10,60\", summing to 100)"}
+                  name="rewardSplit"
+                  type="number[]"
+                  className={touched.rewardSplit && errors.rewardSplit ? css.error : null}
+                />
+              </div>
 
-                <div>
-                  <TrainingTooltip overlay="Number of beneficiaries each members can vote for" placement="right">
-                    <label htmlFor="numVotesInput">
-                    Number of votes
-                      <ErrorMessage name="numVotes">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      <div className={css.requiredMarker}>*</div>
-                    </label>
-                  </TrainingTooltip>
-              
-                  <Field
-                    id="numVotesInput"
-                    maxLength={120}
-                    placeholder={"How many beneficiaries can a member vote for"}
-                    name="numVotes"
-                    type="number"
-                    className={touched.numVotes && errors.numVotes ? css.error : null}
-                  />
-                </div>
+              <div>
+                <TrainingTooltip overlay="Number of beneficiaries each members can vote for" placement="right">
+                  <label htmlFor="numVotesInput">
+                  Number of votes
+                    <ErrorMessage name="numVotes">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    <div className={css.requiredMarker}>*</div>
+                  </label>
+                </TrainingTooltip>
+            
+                <Field
+                  id="numVotesInput"
+                  maxLength={120}
+                  placeholder={"How many beneficiaries can a member vote for"}
+                  name="numVotes"
+                  type="number"
+                  className={touched.numVotes && errors.numVotes ? css.error : null}
+                />
+              </div>
 
               <div className={css.clearfix}>
                 <div className={css.reward}>
