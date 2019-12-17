@@ -11,8 +11,8 @@ import { showNotification } from "reducers/notifications";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { ICrxRewarderProps } from "crxRegistry";
-import * as css from "../CreateProposal.scss";
-import MarkdownField from "./MarkdownField";
+import * as css from "components/Proposal/Create/CreateProposal.scss";
+import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 
 interface IExternalProps {
   rewarder: ICrxRewarderProps;
@@ -282,7 +282,7 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
                 <div>
                   <TrainingTooltip overlay="Percentage distribution of rewards to beneficiaries" placement="right">
                     <label htmlFor="rewardSplit">
-                    Reward Split
+                    Winner Reward Distribution (%)
                       <ErrorMessage name="rewardSplit">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       <div className={css.requiredMarker}>*</div>
                     </label>
