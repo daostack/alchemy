@@ -1,0 +1,170 @@
+{
+  "name": "SignalsScheme",
+  "addresses": {
+    "main": [
+      "0xb9812e2fa995ec53b5b6df34d21f9304762c5497"
+    ],
+    "rinkeby": [
+      "0xaaeb2035ff394fdb2c879190f95e7676f1a9444b"
+    ],
+    "private": [
+      "0xb279182d99e65703f0076e4812653aab85fca0f0"
+    ]
+  },
+  "actions": [
+    {
+      "id": "",
+      "label": "Set DAO Name",
+      "description": "",
+      "notes": "",
+      "fields": [
+        {
+          "label": "",
+          "name": "",
+          "placeholder": ""
+        },
+        {
+          "name": "",
+          "defaultValue": 1,
+          "label": "",
+          "labelTrue": "",
+          "labelFalse": ""
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "",
+            "type": "address[]"
+          },
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "name": "",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "",
+      "label": "Set DAO Description",
+      "description": "",
+      "notes": "",
+      "fields": [
+        {
+          "decimals": 18,
+          "label": "",
+          "name": "",
+          "unit": "USD",
+          "placeholder": ""
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "",
+      "label": "Set DAO Headline",
+      "description": "",
+      "notes": "",
+      "fields": [
+        {
+          "decimals": 18,
+          "label": "",
+          "name": "",
+          "unit": "",
+          "placeholder": ""
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "",
+      "label": "Set DAO Icon",
+      "description": "",
+      "notes": "",
+      "fields": [
+        {
+          "decimals": 18,
+          "label": "",
+          "name": "",
+          "unit": "",
+          "placeholder": ""
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "",
+      "label": "Set DAO Banner Image",
+      "description": "",
+      "notes": "",
+      "fields": [
+        {
+          "decimals": 18,
+          "label": "",
+          "name": "",
+          "unit": "",
+          "placeholder": ""
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }
+  ]
+}

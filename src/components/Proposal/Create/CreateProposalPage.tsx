@@ -14,7 +14,7 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { RouteComponentProps } from "react-router-dom";
 import * as css from "./CreateProposal.scss";
-
+// import CreateSignalSchemeProposal from "components/Proposal/Create/SchemeForms/CreateSignalSchemeProposal";
 type IExternalProps = RouteComponentProps<any>;
 
 interface IStateProps {
@@ -88,6 +88,8 @@ class CreateProposalPage extends React.Component<IProps, null> {
       } else {
         createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
       }
+    } else if (schemeName === "SignalsScheme") {
+      // createSchemeComponent = <CreateSignalSchemeProposal {...props} />
     }
 
     return (

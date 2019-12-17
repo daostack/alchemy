@@ -34,7 +34,7 @@ const ProposalSignalSchemeCard = (props: IProps) => {
   const proposalsHTML = proposals.map((proposal: Proposal) => <SubscribedSignalProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
   const headerHtml = <h2>{schemeName(schemeState, "[Unknown]")}</h2>;
 
-  let trainingTooltipMessage: string = "Use this scheme to change DAO's name, description, avatar and more";
+  const trainingTooltipMessage = "Use this scheme to change DAO's name, description, avatar and more";
 
   return (
     <div className={css.wrapper} data-test-id={`schemeCard-${schemeState.name}`}>
