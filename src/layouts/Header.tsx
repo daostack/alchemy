@@ -161,17 +161,13 @@ class Header extends React.Component<IProps, IStateProps> {
 
     return(
       <div className={css.headerContainer}>
-        <nav className={classNames({
-          [css.header]: true,
-          [css.hasHamburger]: !!daoAvatarAddress,
-        })}>
-          { daoAvatarAddress ?
-            <div className={css.menuToggle} onClick={this.handleToggleMenu}>
-              {this.props.menuOpen ?
-                <img src="/assets/images/Icon/Close.svg"/> :
-                <img src="/assets/images/Icon/Menu.svg"/>}
-            </div> : "" }
-          <TrainingTooltip overlay="List of all DAOs accessible by Alchemy" placement="bottomRight">
+        <nav className={css.header}>
+          <div className={css.menuToggle} onClick={this.handleToggleMenu}>
+            {this.props.menuOpen ?
+              <img src="/assets/images/Icon/Close.svg"/> :
+              <img src="/assets/images/Icon/Menu.svg"/>}
+          </div>
+          <TrainingTooltip overlay="View your personal feed" placement="bottomRight">
             <div className={css.menu}>
               <Link to="/">
                 <img src="/assets/images/alchemy-logo-white.svg"/>
@@ -206,7 +202,7 @@ class Header extends React.Component<IProps, IStateProps> {
                       <AccountProfileName accountAddress={currentAccountAddress}
                         accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
                       <span className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
-                        <AccountImage accountAddress={currentAccountAddress} />
+                        <AccountImage accountAddress={currentAccountAddress} profile={currentAccountProfile} width={50} />
                       </span>
                     </div>
                   </div>
@@ -215,7 +211,7 @@ class Header extends React.Component<IProps, IStateProps> {
                   <div className={css.pointer}></div>
                   <div className={css.walletDetails}>
                     <div className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
-                      <AccountImage accountAddress={currentAccountAddress} />
+                      <AccountImage accountAddress={currentAccountAddress} profile={currentAccountProfile} width={50} />
                     </div>
                     <div className={css.profileName}>
                       <AccountProfileName accountAddress={currentAccountAddress}
@@ -244,7 +240,7 @@ class Header extends React.Component<IProps, IStateProps> {
                       <div className={css.web3ProviderLogInOut}  onClick={this.handleConnect}><div className={css.text}>Connect</div> <img src="/assets/images/Icon/login.svg"/></div> }
                   </div>
                 </div>
-              </span> : ""
+              </span> : <span></span>
             }
             {!currentAccountAddress ?
               <div className={css.web3ProviderLogin}>
