@@ -49,7 +49,7 @@ class CompetitionCard extends React.Component<IProps, null> {
       <div className={css.status}>Not open yet &gt;&gt;&gt;</div>
       <div className={css.creatorCountdown}>
         <div className={css.createdBy}>
-          <AccountPopup accountAddress={proposalState.proposer} daoState={daoState} detailView={false} />
+          <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
           <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
         </div>
         <div className={css.countdown}>Suggestions open in 24h</div>

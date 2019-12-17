@@ -15,6 +15,7 @@
   transition: all .25s ease;
   vertical-align: top;
   height: auto;
+  overflow: visible; // for the account popup
 
   .status {
     display: block;
