@@ -35,6 +35,13 @@ export function checkTotalPercent(split: any) {
 
 }
 
+export function getUnixTimestamp(date: string = '', time: string = '') {
+  if (!date || !time) {
+    return moment().unix();
+  }
+  return moment(date + ' ' + time).unix()
+}
+
 export function copyToClipboard(value: any) {
   const el = document.createElement("textarea");
   el.value = value;

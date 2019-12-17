@@ -14,7 +14,7 @@ import { ICrxRewarderProps } from "crxRegistry";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 
-import { checkTotalPercent } from "lib/util";
+import { checkTotalPercent, getUnixTimestamp } from "lib/util";
 
 interface IExternalProps {
   rewarder: ICrxRewarderProps;
@@ -119,6 +119,14 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
       externalTokenReward = toWei(Number(values.externalTokenReward));
     }
 
+
+    // Parameters to be passes to client
+    // const rewardSplit = values.rewardSplit.split(",");
+    // const compStart = getUnixTimestamp(values.compStartDate, values.compStartTime)
+    // const voteStart = getUnixTimestamp(values.voteStartDate, values.voteStartTime)
+    // const compEnd = getUnixTimestamp(values.compEndDate, values.compEndTime)
+    // const voteEnd = getUnixTimestamp(values.voteEndDate, values.voteEndTime)
+
     const proposalValues = {...values,
       scheme: this.props.scheme.address,
       dao: this.props.daoAvatarAddress,
@@ -149,7 +157,7 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
     const halfs: string[] = ["00", "30"];
     const timeSlots: Object[] = [];
     for(let i = 0; i < 24; i++){
-        timeSlots.push({ value: i + ":" + halfs[i%2], label: i + ":" + halfs[i%2]});
+        timeSlots.push({ value: i.toString().padStart(2, "0") + ":" + halfs[i%2], label: i.toString().padStart(2,"0") + ":" + halfs[i%2]});
     }
 
     const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
@@ -186,7 +194,7 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
             };
 
             const nonZero = (name: string): void => {
-              if ((values as any)[name] != 0) {
+              if ((values as any)[name] == 0) {
                 errors[name] = "Please enter a non-zero value";
               }
             };
@@ -195,16 +203,43 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
               errors.title = "Title is too long (max 120 characters)";
             }
 
-            const split = values.rewardSplit.split(",");
-
-            // Check rewardSplit add upto 100
+            // Check rewardSplit add upto 100 and number of winners match the winner distribution
             if (values.rewardSplit !== "") {
+              const split = values.rewardSplit.split(",");
+
+              if (split.length != values.numWinners) {
+                errors.numWinners = "Number of winners should match the winner distribution";
+              }
+
               if (!checkTotalPercent(split))
                 errors.rewardSplit = "Please provide reward split summing upto 100";
             }
 
-            if (split.length != values.numWinners) {
-              errors.numWinners = "Number of winners should match the winner distribution";
+            // Check Valid Date and Time for Competition Start and End
+            // Check Valid Date and Time for Vote Start and End
+            if (values.compStartTime && values.compStartDate && values.voteStartTime && values.voteStartDate) {
+              const compStart = getUnixTimestamp(values.compStartDate, values.compStartTime)
+              const voteStart = getUnixTimestamp(values.voteStartDate, values.voteStartTime)
+              const now = getUnixTimestamp()
+              if (compStart < now) {
+                errors.compStartDate = "Competion start date and time can't be in past";
+                errors.compStartTime = "Competion start date and time can't be in past";
+              }
+              if (voteStart < compStart) {
+                errors.voteStartDate = "Vote start date and time can't be in past";
+                errors.voteStartTime = "Vote start date and time can't be in past";
+              }
+              const compEnd = getUnixTimestamp(values.compEndDate, values.compEndTime)
+              const voteEnd = getUnixTimestamp(values.voteEndDate, values.voteEndTime)
+              if (compEnd < compStart) {
+                errors.compEndDate = "Competion end date and time can't be before start";
+                errors.compEndTime = "Competion end date and time can't be in past";
+              }
+              if (voteEnd < voteStart) {
+                errors.voteEndDate = "Vote end date and time can't be before start";
+                errors.voteEndTime = "Vote end date and time can't be before start";
+              }
+
             }
 
             if (!isValidUrl(values.url)) {
