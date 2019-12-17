@@ -122,6 +122,13 @@ class SchemeContainer extends React.Component<IProps, null> {
             <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
               <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Information</Link>
             </TrainingTooltip>
+            {
+              crxRewarderConfig ?
+                <TrainingTooltip placement="top" overlay={crxRewarderConfig.shortDescription}>
+                  <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/crx/`}>{crxRewarderConfig.friendlyName} ({approvedProposals.length})</Link>
+                </TrainingTooltip>
+                : ""
+            }
             <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
               <a className={
                 classNames({
@@ -134,13 +141,6 @@ class SchemeContainer extends React.Component<IProps, null> {
               >
               + New { `${crxRewarderConfig ? crxRewarderConfig.contractName : schemeState.name } `}Proposal</a>
             </TrainingTooltip>
-            {
-              crxRewarderConfig ?
-                <TrainingTooltip placement="top" overlay={crxRewarderConfig.shortDescription}>
-                  <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/crx/`}>{crxRewarderConfig.friendlyName} ({approvedProposals.length})</Link>
-                </TrainingTooltip>
-                : ""
-            }
           </div>
         </Sticky>
 

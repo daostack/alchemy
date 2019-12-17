@@ -11,7 +11,6 @@ import { connect } from "react-redux";
 import * as css from "./Competitions.scss";
 
 interface IStateProps {
-  // currentAccountAddress: Address;
   creatorProfile: IProfileState;
   beneficiaryProfile: IProfileState;
 }
