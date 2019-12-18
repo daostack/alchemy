@@ -64,7 +64,7 @@
   }
 
   .newSolution {
-    display: block;
+    display: relative;
   }
 
   .name {
@@ -143,5 +143,28 @@
       }
 
     }
+  }
+}
+
+a.blueButton {
+  height: 30px;
+  line-height: 30px;
+  font-size: 13px;
+  color: white;
+  background-color: rgba(5, 118, 255, 1.000);
+  transition: all .25s ease;
+  border-radius: 15px;
+  display: inline-block;
+  padding: 0 22px;
+
+  &:hover {
+    background-color: rgba(19, 46, 91, 1.000);
+    color: $white;
+  }
+
+  &.disabled, &disabled:hover {
+    background-color: rgba(200,200,200,.5);
+    border: 1px solid rgba(200,200,200,1);
+    cursor: not-allowed;
   }
 }

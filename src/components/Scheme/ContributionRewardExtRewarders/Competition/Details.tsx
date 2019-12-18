@@ -44,6 +44,10 @@ class CompetitionDetails extends React.Component<IProps, null> {
     return moment(new Date("2020-01-01").getTime());
   };
 
+  private handleNewSolution = () => {
+    
+  }
+
   public render(): RenderOutput {
     const { daoState, proposalState } = this.props;
     const tags = proposalState.tags;
@@ -55,7 +59,13 @@ class CompetitionDetails extends React.Component<IProps, null> {
       <div className={css.competitionDetailsContainer}>
         <div className={css.status}>Open for Suggestions</div>
         <div className={css.gotoProposal}><Link to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>Go to Proposal&nbsp;&gt;</Link></div>
-        <div className={css.newSolution}>+ New Solution</div>
+        <div className={css.newSolution}>
+          <a className={css.blueButton}
+            href="javascript:void(0)"
+            onClick={this.handleNewSolution}
+            data-test-id="createSOlution"
+          >+ New Solution</a>
+        </div>
         <div className={css.name}>{humanProposalTitle(proposalState)}</div>
         <div className={css.countdown}>
           <div>Voting starts in:</div>
