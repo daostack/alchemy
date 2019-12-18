@@ -67,7 +67,7 @@ class FeedPage extends React.Component<IProps, null> {
     if (!currentAccountAddress) {
       return <div className={css.emptyFeedBanner} data-test-id="not-logged-in-banner">
         <img src="/assets/images/unplugged.svg" />
-        <h1>Excuse me, who are you?</h1>
+        <h1>Hi there! Have we met before?</h1>
         <h3>Please Log In to see your personal feed</h3>
         <button onClick={this.handleConnect} className={css.connectButton}>
           <span>Log In</span>
