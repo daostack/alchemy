@@ -142,10 +142,15 @@
         }
 
         .winnerIcon {
-          display: none;
+          display: table-cell;
+          img {
+            display:none;
+          }
 
           &.isWinner {
-            display: table-cell;
+            img {
+              display: inline-block;
+            }
           }
         }
       }

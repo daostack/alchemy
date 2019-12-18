@@ -113,7 +113,7 @@ class CompetitionDetails extends React.Component<IProps, null> {
               </div>
             </div>
             <div className={css.row}>
-              <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: true })}>
+              <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: false })}>
                 <img src="/assets/images/Icon/winner.svg"></img>
               </div>
               <div className={css.description}>
