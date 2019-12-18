@@ -75,7 +75,7 @@ services:
     ports:
       - 5001:5001
 
-  postgres:
+  postgres4graphnode:
     image: daostack/subgraph-postgres:0.0.1-rc.36-v1-3.0.19
     ports:
       - 9432:5432
