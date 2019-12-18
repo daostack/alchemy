@@ -201,7 +201,7 @@
     "sass-resources-loader": "^2.0.1",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
-    "terser-webpack-plugin": "^2.2.1",
+    "terser-webpack-plugin": "^2.3.1",
     "ts-jest": "^24.1.0",
     "typescript": "^3.6.3",
     "typings-for-css-modules-loader": "^1.7.0",
