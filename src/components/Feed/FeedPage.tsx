@@ -163,6 +163,10 @@ const getFeedObservable = (props: IStateProps, existingData?: SubscriptionData) 
     dao {
       id
       name
+      nativeReputation {
+        id
+        totalSupply
+      }
     }
     timestamp
   }`;
