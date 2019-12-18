@@ -80,7 +80,7 @@ class FeedPage extends React.Component<IProps, null> {
     }
 
     if (!data) {
-      return this.renderEmptyFeed();
+      return <div className={css.loading}><Loading/></div>;
     }
 
     // Create the feed
