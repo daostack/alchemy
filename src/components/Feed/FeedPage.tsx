@@ -40,7 +40,7 @@ type SubscriptionData = [any[], any[], any[]];
 
 type IProps = IStateProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
 
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 20;
 
 class FeedPage extends React.Component<IProps, null> {
 
