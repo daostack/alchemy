@@ -152,8 +152,6 @@
     background-color: #fcfdff;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
     padding: 21px 26px;
-    max-height: 325px;
-    overflow: hidden;
     position: relative;
 
     .proposalItem {
@@ -166,6 +164,12 @@
       }
 
       .proposalDescription {
+        max-height: 150px;
+        overflow: hidden;
+        margin-bottom: 10px;
+
+        > p { margin-top: 0; }
+
         img {
           max-width: 100%;
         }
