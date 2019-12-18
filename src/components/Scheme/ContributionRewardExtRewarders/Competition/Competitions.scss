@@ -69,6 +69,7 @@
 
   .name {
     display: block;
+    border-bottom: $gray-border-2;
   }
 
   .countdown {
@@ -81,5 +82,66 @@
 
   .description {
     display: block;
+  }
+
+  .middleSection {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+
+    .leftSection {
+      flex-grow: 0;
+    }
+
+    .rightSection {
+      flex-grow: 1;
+      background-color: $white;
+
+      .winners {
+        display: inline-block;
+      }
+
+      img.transferIcon {
+        display: inline-block;        
+      }
+    }
+  }
+
+  .solutions {
+    display: block;
+
+    .heading {
+      display: block;
+      font-weight: 500;
+      font-size: 20px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .list {
+      background-color: $white;
+      display: table;
+      width: 100%;
+
+      .row {
+        display: table-row;
+        width: 100%;
+
+        .description, .creator, .votes {
+          display: table-cell;
+          padding: 4px 8px;
+          // padding-left: 6px;
+          // padding-right: 6px;
+          // padding-top: 4px;
+          // padding-bottom: 4px;
+        }
+
+        .description {
+          font-weight: 500;
+        }
+      }
+
+    }
   }
 }

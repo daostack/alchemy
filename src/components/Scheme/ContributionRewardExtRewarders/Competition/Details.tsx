@@ -8,7 +8,9 @@ import { connect } from "react-redux";
 
 import moment = require("moment");
 import Countdown from "components/Shared/Countdown";
-import TagsSelector from 'components/Proposal/Create/SchemeForms/TagsSelector';
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import RewardsString from "components/Proposal/RewardsString";
+import { Link } from "react-router-dom";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -38,7 +40,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 
 class CompetitionDetails extends React.Component<IProps, null> {
 
-  private closingTime = (proposal: IProposalState) => {
+  private closingTime = (_proposal: IProposalState) => {
     return moment(new Date("2020-01-01").getTime());
   };
 
@@ -52,7 +54,7 @@ class CompetitionDetails extends React.Component<IProps, null> {
 
       <div className={css.competitionDetailsContainer}>
         <div className={css.status}>Open for Suggestions</div>
-        <div className={css.gotoProposal}>Go to Proposal</div>
+        <div className={css.gotoProposal}><Link to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>Go to Proposal&nbsp;&gt;</Link></div>
         <div className={css.newSolution}>+ New Solution</div>
         <div className={css.name}>{humanProposalTitle(proposalState)}</div>
         <div className={css.countdown}>
@@ -60,18 +62,55 @@ class CompetitionDetails extends React.Component<IProps, null> {
           <Countdown toDate={this.closingTime(proposalState)} />
         </div>
 
-        { tags && tags.length ? <div className={css.tagsContainer}>
-          <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
-        </div> : "" }
+        <div className={css.middleSection}>
+          <div className={css.leftSection}>
+            { tags && tags.length ? <div className={css.tagsContainer}>
+              <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
+            </div> : "" }
 
-        <div className={css.description}>
-          <ReactMarkdown source={proposalState.description}
-            renderers={{link: (props: { href: string; children: React.ReactNode }) => {
-              return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
-            }}}
-          />
+            <div className={css.description}>
+              <ReactMarkdown source={proposalState.description}
+                renderers={{link: (props: { href: string; children: React.ReactNode }) => {
+                  return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
+                }}}
+              />
+            </div>
+          </div>
+          <div className={css.rightSection}>
+            <img src="/assets/images/Icon/winner.svg"></img>
+            <RewardsString proposal={proposalState} dao={daoState} />
+            <img className={css.transferIcon} src="/assets/images/Icon/Transfer.svg" />
+            <div className={css.winners}>{5} Winners</div>
+          </div>
         </div>
 
+        <div className={css.solutions}>
+          <div className={css.heading}>7 Solutions</div>
+          <div className={css.list}>
+            <div className={css.row}>
+              <div className={css.description}>
+                Genesis logo inspired by the sun - you have to take a look to understand (:
+              </div>
+              <div className={css.creator}>
+                [Account Info]
+              </div>
+              <div className={css.votes}>
+                16.5<img src="/assets/images/Icon/vote/for-gray.svg" />
+              </div>
+            </div>
+            <div className={css.row}>
+              <div className={css.description}>
+                DAOstack logo with a mechanical twist
+              </div>
+              <div className={css.creator}>
+                [Account Info]
+              </div>
+              <div className={css.votes}>
+                12.5<img src="/assets/images/Icon/vote/for-gray.svg" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </React.Fragment>;
   }
