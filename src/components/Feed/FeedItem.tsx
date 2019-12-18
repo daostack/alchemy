@@ -28,7 +28,7 @@ const accountTitle = (event: any, userProfile: IProfileState, text: string | Rea
   </span>;
 };
 
-const daoTitle = (event: any, text = "") => {
+const daoTitle = (event: any, text: string | React.ReactElement = "") => {
   const bgPattern = GeoPattern.generate(event.dao.id + event.dao.name);
 
   return <span>
@@ -68,13 +68,35 @@ const FeedItem = (props: IProps) => {
       icon = <img src="/assets/images/Icon/new-person.svg" />;
       content = <UserFeedItem event={event} />;
       break;
-    case "ProposalStageChange":
+    case "ProposalStageChange": {
+      let statusText;
+      switch (eventData.stage) {
+        case "Executed":
+          statusText = event.proposal.winningOutcome === "Fail" ? "has failed" : "has passed";
+          break;
+        case "Boosted":
+          statusText = <span>is <b>boosted</b></span>;
+          break;
+        case "PreBoosted":
+          statusText = <span>is now <b>pending</b></span>;
+          break;
+        case "QuietEndingPeriod":
+          statusText = <span>is in <b>overtime</b></span>;
+          break;
+        case "Queued":
+          statusText = <span>is no longer boosted</span>;
+          break;
+        case "ExpiredInQueue":
+          statusText = <span>is no longer boosted</span>;
+          break;
+      }
       title = event.from === "dao"
-        ? daoTitle(event, ` - proposal is ${eventData.stage}`)
-        : `Proposal is ${eventData.stage}`;
+        ? daoTitle(event, <span> &mdash; proposal {statusText}</span>)
+        : <span>Proposal {statusText}</span>;
       icon = <img src="/assets/images/Icon/Info.svg" />;
       content = <ProposalFeedItem event={event} />;
       break;
+    }
     case "VoteFlip": {
       const voteFlipForAgainst = eventData.outcome === "Pass" ? "Pass" : "Fail";
       title = event.from === "dao"

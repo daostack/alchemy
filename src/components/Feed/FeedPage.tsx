@@ -158,6 +158,7 @@ const getFeedObservable = (props: IStateProps, existingData?: SubscriptionData) 
         name
       }
       stage
+      winningOutcome
     }
     user
     dao {
