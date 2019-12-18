@@ -13,6 +13,7 @@ import * as Sticky from "react-stickynode";
 import { showNotification } from "reducers/notifications";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
@@ -29,7 +30,6 @@ interface IExternalProps extends RouteComponentProps<any> {
 }
 
 interface IStateProps {
-  daoAvatarAddress: Address;
   schemeId: Address;
 }
 
@@ -40,7 +40,6 @@ const mapStateToProps = (_state: IRootState, ownProps: IExternalProps): IExterna
 
   return {
     ...ownProps,
-    daoAvatarAddress: match.params.daoAvatarAddress,
     schemeId: match.params.schemeId,
   };
 };
@@ -52,7 +51,8 @@ const mapDispatchToProps = {
 class SchemeContainer extends React.Component<IProps, null> {
 
   public handleNewProposal = async (e: any): Promise<void> => {
-    const { daoAvatarAddress, schemeId, showNotification } = this.props;
+    const { schemeId, showNotification, daoState } = this.props;
+    const daoAvatarAddress = daoState.address;
     e.preventDefault();
 
     e.preventDefault();
@@ -62,8 +62,12 @@ class SchemeContainer extends React.Component<IProps, null> {
     this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
   };
 
+  private schemeInfoPageHtml = (daoState: IDAOState) => (props: any) => <SchemeInfoPage {...props} daoState={daoState} scheme={this.props.data} />;
+  private schemeProposalsPageHtml = (isActive: boolean, daoState: IDAOState) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data} />;
+
   public render(): RenderOutput {
-    const { currentAccountAddress, daoAvatarAddress, schemeId } = this.props;
+    const { schemeId, daoState } = this.props;
+    const daoAvatarAddress = daoState.address;
     const schemeState = this.props.data;
 
     if (schemeState.name === "ReputationFromToken") {
@@ -92,25 +96,29 @@ class SchemeContainer extends React.Component<IProps, null> {
 
           <div className={css.schemeMenu}>
             <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
-            <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Info</Link>
-            <a className={
-              classNames({
-                [css.createProposal]: true,
-                [css.disabled]: !isActive,
-              })}
-            data-test-id="createProposal"
-            href="javascript:void(0)"
-            onClick={isActive ? this.handleNewProposal : null}
-            >+ New proposal</a>
+            <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
+              <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Info</Link>
+            </TrainingTooltip>
+            <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+              <a className={
+                classNames({
+                  [css.createProposal]: true,
+                  [css.disabled]: !isActive,
+                })}
+              data-test-id="createProposal"
+              href="javascript:void(0)"
+              onClick={isActive ? this.handleNewProposal : null}
+              >+ New proposal</a>
+            </TrainingTooltip>
           </div>
         </Sticky>
 
         <Switch>
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info"
-            render={(props) => <SchemeInfoPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
+            render={this.schemeInfoPageHtml(daoState)} />
 
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-            render={(props) => <SchemeProposalsPage {...props} isActive={isActive} currentAccountAddress={currentAccountAddress} scheme={schemeState} />} />
+            render={this.schemeProposalsPageHtml(isActive, daoState)} />
         </Switch>
       </div>
     );

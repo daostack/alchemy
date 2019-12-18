@@ -1,7 +1,6 @@
-import { Address, Arc, createApolloClient } from "@daostack/client";
+import { Address, Arc } from "@daostack/client";
 // @ts-ignore
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { getMainDefinition } from "apollo-utilities";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 import Web3Connect from "web3connect";
@@ -82,7 +81,7 @@ const web3ConnectProviderOptions =
 /**
  * return the default Arc configuration given the execution environment
  */
-function getArcSettings(): any {
+export function getArcSettings(): any {
   let arcSettings: any;
   switch (process.env.NODE_ENV || "development") {
     case "test": {
@@ -182,6 +181,7 @@ async function checkWeb3ProviderIsForNetwork(provider: any): Promise<string> {
     }
     default: {
       const msg = `Unknown NODE_ENV: ${process.env.NODE_ENV}`;
+      // eslint-disable-next-line no-console
       console.error(msg);
       throw new Error(msg);
     }
@@ -226,55 +226,6 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       arc.web3 = new Web3(provider);
     } else {
       arc = new Arc(arcSettings);
-
-      // TODO: for debugging, remove this when done
-      // @ts-ignore
-      window.networkSubscriptions = [];
-      // @ts-ignore
-      window.networkQueries = [];
-      arc.apolloClient = createApolloClient({
-        graphqlHttpProvider: arcSettings.graphqlHttpProvider ,
-        graphqlWsProvider: arcSettings.graphqlWsProvider,
-        graphqlPrefetchHook: (query: any) => {
-          const definition = getMainDefinition(query);
-          // @ts-ignore
-          if (definition.operation === "subscription") {
-            // @ts-ignore
-            window.networkSubscriptions.push(definition);
-            // @ts-ignore
-            console.log(`add ${definition.operation} ${definition.name && definition.name.value || "[undefined]"}`);
-          } else {
-            // @ts-ignore
-            window.networkQueries.push(definition);
-            // @ts-ignore
-            // console.log(`add ${definition.operation} ${definition.name && definition.name.value || "[undefined]"}`);
-          }
-
-          // function printQueries(queries: any[]) {
-          //   const rs: {[ key: string]: number } = {};
-          //   rs.undefined = 0;
-          //   for (const q of queries) {
-          //     if (q.name) {
-          //       if (!rs[q.name.value]) {
-          //         rs[q.name.value] = 1;
-          //       } else {
-          //         rs[q.name.value] += 1;
-          //       }
-          //     } else {
-          //       rs["undefined"] += 1;
-          //     }
-          //     for (const key in rs) {
-          //       console.log(key, rs[key]);
-          //     }
-          //   }
-          // }
-          // @ts-ignore
-          // console.log(`${window.networkQueries.length} queries; ${window.networkSubscriptions.length} subscriptions`);
-          // @ts-ignore
-          // printQueries(window.networkSubscriptions);
-        },
-      });
-    // TODO: End debugging stuff -- remove this when done
     }
 
     // get contract information from the subgraph
@@ -286,6 +237,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
 
       if (!initializedAccount) {
         // then something went wrong
+        // eslint-disable-next-line no-console
         console.error("Unable to obtain an account from the provider");
         // success = false;
       }
@@ -302,9 +254,11 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       // if this is metamask this should prevent a browser refresh when the network changes
         (window as any).ethereum.autoRefreshOnNetworkChange = false;
       }
+      // eslint-disable-next-line no-console
       console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
     }
   } catch (reason) {
+    // eslint-disable-next-line no-console
     console.error(reason.message);
   }
 
@@ -321,6 +275,7 @@ async function ensureCorrectNetwork(provider: any): Promise<void> {
   const correctNetworkErrorMsg = await checkWeb3ProviderIsForNetwork(provider);
 
   if (correctNetworkErrorMsg) {
+    // eslint-disable-next-line no-console
     console.error(`connected to the wrong network, should be ${correctNetworkErrorMsg}`);
     throw new Error(`Please connect your wallet provider to ${correctNetworkErrorMsg}`);
   }
@@ -329,6 +284,7 @@ async function ensureCorrectNetwork(provider: any): Promise<void> {
 function inTesting(): boolean {
   if (process.env.NODE_ENV === "development" && navigator.webdriver) {
     // in test mode, we have an unlocked ganache and we are not using any wallet
+    // eslint-disable-next-line no-console
     console.log("not using any wallet, because we are in automated test");
     selectedProvider = new Web3(settings.dev.web3Provider);
     return true;
@@ -380,6 +336,7 @@ async function enableWeb3Provider(provider?: any): Promise<void> {
       });
 
     web3Connect.on("error", (error: Error): any => {
+      // eslint-disable-next-line no-console
       console.error(`web3Connect closed on error:  ${error.message}`);
       return rejectOnClosePromise(error);
     });
@@ -399,12 +356,14 @@ async function enableWeb3Provider(provider?: any): Promise<void> {
       await onClosePromise;
 
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(`Unable to connect to web3 provider:  ${error.message}`);
       throw new Error("Unable to connect to web3 provider");
     }
 
     if (!provider) {
       // should only be cancelled, errors should have been handled above
+      // eslint-disable-next-line no-console
       console.warn("uncaught error or user cancelled out");
       return;
     }
@@ -422,13 +381,16 @@ async function enableWeb3Provider(provider?: any): Promise<void> {
   try {
     // brings up the provider UI as needed
     await provider.enable();
+    // eslint-disable-next-line no-console
     console.log(`Connected to network provider ${getWeb3ProviderInfo(provider).name}`);
   } catch (ex) {
+    // eslint-disable-next-line no-console
     console.error(`Unable to enable provider: ${ex.message}`);
     throw new Error("Unable to enable provider");
   }
 
   if (!await initializeArc(provider)) {
+    // eslint-disable-next-line no-console
     console.error("Unable to initialize Arc");
     throw new Error("Unable to initialize Arc");
   }
@@ -531,6 +493,7 @@ async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Promise<voi
     }
 
   } catch (ex) {
+    // eslint-disable-next-line no-console
     console.error(`Unable to instantiate provider: ${ex.message}`);
     throw new Error("Unable to instantiate provider");
   }
@@ -604,8 +567,10 @@ async function loadCachedWeb3Provider(): Promise<void> {
 
     try {
       await setWeb3Provider(cachedWeb3ProviderInfo);
+      // eslint-disable-next-line no-console
       console.log("using cached web3Provider");
     } catch(ex) {
+      // eslint-disable-next-line no-console
       console.error("failed to instantiate cached web3Provider");
       uncacheWeb3Info();
       throw new Error(ex);
@@ -626,7 +591,6 @@ export interface IEnableWalletProviderParams {
  * @returns Promise of true on success
  */
 export async function enableWalletProvider(options: IEnableWalletProviderParams): Promise<boolean> {
-  let msg: string;
   try {
 
     if (inTesting()) {
@@ -668,7 +632,11 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
     }
 
   } catch(err) {
-    msg = err.message || "Unable to connect to the web3 provider";
+    let msg: string;
+    msg = err.message || "Unable to connect to the ethereum provider";
+    if (msg.match(/response has no error or result for request/g)) {
+      msg = "Unable to connect to ethereum provider, sorry :-(";
+    }
     if (options.showNotification) {
       options.showNotification(NotificationStatus.Failure, msg);
     } else {
@@ -684,6 +652,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
 // TODO: check if this (new?) function can replace polling:
 // https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
 export function pollForAccountChanges(currentAccountAddress: Address | null, interval = 2000): Observable<Address> {
+  // eslint-disable-next-line no-console
   console.log(`start polling for account changes from: ${currentAccountAddress}`);
   return Observable.create((observer: any): () => void  => {
     let prevAccount = currentAccountAddress;
@@ -709,8 +678,10 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
                 prevAccount = account;
               }
             })
+            // eslint-disable-next-line no-console
             .catch((err): void => {console.error(err.message); });
         } catch (ex) {
+          // eslint-disable-next-line no-console
           console.error(ex.message);
         }
         finally {

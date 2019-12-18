@@ -98,7 +98,12 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
 
       const { createObservable, wrappedComponent } = options;
 
-      this.observable = observable || await createObservable(this.props);
+      try {
+        this.observable = observable || await createObservable(this.props);
+      } catch(ex) {
+        // this will go to the error page
+        this.setState(() => { throw ex; });
+      }
 
       this.subscription = this.observable.subscribe(
         (next: ObservableType) => {
@@ -110,11 +115,8 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
         (error: Error) => {
           // eslint-disable-next-line no-console
           console.error(getDisplayName(wrappedComponent), "Error in subscription", error);
-
-          this.setState({
-            isLoading: false,
-            error,
-          });
+          // this will go to the error page
+          this.setState(() => { throw error; });
         },
         () => { this.setState({
           complete: true,

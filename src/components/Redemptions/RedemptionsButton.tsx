@@ -48,7 +48,7 @@ class RedemptionsButton extends React.Component<IProps, null> {
     const { data: redeemableProposals } = this.props;
     const menu = <RedemptionsMenu
       redeemableProposals={redeemableProposals}
-      handleClose={this.closeMenu.bind(this)}
+      handleClose={this.closeMenu}
     />;
     return <Tooltip
       ref={this.menu}
@@ -70,7 +70,7 @@ class RedemptionsButton extends React.Component<IProps, null> {
     </Tooltip>;
   }
 
-  private closeMenu() {
+  private closeMenu = () => {
     if (this.menu.current) {
       (this.menu.current as any).trigger.close();
     }

@@ -33,6 +33,21 @@ body {
   height: 100%;
 }
 
+.sidebarWrapper {
+  position: relative;
+  width: 125px;
+}
+
+.withDAO .sidebarWrapper {
+  width: 250px;
+}
+
+.contentWrapper {
+  position: relative;
+  max-width: $max-width;
+  margin: 0 auto;
+}
+
 .background {
   background-color: rgba(244, 244, 244, 1.000);
 }
@@ -52,6 +67,7 @@ body {
 
 .web3ProviderLogin {
   display: inline-block;
+  vertical-align: middle;
 }
 
 .web3ProviderLogin button {
@@ -66,7 +82,7 @@ body {
   border-radius: 15px;
   color: $white;
   position: relative;
-  top: 9px;
+  vertical-align: middle;
   right: 10px;
 
   img {
@@ -97,6 +113,19 @@ body {
   top: 0;
   color: rgba(255,255,255,1);
   display: flex;
+
+  /** the following is only meant to apply to the toggle button in the header **/
+  :global {
+    .react-toggle.react-toggle--checked .react-toggle-track {
+      background-color: #0076ff !important;
+    }
+
+    .react-toggle-thumb {
+      background-image: url(/assets/images/Icon/info-i.svg);
+      background-color: transparent !important;
+      background-size: 20px 20px;
+    }
+  }
 
   .logoContainer {
     margin: 0 auto;
@@ -153,6 +182,10 @@ body {
   }
 
   .redemptionsButton {
+    margin: 13px 0 14px 20px;
+  }
+
+  .toggleButton {
     margin: 13px 0 14px auto;
   }
 
@@ -160,6 +193,7 @@ body {
     display: inline-block;
     padding: 0 15px;
     height: 50px;
+    vertical-align: middle;
   }
 
   .accountInfo {
@@ -170,6 +204,12 @@ body {
     padding: 0 20px;
     transition: all .25s ease;
     height: 50px;
+
+    > span {
+      height: 50px;
+      display: inline-block;
+      vertical-align: middle;
+    }
 
     .accountImage {
       border: none;
@@ -202,25 +242,21 @@ body {
 
     .wallet {
       position: absolute;
-      top: 43px;
-      width: 0px;
-      opacity: 0;
-      transition: all .25s ease;
+      width: 270px;
+      top: 50px;
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 0.25s ease;
       right: 12px;
       font-size: 12px;
       z-index: 100;
       color: rgba(78, 97, 118, 1.000);
       background-color: rgba(252, 253, 255, 1.000);
       border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.27);
 
       .walletImage {
         float: left;
-
-        img {
-          width: 50px;
-          height: 50px;
-          border-radius: 8px;
-        }
       }
 
       .pointer {
@@ -392,7 +428,7 @@ body {
               color: #001d35;
               margin-bottom: 2px;
             }
-            
+
             .name {
               font-size: 11px;
               color: #4e6176;
@@ -434,11 +470,13 @@ body {
   .accountInfoContainer:hover{
     background-color: rgba(10, 28, 61, 1.000);
 
-    .wallet {
-      width: 270px;
-      opacity: 1;
-      box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.27);
+    + .wallet {
+    transform: scaleY(1);
     }
+  }
+
+  .wallet:hover {
+    transform: scaleY(1);
   }
 
   .etherBalance {
@@ -473,7 +511,6 @@ body {
       color: white;
       font-size: 13px;
       position: relative;
-      top: -6px;
       right: 12px;
     }
 
@@ -496,7 +533,7 @@ body {
   position: fixed;
   bottom: 50px;
   background-color: rgba(255,255,255,1);
-  left: 260px;
+  left: 20px;
   width: 290px;
   height: auto;
   text-align: left;
@@ -526,18 +563,6 @@ body {
   overflow: hidden;
 }
 
-.breadcrumbsContainer {
-  position: absolute;
-  width: 100%;
-  background: #444;
-  padding: 0 0 3px 15px;
-  color: white;
-}
-
-.breadcrumb {
-  color: white;
-}
-
 .topInfo {
   position: absolute;
   left: 70px;
@@ -551,7 +576,7 @@ body {
     margin: 0 15px;
   }
 
-  a:visited {
+  a, a:visited {
     color: $white;
   }
 }
@@ -577,13 +602,113 @@ body {
 }
 /* EO Header */
 
+.cookieDisclaimerContainer {
+  padding-left: 12%;
+  padding-right: 12%;
+  text-align: center;
+  width: 76%;
+  position: fixed;
+  bottom: 0px;
+  z-index: 999999;
+  display: inline-block;
+
+  .cookieDisclaimer {
+    padding: 25px;
+    border-radius: 10px 10px 0px 0px;
+    box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.15);
+    background-color: #132e5b;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+
+    .body {
+      text-align: left;
+      height: auto;
+      font-family: "Open Sans";
+      font-size: 13px;
+      font-weight: normal;
+      font-style: normal;
+      font-stretch: normal;
+      line-height: 1.54;
+      letter-spacing: 0.24px;
+      color: #ffffff;
+      display: inline-block;
+      width: 80%;
+      flex-grow: 2;
+      flex-basis: content;
+
+      a {
+        color: $accent-2;
+      }
+    }
+
+    .accept {
+      flex-grow: 1;
+      text-align: right;
+      display: inline-block;
+      white-space: nowrap;
+
+      a.blueButton {
+        position: relative;
+        top: 12px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 13px;
+        color: white;
+        background-color: rgba(5, 118, 255, 1.000);
+        transition: all .25s ease;
+        border-radius: 15px;
+        display: inline-block;
+        padding: 0 30px;
+        font-weight: bold;
+        cursor: pointer;
+
+        img {
+          position: relative;
+          right: 9px;
+        }
+      }
+    }
+  }
+}
+
+.waitingToInitContainer {
+  padding-top: 4rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.waitingToInitMessage {
+  text-align: center;
+}
+
+/* This allow us to center content until screen is too small to
+   center content with width 1080 with DAO sidebar of width 250px */
+@media only screen and (max-width: 1580px) {
+  .withDAO {
+    .contentWrapper {
+      margin: 0 0 0 250px;
+    }
+  }
+}
+
+/* This allow us to center content until screen is too small to center
+   content with width 1080 with non DAO sidebar of width 125px */
+@media only screen and (max-width: 1330px) {
+  .contentWrapper {
+    margin: 0 0 0 125px;
+  }
+}
+
 @media only screen and (max-width: 425px) {
+  .contentWrapper {
+    margin: 0 !important;
+  }
 
   .pendingTransactions {
     bottom: 70px;
     left: 15px;
   }
-
 
   .modal {
     top: 0;
@@ -648,8 +773,8 @@ body {
       margin-left: 12px;
     }
 
-    &.hasHamburger .redemptionsButton {
-      margin-left: 60px;
+    .toggleButton {
+      margin-left: 52px;
     }
 
     .accountInfo {
@@ -682,80 +807,24 @@ body {
     top: 16px;
     left: 12px;
   }
- }
 
-.cookieDisclaimerContainer {
-  padding-left: 12%;
-  padding-right: 12%;
-  text-align: center;
-  width: 76%;
-  position: fixed;
-  bottom: 0px;
-  z-index: 999999;
-  display: inline-block;
+  .cookieDisclaimerContainer {
 
-  .cookieDisclaimer {
-    padding: 25px;
-    border-radius: 10px 10px 0px 0px;
-    box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.15);
-    background-color: #132e5b;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-
-    .body {
-      text-align: left;
-      height: auto;
-      font-family: "Open Sans";
-      font-size: 13px;
-      font-weight: normal;
-      font-style: normal;
-      font-stretch: normal;
-      line-height: 1.54;
-      letter-spacing: 0.24px;
-      color: #ffffff;
+    .cookieDisclaimer {
       display: inline-block;
-      width: 80%;
-      flex-grow: 2;
-      flex-basis: content;
-    }
+      padding-left: 20px;
+      padding-right: 20px;
 
-    .accept {
-      flex-grow: 1;
-      text-align: right;
-      display: inline-block;
-      white-space: nowrap;
+      .body {
+        display: block;
+        flex-grow: unset;
+        flex-basis: unset;
+        width: 100%;
+      }
 
-      a.blueButton {
-        position: relative;
-        top: 12px;
-        height: 30px;
-        line-height: 30px;
-        font-size: 13px;
-        color: white;
-        background-color: rgba(5, 118, 255, 1.000);
-        transition: all .25s ease;
-        border-radius: 15px;
-        display: inline-block;
-        padding: 0 30px;
-        font-weight: bold;
-        cursor: pointer;
-
-        img {
-          position: relative;
-          right: 9px;
-        }
+      .accept {
+        flex-grow: unset;
       }
     }
   }
-}
-
-.waitingToInitContainer {
-  padding-top: 4rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.waitingToInitMessage {
-  text-align: center; 
 }

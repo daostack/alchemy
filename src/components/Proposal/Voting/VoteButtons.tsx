@@ -54,7 +54,7 @@ class VoteButtons extends React.Component<IProps, IState> {
     };
   }
 
-  public async handleClickVote(vote: number, _event: any): Promise<void> {
+  public handleClickVote = (vote: number) => async (): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const currentAccountState = this.props.currentAccountState;
@@ -63,9 +63,8 @@ class VoteButtons extends React.Component<IProps, IState> {
     }
   }
 
-  public closePreVoteModal(_event: any): void {
-    this.setState({ showPreVoteModal: false });
-  }
+  private closePreVoteModal = (_event: any): void => { this.setState({ showPreVoteModal: false }); }
+  private handleVoteOnProposal = (): void => { this.props.voteOnProposal(this.props.dao.address, this.props.proposal.id, this.state.currentVote);  };
 
   public render(): RenderOutput {
     const {
@@ -77,11 +76,11 @@ class VoteButtons extends React.Component<IProps, IState> {
       proposal,
       dao,
       expired,
-      voteOnProposal,
     } = this.props;
 
     const votingDisabled = proposal.stage === IProposalStage.ExpiredInQueue ||
                             proposal.stage === IProposalStage.Executed ||
+                            (proposal.stage === IProposalStage.Queued && expired) ||
                             (proposal.stage === IProposalStage.Boosted && expired) ||
                             (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
                             (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ||
@@ -90,20 +89,20 @@ class VoteButtons extends React.Component<IProps, IState> {
                             ;
 
     /**
-     * only invoked when votingDisabled
-     * @param vote
+     * only used when votingDisabled
      */
-    const tipContent = (vote: IProposalOutcome|undefined): string =>
+    const tipContent = 
       ((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)) ?
         "Can't change your vote" :
         (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
           "Voting requires reputation in " + dao.name :
-          proposal.stage === IProposalStage.ExpiredInQueue || (proposal.stage === IProposalStage.Boosted && expired) || (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ?
+          proposal.stage === IProposalStage.ExpiredInQueue ||
+              (proposal.stage === IProposalStage.Boosted && expired) ||
+              (proposal.stage === IProposalStage.QuietEndingPeriod && expired)  ||
+              (proposal.stage === IProposalStage.Queued && expired) ?
             "Can't vote on expired proposals" :
             proposal.stage === IProposalStage.Executed ?
-              "Can't vote on executed proposals" :
-              `Vote ${vote === IProposalOutcome.Pass ? "for" : "against"}`
-;
+              "Can't vote on executed proposals" : "";
 
     const voteUpButtonClass = classNames({
       [css.votedFor]: currentVote === IProposalOutcome.Pass,
@@ -129,8 +128,8 @@ class VoteButtons extends React.Component<IProps, IState> {
         {this.state.showPreVoteModal ?
           <PreTransactionModal
             actionType={this.state.currentVote === IProposalOutcome.Pass ? ActionTypes.VoteUp : ActionTypes.VoteDown}
-            action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
-            closeAction={this.closePreVoteModal.bind(this)}
+            action={this.handleVoteOnProposal}
+            closeAction={this.closePreVoteModal}
             currentAccount={currentAccountState}
             dao={dao}
             effectText={<span>Your influence: <strong><Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
@@ -167,12 +166,12 @@ class VoteButtons extends React.Component<IProps, IState> {
               <div className={css.hasNotVoted}>
                 {!votingDisabled ?
                   <div>
-                    <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
+                    <button onClick={this.handleClickVote(1)} className={voteUpButtonClass} data-test-id="voteFor">
                       <img src={`/assets/images/Icon/vote/for-btn-selected${altStyle ? "-w" : ""}.svg`} />
                       <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
                       <span> For</span>
                     </button>
-                    <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                    <button onClick={this.handleClickVote(2)} className={voteDownButtonClass}>
                       <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`}/>
                       <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
                       <span> Against</span>
@@ -193,12 +192,12 @@ class VoteButtons extends React.Component<IProps, IState> {
             <div className={css.castVote}>
               {!votingDisabled ?
                 <div>
-                  <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
+                  <button onClick={this.handleClickVote(1)} className={voteUpButtonClass} data-test-id="voteFor">
                     <img src={`/assets/images/Icon/vote/for-btn-selected${altStyle ? "-w" : ""}.svg`} />
                     <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
                     <span> For</span>
                   </button>
-                  <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                  <button onClick={this.handleClickVote(2)} className={voteDownButtonClass}>
                     <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`}/>
                     <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
                     <span> Against</span>

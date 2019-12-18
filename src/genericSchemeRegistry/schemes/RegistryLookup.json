@@ -2,14 +2,16 @@
   "name": "RegistryLookup",
   "addresses": {
     "main": [
-      "0x314159265dd8dbb310642f98f50c066173c1259b"
+      "0xc6e6060f3c32de9615320ab047bb93919c8f6324",
+      "0xf52fa064a4077fa1a5ec50604304715d63f2b309",
+      "0xd9f3c5eab7b86b9992a65a385026aa46b0d04896"
     ],
     "rinkeby": [
       "0xb5f95a7118c7b778746ae35adbb16fc95f021ae9",
       "0xf268dc803924f6d9d06c7ddbfc06bf7cc6daf7d4"
     ],
     "private": [
-      "0x09711cb35d15bf8405cb9023a579395d3167d39d"
+      "0xe7410170f87102df0055eb195163a03b7f2bff4a"
     ]
   },
   "actions": [

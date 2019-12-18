@@ -9,6 +9,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { closingTime } from "reducers/arcReducer";
 import { combineLatest } from "rxjs";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "./SchemeCard.scss";
 
 interface IExternalProps {
@@ -20,7 +21,7 @@ type SubscriptionData = [ISchemeState, Proposal[]];
 type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 const ProposalSchemeCard = (props: IProps) => {
-  const { data, dao} = props;
+  const { data, dao } = props;
 
   const [schemeState, boostedProposals] = data;
 
@@ -28,10 +29,27 @@ const ProposalSchemeCard = (props: IProps) => {
   const proposals = boostedProposals.slice(0, 3);
 
   const proposalsHTML = proposals.map((proposal: Proposal) => <SubscribedProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
+  const headerHtml = <h2>{schemeName(schemeState, "[Unknown]")}</h2>;
+
+  let trainingTooltipMessage: string;
+
+  switch(schemeState.name) {
+    case "ContributionReward":
+      trainingTooltipMessage = "Use this scheme to reward users (rep and/or funds) for their contributions to the DAO";
+      break;
+    case "SchemeRegistrar":
+      trainingTooltipMessage = "Use this scheme to install, remove or edit the schemes of the DAO";
+      break;
+  }
+
   return (
     <div className={css.wrapper} data-test-id={`schemeCard-${schemeState.name}`}>
       <Link className={css.headerLink} to={`/dao/${dao.address}/scheme/${schemeState.id}`}>
-        <h2>{schemeName(schemeState, "[Unknown]")}</h2>
+        { trainingTooltipMessage ?
+          <TrainingTooltip placement="topLeft" overlay={trainingTooltipMessage}>
+            {headerHtml}
+          </TrainingTooltip> : headerHtml
+        }
         <div>
           <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
         </div>
@@ -45,6 +63,7 @@ const ProposalSchemeCard = (props: IProps) => {
           : " "
         }
       </Link>
+
       {proposals.length > 0 ?
         <div>
           {proposalsHTML}

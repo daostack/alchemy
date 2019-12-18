@@ -3,7 +3,7 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
 
@@ -12,7 +12,7 @@ const baseConfig = require('./webpack.base.config.js');
 const config = merge(baseConfig, {
   mode: 'production',
 
-  devtool: 'nosources-source-map',
+  //devtool: 'nosources-source-map',
 
   entry: {
     // the entry point of our app
@@ -31,8 +31,8 @@ const config = merge(baseConfig, {
     minimize: true,
     minimizer: [
       new OptimizeCSSAssetsPlugin({}),
-      new UglifyJsPlugin({uglifyOptions: {
-        compress: true
+      new TerserPlugin({
+        terserOptions: {
         }
       })
     ],
@@ -91,7 +91,6 @@ plugins: [
     }),
     new webpack.DefinePlugin({
       'process.env': {
-        'API_URL': JSON.stringify(process.env.API_URL || "https://daostack-alchemy.herokuapp.com"),
         'BASE_URL': JSON.stringify(process.env.BASE_URL || "https://alchemy.daostack.io"),
         'DISQUS_SITE': JSON.stringify(process.env.DISQUS_SITE || 'daostack-alchemy'),
         'NODE_ENV': JSON.stringify(process.env.NODE_ENV) || JSON.stringify("production")

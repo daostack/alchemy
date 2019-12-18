@@ -7,7 +7,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import ActionButton from "components/Proposal/ActionButton";
 import RedemptionsString from "components/Proposal/RedemptionsString";
 import ProposalSummary from "components/Proposal/ProposalSummary";
-import { humanProposalTitle } from "lib/util";
+import { ethErrorHandler, humanProposalTitle } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -75,7 +75,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
         </Link>
         <button
           className={css.redeemAllButton}
-          onClick={this.redeemAll.bind(this)}
+          onClick={this.redeemAll}
           disabled={redeemableProposals.length === 0}
         >
           <img src="/assets/images/Icon/redeem.svg" />
@@ -85,7 +85,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
     </div>;
   }
 
-  private async redeemAll() {
+  private  redeemAll = async (): Promise<void> => {
     const {
       currentAccountAddress,
       data: redeemableProposals,
@@ -148,7 +148,7 @@ const mapStateToItemContentProps = (state: IRootState, ownProps: IMenuItemProps)
   };
 };
 
-type IMenuItemContentProps = IMenuItemProps & IMenuItemContentStateProps & ISubscriptionProps<[IDAOState, BN, IRewardState]>;
+type IMenuItemContentProps = IMenuItemProps & IMenuItemContentStateProps & ISubscriptionProps<[IDAOState, BN|null, IRewardState]>;
 
 class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
   public render(): RenderOutput {
@@ -194,11 +194,12 @@ const SubscribedMenuItemContent = withSubscription({
     const { currentAccountAddress, proposal } = props;
     const arc = getArc();
     const dao = arc.dao(proposal.dao.id);
-    const ethBalance = concat(of(new BN("0")), dao.ethBalance());
+    const ethBalance = concat(of(new BN("0")), dao.ethBalance()).pipe(ethErrorHandler());
     const rewards = proposal.proposal.rewards({ where: { beneficiary: currentAccountAddress }})
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
-    return combineLatest(dao.state(), ethBalance, rewards);
+    // subscribe to dao to get DAO reputation supply updates
+    return combineLatest(dao.state( { subscribe: true }), ethBalance, rewards);
   },
 });
 

@@ -24,7 +24,21 @@ export class App extends React.Component<{}, {
     };
   }
 
-  public async UNSAFE_componentWillMount(): Promise<void> {
+                
+  private getPdfHtml = (filename: string): any => {
+    window.location.href = `${window.location.protocol}//${window.location.host}/assets/${filename}`;
+    return null;
+  }
+
+  private CookiePolicy = () => {
+    return this.getPdfHtml("cookie_policy.pdf");
+  }
+
+  private PrivacyPolicy = () => {
+    return this.getPdfHtml("privacy_policy.pdf");
+  }
+
+  public async componentDidMount (): Promise<void> {
     // Do this here because we need to have initialized Arc first.  This will
     // not create a provider for the app, rather will just initialize Arc with a
     // readonly provider with no account, internal only to it.
@@ -76,8 +90,11 @@ export class App extends React.Component<{}, {
           <ThroughProvider>
             <ConnectedRouter history={history}>
               <Switch>
+                <Route path="/cookie-policy" component={this.CookiePolicy}/>
+                <Route path="/privacy-policy" component={this.PrivacyPolicy}/>
                 <Route path="/" exact component={AppContainer}/>
                 <Route path="/dao" component={AppContainer}/>
+                <Route path="/daos" component={AppContainer}/>
                 <Route path="/profile" component={AppContainer}/>
                 <Route path="/redemptions" component={AppContainer}/>
                 <Route component={Error404} />

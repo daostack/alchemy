@@ -302,24 +302,35 @@
   line-height: 24px;
 
   p {
-    padding: 0 15px;
+    padding: 0 15px 6px 15px;
     font-size: 14px;
     opacity: .6;
   }
 
-  button {
-    width: 100px;
-    margin: 0 auto;
-    border: none;
-    cursor: pointer;
-    height: 30px;
-    line-height: 30px;
-    font-size: 13px;
-    color: white;
-    background-color: #0376ff;
-    border-radius: 15px;
-    display: block;
-    padding: 0 15px;
+  .preapproveButtonsWrapper {
+    text-align: center;
+    
+    button {
+      width: 100px;
+      margin-left: 3px;
+      margin-right: 3px;
+      border: none;
+      cursor: pointer;
+      height: 30px;
+      line-height: 30px;
+      font-size: 13px;
+      color: white;
+      background-color: #0376ff;
+      border-radius: 15px;
+      display: inline-block;
+      padding: 0 15px;
+      outline: none;
+    }
+
+    button:first-of-type {
+      background-color: rgba(225, 235, 247, 1.000);
+      color: rgba(0, 113, 255, 1.000);
+    }
   }
 }
 

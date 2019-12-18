@@ -37,6 +37,7 @@ interface IProps {
   proposal: IProposalState;
   secondaryHeader?: string;
   showNotification: typeof showNotification;
+  multiLineMsg?: boolean;
 }
 
 interface IState {
@@ -61,7 +62,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     };
   }
 
-  public async handleClickAction() {
+  private handleClickAction = async (): Promise<void> => {
     const { actionType, showNotification } = this.props;
     if (!await enableWalletProvider({ showNotification })) { return; }
 
@@ -73,12 +74,25 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     this.props.closeAction();
   }
 
-  public toggleInstructions() {
+  public toggleInstructions = () => {
     this.setState({ instructionsOpen: !this.state.instructionsOpen });
   }
 
+  private stakeOnChange = (e: any) => this.setState({stakeAmount: Number(e.target.value)});
+  private ref = (input: any) => { this.stakeInput = input; };
+  private exchangeHtml = (item: any) => {
+    return(
+      <li key={item.name}>
+        <a href={item.url} target="_blank" rel="noopener noreferrer">
+          <b><img src={item.logo}/></b>
+          <span>{item.name}</span>
+        </a>
+      </li>
+    );
+  };
+
   public render(): RenderOutput {
-    const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, dao, effectText, proposal, secondaryHeader } = this.props;
+    const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, dao, effectText, multiLineMsg, proposal, secondaryHeader } = this.props;
     const { stakeAmount } = this.state;
 
     let icon; let transactionType; let rulesHeader; let rules; let actionTypeClass;
@@ -221,7 +235,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               <div className={css.transactionIcon}>{icon}</div>
               <div className={css.transactionInfo}>
                 <span className={css.transactionType}>{transactionType}</span>
-                &nbsp; | &nbsp;
+                { !multiLineMsg ? <span className={css.titleSeparator}>|</span>: "" }
                 <span className={css.secondaryHeader}>{secondaryHeader}</span>
                 <div className={css.transactionEffect}>
                   {effectText}
@@ -229,7 +243,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               </div>
               {actionType !== ActionTypes.Redeem && actionType !== ActionTypes.Execute ?
                 <div className={classNames({[css.helpButton]: true, [css.open]: this.state.instructionsOpen})}>
-                  <button className={css.hover}  onClick={this.toggleInstructions.bind(this)}>
+                  <button className={css.hover}  onClick={this.toggleInstructions}>
                     <b> &lt; Got it</b>
                     <span>x</span>
                     <span>?</span>
@@ -272,9 +286,9 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                           autoFocus
                           type="number"
                           min="1"
-                          ref={(input) => { this.stakeInput = input; }}
+                          ref={this.ref}
                           className={css.predictionAmount}
-                          onChange={(e) => this.setState({stakeAmount: Number(e.target.value)})}
+                          onChange={this.stakeOnChange}
                           placeholder="0"
                         />
                         <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
@@ -285,16 +299,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                             <ul>
                               <div className={css.diamond}></div>
                               {
-                                getExchangesList().map((item: any) => {
-                                  return(
-                                    <li key={item.name}>
-                                      <a href={item.url} target="_blank" rel="noopener noreferrer">
-                                        <b><img src={item.logo}/></b>
-                                        <span>{item.name}</span>
-                                      </a>
-                                    </li>
-                                  );
-                                })
+                                getExchangesList().map(this.exchangeHtml)
                               }
                             </ul>
                           </div>
@@ -353,14 +358,14 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                       <button
                         className={classNames({[css.launchMetaMask]: true, [css.disabled]: true})}
                         disabled
-                        onClick={this.handleClickAction.bind(this)}
+                        onClick={this.handleClickAction}
                         data-test-id="launch-metamask"
                       >
                         {transactionType}
                       </button>
                     </Tooltip>
                     :
-                    <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
+                    <button className={css.launchMetaMask} onClick={this.handleClickAction} data-test-id="launch-metamask">
                       {transactionType}
                     </button>
                   }

@@ -1,8 +1,93 @@
 ### template
   - Features Added
   - Bugs Fixed
-  - Maintenence / Refactor
-  - Misc
+
+## Next release
+  - Features Added
+  - Bugs Fixed
+
+## 2019-12-10
+  - Features Added
+    - Use 3box profiles 
+    - Create a Feed of events
+    - add new cookie policy and privacy policy 
+  - Bugs Fixed
+    - do not error on bad token address
+    - convert deprecated React methods
+    - various UI cleanups and fixes
+    - add subscriptions for votes, stakes and rewards on the proposal page
+    - ignore externalTokenReward when address is null
+    - change old dai to sai, add new dai
+    - better position notifications 
+    - shorten token dropdown menu
+
+## 2019-12-03
+
+  - Features Added
+  - Bugs Fixed
+    - the proposal detail page now gets updates automatically if data changes
+    - rewards do not crash anymore when token address is null
+    - some UI fixes
+    - refactor all UNSAFE_ methods
+
+## 2019-12-03
+
+## 2019-11-25
+  - Features Added
+    - prevent redemptions when nothing will happen due to insufficient DAO resources.  Warn on partial redemptions.
+    - tooltips: show less duplicates, toggle button always shows it
+    - use subgraph v33, client 0.2.34
+  - Bugs Fixed
+    - update DAO total rep when it changes, so rep percentages remain correct
+    - go to error page on non-existent DAOs
+    - eliminate rerendering of Disqus component on the proposal details apge
+    - refactor arrow functions
+    - eliminate empty tooltips
+    - eliminate duplicate confirmation notifications
+
+
+### 2019-11-12
+  - Features added
+    - Add controls for training tooltips
+    - use subgraph v32
+  - Bugs fixed
+    - Recognize ENS contract addresses on main net
+
+### 2019-11-05
+  - Features Added
+    - prevent attempting redemptions unless there exist sufficient resources to pay out at least one reward
+    - added informative tooltips for application training
+    - Gasless ReputationFromTokens using the tx-sender service
+    - improved paging on scheme page
+  - Bugs Fixed
+    - fixed display of scheme activation time
+    - fixed empty proposal page when not logged in
+    - application behaves better whne the ethereum connection goes down or is unavailable
+
+### 2019-11-05
+
+  - Features Added
+    - Proposals can now be tagged on creation
+    - History (and other pages) load much faster now
+  - Bugs Fixed
+    - Proposals counts are fixed
+    - Upgrade client to 0.2.22 and subgraph to v31_0
+
+### 2019-10-25
+
+  - Features Added
+    - More detailed information on scheme page
+    - Performance improvements
+    - New proposal button not available on inactive schemes
+    - ENS public resolver interface
+
+  - Bugs fixed
+    - Improved layout of cookie disclaimer on mobile devices
+    - fix "nervous" account menu, now drops down instead of across
+    - fix hang on malformed dao address
+    - In scheme properties, round thresholdConst up
+    - Added cancel button to staking preapproval prompt
+    - Names on vote popup are correct now
 
 ### 2019-10-16
 
@@ -22,6 +107,7 @@
     - ENS interface for generic schemes
     - Feedback when there are unread messages on DAO wall
     - Added Error and 404 pages
+    - Proposals now can have tags
 
   - Bugs Fixed
     - Align headers of table in proposal history
@@ -29,6 +115,7 @@
     - Fix error on initializing arc
     - Fix infinite scroll loading of queued scheme proposals
     - handle Metamask account changing
+
 
 ### 2019-09-12 [actually two releases]
 

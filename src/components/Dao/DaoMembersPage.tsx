@@ -1,5 +1,5 @@
-import { DAO, IDAOState, Member } from "@daostack/client";
-import { getArc } from "arc";
+import { IDAOState, Member } from "@daostack/client";
+import { getProfile } from "actions/profilesActions";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
@@ -22,8 +22,6 @@ interface IStateProps {
   profiles: IProfilesState;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]>;
-
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
     ...ownProps,
@@ -31,18 +29,37 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
   };
 };
 
+interface IDispatchProps {
+  getProfile: typeof getProfile;
+}
+
+const mapDispatchToProps = {
+  getProfile,
+};
+
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]> & IDispatchProps;
+
 const PAGE_SIZE = 100;
 
 class DaoMembersPage extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    this.props.data.forEach((member) => {
+      if (!this.props.profiles[member.staticState.address]) {
+        this.props.getProfile(member.staticState.address);
+      }
+    });
+  }
 
   public render(): RenderOutput {
     const { data } = this.props;
 
     const members = data;
+    const daoTotalReputation = this.props.daoState.reputationTotalSupply;
     const { daoState, profiles } = this.props;
 
     const membersHTML = members.map((member) =>
-      <DaoMember key={member.staticState.address} dao={daoState} member={member} profile={profiles[member.staticState.address]} />);
+      <DaoMember key={member.staticState.address} dao={daoState} daoTotalReputation={daoTotalReputation} member={member} profile={profiles[member.staticState.address]} />);
 
     return (
       <div className={css.membersContainer}>
@@ -50,7 +67,7 @@ class DaoMembersPage extends React.Component<IProps, null> {
         <Sticky enabled top={50} innerZ={10000}>
           <h2>Reputation Holders</h2>
         </Sticky>
-        <table>
+        <table className={css.memberHeaderTable}>
           <tbody className={css.memberTable + " " + css.memberTableHeading}>
             <tr>
               <td className={css.memberAvatar}></td>
@@ -84,10 +101,11 @@ const SubscribedDaoMembersPage = withSubscription({
   loadingComponent: <div className={css.loading}><Loading/></div>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
-  checkForUpdate: (oldProps, newProps) => { return oldProps.daoState.address !== newProps.daoState.address; },
+  checkForUpdate: [], // (oldProps, newProps) => { return oldProps.daoState.address !== newProps.daoState.address; },
 
-  createObservable: (props: IExternalProps) => {
+  createObservable: async (props: IExternalProps) => {
     const dao = props.daoState.dao;
+
     return dao.members({
       orderBy: "balance",
       orderDirection: "desc",
@@ -100,8 +118,7 @@ const SubscribedDaoMembersPage = withSubscription({
   pageSize: PAGE_SIZE,
 
   getFetchMoreObservable: (props: IExternalProps, data: Member[]) => {
-    const arc = getArc();
-    const dao = new DAO(props.daoState.address, arc);
+    const dao = props.daoState.dao;
     return dao.members({
       orderBy: "balance",
       orderDirection: "desc",
@@ -111,4 +128,4 @@ const SubscribedDaoMembersPage = withSubscription({
   },
 });
 
-export default connect(mapStateToProps)(SubscribedDaoMembersPage);
+export default connect(mapStateToProps, mapDispatchToProps)(SubscribedDaoMembersPage);

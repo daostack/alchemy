@@ -13,7 +13,7 @@ module.exports = {
 
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
+    extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".mjs"],
 
     alias: {
       arc: path.resolve(basePath, 'src/arc'),
@@ -42,7 +42,12 @@ module.exports = {
         loader: ['react-hot-loader/webpack', "awesome-typescript-loader"],
         exclude: [/node_modules/, /\.spec\.ts$/]
       },
-
+      // All output '.mjs' files for graphql files - Source https://github.com/graphql/graphql-js/issues/1272#issuecomment-393903706
+      {
+        test: /\.mjs$/,
+        include: /node_modules/,
+        type: "javascript/auto",
+      },
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
       {
         enforce: "pre",
@@ -59,6 +64,8 @@ module.exports = {
           /node_modules\/rlp/,
           /node_modules\/subscriptions-transport-ws/,
           /node_modules\/zen-observable-ts/,
+          /node_modules\/graphql-request/,
+          /node_modules\/https-did-resolver/
         ]
       },
 

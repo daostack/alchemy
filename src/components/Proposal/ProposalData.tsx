@@ -1,5 +1,6 @@
 import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Reward, Stake, Vote } from "@daostack/client";
 import { getArc } from "arc";
+import { ethErrorHandler } from "lib/util";
 
 import BN = require("bn.js");
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -16,9 +17,13 @@ import * as css from "./ProposalCard.scss";
 
 interface IExternalProps {
   currentAccountAddress: Address;
-  dao: IDAOState;
+  daoState: IDAOState;
   proposalId: string;
   children(props: IInjectedProposalProps): JSX.Element;
+  /**
+   * true to subscribe to changes in votes, stakes and rewards
+   */
+  subscribeToProposalDetails?: boolean;
 }
 
 interface IStateProps {
@@ -27,6 +32,7 @@ interface IStateProps {
 }
 
 type SubscriptionData = [IProposalState, Vote[], Stake[], IRewardState, IMemberState, BN, BN, BN];
+type IPreProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 interface IInjectedProposalProps {
@@ -43,7 +49,7 @@ interface IInjectedProposalProps {
   votes: Vote[];
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IProps => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IPreProps => {
   const proposalState = ownProps.data ? ownProps.data[0] : null;
 
   return {
@@ -97,7 +103,7 @@ class ProposalData extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedProposalData = connect(mapStateToProps)(ProposalData);
+const ConnectedProposalData = connect(mapStateToProps, null)(ProposalData);
 
 export default withSubscription({
   wrappedComponent: ConnectedProposalData,
@@ -110,19 +116,18 @@ export default withSubscription({
 
   createObservable: async (props) => {
     const arc = getArc();
-    const { currentAccountAddress, dao, proposalId } = props;
-    const arcDao = arc.dao(dao.address);
+    const { currentAccountAddress, daoState, proposalId } = props;
+    const arcDao = daoState.dao;
     const proposal = arc.proposal(proposalId);
     await proposal.fetchStaticState();
     const spender = proposal.staticState.votingMachine;
 
     if (currentAccountAddress) {
       return combineLatest(
-        proposal.state(), // state of the current proposal
-        // TODO: do these subscription on the schemespage level
-        proposal.votes({where: { voter: currentAccountAddress }}),
-        proposal.stakes({where: { staker: currentAccountAddress }}),
-        proposal.rewards({ where: {beneficiary: currentAccountAddress}})
+        proposal.state({ subscribe: props.subscribeToProposalDetails }), // state of the current proposal
+        proposal.votes({where: { voter: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
+        proposal.stakes({where: { staker: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
+        proposal.rewards({ where: {beneficiary: currentAccountAddress}}, { subscribe: props.subscribeToProposalDetails })
           .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
           .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
 
@@ -132,9 +137,12 @@ export default withSubscription({
         // TODO: also need the member state for the proposal proposer and beneficiary
         //      but since we need the proposal state first to get those addresses we will need to
         //      update the client query to load them inline
-        concat(of(new BN("0")), arcDao.ethBalance()),
-        arc.GENToken().balanceOf(currentAccountAddress),
-        arc.allowance(currentAccountAddress, spender),
+        concat(of(new BN("0")), arcDao.ethBalance())
+          .pipe(ethErrorHandler()),
+        arc.GENToken().balanceOf(currentAccountAddress)
+          .pipe(ethErrorHandler()),
+        arc.allowance(currentAccountAddress, spender)
+          .pipe(ethErrorHandler())
       );
     } else {
       return combineLatest(
@@ -143,8 +151,9 @@ export default withSubscription({
         of([]), // stakes
         of(null), // rewards
         of(null), // current account member state
-        concat(of(new BN("0")), arcDao.ethBalance()), // dao eth balance
-        of(new BN("0")), // current account gen balance
+        concat(of(new BN(0)), arcDao.ethBalance()) // dao eth balance
+          .pipe(ethErrorHandler()),
+        of(new BN(0)), // current account gen balance
         of(null), // current account GEN allowance
       );
     }

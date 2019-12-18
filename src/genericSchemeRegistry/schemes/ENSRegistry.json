@@ -1,5 +1,5 @@
 {
-  "name": "ENS",
+  "name": "EnsRegistry",
   "addresses": {
     "main": [
       "0x314159265dd8dbb310642f98f50c066173c1259b"
@@ -8,7 +8,7 @@
       "0xe7410170f87102df0055eb195163a03b7f2bff4a"
     ],
     "private": [
-      "0x711e3c2f874eaa02c01da2c80d7af899504b905c"
+      "0x63af764d17b78879774988e011f67cf4b3a111f6"
     ]
   },
   "actions": [
@@ -20,12 +20,12 @@
       "fields": [
         {
           "name": "node",
-          "label": "Node",
+          "label": "ENS Identifier Name",
           "placeholder": "e.g. alice.eth",
           "transformation": "namehash"
         },
         {
-          "name": "Owner",
+          "name": "owner",
           "label": "Owner Address"
         }
       ],
@@ -54,13 +54,13 @@
       "notes": "https://docs.ens.domains/contract-api-reference/ens#set-resolver",
       "fields": [
         {
-          "label": "Node",
+          "label": "ENS Identifier Name",
           "name": "node",
           "placeholder": "e.g. alice.eth",
           "transformation": "namehash"
         },
         {
-          "name": "Resolver",
+          "name": "resolver",
           "label": "Resolver address"
         }
       ],
@@ -90,7 +90,7 @@
       "fields": [
         {
           "name": "node",
-          "label": "Node",
+          "label": "ENS Identifier Name",
           "placeholder": "e.g. alice.eth",
           "transformation": "namehash"
         },
@@ -125,7 +125,7 @@
       "fields": [
         {
           "name": "node",
-          "label": "Node",
+          "label": "ENS Identifier Name",
           "placeholder": "e.g. alice.eth",
           "transformation": "namehash"
         },
