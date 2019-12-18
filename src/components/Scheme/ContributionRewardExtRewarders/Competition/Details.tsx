@@ -11,6 +11,7 @@ import Countdown from "components/Shared/Countdown";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
 import { Link } from "react-router-dom";
+import classNames from "classnames";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -45,7 +46,7 @@ class CompetitionDetails extends React.Component<IProps, null> {
   };
 
   private handleNewSolution = () => {
-    
+
   }
 
   public render(): RenderOutput {
@@ -98,6 +99,9 @@ class CompetitionDetails extends React.Component<IProps, null> {
           <div className={css.heading}>7 Solutions</div>
           <div className={css.list}>
             <div className={css.row}>
+              <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: true })}>
+                <img src="/assets/images/Icon/winner.svg"></img>
+              </div>
               <div className={css.description}>
                 Genesis logo inspired by the sun - you have to take a look to understand (:
               </div>
@@ -109,6 +113,9 @@ class CompetitionDetails extends React.Component<IProps, null> {
               </div>
             </div>
             <div className={css.row}>
+              <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: true })}>
+                <img src="/assets/images/Icon/winner.svg"></img>
+              </div>
               <div className={css.description}>
                 DAOstack logo with a mechanical twist
               </div>

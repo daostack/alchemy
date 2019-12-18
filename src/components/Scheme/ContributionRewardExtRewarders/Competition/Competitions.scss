@@ -140,6 +140,14 @@
         .description {
           font-weight: 500;
         }
+
+        .winnerIcon {
+          display: none;
+
+          &.isWinner {
+            display: table-cell;
+          }
+        }
       }
 
     }
