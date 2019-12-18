@@ -66,7 +66,7 @@ export default class ProposalStatus extends React.Component<IProps, null> {
                         <div className={classNames({
                           [css.status]: true,
                           [css.quietEnding]: true,
-                        })}><img src="/assets/images/Icon/boosted.svg" />Quiet Ending</div> :
+                        })}><img src="/assets/images/Icon/boosted.svg" />Boosted (overtime)</div> :
 
                         <div className={classNames({
                           [css.status]: true,
