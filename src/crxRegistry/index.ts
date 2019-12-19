@@ -20,7 +20,7 @@ export interface ICrxRewarderProps
 export const getCrxRewarderConfig = (scheme: ISchemeStaticState): ICrxRewarderProps | null  => {
   // FAKE -- will get this from the JSON file and the scheme's rewarder address, if present
   //const networkName = getNetworkName();
-  if (scheme.name === "ContributionReward") {
+  if (scheme.name === "ContributionReward" || scheme.name === "ContributionRewardExt") {
     return {
       address: scheme.address,
       contractName: "Competition",

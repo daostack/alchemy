@@ -208,6 +208,7 @@ export const KNOWN_SCHEME_NAMES = [
   "SchemeRegistrar",
   "UGenericScheme",
   "Competition",
+  "ContributionRewardExt",
 ];
 
 export const PROPOSAL_SCHEME_NAMES = [
@@ -216,6 +217,7 @@ export const PROPOSAL_SCHEME_NAMES = [
   "SchemeRegistrar",
   "UGenericScheme",
   "Competition",
+  "ContributionRewardExt",
 ];
 
 /**
@@ -265,7 +267,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
     }
   } else if (scheme.name) {
     // FAKE - this will need to be driven by mapping `ContributionRewardExt.rewarder` to a json file
-    if (scheme.name === "ContributionReward") {
+    if (scheme.name === "ContributionRewardExt") {
       name = "Competition";
     } else {
       // add spaces before capital letters to approximate a human-readable title

@@ -106,8 +106,6 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    // if (!values.rewardSplit.startsWith("0x")) { values.rewardSplit = "0x" + values.rewardSplit; }
-
     const externalTokenDetails = tokenDetails(values.externalTokenAddress);
     let externalTokenReward;
 
@@ -121,12 +119,14 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
 
 
     // Parameters to be passes to client
-    // const rewardSplit = values.rewardSplit.split(",");
-    // const compStart = getUnixTimestamp(values.compStartDate, values.compStartTime)
-    // const voteStart = getUnixTimestamp(values.voteStartDate, values.voteStartTime)
-    // const compEnd = getUnixTimestamp(values.compEndDate, values.compEndTime)
-    // const voteEnd = getUnixTimestamp(values.voteEndDate, values.voteEndTime)
+    const rewardSplit = values.rewardSplit.split(",");
+    const startTime = new Date(values.compStartDate + " " + values.compStartTime)
+    const votingStartTime = new Date(values.voteStartDate + " " +  values.voteStartTime)
+    const suggestionsEndTime = new Date(values.compEndDate + " " +  values.compEndTime)
+    const endTime = new Date(values.voteEndDate + " " +  values.voteEndTime)
 
+    console.log(this.props.daoAvatarAddress)
+    console.log(this.props.scheme.address)
     const proposalValues = {...values,
       scheme: this.props.scheme.address,
       dao: this.props.daoAvatarAddress,
@@ -134,7 +134,16 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
       externalTokenReward,
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
       reputationReward: toWei(Number(values.reputationReward)),
+      numberOfVotesPerVoter: Number(values.numVotes),
       tags: this.state.tags,
+      beneficiaries: "0xffcf8fdee72ac11b5c542428b35eef5769c409f0",
+      endTime,
+      proposalType: 'competition',
+      rewardSplit: rewardSplit.map(p => Number(p)),
+      startTime,
+      suggestionsEndTime,
+      votingStartTime,
+      value: 0
     };
 
     setSubmitting(false);
