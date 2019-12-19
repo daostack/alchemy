@@ -14,8 +14,8 @@ import { IRootState } from "reducers";
 import { RouteComponentProps } from "react-router-dom";
 import {default as CreateCompetitionProposal} from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateProposal";
 import { ICrxRewarderProps, getCrxRewarderConfig } from "crxRegistry";
+import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
 import * as css from "./CreateProposal.scss";
-import CreateContributionRewardProposal from 'components/Proposal/Create/SchemeForms/CreateContributionRewardProposal';
 
 type IExternalProps = RouteComponentProps<any>;
 
