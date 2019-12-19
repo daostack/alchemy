@@ -61,15 +61,19 @@ class CreateProposalPage extends React.Component<IProps, null> {
 
     let crxRewarderConfig: ICrxRewarderProps;
     
-    if (schemeName === "ContributionReward") {
+    if (schemeName === "ContributionRewardExt") {
+      crxRewarderConfig = getCrxRewarderConfig(scheme);
+      createSchemeComponent = <CreateCompetitionProposal {...props} rewarder={crxRewarderConfig} />;
+    } else if (schemeName === "ContributionReward") {
       // FAKE
       // createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
-      createSchemeComponent = <CreateCompetitionProposal {...props} rewarder={crxRewarderConfig} />;
       // FAKE -- we'll do this if (schemeName === "ContributionRewardExt")
-      crxRewarderConfig = getCrxRewarderConfig(scheme);
-      // FAKE this will automatically come from the scheme
-      schemeName = "ContributionRewardExt";
-    } else if (schemeName === "SchemeRegistrar") {
+      // crxRewarderConfig = getCrxRewarderConfig(scheme);
+      // createSchemeComponent = <CreateCompetitionProposal {...props} rewarder={crxRewarderConfig} />;
+      // // FAKE this will automatically come from the scheme
+      // schemeName = "ContributionRewardExt";
+    }
+    else if (schemeName === "SchemeRegistrar") {
       createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
     } else if (schemeName === "GenericScheme") {
       const genericSchemeRegistry = new GenericSchemeRegistry();
