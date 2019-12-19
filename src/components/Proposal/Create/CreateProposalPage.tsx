@@ -1,10 +1,8 @@
 import { ISchemeState } from "@daostack/client";
 import { getArc } from "arc";
-//import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
 import CreateKnownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateKnownGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "components/Proposal/Create/SchemeForms/CreateSchemeRegistrarProposal";
 import CreateUnknownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateUnknownGenericSchemeProposal";
-import CreateContributionRewardExProposal from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateProposal";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
@@ -17,6 +15,7 @@ import { RouteComponentProps } from "react-router-dom";
 import {default as CreateCompetitionProposal} from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateProposal";
 import { ICrxRewarderProps, getCrxRewarderConfig } from "crxRegistry";
 import * as css from "./CreateProposal.scss";
+import CreateContributionRewardProposal from 'components/Proposal/Create/SchemeForms/CreateContributionRewardProposal';
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -62,12 +61,13 @@ class CreateProposalPage extends React.Component<IProps, null> {
 
     let crxRewarderConfig: ICrxRewarderProps;
     
-    if (schemeName === "ContributionReward") {
-      createSchemeComponent = <CreateContributionRewardExProposal {...props} rewarder={crxRewarderConfig} />;
-    } else if (schemeName === "ContributionRewardExt") {
+    if (schemeName === "ContributionRewardExt") {
       crxRewarderConfig = getCrxRewarderConfig(scheme);
       createSchemeComponent = <CreateCompetitionProposal {...props} rewarder={crxRewarderConfig} />;
-    } else if (schemeName === "SchemeRegistrar") {
+    } else if (schemeName === "ContributionReward") {
+      createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
+    }
+    else if (schemeName === "SchemeRegistrar") {
       createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
     } else if (schemeName === "GenericScheme") {
       const genericSchemeRegistry = new GenericSchemeRegistry();
