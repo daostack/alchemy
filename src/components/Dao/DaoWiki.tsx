@@ -1,7 +1,9 @@
 import * as React from "react";
 import * as Sticky from "react-stickynode";
+
+import { IDAOState } from "@daostack/client";
 import * as css from "./Dao.scss";
-import { WikiContainer } from "@dorgtech/daoswiki";
+import { WikiContainer } from "@dorgtech/daosmind";
 
 declare global {
   namespace JSX {
@@ -13,21 +15,24 @@ declare global {
 }
 
 interface IProps {
-  dao: any;
+  dao: IDAOState;
 }
-export default class DaoWiki extends React.Component<IProps> {
-  constructor(props: IProps) {
-    super(props);
-    new WikiContainer();
+
+export default class DaoWiki extends React.Component<IProps, null> {
+  componentDidMount() {
+    WikiContainer.Instance;
   }
+
   public render(): RenderOutput {
     return (
-      <module-container>
+      <div>
         <Sticky enabled top={50} innerZ={10000}>
           <div className={css.daoHistoryHeader}>Wiki</div>
         </Sticky>
-        <simple-wiki />
-      </module-container>
+        <module-container>
+          <simple-wiki />
+        </module-container>
+      </div>
     );
   }
 }
