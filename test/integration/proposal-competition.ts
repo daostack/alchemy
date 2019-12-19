@@ -1,27 +1,27 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
+import { DAO, Arc } from "@daostack/client";
 import { getArc } from "./utils";
-import { DAO, Arc } from '@daostack/client'
 
 describe("Proposals", () => {
   let dao: DAO;
-  let arc: Arc
+  let arc: Arc;
 
   beforeEach(async () => {
     // we need to find a DAO with a competition scheme
     // TODO: create a test_env with a nameed DAO so we can find it consistently
     arc = getArc();
-    await arc.fetchContractInfos()
-    const ARC_VERSION = '0.0.1-rc.36'
-    const contributionRewardExtContract  = arc.getContractInfoByName(`ContributionRewardExt`, ARC_VERSION)
+    await arc.fetchContractInfos();
+    const ARC_VERSION = "0.0.1-rc.36";
+    const contributionRewardExtContract  = arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);
 
     // find the corresponding scheme object
     const contributionRewardExts = await arc
-      .schemes({where: {address: contributionRewardExtContract.address}}).pipe(first()).toPromise()
+      .schemes({where: {address: contributionRewardExtContract.address}}).pipe(first()).toPromise();
 
-    const contributionRewardExt = contributionRewardExts[0]
-    const contributionRewardExtState = await contributionRewardExt.state().pipe(first()).toPromise()
-    dao = new DAO(contributionRewardExtState.dao, arc)
+    const contributionRewardExt = contributionRewardExts[0];
+    const contributionRewardExtState = await contributionRewardExt.state().pipe(first()).toPromise();
+    dao = new DAO(contributionRewardExtState.dao, arc);
   });
 
 
@@ -55,7 +55,7 @@ describe("Proposals", () => {
     await numWinnersInput.setValue(3);
 
     const rewardSplitInput = await $("*[id=\"rewardSplitInput\"]");
-    await rewardSplitInput.setValue('60,20,20 ');
+    await rewardSplitInput.setValue("60,20,20 ");
     const numVotesInput = await $("*[id=\"numVotesInput\"]");
     await numVotesInput.setValue(3);
 
@@ -63,22 +63,22 @@ describe("Proposals", () => {
     await ethRewardInput.setValue(22);
 
     const compStartDateInput = await $("*[id=\"compStartDateInput\"]");
-    await compStartDateInput.setValue('01/01/1970');
+    await compStartDateInput.setValue("01/01/1970");
     // const compStartTimeInput = await $("*[name=\"compStartTime\"]");
     // await compStartTimeInput.setValue('00:00');
 
     const compEndDateInput = await $("*[id=\"compEndDateInput\"]");
-    await compEndDateInput.setValue('01/01/2021');
+    await compEndDateInput.setValue("01/01/2021");
     // const compEndTimeInput = await $("*[id=\"compEndTimeInput\"]");
     // await compEndTimeInput.setValue('00:00');
 
     const votingStartDateInput = await $("*[id=\"votingStartDateInput\"]");
-    await votingStartDateInput.setValue('01/01/1970');
+    await votingStartDateInput.setValue("01/01/1970");
     // const votingStartTimeInput = await $("*[id=\"votingStartTimeInput\"]");
     // await votingStartTimeInput.setValue('00:00');
 
     const suggestionsEndDateInput = await $("*[id=\"suggestionsEndDateInput\"]");
-    await suggestionsEndDateInput.setValue('01/01/2022');
+    await suggestionsEndDateInput.setValue("01/01/2022");
     // const suggestionsEndTimeInput = await $("*[id=\"suggestionsEndTimeInput\"]");
     // await suggestionsEndTimeInput.setValue('00:00');
 

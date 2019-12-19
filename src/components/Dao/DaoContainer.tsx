@@ -146,7 +146,7 @@ const SubscribedDaoContainer = withSubscription({
       dao.state({ subscribe: true, fetchAllData: true }), // DAO state
       dao.members()
     );
-    return observable
+    return observable;
   },
 });
 

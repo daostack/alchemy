@@ -53,7 +53,7 @@ const mapDispatchToProps = {
 
 class SchemeContainer extends React.Component<IProps, null> {
 
-  public handleNewProposal = async (e: any): Promise<void> => {
+  public handleNewProposal = async (): Promise<void> => {
     const { schemeId, showNotification, daoState } = this.props;
     const daoAvatarAddress = daoState.address;
 

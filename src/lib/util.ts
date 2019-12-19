@@ -43,7 +43,7 @@ export function getUnixTimestamp(date = "", time = "") {
 }
 
 export function getJSDate(date: string, time: string) {
-  return new Date(date + " " + time)
+  return new Date(date + " " + time);
 }
 
 export function copyToClipboard(value: any) {
@@ -271,13 +271,8 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
     }
   } else if (scheme.name) {
     if (scheme.name === "ContributionRewardExt") {
-      // TODO: "hasCompetitonContract" needs to be implemented in the client
-      // if (hasCompetitionContract(scheme, arc)) {
-      if  (true) {
-        name = "Competition";
-      } else {
-        name = "Contribution Reward"
-      }
+      // FAKE: "hasCompetitonContract" needs to be implemented in the client
+      name = "Competition";
     } else {
       // add spaces before capital letters to approximate a human-readable title
       name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;

@@ -1,4 +1,4 @@
-import { IDAOState, ISchemeState , IProposalCreateOptionsCompetition 
+import { IDAOState, ISchemeState , IProposalCreateOptionsCompetition, 
 } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
@@ -83,8 +83,8 @@ const customStyles = {
   }),
 };
 
-export const SelectField: React.SFC<any> = ({options, field, form, value }) => {
-    // value={options ? options.find((option: any) => option.value === field.value) : ""}
+export const SelectField: React.SFC<any> = ({options, field, form, _value }) => {
+  // value={options ? options.find((option: any) => option.value === field.value) : ""}
   return <Select
     options={options}
     name={field.name}
@@ -93,7 +93,7 @@ export const SelectField: React.SFC<any> = ({options, field, form, value }) => {
     onChange={(option: any) => form.setFieldValue(field.name, option.value)}
     onBlur={field.onBlur}
     styles={customStyles}
-  />
+  />;
 };
 
 class CreateProposal extends React.Component<IProps, IStateProps> {
@@ -105,7 +105,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     };
   }
 
-  public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
+  public handleSubmit = async (values: IFormValues, { _setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { 
       return; 
     }
@@ -124,10 +124,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
     // Parameters to be passes to client
     const rewardSplit = values.rewardSplit.split(",").map((s: string) => Number(s));
-    const startTime = getJSDate(values.compStartDate, values.compStartTime)
-    const votingStartTime = getJSDate(values.votingStartDate, values.votingStartTime)
-    const endTime = getJSDate(values.compEndDate, values.compEndTime)
-    const suggestionsEndTime = getJSDate(values.suggestionsEndDate, values.suggestionsEndTime)
+    const startTime = getJSDate(values.compStartDate, values.compStartTime);
+    const votingStartTime = getJSDate(values.votingStartDate, values.votingStartTime);
+    const endTime = getJSDate(values.compEndDate, values.compEndTime);
+    const suggestionsEndTime = getJSDate(values.suggestionsEndDate, values.suggestionsEndTime);
 
     const proposalOptions: IProposalCreateOptionsCompetition  = {
       beneficiary: null,
@@ -138,7 +138,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
       numberOfVotesPerVoter:  Number(values.numberOfVotesPerVoter),
       proposer: undefined,
-      proposalType: 'competition', // this makes `createPRoposal` create a competition rather then a 'normal' contributionRewardExt
+      proposalType: "competition", // this makes `createPRoposal` create a competition rather then a 'normal' contributionRewardExt
       reputationReward: toWei(Number(values.reputationReward)),
       rewardSplit,
       scheme: this.props.scheme.address,
@@ -146,7 +146,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       suggestionsEndTime,
       tags: this.state.tags,
       votingStartTime,
-    }
+    };
 
     await this.props.createProposal(proposalOptions);
     this.props.handleClose();
@@ -281,7 +281,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
               errors.rewards = "Please select at least some reward";
             }
-            console.log(errors)
+            console.log(errors);
 
             return errors;
           }}
