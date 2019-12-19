@@ -4,14 +4,17 @@
 import BN = require("bn.js");
 const namehash = require("eth-ens-namehash");
 const Web3 = require("web3");
+const WikiUpdate = require("./schemes/WikiUpdate.json");
 const dutchXInfo = require("./schemes/DutchX.json");
 const gpInfo = require("./schemes/GenesisProtocol.json");
 const ensRegistryInfo = require("./schemes/ENSRegistry.json");
 const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
 const registryLookupInfo = require("./schemes/RegistryLookup.json");
 
+WikiUpdate.addresses = {...dutchXInfo.addresses};
+
 const KNOWNSCHEMES = [
-  dutchXInfo,
+  WikiUpdate,
   ensRegistryInfo,
   ensPublicResolverInfo,
   gpInfo,

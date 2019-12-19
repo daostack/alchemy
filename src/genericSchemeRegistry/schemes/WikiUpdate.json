@@ -1,0 +1,38 @@
+{
+  "name": "WikiUpdate",
+  "addresses": {
+    "main": [ "" ],
+    "rinkeby": [ "" ],
+    "private": [
+      "0xA10f1c26d7D4BCB1a93F84652177D2E2b320378B"
+    ]
+  },
+  "actions": [
+    {
+      "id": "Vote",
+      "label": "Vote",
+      "description": "Vote",
+      "fields": [
+        {
+          "label": "Number of proposal",
+          "name": "Number of proposal"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "uint8",
+            "name": "toProposal",
+            "type": "uint8"
+          }
+        ],
+        "name": "vote",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }
+  ]
+}
