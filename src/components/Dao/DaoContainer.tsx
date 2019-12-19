@@ -142,10 +142,11 @@ const SubscribedDaoContainer = withSubscription({
     const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
     const daoAddress = props.match.params.daoAvatarAddress;
     const dao = arc.dao(daoAddress);
-    return combineLatest(
+    const observable = combineLatest(
       dao.state({ subscribe: true, fetchAllData: true }), // DAO state
       dao.members()
     );
+    return observable
   },
 });
 

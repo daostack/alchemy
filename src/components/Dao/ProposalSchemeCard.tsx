@@ -105,6 +105,7 @@ export default withSubscription({
 });
 
 
+// TODO: move this to a separate file
 /***** ProposalDetail Component *****/
 interface IProposalDetailProps extends ISubscriptionProps<IProposalState> {
   dao: IDAOState;

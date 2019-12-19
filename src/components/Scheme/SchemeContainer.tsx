@@ -56,7 +56,6 @@ class SchemeContainer extends React.Component<IProps, null> {
   public handleNewProposal = async (e: any): Promise<void> => {
     const { schemeId, showNotification, daoState } = this.props;
     const daoAvatarAddress = daoState.address;
-    e.preventDefault();
 
     if (!await enableWalletProvider({ showNotification })) { return; }
 
