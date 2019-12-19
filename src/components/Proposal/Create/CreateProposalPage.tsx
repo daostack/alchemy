@@ -16,6 +16,7 @@ import { RouteComponentProps } from "react-router-dom";
 import {default as CreateCompetitionProposal} from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateProposal";
 import { ICrxRewarderProps, getCrxRewarderConfig } from "crxRegistry";
 import * as css from "./CreateProposal.scss";
+import CreateContributionRewardProposal from 'components/Proposal/Create/SchemeForms/CreateContributionRewardProposal';
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -65,8 +66,7 @@ class CreateProposalPage extends React.Component<IProps, null> {
       crxRewarderConfig = getCrxRewarderConfig(scheme);
       createSchemeComponent = <CreateCompetitionProposal {...props} rewarder={crxRewarderConfig} />;
     } else if (schemeName === "ContributionReward") {
-      // FAKE
-      // createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
+      createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
       // FAKE -- we'll do this if (schemeName === "ContributionRewardExt")
       // crxRewarderConfig = getCrxRewarderConfig(scheme);
       // createSchemeComponent = <CreateCompetitionProposal {...props} rewarder={crxRewarderConfig} />;
