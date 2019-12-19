@@ -58,8 +58,6 @@ class SchemeContainer extends React.Component<IProps, null> {
     const daoAvatarAddress = daoState.address;
     e.preventDefault();
 
-    e.preventDefault();
-
     if (!await enableWalletProvider({ showNotification })) { return; }
 
     this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);

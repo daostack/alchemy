@@ -14,6 +14,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { RouteComponentProps } from "react-router-dom";
+import {default as CreateCompetitionProposal} from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateProposal";
 import { ICrxRewarderProps, getCrxRewarderConfig } from "crxRegistry";
 import * as css from "./CreateProposal.scss";
 
@@ -65,7 +66,7 @@ class CreateProposalPage extends React.Component<IProps, null> {
       createSchemeComponent = <CreateContributionRewardExProposal {...props} rewarder={crxRewarderConfig} />;
     } else if (schemeName === "ContributionRewardExt") {
       crxRewarderConfig = getCrxRewarderConfig(scheme);
-      createSchemeComponent = <CreateContributionRewardExProposal {...props} rewarder={crxRewarderConfig} />;
+      createSchemeComponent = <CreateCompetitionProposal {...props} rewarder={crxRewarderConfig} />;
     } else if (schemeName === "SchemeRegistrar") {
       createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
     } else if (schemeName === "GenericScheme") {
