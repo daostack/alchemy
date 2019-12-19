@@ -39,14 +39,13 @@ class CompetitionCard extends React.Component<IProps, null> {
   public render(): RenderOutput {
 
     const {
-      beneficiaryProfile,
       creatorProfile,
       daoState,
       proposalState,
     } = this.props;
 
     return <div className={css.competitionCardContainer} data-test-id={"competition-card-" + proposalState.id}>
-      <div className={css.status}>Not open yet &gt;&gt;&gt;</div>
+      <div className={css.status}>Not open yet </div>
       <div className={css.createdBy}>
         <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
         <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
@@ -61,10 +60,8 @@ class CompetitionCard extends React.Component<IProps, null> {
       <div className={css.rewards}>
         <div className={css.transferType}><RewardsString proposal={proposalState} dao={daoState} /></div>
         <img src="/assets/images/Icon/Transfer.svg" />
-        {/* FAKE:  should be proposalState.contributionRewardExt */}
-        <AccountPopup accountAddress={proposalState.contributionReward.beneficiary} daoState={daoState} />
-        {/* FAKE:  should be proposalState.contributionRewardExt */}
-        <AccountProfileName accountAddress={proposalState.contributionReward.beneficiary} accountProfile={beneficiaryProfile} daoAvatarAddress={daoState.address}/>
+        {/* FAKE:  should be proposalState.contributionRewardExt.numWinners */}
+        <div className={css.winners}>2 winners</div>
       </div>
     </div>;
   }
