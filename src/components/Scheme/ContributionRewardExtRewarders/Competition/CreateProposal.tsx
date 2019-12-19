@@ -1,4 +1,5 @@
-import { IDAOState, ISchemeState } from "@daostack/client";
+import { IDAOState, ISchemeState , IProposalCreateOptionsCompetition 
+} from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -14,7 +15,7 @@ import { ICrxRewarderProps } from "crxRegistry";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 
-import { checkTotalPercent, getUnixTimestamp } from "lib/util";
+import { checkTotalPercent, getUnixTimestamp, getJSDate } from "lib/util";
 
 interface IExternalProps {
   rewarder: ICrxRewarderProps;
@@ -82,17 +83,18 @@ const customStyles = {
   }),
 };
 
-export const SelectField: React.SFC<any> = ({options, field, form }) => (
-  <Select
+export const SelectField: React.SFC<any> = ({options, field, form, value }) => {
+    // value={options ? options.find((option: any) => option.value === field.value) : ""}
+  return <Select
     options={options}
     name={field.name}
-    value={options ? options.find((option: any) => option.value === field.value) : ""}
+    value={options[0]}
     maxMenuHeight={100}
     onChange={(option: any) => form.setFieldValue(field.name, option.value)}
     onBlur={field.onBlur}
     styles={customStyles}
   />
-);
+};
 
 class CreateContributionRewardExProposal extends React.Component<IProps, IStateProps> {
 
@@ -104,7 +106,9 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
   }
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { 
+      return; 
+    }
 
     // if (!values.rewardSplit.startsWith("0x")) { values.rewardSplit = "0x" + values.rewardSplit; }
 
@@ -121,24 +125,32 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
 
 
     // Parameters to be passes to client
-    // const rewardSplit = values.rewardSplit.split(",");
-    // const compStart = getUnixTimestamp(values.compStartDate, values.compStartTime)
-    // const voteStart = getUnixTimestamp(values.voteStartDate, values.voteStartTime)
-    // const compEnd = getUnixTimestamp(values.compEndDate, values.compEndTime)
-    // const voteEnd = getUnixTimestamp(values.voteEndDate, values.voteEndTime)
+    const rewardSplit = values.rewardSplit.split(",").map((s: string) => Number(s));
+    const startTime = getJSDate(values.compStartDate, values.compStartTime)
+    const votingStartTime = getJSDate(values.votingStartDate, values.votingStartTime)
+    const endTime = getJSDate(values.compEndDate, values.compEndTime)
+    const suggestionsEndTime = getJSDate(values.suggestionsEndDate, values.suggestionsEndTime)
 
-    const proposalValues = {...values,
-      scheme: this.props.scheme.address,
+    const proposalOptions: IProposalCreateOptionsCompetition  = {
+      beneficiary: null,
       dao: this.props.daoAvatarAddress,
+      endTime,
       ethReward: toWei(Number(values.ethReward)),
       externalTokenReward,
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
+      proposalType: 'competition', // this makes `createPRoposal` create a competition rather then a 'normal' contributionRewardExt
       reputationReward: toWei(Number(values.reputationReward)),
+      rewardSplit,
+      scheme: this.props.scheme.address,
+      startTime,
+      suggestionsEndTime,
       tags: this.state.tags,
-    };
+      votingStartTime,
+      proposer: undefined,
+      numberOfVotesPerVoter:  values.numberOfVotesPerVoter
+    }
 
-    setSubmitting(false);
-    await this.props.createProposal(proposalValues);
+    await this.props.createProposal(proposalOptions);
     this.props.handleClose();
   }
 
@@ -180,10 +192,13 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
+            console.log(`start validating`)
 
             const require = (name: string): void => {
               if (!(values as any)[name]) {
                 errors[name] = "Required";
+                console.log((values as any)[name])
+                console.error(`${name} is required...`)
               }
             };
 
@@ -217,27 +232,27 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
 
             // Check Valid Date and Time for Competition Start and End
             // Check Valid Date and Time for Vote Start and End
-            if (values.compStartTime && values.compStartDate && values.voteStartTime && values.voteStartDate) {
+            if (values.compStartTime && values.compStartDate && values.votingStartTime && values.votingStartDate) {
               const compStart = getUnixTimestamp(values.compStartDate, values.compStartTime);
-              const voteStart = getUnixTimestamp(values.voteStartDate, values.voteStartTime);
-              const now = getUnixTimestamp();
-              if (compStart < now) {
-                errors.compStartDate = "Competion start date and time can't be in past";
-                errors.compStartTime = "Competion start date and time can't be in past";
-              }
+              const voteStart = getUnixTimestamp(values.votingStartDate, values.votingStartTime);
+              // const now = getUnixTimestamp();
+              // if (compStart < now) {
+              //   errors.compStartDate = "Competion start date and time can't be in past";
+              //   errors.compStartTime = "Competion start date and time can't be in past";
+              // }
               if (voteStart < compStart) {
-                errors.voteStartDate = "Vote start date and time can't be in past";
-                errors.voteStartTime = "Vote start date and time can't be in past";
+                errors.votingStartDate = "Vote start date and time should be later then competition start";
+                errors.votingStartTime = "Vote start date and time should be later then competition start";
               }
               const compEnd = getUnixTimestamp(values.compEndDate, values.compEndTime);
-              const voteEnd = getUnixTimestamp(values.voteEndDate, values.voteEndTime);
+              const voteEnd = getUnixTimestamp(values.suggestionsEndDate, values.suggestionsEndTime);
               if (compEnd < compStart) {
                 errors.compEndDate = "Competion end date and time can't be before start";
                 errors.compEndTime = "Competion end date and time can't be in past";
               }
               if (voteEnd < voteStart) {
-                errors.voteEndDate = "Vote end date and time can't be before start";
-                errors.voteEndTime = "Vote end date and time can't be before start";
+                errors.suggestionsEndDate = "Suggesitons end date and time can't be before start";
+                errors.suggestionsEndTime = "Suggestions end date and time can't be before start";
               }
 
             }
@@ -250,23 +265,23 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
             nonNegative("externalTokenReward");
             nonNegative("nativeTokenReward");
             nonNegative("numWinners");
-            nonNegative("numVotes");
+            nonNegative("numberOfVotesPerVoter");
 
             nonZero("numWinners");
-            nonZero("numVotes");
+            nonZero("numberOfVotesPerVoter");
 
             require("description");
             require("title");
             require("numWinners");
-            require("numVotes");
+            require("numberOfVotesPerVoter");
             require("compStartDate");
             require("compEndDate");
             require("compStartTime");
             require("compEndTime");
-            require("voteStartDate");
-            require("voteEndDate");
-            require("voteStartTime");
-            require("voteEndTime");
+            require("votingStartDate");
+            require("votingStartTime");
+            require("suggestionsEndDate");
+            require("suggestionsEndTime");
 
             if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
               errors.rewards = "Please select at least some reward";
@@ -349,7 +364,7 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
               />
 
               <div>
-                <TrainingTooltip overlay="Number of winnders of this competition" placement="right">
+                <TrainingTooltip overlay="Number of winners of this competition" placement="right">
                   <label htmlFor="numWinnersInput">
                   Number of winners
                     <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -390,7 +405,7 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
                 <TrainingTooltip overlay="Number of beneficiaries each members can vote for" placement="right">
                   <label htmlFor="numVotesInput">
                   Number of votes
-                    <ErrorMessage name="numVotes">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    <ErrorMessage name="numberOfVotesPerVoter">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
                   </label>
                 </TrainingTooltip>
@@ -399,9 +414,9 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
                   id="numVotesInput"
                   maxLength={120}
                   placeholder={"How many beneficiaries can a member vote for"}
-                  name="numVotes"
+                  name="numberOfVotesPerVoter"
                   type="number"
-                  className={touched.numVotes && errors.numVotes ? css.error : null}
+                  className={touched.numberOfVotesPerVoter && errors.numberOfVotesPerVoter ? css.error : null}
                 />
               </div>
 
@@ -501,6 +516,7 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
                       component={SelectField}
                       className={css.timeSelect}
                       options={timeSlots}
+                      value="00:00"
                     />
                   </div>
                 </div>
@@ -531,44 +547,45 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
 
                 <div className={css.date}>
                   <img src="/assets/images/Icon/down.svg" className={css.downV}/>
-                  <label htmlFor="voteStartDate">
-                    Competition start time
-                    <ErrorMessage name="voteStartDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  <label htmlFor="votingStartDate">
+                    Voting start time
+                    <ErrorMessage name="votingStartDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="voteStartDateInput"
-                    name="voteStartDate"
+                    id="votingStartDateInput"
+                    name="votingStartDate"
                     type="date"
                     className={touched.startTime && errors.startTime ? css.error : null}
                   />
                   <div className={css.timeSelect}>
                     <Field
-                      id="voteStartTimeInput"
-                      name="voteStartTime"
+                      id="votingStartTimeInput"
+                      name="votingStartTime"
                       type="time"
                       component={SelectField}
                       className={css.timeSelect}
                       options={timeSlots}
+                      value="00:00"
                     />
                   </div>
                 </div>
 
                 <div className={css.date}>
                   <img src="/assets/images/Icon/down.svg" className={css.downV}/>
-                  <label htmlFor="voteEndDate">
-                    Competition end time
-                    <ErrorMessage name="voteEndDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  <label htmlFor="suggestionsEndDate">
+                    Suggestions end time
+                    <ErrorMessage name="suggestionsEndDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="voteEndDateInput"
-                    name="voteEndDate"
+                    id="suggestionsEndDateInput"
+                    name="suggestionsEndDate"
                     type="date"
                     className={touched.endDate && errors.endDate ? css.error : null}
                   />
                   <div className={css.timeSelect}>
                     <Field
-                      id="voteEndTimeInput"
-                      name="voteEndTime"
+                      id="suggestionsEndTimeInput"
+                      name="suggestionsEndTime"
                       type="time"
                       component={SelectField}
                       className={css.timeSelect}

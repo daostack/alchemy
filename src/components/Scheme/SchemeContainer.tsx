@@ -14,7 +14,7 @@ import { showNotification } from "reducers/notifications";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-import Competitions from "components/Scheme/ContributionRewardExtRewarders/Competition/List";
+import Competitions from "components/Scheme/ContributionRewardExtRewarders/Competition/CompetitionsList";
 import { combineLatest, from } from "rxjs";
 import { ICrxRewarderProps, getCrxRewarderConfig } from "crxRegistry";
 import ReputationFromToken from "./ReputationFromToken";
@@ -56,7 +56,6 @@ class SchemeContainer extends React.Component<IProps, null> {
   public handleNewProposal = async (e: any): Promise<void> => {
     const { schemeId, showNotification, daoState } = this.props;
     const daoAvatarAddress = daoState.address;
-    e.preventDefault();
 
     e.preventDefault();
 
