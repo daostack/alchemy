@@ -18,17 +18,17 @@ export default class RewardsString extends React.Component<IProps, null> {
 
     const contributionReward = proposal.contributionReward;
     const rewards = [];
-    if (contributionReward.ethReward.gt(new BN(0))) {
+    if (contributionReward.ethReward && contributionReward.ethReward.gt(new BN(0))) {
       rewards.push(formatTokens(contributionReward.ethReward, "ETH"));
     }
-    if (contributionReward.externalToken && contributionReward.externalTokenReward.gt(new BN(0))) {
+    if (contributionReward.externalToken && contributionReward.externalTokenReward && contributionReward.externalTokenReward.gt(new BN(0))) {
       const tokenData = tokenDetails(contributionReward.externalToken);
       rewards.push(formatTokens(contributionReward.externalTokenReward, tokenData ? tokenData["symbol"] : "?", tokenData ? tokenData["decimals"] : 18));
     }
-    if (contributionReward.nativeTokenReward.gt(new BN(0))) {
+    if (contributionReward.nativeTokenReward && contributionReward.nativeTokenReward.gt(new BN(0))) {
       rewards.push(formatTokens(contributionReward.nativeTokenReward, dao.tokenSymbol));
     }
-    if (!contributionReward.reputationReward.isZero()) {
+    if (contributionReward.reputationReward && !contributionReward.reputationReward.isZero()) {
       rewards.push(
         <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={contributionReward.reputationReward}/>
       );
