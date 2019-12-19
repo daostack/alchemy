@@ -100,6 +100,8 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     };
   }
 
+  private fnDescription = (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
+
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
@@ -143,8 +145,6 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     }
     const dao = data;
     const arc = getArc();
-
-    const fnDescription = (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
     return (
       <div className={css.contributionReward}>
@@ -234,7 +234,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 className={touched.title && errors.title ? css.error : null}
               />
 
-              <TrainingTooltip overlay={fnDescription} placement="right">
+              <TrainingTooltip overlay={this.fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
                 Description
                   <div className={css.requiredMarker}>*</div>
