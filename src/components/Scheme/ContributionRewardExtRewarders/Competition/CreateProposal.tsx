@@ -88,7 +88,7 @@ export const SelectField: React.SFC<any> = ({options, field, form, value }) => {
   return <Select
     options={options}
     name={field.name}
-    value={options[0]}
+    defaultValue={options[0]}
     maxMenuHeight={100}
     onChange={(option: any) => form.setFieldValue(field.name, option.value)}
     onBlur={field.onBlur}
@@ -190,13 +190,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
-            console.log(`start validating`)
 
             const require = (name: string): void => {
               if (!(values as any)[name]) {
                 errors[name] = "Required";
-                console.log((values as any)[name])
-                console.error(`${name} is required...`)
               }
             };
 
@@ -284,6 +281,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
               errors.rewards = "Please select at least some reward";
             }
+            console.log(errors)
 
             return errors;
           }}
@@ -514,7 +512,6 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                       component={SelectField}
                       className={css.timeSelect}
                       options={timeSlots}
-                      value="00:00"
                     />
                   </div>
                 </div>
@@ -563,7 +560,6 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                       component={SelectField}
                       className={css.timeSelect}
                       options={timeSlots}
-                      value="00:00"
                     />
                   </div>
                 </div>
