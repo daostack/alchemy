@@ -43,7 +43,7 @@ export function getUnixTimestamp(date = "", time = "") {
 }
 
 export function getJSDate(date: string, time: string) {
-  return moment(date + " " + time).toDate()
+  return new Date(date + " " + time)
 }
 
 export function copyToClipboard(value: any) {
@@ -212,6 +212,7 @@ export const KNOWN_SCHEME_NAMES = [
   "SchemeRegistrar",
   "UGenericScheme",
   "Competition",
+  "ContributionRewardExt",
 ];
 
 export const PROPOSAL_SCHEME_NAMES = [
@@ -220,6 +221,7 @@ export const PROPOSAL_SCHEME_NAMES = [
   "SchemeRegistrar",
   "UGenericScheme",
   "Competition",
+  "ContributionRewardExt",
 ];
 
 /**
@@ -268,7 +270,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       name = "Generic Scheme";
     }
   } else if (scheme.name) {
-    if (scheme.name === "ContributionReward") {
+    if (scheme.name === "ContributionRewardExt") {
       // TODO: "hasCompetitonContract" needs to be implemented in the client
       // if (hasCompetitionContract(scheme, arc)) {
       if  (true) {

@@ -96,7 +96,7 @@ export const SelectField: React.SFC<any> = ({options, field, form, value }) => {
   />
 };
 
-class CreateContributionRewardExProposal extends React.Component<IProps, IStateProps> {
+class CreateProposal extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
@@ -109,8 +109,6 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { 
       return; 
     }
-
-    // if (!values.rewardSplit.startsWith("0x")) { values.rewardSplit = "0x" + values.rewardSplit; }
 
     const externalTokenDetails = tokenDetails(values.externalTokenAddress);
     let externalTokenReward;
@@ -138,6 +136,8 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
       ethReward: toWei(Number(values.ethReward)),
       externalTokenReward,
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
+      numberOfVotesPerVoter:  Number(values.numberOfVotesPerVoter),
+      proposer: undefined,
       proposalType: 'competition', // this makes `createPRoposal` create a competition rather then a 'normal' contributionRewardExt
       reputationReward: toWei(Number(values.reputationReward)),
       rewardSplit,
@@ -146,8 +146,6 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
       suggestionsEndTime,
       tags: this.state.tags,
       votingStartTime,
-      proposer: undefined,
-      numberOfVotesPerVoter:  values.numberOfVotesPerVoter
     }
 
     await this.props.createProposal(proposalOptions);
@@ -618,7 +616,7 @@ class CreateContributionRewardExProposal extends React.Component<IProps, IStateP
 }
 
 const SubscribedCreateContributionRewardExProposal = withSubscription({
-  wrappedComponent: CreateContributionRewardExProposal,
+  wrappedComponent: CreateProposal,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
     const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
