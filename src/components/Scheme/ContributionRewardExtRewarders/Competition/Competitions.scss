@@ -221,6 +221,7 @@
     font-family: $body-font;
     font-weight: $normal;
     font-size: 16px;
+    padding-left: 10px;
 
     .content {
       display: inline-block;
@@ -238,7 +239,7 @@
       font-size: 14px;
       overflow-x: hidden;
       text-overflow: ellipsis;
-      max-width: 320px;
+      max-width: 318px;
     }
   }
 
