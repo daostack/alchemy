@@ -2,9 +2,9 @@ import { IDAOState, Address } from "@daostack/client";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { isValidUrl } from "lib/util";
 import * as React from "react";
-import TagsSelector from "components/proposal/Create/SchemeForms/TagsSelector";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-import MarkdownField from "components/proposal/Create/SchemeForms/MarkdownField";
+import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 
 import UserSearchField from "components/Shared/UserSearchField";
 import * as css from "./Competitions.scss";
