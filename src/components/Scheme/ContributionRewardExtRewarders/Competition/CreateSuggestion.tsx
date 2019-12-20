@@ -1,4 +1,4 @@
-import { IDAOState, Address } from "@daostack/client";
+import { IDAOState, Address, IProposalState } from "@daostack/client";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { isValidUrl } from "lib/util";
 import * as React from "react";
@@ -19,6 +19,7 @@ export interface ISubmitValues {
 
 interface IExternalProps {
   daoState: IDAOState;
+  proposalState: IProposalState;
   handleCancel: () => any;
   handleSubmit: (values: ISubmitValues) => any;
 }
@@ -60,10 +61,14 @@ export default class CreateSuggestion extends React.Component<IProps, IStateProp
   private fnDescription = (<span>Short description of the submission.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
   public render(): RenderOutput {
-    const { handleCancel } = this.props;
+    const { handleCancel, proposalState } = this.props;
 
     return (
       <div className={css.createSolutionForm}>
+        <h2 className={css.header}>
+          <div className={css.content}>+ New Solution<div className={css.proposalTitle}>{proposalState.title ? <span> | {proposalState.title}</span> : " | asd flkja dslkfj adflkj adslkfj adsf asdflkj adsflkj adslkfj adslkfj adslfkja dslfkj asdlfkj" }</div></div>
+        </h2>
+
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           initialValues={{

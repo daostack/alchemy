@@ -117,7 +117,7 @@ function anyRedemptions(redemptions: IRedemptionState): boolean {
   );
 }
 
-export interface IProposalState {
+interface IProposalState {
   beneficiaryAddress: string;
   boostedTime: number;
   boostedVotePeriodLimit: number;
@@ -151,7 +151,7 @@ export interface IProposalState {
   winningVote: VoteOptions;
 }
 
-export interface IStakeState {
+interface IStakeState {
   avatarAddress: string;
   prediction: VoteOptions;
   proposalId: string;
@@ -159,7 +159,7 @@ export interface IStakeState {
   stakerAddress: string;
 }
 
-export interface IVoteState {
+interface IVoteState {
   avatarAddress: string;
   proposalId: string;
   reputation?: number;

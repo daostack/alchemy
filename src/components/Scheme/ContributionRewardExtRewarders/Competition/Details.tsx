@@ -173,7 +173,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     
       {this.state.showingCreateSuggestion ?
         <Modal onBackdropClick={this.cancelNewSolutionModal}>
-          <CreateSuggestion daoState={daoState} handleCancel={this.cancelNewSolutionModal} handleSubmit={this.submitNewSolutionModal}></CreateSuggestion>
+          <CreateSuggestion proposalState={proposalState} daoState={daoState} handleCancel={this.cancelNewSolutionModal} handleSubmit={this.submitNewSolutionModal}></CreateSuggestion>
         </Modal> : ""
       }
 
