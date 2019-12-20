@@ -93,17 +93,12 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const { daoState, proposalState } = this.props;
     const tags = proposalState.tags;
 
-    if (this.state.showingCreateSuggestion) {
-      return <Modal onBackdropClick={this.cancelNewSolutionModal}>
-        <CreateSuggestion daoState={daoState} handleCancel={this.cancelNewSolutionModal} handleSubmit={this.submitNewSolutionModal}></CreateSuggestion>
-      </Modal>;
-    }
-
     return <React.Fragment>
       <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}/crx`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
       <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/crx/proposal/${proposalState.id}`}>{humanProposalTitle(proposalState)}</BreadcrumbsItem>
 
       <div className={css.competitionDetailsContainer}>
+      
         <div className={css.status}>Open for Suggestions</div>
         <div className={css.gotoProposal}><Link to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>Go to Proposal&nbsp;&gt;</Link></div>
         <div className={css.newSolution}>
@@ -175,6 +170,14 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           </div>
         </div>
       </div>
+    
+      {this.state.showingCreateSuggestion ?
+        <Modal onBackdropClick={this.cancelNewSolutionModal}>
+          <CreateSuggestion daoState={daoState} handleCancel={this.cancelNewSolutionModal} handleSubmit={this.submitNewSolutionModal}></CreateSuggestion>
+        </Modal> : ""
+      }
+
+
     </React.Fragment>;
   }
 }
