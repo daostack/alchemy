@@ -1,3 +1,4 @@
+// import * as H from "history";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
@@ -12,23 +13,33 @@ import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
+import { showNotification } from "reducers/notifications";
+import { enableWalletProvider } from "arc";
+import CreateSuggestion, { ISubmitValues } from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSuggestion";
+import { Modal } from "react-router-modal";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
 
+interface IDispatchProps {
+  showNotification: typeof showNotification;
+}
+
 interface IStateProps {
   creatorProfile: IProfileState;
   beneficiaryProfile: IProfileState;
+  showingCreateSuggestion: boolean;
 }
 
-interface IExternalProps {
+interface IExternalProps /* extends RouteComponentProps<any> */ {
   daoState: IDAOState;
   proposalState: IProposalState;
+  // history: H.History;
 }
 
-type IProps = IExternalProps & IStateProps;
+type IProps = IExternalProps & IDispatchProps & IStateProps;
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalProps): IExternalProps & IStateProps => {
 
   return {
     ...ownProps,
@@ -36,22 +47,57 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
     // FAKE:  should be proposalState.contributionRewardExt
     beneficiaryProfile: state.profiles[ownProps.proposalState.contributionReward.beneficiary],
     // currentAccountAddress: state.web3.currentAccountAddress,
+    showingCreateSuggestion: state.showingCreateSuggestion,
   };
 };
 
-class CompetitionDetails extends React.Component<IProps, null> {
+const mapDispatchToProps = {
+  showNotification,
+};
+
+class CompetitionDetails extends React.Component<IProps, IStateProps> {
+
+  constructor(props: IProps) {
+    super(props);
+    this.state = { 
+      beneficiaryProfile: null,
+      creatorProfile: null,
+      showingCreateSuggestion: false,
+    };
+  }
 
   private closingTime = (_proposal: IProposalState) => {
     return moment(new Date("2020-01-01").getTime());
   };
 
-  private handleNewSolution = () => {
+  private openNewSolutionModal = async (): Promise<void> => {
+    
+    const { showNotification } = this.props;
 
+    if (!await enableWalletProvider({ showNotification })) { return; }
+
+    this.setState({ showingCreateSuggestion: true });
+
+    // this.props.history.push(`/dao/${daoState.address}/crx/proposal/solution/create/${proposalState.id}`);
+  }
+
+  private submitNewSolutionModal = async (_values: ISubmitValues): Promise<void> => {
+    this.setState({ showingCreateSuggestion: true });
+  }
+
+  private cancelNewSolutionModal = async (): Promise<void> => {
+    this.setState({ showingCreateSuggestion: false });
   }
 
   public render(): RenderOutput {
     const { daoState, proposalState } = this.props;
     const tags = proposalState.tags;
+
+    if (this.state.showingCreateSuggestion) {
+      return <Modal onBackdropClick={this.cancelNewSolutionModal}>
+        <CreateSuggestion daoState={daoState} handleCancel={this.cancelNewSolutionModal} handleSubmit={this.submitNewSolutionModal}></CreateSuggestion>
+      </Modal>;
+    }
 
     return <React.Fragment>
       <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}/crx`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
@@ -63,8 +109,8 @@ class CompetitionDetails extends React.Component<IProps, null> {
         <div className={css.newSolution}>
           <a className={css.blueButton}
             href="javascript:void(0)"
-            onClick={this.handleNewSolution}
-            data-test-id="createSOlution"
+            onClick={this.openNewSolutionModal}
+            data-test-id="createSuggestion"
           >+ New Solution</a>
         </div>
         <div className={css.name}>{humanProposalTitle(proposalState)}</div>
@@ -133,4 +179,4 @@ class CompetitionDetails extends React.Component<IProps, null> {
   }
 }
 
-export default connect(mapStateToProps)(CompetitionDetails);
+export default connect(mapStateToProps, mapDispatchToProps)(CompetitionDetails);
