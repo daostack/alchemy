@@ -66,7 +66,7 @@ export default class CreateSuggestion extends React.Component<IProps, IStateProp
     return (
       <div className={css.createSolutionForm}>
         <h2 className={css.header}>
-          <div className={css.content}>+ New Solution<div className={css.proposalTitle}>{proposalState.title ? <span> | {proposalState.title}</span> : " | asd flkja dslkfj adflkj adslkfj adsf asdflkj adsflkj adslkfj adslkfj adslfkja dslfkj asdlfkj" }</div></div>
+          <div className={css.content}>+ New Solution<div className={css.proposalTitle}>{proposalState.title ? <span> | {proposalState.title}</span> : "" }</div></div>
         </h2>
 
         <Formik
