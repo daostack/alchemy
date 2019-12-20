@@ -103,15 +103,16 @@ class SchemeContainer extends React.Component<IProps, null> {
       [css.crx]: true,
       [css.active]: this.props.location.pathname.includes("crx"),
     });
-
+    const schemeFriendlyName = schemeName(schemeState, schemeState.address);
+    
     return (
       <div className={css.schemeContainer}>
       
-        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeName(schemeState, schemeState.address)}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeFriendlyName}</BreadcrumbsItem>
 
         <Sticky enabled top={50} innerZ={10000}>
           <h2 className={css.schemeName}>
-            {schemeName(schemeState, schemeState.address)}
+            {schemeFriendlyName}
           </h2>
 
           <div className={css.schemeMenu}>
@@ -136,7 +137,7 @@ class SchemeContainer extends React.Component<IProps, null> {
               href="javascript:void(0)"
               onClick={isActive ? this.handleNewProposal : null}
               >
-              + New { `${crxRewarderConfig ? crxRewarderConfig.contractName : schemeState.name } `}Proposal</a>
+              + New { `${crxRewarderConfig ? crxRewarderConfig.contractName : schemeFriendlyName } `}Proposal</a>
             </TrainingTooltip>
           </div>
         </Sticky>
