@@ -17,6 +17,7 @@ import { showNotification } from "reducers/notifications";
 import { enableWalletProvider } from "arc";
 import CreateSuggestion, { ISubmitValues } from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSuggestion";
 import { Modal } from "react-router-modal";
+import SuggestionDetails from "components/Scheme/ContributionRewardExtRewarders/Competition/SuggestionDetails";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -29,6 +30,7 @@ interface IStateProps {
   creatorProfile: IProfileState;
   beneficiaryProfile: IProfileState;
   showingCreateSuggestion: boolean;
+  showingSuggestionDetails: string;
 }
 
 interface IExternalProps /* extends RouteComponentProps<any> */ {
@@ -48,6 +50,7 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
     beneficiaryProfile: state.profiles[ownProps.proposalState.contributionReward.beneficiary],
     // currentAccountAddress: state.web3.currentAccountAddress,
     showingCreateSuggestion: state.showingCreateSuggestion,
+    showingSuggestionDetails: state.showingSuggestionDetails,
   };
 };
 
@@ -63,6 +66,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       beneficiaryProfile: null,
       creatorProfile: null,
       showingCreateSuggestion: false,
+      showingSuggestionDetails: null,
     };
   }
 
@@ -77,8 +81,6 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     if (!await enableWalletProvider({ showNotification })) { return; }
 
     this.setState({ showingCreateSuggestion: true });
-
-    // this.props.history.push(`/dao/${daoState.address}/crx/proposal/solution/create/${proposalState.id}`);
   }
 
   private submitNewSolutionModal = async (_values: ISubmitValues): Promise<void> => {
@@ -87,6 +89,22 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
   private cancelNewSolutionModal = async (): Promise<void> => {
     this.setState({ showingCreateSuggestion: false });
+  }
+
+  private openSuggestionDetailsModal = (suggestionId: string) => async (): Promise<void> => {
+
+    this.setState({ showingSuggestionDetails: suggestionId });
+  }
+
+  private voteOnSuggestion = async (): Promise<void> => {
+    const { showNotification } = this.props;
+
+    if (!await enableWalletProvider({ showNotification })) { return; }
+  }
+
+  private closeSuggestionDetailsModal = async (): Promise<void> => {
+    this.setState({ showingSuggestionDetails: null });
+    return Promise.resolve(); // delete this when the actual vote is coded
   }
 
   public render(): RenderOutput {
@@ -132,14 +150,15 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             <img src="/assets/images/Icon/winner.svg"></img>
             <RewardsString proposal={proposalState} dao={daoState} />
             <img className={css.transferIcon} src="/assets/images/Icon/Transfer.svg" />
-            <div className={css.winners}>{5} Winners</div>
+            <div className={css.winners}>{1} Winner(s)</div>
           </div>
         </div>
 
         <div className={css.solutions}>
-          <div className={css.heading}>7 Solutions</div>
+          <div className={css.heading}>2 Solutions</div>
           <div className={css.list}>
-            <div className={css.row}>
+            { /* TODO:  gotta have a list of suggestionIds, and know whether the current account has voted for it */ } 
+            <div className={css.row} onClick={this.openSuggestionDetailsModal("5678")}>
               <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: true })}>
                 <img src="/assets/images/Icon/winner.svg"></img>
               </div>
@@ -150,21 +169,21 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
                 [Account Info]
               </div>
               <div className={css.votes}>
-                16.5<img src="/assets/images/Icon/vote/for-gray.svg" />
+                16.5
               </div>
             </div>
-            <div className={css.row}>
+            <div className={css.row} onClick={this.openSuggestionDetailsModal("1234")}>
               <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: false })}>
                 <img src="/assets/images/Icon/winner.svg"></img>
               </div>
               <div className={css.description}>
-                DAOstack logo with a mechanical twist
+                  DAOstack logo with a mechanical twist
               </div>
               <div className={css.creator}>
-                [Account Info]
+                  [Account Info]
               </div>
               <div className={css.votes}>
-                12.5<img src="/assets/images/Icon/vote/for-gray.svg" />
+                  12.5<img src="/assets/images/Icon/vote/for-fill-green.svg" />
               </div>
             </div>
           </div>
@@ -177,6 +196,11 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         </Modal> : ""
       }
 
+      {this.state.showingSuggestionDetails ?
+        <Modal onBackdropClick={this.closeSuggestionDetailsModal}>
+          <SuggestionDetails suggestionId={this.state.showingSuggestionDetails} proposalState={proposalState} daoState={daoState} handleClose={this.closeSuggestionDetailsModal} handleVote={this.voteOnSuggestion}></SuggestionDetails>
+        </Modal> : ""
+      }
 
     </React.Fragment>;
   }

@@ -173,10 +173,6 @@
         .description, .creator, .votes {
           display: table-cell;
           padding: 4px 8px;
-          // padding-left: 6px;
-          // padding-right: 6px;
-          // padding-top: 4px;
-          // padding-bottom: 4px;
         }
 
         .description {
@@ -209,7 +205,7 @@
   left: 50%;
   transform: translate(-50%,-50%);
   box-shadow: $shadow-3;
-  width: 445px;
+  max-width: 445px;
 
   .header {
     background-color: $navy;
@@ -391,6 +387,41 @@
   .createProposalActions {
     text-align: right;
     margin-top: 20px;
+  }
+}
+
+.solutionDetails {
+  padding: 10px;
+  background-color: $white;
+  position: fixed;
+  top: 0;
+  right: 0;
+  box-shadow: $shadow-3;
+  width: 540px;
+  max-width: 445px;
+
+  .closeButton {
+    display: inline-block;
+  }
+
+  .reputationVoted {
+    display: inline-block;
+  } 
+
+  .voteButton {
+    display: block;
+  }
+
+  .title {
+    display: block;
+  }
+
+  .proposer {
+    display: block;
+  }
+
+  .description {
+    display: block;
   }
 }
 
