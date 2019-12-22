@@ -93,7 +93,7 @@ export const SelectField: React.SFC<any> = ({options, field, form }) => (
 );
 
 class CreateContributionReward extends React.Component<IProps, IStateProps> {
-
+  initialFormValues: IFormValues;
   constructor(props: IProps) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -101,6 +101,17 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       tags: new Array<string>(),
     };
 
+    this.initialFormValues = importUrlValues({
+      beneficiary: "",
+      description: "",
+      ethReward: 0,
+      externalTokenAddress: getArc().GENToken().address,
+      externalTokenReward: 0,
+      nativeTokenReward: 0,
+      reputationReward: 0,
+      title: "",
+      url: "",
+    });
     // Populating the state with URL parameters
     this.state = importUrlValues(this.state);
   }
@@ -156,23 +167,12 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     const arc = getArc();
 
     const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
-    const initialFormValues: IFormValues  = {
-      beneficiary: "",
-      description: "",
-      ethReward: 0,
-      externalTokenAddress: arc.GENToken().address,
-      externalTokenReward: 0,
-      nativeTokenReward: 0,
-      reputationReward: 0,
-      title: "",
-      url: "",
-    };
 
     return (
       <div className={css.contributionReward}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={importUrlValues(initialFormValues)}
+          initialValues={this.initialFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
@@ -302,7 +302,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                     name="beneficiary"
                     onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                     onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                    defaultValue={importUrlValues(initialFormValues).beneficiary}
+                    defaultValue={this.initialFormValues.beneficiary}
                   />
                 </div>
 
