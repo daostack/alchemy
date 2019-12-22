@@ -2,7 +2,7 @@ import * as React from "react";
 import * as Sticky from "react-stickynode";
 
 import { IDAOState } from "@daostack/client";
-// import { WikiContainer } from "@dorgtech/daosmind";
+import { WikiContainer } from "@dorgtech/daosmind";
 import * as css from "./Dao.scss";
 
 declare global {
@@ -20,7 +20,7 @@ interface IProps {
 
 export default class DaoWiki extends React.Component<IProps, null> {
   componentDidMount() {
-    // return WikiContainer.Instance;
+    return WikiContainer.Instance;
   }
 
   public render(): RenderOutput {
