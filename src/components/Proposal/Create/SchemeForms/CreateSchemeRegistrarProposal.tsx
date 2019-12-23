@@ -61,12 +61,27 @@ interface IState {
 }
 
 class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
-
+  initialFormValues: IFormValues;
   constructor(props: IProps) {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-
+    this.initialFormValues = importUrlValues({
+      description: "",
+      otherScheme: "",
+      schemeToAdd: "",
+      schemeToEdit: "",
+      schemeToRemove: "",
+      parametersHash: "",
+      permissions: {
+        registerSchemes: false,
+        changeConstraints: false,
+        upgradeController: false,
+        genericCall: false,
+      },
+      title: "",
+      url: "",
+    });
     this.state = {
       currentTab: this.loadCurrentTab(),
       tags: new Array<string>(),
@@ -155,22 +170,6 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
   
   public render(): RenderOutput {
     // "schemes" are the schemes registered in this DAO
-    const initialFormValues: any = {
-      description: "",
-      otherScheme: "",
-      schemeToAdd: "",
-      schemeToEdit: "",
-      schemeToRemove: "",
-      parametersHash: "",
-      permissions: {
-        registerSchemes: false,
-        changeConstraints: false,
-        upgradeController: false,
-        genericCall: false,
-      },
-      title: "",
-      url: "",
-    };
     const schemes = this.props.data;
     const { handleClose } = this.props;
 
@@ -226,7 +225,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
         <div className={schemeRegistrarFormClass}>
           <Formik
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            initialValues={importUrlValues(initialFormValues)}
+            initialValues={this.initialFormValues}
             // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues) => {
               const errors: any = {};
@@ -372,7 +371,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         name="schemeToEdit"
                         component="select"
                         className={css.schemeSelect}
-                        defaultValue={importUrlValues(initialFormValues)}
+                        defaultValue={this.initialFormValues}
                       >
                         <option value="">Select a scheme...</option>
                         {schemes.map((scheme, _i) => {
@@ -447,7 +446,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         name="schemeToRemove"
                         component="select"
                         className={css.schemeSelect}
-                        defaultValue={importUrlValues(initialFormValues).schemeToRemove}
+                        defaultValue={this.initialFormValues.schemeToRemove}
                       >
                         <option value="">Select a scheme...</option>
                         {schemes.map((scheme, _i) => {
