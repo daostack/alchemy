@@ -13,7 +13,7 @@ module.exports = {
 
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".mjs"],
+    extensions: [".mjs", ".ts", ".tsx", ".js", ".jsx", ".json"],
 
     alias: {
       arc: path.resolve(basePath, 'src/arc'),
@@ -30,7 +30,9 @@ module.exports = {
       src: path.resolve(basePath, 'src'),
       'ipfs-api': 'ipfs-api/dist',
       'ipfs-http-client': 'ipfs-http-client/dist',
-      'bn.js': 'bn.js/lib/bn.js'
+      'bn.js': 'bn.js/lib/bn.js',
+      'lit-element': path.resolve('./node_modules/@dorgtech/daosmind/node_modules/lit-element'),
+      'lit-html': path.resolve('./node_modules/@dorgtech/daosmind/node_modules/lit-html')
     },
   },
 
@@ -42,13 +44,6 @@ module.exports = {
         loader: ['react-hot-loader/webpack', "awesome-typescript-loader"],
         exclude: [/node_modules/, /\.spec\.ts$/]
       },
-      // All output '.mjs' files for graphql files - Source https://github.com/graphql/graphql-js/issues/1272#issuecomment-393903706
-      {
-        test: /\.mjs$/,
-        include: /node_modules/,
-        type: "javascript/auto",
-      },
-      // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
       {
         enforce: "pre",
         test: /\.js$/,
