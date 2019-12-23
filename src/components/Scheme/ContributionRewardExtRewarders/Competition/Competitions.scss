@@ -16,15 +16,15 @@
   width: 477px;
   height: 250px;
   overflow: visible; // for the account popup
+  padding: 26px 36px ;
+  box-sizing: border-box;
 
   .status {
     display: block;
     position: relative;
-    margin: 9px 23px 6px 23px;
     width: 122px;
     height: 33px;
-    top: 21px;
-    left: 178px;
+    margin: auto;
     text-align: center;
     border-radius: 4px;
     background-color: #9aa9b5;
@@ -35,11 +35,8 @@
     font-size: $small;
     color: $black-thirdtone;
     height: 18px;
-    float: left;
     padding-top: 9px;
     margin-top: 30px;
-    margin-left: 36px;
-    position: relative;
   }
 
   .countdown {
@@ -47,16 +44,11 @@
     font-size: $small;
     color: #689bd6;
     height: 18px;
-    float: right;
     padding-top: 9px;
     margin-top: 30px;
-    margin-right: 37px;
-    position: relative;
   }
 
   .description {
-    position: relative;
-    margin: 63px 37px 18px 36px;
     text-overflow: ellipsis;
     .detailLink {
       display: block;
