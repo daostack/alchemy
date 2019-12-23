@@ -73,7 +73,7 @@
     "test:unit": "jest"
   },
   "dependencies": {
-    "@daostack/client": "0.2.38-experimental-1",
+    "@daostack/client": "0.2.38-experimental-3",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
     "@fortawesome/react-fontawesome": "^0.1.3",

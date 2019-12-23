@@ -130,14 +130,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     const suggestionsEndTime = getJSDate(values.suggestionsEndDate, values.suggestionsEndTime);
 
     const proposalOptions: IProposalCreateOptionsCompetition  = {
-      beneficiary: null,
       dao: this.props.daoAvatarAddress,
       endTime,
       ethReward: toWei(Number(values.ethReward)),
       externalTokenReward,
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
       numberOfVotesPerVoter:  Number(values.numberOfVotesPerVoter),
-      proposer: undefined,
       proposalType: "competition", // this makes `createPRoposal` create a competition rather then a 'normal' contributionRewardExt
       reputationReward: toWei(Number(values.reputationReward)),
       rewardSplit,
