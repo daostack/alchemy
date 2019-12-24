@@ -21,35 +21,54 @@
 
   .status {
     display: block;
-    position: relative;
-    width: 122px;
-    height: 33px;
+    height: 34px;
     margin: auto;
     text-align: center;
     border-radius: 4px;
     background-color: #9aa9b5;
+    color: $white;
+    font-size: 13px;
+    padding-top: 9px;
+    padding-right: 16px;
+    padding-left: 16px;
+    box-sizing: border-box;
+    width: fit-content;
+    margin-bottom: 30px;
+
+    &.open {
+      background-color: #00be90;
+    }
+
+    &.voting {
+      background-color: #e2ae10;
+    }
 }
 
-  .createdBy {
-    display: inline-block;
-    font-size: $small;
-    color: $black-thirdtone;
-    height: 18px;
-    padding-top: 9px;
-    margin-top: 30px;
-  }
+  .createByContainer {
+    display: flex;
+    font-size: 13px;
+    margin-bottom: 20px;
 
-  .countdown {
-    display: inline-block;
-    font-size: $small;
-    color: #689bd6;
-    height: 18px;
-    padding-top: 9px;
-    margin-top: 30px;
+    .createdBy {
+      flex-grow: 1;
+      display: inline-block;
+      color: $black-thirdtone;
+      height: 18px;
+    }
+
+    .countdown {
+      flex-grow: 0;
+      display: inline-block;
+      color: #689bd6;
+      height: 18px;
+    }
   }
 
   .description {
     text-overflow: ellipsis;
+    font-size: 21px;
+    margin-bottom: 20px;
+
     .detailLink {
       display: block;
 
@@ -64,24 +83,45 @@
   }
 
   .rewards {
-    margin: 0px 37px 18px 36px;
-    position: relative;
     display: block;
     border: 1px solid rgba(229, 235, 242, 1.000);
     border-radius: 2px;
-    font-size: 12px;
+    font-size: 11px;
     padding: 5px;
     text-align: center;
     font-family: "Open Sans";
+    color: #4f6176;
+    margin-bottom: 16px;
+
+    img {
+      padding-left:  10px;
+      padding-right: 10px;
+    }
 
     .transferType {
       display: inline-block;
-      padding-left: 5px;
+
+      >strong>span {
+        font-weight: normal;
+      }
     }
 
     .winners {
       display: inline-block;
-      padding-left: 5px;
+    }
+  }
+
+  .activityContainer {
+    display: flex;
+    font-size: 13px;
+    color: #4f6176;
+    font-family: "Open Sans";
+
+    .suggestions {
+      flex-grow: 1;
+    }
+    .comments {
+      flex-grow: 0;
     }
   }
 }

@@ -8,7 +8,10 @@ import { IDAOState, IProposalState } from "@daostack/client";
 import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
+import classNames from "classnames";
 import * as css from "./Competitions.scss";
+
+import moment = require("moment");
 
 interface IStateProps {
   creatorProfile: IProfileState;
@@ -44,17 +47,27 @@ class CompetitionCard extends React.Component<IProps, null> {
       proposalState,
     } = this.props;
 
+    const competition = proposalState.competition;
+    const now = moment();
+
     return <div className={css.competitionCardContainer} data-test-id={"competition-card-" + proposalState.id}>
-      <div className={css.status}>Not open yet </div>
-      <div className={css.createdBy}>
-        <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
-        <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
+      { now.isBefore(moment(competition.startTime)) ?
+        <div className={css.status}>Not open yet</div> :
+        now.isBefore(moment(competition.votingStartTime)) ? 
+          <div className={classNames({[css.status]: true, [css.open]: true})}>Open for suggestions</div> :
+          now.isBefore(moment(competition.endTime)) ?
+            <div className={classNames({[css.status]: true, [css.voting]: true})}>Voting started!</div> : ""
+      }
+      <div className={css.createByContainer}>
+        <div className={css.createdBy}>
+          <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
+          <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
+        </div>
+        <div className={css.countdown}>Suggestions open in 24h</div>
       </div>
-      <div className={css.countdown}>Suggestions open in 24h</div>
       <div className={css.description}>
         <Link className={css.detailLink} to={"/dao/" + daoState.address +  "/crx/proposal/" + proposalState.id} data-test-id="proposal-title">
           <div className={css.name}>{humanProposalTitle(proposalState)}</div>
-          <img src="/assets/images/Icon/Open.svg" />
         </Link>
       </div>
       <div className={css.rewards}>
@@ -62,6 +75,10 @@ class CompetitionCard extends React.Component<IProps, null> {
         <img src="/assets/images/Icon/Transfer.svg" />
         {/* FAKE:  should be proposalState.contributionRewardExt.numWinners */}
         <div className={css.winners}>2 winners</div>
+      </div>
+      <div className={css.activityContainer}>
+        <div className={css.suggestions}>21 Suggestions | 3 Votes</div>
+        <div className={css.comments}></div>
       </div>
     </div>;
   }
