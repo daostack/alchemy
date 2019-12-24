@@ -9,19 +9,18 @@ import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import classNames from "classnames";
+import Countdown from "components/Shared/Countdown";
 import * as css from "./Competitions.scss";
 
 import moment = require("moment");
 
 interface IStateProps {
   creatorProfile: IProfileState;
-  beneficiaryProfile: IProfileState;
 }
 
 interface IExternalProps {
   daoState: IDAOState;
   proposalState: IProposalState;
-  suppressTrainingTooltips?: boolean;
 }
 
 type IProps = IExternalProps & IStateProps;
@@ -31,9 +30,6 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
   return {
     ...ownProps,
     creatorProfile: state.profiles[ownProps.proposalState.proposer],
-    // FAKE:  should be proposalState.contributionRewardExt
-    beneficiaryProfile: state.profiles[ownProps.proposalState.contributionReward.beneficiary],
-    // currentAccountAddress: state.web3.currentAccountAddress,
   };
 };
 
@@ -49,13 +45,16 @@ class CompetitionCard extends React.Component<IProps, null> {
 
     const competition = proposalState.competition;
     const now = moment();
+    const startTime = moment(competition.startTime);
+    const votingStartTime = moment(competition.votingStartTime);
+    const endTime = moment(competition.endTime);
 
     return <div className={css.competitionCardContainer} data-test-id={"competition-card-" + proposalState.id}>
-      { now.isBefore(moment(competition.startTime)) ?
+      { now.isBefore(startTime) ?
         <div className={css.status}>Not open yet</div> :
-        now.isBefore(moment(competition.votingStartTime)) ? 
+        now.isBefore(votingStartTime) ? 
           <div className={classNames({[css.status]: true, [css.open]: true})}>Open for suggestions</div> :
-          now.isBefore(moment(competition.endTime)) ?
+          now.isBefore(endTime) ?
             <div className={classNames({[css.status]: true, [css.voting]: true})}>Voting started!</div> : ""
       }
       <div className={css.createByContainer}>
@@ -63,7 +62,13 @@ class CompetitionCard extends React.Component<IProps, null> {
           <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
           <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
         </div>
-        <div className={css.countdown}>Suggestions open in 24h</div>
+        { now.isBefore(startTime) ?
+          <div className={css.countdown}>Suggestions open in <Countdown fromDate={now} toDate={startTime}></Countdown></div> :
+          now.isBefore(votingStartTime) ? 
+            <div className={css.countdown}>Voting starts in <Countdown fromDate={now} toDate={votingStartTime}></Countdown></div> :
+            now.isBefore(endTime) ?
+              <div className={css.countdown}>Voting ends in <Countdown fromDate={now} toDate={endTime}></Countdown></div> : ""
+        }
       </div>
       <div className={css.description}>
         <Link className={css.detailLink} to={"/dao/" + daoState.address +  "/crx/proposal/" + proposalState.id} data-test-id="proposal-title">
@@ -73,8 +78,7 @@ class CompetitionCard extends React.Component<IProps, null> {
       <div className={css.rewards}>
         <div className={css.transferType}><RewardsString proposal={proposalState} dao={daoState} /></div>
         <img src="/assets/images/Icon/Transfer.svg" />
-        {/* FAKE:  should be proposalState.contributionRewardExt.numWinners */}
-        <div className={css.winners}>2 winners</div>
+        <div className={css.winners}>{competition.numberOfWinners} winners</div>
       </div>
       <div className={css.activityContainer}>
         <div className={css.suggestions}>21 Suggestions | 3 Votes</div>
