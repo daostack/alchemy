@@ -61,7 +61,7 @@
     "lint-andFix": "npm run lint -- --fix",
     "postinstall": "rimraf ./src/**/*.scss.d.ts",
     "service-status": "node scripts/serviceStatus.js",
-    "start": "webpack-dev-server --config webpack.dev.config.js",
+    "start": "node --max-old-space-size=4096 node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.config.js",
     "start-dev-profiling": "cross-env NODE_ENV=dev-profiling API_URL=https://daostack-alchemy.herokuapp.com S3_BUCKET=daostack-alchemy-staging webpack-dev-server --config webpack.dev.config.js",
     "start-docker": "webpack-dev-server --config webpack.docker.config.js",
     "start-prod": "cross-env NODE_ENV=production webpack-dev-server --config webpack.dev.config.js",
