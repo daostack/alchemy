@@ -220,31 +220,35 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           <div className={css.list}>
             { /* TODO:  gotta have a list of suggestionIds, and know whether the current account has voted for it */ } 
             <div className={css.row} onClick={this.openSuggestionDetailsModal("5678")}>
-              <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: true })}>
-                <img src="/assets/images/Icon/winner.svg"></img>
-              </div>
-              <div className={css.description}>
+              <div className={css.innerContainer}>
+                <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: true })}>
+                  <img src="/assets/images/Icon/winner.svg"></img>
+                </div>
+                <div className={css.description}>
                 Genesis logo inspired by the sun - you have to take a look to understand (:
-              </div>
-              <div className={css.creator}>
+                </div>
+                <div className={css.creator}>
                 [Account Info]
-              </div>
-              <div className={css.votes}>
+                </div>
+                <div className={css.votes}>
                 16.5
+                </div>
               </div>
             </div>
             <div className={css.row} onClick={this.openSuggestionDetailsModal("1234")}>
-              <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: false })}>
-                <img src="/assets/images/Icon/winner.svg"></img>
-              </div>
-              <div className={css.description}>
+              <div className={css.innerContainer}>
+                <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: false })}>
+                  <img src="/assets/images/Icon/winner.svg"></img>
+                </div>
+                <div className={css.description}>
                   DAOstack logo with a mechanical twist
-              </div>
-              <div className={css.creator}>
+                </div>
+                <div className={css.creator}>
                   [Account Info]
-              </div>
-              <div className={css.votes}>
+                </div>
+                <div className={css.votes}>
                   12.5<img src="/assets/images/Icon/vote/for-fill-green.svg" />
+                </div>
               </div>
             </div>
           </div>

@@ -246,35 +246,39 @@
 
       .row {
         display: table-row;
-        background-color: $white;
         width: 100%;
         cursor: pointer;
 
-        .description, .creator, .votes, .winnerIcon {
-          display: table-cell;
+        .innerContainer {
           padding: 4px 8px;
-          border-bottom: 4px solid #e5ebf2;
-        }
+          border-radius: 4px;
+          margin-bottom: 2px;
+          background-color: $white;
 
-        .description {
-          font-weight: 500;
-        }
-
-        .votes {
-          border-top-right-radius: 4px;
-        }
-
-        .winnerIcon {
-
-          border-top-left-radius: 4px;
-
-          img {
-            display:none;
+          .description, .creator, .votes, .winnerIcon {
+            display: table-cell;
           }
 
-          &.isWinner {
+          .description, .creator, .votes {
+            position: relative;
+            bottom: 3px;
+          }
+
+          .description {
+            font-weight: 500;
+          }
+
+          .winnerIcon {
+            width: 22px;
+
             img {
-              display: inline-block;
+              display:none;
+            }
+
+            &.isWinner {
+              img {
+                display: inline-block;
+              }
             }
           }
         }
