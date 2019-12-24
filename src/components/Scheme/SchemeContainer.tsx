@@ -1,6 +1,6 @@
 import * as H from "history";
 import { first, mergeMap, filter, toArray } from "rxjs/operators";
-import { Address, IProposalStage, IDAOState, ISchemeState, IProposalState, Proposal, IProposalOutcome } from "@daostack/client";
+import Arc, { Address, IProposalStage, IDAOState, ISchemeState, IProposalState, Proposal, IProposalOutcome } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
@@ -15,7 +15,7 @@ import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Competitions from "components/Scheme/ContributionRewardExtRewarders/Competition/List";
-import { combineLatest, from } from "rxjs";
+import { combineLatest, Observable, from, of } from "rxjs";
 import { ICrxRewarderProps, getCrxRewarderConfig } from "crxRegistry";
 import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
@@ -163,21 +163,48 @@ const SubscribedSchemeContainer = withSubscription({
   checkForUpdate: ["schemeId"],
   createObservable: async (props: IProps) => {
     const arc = getArc();
-    const scheme = arc.scheme(props.schemeId);
+    const scheme = arc.scheme(props.schemeId) as any;
+    // FAKE -- until the real isCompetitionScheme is available
+    const isCompetitionScheme = (arc: Arc, item: any): boolean => {
+      if (item.contributionRewardExtParams) {
+        const contractInfo = arc.getContractInfo(item.contributionRewardExtParams.rewarder);
+        return contractInfo.name === "Competition";
+      } else {
+        return false;
+      }
+    };
 
     // TODO: this may NOT be the best place to do this - we'd like to do this higher up
-
+    // why are we doing this for all schemes and not just the scheme we care about here?
     // eslint-disable-next-line @typescript-eslint/camelcase
-    const proposals = await props.daoState.dao.proposals({where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted]}}, { fetchAllData: true }).pipe(first()).toPromise();
+    await props.daoState.dao.proposals({where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted]}}, { fetchAllData: true }).pipe(first()).toPromise();
     // end cache priming
 
+    const schemeState = await scheme.state().pipe(first()).toPromise();
+    // hack alert (doesn't smell right to be doing Competition-specific stuff at this level)
+    let  executedCompetitionProposals: Observable<Array<IProposalState>>;
+    if (isCompetitionScheme(arc,schemeState)) {
+      
+      // TODO: can this query be simplified???
+      executedCompetitionProposals = from((await props.daoState.dao.proposals(
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        { where: { scheme: scheme.id, stage_in: [IProposalStage.Executed]},
+          orderBy: "closingAt",
+          orderDirection: "desc",
+        },
+        { fetchAllData: true })
+        .pipe(first()).toPromise()))
+        .pipe(
+          mergeMap((proposal: Proposal): Promise<IProposalState> => proposal.state().pipe(first()).toPromise()),
+          filter((proposal: IProposalState) => proposal.winningOutcome === IProposalOutcome.Pass ),
+          toArray());
+    } else {
+      executedCompetitionProposals = of([]);
+    }
+
     return combineLatest(
-      scheme.state(),
-      from(proposals).pipe(
-        mergeMap((proposal: Proposal): Promise<IProposalState> => proposal.state().pipe(first()).toPromise()),
-        filter((proposal: IProposalState) => proposal.winningOutcome === IProposalOutcome.Pass ),
-        toArray()
-      )
+      of(schemeState),
+      executedCompetitionProposals
     );
   },
 });
