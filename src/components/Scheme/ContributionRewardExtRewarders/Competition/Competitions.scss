@@ -123,21 +123,107 @@
     justify-content: center;
     align-items: flex-start;
     width: 100%;
+    margin-bottom: 16px;
 
     .leftSection {
-      flex-grow: 0;
+      flex-grow: 1;
     }
 
     .rightSection {
-      flex-grow: 1;
+      flex-grow: 0;
       background-color: $white;
+      padding-left: 12px;
+      padding-right: 12px;
+      padding-bottom: 16px;
+      border-radius: 4px;
+      max-width: 300px;
 
-      .winners {
-        display: inline-block;
+      .header {
+        border-bottom: $gray-border-2;
+        width: 100%;
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+        padding-top: 16px;
+        font-size: 16px;
+
+        .isWinner {
+          padding-right: 6px;
+          display: inline-block;
+        }
+
+        .results {
+          display: inline-block;
+          position: relative;
+          bottom: 4px;
+
+          .winners {
+            white-space: nowrap;
+            display: inline-block;
+          }
+
+          img.transferIcon {
+            display: inline-block;
+            padding: 0 8px;
+          }
+        }
       }
 
-      img.transferIcon {
-        display: inline-block;        
+      .distribution {
+        display: flex;
+        flex-wrap:  wrap;
+        margin-bottom: 12px;
+        font-size: 13px;
+
+        .winner {
+          margin-right: 12px;
+
+          .position {
+            color: #9aa9b5;
+          }
+
+          .proportion {
+            font-weight: 500;
+          }
+        }
+      }
+
+      .allowedVote {
+        font-weight: 500;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 12px;
+        font-size: 13px;
+      }
+
+      .periods {
+        display:  table;
+        width: 100%;
+
+        .period {
+          font-size: 11px;
+          display: table-row;
+
+          .bullet, .label, .datetime {
+            display: table-cell;
+            padding-bottom: 6px;
+          }
+
+          .bullet::after {
+            content: '\E50';
+            padding-right: 4px;
+            position: relative;
+            bottom: 2px;
+          }
+
+          .label {
+            color: #4f6176;
+          }
+
+          .datetime {
+            color: #9aa9b5;
+          }
+
+        }
       }
     }
   }
@@ -151,28 +237,37 @@
       font-size: 20px;
       width: 100%;
       text-align: center;
+      margin-bottom: 18px;
     }
 
     .list {
-      background-color: $white;
       display: table;
       width: 100%;
 
       .row {
         display: table-row;
+        background-color: $white;
         width: 100%;
+        cursor: pointer;
 
-        .description, .creator, .votes {
+        .description, .creator, .votes, .winnerIcon {
           display: table-cell;
           padding: 4px 8px;
+          border-bottom: 4px solid #e5ebf2;
         }
 
         .description {
           font-weight: 500;
         }
 
+        .votes {
+          border-top-right-radius: 4px;
+        }
+
         .winnerIcon {
-          display: table-cell;
+
+          border-top-left-radius: 4px;
+
           img {
             display:none;
           }

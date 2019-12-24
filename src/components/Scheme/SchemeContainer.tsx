@@ -89,6 +89,7 @@ class SchemeContainer extends React.Component<IProps, null> {
     }
 
     const isActive = getSchemeIsActive(schemeState);
+    // FAKE
     const crxRewarderConfig = getCrxRewarderConfig(schemeState);
 
     const proposalsTabClass = classNames({

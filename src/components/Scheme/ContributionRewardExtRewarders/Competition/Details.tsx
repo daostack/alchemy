@@ -147,13 +147,74 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             </div>
           </div>
           <div className={css.rightSection}>
-            <img src="/assets/images/Icon/winner.svg"></img>
-            <RewardsString proposal={proposalState} dao={daoState} />
-            <img className={css.transferIcon} src="/assets/images/Icon/Transfer.svg" />
-            <div className={css.winners}>{1} Winner(s)</div>
+            <div className={css.header}>
+              <div className={css.isWinner}><img src="/assets/images/Icon/winner.svg"></img></div>
+              <div className={css.results}>
+                <RewardsString proposal={proposalState} dao={daoState} />
+                <img className={css.transferIcon} src="/assets/images/Icon/Transfer.svg" />
+                <div className={css.winners}>{1} Winner(s)</div>
+              </div>
+            </div>
+            <div className={css.distribution}>
+              <div className={css.winner}>
+                <div className={css.position}>1st</div>
+                <div className={css.proportion}>40%</div>
+              </div>
+              <div className={css.winner}>
+                <div className={css.position}>2nd</div>
+                <div className={css.proportion}>20%</div>
+              </div>
+              <div className={css.winner}>
+                <div className={css.position}>3rd</div>
+                <div className={css.proportion}>10%</div>
+              </div>
+              <div className={css.winner}>
+                <div className={css.position}>4th</div>
+                <div className={css.proportion}>10%</div>
+              </div>
+              <div className={css.winner}>
+                <div className={css.position}>5th</div>
+                <div className={css.proportion}>5%</div>
+              </div>
+              <div className={css.winner}>
+                <div className={css.position}>6th</div>
+                <div className={css.proportion}>5%</div>
+              </div>
+              <div className={css.winner}>
+                <div className={css.position}>7th</div>
+                <div className={css.proportion}>5%</div>
+              </div>
+              <div className={css.winner}>
+                <div className={css.position}>8th</div>
+                <div className={css.proportion}>5%</div>
+              </div>
+            </div>
+            <div className={css.allowedVote}>Up to 3 votes allowed</div>
+            <div className={css.periods}>
+              <div className={css.period}>
+                <div className={css.bullet}></div>
+                <div className={css.label}>Competition start time:</div>
+                <div className={css.datetime}>21 Dec 2019</div>
+              </div>
+              <div className={css.period}>
+                <div className={css.bullet}></div>
+                <div className={css.label}>Submission end time:</div>
+                <div className={css.datetime}>30 Dec 2019</div>
+              </div>
+              <div className={css.period}>
+                <div className={css.bullet}></div>
+                <div className={css.label}>Voting start time:</div>
+                <div className={css.datetime}>1 Jan 2020</div>
+              </div>
+              <div className={css.period}>
+                <div className={css.bullet}></div>
+                <div className={css.label}>Competition end time:</div>
+                <div className={css.datetime}>20 Jan 2020</div>
+              </div>
+            </div>
           </div>
         </div>
-
+        
         <div className={css.solutions}>
           <div className={css.heading}>2 Solutions</div>
           <div className={css.list}>
