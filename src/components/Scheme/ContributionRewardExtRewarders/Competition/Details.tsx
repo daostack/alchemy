@@ -4,10 +4,9 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
 import { IDAOState, IProposalState } from "@daostack/client";
-import { schemeName, humanProposalTitle } from "lib/util";
+import { schemeName, humanProposalTitle, getDateWithTimezone, formatFriendlyDateForLocalTimezone } from "lib/util";
 import { connect } from "react-redux";
 
-import moment = require("moment");
 import Countdown from "components/Shared/Countdown";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
@@ -18,6 +17,7 @@ import { enableWalletProvider } from "arc";
 import CreateSuggestion, { ISubmitValues } from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSuggestion";
 import { Modal } from "react-router-modal";
 import SuggestionDetails from "components/Scheme/ContributionRewardExtRewarders/Competition/SuggestionDetails";
+import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competition/StatusBlob";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -70,10 +70,6 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     };
   }
 
-  private closingTime = (_proposal: IProposalState) => {
-    return moment(new Date("2020-01-01").getTime());
-  };
-
   private openNewSolutionModal = async (): Promise<void> => {
     
     const { showNotification } = this.props;
@@ -110,6 +106,11 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   public render(): RenderOutput {
     const { daoState, proposalState } = this.props;
     const tags = proposalState.tags;
+    const competition = proposalState.competition;
+    const startTime =         getDateWithTimezone(competition.startTime);
+    const solutionsEndTime =  getDateWithTimezone(competition.suggestionsEndTime);
+    const votingStartTime =   getDateWithTimezone(competition.votingStartTime);
+    const endTime =           getDateWithTimezone(competition.endTime);
 
     return <React.Fragment>
       <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}/crx`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
@@ -117,7 +118,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
       <div className={css.competitionDetailsContainer}>
       
-        <div className={css.status}>Open for Suggestions</div>
+        <StatusBlob competition={competition}></StatusBlob>
+        
         <div className={css.gotoProposal}><Link to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>Go to Proposal&nbsp;&gt;</Link></div>
         <div className={css.newSolution}>
           <a className={css.blueButton}
@@ -129,7 +131,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         <div className={css.name}>{humanProposalTitle(proposalState)}</div>
         <div className={css.countdown}>
           <div>Voting starts in:</div>
-          <Countdown toDate={this.closingTime(proposalState)} />
+          <Countdown toDate={votingStartTime} />
         </div>
 
         <div className={css.middleSection}>
@@ -194,22 +196,22 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
               <div className={css.period}>
                 <div className={css.bullet}></div>
                 <div className={css.label}>Competition start time:</div>
-                <div className={css.datetime}>21 Dec 2019</div>
+                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(startTime)}</div>
               </div>
               <div className={css.period}>
                 <div className={css.bullet}></div>
                 <div className={css.label}>Submission end time:</div>
-                <div className={css.datetime}>30 Dec 2019</div>
+                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(solutionsEndTime)}</div>
               </div>
               <div className={css.period}>
                 <div className={css.bullet}></div>
                 <div className={css.label}>Voting start time:</div>
-                <div className={css.datetime}>1 Jan 2020</div>
+                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(votingStartTime)}</div>
               </div>
               <div className={css.period}>
                 <div className={css.bullet}></div>
                 <div className={css.label}>Competition end time:</div>
-                <div className={css.datetime}>20 Jan 2020</div>
+                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(endTime)}</div>
               </div>
             </div>
           </div>

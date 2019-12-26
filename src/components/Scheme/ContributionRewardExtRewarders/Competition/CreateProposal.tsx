@@ -358,7 +358,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               />
 
               <div>
-                <TrainingTooltip overlay="Number of winners of this competition" placement="right">
+                <TrainingTooltip overlay="The anticipated number of winning Solutions for this competition" placement="right">
                   <label htmlFor="numWinnersInput">
                   Number of winners
                     <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -369,7 +369,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 <Field
                   id="numWinnersInput"
                   maxLength={120}
-                  placeholder={"How many winners will this competition have"}
+                  placeholder={"The anticipated number of winning Solutions for this competition"}
                   name="numWinners"
                   type="number"
                   className={touched.numWinners && errors.numWinners ? css.error : null}
@@ -396,7 +396,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               </div>
 
               <div>
-                <TrainingTooltip overlay="Number of beneficiaries each members can vote for" placement="right">
+                <TrainingTooltip overlay="Number of Solutions for which each member can vote" placement="right">
                   <label htmlFor="numVotesInput">
                   Number of votes
                     <ErrorMessage name="numberOfVotesPerVoter">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -407,7 +407,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 <Field
                   id="numVotesInput"
                   maxLength={120}
-                  placeholder={"How many beneficiaries can a member vote for"}
+                  placeholder={"Number of Solutions for which each member can vote"}
                   name="numberOfVotesPerVoter"
                   type="number"
                   className={touched.numberOfVotesPerVoter && errors.numberOfVotesPerVoter ? css.error : null}
@@ -516,20 +516,20 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
                 <div className={css.date}>
                   <img src="/assets/images/Icon/down.svg" className={css.downV}/>
-                  <label htmlFor="compEndDate">
-                    Competition end time
-                    <ErrorMessage name="compEndDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  <label htmlFor="suggestionsEndDate">
+                    Suggestions end time
+                    <ErrorMessage name="suggestionsEndDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="compEndDateInput"
-                    name="compEndDate"
+                    id="suggestionsEndDateInput"
+                    name="suggestionsEndDate"
                     type="date"
                     className={touched.endDate && errors.endDate ? css.error : null}
                   />
                   <div className={css.timeSelect}>
                     <Field
-                      id="compEndTimeInput"
-                      name="compEndTime"
+                      id="suggestionsEndTimeInput"
+                      name="suggestionsEndTime"
                       type="time"
                       component={SelectField}
                       className={css.timeSelect}
@@ -564,20 +564,20 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
                 <div className={css.date}>
                   <img src="/assets/images/Icon/down.svg" className={css.downV}/>
-                  <label htmlFor="suggestionsEndDate">
-                    Suggestions end time
-                    <ErrorMessage name="suggestionsEndDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  <label htmlFor="compEndDate">
+                    Competition end time
+                    <ErrorMessage name="compEndDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="suggestionsEndDateInput"
-                    name="suggestionsEndDate"
+                    id="compEndDateInput"
+                    name="compEndDate"
                     type="date"
                     className={touched.endDate && errors.endDate ? css.error : null}
                   />
                   <div className={css.timeSelect}>
                     <Field
-                      id="suggestionsEndTimeInput"
-                      name="suggestionsEndTime"
+                      id="compEndTimeInput"
+                      name="compEndTime"
                       type="time"
                       component={SelectField}
                       className={css.timeSelect}

@@ -5,15 +5,17 @@ import {
   IContributionReward,
   IProposalState,
   IRewardState,
-  ISchemeState } from "@daostack/client";
+  ISchemeState} from "@daostack/client";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
 import BN = require("bn.js");
+import "moment";
+import * as moment from "moment-timezone";
 import { getArc } from "../arc";
 
-import moment = require("moment");
+
 const Web3 = require("web3");
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
@@ -580,4 +582,19 @@ export function arrayRemove(arr: any[], value: any) {
   return arr.filter(function(ele){
     return ele !== value;
   });
+}
+
+const localTimezone = moment.tz.guess();
+
+export function getDateWithTimezone(date: Date) {
+  return moment.tz(date.toISOString(), localTimezone); 
+}
+
+const dateFormat = "HH:mm z (Z) MMM DD, YYYY";
+/**
+ * looks like: "17:30 EST (-05:00) Dec 31, 2019"
+ * @param date 
+ */
+export function formatFriendlyDateForLocalTimezone(date: moment.Moment): string {
+  return date.format(dateFormat);
 }

@@ -19,30 +19,11 @@
   padding: 26px 36px ;
   box-sizing: border-box;
 
-  .status {
+  .statusBlob {
     display: block;
-    height: 34px;
     margin: auto;
-    text-align: center;
-    border-radius: 4px;
-    background-color: #9aa9b5;
-    color: $white;
-    font-size: 13px;
-    padding-top: 9px;
-    padding-right: 16px;
-    padding-left: 16px;
-    box-sizing: border-box;
-    width: fit-content;
     margin-bottom: 30px;
-
-    &.open {
-      background-color: #00be90;
-    }
-
-    &.voting {
-      background-color: #e2ae10;
-    }
-}
+  }
 
   .createByContainer {
     display: flex;
@@ -135,16 +116,17 @@
 .competitionDetailsContainer {
   display: block;
 
-  .status {
-    display: block;
+  .statusBlob {
+    display: inline-block;
+    margin-bottom: 30px;
   }
 
   .gotoProposal {
-    display: block;
+    display: inline-block;
   }
 
   .newSolution {
-    display: relative;
+    display: inline-block;
   }
 
   .name {
@@ -178,8 +160,8 @@
     .rightSection {
       flex-grow: 0;
       background-color: $white;
-      padding-left: 12px;
-      padding-right: 12px;
+      padding-left:  20px;
+      padding-right: 20px;
       padding-bottom: 16px;
       border-radius: 4px;
       max-width: 300px;
@@ -263,6 +245,7 @@
 
           .label {
             color: #4f6176;
+            padding-right: 8px;
           }
 
           .datetime {
@@ -582,5 +565,27 @@ a.blueButton {
     background-color: rgba(200,200,200,.5);
     border: 1px solid rgba(200,200,200,1);
     cursor: not-allowed;
+  }
+}
+
+.statusBlob {
+  height: 34px;
+  text-align: center;
+  border-radius: 4px;
+  background-color: #9aa9b5;
+  color: $white;
+  font-size: 13px;
+  padding-top: 9px;
+  padding-right: 16px;
+  padding-left: 16px;
+  box-sizing: border-box;
+  width: fit-content;
+
+  &.open {
+    background-color: #00be90;
+  }
+
+  &.voting {
+    background-color: #e2ae10;
   }
 }

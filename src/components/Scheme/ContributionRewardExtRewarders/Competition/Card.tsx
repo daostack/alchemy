@@ -8,11 +8,10 @@ import { IDAOState, IProposalState } from "@daostack/client";
 import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
-import classNames from "classnames";
 import Countdown from "components/Shared/Countdown";
+import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competition/StatusBlob";
 import * as css from "./Competitions.scss";
-
-import moment = require("moment");
+import { competitionStatus } from "./utils";
 
 interface IStateProps {
   creatorProfile: IProfileState;
@@ -44,30 +43,21 @@ class CompetitionCard extends React.Component<IProps, null> {
     } = this.props;
 
     const competition = proposalState.competition;
-    const now = moment();
-    const startTime = moment(competition.startTime);
-    const votingStartTime = moment(competition.votingStartTime);
-    const endTime = moment(competition.endTime);
+    const status = competitionStatus(competition);
 
     return <div className={css.competitionCardContainer} data-test-id={"competition-card-" + proposalState.id}>
-      { now.isBefore(startTime) ?
-        <div className={css.status}>Not open yet</div> :
-        now.isBefore(votingStartTime) ? 
-          <div className={classNames({[css.status]: true, [css.open]: true})}>Open for suggestions</div> :
-          now.isBefore(endTime) ?
-            <div className={classNames({[css.status]: true, [css.voting]: true})}>Voting started!</div> : ""
-      }
+      <StatusBlob competition={competition}></StatusBlob>
       <div className={css.createByContainer}>
         <div className={css.createdBy}>
           <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
           <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
         </div>
-        { now.isBefore(startTime) ?
-          <div className={css.countdown}>Suggestions open in <Countdown fromDate={now} toDate={startTime}></Countdown></div> :
-          now.isBefore(votingStartTime) ? 
-            <div className={css.countdown}>Voting starts in <Countdown fromDate={now} toDate={votingStartTime}></Countdown></div> :
-            now.isBefore(endTime) ?
-              <div className={css.countdown}>Voting ends in <Countdown fromDate={now} toDate={endTime}></Countdown></div> : ""
+        { status.now.isBefore(status.startTime) ?
+          <div className={css.countdown}>Suggestions open in <Countdown toDate={status.startTime}></Countdown></div> :
+          status.now.isBefore(status.votingStartTime) ? 
+            <div className={css.countdown}>Voting starts in <Countdown toDate={status.votingStartTime}></Countdown></div> :
+            status.now.isBefore(status.endTime) ?
+              <div className={css.countdown}>Voting ends in <Countdown toDate={status.endTime}></Countdown></div> : ""
         }
       </div>
       <div className={css.description}>
@@ -78,7 +68,7 @@ class CompetitionCard extends React.Component<IProps, null> {
       <div className={css.rewards}>
         <div className={css.transferType}><RewardsString proposal={proposalState} dao={daoState} /></div>
         <img src="/assets/images/Icon/Transfer.svg" />
-        <div className={css.winners}>{competition.numberOfWinners} winners</div>
+        <div className={css.winners}>{competition.numberOfWinners} anticipated winners</div>
       </div>
       <div className={css.activityContainer}>
         <div className={css.suggestions}>21 Suggestions | 3 Votes</div>
