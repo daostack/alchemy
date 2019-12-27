@@ -1,16 +1,13 @@
-import { IDAOState, Address, IProposalState } from "@daostack/client";
+import { IDAOState, IProposalState } from "@daostack/client";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { isValidUrl } from "lib/util";
 import * as React from "react";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
-
-import UserSearchField from "components/Shared/UserSearchField";
 import * as css from "./Competitions.scss";
 
-export interface ISubmitValues {
-  recipient: Address;
+export interface ICreateSolutionOptions {
   description: string;
   title: string;
   url: string;
@@ -21,7 +18,7 @@ interface IExternalProps {
   daoState: IDAOState;
   proposalState: IProposalState;
   handleCancel: () => any;
-  handleSubmit: (values: ISubmitValues) => any;
+  handleSubmit: (values: ICreateSolutionOptions) => any;
 }
 
 interface IStateProps {
@@ -30,11 +27,11 @@ interface IStateProps {
 
 type IProps = IExternalProps;
 
-interface IFormValues extends ISubmitValues {
+interface IFormValues extends ICreateSolutionOptions {
   [key: string]: any;
 }
 
-export default class CreateSuggestion extends React.Component<IProps, IStateProps> {
+export default class CreateSolution extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
@@ -44,9 +41,7 @@ export default class CreateSuggestion extends React.Component<IProps, IStateProp
   }
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
-    if (!values.recipient.startsWith("0x")) { values.recipient = "0x" + values.recipient; }
-
-    const solutionValues = {...values,
+    const solutionValues: ICreateSolutionOptions = {...values,
       tags: this.state.tags,
     };
 
@@ -72,7 +67,6 @@ export default class CreateSuggestion extends React.Component<IProps, IStateProp
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           initialValues={{
-            recipient: "",
             description: "",
             title: "",
             url: "",
@@ -98,7 +92,6 @@ export default class CreateSuggestion extends React.Component<IProps, IStateProp
 
             require("description");
             require("title");
-            require("recipient");
 
             return errors;
           }}
@@ -173,22 +166,6 @@ export default class CreateSuggestion extends React.Component<IProps, IStateProp
                 type="text"
                 className={touched.url && errors.url ? css.error : null}
               />
-
-              <div>
-                <TrainingTooltip overlay="Ethereum Address or Alchemy Username to receive rewards" placement="right">
-                  <label htmlFor="recipient">
-                  Recipient
-                    <ErrorMessage name="recipient">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                    <div className={css.requiredMarker}>*</div>
-                  </label>
-                </TrainingTooltip>
-                <UserSearchField
-                  daoAvatarAddress={this.props.daoState.address}
-                  name="recipient"
-                  onBlur={(touched) => { setFieldTouched("recipient", touched); }}
-                  onChange={(newValue) => { setFieldValue("recipient", newValue); }}
-                />
-              </div>
 
               <div className={css.createProposalActions}>
                 <button className={css.exitProposalCreation} type="button" onClick={handleCancel}>

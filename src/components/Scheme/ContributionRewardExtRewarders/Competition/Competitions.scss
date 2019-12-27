@@ -297,16 +297,16 @@
           margin-bottom: 2px;
           background-color: $white;
 
-          .description, .creator, .votes, .winnerIcon {
+          .title, .creator, .votes, .winnerIcon, .votedUp {
             display: table-cell;
           }
 
-          .description, .creator, .votes {
+          .title, .creator, .votes {
             position: relative;
             bottom: 3px;
           }
 
-          .description {
+          .title {
             font-weight: 500;
           }
 
@@ -325,10 +325,14 @@
           }
 
           .votedUp {
-            display: hidden;
-            
+            img {
+              display: hidden;
+            }
+
             &.didVote {
-              display:inline-block;
+              img {
+                display:inline-block;
+              }
             }
           }
         }

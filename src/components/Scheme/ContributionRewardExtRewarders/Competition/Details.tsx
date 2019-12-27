@@ -14,14 +14,15 @@ import { Link } from "react-router-dom";
 import classNames from "classnames";
 import { showNotification } from "reducers/notifications";
 import { enableWalletProvider, getArc } from "arc";
-import CreateSuggestion, { ISubmitValues } from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSuggestion";
+import CreateSolution, { ICreateSolutionOptions } from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSolution";
 import { Modal } from "react-router-modal";
-import SuggestionDetails from "components/Scheme/ContributionRewardExtRewarders/Competition/SuggestionDetails";
+import SuggestionDetails from "components/Scheme/ContributionRewardExtRewarders/Competition/SolutionDetails";
 import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competition/StatusBlob";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { map } from "rxjs/operators";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
+import * as CompetitionActions from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -30,6 +31,7 @@ type ISubscriptionState = Array<ICompetitionSuggestion>;
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
+  createCompetitionSolution: typeof CompetitionActions.createCompetitionSolution;
 }
 
 interface IStateProps {
@@ -47,7 +49,6 @@ interface IExternalProps /* extends RouteComponentProps<any> */ {
 type IProps = IExternalProps & IDispatchProps & IStateProps & ISubscriptionProps<ISubscriptionState>;
 
 const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalProps): IExternalProps & IStateProps => {
-
   return {
     ...ownProps,
     creatorProfile: state.profiles[ownProps.proposalState.proposer],
@@ -57,6 +58,7 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
 };
 
 const mapDispatchToProps = {
+  createCompetitionSolution: CompetitionActions.createCompetitionSolution,
   showNotification,
 };
 
@@ -80,8 +82,10 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     this.setState({ showingCreateSuggestion: true });
   }
 
-  private submitNewSolutionModal = async (_values: ISubmitValues): Promise<void> => {
-    this.setState({ showingCreateSuggestion: true });
+  private submitNewSolutionModal = async (options: ICreateSolutionOptions): Promise<void> => {
+    await this.props.createCompetitionSolution(this.props.proposalState.id, options);
+
+    this.setState({ showingCreateSuggestion: false });
   }
 
   private cancelNewSolutionModal = async (): Promise<void> => {
@@ -124,6 +128,17 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           <div className={css.proportion}>40%</div>
         </div>,
       ];
+
+      /** the following is wrong
+      return solutions
+        .sort((a: ICompetitionSuggestion, b: ICompetitionSuggestion) => b.rewardPercentage - a.rewardPercentage)
+        .map((solution: ICompetitionSuggestion, index: number) => {
+          return <div key={index} className={css.winner}>
+            <div className={css.position}>{index+1}</div>
+            <div className={css.proportion}>{solution.rewardPercentage}%</div>
+          </div>;
+        });
+         */
     };
     const solutionsHtml = () => {
       return solutions.map((solution: ICompetitionSuggestion, index: number) => {
@@ -135,8 +150,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: true })}>
               <img src="/assets/images/Icon/winner.svg"></img>
             </div>
-            <div className={css.description}>
-              { solution.description }
+            <div className={css.title}>
+              { solution.title }
             </div>
             <div className={css.creator}>
               <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
@@ -149,7 +164,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
               FAKE: know whether the current account has voted for the solution.
               */}
             <div className={classNames({[css.votedUp]: true, [css.didVote]: true })}>
-              <img src="assets/images/Icon/for-gray.svg"></img>
+              <img src="/assets/images/Icon/vote/for-gray.svg"></img>
             </div>
           </div>
         </div>;
@@ -240,7 +255,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     
       {this.state.showingCreateSuggestion ?
         <Modal onBackdropClick={this.cancelNewSolutionModal}>
-          <CreateSuggestion proposalState={proposalState} daoState={daoState} handleCancel={this.cancelNewSolutionModal} handleSubmit={this.submitNewSolutionModal}></CreateSuggestion>
+          <CreateSolution proposalState={proposalState} daoState={daoState} handleCancel={this.cancelNewSolutionModal} handleSubmit={this.submitNewSolutionModal}></CreateSolution>
         </Modal> : ""
       }
 

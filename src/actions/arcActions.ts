@@ -5,7 +5,6 @@ import { toWei } from "lib/util";
 import { IRedemptionState } from "reducers/arcReducer";
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
-import { Dispatch } from "redux";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 
@@ -15,7 +14,7 @@ export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarA
  * // @ts-ignore
  * transaction.send().observer(...operationNotifierObserver(dispatch, "Whatever"))
  */
-const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescription = ""): [(update: ITransactionUpdate<any>) => void, (err: Error) => void] => {
+export const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescription = ""): [(update: ITransactionUpdate<any>) => void, (err: Error) => void] => {
   return [
     (update: ITransactionUpdate<any>) => {
       let msg: string;
@@ -57,7 +56,7 @@ export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAc
 }
 
 export function executeProposal(avatarAddress: string, proposalId: string, _accountAddress: string) {
-  return async (dispatch: Dispatch<any, any>) => {
+  return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
     const proposalObj = await arc.dao(avatarAddress).proposal(proposalId);

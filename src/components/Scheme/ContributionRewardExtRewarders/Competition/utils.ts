@@ -1,6 +1,12 @@
-import { ICompetitionProposal } from "@daostack/client";
+import { ICompetitionProposal, Competition } from "@daostack/client";
+import * as Redux from "redux";
+import { ThunkAction } from "redux-thunk";
 
 import moment = require("moment");
+import { getArc } from "arc";
+import { operationNotifierObserver } from "actions/arcActions";
+import { ICreateSolutionOptions } from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSolution";
+import { IRootState } from "reducers";
 
 export interface ICompetitionStatus {
   endTime: moment.Moment;
@@ -49,5 +55,19 @@ export const competitionStatus = (competition: ICompetitionProposal): ICompetiti
     text,
     voting,
     votingStartTime,
+  };
+};
+
+export const createCompetitionSolution = (proposalId: string, options: ICreateSolutionOptions ): ThunkAction<any, IRootState, null> => {
+  return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
+    try {
+      const observer = operationNotifierObserver(dispatch, "Create Solution");
+      const competition = new Competition(proposalId, getArc());
+      await competition.createSuggestion(options).subscribe(...observer);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
+      throw err;
+    }
   };
 };

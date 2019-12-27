@@ -31,7 +31,7 @@ interface IExternalProps {
 
 type IProps = IExternalProps & ISubscriptionProps<ISubscriptionState>;
 
-class SuggestionDetails extends React.Component<IProps, null> {
+class SolutionDetails extends React.Component<IProps, null> {
 
   public handleVote = async (): Promise<void> => {
     this.props.handleVote();
@@ -66,7 +66,7 @@ class SuggestionDetails extends React.Component<IProps, null> {
 }
 
 export default withSubscription({
-  wrappedComponent: SuggestionDetails,
+  wrappedComponent: SolutionDetails,
   loadingComponent: null,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["suggestionId"],
