@@ -142,32 +142,31 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     };
     const solutionsHtml = () => {
       return solutions.map((solution: ICompetitionSuggestion, index: number) => {
-        return  <div key={index} className={css.row} onClick={this.openSuggestionDetailsModal(solution.id)}>
-          <div className={css.innerContainer}>
+        return (
+          <div key={index} className={css.row} onClick={this.openSuggestionDetailsModal(solution.id)}>
             {/*
               FAKE:  know if a winner.  Can't be a winner until competition is over
               */}
-            <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: true })}>
+            <div className={classNames({[css.cell]: true, [css.winnerIcon]: true, [css.isWinner]: true })}>
               <img src="/assets/images/Icon/winner.svg"></img>
             </div>
-            <div className={css.title}>
-              { solution.title }
+            <div className={classNames({[css.cell]: true, [css.title]: true})}>
+              { solution.title || "No title is available" }
             </div>
-            <div className={css.creator}>
+            <div className={classNames({[css.cell]: true, [css.creator]: true})}>
               <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
               <AccountProfileName accountAddress={proposalState.proposer} accountProfile={this.props.creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
             </div>
-            <div className={css.votes}>
+            <div className={classNames({[css.cell]: true, [css.votes]: true})}>
               { formatTokens(solution.totalVotes) }
             </div>
             {/*
               FAKE: know whether the current account has voted for the solution.
               */}
-            <div className={classNames({[css.votedUp]: true, [css.didVote]: true })}>
+            <div className={classNames({[css.cell]: true, [css.votedUp]: true, [css.didVote]: true })}>
               <img src="/assets/images/Icon/vote/for-gray.svg"></img>
             </div>
-          </div>
-        </div>;
+          </div>);
       });
     };
 
