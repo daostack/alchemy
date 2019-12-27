@@ -97,10 +97,6 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
   constructor(props: IProps) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.state = { 
-      tags: new Array<string>(),
-    };
-
     this.initialFormValues = importUrlValues({
       beneficiary: "",
       description: "",
@@ -111,9 +107,11 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       reputationReward: 0,
       title: "",
       url: "",
+      tags: [],
     });
-    // Populating the state with URL parameters
-    this.state = importUrlValues(this.state);
+    this.state = {
+      tags: this.initialFormValues.tags,
+    };
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {

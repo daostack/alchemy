@@ -81,12 +81,13 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       },
       title: "",
       url: "",
+      currentTab: "",
+      tags: [],
     });
     this.state = {
-      currentTab: this.loadCurrentTab(),
-      tags: new Array<string>(),
+      currentTab: this.initialFormValues.currentTab,
+      tags: this.initialFormValues.tags,
     };
-    this.state = importUrlValues(this.state);
   }
   
   
@@ -148,24 +149,6 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     };
     exportUrl(values);
     this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
-  }
-  
-  loadCurrentTab(){
-    let initialCurrentTab = importUrlValues({ schemeToAdd: "", schemeToEdit: "", schemeToRemove: ""});
-    if(initialCurrentTab.schemeToAdd) {
-      initialCurrentTab = "addScheme";
-    }
-    else if(initialCurrentTab.schemeToEdit) {
-      initialCurrentTab = "editScheme";
-    }
-    else if(initialCurrentTab.schemeToRemove) {
-      initialCurrentTab = "removeScheme";
-    }
-    else {
-      initialCurrentTab = "addScheme";
-    }
-
-    return initialCurrentTab;
   }
   
   public render(): RenderOutput {
