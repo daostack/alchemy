@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { Address, ISchemeState, IDAOState, IProposalState } from "@daostack/client";
+import { ISchemeState, IDAOState, IProposalState } from "@daostack/client";
 import Card from "components/Scheme/ContributionRewardExtRewarders/Competition/Card";
 import * as css from "./Competitions.scss";
 
@@ -10,7 +10,6 @@ interface IProps {
   daoState: IDAOState;
   scheme: ISchemeState;
   proposals: Array<IProposalState>;
-  currentAccountAddress: Address;
 }
 
 export default class CompetitionsList extends React.Component<IProps, null> {

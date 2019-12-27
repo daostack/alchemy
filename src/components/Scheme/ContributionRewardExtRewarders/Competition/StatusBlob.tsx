@@ -11,10 +11,7 @@ export interface IExternalProps {
 export default class StatusBlob extends React.Component<IExternalProps, null> {
 
   public render(): RenderOutput {
-
     const status = competitionStatus(this.props.competition);
-
     return <div className={classNames({[css.statusBlob]: true, [css.open]: status.open, [css.voting]: status.voting})}>{status.text}</div>;
   }
-
 }

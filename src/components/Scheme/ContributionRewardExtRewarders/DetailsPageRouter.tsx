@@ -35,7 +35,6 @@ class DetailsPageRouter extends React.Component<IProps, null>
     switch(crxRewarderConfig.contractName) {
       case "Competition":
         return <CompetitionDetails 
-          {...this.props}
           daoState={this.props.daoState}
           proposalState={proposalState} />;
       default:

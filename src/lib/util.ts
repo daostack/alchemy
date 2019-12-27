@@ -590,7 +590,7 @@ export function getDateWithTimezone(date: Date) {
   return moment.tz(date.toISOString(), localTimezone); 
 }
 
-const dateFormat = "HH:mm z (Z) MMM DD, YYYY";
+const dateFormat = "MMM DD, YYYY HH:mm z (Z) ";
 /**
  * looks like: "17:30 EST (-05:00) Dec 31, 2019"
  * @param date 

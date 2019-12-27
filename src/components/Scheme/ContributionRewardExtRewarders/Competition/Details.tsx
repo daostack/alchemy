@@ -3,8 +3,8 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
-import { IDAOState, IProposalState } from "@daostack/client";
-import { schemeName, humanProposalTitle, getDateWithTimezone, formatFriendlyDateForLocalTimezone } from "lib/util";
+import { IDAOState, IProposalState, ICompetitionSuggestion, CompetitionSuggestion, Competition } from "@daostack/client";
+import { schemeName, humanProposalTitle, getDateWithTimezone, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
 import { connect } from "react-redux";
 
 import Countdown from "components/Shared/Countdown";
@@ -13,14 +13,20 @@ import RewardsString from "components/Proposal/RewardsString";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 import { showNotification } from "reducers/notifications";
-import { enableWalletProvider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import CreateSuggestion, { ISubmitValues } from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSuggestion";
 import { Modal } from "react-router-modal";
 import SuggestionDetails from "components/Scheme/ContributionRewardExtRewarders/Competition/SuggestionDetails";
 import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competition/StatusBlob";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import { map } from "rxjs/operators";
+import AccountPopup from "components/Account/AccountPopup";
+import AccountProfileName from "components/Account/AccountProfileName";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
+
+type ISubscriptionState = Array<ICompetitionSuggestion>;
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -28,7 +34,6 @@ interface IDispatchProps {
 
 interface IStateProps {
   creatorProfile: IProfileState;
-  beneficiaryProfile: IProfileState;
   showingCreateSuggestion: boolean;
   showingSuggestionDetails: string;
 }
@@ -39,16 +44,13 @@ interface IExternalProps /* extends RouteComponentProps<any> */ {
   // history: H.History;
 }
 
-type IProps = IExternalProps & IDispatchProps & IStateProps;
+type IProps = IExternalProps & IDispatchProps & IStateProps & ISubscriptionProps<ISubscriptionState>;
 
 const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalProps): IExternalProps & IStateProps => {
 
   return {
     ...ownProps,
     creatorProfile: state.profiles[ownProps.proposalState.proposer],
-    // FAKE:  should be proposalState.contributionRewardExt
-    beneficiaryProfile: state.profiles[ownProps.proposalState.contributionReward.beneficiary],
-    // currentAccountAddress: state.web3.currentAccountAddress,
     showingCreateSuggestion: state.showingCreateSuggestion,
     showingSuggestionDetails: state.showingSuggestionDetails,
   };
@@ -63,7 +65,6 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   constructor(props: IProps) {
     super(props);
     this.state = { 
-      beneficiaryProfile: null,
       creatorProfile: null,
       showingCreateSuggestion: false,
       showingSuggestionDetails: null,
@@ -105,12 +106,55 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
   public render(): RenderOutput {
     const { daoState, proposalState } = this.props;
+    const solutions = this.props.data;
     const tags = proposalState.tags;
     const competition = proposalState.competition;
     const startTime =         getDateWithTimezone(competition.startTime);
     const solutionsEndTime =  getDateWithTimezone(competition.suggestionsEndTime);
     const votingStartTime =   getDateWithTimezone(competition.votingStartTime);
     const endTime =           getDateWithTimezone(competition.endTime);
+    const distributionsHtml = () => {
+      return [
+        <div key={0} className={css.winner}>
+          <div className={css.position}>1st</div>
+          <div className={css.proportion}>60%</div>
+        </div>,
+        <div key={1} className={css.winner}>
+          <div className={css.position}>2nd</div>
+          <div className={css.proportion}>40%</div>
+        </div>,
+      ];
+    };
+    const solutionsHtml = () => {
+      return solutions.map((solution: ICompetitionSuggestion, index: number) => {
+        return  <div key={index} className={css.row} onClick={this.openSuggestionDetailsModal(solution.id)}>
+          <div className={css.innerContainer}>
+            {/*
+              FAKE:  know if a winner.  Can't be a winner until competition is over
+              */}
+            <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: true })}>
+              <img src="/assets/images/Icon/winner.svg"></img>
+            </div>
+            <div className={css.description}>
+              { solution.description }
+            </div>
+            <div className={css.creator}>
+              <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
+              <AccountProfileName accountAddress={proposalState.proposer} accountProfile={this.props.creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
+            </div>
+            <div className={css.votes}>
+              { formatTokens(solution.totalVotes) }
+            </div>
+            {/*
+              FAKE: know whether the current account has voted for the solution.
+              */}
+            <div className={classNames({[css.votedUp]: true, [css.didVote]: true })}>
+              <img src="assets/images/Icon/for-gray.svg"></img>
+            </div>
+          </div>
+        </div>;
+      });
+    };
 
     return <React.Fragment>
       <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}/crx`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
@@ -130,7 +174,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         </div>
         <div className={css.name}>{humanProposalTitle(proposalState)}</div>
         <div className={css.countdown}>
-          <div>Voting starts in:</div>
+          <div className={css.startsIn}>Voting starts in:</div>
           <Countdown toDate={votingStartTime} />
         </div>
 
@@ -154,44 +198,13 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
               <div className={css.results}>
                 <RewardsString proposal={proposalState} dao={daoState} />
                 <img className={css.transferIcon} src="/assets/images/Icon/Transfer.svg" />
-                <div className={css.winners}>{1} Winner(s)</div>
+                <div className={css.winners}>{competition.numberOfWinners} anticipated winner(s)</div>
               </div>
             </div>
             <div className={css.distribution}>
-              <div className={css.winner}>
-                <div className={css.position}>1st</div>
-                <div className={css.proportion}>40%</div>
-              </div>
-              <div className={css.winner}>
-                <div className={css.position}>2nd</div>
-                <div className={css.proportion}>20%</div>
-              </div>
-              <div className={css.winner}>
-                <div className={css.position}>3rd</div>
-                <div className={css.proportion}>10%</div>
-              </div>
-              <div className={css.winner}>
-                <div className={css.position}>4th</div>
-                <div className={css.proportion}>10%</div>
-              </div>
-              <div className={css.winner}>
-                <div className={css.position}>5th</div>
-                <div className={css.proportion}>5%</div>
-              </div>
-              <div className={css.winner}>
-                <div className={css.position}>6th</div>
-                <div className={css.proportion}>5%</div>
-              </div>
-              <div className={css.winner}>
-                <div className={css.position}>7th</div>
-                <div className={css.proportion}>5%</div>
-              </div>
-              <div className={css.winner}>
-                <div className={css.position}>8th</div>
-                <div className={css.proportion}>5%</div>
-              </div>
+              { distributionsHtml() }
             </div>
-            <div className={css.allowedVote}>Up to 3 votes allowed</div>
+            <div className={css.allowedVote}>Up to {competition.numberOfVotesPerVoter} votes allowed per account</div>
             <div className={css.periods}>
               <div className={css.period}>
                 <div className={css.bullet}></div>
@@ -218,41 +231,9 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         </div>
         
         <div className={css.solutions}>
-          <div className={css.heading}>2 Solutions</div>
+          <div className={css.heading}>{solutions.length} Solutions</div>
           <div className={css.list}>
-            { /* TODO:  gotta have a list of suggestionIds, and know whether the current account has voted for it */ } 
-            <div className={css.row} onClick={this.openSuggestionDetailsModal("5678")}>
-              <div className={css.innerContainer}>
-                <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: true })}>
-                  <img src="/assets/images/Icon/winner.svg"></img>
-                </div>
-                <div className={css.description}>
-                Genesis logo inspired by the sun - you have to take a look to understand (:
-                </div>
-                <div className={css.creator}>
-                [Account Info]
-                </div>
-                <div className={css.votes}>
-                16.5
-                </div>
-              </div>
-            </div>
-            <div className={css.row} onClick={this.openSuggestionDetailsModal("1234")}>
-              <div className={css.innerContainer}>
-                <div className={classNames({[css.winnerIcon]: true, [css.isWinner]: false })}>
-                  <img src="/assets/images/Icon/winner.svg"></img>
-                </div>
-                <div className={css.description}>
-                  DAOstack logo with a mechanical twist
-                </div>
-                <div className={css.creator}>
-                  [Account Info]
-                </div>
-                <div className={css.votes}>
-                  12.5<img src="/assets/images/Icon/vote/for-fill-green.svg" />
-                </div>
-              </div>
-            </div>
+            {solutionsHtml()}
           </div>
         </div>
       </div>
@@ -273,4 +254,20 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CompetitionDetails);
+const CompetitionDetailsConnected = connect(mapStateToProps, mapDispatchToProps)(CompetitionDetails);
+
+export default withSubscription({
+  wrappedComponent: CompetitionDetailsConnected,
+  loadingComponent: null,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
+  checkForUpdate: [],
+  createObservable: (props: IExternalProps) => {
+    // FAKE -- until we have IProposalState.competition.suggestions()
+    const competition = new Competition(props.proposalState.id, getArc());
+    // return props.proposalState.competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true } )
+    return competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true } )
+      .pipe(
+        map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion.staticState ))
+      );
+  },
+});

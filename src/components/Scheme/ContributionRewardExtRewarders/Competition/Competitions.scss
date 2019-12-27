@@ -114,8 +114,6 @@
 }
 
 .competitionDetailsContainer {
-  display: block;
-
   .statusBlob {
     display: inline-block;
     margin-bottom: 30px;
@@ -130,12 +128,27 @@
   }
 
   .name {
-    display: block;
+    font-size: 28px;
     border-bottom: $gray-border-2;
+    color: #689bd6;
+    margin-bottom: 6px;
+    padding-bottom: 16px;
   }
 
   .countdown {
-    display: block;
+    font-size: 13px;
+    color: #9aa9b5;
+    white-space: nowrap;
+    margin-bottom: 26px;
+
+    .startsIn {
+      display: inline-block;
+      margin-right: 8px;
+    }
+    /* Countdown component */
+    .container {
+      display: inline-block;
+    }
   }
 
   .tagsContainer {
@@ -279,7 +292,7 @@
         cursor: pointer;
 
         .innerContainer {
-          padding: 4px 8px;
+          padding: 10px 8px;
           border-radius: 4px;
           margin-bottom: 2px;
           background-color: $white;
@@ -308,6 +321,14 @@
               img {
                 display: inline-block;
               }
+            }
+          }
+
+          .votedUp {
+            display: hidden;
+            
+            &.didVote {
+              display:inline-block;
             }
           }
         }

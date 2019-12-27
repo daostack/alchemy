@@ -72,7 +72,7 @@ class SchemeContainer extends React.Component<IProps, null> {
 
     switch(crxRewarderConfig.contractName) {
       case "Competition":
-        return <Competitions {...props} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} proposals={this.props.data[1]} />;
+        return <Competitions {...props} daoState={this.props.daoState} scheme={this.props.data[0]} proposals={this.props.data[1]} />;
       default:
         throw new Error(`Unknown ContributionRewardExt rewarder name: ${crxRewarderConfig.contractName}`);
     }
