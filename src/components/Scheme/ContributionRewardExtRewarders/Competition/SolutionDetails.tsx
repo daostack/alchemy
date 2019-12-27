@@ -27,6 +27,7 @@ interface IExternalProps {
   suggestionId: string;
   handleClose: () => any;
   handleVote: () => any;
+  handleRedeem: () => any;
 }
 
 type IProps = IExternalProps & ISubscriptionProps<ISubscriptionState>;

@@ -103,6 +103,12 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     if (!await enableWalletProvider({ showNotification })) { return; }
   }
 
+  private redeemSuggestion = async (): Promise<void> => {
+    const { showNotification } = this.props;
+
+    if (!await enableWalletProvider({ showNotification })) { return; }
+  }
+
   private closeSuggestionDetailsModal = async (): Promise<void> => {
     this.setState({ showingSuggestionDetails: null });
     return Promise.resolve(); // delete this when the actual vote is coded
@@ -141,29 +147,31 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
          */
     };
     const solutionsHtml = () => {
+
       return solutions.map((solution: ICompetitionSuggestion, index: number) => {
+        const isSelected = () => this.state.showingSuggestionDetails === solution.id;
         return (
           <div key={index} className={css.row} onClick={this.openSuggestionDetailsModal(solution.id)}>
             {/*
               FAKE:  know if a winner.  Can't be a winner until competition is over
               */}
-            <div className={classNames({[css.cell]: true, [css.winnerIcon]: true, [css.isWinner]: true })}>
+            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.winnerIcon]: true, [css.isWinner]: true })}>
               <img src="/assets/images/Icon/winner.svg"></img>
             </div>
-            <div className={classNames({[css.cell]: true, [css.title]: true})}>
-              { solution.title || "No title is available" }
+            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.title]: true})}>
+              { solution.title || "[No title is available]" }
             </div>
-            <div className={classNames({[css.cell]: true, [css.creator]: true})}>
+            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.creator]: true})}>
               <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
               <AccountProfileName accountAddress={proposalState.proposer} accountProfile={this.props.creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
             </div>
-            <div className={classNames({[css.cell]: true, [css.votes]: true})}>
+            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votes]: true})}>
               { formatTokens(solution.totalVotes) }
             </div>
             {/*
               FAKE: know whether the current account has voted for the solution.
               */}
-            <div className={classNames({[css.cell]: true, [css.votedUp]: true, [css.didVote]: true })}>
+            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votedUp]: true, [css.didVote]: true })}>
               <img src="/assets/images/Icon/vote/for-gray.svg"></img>
             </div>
           </div>);
@@ -260,7 +268,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
       {this.state.showingSuggestionDetails ?
         <Modal onBackdropClick={this.closeSuggestionDetailsModal}>
-          <SuggestionDetails suggestionId={this.state.showingSuggestionDetails} proposalState={proposalState} daoState={daoState} handleClose={this.closeSuggestionDetailsModal} handleVote={this.voteOnSuggestion}></SuggestionDetails>
+          <SuggestionDetails suggestionId={this.state.showingSuggestionDetails} proposalState={proposalState} daoState={daoState} handleClose={this.closeSuggestionDetailsModal} handleVote={this.voteOnSuggestion} handleRedeem={this.redeemSuggestion}></SuggestionDetails>
         </Modal> : ""
       }
 
