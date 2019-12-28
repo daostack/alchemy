@@ -186,7 +186,7 @@ const SubscribedSchemeContainer = withSubscription({
     let  executedCompetitionProposals: Observable<Array<IProposalState>>;
     if (isCompetitionScheme(arc,schemeState)) {
       
-      // TODO: can this query be simplified???
+      // TODO: can there please be a simpler way to do this???
       executedCompetitionProposals = from((await props.daoState.dao.proposals(
         // eslint-disable-next-line @typescript-eslint/camelcase
         { where: { scheme: scheme.id, stage_in: [IProposalStage.Executed]},

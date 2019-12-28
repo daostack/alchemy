@@ -16,13 +16,15 @@ import { showNotification } from "reducers/notifications";
 import { enableWalletProvider, getArc } from "arc";
 import CreateSolution, { ICreateSolutionOptions } from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSolution";
 import { Modal } from "react-router-modal";
-import SuggestionDetails from "components/Scheme/ContributionRewardExtRewarders/Competition/SolutionDetails";
+import SolutionDetails from "components/Scheme/ContributionRewardExtRewarders/Competition/SolutionDetails";
 import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competition/StatusBlob";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { map } from "rxjs/operators";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import * as CompetitionActions from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+
+import moment = require("moment");
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -36,8 +38,8 @@ interface IDispatchProps {
 
 interface IStateProps {
   creatorProfile: IProfileState;
-  showingCreateSuggestion: boolean;
-  showingSuggestionDetails: string;
+  showingCreateSolution: boolean;
+  showingSolutionDetails: string;
 }
 
 interface IExternalProps /* extends RouteComponentProps<any> */ {
@@ -52,8 +54,8 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
   return {
     ...ownProps,
     creatorProfile: state.profiles[ownProps.proposalState.proposer],
-    showingCreateSuggestion: state.showingCreateSuggestion,
-    showingSuggestionDetails: state.showingSuggestionDetails,
+    showingCreateSolution: state.showingCreateSolution,
+    showingSolutionDetails: state.showingSolutionDetails,
   };
 };
 
@@ -68,8 +70,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     super(props);
     this.state = { 
       creatorProfile: null,
-      showingCreateSuggestion: false,
-      showingSuggestionDetails: null,
+      showingCreateSolution: false,
+      showingSolutionDetails: null,
     };
   }
 
@@ -79,38 +81,42 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
     if (!await enableWalletProvider({ showNotification })) { return; }
 
-    this.setState({ showingCreateSuggestion: true });
+    this.setState({ showingCreateSolution: true });
   }
 
   private submitNewSolutionModal = async (options: ICreateSolutionOptions): Promise<void> => {
     await this.props.createCompetitionSolution(this.props.proposalState.id, options);
 
-    this.setState({ showingCreateSuggestion: false });
+    this.setState({ showingCreateSolution: false });
   }
 
   private cancelNewSolutionModal = async (): Promise<void> => {
-    this.setState({ showingCreateSuggestion: false });
+    this.setState({ showingCreateSolution: false });
   }
 
-  private openSuggestionDetailsModal = (suggestionId: string) => async (): Promise<void> => {
+  private openSolutionDetailsModal = (suggestionId: string) => async (): Promise<void> => {
 
-    this.setState({ showingSuggestionDetails: suggestionId });
+    this.setState({ showingSolutionDetails: suggestionId });
   }
 
-  private voteOnSuggestion = async (): Promise<void> => {
+  private voteOnSolution = async (): Promise<void> => {
     const { showNotification } = this.props;
 
     if (!await enableWalletProvider({ showNotification })) { return; }
+  
+    this.setState({ showingSolutionDetails: null });
   }
 
-  private redeemSuggestion = async (): Promise<void> => {
+  private redeemSolution = async (): Promise<void> => {
     const { showNotification } = this.props;
 
     if (!await enableWalletProvider({ showNotification })) { return; }
+  
+    this.setState({ showingSolutionDetails: null });
   }
 
-  private closeSuggestionDetailsModal = async (): Promise<void> => {
-    this.setState({ showingSuggestionDetails: null });
+  private closeSolutionDetailsModal = async (): Promise<void> => {
+    this.setState({ showingSolutionDetails: null });
     return Promise.resolve(); // delete this when the actual vote is coded
   }
 
@@ -119,6 +125,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const solutions = this.props.data;
     const tags = proposalState.tags;
     const competition = proposalState.competition;
+    const now = moment();
+    const notYetVoting = now.isBefore(competition.startTime);
     const startTime =         getDateWithTimezone(competition.startTime);
     const solutionsEndTime =  getDateWithTimezone(competition.suggestionsEndTime);
     const votingStartTime =   getDateWithTimezone(competition.votingStartTime);
@@ -149,11 +157,11 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const solutionsHtml = () => {
 
       return solutions.map((solution: ICompetitionSuggestion, index: number) => {
-        const isSelected = () => this.state.showingSuggestionDetails === solution.id;
+        const isSelected = () => this.state.showingSolutionDetails === solution.id;
         return (
-          <div key={index} className={css.row} onClick={this.openSuggestionDetailsModal(solution.id)}>
+          <div key={index} className={css.row} onClick={this.openSolutionDetailsModal(solution.id)}>
             {/*
-              FAKE:  know if a winner.  Can't be a winner until competition is over
+              FAKE:  until we how to know if a winner.  Can't be a winner until competition is over
               */}
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.winnerIcon]: true, [css.isWinner]: true })}>
               <img src="/assets/images/Icon/winner.svg"></img>
@@ -184,21 +192,26 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
       <div className={css.competitionDetailsContainer}>
       
-        <StatusBlob competition={competition}></StatusBlob>
-        
-        <div className={css.gotoProposal}><Link to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>Go to Proposal&nbsp;&gt;</Link></div>
-        <div className={css.newSolution}>
-          <a className={css.blueButton}
-            href="javascript:void(0)"
-            onClick={this.openNewSolutionModal}
-            data-test-id="createSuggestion"
-          >+ New Solution</a>
+        <div className={css.header}>
+          <StatusBlob competition={competition}></StatusBlob>
+          <div className={css.gotoProposal}><Link to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>Go to Proposal&nbsp;&gt;</Link></div>
+          <div className={css.newSolution}>
+            <a className={css.blueButton}
+              href="javascript:void(0)"
+              onClick={this.openNewSolutionModal}
+              data-test-id="createSuggestion"
+            >+ New Solution</a>
+          </div>
         </div>
+
         <div className={css.name}>{humanProposalTitle(proposalState)}</div>
-        <div className={css.countdown}>
-          <div className={css.startsIn}>Voting starts in:</div>
-          <Countdown toDate={votingStartTime} />
-        </div>
+
+        { notYetVoting ? 
+          <div className={css.countdown}>
+            <div className={css.startsIn}>Voting starts in:</div>
+            <Countdown toDate={votingStartTime} />
+          </div> : ""
+        }
 
         <div className={css.middleSection}>
           <div className={css.leftSection}>
@@ -260,15 +273,25 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         </div>
       </div>
     
-      {this.state.showingCreateSuggestion ?
+      {this.state.showingCreateSolution ?
         <Modal onBackdropClick={this.cancelNewSolutionModal}>
-          <CreateSolution proposalState={proposalState} daoState={daoState} handleCancel={this.cancelNewSolutionModal} handleSubmit={this.submitNewSolutionModal}></CreateSolution>
+          <CreateSolution
+            proposalState={proposalState}
+            daoState={daoState}
+            handleCancel={this.cancelNewSolutionModal}
+            handleSubmit={this.submitNewSolutionModal}></CreateSolution>
         </Modal> : ""
       }
 
-      {this.state.showingSuggestionDetails ?
-        <Modal onBackdropClick={this.closeSuggestionDetailsModal}>
-          <SuggestionDetails suggestionId={this.state.showingSuggestionDetails} proposalState={proposalState} daoState={daoState} handleClose={this.closeSuggestionDetailsModal} handleVote={this.voteOnSuggestion} handleRedeem={this.redeemSuggestion}></SuggestionDetails>
+      {this.state.showingSolutionDetails ?
+        <Modal onBackdropClick={this.closeSolutionDetailsModal}>
+          <SolutionDetails
+            suggestionId={this.state.showingSolutionDetails}
+            proposalState={proposalState}
+            daoState={daoState}
+            handleClose={this.closeSolutionDetailsModal}
+            handleVote={this.voteOnSolution}
+            handleRedeem={this.redeemSolution}></SolutionDetails>
         </Modal> : ""
       }
 
@@ -287,7 +310,7 @@ export default withSubscription({
     // FAKE -- until we have IProposalState.competition.suggestions()
     const competition = new Competition(props.proposalState.id, getArc());
     // return props.proposalState.competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true } )
-    return competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true } )
+    return competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true, fetchAllData: true } )
       .pipe(
         map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion.staticState ))
       );

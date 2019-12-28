@@ -1,3 +1,48 @@
+a.blueButton {
+  height: 30px;
+  line-height: 30px;
+  font-size: 13px;
+  color: white;
+  background-color: rgba(5, 118, 255, 1.000);
+  transition: all .25s ease;
+  border-radius: 15px;
+  display: inline-block;
+  padding: 0 22px;
+
+  &:hover {
+    background-color: rgba(19, 46, 91, 1.000);
+    color: $white;
+  }
+
+  &.disabled, &disabled:hover {
+    background-color: rgba(200,200,200,.5);
+    border: 1px solid rgba(200,200,200,1);
+    cursor: not-allowed;
+  }
+}
+
+.statusBlob {
+  height: 34px;
+  text-align: center;
+  border-radius: 4px;
+  background-color: #9aa9b5;
+  color: $white;
+  font-size: 13px;
+  padding-top: 9px;
+  padding-right: 16px;
+  padding-left: 16px;
+  box-sizing: border-box;
+  width: fit-content;
+
+  &.open {
+    background-color: #00be90;
+  }
+
+  &.voting {
+    background-color: #e2ae10;
+  }
+}
+
 .competitionCards {
   display: flex;
   justify-content: center;
@@ -44,10 +89,6 @@
       height: 18px;
       font-weight: 500;
       white-space: nowrap;
-
-      // .countdown {
-      //   font-weight: 500;
-      // }
     }
   }
 
@@ -114,17 +155,28 @@
 }
 
 .competitionDetailsContainer {
-  .statusBlob {
-    display: inline-block;
-    margin-bottom: 30px;
-  }
 
-  .gotoProposal {
-    display: inline-block;
-  }
+  .header {
+    display: flex;
 
-  .newSolution {
-    display: inline-block;
+    .statusBlob {
+      display: inline-block;
+      margin-bottom: 30px;
+      flex: 1;
+      margin-right: 20px;
+    }
+
+    .gotoProposal {
+      display: inline-block;
+      flex: 1;
+      position: relative;
+      top: 6px;
+    }
+
+    .newSolution {
+      text-align: right;
+      flex: 2;
+    }
   }
 
   .name {
@@ -579,16 +631,50 @@
   width: 540px;
   max-width: 445px;
 
-  .closeButton {
-    display: inline-block;
-  }
+  .header {
+    display: flex;
 
-  .reputationVoted {
-    display: inline-block;
-  } 
+    .closeButton {
+      flex-grow: 2;
+      vertical-align: middle;
+      width: 60%;
+      img {
+        width: 13px;
+        height: 13px;
+      }
+    }
 
-  .voteButton {
-    display: block;
+    .reputationVoted {
+      flex-grow: 1;
+      vertical-align: middle;
+
+      img {
+        vertical-align: middle;
+        padding-right: 6px;
+      }
+    }
+
+    .actions {
+      flex-grow: 1;
+      vertical-align: middle;
+      margin-bottom: 16px;
+
+      a.blueButton.voteButton {
+        img {
+          margin-left: 3px;
+          position: relative;
+          top: 6px;
+        }
+      }
+
+      a.blueButton.redeemButton {
+        img {
+          margin-right: 3px;
+          position: relative;
+          top: 6px;
+        }
+      }
+    }
   }
 
   .title {
@@ -596,55 +682,10 @@
   }
 
   .proposer {
-    display: block;
+    margin-bottom: 16px;
   }
 
   .description {
     display: block;
-  }
-}
-
-a.blueButton {
-  height: 30px;
-  line-height: 30px;
-  font-size: 13px;
-  color: white;
-  background-color: rgba(5, 118, 255, 1.000);
-  transition: all .25s ease;
-  border-radius: 15px;
-  display: inline-block;
-  padding: 0 22px;
-
-  &:hover {
-    background-color: rgba(19, 46, 91, 1.000);
-    color: $white;
-  }
-
-  &.disabled, &disabled:hover {
-    background-color: rgba(200,200,200,.5);
-    border: 1px solid rgba(200,200,200,1);
-    cursor: not-allowed;
-  }
-}
-
-.statusBlob {
-  height: 34px;
-  text-align: center;
-  border-radius: 4px;
-  background-color: #9aa9b5;
-  color: $white;
-  font-size: 13px;
-  padding-top: 9px;
-  padding-right: 16px;
-  padding-left: 16px;
-  box-sizing: border-box;
-  width: fit-content;
-
-  &.open {
-    background-color: #00be90;
-  }
-
-  &.voting {
-    background-color: #e2ae10;
   }
 }

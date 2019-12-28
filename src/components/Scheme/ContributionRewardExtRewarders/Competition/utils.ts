@@ -9,9 +9,11 @@ import { ICreateSolutionOptions } from "components/Scheme/ContributionRewardExtR
 import { IRootState } from "reducers";
 
 export interface ICompetitionStatus {
+  complete: boolean;
   endTime: moment.Moment;
   now: moment.Moment;
   open: boolean;
+  paused: boolean;
   startTime: moment.Moment;
   solutionsEndTime: moment.Moment;
   text: string;
@@ -26,14 +28,17 @@ export const competitionStatus = (competition: ICompetitionProposal): ICompetiti
   const votingStartTime = moment(competition.votingStartTime);
   const endTime = moment(competition.endTime);
 
+  let complete = false;
   let voting = false;
   let open = false;
+  let paused = false;
   let text = "";
 
   if (now.isBefore(startTime)){
     text = "Not open yet";
   } else if (now.isBefore(votingStartTime)) {
     if (now.isSameOrAfter(solutionsEndTime)) {
+      paused = true;
       text = "Paused";
     } else {
       open = true;
@@ -43,13 +48,16 @@ export const competitionStatus = (competition: ICompetitionProposal): ICompetiti
     voting = true;
     text = "Voting started!";
   } else {
+    complete = true;
     text = "Complete";
   }
 
   return {
+    complete,
     endTime,
     now,
     open,
+    paused,
     solutionsEndTime,
     startTime,
     text,

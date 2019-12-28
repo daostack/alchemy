@@ -1,24 +1,26 @@
-import { IDAOState, IProposalState, Address } from "@daostack/client";
+import { IDAOState, IProposalState, Address, Competition, CompetitionSuggestion, ICompetitionSuggestion } from "@daostack/client";
 import * as React from "react";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 
 // import UserSearchField from "components/Shared/UserSearchField";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { of } from "rxjs";
 
-import BN = require("bn.js");
 import { formatTokens } from "lib/util";
+import { getArc } from "arc";
+import { map, filter, first } from "rxjs/operators";
+import { from } from "rxjs";
+import { competitionStatus } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { IRootState } from "reducers";
+import { connect } from "react-redux";
+import classNames from "classnames";
+import AccountPopup from "components/Account/AccountPopup";
+import AccountProfileName from "components/Account/AccountProfileName";
+import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./Competitions.scss";
 
-// FAKE
-interface ISubscriptionState {
-  title: string;
-  description: string;
-  proposer: Address;
-  reputationVoted: BN;
-  accounthasVoted: boolean;
-  isWinner: boolean;
-  votingIsActive: boolean;
+interface IStateProps {
+  currentAccountAddress: Address;
+  currentAccountProfile: IProfileState;
 }
 
 interface IExternalProps {
@@ -30,55 +32,95 @@ interface IExternalProps {
   handleRedeem: () => any;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<ISubscriptionState>;
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<ICompetitionSuggestion>;
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+  return {
+    ...ownProps,
+    currentAccountAddress: state.web3.currentAccountAddress,
+    currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
+  };
+};
 
 class SolutionDetails extends React.Component<IProps, null> {
 
-  public handleVote = async (): Promise<void> => {
-    this.props.handleVote();
-  }
-
   public render(): RenderOutput {
-    // const { proposalState } = this.props;
-    const subscriptionState = this.props.data;
+
+    const competition = this.props.proposalState.competition;
+    const solution = this.props.data;
+
+    const status = competitionStatus(competition);
+    const canVote = status.voting;
+    // FAKE -- until can know whether this is a winning solution
+    const isWinner = true;
+    const canRedeem = isWinner && status.complete && !solution.redeemedAt && (solution.suggester === this.props.currentAccountAddress);
+    // FAKE -- until we can know whether the current account has voted for it
+    const currentAccountVotedForIt = true;
 
     return (
       <div className={css.solutionDetails}>
-        <div className={css.closeButton}>Close Button</div>
-        <div className={css.reputationVoted}>
-          <img src="/assets/images/Icon/vote/for-gray.svg"/>
-          {formatTokens(subscriptionState.reputationVoted)}
+        <div className={css.header}>
+          <div className={css.closeButton}><img onClick={this.props.handleClose} src="/assets/images/Icon/x-grey.svg"/></div>
+          <div className={css.reputationVoted}>
+            <img src="/assets/images/Icon/vote/for-gray.svg"/>
+            {formatTokens(solution.totalVotes)}
+          </div>
+          <div className={css.actions}>
+            { (canVote && !currentAccountVotedForIt) ?
+
+              <TrainingTooltip overlay="Vote for this solution">
+                <a className={classNames({[css.blueButton]: true, [css.voteButton]: true})}
+                  href="javascript:void(0)"
+                  onClick={this.props.handleVote}
+                  data-test-id="voteSuggestion"
+                >Vote<img src="/assets/images/Icon/vote/for-btn-selected-w.svg"/></a>
+              </TrainingTooltip> :
+
+              canRedeem ? 
+              
+                <TrainingTooltip overlay="Redeem for your winning solution">
+                  <a className={classNames({[css.blueButton]: true, [css.redeemButton]: true})}
+                    href="javascript:void(0)"
+                    onClick={this.props.handleRedeem}
+                    data-test-id="redeemSuggestion"
+                  ><img src="/assets/images/Icon/vote/redeem.svg"/>Redeem</a>
+                </TrainingTooltip> :
+
+                isWinner ? 
+                  <img src="/assets/images/Icon/winner.svg"></img> : ""
+            }
+          </div>
         </div>
-        { subscriptionState.isWinner ? 
-          <img src="/assets/images/Icon/winner.svg"></img>
-          : 
-          subscriptionState.accounthasVoted ?
-            <TrainingTooltip overlay="Vote yes for this solution">
-              <div className={css.voteButton}>Vote Button</div>
-            </TrainingTooltip> : ""
-        }
         
-        <div className={css.proposer}>{subscriptionState.proposer}</div>
-        <div className={css.description}>{subscriptionState.title}</div>
-        <div className={css.description}>{subscriptionState.description}</div>
+        <div className={css.proposer}>
+          <AccountPopup accountAddress={solution.suggester} daoState={this.props.daoState}/>
+          <AccountProfileName accountAddress={solution.suggester} accountProfile={this.props.currentAccountProfile} daoAvatarAddress={this.props.daoState.address} detailView={false} />
+        </div>
+        <div className={css.description}>{solution.title}</div>
+        <div className={css.description}>{solution.description}</div>
       </div>
     );
   }
 }
 
-export default withSubscription({
+const SolutionDetailsSubscription = withSubscription({
   wrappedComponent: SolutionDetails,
   loadingComponent: null,
   errorComponent: (props) => <div>{ props.error.message }</div>,
-  checkForUpdate: ["suggestionId"],
-  createObservable: (_props: IExternalProps) => {
-    // FAKE
-    return of({
-      proposer: "Proposer",
-      reputationVoted: new BN("56000000000000000"),
-      title:"Title",
-      accounthasVoted: true,
-      description: "Description",
-    });
+  checkForUpdate: [],
+  createObservable: async (props: IExternalProps) => {
+
+    // FAKE -- until we can ask the client lib for a specific suggestion id
+    const competition = new Competition(props.proposalState.id, getArc());
+    // no need to subscribe here as Details will already have done it
+    // TODO: can there please be a simpler way to do this???
+    return from((await competition.suggestions({ where: { proposal: props.proposalState.id }})
+      .pipe(first()).toPromise()))
+      .pipe(
+        filter((suggestion: CompetitionSuggestion) => suggestion.id === props.suggestionId),
+        map((suggestion: CompetitionSuggestion) => suggestion.staticState)
+      );
   },
 });
+
+export default connect(mapStateToProps)(SolutionDetailsSubscription);
