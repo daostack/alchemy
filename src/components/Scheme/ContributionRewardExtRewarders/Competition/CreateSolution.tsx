@@ -5,14 +5,8 @@ import * as React from "react";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
+import { ICreateSolutionOptions } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import * as css from "./Competitions.scss";
-
-export interface ICreateSolutionOptions {
-  description: string;
-  title: string;
-  url: string;
-  tags: Array<string>;
-}
 
 interface IExternalProps {
   daoState: IDAOState;

@@ -26,7 +26,7 @@ interface IStateProps {
 interface IExternalProps {
   daoState: IDAOState;
   proposalState: IProposalState;
-  suggestionId: string;
+  suggestionId: string; // this is the real id (not the counter)
   handleClose: () => any;
   handleVote: () => any;
   handleRedeem: () => any;
@@ -44,6 +44,10 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 
 class SolutionDetails extends React.Component<IProps, null> {
 
+  public handleVote = (): void => {
+    this.props.handleVote();
+  }
+
   public render(): RenderOutput {
 
     const competition = this.props.proposalState.competition;
@@ -55,7 +59,7 @@ class SolutionDetails extends React.Component<IProps, null> {
     const isWinner = true;
     const canRedeem = isWinner && status.complete && !solution.redeemedAt && (solution.suggester === this.props.currentAccountAddress);
     // FAKE -- until we can know whether the current account has voted for it
-    const currentAccountVotedForIt = true;
+    const currentAccountVotedForIt = false;
 
     return (
       <div className={css.solutionDetails}>

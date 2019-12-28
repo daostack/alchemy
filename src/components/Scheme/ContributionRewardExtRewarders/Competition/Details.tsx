@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 import classNames from "classnames";
 import { showNotification } from "reducers/notifications";
 import { enableWalletProvider, getArc } from "arc";
-import CreateSolution, { ICreateSolutionOptions } from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSolution";
+import CreateSolution from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSolution";
 import { Modal } from "react-router-modal";
 import SolutionDetails from "components/Scheme/ContributionRewardExtRewarders/Competition/SolutionDetails";
 import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competition/StatusBlob";
@@ -25,6 +25,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import * as CompetitionActions from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 
 import moment = require("moment");
+import { ICreateSolutionOptions } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -34,12 +35,13 @@ type ISubscriptionState = Array<ICompetitionSuggestion>;
 interface IDispatchProps {
   showNotification: typeof showNotification;
   createCompetitionSolution: typeof CompetitionActions.createCompetitionSolution;
+  voteForSolution: typeof CompetitionActions.voteForSolution;
 }
 
 interface IStateProps {
   creatorProfile: IProfileState;
   showingCreateSolution: boolean;
-  showingSolutionDetails: string;
+  showingSolutionDetails: ICompetitionSuggestion;
 }
 
 interface IExternalProps /* extends RouteComponentProps<any> */ {
@@ -61,6 +63,7 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
 
 const mapDispatchToProps = {
   createCompetitionSolution: CompetitionActions.createCompetitionSolution,
+  voteForSolution: CompetitionActions.voteForSolution,
   showNotification,
 };
 
@@ -94,25 +97,23 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     this.setState({ showingCreateSolution: false });
   }
 
-  private openSolutionDetailsModal = (suggestionId: string) => async (): Promise<void> => {
+  private openSolutionDetailsModal = (suggestion: ICompetitionSuggestion) => async (): Promise<void> => {
 
-    this.setState({ showingSolutionDetails: suggestionId });
+    this.setState({ showingSolutionDetails: suggestion });
   }
 
   private voteOnSolution = async (): Promise<void> => {
     const { showNotification } = this.props;
 
     if (!await enableWalletProvider({ showNotification })) { return; }
-  
-    this.setState({ showingSolutionDetails: null });
+
+    await this.props.voteForSolution(this.props.proposalState.scheme.id, { suggestionId: this.state.showingSolutionDetails.suggestionId });
   }
 
   private redeemSolution = async (): Promise<void> => {
     const { showNotification } = this.props;
 
     if (!await enableWalletProvider({ showNotification })) { return; }
-  
-    this.setState({ showingSolutionDetails: null });
   }
 
   private closeSolutionDetailsModal = async (): Promise<void> => {
@@ -157,9 +158,9 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const solutionsHtml = () => {
 
       return solutions.map((solution: ICompetitionSuggestion, index: number) => {
-        const isSelected = () => this.state.showingSolutionDetails === solution.id;
+        const isSelected = () => this.state.showingSolutionDetails && (this.state.showingSolutionDetails.suggestionId === solution.suggestionId);
         return (
-          <div key={index} className={css.row} onClick={this.openSolutionDetailsModal(solution.id)}>
+          <div key={index} className={css.row} onClick={this.openSolutionDetailsModal(solution)}>
             {/*
               FAKE:  until we how to know if a winner.  Can't be a winner until competition is over
               */}
@@ -287,7 +288,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       {this.state.showingSolutionDetails ?
         <Modal onBackdropClick={this.closeSolutionDetailsModal}>
           <SolutionDetails
-            suggestionId={this.state.showingSolutionDetails}
+            suggestionId={this.state.showingSolutionDetails.id}
             proposalState={proposalState}
             daoState={daoState}
             handleClose={this.closeSolutionDetailsModal}

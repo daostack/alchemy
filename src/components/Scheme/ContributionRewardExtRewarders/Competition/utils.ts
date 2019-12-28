@@ -1,11 +1,10 @@
-import { ICompetitionProposal, Competition } from "@daostack/client";
+import { ICompetitionProposal, Competition, CompetitionScheme } from "@daostack/client";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 
 import moment = require("moment");
 import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
-import { ICreateSolutionOptions } from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSolution";
 import { IRootState } from "reducers";
 
 export interface ICompetitionStatus {
@@ -66,12 +65,38 @@ export const competitionStatus = (competition: ICompetitionProposal): ICompetiti
   };
 };
 
+export interface ICreateSolutionOptions {
+  description: string;
+  title: string;
+  url: string;
+  tags: Array<string>;
+}
+
 export const createCompetitionSolution = (proposalId: string, options: ICreateSolutionOptions ): ThunkAction<any, IRootState, null> => {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Create Solution");
       const competition = new Competition(proposalId, getArc());
       await competition.createSuggestion(options).subscribe(...observer);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
+      throw err;
+    }
+  };
+};
+
+export interface IVoteSolutionOptions {
+  suggestionId: number;
+}
+
+export const voteForSolution = (schemeId: string, options: IVoteSolutionOptions ): ThunkAction<any, IRootState, null> => {
+  return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
+    try {
+      const observer = operationNotifierObserver(dispatch, "Vote Solution");
+      const competitionScheme = new CompetitionScheme(schemeId, getArc());
+
+      await competitionScheme.vote({suggestionId: options.suggestionId.toString()}).subscribe(...observer);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err);
