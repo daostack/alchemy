@@ -2,7 +2,7 @@ import * as React from "react";
 import * as Sticky from "react-stickynode";
 
 import { IDAOState } from "@daostack/client";
-import { WikiContainer } from "@dorgtech/daosmind";
+import { WikiContainer, actualHash } from "@dorgtech/daosmind";
 import * as css from "./Dao.scss";
 
 declare global {
@@ -16,11 +16,16 @@ declare global {
 
 interface IProps {
   dao: IDAOState;
+  match: any;
 }
 
 export default class DaoWiki extends React.Component<IProps, null> {
   componentDidMount() {
-    return WikiContainer.Instance;
+    const { daoAvatarAddress, perspectiveId, pageId } = this.props.match.params
+    actualHash['dao'] = daoAvatarAddress
+    actualHash['wiki'] = perspectiveId
+    actualHash['page'] = pageId
+    return WikiContainer.getInstance({});
   }
 
   public render(): RenderOutput {

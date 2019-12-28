@@ -32,7 +32,9 @@ module.exports = {
       'ipfs-http-client': 'ipfs-http-client/dist',
       'bn.js': 'bn.js/lib/bn.js',
       'lit-element': path.resolve('./node_modules/@dorgtech/daosmind/node_modules/lit-element'),
-      'lit-html': path.resolve('./node_modules/@dorgtech/daosmind/node_modules/lit-html')
+      'lit-html': path.resolve('./node_modules/@dorgtech/daosmind/node_modules/lit-html'),
+      'graphql': path.resolve('./node_modules/@dorgtech/daosmind/node_modules/graphql'),
+
     },
   },
 
