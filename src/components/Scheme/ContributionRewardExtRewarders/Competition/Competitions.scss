@@ -156,53 +156,56 @@ a.blueButton {
 
 .competitionDetailsContainer {
 
-  .header {
-    display: flex;
-
-    .statusBlob {
-      display: inline-block;
-      margin-bottom: 30px;
-      flex: 1;
-      margin-right: 20px;
-    }
-
-    .gotoProposal {
-      display: inline-block;
-      flex: 1;
-      position: relative;
-      top: 6px;
-    }
-
-    .newSolution {
-      text-align: right;
-      flex: 2;
-    }
-  }
-
-  .name {
-    font-size: 28px;
-    border-bottom: $gray-border-2;
-    color: #689bd6;
-    margin-bottom: 6px;
-    padding-bottom: 16px;
-  }
-
-  .countdown {
-    font-size: 13px;
-    color: #9aa9b5;
-    white-space: nowrap;
+  .topSection {
     margin-bottom: 26px;
 
-    .startsIn {
-      display: inline-block;
-      margin-right: 8px;
+    .header {
+      display: flex;
+
+      .statusBlob {
+        display: inline-block;
+        margin-bottom: 30px;
+        flex: 1;
+        margin-right: 20px;
+      }
+
+      .gotoProposal {
+        display: inline-block;
+        flex: 1;
+        position: relative;
+        top: 6px;
+      }
+
+      .newSolution {
+        text-align: right;
+        flex: 2;
+      }
     }
-    /* Countdown component */
-    .container {
-      display: inline-block;
+
+    .name {
+      font-size: 28px;
+      border-bottom: $gray-border-2;
+      color: #689bd6;
+      margin-bottom: 6px;
+      padding-bottom: 16px;
+    }
+
+    .countdown {
+      font-size: 13px;
+      color: #9aa9b5;
+      white-space: nowrap;
+
+      .startsIn {
+        display: inline-block;
+        margin-right: 8px;
+      }
+      /* Countdown component */
+      .container {
+        display: inline-block;
+      }
     }
   }
-
+  
   .tagsContainer {
     display: block;
   }

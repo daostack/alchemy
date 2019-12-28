@@ -192,27 +192,28 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
       <div className={css.competitionDetailsContainer}>
       
-        <div className={css.header}>
-          <StatusBlob competition={competition}></StatusBlob>
-          <div className={css.gotoProposal}><Link to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>Go to Proposal&nbsp;&gt;</Link></div>
-          <div className={css.newSolution}>
-            <a className={css.blueButton}
-              href="javascript:void(0)"
-              onClick={this.openNewSolutionModal}
-              data-test-id="createSuggestion"
-            >+ New Solution</a>
+        <div className={css.topSection}>
+          <div className={css.header}>
+            <StatusBlob competition={competition}></StatusBlob>
+            <div className={css.gotoProposal}><Link to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>Go to Proposal&nbsp;&gt;</Link></div>
+            <div className={css.newSolution}>
+              <a className={css.blueButton}
+                href="javascript:void(0)"
+                onClick={this.openNewSolutionModal}
+                data-test-id="createSuggestion"
+              >+ New Solution</a>
+            </div>
           </div>
+
+          <div className={css.name}>{humanProposalTitle(proposalState)}</div>
+
+          { notYetVoting ? 
+            <div className={css.countdown}>
+              <div className={css.startsIn}>Voting starts in:</div>
+              <Countdown toDate={votingStartTime} />
+            </div> : ""
+          }
         </div>
-
-        <div className={css.name}>{humanProposalTitle(proposalState)}</div>
-
-        { notYetVoting ? 
-          <div className={css.countdown}>
-            <div className={css.startsIn}>Voting starts in:</div>
-            <Countdown toDate={votingStartTime} />
-          </div> : ""
-        }
-
         <div className={css.middleSection}>
           <div className={css.leftSection}>
             { tags && tags.length ? <div className={css.tagsContainer}>
