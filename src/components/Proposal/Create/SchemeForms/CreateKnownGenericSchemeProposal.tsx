@@ -59,23 +59,23 @@ interface IState {
 }
 
 class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
-
+  initialFormValues: IFormValues;
   constructor(props: IProps) {
     super(props);
 
     if (!props.genericSchemeInfo) {
       throw Error("GenericSchemeInfo should be provided");
     }
-
+    this.setInititialFormValues();
     const actions = props.genericSchemeInfo.actions();
-    const initialActionId = importUrlValues({ currentActionId: ""}).currentActionId;
+    const initialActionId = this.initialFormValues.currentActionId;
     this.state = {
-      actions,
+      actions: props.genericSchemeInfo.actions(),
       currentAction: initialActionId ? actions.find(action => action.id === initialActionId) : actions[0],
-      tags: importUrlValues({ tags: []}).tags,
+      tags: this.initialFormValues.tags,
     };
   }
-
+  
   private handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
@@ -199,6 +199,44 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     this.setState({tags});
   }
   
+  private setInititialFormValues(){
+    this.initialFormValues = {
+      description: "",
+      title: "",
+      url: "",
+      currentActionId:"",
+      tags: [],
+    };
+    const actions = this.props.genericSchemeInfo.actions();
+    const daoAvatarAddress = this.props.daoAvatarAddress;
+    actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
+      if (typeof(field.defaultValue) !== "undefined") {
+        if (field.defaultValue === "_avatar") {
+          this.initialFormValues[field.name] = daoAvatarAddress;
+        } else {
+          this.initialFormValues[field.name] = field.defaultValue;
+        }
+      } else {
+        switch (field.type) {
+          case "uint64":
+          case "uint256":
+          case "bytes32":
+          case "bytes":
+          case "address":
+          case "string":
+            this.initialFormValues[field.name] = "";
+            break;
+          case "bool":
+            this.initialFormValues[field.name] = 0;
+            break;
+          case "address[]":
+            this.initialFormValues[field.name] = [""];
+            break;
+        }
+      }
+    }));
+    this.initialFormValues = importUrlValues(this.initialFormValues);
+  }
   public exportFormValues(values: IFormValues) {
     values = {
       ...values, 
@@ -210,44 +248,12 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
   }
   
   public render(): RenderOutput {
-    const { handleClose, daoAvatarAddress } = this.props;
+    const { handleClose } = this.props;
     const arc = getArc();
 
     const actions = this.state.actions;
     const currentAction = this.state.currentAction;
-
-    const initialFormValues: IFormValues = {
-      description: "",
-      title: "",
-      url: "",
-    };
     
-    actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
-      if (typeof(field.defaultValue) !== "undefined") {
-        if (field.defaultValue === "_avatar") {
-          initialFormValues[field.name] = daoAvatarAddress;
-        } else {
-          initialFormValues[field.name] = field.defaultValue;
-        }
-      } else {
-        switch (field.type) {
-          case "uint64":
-          case "uint256":
-          case "bytes32":
-          case "bytes":
-          case "address":
-          case "string":
-            initialFormValues[field.name] = "";
-            break;
-          case "bool":
-            initialFormValues[field.name] = 0;
-            break;
-          case "address[]":
-            initialFormValues[field.name] = [""];
-            break;
-        }
-      }
-    }));
     return (
       <div className={css.createWrapperWithSidebar}>
         <div className={css.sidebar}>
@@ -268,7 +274,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
         <div className={css.formWrapper}>
           <Formik
-            initialValues={importUrlValues(initialFormValues)}
+            initialValues={this.initialFormValues}
             // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues): void => {
               const errors: any = {};
