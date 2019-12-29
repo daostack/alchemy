@@ -297,7 +297,9 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <label className={css.description}>What to Expect</label>
-              <div className={css.description}>This proposal can send to multiple beneficiaries eth / erc20 token, mint new DAO tokens ({dao.tokenSymbol}) and mint / slash reputation in the DAO. Each proposal can have one of each of these actions. e.g. 100 rep for completing a project + 0.05 ETH for covering expenses.</div>
+              <div className={css.description}>This competition proposal can distribute ETH/erc20 token, mint new DAO tokens, and reputation in the DAO to &apos;N&apos; number of winners with a custom distribution method.
+                Each proposal can have one of each of these actions. e.g. &quot;100 rep, + 3 ETH for each competition winner.&quot;</div>
+
               <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
                 <label htmlFor="titleInput">
                 Title
