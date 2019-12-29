@@ -297,8 +297,8 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <label className={css.description}>What to Expect</label>
-              <div className={css.description}>This competition proposal can distribute ETH/erc20 token, mint new DAO tokens, and reputation in the DAO to &apos;N&apos; number of winners with a custom distribution method.
-                Each proposal can have one of each of these actions. e.g. &quot;100 rep, + 3 ETH for each competition winner.&quot;</div>
+              <div className={css.description}>This competition proposal can distribute funds, mint new DAO tokens, or assign Reputation. Additionally, you may determine how many winners are rewarded, as well as their proportional distribution.
+                  Each proposal may specify one of each action, e.g. &quot;3 ETH and 100 Reputation in total rewards, 3 total winners, 50/25/25% reward distribution&quot;.</div>
 
               <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
                 <label htmlFor="titleInput">
