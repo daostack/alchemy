@@ -1,3 +1,4 @@
+/** <globally-scoped> */
 a.blueButton {
   height: 30px;
   line-height: 30px;
@@ -42,6 +43,16 @@ a.blueButton {
     background-color: #e2ae10;
   }
 }
+
+.submissionsModalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent; // the whole point of this, which is otherwise defined in Alchemy App.scss
+}
+/** </globally-scoped> */
 
 .competitionCards {
   display: flex;
@@ -352,11 +363,13 @@ a.blueButton {
             display: table-cell;
             background-color: $white;
             vertical-align: middle;
-            padding-top: 8px;
-            padding-bottom: 8px;
+            padding-top: 7px;
+            padding-bottom: 7px;
             padding-left: 6px;
             padding-right: 6px;
             flex-grow: 1;
+            border-top: 1px solid transparent;
+            border-bottom: 1px solid transparent;
 
             &.selected {
               border-top: 1px solid #0076ff;
@@ -380,6 +393,7 @@ a.blueButton {
           .winnerIcon {
             border-top-left-radius: 5px;
             border-bottom-left-radius: 5px;
+            border-left: 1px solid transparent;
 
             &.selected {
               border-left: 1px solid #0076ff;
@@ -389,14 +403,11 @@ a.blueButton {
           .votedUp {
             border-top-right-radius: 5px;
             border-bottom-right-radius: 5px;
+            border-right: 1px solid transparent;
 
             &.selected {
               border-right: 1px solid #0076ff;
             }
-          }
-
-          .title {
-            font-weight: 500;
           }
 
           .winnerIcon {
@@ -626,17 +637,21 @@ a.blueButton {
 }
 
 .submissionDetails {
-  padding: 10px;
+  padding: 26px;
+  padding-top: 20px;
   background-color: $white;
   position: fixed;
-  top: 0;
+  top: 50px;
   right: 0;
   box-shadow: $shadow-3;
-  width: 540px;
   max-width: 445px;
+  max-height: calc(100vh - 136px);
+  flex-direction: column;
+  display: flex;
 
   .header {
     display: flex;
+    margin-bottom: 20px;
 
     .closeButton {
       flex-grow: 2;
@@ -650,18 +665,22 @@ a.blueButton {
 
     .reputationVoted {
       flex-grow: 1;
-      vertical-align: middle;
+      position: relative;
+      top: 3px;
+      color: #9aa9b5;
+      padding-right: 7px;
+      white-space: nowrap;
 
       img {
-        vertical-align: middle;
-        padding-right: 6px;
+        padding-right: 5px;
+        position: relative;
+        top: 4px;
       }
     }
 
     .actions {
       flex-grow: 1;
       vertical-align: middle;
-      margin-bottom: 16px;
 
       a.blueButton.voteButton {
         img {
@@ -682,14 +701,36 @@ a.blueButton {
   }
 
   .title {
-    display: block;
+    font-size: 21px;
+    font-weight: bold;
+    margin-bottom: 16px;
   }
 
   .proposer {
     margin-bottom: 16px;
+    font-size: 13px;
+  }
+
+  .attachmentLink, .attachmentLink:visited {
+    font-size: 11px;
+    color: rgba(0, 113, 255, 1.000);
+    display: inline-block;
+    margin-bottom: 15px;
+
+    img {
+      position: relative;
+      top: 2px;
+      margin-right: 5px;
+    }
   }
 
   .description {
-    display: block;
+    padding-bottom: 20px;
+    max-height: 100%;
+    overflow: auto;
+
+    h1:first-of-type, h2:first-of-type, h3:first-of-type, h4:first-of-type {
+      margin-top: 0;
+    }
   }
 }

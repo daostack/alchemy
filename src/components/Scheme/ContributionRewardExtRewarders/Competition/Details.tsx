@@ -268,7 +268,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         </div>
         
         <div className={css.submissions}>
-          <div className={css.heading}>{submissions.length} Submissions</div>
+          <div className={css.heading}>{submissions.length}&nbsp;Submissions</div>
           <div className={css.list}>
             {submissionsHtml()}
           </div>
@@ -286,7 +286,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       }
 
       {this.state.showingSubmissionDetails ?
-        <Modal onBackdropClick={this.closeSubmissionDetailsModal}>
+        <Modal onBackdropClick={this.closeSubmissionDetailsModal}
+          backdropClassName={css.submissionsModalBackdrop}>
           <SubmissionDetails
             suggestionId={this.state.showingSubmissionDetails.id}
             proposalState={proposalState}

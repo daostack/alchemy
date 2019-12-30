@@ -598,3 +598,16 @@ const dateFormat = "MMM DD, YYYY HH:mm z (Z) ";
 export function formatFriendlyDateForLocalTimezone(date: moment.Moment): string {
   return date.format(dateFormat);
 }
+
+export function ensureHttps(url: string) {
+
+  if (url) {
+    const pattern = /^((http|https):\/\/)/;
+
+    if(!pattern.test(url)) {
+      url = "https://" + url;
+    }
+  }
+
+  return url;
+}

@@ -5,7 +5,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 // import UserSearchField from "components/Shared/UserSearchField";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
-import { formatTokens } from "lib/util";
+import { formatTokens, ensureHttps } from "lib/util";
 import { getArc } from "arc";
 import { map, filter, first } from "rxjs/operators";
 import { from } from "rxjs";
@@ -17,6 +17,8 @@ import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./Competitions.scss";
+
+const ReactMarkdown = require("react-markdown");
 
 interface IStateProps {
   currentAccountAddress: Address;
@@ -95,13 +97,31 @@ class SubmissionDetails extends React.Component<IProps, null> {
             }
           </div>
         </div>
-        
+
+        <div className={css.title}>{submission.title}</div>
+
         <div className={css.proposer}>
           <AccountPopup accountAddress={submission.suggester} daoState={this.props.daoState}/>
           <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.currentAccountProfile} daoAvatarAddress={this.props.daoState.address} detailView={false} />
         </div>
-        <div className={css.description}>{submission.title}</div>
-        <div className={css.description}>{submission.description}</div>
+
+        {submission.url ?
+          <a href={ensureHttps(submission.url)} className={css.attachmentLink} target="_blank" rel="noopener noreferrer">
+            <img src="/assets/images/Icon/Attachment.svg" />
+            Attachment &gt;
+          </a>
+          : " "
+        }
+
+        { submission.description ?
+          <div className={css.description}>
+            <ReactMarkdown source={submission.description}
+              renderers={{link: (props: { href: string; children: React.ReactNode }) => {
+                return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
+              }}}
+            />
+          </div>
+          : "" }
       </div>
     );
   }

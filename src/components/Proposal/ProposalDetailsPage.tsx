@@ -5,7 +5,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
 import FollowButton from "components/Shared/FollowButton";
 import { DiscussionEmbed } from "disqus-react";
-import { humanProposalTitle, schemeName } from "lib/util";
+import { humanProposalTitle, schemeName, ensureHttps } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 
@@ -115,7 +115,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
           currentAccountVote = currentVote.staticState.outcome;
         }
 
-        const url = proposal.url ? (/https?:\/\//.test(proposal.url) ? proposal.url : "//" + proposal.url) : null;
+        const url = ensureHttps(proposal.url);
 
         const voteWrapperClass = classNames({
           [css.voteBox]: true,
