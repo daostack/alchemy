@@ -21,29 +21,31 @@
   padding-top: 10px;
 }
 
-a.createProposal {
-  height: 30px;
-  line-height: 30px;
-  font-size: 13px;
-  color: $white;
-  background-color: rgba(3, 118, 255, 1.000);
-  border-radius: 15px;
-  display: block;
-  position: absolute;
+.createProposal {
   z-index: 100;
-  right: 0;
-  top: 63px;
-  padding: 0 15px;
+  width: 100%;
+  text-align: right;
 
-  &:hover {
-    background-color: $accent-1;
+  a {
+    padding: 8px 15px;
     color: $white;
-  }
+    background-color: rgba(3, 118, 255, 1.000);
+    border-radius: 15px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 13px;
+    white-space: nowrap;
 
-  &.disabled, &.disabled:hover {
-    background-color: rgba(200,200,200,.5);
-    border: 1px solid rgba(200,200,200,1);
-    cursor: not-allowed;
+    &:hover {
+      background-color: $accent-1;
+      color: $white;
+    }
+
+    &.disabled, &.disabled:hover {
+      background-color: rgba(200,200,200,.5);
+      border: 1px solid rgba(200,200,200,1);
+      cursor: not-allowed;
+    }
   }
 }
 
@@ -53,6 +55,7 @@ a.createProposal {
   border-bottom: 1px solid rgba(212,220,228,1);
   padding-top: 15px;
   position: relative;
+  margin-bottom: 20px;
 
   a {
      color: rgba(0, 29, 53, 1.000);
@@ -177,8 +180,7 @@ a.createProposal {
 @media only screen and (max-width: 425px) {
 
   .createProposal {
-    top: 5px;
-    right: 15px;
+    text-align: center;
   }
 
   .schemeName {

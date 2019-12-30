@@ -128,17 +128,18 @@ class SchemeContainer extends React.Component<IProps, null> {
                 </TrainingTooltip>
                 : ""
             }
+          </div>
+          <div className={css.createProposal}>
             <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
               <a className={
                 classNames({
-                  [css.createProposal]: true,
                   [css.disabled]: !isActive,
                 })}
               data-test-id="createProposal"
               href="javascript:void(0)"
               onClick={isActive ? this.handleNewProposal : null}
               >
-              + New { `${crxRewarderConfig ? crxRewarderConfig.contractName : schemeFriendlyName } `}Proposal</a>
+            + New { `${crxRewarderConfig ? crxRewarderConfig.contractName : schemeFriendlyName } `}Proposal</a>
             </TrainingTooltip>
           </div>
         </Sticky>
