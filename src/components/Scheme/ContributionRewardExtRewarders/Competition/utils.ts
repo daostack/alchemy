@@ -14,7 +14,7 @@ export interface ICompetitionStatus {
   open: boolean;
   paused: boolean;
   startTime: moment.Moment;
-  solutionsEndTime: moment.Moment;
+  submissionsEndTime: moment.Moment;
   text: string;
   voting: boolean;
   votingStartTime: moment.Moment;
@@ -23,7 +23,7 @@ export interface ICompetitionStatus {
 export const competitionStatus = (competition: ICompetitionProposal): ICompetitionStatus => {
   const now = moment();
   const startTime = moment(competition.startTime);
-  const solutionsEndTime = moment(competition.suggestionsEndTime);
+  const submissionsEndTime = moment(competition.suggestionsEndTime);
   const votingStartTime = moment(competition.votingStartTime);
   const endTime = moment(competition.endTime);
 
@@ -36,7 +36,7 @@ export const competitionStatus = (competition: ICompetitionProposal): ICompetiti
   if (now.isBefore(startTime)){
     text = "Not open yet";
   } else if (now.isBefore(votingStartTime)) {
-    if (now.isSameOrAfter(solutionsEndTime)) {
+    if (now.isSameOrAfter(submissionsEndTime)) {
       paused = true;
       text = "Paused";
     } else {
@@ -57,7 +57,7 @@ export const competitionStatus = (competition: ICompetitionProposal): ICompetiti
     now,
     open,
     paused,
-    solutionsEndTime,
+    submissionsEndTime,
     startTime,
     text,
     voting,
@@ -65,14 +65,14 @@ export const competitionStatus = (competition: ICompetitionProposal): ICompetiti
   };
 };
 
-export interface ICreateSolutionOptions {
+export interface ICreateSubmissionOptions {
   description: string;
   title: string;
   url: string;
   tags: Array<string>;
 }
 
-export const createCompetitionSolution = (proposalId: string, options: ICreateSolutionOptions ): ThunkAction<any, IRootState, null> => {
+export const createCompetitionSubmission = (proposalId: string, options: ICreateSubmissionOptions ): ThunkAction<any, IRootState, null> => {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Create Submission");
@@ -86,11 +86,11 @@ export const createCompetitionSolution = (proposalId: string, options: ICreateSo
   };
 };
 
-export interface IVoteSolutionOptions {
+export interface IVoteSubmissionOptions {
   suggestionId: number;
 }
 
-export const voteForSolution = (schemeId: string, options: IVoteSolutionOptions ): ThunkAction<any, IRootState, null> => {
+export const voteForSubmission = (schemeId: string, options: IVoteSubmissionOptions ): ThunkAction<any, IRootState, null> => {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Vote Submission");

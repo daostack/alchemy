@@ -42,7 +42,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
   };
 };
 
-class SolutionDetails extends React.Component<IProps, null> {
+class SubmissionDetails extends React.Component<IProps, null> {
 
   public handleVote = (): void => {
     this.props.handleVote();
@@ -62,7 +62,7 @@ class SolutionDetails extends React.Component<IProps, null> {
     const currentAccountVotedForIt = false;
 
     return (
-      <div className={css.solutionDetails}>
+      <div className={css.submissionDetails}>
         <div className={css.header}>
           <div className={css.closeButton}><img onClick={this.props.handleClose} src="/assets/images/Icon/x-grey.svg"/></div>
           <div className={css.reputationVoted}>
@@ -107,8 +107,8 @@ class SolutionDetails extends React.Component<IProps, null> {
   }
 }
 
-const SolutionDetailsSubscription = withSubscription({
-  wrappedComponent: SolutionDetails,
+const SubmissionDetailsSubscription = withSubscription({
+  wrappedComponent: SubmissionDetails,
   loadingComponent: null,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: [],
@@ -127,4 +127,4 @@ const SolutionDetailsSubscription = withSubscription({
   },
 });
 
-export default connect(mapStateToProps)(SolutionDetailsSubscription);
+export default connect(mapStateToProps)(SubmissionDetailsSubscription);

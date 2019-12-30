@@ -176,7 +176,7 @@ a.blueButton {
         top: 6px;
       }
 
-      .newSolution {
+      .newSubmission {
         text-align: right;
         flex: 2;
       }
@@ -431,7 +431,7 @@ a.blueButton {
   }
 }
 
-.createSolutionForm {
+.createSubmissionForm {
   border-radius: 15px 15px 0 0;
   background-color: $white;
   position: fixed;
@@ -624,7 +624,7 @@ a.blueButton {
   }
 }
 
-.solutionDetails {
+.submissionDetails {
   padding: 10px;
   background-color: $white;
   position: fixed;

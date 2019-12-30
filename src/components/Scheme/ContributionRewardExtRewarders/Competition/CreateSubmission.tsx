@@ -5,14 +5,14 @@ import * as React from "react";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
-import { ICreateSolutionOptions } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { ICreateSubmissionOptions } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import * as css from "./Competitions.scss";
 
 interface IExternalProps {
   daoState: IDAOState;
   proposalState: IProposalState;
   handleCancel: () => any;
-  handleSubmit: (values: ICreateSolutionOptions) => any;
+  handleSubmit: (values: ICreateSubmissionOptions) => any;
 }
 
 interface IStateProps {
@@ -21,11 +21,11 @@ interface IStateProps {
 
 type IProps = IExternalProps;
 
-interface IFormValues extends ICreateSolutionOptions {
+interface IFormValues extends ICreateSubmissionOptions {
   [key: string]: any;
 }
 
-export default class CreateSolution extends React.Component<IProps, IStateProps> {
+export default class CreateSubmission extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
@@ -35,12 +35,12 @@ export default class CreateSolution extends React.Component<IProps, IStateProps>
   }
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
-    const solutionValues: ICreateSolutionOptions = {...values,
+    const submissionValues: ICreateSubmissionOptions = {...values,
       tags: this.state.tags,
     };
 
     setSubmitting(false);
-    this.props.handleSubmit(solutionValues);
+    this.props.handleSubmit(submissionValues);
   }
 
   private onTagsChange = (tags: string[]): void => {
@@ -53,7 +53,7 @@ export default class CreateSolution extends React.Component<IProps, IStateProps>
     const { handleCancel, proposalState } = this.props;
 
     return (
-      <div className={css.createSolutionForm}>
+      <div className={css.createSubmissionForm}>
         <h2 className={css.header}>
           <div className={css.content}>+ New Submission<div className={css.proposalTitle}>{proposalState.title ? <span> | {proposalState.title}</span> : "" }</div></div>
         </h2>
