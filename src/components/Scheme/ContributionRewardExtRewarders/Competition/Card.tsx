@@ -4,14 +4,19 @@ import { humanProposalTitle } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import RewardsString from "components/Proposal/RewardsString";
-import { IDAOState, IProposalState } from "@daostack/client";
+import { IDAOState, IProposalState, Competition, CompetitionSuggestion, ICompetitionSuggestion } from "@daostack/client";
 import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import Countdown from "components/Shared/Countdown";
 import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competition/StatusBlob";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import { getArc } from "arc";
+import { map } from "rxjs/operators";
 import * as css from "./Competitions.scss";
 import { competitionStatus } from "./utils";
+
+type ISubscriptionState = Array<ICompetitionSuggestion>;
 
 interface IStateProps {
   creatorProfile: IProfileState;
@@ -22,7 +27,7 @@ interface IExternalProps {
   proposalState: IProposalState;
 }
 
-type IProps = IExternalProps & IStateProps;
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<ISubscriptionState>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
 
@@ -44,6 +49,7 @@ class CompetitionCard extends React.Component<IProps, null> {
 
     const competition = proposalState.competition;
     const status = competitionStatus(competition);
+    const submissions = this.props.data;
 
     return <div className={css.competitionCardContainer} data-test-id={"competition-card-" + proposalState.id}>
       <StatusBlob competition={competition}></StatusBlob>
@@ -71,11 +77,28 @@ class CompetitionCard extends React.Component<IProps, null> {
         <div className={css.winners}>{competition.numberOfWinners} anticipated winners</div>
       </div>
       <div className={css.activityContainer}>
-        <div className={css.suggestions}>21 Suggestions | 3 Votes</div>
+        <div className={css.suggestions}>{submissions.length} Suggestions | [n] Votes</div>
         <div className={css.comments}></div>
       </div>
     </div>;
   }
 }
 
-export default connect(mapStateToProps)(CompetitionCard);
+const CompetitionCardConnected = connect(mapStateToProps)(CompetitionCard);
+
+
+export default withSubscription({
+  wrappedComponent: CompetitionCardConnected,
+  loadingComponent: null,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
+  checkForUpdate: [],
+  createObservable: (props: IExternalProps) => {
+    // FAKE -- until we have IProposalState.competition.suggestions()
+    const competition = new Competition(props.proposalState.id, getArc());
+    // return props.proposalState.competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true } )
+    return competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true, fetchAllData: true } )
+      .pipe(
+        map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion.staticState ))
+      );
+  },
+});

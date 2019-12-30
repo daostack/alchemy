@@ -9,6 +9,7 @@ a.blueButton {
   border-radius: 15px;
   display: inline-block;
   padding: 0 22px;
+  white-space: nowrap;
 
   &:hover {
     background-color: rgba(19, 46, 91, 1.000);
@@ -56,10 +57,9 @@ a.blueButton {
 
 .competitionCards {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
   justify-content: space-between;
-  width: 100%;
+  flex-wrap: wrap;
+  //align-content: space-evenly;
   padding-top: 30px;
 }
 
@@ -75,6 +75,7 @@ a.blueButton {
   overflow: visible; // for the account popup
   padding: 26px 36px ;
   box-sizing: border-box;
+  margin-bottom: 12px; // for when there are multiple columns
 
   .statusBlob {
     display: block;
@@ -123,7 +124,6 @@ a.blueButton {
   }
 
   .rewards {
-    display: block;
     border: 1px solid rgba(229, 235, 242, 1.000);
     border-radius: 2px;
     font-size: 11px;
@@ -159,6 +159,7 @@ a.blueButton {
 
     .suggestions {
       flex-grow: 1;
+      white-space: nowrap;
     }
     .comments {
       flex-grow: 0;
@@ -173,6 +174,7 @@ a.blueButton {
 
     .header {
       display: flex;
+      flex-wrap: wrap;
 
       .statusBlob {
         display: inline-block;
@@ -229,6 +231,7 @@ a.blueButton {
   .middleSection {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
     align-items: flex-start;
     width: 100%;
     margin-bottom: 16px;
@@ -361,12 +364,13 @@ a.blueButton {
 
           .cell {
             display: table-cell;
+            font-size: 16px;
             background-color: $white;
             vertical-align: middle;
             padding-top: 7px;
             padding-bottom: 7px;
-            padding-left: 6px;
-            padding-right: 6px;
+            padding-left: 8px;
+            padding-right: 8px;
             flex-grow: 1;
             border-top: 1px solid transparent;
             border-bottom: 1px solid transparent;
@@ -383,7 +387,7 @@ a.blueButton {
           }
 
           .votes {
-            color: inherit;
+            color: inherit; // placeholder
           }
           
           .title, .creator {
@@ -408,6 +412,17 @@ a.blueButton {
             &.selected {
               border-right: 1px solid #0076ff;
             }
+
+            img {
+              vertical-align: middle;
+              display: hidden;
+            }
+
+            &.didVote {
+              img {
+                display:inline-block;
+              }
+            }
           }
 
           .winnerIcon {
@@ -424,21 +439,7 @@ a.blueButton {
               }
             }
           }
-
-          .votedUp {
-            img {
-              vertical-align: middle;
-              display: hidden;
-            }
-
-            &.didVote {
-              img {
-                display:inline-block;
-              }
-            }
-        }
       }
-
     }
   }
 }
@@ -645,9 +646,11 @@ a.blueButton {
   right: 0;
   box-shadow: $shadow-3;
   max-width: 445px;
+  // the follinwg enable scrolling to work in the description div
   max-height: calc(100vh - 136px);
   flex-direction: column;
   display: flex;
+  // end scrolling stuff
 
   .header {
     display: flex;

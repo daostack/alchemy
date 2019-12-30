@@ -241,7 +241,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             <div className={css.distribution}>
               { distributionsHtml() }
             </div>
-            <div className={css.allowedVote}>Up to {competition.numberOfVotesPerVoter} votes allowed per account</div>
+            <div className={css.allowedVote}>Up to {competition.numberOfVotesPerVoter} vote(s) allowed per account</div>
             <div className={css.periods}>
               <div className={css.period}>
                 <div className={css.bullet}></div>
