@@ -75,7 +75,7 @@ export interface ICreateSolutionOptions {
 export const createCompetitionSolution = (proposalId: string, options: ICreateSolutionOptions ): ThunkAction<any, IRootState, null> => {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
-      const observer = operationNotifierObserver(dispatch, "Create Solution");
+      const observer = operationNotifierObserver(dispatch, "Create Submission");
       const competition = new Competition(proposalId, getArc());
       await competition.createSuggestion(options).subscribe(...observer);
     } catch (err) {
@@ -93,7 +93,7 @@ export interface IVoteSolutionOptions {
 export const voteForSolution = (schemeId: string, options: IVoteSolutionOptions ): ThunkAction<any, IRootState, null> => {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
-      const observer = operationNotifierObserver(dispatch, "Vote Solution");
+      const observer = operationNotifierObserver(dispatch, "Vote Submission");
       const competitionScheme = new CompetitionScheme(schemeId, getArc());
 
       await competitionScheme.vote({suggestionId: options.suggestionId.toString()}).subscribe(...observer);

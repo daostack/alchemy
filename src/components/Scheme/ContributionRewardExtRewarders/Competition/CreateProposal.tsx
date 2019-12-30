@@ -360,7 +360,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               />
 
               <div>
-                <TrainingTooltip overlay="The anticipated number of winning Solutions for this competition" placement="right">
+                <TrainingTooltip overlay="The anticipated number of winning Submissions for this competition" placement="right">
                   <label htmlFor="numWinnersInput">
                   Number of winners
                     <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -371,7 +371,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 <Field
                   id="numWinnersInput"
                   maxLength={120}
-                  placeholder={"The anticipated number of winning Solutions for this competition"}
+                  placeholder={"The anticipated number of winning Submissions for this competition"}
                   name="numWinners"
                   type="number"
                   className={touched.numWinners && errors.numWinners ? css.error : null}
@@ -398,7 +398,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               </div>
 
               <div>
-                <TrainingTooltip overlay="Number of Solutions for which each member can vote" placement="right">
+                <TrainingTooltip overlay="Number of Submissions for which each member can vote" placement="right">
                   <label htmlFor="numVotesInput">
                   Number of votes
                     <ErrorMessage name="numberOfVotesPerVoter">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -409,7 +409,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 <Field
                   id="numVotesInput"
                   maxLength={120}
-                  placeholder={"Number of Solutions for which each member can vote"}
+                  placeholder={"Number of Submissions for which each member can vote"}
                   name="numberOfVotesPerVoter"
                   type="number"
                   className={touched.numberOfVotesPerVoter && errors.numberOfVotesPerVoter ? css.error : null}

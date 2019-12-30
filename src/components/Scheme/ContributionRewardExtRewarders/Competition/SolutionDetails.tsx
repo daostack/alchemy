@@ -51,13 +51,13 @@ class SolutionDetails extends React.Component<IProps, null> {
   public render(): RenderOutput {
 
     const competition = this.props.proposalState.competition;
-    const solution = this.props.data;
+    const submission = this.props.data;
 
     const status = competitionStatus(competition);
     const canVote = status.voting;
-    // FAKE -- until can know whether this is a winning solution
+    // FAKE -- until can know whether this is a winning submission
     const isWinner = true;
-    const canRedeem = isWinner && status.complete && !solution.redeemedAt && (solution.suggester === this.props.currentAccountAddress);
+    const canRedeem = isWinner && status.complete && !submission.redeemedAt && (submission.suggester === this.props.currentAccountAddress);
     // FAKE -- until we can know whether the current account has voted for it
     const currentAccountVotedForIt = false;
 
@@ -67,12 +67,12 @@ class SolutionDetails extends React.Component<IProps, null> {
           <div className={css.closeButton}><img onClick={this.props.handleClose} src="/assets/images/Icon/x-grey.svg"/></div>
           <div className={css.reputationVoted}>
             <img src="/assets/images/Icon/vote/for-gray.svg"/>
-            {formatTokens(solution.totalVotes)}
+            {formatTokens(submission.totalVotes)}
           </div>
           <div className={css.actions}>
             { (canVote && !currentAccountVotedForIt) ?
 
-              <TrainingTooltip overlay="Vote for this solution">
+              <TrainingTooltip overlay="Vote for this submission">
                 <a className={classNames({[css.blueButton]: true, [css.voteButton]: true})}
                   href="javascript:void(0)"
                   onClick={this.props.handleVote}
@@ -82,7 +82,7 @@ class SolutionDetails extends React.Component<IProps, null> {
 
               canRedeem ? 
               
-                <TrainingTooltip overlay="Redeem for your winning solution">
+                <TrainingTooltip overlay="Redeem for your winning submission">
                   <a className={classNames({[css.blueButton]: true, [css.redeemButton]: true})}
                     href="javascript:void(0)"
                     onClick={this.props.handleRedeem}
@@ -97,11 +97,11 @@ class SolutionDetails extends React.Component<IProps, null> {
         </div>
         
         <div className={css.proposer}>
-          <AccountPopup accountAddress={solution.suggester} daoState={this.props.daoState}/>
-          <AccountProfileName accountAddress={solution.suggester} accountProfile={this.props.currentAccountProfile} daoAvatarAddress={this.props.daoState.address} detailView={false} />
+          <AccountPopup accountAddress={submission.suggester} daoState={this.props.daoState}/>
+          <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.currentAccountProfile} daoAvatarAddress={this.props.daoState.address} detailView={false} />
         </div>
-        <div className={css.description}>{solution.title}</div>
-        <div className={css.description}>{solution.description}</div>
+        <div className={css.description}>{submission.title}</div>
+        <div className={css.description}>{submission.description}</div>
       </div>
     );
   }

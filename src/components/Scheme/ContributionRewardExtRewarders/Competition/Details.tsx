@@ -123,7 +123,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
   public render(): RenderOutput {
     const { daoState, proposalState } = this.props;
-    const solutions = this.props.data;
+    const submissions = this.props.data;
     const tags = proposalState.tags;
     const competition = proposalState.competition;
     const now = moment();
@@ -145,22 +145,22 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       ];
 
       /** the following is wrong
-      return solutions
+      return submissions
         .sort((a: ICompetitionSuggestion, b: ICompetitionSuggestion) => b.rewardPercentage - a.rewardPercentage)
-        .map((solution: ICompetitionSuggestion, index: number) => {
+        .map((submission: ICompetitionSuggestion, index: number) => {
           return <div key={index} className={css.winner}>
             <div className={css.position}>{index+1}</div>
-            <div className={css.proportion}>{solution.rewardPercentage}%</div>
+            <div className={css.proportion}>{submission.rewardPercentage}%</div>
           </div>;
         });
          */
     };
     const solutionsHtml = () => {
 
-      return solutions.map((solution: ICompetitionSuggestion, index: number) => {
-        const isSelected = () => this.state.showingSolutionDetails && (this.state.showingSolutionDetails.suggestionId === solution.suggestionId);
+      return submissions.map((submission: ICompetitionSuggestion, index: number) => {
+        const isSelected = () => this.state.showingSolutionDetails && (this.state.showingSolutionDetails.suggestionId === submission.suggestionId);
         return (
-          <div key={index} className={css.row} onClick={this.openSolutionDetailsModal(solution)}>
+          <div key={index} className={css.row} onClick={this.openSolutionDetailsModal(submission)}>
             {/*
               FAKE:  until we how to know if a winner.  Can't be a winner until competition is over
               */}
@@ -168,17 +168,17 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
               <img src="/assets/images/Icon/winner.svg"></img>
             </div>
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.title]: true})}>
-              { solution.title || "[No title is available]" }
+              { submission.title || "[No title is available]" }
             </div>
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.creator]: true})}>
               <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
               <AccountProfileName accountAddress={proposalState.proposer} accountProfile={this.props.creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
             </div>
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votes]: true})}>
-              { formatTokens(solution.totalVotes) }
+              { formatTokens(submission.totalVotes) }
             </div>
             {/*
-              FAKE: know whether the current account has voted for the solution.
+              FAKE: know whether the current account has voted for the submission.
               */}
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votedUp]: true, [css.didVote]: true })}>
               <img src="/assets/images/Icon/vote/for-gray.svg"></img>
@@ -202,7 +202,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
                 href="javascript:void(0)"
                 onClick={this.openNewSolutionModal}
                 data-test-id="createSuggestion"
-              >+ New Solution</a>
+              >+ New Submission</a>
             </div>
           </div>
 
@@ -267,8 +267,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           </div>
         </div>
         
-        <div className={css.solutions}>
-          <div className={css.heading}>{solutions.length} Solutions</div>
+        <div className={css.submissions}>
+          <div className={css.heading}>{submissions.length} Submissions</div>
           <div className={css.list}>
             {solutionsHtml()}
           </div>

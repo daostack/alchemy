@@ -55,7 +55,7 @@ export default class CreateSolution extends React.Component<IProps, IStateProps>
     return (
       <div className={css.createSolutionForm}>
         <h2 className={css.header}>
-          <div className={css.content}>+ New Solution<div className={css.proposalTitle}>{proposalState.title ? <span> | {proposalState.title}</span> : "" }</div></div>
+          <div className={css.content}>+ New Submission<div className={css.proposalTitle}>{proposalState.title ? <span> | {proposalState.title}</span> : "" }</div></div>
         </h2>
 
         <Formik
@@ -102,7 +102,7 @@ export default class CreateSolution extends React.Component<IProps, IStateProps>
             setFieldValue,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
-              <TrainingTooltip overlay="The title is the header of the solution and will be the first visible information about your suggestion" placement="right">
+              <TrainingTooltip overlay="The title is the header of the submission and will be the first visible information about your suggestion" placement="right">
                 <label htmlFor="titleInput">
                 Title
                   <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -113,7 +113,7 @@ export default class CreateSolution extends React.Component<IProps, IStateProps>
                 autoFocus
                 id="titleInput"
                 maxLength={120}
-                placeholder="Summarize your solution"
+                placeholder="Summarize your submission"
                 name="title"
                 type="text"
                 className={touched.title && errors.title ? css.error : null}
@@ -131,12 +131,12 @@ export default class CreateSolution extends React.Component<IProps, IStateProps>
                 component={MarkdownField}
                 onChange={(value: any) => { setFieldValue("description", value); }}
                 id="descriptionInput"
-                placeholder="Describe your solution in greater detail"
+                placeholder="Describe your submission in greater detail"
                 name="description"
                 className={touched.description && errors.description ? css.error : null}
               />
 
-              <TrainingTooltip overlay="Add some tags to give context for your solution" placement="right">
+              <TrainingTooltip overlay="Add some tags to give context for your submission" placement="right">
                 <label className={css.tagSelectorLabel}>
                 Tags
                 </label>
@@ -146,7 +146,7 @@ export default class CreateSolution extends React.Component<IProps, IStateProps>
                 <TagsSelector onChange={this.onTagsChange}></TagsSelector>
               </div>
 
-              <TrainingTooltip overlay="Link to the fully detailed description of your solution" placement="right">
+              <TrainingTooltip overlay="Link to the fully detailed description of your submission" placement="right">
                 <label htmlFor="urlInput">
                 URL
                   <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -165,9 +165,9 @@ export default class CreateSolution extends React.Component<IProps, IStateProps>
                 <button className={css.exitProposalCreation} type="button" onClick={handleCancel}>
                   Cancel
                 </button>
-                <TrainingTooltip overlay="Once the solution is submitted it cannot be edited or deleted" placement="top">
+                <TrainingTooltip overlay="Once the submission is submitted it cannot be edited or deleted" placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                  Submit solution
+                  Submit submission
                   </button>
                 </TrainingTooltip>
               </div>
