@@ -73,8 +73,9 @@ class FollowButton extends React.Component<IProps, IState> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     // If they already have a saved threeBox from this session
-    //   or have checked the box not to see threebox interstitial again then just do the follow
-    if (this.props.threeBox || parseInt(localStorage.getItem("dontShowThreeboxModal"))) {
+    //  or 3box has cached their signature and doesnt need it again
+    //  or they have checked the box not to see threebox interstitial again then just do the follow
+    if (this.props.threeBox || parseInt(localStorage.getItem("serialized3id_" + this.props.currentAccountAddress)) || parseInt(localStorage.getItem("dontShowThreeboxModal"))) {
       await this.doFollow();
     } else {
       this.setState({ showThreeboxModal: true });
