@@ -66,14 +66,14 @@ class DaoContainer extends React.Component<IProps, null> {
   private daoDiscussionRoute = (routeProps: any) => <DaoDiscussionPage {...routeProps} dao={this.props.data[0]} />;
   private daoProposalRoute = (routeProps: any) =>
     <ProposalDetailsPage {...routeProps}
-      daoState={this.props.data[0]}
       currentAccountAddress={this.props.currentAccountAddress}
+      daoState={this.props.data[0]}
       proposalId={routeProps.match.params.proposalId}
     />;
   private daoCrxProposalRoute = (routeProps: any) =>
     <DetailsPageRouter {...routeProps}
+      currentAccountAddress = {this.props.currentAccountAddress}
       daoState={this.props.data[0]}
-      // currentAccountAddress={this.props.currentAccountAddress}
       proposalId={routeProps.match.params.proposalId}
     />;
 

@@ -2,13 +2,14 @@ import { RouteComponentProps } from "react-router";
 import * as React from "react";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { getArc } from "arc";
-import { IDAOState, IProposalState } from "@daostack/client";
+import { IDAOState, IProposalState, Address } from "@daostack/client";
 import Loading from "components/Shared/Loading";
 import { getCrxRewarderConfig } from "crxRegistry";
 import {default as CompetitionDetails} from "components/Scheme/ContributionRewardExtRewarders/Competition/Details";
 import * as css from "../Scheme.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
+  currentAccountAddress: Address;
   daoState: IDAOState;
   proposalId: string;
 }
@@ -35,6 +36,7 @@ class DetailsPageRouter extends React.Component<IProps, null>
     switch(crxRewarderConfig.contractName) {
       case "Competition":
         return <CompetitionDetails 
+          currentAccountAddress= {this.props.currentAccountAddress}
           daoState={this.props.daoState}
           proposalState={proposalState} />;
       default:

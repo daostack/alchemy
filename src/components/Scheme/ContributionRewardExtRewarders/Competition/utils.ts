@@ -7,7 +7,7 @@ import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
 import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { map, first } from "rxjs/operators";
 
 export interface ICompetitionStatus {
   complete: boolean;
@@ -151,10 +151,11 @@ export const getProposalSubmission = (proposalId: string, id: string, subscribe 
 };
 
 
-export const getSubmissionVoterHasVoted = (voterAddress: string, submissionId: string, subscribe = false): Observable<Array<CompetitionVote>> => {
+export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: string, subscribe = false): Observable<boolean> => {
   // submissionId is the actual id, not the count
   const submission = new CompetitionSuggestion(submissionId, getArc());
-  return submission.votes({ where: { voter: voterAddress, suggestion: submissionId} }, { subscribe, fetchAllData: true });
+  return submission.votes({ where: { voter: voterAddress, suggestion: submissionId} }, { subscribe, fetchAllData: false })
+    .pipe(map((votes: Array<CompetitionVote>) => !!votes.length), first());
 };
 
 // export const getCompetitionVotes = (competitionId: string, subscribe = false): Observable<Array<CompetitionVote>> => {

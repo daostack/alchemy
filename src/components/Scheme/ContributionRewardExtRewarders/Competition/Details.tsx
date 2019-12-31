@@ -3,7 +3,7 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
-import { IDAOState, IProposalState, ICompetitionSuggestion } from "@daostack/client";
+import { IDAOState, IProposalState, ICompetitionSuggestion, Address } from "@daostack/client";
 import { schemeName, humanProposalTitle, getDateWithTimezone, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
 import { connect } from "react-redux";
 
@@ -22,14 +22,17 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import * as CompetitionActions from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { concatMap } from "rxjs/operators";
+import { forkJoin, combineLatest, Observable } from "rxjs";
 
 import moment = require("moment");
-import { ICreateSubmissionOptions, getProposalSubmissions } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { ICreateSubmissionOptions, getProposalSubmissions, getSubmissionVoterHasVoted } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import Tooltip from "rc-tooltip";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
 
-type ISubscriptionState = Array<ICompetitionSuggestion>;
+type ISubscriptionState = [Array<ICompetitionSuggestion>, Array<boolean>];
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -44,6 +47,7 @@ interface IStateProps {
 }
 
 interface IExternalProps /* extends RouteComponentProps<any> */ {
+  currentAccountAddress: Address;
   daoState: IDAOState;
   proposalState: IProposalState;
   // history: H.History;
@@ -122,7 +126,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
   public render(): RenderOutput {
     const { daoState, proposalState } = this.props;
-    const submissions = this.props.data;
+    const submissions = this.props.data[0];
+    const votersVotes = this.props.data[1];
     const tags = proposalState.tags;
     const competition = proposalState.competition;
     const now = moment();
@@ -175,8 +180,10 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             {/*
               FAKE: know whether the current account has voted for the submission.
               */}
-            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votedUp]: true, [css.didVote]: true })}>
-              <img src="/assets/images/Icon/vote/for-gray.svg"></img>
+            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votedUp]: true, [css.didVote]: votersVotes[index] })}>
+              <Tooltip placement="top" trigger={["hover"]} overlay={"You voted for this submission"}>
+                <img src="/assets/images/Icon/vote/for-gray.svg"></img>
+              </Tooltip>
             </div>
           </div>);
       });
@@ -304,10 +311,22 @@ export default withSubscription({
   loadingComponent: null,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: [],
-  createObservable: (props: IExternalProps) => {
+  createObservable: (props: IExternalProps & IStateProps ) => {
     /**
      * HEADS UP:  we subscribe here because we can't rely on getting to this component via CompetitionCard
      */
-    return getProposalSubmissions(props.proposalState.id, true);
+    const submissions = getProposalSubmissions(props.proposalState.id, true);
+
+    return combineLatest(
+      submissions,
+      submissions.pipe(
+        concatMap((submissions: Array<ICompetitionSuggestion>) => {
+          // seems like there should be a more elegant rxjs way
+          const observables: Array<Observable<boolean>> = [];
+          submissions.forEach((submission) => observables.push(getSubmissionVoterHasVoted(submission.id, props.currentAccountAddress, true)));
+          return forkJoin(observables);
+        })
+      )
+    );
   },
 });
