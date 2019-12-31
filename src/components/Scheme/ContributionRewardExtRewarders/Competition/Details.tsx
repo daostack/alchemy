@@ -107,7 +107,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
     if (!await enableWalletProvider({ showNotification })) { return; }
 
-    await this.props.voteForSubmission(this.props.proposalState.scheme.id, { suggestionId: this.state.showingSubmissionDetails.suggestionId });
+    await this.props.voteForSubmission({ id: this.state.showingSubmissionDetails.id });
   }
 
   private redeemSubmission = async (): Promise<void> => {
@@ -315,7 +315,14 @@ export default withSubscription({
     // return props.proposalState.competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true } )
     return competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true, fetchAllData: true } )
       .pipe(
-        map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion.staticState ))
+        // FAKE -- until .fetchStaticState() exists on CompetitionSuggestion
+        // mergeMap((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => from(suggestion.fetchStaticState()) )),
+        // combineLatest()
+        // or:
+        // map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion.staticState ))
+
+        // work-around hack because CompetitionSuggestion actually contains all we need
+        map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion as unknown as ICompetitionSuggestion) )
       );
   },
 });

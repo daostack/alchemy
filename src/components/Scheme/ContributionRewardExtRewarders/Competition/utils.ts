@@ -1,4 +1,4 @@
-import { ICompetitionProposal, Competition, CompetitionScheme } from "@daostack/client";
+import { ICompetitionProposal, Competition, CompetitionSuggestion } from "@daostack/client";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 
@@ -87,16 +87,16 @@ export const createCompetitionSubmission = (proposalId: string, options: ICreate
 };
 
 export interface IVoteSubmissionOptions {
-  suggestionId: number;
+  id: string;
 }
 
-export const voteForSubmission = (schemeId: string, options: IVoteSubmissionOptions ): ThunkAction<any, IRootState, null> => {
+export const voteForSubmission = (options: IVoteSubmissionOptions ): ThunkAction<any, IRootState, null> => {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Vote Submission");
-      const competitionScheme = new CompetitionScheme(schemeId, getArc());
+      const submission = new CompetitionSuggestion(options.id, getArc());
 
-      await competitionScheme.vote({suggestionId: options.suggestionId.toString()}).subscribe(...observer);
+      await submission.vote().subscribe(...observer);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err);

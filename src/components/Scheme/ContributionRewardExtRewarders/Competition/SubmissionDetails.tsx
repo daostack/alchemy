@@ -141,8 +141,17 @@ const SubmissionDetailsSubscription = withSubscription({
     return from((await competition.suggestions({ where: { proposal: props.proposalState.id }})
       .pipe(first()).toPromise()))
       .pipe(
+        // props.suggestionId is actually the id
         filter((suggestion: CompetitionSuggestion) => suggestion.id === props.suggestionId),
-        map((suggestion: CompetitionSuggestion) => suggestion.staticState)
+
+        // FAKE -- until .fetchStaticState() exists on CompetitionSuggestion
+        // mergeMap((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => from(suggestion.fetchStaticState()) )),
+        // combineLatest()
+        // or:
+        // map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion.staticState ))
+
+        // work-around hack because CompetitionSuggestion actually contains all we need
+        map((suggestion: CompetitionSuggestion) => suggestion as unknown as ICompetitionSuggestion )
       );
   },
 });

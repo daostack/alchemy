@@ -74,7 +74,7 @@
   },
   "dependencies": {
     "3box": "^1.14.0",
-    "@daostack/client": "0.2.38-experimental-3",
+    "@daostack/client": "^0.2.38-experimental-4",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
     "@fortawesome/react-fontawesome": "^0.1.3",
