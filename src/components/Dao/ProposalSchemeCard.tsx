@@ -7,7 +7,6 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import { humanProposalTitle, schemeName } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { closingTime } from "reducers/arcReducer";
 import { combineLatest } from "rxjs";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "./SchemeCard.scss";
@@ -122,7 +121,7 @@ const ProposalDetail = (props: IProposalDetailProps) => {
         {humanProposalTitle(proposalState)}
       </span>
       <b>
-        <Countdown toDate={closingTime(proposalState)} detailView={false} schemeView />
+        <Countdown proposal={proposalState} schemeView />
       </b>
     </Link>
   );

@@ -1,14 +1,16 @@
+import { IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
 import * as classNames from "classnames";
 import * as moment from "moment";
 import * as React from "react";
+import { closingTime } from "reducers/arcReducer";
+
+import BN = require("bn.js");
 
 import * as css from "./Countdown.scss";
 
 interface IProps {
   detailView?: boolean;
-  toDate: Date | moment.Moment;
-  fromDate?: Date | moment.Moment;
-  overTime?: boolean;
+  proposal: IProposalState;
   schemeView?: boolean;
   onEnd?(): any;
 }
@@ -19,6 +21,7 @@ interface IState {
   hours: number;
   min: number;
   seconds: number;
+  complete: boolean;
 }
 
 class Countdown extends React.Component<IProps, IState> {
@@ -27,22 +30,16 @@ class Countdown extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    this.state = this.calculateCountdown(this.props.toDate) || {
-      years: 0,
-      days: 0,
-      hours: 0,
-      min: 0,
-      seconds: 0,
-    };
+    this.state = this.calculateCountdown(closingTime(this.props.proposal));
   }
 
   public componentDidMount() {
     // update every five seconds
     this.interval = setInterval(() => {
-      const date = this.calculateCountdown(this.props.toDate);
-      if (date) {
-        this.setState(date);
-      } else {
+      const countdownState = this.calculateCountdown(closingTime(this.props.proposal));
+      this.setState(countdownState);
+
+      if (countdownState.complete) {
         this.stop();
         if (this.props.onEnd) {
           this.props.onEnd();
@@ -56,13 +53,21 @@ class Countdown extends React.Component<IProps, IState> {
   }
 
   public calculateCountdown(endDate: Date | moment.Moment) {
-    const endDateMoment = moment(endDate); const now = new Date();
+    const endDateMoment = moment(endDate);
+    const now = new Date();
 
     const diff = endDateMoment.diff(now);
 
     // clear countdown when date is reached
     if (diff <= 0) {
-      return false;
+      return {
+        years: 0,
+        days: 0,
+        hours: 0,
+        min: 0,
+        seconds: 0,
+        complete: true,
+      };
     }
 
     const duration = moment.duration(diff);
@@ -72,6 +77,7 @@ class Countdown extends React.Component<IProps, IState> {
       hours: duration.hours(),
       min: duration.minutes(),
       seconds: duration.seconds(),
+      complete: false,
     };
 
     return timeLeft;
@@ -91,21 +97,23 @@ class Countdown extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
     const countDown = this.state;
+    const { proposal } = this.props;
 
-    let percentageComplete = 0;
-    if (this.props.fromDate) {
-      const endDateMoment = moment(this.props.toDate);
-      const timeLeft = endDateMoment.diff(new Date());
-      if (timeLeft <= 0) {
-        percentageComplete = 100;
-      } else {
-        percentageComplete = (1 - timeLeft / endDateMoment.diff(this.props.fromDate)) * 100;
-      }
+    const percentageComplete = 0;
+    // TODO: do we want to show the percentage complete bar? We have not been so far
+    // if (this.props.fromDate) {
+    //   const endDateMoment = moment(this.props.toDate);
+    //   const timeLeft = endDateMoment.diff(new Date());
+    //   if (timeLeft <= 0) {
+    //     percentageComplete = 100;
+    //   } else {
+    //     percentageComplete = (1 - timeLeft / endDateMoment.diff(this.props.fromDate)) * 100;
+    //   }
 
-      if (percentageComplete < 1) {
-        percentageComplete = 2;
-      }
-    }
+    //   if (percentageComplete < 1) {
+    //     percentageComplete = 2;
+    //   }
+    // }
 
     const containerClass = classNames({
       [css.detailView]: this.props.detailView,
@@ -119,7 +127,15 @@ class Countdown extends React.Component<IProps, IState> {
           <div style={{ backgroundColor: "blue", height: "2px", width: percentageComplete + "%" }}></div>
         </div>
         {this.props.detailView ?
-          <span className={css.label}>Proposal ends:</span>
+          <span className={css.label}>
+            { proposal.stage === IProposalStage.Queued ? "Proposal will expire in" :
+              proposal.stage === IProposalStage.PreBoosted && proposal.downStakeNeededToQueue.lte(new BN(0)) ? "Proposal will un-boost in" :
+                proposal.stage === IProposalStage.PreBoosted ? "Proposal will boost in" :
+                  (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) && proposal.winningOutcome === IProposalOutcome.Pass ? "Proposal will pass in" :
+                    (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) ? "Proposal will fail in" :
+                      ""
+            }
+          </span>
           : " "
         }
         {
@@ -130,7 +146,7 @@ class Countdown extends React.Component<IProps, IState> {
         {
           countDown.days ? "" : <span className={css.timeSection}><span className={css.colon}>:</span><strong>{this.addLeadingZeros(countDown.seconds)}s</strong></span>
         }
-        {this.props.overTime ?
+        {proposal.stage === IProposalStage.QuietEndingPeriod && !countDown.complete ?
           <strong className={css.overTime}>
             <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME
           </strong>

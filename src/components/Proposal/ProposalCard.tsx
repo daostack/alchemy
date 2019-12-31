@@ -140,7 +140,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
               <div className={css.timer}>
                 <span className={css.content}>
                   {!expired
-                    ? <Countdown toDate={closingTime(proposal)} detailView={false} overTime={proposal.stage === IProposalStage.QuietEndingPeriod && !expired} />
+                    ? <Countdown proposal={proposal} detailView={false} />
                     : <span className={css.closedTime}>
                       {proposal.stage === IProposalStage.Queued ? "Expired" :
                         proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
