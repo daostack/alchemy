@@ -6,23 +6,24 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
 import { formatTokens, ensureHttps } from "lib/util";
-import { competitionStatus, getProposalSubmission } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { competitionStatus, getProposalSubmission, getSubmissionVoterHasVoted } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import { IProfileState } from "reducers/profilesReducer";
+import { combineLatest } from "rxjs";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
 
 interface IStateProps {
-  currentAccountAddress: Address;
   currentAccountProfile: IProfileState;
 }
 
 interface IExternalProps {
+  currentAccountAddress: Address;
   daoState: IDAOState;
   proposalState: IProposalState;
   suggestionId: string; // this is the real id (not the counter)
@@ -31,13 +32,12 @@ interface IExternalProps {
   handleRedeem: () => any;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<ICompetitionSuggestion>;
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<[ICompetitionSuggestion, boolean]>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
     ...ownProps,
-    currentAccountAddress: state.web3.currentAccountAddress,
-    currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
+    currentAccountProfile: state.profiles[ownProps.currentAccountAddress],
   };
 };
 
@@ -50,15 +50,15 @@ class SubmissionDetails extends React.Component<IProps, null> {
   public render(): RenderOutput {
 
     const competition = this.props.proposalState.competition;
-    const submission = this.props.data;
+    const submission = this.props.data[0];
 
     const status = competitionStatus(competition);
     const canVote = status.voting;
     // FAKE -- until can know whether this is a winning submission
-    const isWinner = true;
+    const isWinner = false;
     const canRedeem = isWinner && status.complete && !submission.redeemedAt && (submission.suggester === this.props.currentAccountAddress);
     // FAKE -- until we can know whether the current account has voted for it
-    const currentAccountVotedForIt = false;
+    const currentAccountVotedForIt = this.props.data[1];
 
     return (
       <div className={css.submissionDetails}>
@@ -130,7 +130,13 @@ const SubmissionDetailsSubscription = withSubscription({
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: [],
   createObservable: async (props: IExternalProps) => {
-    return getProposalSubmission(props.proposalState.id, props.suggestionId);
+    /**
+      * no subscriptions because assuming we'll get them from Details
+      **/ 
+    return combineLatest(
+      getProposalSubmission(props.proposalState.id, props.suggestionId),
+      getSubmissionVoterHasVoted(props.suggestionId, props.currentAccountAddress, false),
+    );
   },
 });
 

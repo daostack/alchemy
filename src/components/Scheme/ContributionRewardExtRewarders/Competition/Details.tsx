@@ -143,17 +143,6 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           <div className={css.proportion}>{split}%</div>
         </div>);
       });
-      
-      /** the following is wrong
-      return submissions
-        .sort((a: ICompetitionSuggestion, b: ICompetitionSuggestion) => b.rewardPercentage - a.rewardPercentage)
-        .map((submission: ICompetitionSuggestion, index: number) => {
-          return <div key={index} className={css.winner}>
-            <div className={css.position}>{index+1}</div>
-            <div className={css.proportion}>{submission.rewardPercentage}%</div>
-          </div>;
-        });
-         */
     };
     const submissionsHtml = () => {
 
@@ -291,6 +280,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         <Modal onBackdropClick={this.closeSubmissionDetailsModal}
           backdropClassName={css.submissionsModalBackdrop}>
           <SubmissionDetails
+            currentAccountAddress={this.props.currentAccountAddress}
             suggestionId={this.state.showingSubmissionDetails.id}
             proposalState={proposalState}
             daoState={daoState}

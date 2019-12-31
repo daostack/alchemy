@@ -675,7 +675,7 @@ a.blueButton {
       white-space: nowrap;
 
       img {
-        padding-right: 5px;
+        padding-right: 7px;
         position: relative;
         top: 4px;
       }
@@ -699,6 +699,12 @@ a.blueButton {
           position: relative;
           top: 6px;
         }
+      }
+
+      // is winner icon
+      >img {
+        position: relative;
+        top: 4px;
       }
     }
   }
