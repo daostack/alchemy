@@ -1,4 +1,4 @@
-import { ICompetitionProposal, Competition, CompetitionSuggestion } from "@daostack/client";
+import { ICompetitionProposal, Competition, CompetitionSuggestion, ICompetitionSuggestion, CompetitionVote } from "@daostack/client";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 
@@ -6,6 +6,8 @@ import moment = require("moment");
 import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 
 export interface ICompetitionStatus {
   complete: boolean;
@@ -103,4 +105,65 @@ export const voteForSubmission = (options: IVoteSubmissionOptions ): ThunkAction
       throw err;
     }
   };
+};
+
+/**
+ * must be an exact subset of ICompetitionSuggestionQueryOptions
+ */
+export interface IGetSubmissionsOptions {
+  id?: string; // id of the competition
+  suggestionId?: string; // the "suggestionId" is a counter that is unique to the scheme
+  // - and is not to be confused with suggestion.id
+}
+
+const getSubmissions = (
+  proposalId: string,
+  options?: IGetSubmissionsOptions,
+  subscribe = false
+): Observable<Array<ICompetitionSuggestion>> => {
+  // FAKE -- until we have IProposalState.competition.suggestions()
+  const competition = new Competition(proposalId, getArc());
+  // return props.proposalState.competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true } )
+  return competition.suggestions({ where: options }, { subscribe, fetchAllData: true })
+    .pipe(
+      // FAKE -- until .fetchStaticState() exists on CompetitionSuggestion
+      // mergeMap((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => from(suggestion.fetchStaticState()) )),
+      // concat()  (??)
+      // or:
+      // map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion.staticState ))
+
+      // work-around hack because CompetitionSuggestion actually contains all we need
+      map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion as unknown as ICompetitionSuggestion) )
+    );
+};
+
+export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestion>> => {
+  return getSubmissions(proposalId, undefined, subscribe);
+};
+
+export const getProposalSubmission = (proposalId: string, id: string, subscribe = false): Observable<ICompetitionSuggestion> => {
+  /** 
+   * won't subscribe here because the only use case is SubmissionDetails where we can assume the suggestion has
+   * been subscribed by CompetitionDetails from where SubmissionDetails is loaded.
+   **/
+  return getSubmissions(proposalId, { id }, subscribe).pipe(
+    map((suggestions: Array<ICompetitionSuggestion>) => suggestions.length ? suggestions[0]: null ));
+};
+
+
+export const getSubmissionVoterHasVoted = (voterAddress: string, submissionId: string, subscribe = false): Observable<Array<CompetitionVote>> => {
+  // submissionId is the actual id, not the count
+  const submission = new CompetitionSuggestion(submissionId, getArc());
+  return submission.votes({ where: { voter: voterAddress, suggestion: submissionId} }, { subscribe, fetchAllData: true });
+};
+
+// export const getCompetitionVotes = (competitionId: string, subscribe = false): Observable<Array<CompetitionVote>> => {
+//   const submission = new CompetitionSuggestion(submissionId, getArc());
+//   return submission.votes({ where: options }, { subscribe, fetchAllData: true });
+// };
+
+export const getSubmissionVotes = (submissionId: string, subscribe = false): Observable<Array<CompetitionVote>> => {
+  // submissionId is the actual id, not the count
+  const submission = new CompetitionSuggestion(submissionId, getArc());
+  return submission.votes({ }, { subscribe, fetchAllData: true });
 };

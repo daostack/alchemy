@@ -6,13 +6,13 @@ import { ISchemeState, IDAOState, IProposalState } from "@daostack/client";
 import Card from "components/Scheme/ContributionRewardExtRewarders/Competition/Card";
 import * as css from "./Competitions.scss";
 
-interface IProps {
+interface IExternalProps {
   daoState: IDAOState;
   scheme: ISchemeState;
   proposals: Array<IProposalState>;
 }
 
-export default class CompetitionsList extends React.Component<IProps, null> {
+export default class CompetitionsList extends React.Component<IExternalProps, null> {
 
   public render(): RenderOutput {
     const { daoState, scheme, proposals} = this.props;
@@ -31,3 +31,26 @@ export default class CompetitionsList extends React.Component<IProps, null> {
     </React.Fragment>;
   }
 }
+
+// export default withSubscription({
+//   wrappedComponent: CompetitionsList,
+//   loadingComponent: null,
+//   errorComponent: (props) => <div>{ props.error.message }</div>,
+//   checkForUpdate: [],
+//   createObservable: async (props: IExternalProps) => {
+//     // per dao, subscribe and prime the cache for Competitions, Subscriptions and Votes
+//     const competitions = Competition.search(getArc(),{ where: { dao: props.daoState.address } }, { subscribe: true, fetchAllData: true } );
+
+//     competitions.pipe(
+//       mergeMap(async (competitions: Array<Competition>) => {
+//         competitions.map((competition: Competition) => getProposalSubmissions(competition.id, true )
+//           .pipe(
+//             mergeMap(async (submissions: Array<ICompetitionSuggestion>) => {
+//               submissions.map((submission: ICompetitionSuggestion) => getSubmissionVotes(submission.id, undefined, true));
+//             })
+//           )
+//         );
+//       })
+//     );
+//   },
+// });

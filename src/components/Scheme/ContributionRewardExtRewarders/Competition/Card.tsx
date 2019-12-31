@@ -4,17 +4,15 @@ import { humanProposalTitle } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import RewardsString from "components/Proposal/RewardsString";
-import { IDAOState, IProposalState, Competition, CompetitionSuggestion, ICompetitionSuggestion } from "@daostack/client";
+import { IDAOState, IProposalState, ICompetitionSuggestion } from "@daostack/client";
 import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import Countdown from "components/Shared/Countdown";
 import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competition/StatusBlob";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { getArc } from "arc";
-import { map } from "rxjs/operators";
 import * as css from "./Competitions.scss";
-import { competitionStatus } from "./utils";
+import { competitionStatus, getProposalSubmissions } from "./utils";
 
 type ISubscriptionState = Array<ICompetitionSuggestion>;
 
@@ -86,19 +84,15 @@ class CompetitionCard extends React.Component<IProps, null> {
 
 const CompetitionCardConnected = connect(mapStateToProps)(CompetitionCard);
 
-
 export default withSubscription({
   wrappedComponent: CompetitionCardConnected,
   loadingComponent: null,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: [],
   createObservable: (props: IExternalProps) => {
-    // FAKE -- until we have IProposalState.competition.suggestions()
-    const competition = new Competition(props.proposalState.id, getArc());
-    // return props.proposalState.competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true } )
-    return competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true, fetchAllData: true } )
-      .pipe(
-        map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion.staticState ))
-      );
+    /**
+     * Would be better to prime for all cards
+     */
+    return getProposalSubmissions(props.proposalState.id, true);
   },
 });

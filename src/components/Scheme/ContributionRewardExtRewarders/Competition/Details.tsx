@@ -3,7 +3,7 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
-import { IDAOState, IProposalState, ICompetitionSuggestion, CompetitionSuggestion, Competition } from "@daostack/client";
+import { IDAOState, IProposalState, ICompetitionSuggestion } from "@daostack/client";
 import { schemeName, humanProposalTitle, getDateWithTimezone, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
 import { connect } from "react-redux";
 
@@ -13,19 +13,18 @@ import RewardsString from "components/Proposal/RewardsString";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 import { showNotification } from "reducers/notifications";
-import { enableWalletProvider, getArc } from "arc";
+import { enableWalletProvider } from "arc";
 import CreateSubmission from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSubmission";
 import { Modal } from "react-router-modal";
 import SubmissionDetails from "components/Scheme/ContributionRewardExtRewarders/Competition/SubmissionDetails";
 import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competition/StatusBlob";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { map } from "rxjs/operators";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import * as CompetitionActions from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 
 import moment = require("moment");
-import { ICreateSubmissionOptions } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { ICreateSubmissionOptions, getProposalSubmissions } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -133,17 +132,13 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const votingStartTime =   getDateWithTimezone(competition.votingStartTime);
     const endTime =           getDateWithTimezone(competition.endTime);
     const distributionsHtml = () => {
-      return [
-        <div key={0} className={css.winner}>
-          <div className={css.position}>1st</div>
-          <div className={css.proportion}>60%</div>
-        </div>,
-        <div key={1} className={css.winner}>
-          <div className={css.position}>2nd</div>
-          <div className={css.proportion}>40%</div>
-        </div>,
-      ];
-
+      return competition.rewardSplit.map((split: number, index: number) => {
+        return (<div key={split} className={css.winner}>
+          <div className={css.position}>{index+1}</div>
+          <div className={css.proportion}>{split}%</div>
+        </div>);
+      });
+      
       /** the following is wrong
       return submissions
         .sort((a: ICompetitionSuggestion, b: ICompetitionSuggestion) => b.rewardPercentage - a.rewardPercentage)
@@ -310,19 +305,9 @@ export default withSubscription({
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: [],
   createObservable: (props: IExternalProps) => {
-    // FAKE -- until we have IProposalState.competition.suggestions()
-    const competition = new Competition(props.proposalState.id, getArc());
-    // return props.proposalState.competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true } )
-    return competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true, fetchAllData: true } )
-      .pipe(
-        // FAKE -- until .fetchStaticState() exists on CompetitionSuggestion
-        // mergeMap((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => from(suggestion.fetchStaticState()) )),
-        // combineLatest()
-        // or:
-        // map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion.staticState ))
-
-        // work-around hack because CompetitionSuggestion actually contains all we need
-        map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion as unknown as ICompetitionSuggestion) )
-      );
+    /**
+     * HEADS UP:  we subscribe here because we can't rely on getting to this component via CompetitionCard
+     */
+    return getProposalSubmissions(props.proposalState.id, true);
   },
 });

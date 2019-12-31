@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState, Address, Competition, CompetitionSuggestion, ICompetitionSuggestion } from "@daostack/client";
+import { IDAOState, IProposalState, Address, ICompetitionSuggestion } from "@daostack/client";
 import * as React from "react";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 
@@ -6,10 +6,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
 import { formatTokens, ensureHttps } from "lib/util";
-import { getArc } from "arc";
-import { map, filter, first } from "rxjs/operators";
-import { from } from "rxjs";
-import { competitionStatus } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { competitionStatus, getProposalSubmission } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import classNames from "classnames";
@@ -133,26 +130,7 @@ const SubmissionDetailsSubscription = withSubscription({
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: [],
   createObservable: async (props: IExternalProps) => {
-
-    // FAKE -- until we can ask the client lib for a specific suggestion id
-    const competition = new Competition(props.proposalState.id, getArc());
-    // no need to subscribe here as Details will already have done it
-    // TODO: can there please be a simpler way to do this???
-    return from((await competition.suggestions({ where: { proposal: props.proposalState.id }})
-      .pipe(first()).toPromise()))
-      .pipe(
-        // props.suggestionId is actually the id
-        filter((suggestion: CompetitionSuggestion) => suggestion.id === props.suggestionId),
-
-        // FAKE -- until .fetchStaticState() exists on CompetitionSuggestion
-        // mergeMap((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => from(suggestion.fetchStaticState()) )),
-        // combineLatest()
-        // or:
-        // map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion.staticState ))
-
-        // work-around hack because CompetitionSuggestion actually contains all we need
-        map((suggestion: CompetitionSuggestion) => suggestion as unknown as ICompetitionSuggestion )
-      );
+    return getProposalSubmission(props.proposalState.id, props.suggestionId);
   },
 });
 
