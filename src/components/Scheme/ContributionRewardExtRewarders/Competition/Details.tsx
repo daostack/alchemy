@@ -23,7 +23,7 @@ import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import * as CompetitionActions from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import { concatMap } from "rxjs/operators";
-import { forkJoin, combineLatest, Observable } from "rxjs";
+import { forkJoin, combineLatest, Observable, of } from "rxjs";
 
 import moment = require("moment");
 import { ICreateSubmissionOptions, getProposalSubmissions, getSubmissionVoterHasVoted } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
@@ -311,10 +311,14 @@ export default withSubscription({
       submissions,
       submissions.pipe(
         concatMap((submissions: Array<ICompetitionSuggestion>) => {
-          // seems like there should be a more elegant rxjs way
-          const observables: Array<Observable<boolean>> = [];
-          submissions.forEach((submission) => observables.push(getSubmissionVoterHasVoted(submission.id, props.currentAccountAddress, true)));
-          return forkJoin(observables);
+          if (!submissions.length) {
+            return of([]);
+          } else {
+            // seems like there should be a more elegant rxjs way
+            const observables: Array<Observable<boolean>> = [];
+            submissions.forEach((submission) => observables.push(getSubmissionVoterHasVoted(submission.id, props.currentAccountAddress, true)));
+            return forkJoin(observables);
+          }
         })
       )
     );
