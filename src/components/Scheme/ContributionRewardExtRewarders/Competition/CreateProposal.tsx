@@ -131,6 +131,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
     const proposalOptions: IProposalCreateOptionsCompetition  = {
       dao: this.props.daoAvatarAddress,
+      description: values.description,
       endTime,
       ethReward: toWei(Number(values.ethReward)),
       externalTokenReward,
@@ -143,6 +144,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       startTime,
       suggestionsEndTime,
       tags: this.state.tags,
+      title: values.title,
       votingStartTime,
     };
 

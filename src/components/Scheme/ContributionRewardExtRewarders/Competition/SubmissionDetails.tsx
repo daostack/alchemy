@@ -53,6 +53,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const submission = this.props.data[0];
 
     const status = competitionStatus(competition);
+    // FAKE -- need to check whether the user's make number of votes has been reached
     const canVote = status.voting;
     // FAKE -- until can know whether this is a winning submission
     const isWinner = false;
