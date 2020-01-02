@@ -6,6 +6,7 @@ import Countdown from "components/Shared/Countdown";
 import FollowButton from "components/Shared/FollowButton";
 import { humanProposalTitle } from "lib/util";
 import * as React from "react";
+import TrackVisibility from 'react-on-screen';
 import { Link } from "react-router-dom";
 import { closingTime } from "reducers/arcReducer";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
@@ -165,32 +166,35 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   <div className={css.menuIcon}>
                     <img src="/assets/images/Icon/Context-menu.svg"/>
                   </div>
-                  <div className={css.menu}>
-                    <div className={css.followButton}>
-                      <FollowButton id={proposal.id} type="proposals" />
+                  <TrackVisibility partialVisibility={false} offset={-116}>{({ isVisible }) =>
+                    <div className={classNames({[css.menu]: true, [css.leftMenu]: !isVisible })}>
+                      <div className={css.followButton}>
+                        <FollowButton id={proposal.id} type="proposals" />
+                      </div>
+
+                      <VoteButtons
+                        currentAccountAddress={currentAccountAddress}
+                        currentAccountState={member}
+                        currentVote={currentAccountVote}
+                        dao={daoState}
+                        expired={expired}
+                        proposal={proposal}
+                        contextMenu/>
+
+                      <StakeButtons
+                        beneficiaryProfile={beneficiaryProfile}
+                        contextMenu
+                        currentAccountAddress={currentAccountAddress}
+                        currentAccountGens={currentAccountGenBalance}
+                        currentAccountGenStakingAllowance={currentAccountGenAllowance}
+                        dao={daoState}
+                        expired={expired}
+                        proposal={proposal}
+                        stakes={stakes}
+                      />
                     </div>
-
-                    <VoteButtons
-                      currentAccountAddress={currentAccountAddress}
-                      currentAccountState={member}
-                      currentVote={currentAccountVote}
-                      dao={daoState}
-                      expired={expired}
-                      proposal={proposal}
-                      contextMenu/>
-
-                    <StakeButtons
-                      beneficiaryProfile={beneficiaryProfile}
-                      contextMenu
-                      currentAccountAddress={currentAccountAddress}
-                      currentAccountGens={currentAccountGenBalance}
-                      currentAccountGenStakingAllowance={currentAccountGenAllowance}
-                      dao={daoState}
-                      expired={expired}
-                      proposal={proposal}
-                      stakes={stakes}
-                    />
-                  </div>
+                  }
+                  </TrackVisibility>
                 </div>
               </div>
             </div>

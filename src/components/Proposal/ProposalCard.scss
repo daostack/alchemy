@@ -170,14 +170,21 @@
     height: 20px;
     display: inline-block;
     position: relative;
-    top: 3px;
     left: 3px;
     float: right;
+    text-align: center;
 
     .menuIcon {
-      width: 3px;
-      height: 20px;
-      margin: 0 auto;
+      width: 18px;
+      height: 18px;
+      border-radius: 11px;
+      border: solid 1px #0076ff;
+
+      img {
+        height: 11px;
+        position: relative;
+        top: 3px;
+      }
 
       &:hover {
         cursor: pointer;
@@ -191,19 +198,20 @@
       padding: 5px 0;
       box-shadow: 2px 2px 9px 0 rgba(12, 0, 51, 0.1);
       position: absolute;
-      top: -90px;
-      left: -60px;
-      transform: scale(0);
+      top: -7px;
+      left: 24px;
       opacity: 0;
       transition: all .25s ease;
+      z-index: 100;
+
+      &.leftMenu {
+        left: -118px;
+      }
     }
 
     &:hover {
       .menu {
-        transform: scale(1);
         opacity: 1;
-        top: -7px;
-        left: 19px;
       }
     }
 
