@@ -134,12 +134,12 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const tags = proposalState.tags;
     const competition = proposalState.competition;
     const now = moment();
-    const notYetVoting = now.isBefore(competition.startTime);
     const startTime =         getDateWithTimezone(competition.startTime);
     const submissionsEndTime =  getDateWithTimezone(competition.suggestionsEndTime);
     const votingStartTime =   getDateWithTimezone(competition.votingStartTime);
     const endTime =           getDateWithTimezone(competition.endTime);
     const canSubmit =  now.isSameOrAfter(startTime) && now.isBefore(submissionsEndTime);
+    const inSubmissionsNotYetVoting = now.isSameOrAfter(submissionsEndTime) && now.isBefore(competition.votingStartTime);
     const distributionsHtml = () => {
       return competition.rewardSplit.map((split: number, index: number) => {
         return (<div key={split} className={css.winner}>
@@ -203,7 +203,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
           <div className={css.name}>{humanProposalTitle(proposalState)}</div>
 
-          { notYetVoting ? 
+          { inSubmissionsNotYetVoting ? 
             <div className={css.countdown}>
               <div className={css.startsIn}>Voting starts in:</div>
               <Countdown toDate={votingStartTime} />
