@@ -15,6 +15,15 @@ import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 
 import { checkTotalPercent, getUnixTimestamp, getJSDate } from "lib/util";
+import {
+  Grid,
+} from '@material-ui/core/';
+import {
+  KeyboardDatePicker,
+  KeyboardTimePicker,
+  MuiPickersUtilsProvider,
+} from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -24,6 +33,7 @@ interface IExternalProps {
 
 interface IStateProps {
   tags: Array<string>;
+  date: Date;
 }
 
 interface IDispatchProps {
@@ -100,8 +110,13 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     super(props);
     this.state = { 
       tags: new Array<string>(),
+      date: new Date()
     };
   }
+
+  public handleDateChange = (date: Date) => {
+    this.setState({date});
+  }; 
 
   public handleSubmit = async (values: IFormValues, { _setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { 
@@ -121,7 +136,13 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
 
     // Parameters to be passes to client
-    const rewardSplit = values.rewardSplit.split(",").map((s: string) => Number(s));
+    let rewardSplit = []
+    if (values.rewardSplit === "") {
+      let unit = 100.0 / Number(values.numWinners)
+      rewardSplit = Array(values.numWinners).fill(unit);
+    } else {
+      rewardSplit = values.rewardSplit.split(",").map((s: string) => Number(s));
+    }
     const startTime = getJSDate(values.compStartDate, values.compStartTime);
     const votingStartTime = getJSDate(values.votingStartDate, values.votingStartTime);
     const endTime = getJSDate(values.compEndDate, values.compEndTime);
@@ -270,10 +291,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             require("title");
             require("numWinners");
             require("numberOfVotesPerVoter");
-            require("compStartDate");
-            require("compEndDate");
-            require("compStartTime");
-            require("compEndTime");
+            //require("compStartDate");
+            //require("compEndDate");
+            //require("compStartTime");
+            //require("compEndTime");
             require("votingStartDate");
             require("votingStartTime");
             require("suggestionsEndDate");
@@ -495,29 +516,29 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                   />
                 </div>
 
-                <div className={css.date}>
-                  <img src="/assets/images/Icon/down.svg" className={css.downV}/>
-                  <label htmlFor="compStartDate">
-                    Competition start time
-                    <ErrorMessage name="compStartDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  </label>
-                  <Field
-                    id="compStartDateInput"
-                    name="compStartDate"
-                    type="date"
-                    className={touched.startTime && errors.startTime ? css.error : null}
-                  />
-                  <div className={css.timeSelect}>
-                    <Field
-                      id="compStartTimeInput"
-                      name="compStartTime"
-                      type="time"
-                      component={SelectField}
-                      className={css.timeSelect}
-                      options={timeSlots}
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <Grid container className={css.date}>
+                    <KeyboardDatePicker
+                      id="compStartDateInput"
+                      label="Competition start time"
+                      format="MM/dd/yyyy"
+                      value={this.state.date}
+                      onChange={date => this.handleDateChange(date)}
+                      KeyboardButtonProps={{
+                        'aria-label': 'change date',
+                      }}
                     />
-                  </div>
-                </div>
+                    <KeyboardTimePicker
+                      id="time-picker"
+                      label="Time picker"
+                      value={this.state.date}
+                      onChange={date => this.handleDateChange(date)}
+                      KeyboardButtonProps={{
+                        'aria-label': 'change time',
+                      }}
+                    />
+                  </Grid>
+                  </MuiPickersUtilsProvider>
 
                 <div className={css.date}>
                   <img src="/assets/images/Icon/down.svg" className={css.downV}/>
