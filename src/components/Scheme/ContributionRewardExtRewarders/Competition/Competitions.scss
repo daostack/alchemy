@@ -185,14 +185,14 @@ a.blueButton {
 
       .gotoProposal {
         display: inline-block;
-        flex: 1;
+        flex: 3;
         position: relative;
         top: 6px;
       }
 
       .newSubmission {
         text-align: right;
-        flex: 2;
+        flex: 3;
       }
     }
 
@@ -646,6 +646,7 @@ a.blueButton {
   right: 0;
   box-shadow: $shadow-3;
   max-width: 445px;
+  min-width: 250px;
   // the follinwg enable scrolling to work in the description div
   max-height: calc(100vh - 136px);
   flex-direction: column;
@@ -658,7 +659,8 @@ a.blueButton {
 
     .closeButton {
       flex-grow: 2;
-      vertical-align: middle;
+      position: relative;
+      top: 8px;
       width: 60%;
       img {
         width: 13px;
@@ -669,9 +671,9 @@ a.blueButton {
     .reputationVoted {
       flex-grow: 1;
       position: relative;
-      top: 3px;
+      top: 4px;
       color: #9aa9b5;
-      padding-right: 7px;
+      padding-right: 12px;
       white-space: nowrap;
 
       img {

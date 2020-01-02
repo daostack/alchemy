@@ -89,7 +89,7 @@ export const createCompetitionSubmission = (proposalId: string, options: ICreate
 };
 
 export interface IVoteSubmissionOptions {
-  id: string;
+  id: string; // actual id, not the counter
 }
 
 export const voteForSubmission = (options: IVoteSubmissionOptions ): ThunkAction<any, IRootState, null> => {
@@ -106,6 +106,26 @@ export const voteForSubmission = (options: IVoteSubmissionOptions ): ThunkAction
     }
   };
 };
+
+export interface IVoteSubmissionOptions {
+  id: string; // actual id, not the counter
+}
+
+export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkAction<any, IRootState, null> => {
+  return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
+    try {
+      const observer = operationNotifierObserver(dispatch, "Redeem Submission");
+      const submission = new CompetitionSuggestion(options.id, getArc());
+
+      await submission.redeem().subscribe(...observer);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
+      throw err;
+    }
+  };
+};
+
 
 /**
  * must be an exact subset of ICompetitionSuggestionQueryOptions

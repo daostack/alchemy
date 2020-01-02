@@ -1,6 +1,5 @@
 import { IDAOState, IProposalState, Address, ICompetitionSuggestion } from "@daostack/client";
 import * as React from "react";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 
 // import UserSearchField from "components/Shared/UserSearchField";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -14,6 +13,7 @@ import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest } from "rxjs";
+import Tooltip from "rc-tooltip";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -43,9 +43,14 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 
 class SubmissionDetails extends React.Component<IProps, null> {
 
-  public handleVote = (): void => {
+  private handleVote = (): void => {
     this.props.handleVote();
   }
+
+  private handleRedeem = (): void => {
+    this.props.handleRedeem();
+  }
+
 
   public render(): RenderOutput {
 
@@ -53,13 +58,14 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const submission = this.props.data[0];
 
     const status = competitionStatus(competition);
-    // FAKE -- need to check whether the user's make number of votes has been reached
-    const canVote = status.voting;
+    const currentAccountVotedForIt = this.props.data[1];
+    // FAKE -- until can know how many votes per account per Competition
+    const maxNumVotesReached = false;
+    const canVote = status.voting && !currentAccountVotedForIt && !maxNumVotesReached;
     // FAKE -- until can know whether this is a winning submission
     const isWinner = false;
+    // FAKE -- until can know whether this is a winning submission. allso need submission.redeemedAt to be undefined when not redeemed
     const canRedeem = isWinner && status.complete && !submission.redeemedAt && (submission.suggester === this.props.currentAccountAddress);
-    // FAKE -- until we can know whether the current account has voted for it
-    const currentAccountVotedForIt = this.props.data[1];
 
     return (
       <div className={css.submissionDetails}>
@@ -70,28 +76,24 @@ class SubmissionDetails extends React.Component<IProps, null> {
             {formatTokens(submission.totalVotes)}
           </div>
           <div className={css.actions}>
-            { (canVote && !currentAccountVotedForIt) ?
-
-              <TrainingTooltip overlay="Vote for this submission">
-                <a className={classNames({[css.blueButton]: true, [css.voteButton]: true})}
-                  href="javascript:void(0)"
-                  onClick={this.props.handleVote}
-                  data-test-id="voteSuggestion"
-                >Vote<img src="/assets/images/Icon/vote/for-btn-selected-w.svg"/></a>
-              </TrainingTooltip> :
-
-              canRedeem ? 
-              
-                <TrainingTooltip overlay="Redeem for your winning submission">
-                  <a className={classNames({[css.blueButton]: true, [css.redeemButton]: true})}
-                    href="javascript:void(0)"
-                    onClick={this.props.handleRedeem}
-                    data-test-id="redeemSuggestion"
-                  ><img src="/assets/images/Icon/vote/redeem.svg"/>Redeem</a>
-                </TrainingTooltip> :
-
-                isWinner ? 
-                  <img src="/assets/images/Icon/winner.svg"></img> : ""
+            { 
+              isWinner ? 
+                <img src="/assets/images/Icon/winner.svg"></img> :
+                canRedeem ? 
+                  <Tooltip overlay="Redeem for your winning submission">
+                    <a className={classNames({[css.blueButton]: true, [css.redeemButton]: true})}
+                      href="javascript:void(0)"
+                      onClick={this.handleRedeem}
+                      data-test-id="redeemSuggestion"
+                    ><img src="/assets/images/Icon/vote/redeem.svg"/>Redeem</a>
+                  </Tooltip> :
+                  <Tooltip overlay={!status.voting ? "Voting has not yet started" : currentAccountVotedForIt ? "You have already voted" : maxNumVotesReached ? "You have already voted the maximum number of times" : "Vote yes for this submission"}>
+                    <a className={classNames({[css.blueButton]: true, [css.voteButton]: true, [css.disabled]: !canVote})}
+                      href="javascript:void(0)"
+                      onClick={canVote ? this.handleVote : undefined}
+                      data-test-id="voteSuggestion"
+                    >Vote<img src="/assets/images/Icon/vote/for-btn-selected-w.svg"/></a>
+                  </Tooltip>
             }
           </div>
         </div>
@@ -106,7 +108,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
         {submission.url ?
           <a href={ensureHttps(submission.url)} className={css.attachmentLink} target="_blank" rel="noopener noreferrer">
             <img src="/assets/images/Icon/Attachment.svg" />
-            Attachment &gt;
+            Attachment&nbsp;&gt;
           </a>
           : " "
         }

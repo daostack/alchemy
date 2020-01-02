@@ -38,6 +38,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
   createCompetitionSubmission: typeof CompetitionActions.createCompetitionSubmission;
   voteForSubmission: typeof CompetitionActions.voteForSubmission;
+  redeemForSubmission: typeof CompetitionActions.redeemForSubmission;
 }
 
 interface IStateProps {
@@ -67,6 +68,7 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
 const mapDispatchToProps = {
   createCompetitionSubmission: CompetitionActions.createCompetitionSubmission,
   voteForSubmission: CompetitionActions.voteForSubmission,
+  redeemForSubmission: CompetitionActions.redeemForSubmission,
   showNotification,
 };
 
@@ -117,11 +119,12 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const { showNotification } = this.props;
 
     if (!await enableWalletProvider({ showNotification })) { return; }
+
+    await this.props.redeemForSubmission({ id: this.state.showingSubmissionDetails.id });
   }
 
   private closeSubmissionDetailsModal = async (): Promise<void> => {
     this.setState({ showingSubmissionDetails: null });
-    return Promise.resolve(); // delete this when the actual vote is coded
   }
 
   public render(): RenderOutput {
@@ -136,6 +139,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const submissionsEndTime =  getDateWithTimezone(competition.suggestionsEndTime);
     const votingStartTime =   getDateWithTimezone(competition.votingStartTime);
     const endTime =           getDateWithTimezone(competition.endTime);
+    const canSubmit =  now.isSameOrAfter(startTime) && now.isBefore(submissionsEndTime);
     const distributionsHtml = () => {
       return competition.rewardSplit.map((split: number, index: number) => {
         return (<div key={split} className={css.winner}>
@@ -166,9 +170,6 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votes]: true})}>
               { formatTokens(submission.totalVotes) }
             </div>
-            {/*
-              FAKE: know whether the current account has voted for the submission.
-              */}
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votedUp]: true, [css.didVote]: votersVotes[index] })}>
               <Tooltip placement="top" trigger={["hover"]} overlay={"You voted for this submission"}>
                 <img src="/assets/images/Icon/vote/for-gray.svg"></img>
@@ -189,11 +190,14 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             <StatusBlob competition={competition}></StatusBlob>
             <div className={css.gotoProposal}><Link to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>Go to Proposal&nbsp;&gt;</Link></div>
             <div className={css.newSubmission}>
-              <a className={css.blueButton}
-                href="javascript:void(0)"
-                onClick={this.openNewSubmissionModal}
-                data-test-id="createSuggestion"
-              >+ New Submission</a>
+              { canSubmit ? 
+                <a className={css.blueButton}
+                  href="javascript:void(0)"
+                  onClick={this.openNewSubmissionModal}
+                  data-test-id="createSuggestion"
+                >+ New Submission</a>
+                : ""
+              }
             </div>
           </div>
 
@@ -222,6 +226,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           </div>
           <div className={css.rightSection}>
             <div className={css.header}>
+              { /* FAKE -- until can know what is a winner */ }
               <div className={css.isWinner}><img src="/assets/images/Icon/winner.svg"></img></div>
               <div className={css.results}>
                 <RewardsString proposal={proposalState} dao={daoState} />
