@@ -13,7 +13,7 @@ button:hover {
 .wrapper {
   flex-grow: 2;
   padding: 30px 50px 100px 50px;
-  overflow: auto;
+  overflow: visible;
   z-index: 0;
   position: relative;
 }
@@ -382,4 +382,8 @@ a {
   .proposalHistoryTableHeader {
     display: none;
   }
+}
+
+:global .infinite-scroll-component {
+  overflow: visible !important; // to avoid clipping of for user account popup in regular proposals list
 }
