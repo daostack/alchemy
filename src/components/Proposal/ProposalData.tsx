@@ -20,6 +20,10 @@ interface IExternalProps {
   daoState: IDAOState;
   proposalId: string;
   children(props: IInjectedProposalProps): JSX.Element;
+  /**
+   * true to subscribe to changes in votes, stakes and rewards
+   */
+  subscribeToProposalDetails?: boolean;
 }
 
 interface IStateProps {
@@ -28,6 +32,7 @@ interface IStateProps {
 }
 
 type SubscriptionData = [IProposalState, Vote[], Stake[], IRewardState, IMemberState, BN, BN, BN];
+type IPreProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 interface IInjectedProposalProps {
@@ -44,7 +49,7 @@ interface IInjectedProposalProps {
   votes: Vote[];
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IProps => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IPreProps => {
   const proposalState = ownProps.data ? ownProps.data[0] : null;
 
   return {
@@ -98,7 +103,7 @@ class ProposalData extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedProposalData = connect(mapStateToProps)(ProposalData);
+const ConnectedProposalData = connect(mapStateToProps, null)(ProposalData);
 
 export default withSubscription({
   wrappedComponent: ConnectedProposalData,
@@ -119,10 +124,10 @@ export default withSubscription({
 
     if (currentAccountAddress) {
       return combineLatest(
-        proposal.state(), // state of the current proposal
-        proposal.votes({where: { voter: currentAccountAddress }}),
-        proposal.stakes({where: { staker: currentAccountAddress }}),
-        proposal.rewards({ where: {beneficiary: currentAccountAddress}})
+        proposal.state({ subscribe: props.subscribeToProposalDetails }), // state of the current proposal
+        proposal.votes({where: { voter: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
+        proposal.stakes({where: { staker: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
+        proposal.rewards({ where: {beneficiary: currentAccountAddress}}, { subscribe: props.subscribeToProposalDetails })
           .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
           .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
 

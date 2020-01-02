@@ -3,6 +3,7 @@ import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
+import FollowButton from "components/Shared/FollowButton";
 import { DiscussionEmbed } from "disqus-react";
 import { humanProposalTitle, schemeName } from "lib/util";
 import * as React from "react";
@@ -82,7 +83,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
   public render(): RenderOutput {
     const { currentAccountAddress, daoState, proposalId } = this.props;
 
-    return <ProposalData currentAccountAddress={currentAccountAddress} daoState={daoState} proposalId={proposalId}>
+    return <ProposalData currentAccountAddress={currentAccountAddress} daoState={daoState} proposalId={proposalId} subscribeToProposalDetails>
       { props => {
         const {
           beneficiaryProfile,
@@ -163,7 +164,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                 </div>
 
                 <div className={css.createdBy}>
-                  <AccountPopup accountAddress={proposal.proposer} daoState={daoState} detailView />
+                  <AccountPopup accountAddress={proposal.proposer} daoState={daoState} width={35} />
                   <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView />
                 </div>
 
@@ -194,27 +195,30 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                   <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
                 </div> : "" }
 
-                <div className={css.voteButtonsBottom}>
-                  <span className={css.voteLabel}>Vote:</span>
-                  <div className={css.altVoteButtons}>
-                    <VoteButtons
-                      altStyle
-                      currentAccountAddress={currentAccountAddress}
-                      currentVote={currentAccountVote}
-                      dao={daoState}
-                      detailView
-                      expired={expired}
-                      currentAccountState={member}
-                      proposal={proposal}
-                    />
+                <div className={css.buttonBar}>
+                  <div className={css.voteButtonsBottom}>
+                    <span className={css.voteLabel}>Vote:</span>
+                    <div className={css.altVoteButtons}>
+                      <VoteButtons
+                        altStyle
+                        currentAccountAddress={currentAccountAddress}
+                        currentVote={currentAccountVote}
+                        dao={daoState}
+                        detailView
+                        expired={expired}
+                        currentAccountState={member}
+                        proposal={proposal}
+                      />
+                    </div>
                   </div>
+
+                  <button onClick={this.showShareModal} className={css.shareButton} data-test-id="share">
+                    <img src={"/assets/images/Icon/share-white.svg"} />
+                    <span>Share</span>
+                  </button>
+
+                  <div className={css.followButton}><FollowButton type="proposals" id={proposal.id} style="bigButton" /></div>
                 </div>
-
-                <button onClick={this.showShareModal} className={css.shareButton} data-test-id="share">
-                  <img src={"/assets/images/Icon/share-white.svg"} />
-                  <span>Share</span>
-                </button>
-
               </div>
 
               <div className={css.proposalActions + " clearfix"}>

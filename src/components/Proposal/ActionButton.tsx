@@ -3,7 +3,7 @@ import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import { getCRRewards, getGpRewards, ethErrorHandler } from "lib/util";
+import { getCRRewards, getGpRewards, ethErrorHandler, fromWei } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -289,9 +289,16 @@ const SubscribedActionButton = withSubscription({
       props.proposalState.contributionReward.externalTokenReward &&
       !props.proposalState.contributionReward.externalTokenReward.isZero()) {
 
-      const token = new Token(props.proposalState.contributionReward.externalToken, arc);
-
-      externalTokenObservable = token.balanceOf(props.daoState.address).pipe(ethErrorHandler());
+      if (new BN(props.proposalState.contributionReward.externalToken.slice(2), 16).isZero()) {
+        // handle an old bug that enabled corrupt proposals
+        // eslint-disable-next-line no-console
+        console.error(`externalTokenReward is set (to ${fromWei(props.proposalState.contributionReward.externalTokenReward).toString()}) but externalToken address is not`);
+        props.proposalState.contributionReward.externalTokenReward = undefined;
+        externalTokenObservable = of(undefined);
+      } else {
+        const token = new Token(props.proposalState.contributionReward.externalToken, arc);
+        externalTokenObservable = token.balanceOf(props.daoState.address).pipe(ethErrorHandler());
+      }
     } else {
       externalTokenObservable = of(undefined);
     }

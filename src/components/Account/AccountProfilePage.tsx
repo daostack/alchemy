@@ -1,16 +1,14 @@
-import { promisify } from "util";
 import { IDAOState, IMemberState, DAO } from "@daostack/client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import BN = require("bn.js");
 import * as profileActions from "actions/profilesActions";
-import { getArc, getWeb3Provider, getWeb3ProviderInfo, enableWalletProvider } from "arc";
+import { getArc, enableWalletProvider } from "arc";
+import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
-import OAuthLogin from "components/Account/OAuthLogin";
 import Reputation from "components/Account/Reputation";
+import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import DaoSidebar from "components/Dao/DaoSidebar";
-import * as sigUtil from "eth-sig-util";
-import * as ethUtil from "ethereumjs-util";
 import { Field, Formik, FormikProps } from "formik";
 import { copyToClipboard, ethErrorHandler, formatTokens } from "lib/util";
 import * as queryString from "query-string";
@@ -22,10 +20,7 @@ import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
-import * as io from "socket.io-client";
 import * as css from "./Account.scss";
-
-const socket = io(process.env.API_URL);
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -40,7 +35,6 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
   getProfile: typeof profileActions.getProfile;
   updateProfile: typeof profileActions.updateProfile;
-  verifySocialAccount: typeof profileActions.verifySocialAccount;
 }
 
 type SubscriptionData = [IDAOState, IMemberState, BN|null, BN|null];
@@ -61,12 +55,10 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 };
 
 const mapDispatchToProps = {
-  showNotification,
   getProfile: profileActions.getProfile,
   updateProfile: profileActions.updateProfile,
-  verifySocialAccount: profileActions.verifySocialAccount,
+  showNotification,
 };
-
 
 interface IFormValues {
   description: string;
@@ -79,7 +71,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
     super(props);
   }
 
-  public async UNSAFE_componentWillMount(): Promise<void> {
+  public async componentDidMount(): Promise<void> {
     const { accountAddress, getProfile } = this.props;
 
     getProfile(accountAddress);
@@ -93,67 +85,39 @@ class AccountProfilePage extends React.Component<IProps, null> {
   }
 
   public handleFormSubmit = async (values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> => {
-    const { accountAddress, currentAccountAddress, showNotification, updateProfile } = this.props;
+    const { currentAccountAddress, showNotification, updateProfile } = this.props;
 
     if (!await enableWalletProvider({ showNotification })) { return; }
 
-    const web3Provider = await getWeb3Provider();
-    try {
-
-      const timestamp = new Date().getTime().toString();
-      const text = ("Please sign this message to confirm your request to update your profile to name '" +
-        values.name + "' and description '" + values.description +
-        "'. There's no gas cost to you. Timestamp:" + timestamp);
-      const msg = ethUtil.bufferToHex(Buffer.from(text, "utf8"));
-
-      const method = "personal_sign";
-
-      // Create promise-based version of send
-      const send = promisify(web3Provider.sendAsync);
-      const params = [msg, currentAccountAddress];
-      const result = await send({ method, params, from: currentAccountAddress });
-      if (result.error) {
-        showNotification(NotificationStatus.Failure, "Saving profile was canceled");
-        setSubmitting(false);
-        return;
-      }
-      const signature = result.result;
-
-      const recoveredAddress: string = sigUtil.recoverPersonalSignature({ data: msg, sig: signature });
-      if (recoveredAddress.toLowerCase() === accountAddress) {
-        await updateProfile(accountAddress, values.name, values.description, timestamp, signature);
-      } else {
-        showNotification(NotificationStatus.Failure, "Saving profile failed, please try again");
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error.message);
-      const providerName = getWeb3ProviderInfo(web3Provider).name;
-      showNotification(NotificationStatus.Failure, `We're very sorry, but saving the profile failed.  Your wallet (${providerName}) may not support message signing.`);
-    }
+    await updateProfile(currentAccountAddress, values.name, values.description);
     setSubmitting(false);
-  }
-
-  public onOAuthSuccess = (account: IProfileState): void => {
-    this.props.verifySocialAccount(this.props.accountAddress, account);
   }
 
   public render(): RenderOutput {
     const [dao, accountInfo, ethBalance, genBalance] = this.props.data;
 
     const { accountAddress, accountProfile, currentAccountAddress } = this.props;
+    //const accountProfile = this.state.profile;
 
+    if (!accountProfile) {
+      return "Loading...";
+    }
+
+    // TODO: dont show profile until loaded from 3box
     const editing = currentAccountAddress && accountAddress === currentAccountAddress;
+
+    const profileContainerClass = classNames({
+      [css.profileContainer]: true,
+      [css.withDao]: !!dao,
+    });
 
     return (
       <div className={css.profileWrapper}>
         <BreadcrumbsItem to={`/profile/${accountAddress}`}>
-          {editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}
+          {editing ? (accountProfile && accountProfile.name ? "Edit 3Box Profile" : "Set 3Box Profile") : "View 3Box Profile"}
         </BreadcrumbsItem>
 
-        {dao ? <DaoSidebar dao={dao} /> : ""}
-
-        <div className={css.profileContainer} data-test-id="profile-container">
+        <div className={profileContainerClass} data-test-id="profile-container">
           { editing && (!accountProfile || !accountProfile.name) ? <div className={css.setupProfile}>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
           { typeof(accountProfile) === "undefined" ? "Loading..." :
             <Formik
@@ -198,7 +162,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
                   <div className={css.profileContent}>
                     <div className={css.profileDataContainer}>
                       <div className={css.userAvatarContainer}>
-                        <AccountImage accountAddress={accountAddress} />
+                        <AccountImage accountAddress={accountAddress} profile={accountProfile} width={70} />
                       </div>
                       <div className={css.profileData}>
                         <label htmlFor="nameInput">
@@ -249,19 +213,25 @@ class AccountProfilePage extends React.Component<IProps, null> {
                         }
                       </div>
                     </div>
-                    {!editing && Object.keys(accountProfile.socialURLs).length === 0 ? " " :
+                    { editing ? "" : <div className={css.followButton}><FollowButton id={accountAddress} type="users" /></div> }
+                    {Object.keys(accountProfile.socialURLs).length === 0 ? " " :
                       <div className={css.socialLogins}>
+                        <h3>Social Verification</h3>
+
                         {editing
                           ? <div className={css.socialProof}>
-                            <strong><img src="/assets/images/Icon/Alert-yellow.svg" /> Prove it&apos;s you by linking your social accounts</strong>
-                            <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
+                            <img src="/assets/images/Icon/Alert-yellow.svg" /> Prove it&apos;s you by linking your social accounts through 3box.
                           </div>
                           : " "
                         }
 
-                        <h3>Social Verification</h3>
-                        <OAuthLogin editing={editing} provider="twitter" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess} profile={accountProfile} socket={socket} />
-                        <OAuthLogin editing={editing} provider="github" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess} profile={accountProfile} socket={socket} />
+                        <a href={accountProfile.socialURLs.twitter ? "https://twitter.com/" + accountProfile.socialURLs.twitter.username : "https://3box.io/" + accountAddress} className={css.socialButtonAuthenticated} target="_blank" rel="noopener noreferrer">
+                          <FontAwesomeIcon icon={["fab", "twitter"]} className={css.icon} /> {accountProfile.socialURLs.twitter ? "Verified as https://twitter.com/" + accountProfile.socialURLs.twitter.username : "Verify Twitter through 3box"}
+                        </a>
+                        <br/>
+                        <a href={accountProfile.socialURLs.github ? "https://github.com/" + accountProfile.socialURLs.github.username : "https://3box.io/" + accountAddress} className={css.socialButtonAuthenticated} target="_blank" rel="noopener noreferrer">
+                          <FontAwesomeIcon icon={["fab", "github"]} className={css.icon} /> {accountProfile.socialURLs.github ? "Verified as https://github.com/" + accountProfile.socialURLs.github.username : "Verify Github through 3box"}
+                        </a>
                       </div>
                     }
                     <div className={css.otherInfoContainer}>

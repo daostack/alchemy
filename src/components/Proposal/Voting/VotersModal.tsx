@@ -30,7 +30,7 @@ class VoteRow extends React.Component<IVoteRowProps, null> {
       <div className={css.voteRow}>
         <div className={css.voteRowContainer}>
           <div className={css.account}>
-            <AccountImage accountAddress={voteState.voter} />
+            <AccountImage accountAddress={voteState.voter} profile={accountProfile} width={18} />
             <span className={css.accountAddress}>
               <AccountProfileName accountAddress={voteState.voter} accountProfile={accountProfile} daoAvatarAddress={dao.address} />
             </span>
@@ -99,6 +99,8 @@ class VotersModal extends React.Component<IProps, null> {
       [css.votedAgainst]: currentAccountVote.staticState.outcome === IProposalOutcome.Fail,
     });
 
+    const votersDownClass = classNames({[css.container]: true, [css.notAnyVotes]: true });
+
     return (
       <Modal onBackdropClick={this.props.closeAction}>
         <div className={modalWindowClass}>
@@ -131,21 +133,27 @@ class VotersModal extends React.Component<IProps, null> {
             </div>
 
             <div className={css.voters}>
-              <div>
-                <div>{yesVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id}
-                  accountProfile={profiles[vote.staticState.voter]} />)}</div>
+              <div className={css.yesVotes}>
+                {yesVotes.length ?
+                  <div className={css.container}>{yesVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} accountProfile={profiles[vote.staticState.voter]} />)}</div>
+                  : 
+                  <div className={votersDownClass}><div className={css.notAnyVotes}>No one has voted For</div></div>
+                }
               </div>
-              <div>
-                <div>{noVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id}
-                  accountProfile={profiles[vote.staticState.voter]} />)}</div>
+              <div className={css.noVotes}>
+                {noVotes.length ?
+                  <div className={css.container}>{noVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} accountProfile={profiles[vote.staticState.voter]} />)}</div>
+                  :
+                  <div className={votersDownClass}><div className={css.notAnyVotes}>No one has voted Against</div></div>
+                }
               </div>
             </div>
-          </div>
 
-          <div className={css.footer}>
-            <button onClick={this.props.closeAction}>
-              Done
-            </button>
+            <div className={css.footer}>
+              <button onClick={this.props.closeAction}>
+              Close
+              </button>
+            </div>
           </div>
         </div>
       </Modal>

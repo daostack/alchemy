@@ -1,8 +1,8 @@
 import BN = require("bn.js");
 import { IDAOState, IMemberState, Member } from "@daostack/client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
-import OAuthLogin from "components/Account/OAuthLogin";
 import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { fromWei } from "lib/util";
@@ -13,14 +13,14 @@ import * as css from "./Dao.scss";
 interface IProps extends ISubscriptionProps<IMemberState> {
   dao: IDAOState;
   member: Member;
-  profile: IProfileState;
   daoTotalReputation: BN;
+  profile: IProfileState;
 }
 
 class DaoMember extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
-    const { dao, profile, daoTotalReputation } = this.props;
+    const { dao, daoTotalReputation, profile } = this.props;
     const memberState = this.props.data;
 
     return (
@@ -33,7 +33,8 @@ class DaoMember extends React.Component<IProps, null> {
               <td className={css.memberAvatar}>
                 <AccountImage
                   accountAddress={memberState.address}
-                  className="membersPage"
+                  profile={profile}
+                  width={40}
                 />
               </td>
               <td className={css.memberName}>
@@ -57,9 +58,14 @@ class DaoMember extends React.Component<IProps, null> {
               <td className={css.memberSocial}>
                 {profile && Object.keys(profile.socialURLs).length > 0 ?
                   <span>
-                    <OAuthLogin editing={false} provider="facebook" accountAddress={memberState.address} profile={profile} className={css.socialButton}/>
-                    <OAuthLogin editing={false} provider="twitter" accountAddress={memberState.address} profile={profile} className={css.socialButton} />
-                    <OAuthLogin editing={false} provider="github" accountAddress={memberState.address} profile={profile} className={css.socialButton} />
+                    { profile.socialURLs.twitter ?
+                      <a href={"https://twitter.com/" + profile.socialURLs.twitter.username} className={css.socialButton} target="_blank" rel="noopener noreferrer">
+                        <FontAwesomeIcon icon={["fab", "twitter"]} className={css.icon} />
+                      </a> : ""}
+                    { profile.socialURLs.github ?
+                      <a href={"https://github.com/" + profile.socialURLs.github.username} className={css.socialButton} target="_blank" rel="noopener noreferrer">
+                        <FontAwesomeIcon icon={["fab", "github"]} className={css.icon} />
+                      </a> : ""}
                   </span>
                   : ""
                 }

@@ -1,5 +1,6 @@
 import { DAO, IDAOState } from "@daostack/client";
 import classNames from "classnames";
+import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as GeoPattern from "geopattern";
 import * as moment from "moment";
@@ -41,6 +42,10 @@ const DaoCard = (props: IProps) => {
           {inActive ? <div className={css.inactiveFeedback} ><div className={css.time}>{ dxDaoActivationDate.format("MMM Do")}&nbsp;
             {dxDaoActivationDate.format("h:mma z")}</div><img src="/assets/images/Icon/alarm.svg"></img></div> : ""}
         </div>
+
+        <span className={css.followButton}>
+          <FollowButton id={dao.id} type="daos" style="white" />
+        </span>
 
         <div className={"clearfix " + css.daoInfoContainer}>
           <div className={css.daoInfoTitle}>
