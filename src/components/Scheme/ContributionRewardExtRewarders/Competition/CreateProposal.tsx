@@ -169,7 +169,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     const halfs: string[] = ["00", "30"];
     const timeSlots: Record<string, string>[] = [];
     for(let i = 0; i < 24; i++){
-      timeSlots.push({ value: i.toString().padStart(2, "0") + ":" + halfs[i%2], label: i.toString().padStart(2,"0") + ":" + halfs[i%2]});
+      const format = i.toString().padStart(2, "0") + ":" + halfs[0];
+      timeSlots.push({ value: format, label: format});
+      const formatHalf = i.toString().padStart(2, "0") + ":" + halfs[1];
+      timeSlots.push({ value: formatHalf, label: formatHalf});
     }
 
     return (
