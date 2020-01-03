@@ -4,8 +4,6 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import { getArc } from "arc";
 import { IDAOState, IProposalState, Address } from "@daostack/client";
 import Loading from "components/Shared/Loading";
-import { getCrxRewarderConfig } from "crxRegistry";
-import {default as CompetitionDetails} from "components/Scheme/ContributionRewardExtRewarders/Competition/Details";
 import * as css from "../Scheme.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -14,34 +12,45 @@ interface IExternalProps extends RouteComponentProps<any> {
   proposalId: string;
 }
 
+interface IStateProps {
+  crxDetailsComponent: any;
+}
+
 type IProps = IExternalProps & ISubscriptionProps<IProposalState>;
 
-
-class DetailsPageRouter extends React.Component<IProps, null>
+class DetailsPageRouter extends React.Component<IProps, IStateProps>
 {
+
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      crxDetailsComponent: null,
+    };
+  }
+
+  public async componentDidMount() {
+    const newState = {};
+
+    if (!this.state.crxDetailsComponent) {
+      // FAKE -- until this is fixed:  https://github.com/daostack/client/issues/340
+      Object.assign(newState, { crxDetailsComponent : (await import("components/Scheme/ContributionRewardExtRewarders/Competition/Details")).default });
+      // Object.apply(newState, { crxDetailsComponent: await getCrxRewarderComponent(this.props.data[0], CrxRewarderComponentType.Details) });
+    }
+
+    this.setState(newState);
+  }
 
   public render(): RenderOutput {
     const proposalState = this.props.data;
-    const schemeState = proposalState.scheme;
 
-    const crxRewarderConfig = getCrxRewarderConfig(schemeState);
-    
-    if (!crxRewarderConfig) {
+    if (!this.state.crxDetailsComponent) {
       return null;
     }
 
-    /**
-     * display the details page as supplied by the given Crx rewarder
-     */
-    switch(crxRewarderConfig.contractName) {
-      case "Competition":
-        return <CompetitionDetails 
-          currentAccountAddress= {this.props.currentAccountAddress}
-          daoState={this.props.daoState}
-          proposalState={proposalState} />;
-      default:
-        throw new Error(`Unknown ContributionRewardExt rewarder name: ${crxRewarderConfig.contractName}`);
-    }
+    return <this.state.crxDetailsComponent
+      currentAccountAddress= {this.props.currentAccountAddress}
+      daoState={this.props.daoState}
+      proposalState={proposalState} />;
   }
 }
 

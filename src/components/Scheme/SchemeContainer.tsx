@@ -1,6 +1,6 @@
 import * as H from "history";
 import { first, mergeMap, filter, toArray } from "rxjs/operators";
-import Arc, { Address, IProposalStage, IDAOState, ISchemeState, IProposalState, Proposal, IProposalOutcome } from "@daostack/client";
+import { Address, IProposalStage, IDAOState, ISchemeState, IProposalState, Proposal, IProposalOutcome } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
@@ -14,9 +14,8 @@ import { showNotification } from "reducers/notifications";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-import Competitions from "components/Scheme/ContributionRewardExtRewarders/Competition/List";
 import { combineLatest, Observable, from, of } from "rxjs";
-import { ICrxRewarderProps, getCrxRewarderConfig } from "crxRegistry";
+import { ICrxRewarderProps, getCrxRewarderProps, hasRewarderContract, CrxRewarderComponentType, getCrxRewarderComponent } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
@@ -32,13 +31,18 @@ interface IExternalProps extends RouteComponentProps<any> {
   daoState: IDAOState;
 }
 
-interface IStateProps {
+interface IExternalStateProps {
   schemeId: Address;
 }
 
-type IProps = IExternalProps & IDispatchProps & IStateProps & ISubscriptionProps<[ISchemeState, Array<IProposalState>]>;
+interface IStateProps {
+  crxListComponent: any;
+  crxRewarderProps: ICrxRewarderProps;
+}
 
-const mapStateToProps = (_state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+type IProps = IExternalProps & IDispatchProps & IExternalStateProps & ISubscriptionProps<[ISchemeState, Array<IProposalState>]>;
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
   const match = ownProps.match;
 
   return {
@@ -51,7 +55,15 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-class SchemeContainer extends React.Component<IProps, null> {
+class SchemeContainer extends React.Component<IProps, IStateProps> {
+
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      crxListComponent: null,
+      crxRewarderProps: null,
+    };
+  }
 
   public handleNewProposal = async (): Promise<void> => {
     const { schemeId, showNotification, daoState } = this.props;
@@ -64,19 +76,29 @@ class SchemeContainer extends React.Component<IProps, null> {
 
   private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} daoState={this.props.daoState} scheme={this.props.data[0]} />;
   private schemeProposalsPageHtml = (isActive: boolean) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} />;
-  private contributionsRewardExtTabHtml = (crxRewarderConfig: ICrxRewarderProps) => (props: any) => 
+  private contributionsRewardExtTabHtml = () => (props: any) => 
   {
-    if (!crxRewarderConfig) {
+    if (!this.state.crxListComponent) {
       return null;
     }
 
-    switch(crxRewarderConfig.contractName) {
-      case "Competition":
-        return <Competitions {...props} daoState={this.props.daoState} scheme={this.props.data[0]} proposals={this.props.data[1]} />;
-      default:
-        throw new Error(`Unknown ContributionRewardExt rewarder name: ${crxRewarderConfig.contractName}`);
-    }
+    return <this.state.crxListComponent {...props} daoState={this.props.daoState} scheme={this.props.data[0]} proposals={this.props.data[1]} />;
   };
+
+  public async componentDidMount() {
+
+    const newState = {};
+
+    if (!this.state.crxRewarderProps) {
+      Object.assign(newState, { crxRewarderProps: await getCrxRewarderProps(this.props.data[0]) } );
+    }
+
+    if (!this.state.crxListComponent) {
+      Object.assign(newState, { crxListComponent: await getCrxRewarderComponent(this.props.data[0], CrxRewarderComponentType.List) });
+    }
+
+    this.setState(newState);
+  }
 
   public render(): RenderOutput {
     const { schemeId, daoState } = this.props;
@@ -89,8 +111,6 @@ class SchemeContainer extends React.Component<IProps, null> {
     }
 
     const isActive = getSchemeIsActive(schemeState);
-    // FAKE
-    const crxRewarderConfig = getCrxRewarderConfig(schemeState);
 
     const proposalsTabClass = classNames({
       [css.proposals]: true,
@@ -122,9 +142,9 @@ class SchemeContainer extends React.Component<IProps, null> {
               <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Information</Link>
             </TrainingTooltip>
             {
-              crxRewarderConfig ?
-                <TrainingTooltip placement="top" overlay={crxRewarderConfig.shortDescription}>
-                  <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/crx/`}>{crxRewarderConfig.friendlyName} ({approvedProposals.length})</Link>
+              this.state.crxRewarderProps ?
+                <TrainingTooltip placement="top" overlay={this.state.crxRewarderProps.shortDescription}>
+                  <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/crx/`}>{this.state.crxRewarderProps.friendlyName} ({approvedProposals.length})</Link>
                 </TrainingTooltip>
                 : ""
             }
@@ -139,7 +159,7 @@ class SchemeContainer extends React.Component<IProps, null> {
               href="javascript:void(0)"
               onClick={isActive ? this.handleNewProposal : null}
               >
-            + New { `${crxRewarderConfig ? crxRewarderConfig.contractName : schemeFriendlyName } `}Proposal</a>
+            + New { `${this.state.crxRewarderProps ? this.state.crxRewarderProps.contractName : schemeFriendlyName } `}Proposal</a>
             </TrainingTooltip>
           </div>
         </Sticky>
@@ -147,8 +167,8 @@ class SchemeContainer extends React.Component<IProps, null> {
         <Switch>
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info" render={this.schemeInfoPageHtml} />
           {
-            crxRewarderConfig ?
-              <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/crx" render={this.contributionsRewardExtTabHtml(crxRewarderConfig)} />
+            this.state.crxRewarderProps ?
+              <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/crx" render={this.contributionsRewardExtTabHtml()} />
               : ""
           }
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId" render={this.schemeProposalsPageHtml(isActive)} />
@@ -166,15 +186,6 @@ const SubscribedSchemeContainer = withSubscription({
   createObservable: async (props: IProps) => {
     const arc = getArc();
     const scheme = arc.scheme(props.schemeId) as any;
-    // FAKE -- until the real isCompetitionScheme is available
-    const isCompetitionScheme = (arc: Arc, item: any): boolean => {
-      if (item.contributionRewardExtParams) {
-        const contractInfo = arc.getContractInfo(item.contributionRewardExtParams.rewarder);
-        return contractInfo.name === "Competition";
-      } else {
-        return false;
-      }
-    };
 
     // TODO: this may NOT be the best place to do this - we'd like to do this higher up
     // why are we doing this for all schemes and not just the scheme we care about here?
@@ -184,11 +195,11 @@ const SubscribedSchemeContainer = withSubscription({
 
     const schemeState = await scheme.state().pipe(first()).toPromise();
     // hack alert (doesn't smell right to be doing Competition-specific stuff at this level)
-    let  executedCompetitionProposals: Observable<Array<IProposalState>>;
-    if (isCompetitionScheme(arc,schemeState)) {
+    let  approvedProposals: Observable<Array<IProposalState>>;
+    if (hasRewarderContract(schemeState)) {
       
       // TODO: can there please be a simpler way to do this???
-      executedCompetitionProposals = from((await props.daoState.dao.proposals(
+      approvedProposals = from((await props.daoState.dao.proposals(
         // eslint-disable-next-line @typescript-eslint/camelcase
         { where: { scheme: scheme.id, stage_in: [IProposalStage.Executed]},
           orderBy: "closingAt",
@@ -201,12 +212,12 @@ const SubscribedSchemeContainer = withSubscription({
           filter((proposal: IProposalState) => proposal.winningOutcome === IProposalOutcome.Pass ),
           toArray());
     } else {
-      executedCompetitionProposals = of([]);
+      approvedProposals = of([]);
     }
 
     return combineLatest(
       of(schemeState),
-      executedCompetitionProposals
+      approvedProposals
     );
   },
 });

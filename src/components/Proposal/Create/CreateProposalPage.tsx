@@ -12,22 +12,26 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { RouteComponentProps } from "react-router-dom";
-import {default as CreateCompetitionProposal} from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateProposal";
-import { ICrxRewarderProps, getCrxRewarderConfig } from "crxRegistry";
+import { ICrxRewarderProps, getCrxRewarderProps, CrxRewarderComponentType, getCrxRewarderComponent } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
 import * as css from "./CreateProposal.scss";
 
 type IExternalProps = RouteComponentProps<any>;
 
-interface IStateProps {
+interface IExternalStateProps {
   daoAvatarAddress: string;
   history: H.History;
   schemeId: string;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<ISchemeState>;
+interface IStateProps {
+  crxRewarderProps: ICrxRewarderProps;
+  createCrxProposalComponent: any;
+}
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+type IProps = IExternalProps & IExternalStateProps & ISubscriptionProps<ISchemeState>;
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
   return {
     ...ownProps,
     daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
@@ -35,11 +39,33 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
   };
 };
 
-class CreateProposalPage extends React.Component<IProps, null> {
+class CreateProposalPage extends React.Component<IProps, IStateProps> {
+
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      createCrxProposalComponent: null,
+      crxRewarderProps: null,
+    };
+  }
 
   public handleClose(): void {
     const { daoAvatarAddress, history, schemeId } = this.props;
     history.push("/dao/" + daoAvatarAddress + "/scheme/" + schemeId);
+  }
+
+  public async componentDidMount() {
+    const newState = {};
+
+    if (!this.state.crxRewarderProps) {
+      Object.assign(newState, { crxRewarderProps: await getCrxRewarderProps(this.props.data) } );
+    }
+
+    if (!this.state.createCrxProposalComponent) {
+      Object.assign(newState, { createCrxProposalComponent: await getCrxRewarderComponent(this.props.data, CrxRewarderComponentType.CreateProposal) });
+    }
+
+    this.setState(newState);
   }
 
   public render(): RenderOutput {
@@ -59,11 +85,8 @@ class CreateProposalPage extends React.Component<IProps, null> {
       scheme,
     };
 
-    let crxRewarderConfig: ICrxRewarderProps;
-    
-    if (schemeName === "ContributionRewardExt") {
-      crxRewarderConfig = getCrxRewarderConfig(scheme);
-      createSchemeComponent = <CreateCompetitionProposal {...props} rewarder={crxRewarderConfig} />;
+    if (this.state.createCrxProposalComponent) {
+      createSchemeComponent = <this.state.createCrxProposalComponent {...props} rewarder={this.state.crxRewarderProps} />;
     } else if (schemeName === "ContributionReward") {
       createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
     }
@@ -115,7 +138,7 @@ const SubscribedCreateProposalPage = withSubscription({
   loadingComponent: <div className={css.loading}><Loading/></div>,
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
-  createObservable: (props: IStateProps) => {
+  createObservable: (props: IExternalStateProps) => {
     const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
     const scheme = arc.scheme(props.schemeId);
     return scheme.state();

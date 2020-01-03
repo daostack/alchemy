@@ -139,6 +139,7 @@
     "ws": "^7.1.0"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-dynamic-import": "^7.7.4",
     "@daostack/migration": "0.0.1-rc.36-v1",
     "@storybook/addon-info": "^5.0.10",
     "@storybook/react": "^5.0.10",

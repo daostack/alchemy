@@ -1,0 +1,52 @@
+import { ISchemeState } from "@daostack/client";
+import { getArc } from "arc";
+
+export const hasRewarderContract = (schemeState: ISchemeState): boolean => {
+  return !!schemeState.contributionRewardExtParams && !!schemeState.contributionRewardExtParams.rewarder;
+};
+
+export const rewarderContractName = (schemeState: ISchemeState): string => {
+  if (hasRewarderContract(schemeState)) {
+    const contractInfo = getArc().getContractInfo(schemeState.contributionRewardExtParams.rewarder);
+    if (contractInfo) {
+      return contractInfo.name;
+    } else {
+      // eslint-disable-next-line no-console
+      console.error(`rewarder contract not found: ${schemeState.contributionRewardExtParams.rewarder}`);
+    }
+  }
+  return null;
+};
+
+export interface ICrxRewarderProps
+{
+  friendlyName: string;
+  contractName: string;
+  shortDescription: string;
+  // description: string;
+}
+
+/**
+ * If the scheme is a ContributionRewardExt, return props for its rewarder contract, if any
+ * @param scheme 
+ */
+export const getCrxRewarderProps = (scheme: ISchemeState): Promise<ICrxRewarderProps> | null  => {
+  const contractName = rewarderContractName(scheme);
+  // dynamic imports are enabled and optimized by @babel/plugin-syntax-dynamic-import
+  return contractName ?  import(`./${contractName}/props.json`) : null;
+};
+
+export enum CrxRewarderComponentType {
+  List,
+  Details,
+  CreateProposal
+}
+export const getCrxRewarderComponent = async (schemeState: ISchemeState, type: CrxRewarderComponentType): Promise<any> => {
+  const crxRewarderConfig = await getCrxRewarderProps(schemeState);
+  if (crxRewarderConfig) {
+    return import(`components/Scheme/ContributionRewardExtRewarders/${crxRewarderConfig.contractName}/${CrxRewarderComponentType[type]}`)
+      .then(module => module.default);
+  } else {
+    return null;
+  }
+};
