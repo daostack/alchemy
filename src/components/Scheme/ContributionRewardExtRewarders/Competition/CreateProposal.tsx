@@ -11,14 +11,12 @@ import Select from "react-select";
 import { showNotification } from "reducers/notifications";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-import { ICrxRewarderProps } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 
 import { checkTotalPercent, getUnixTimestamp, getJSDate } from "lib/util";
 
 interface IExternalProps {
-  rewarder: ICrxRewarderProps;
   scheme: ISchemeState;
   daoAvatarAddress: string;
   handleClose: () => any;

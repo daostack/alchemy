@@ -41,10 +41,10 @@ export enum CrxRewarderComponentType {
   Details,
   CreateProposal
 }
-export const getCrxRewarderComponent = async (schemeState: ISchemeState, type: CrxRewarderComponentType): Promise<any> => {
-  const crxRewarderConfig = await getCrxRewarderProps(schemeState);
-  if (crxRewarderConfig) {
-    return import(`components/Scheme/ContributionRewardExtRewarders/${crxRewarderConfig.contractName}/${CrxRewarderComponentType[type]}`)
+export const getCrxRewarderComponent = (schemeState: ISchemeState, type: CrxRewarderComponentType): Promise<any> => {
+  const contractName = rewarderContractName(schemeState);
+  if (contractName) {
+    return import(`components/Scheme/ContributionRewardExtRewarders/${contractName}/${CrxRewarderComponentType[type]}`)
       .then(module => module.default);
   } else {
     return null;

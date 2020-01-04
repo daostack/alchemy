@@ -12,7 +12,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { RouteComponentProps } from "react-router-dom";
-import { ICrxRewarderProps, getCrxRewarderProps, CrxRewarderComponentType, getCrxRewarderComponent } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
+import { CrxRewarderComponentType, getCrxRewarderComponent, rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
 import * as css from "./CreateProposal.scss";
 
@@ -25,7 +25,6 @@ interface IExternalStateProps {
 }
 
 interface IStateProps {
-  crxRewarderProps: ICrxRewarderProps;
   createCrxProposalComponent: any;
 }
 
@@ -45,7 +44,6 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     super(props);
     this.state = {
       createCrxProposalComponent: null,
-      crxRewarderProps: null,
     };
   }
 
@@ -56,10 +54,6 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
 
   public async componentDidMount() {
     const newState = {};
-
-    if (!this.state.crxRewarderProps) {
-      Object.assign(newState, { crxRewarderProps: await getCrxRewarderProps(this.props.data) } );
-    }
 
     if (!this.state.createCrxProposalComponent) {
       Object.assign(newState, { createCrxProposalComponent: await getCrxRewarderComponent(this.props.data, CrxRewarderComponentType.CreateProposal) });
@@ -73,7 +67,7 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     const scheme = this.props.data;
 
     const arc = getArc();
-    let schemeName = arc.getContractInfo(scheme.address).name;
+    let schemeName = this.state.createCrxProposalComponent ? rewarderContractName(scheme) : arc.getContractInfo(scheme.address).name;
     if (!schemeName) {
       throw Error(`Unknown Scheme: ${scheme}`);
     }
@@ -86,7 +80,7 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     };
 
     if (this.state.createCrxProposalComponent) {
-      createSchemeComponent = <this.state.createCrxProposalComponent {...props} rewarder={this.state.crxRewarderProps} />;
+      createSchemeComponent = <this.state.createCrxProposalComponent {...props} />;
     } else if (schemeName === "ContributionReward") {
       createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
     }
@@ -125,7 +119,7 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
       <div className={css.createProposalWrapper}>
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/create`}>Create {schemeName.replace(/([A-Z])/g, " $1")} Proposal</BreadcrumbsItem>
         <h2 className={css.header}>
-          <span>+ New proposal <b>| {schemeName}</b></span>
+          <span>+ New Proposal <b>| {schemeName}</b></span>
         </h2>
         { createSchemeComponent }
       </div>
