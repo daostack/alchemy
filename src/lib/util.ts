@@ -14,6 +14,7 @@ import BN = require("bn.js");
 import "moment";
 import * as moment from "moment-timezone";
 import { getArc } from "../arc";
+import { rewarderContractName } from 'components/Scheme/ContributionRewardExtRewarders/rewardersProps';
 
 
 const Web3 = require("web3");
@@ -273,8 +274,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
     }
   } else if (scheme.name) {
     if (scheme.name === "ContributionRewardExt") {
-      // FAKE: "hasCompetitonContract" needs to be implemented in the client
-      name = "Competition";
+      name = rewarderContractName(scheme as ISchemeState);
     } else {
       // add spaces before capital letters to approximate a human-readable title
       name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;
