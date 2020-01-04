@@ -13,7 +13,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { proposalEnded } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
-import { ICrxRewarderProps, getCrxRewarderProps } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
+import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import SocialShareModal from "../Shared/SocialShareModal";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
@@ -40,7 +40,6 @@ interface IProps extends RouteComponentProps<any> {
 interface IState {
   showVotersModal: boolean;
   showShareModal: boolean;
-  crxRewarderProps: ICrxRewarderProps;
 }
 
 export default class ProposalDetailsPage extends React.Component<IProps, IState> {
@@ -53,7 +52,6 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
     this.state = {
       showShareModal: false,
       showVotersModal: false,
-      crxRewarderProps: null,
     };
   }
 
@@ -83,17 +81,6 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
 
   private closeVotersModal = (_event: any): void => {
     this.setState({ showVotersModal: false });
-  }
-
-  public async componentDidMount() {
-
-    const newState = {};
-
-    if (!this.state.crxRewarderProps) {
-      Object.assign(newState, { crxRewarderProps: await getCrxRewarderProps(this.proposal.scheme) } );
-    }
-
-    this.setState(newState);
   }
 
   public render(): RenderOutput {
@@ -136,6 +123,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
 
         const url = ensureHttps(proposal.url);
         const proposalPassed = !!proposal.executedAt && (proposal.winningOutcome === IProposalOutcome.Pass);
+        const crxContractName = rewarderContractName(proposal.scheme);
 
         const voteWrapperClass = classNames({
           [css.voteBox]: true,
@@ -165,9 +153,9 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                     />
                   </div>
                   { // FAKE -- won't work until this is fixed:  https://github.com/daostack/client/issues/340
-                    (proposalPassed && this.state.crxRewarderProps) ? <div className={css.gotoCompetition}>
+                    (proposalPassed && crxContractName) ? <div className={css.gotoCompetition}>
                       {
-                        <Link to={`/dao/${daoState.address}/crx/proposal/${proposal.id}`}>Go to {this.state.crxRewarderProps.contractName}&nbsp;&gt;</Link>}
+                        <Link to={`/dao/${daoState.address}/crx/proposal/${proposal.id}`}>Go to {crxContractName}&nbsp;&gt;</Link>}
                       }
                     </div> : ""
                   }
