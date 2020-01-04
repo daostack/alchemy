@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Vote } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, Vote, IProposalOutcome, IProposalState } from "@daostack/client";
 import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -13,6 +13,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { proposalEnded } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import { ICrxRewarderProps, getCrxRewarderProps } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import SocialShareModal from "../Shared/SocialShareModal";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
@@ -39,9 +40,12 @@ interface IProps extends RouteComponentProps<any> {
 interface IState {
   showVotersModal: boolean;
   showShareModal: boolean;
+  crxRewarderProps: ICrxRewarderProps;
 }
 
 export default class ProposalDetailsPage extends React.Component<IProps, IState> {
+
+  proposal: IProposalState; // work-around for lack of access to ProposalData.props in componentDidMount
 
   constructor(props: IProps) {
     super(props);
@@ -49,6 +53,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
     this.state = {
       showShareModal: false,
       showVotersModal: false,
+      crxRewarderProps: null,
     };
   }
 
@@ -80,6 +85,17 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
     this.setState({ showVotersModal: false });
   }
 
+  public async componentDidMount() {
+
+    const newState = {};
+
+    if (!this.state.crxRewarderProps) {
+      Object.assign(newState, { crxRewarderProps: await getCrxRewarderProps(this.proposal.scheme) } );
+    }
+
+    this.setState(newState);
+  }
+
   public render(): RenderOutput {
     const { currentAccountAddress, daoState, proposalId } = this.props;
 
@@ -99,6 +115,9 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
           votes,
         } = props;
 
+        // work-around for lack of access to ProposalData.props in componentDidMount
+        this.proposal = proposal;
+
         this.disqusConfig.title = proposal.title;
         this.disqusConfig.url = process.env.BASE_URL + this.props.location.pathname;
         this.disqusConfig.identifier = this.props.proposalId;
@@ -116,6 +135,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
         }
 
         const url = ensureHttps(proposal.url);
+        const proposalPassed = !!proposal.executedAt && (proposal.winningOutcome === IProposalOutcome.Pass);
 
         const voteWrapperClass = classNames({
           [css.voteBox]: true,
@@ -132,15 +152,25 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                   <div className={css.statusContainer}>
                     <ProposalStatus proposalState={proposal} />
                   </div>
-                  <ActionButton
-                    currentAccountAddress={currentAccountAddress}
-                    daoState={daoState}
-                    daoEthBalance={daoEthBalance}
-                    detailView
-                    proposalState={proposal}
-                    rewards={rewards}
-                    expired={expired}
-                  />
+                  
+                  <div className={css.actionButtonContainer}>
+                    <ActionButton
+                      currentAccountAddress={currentAccountAddress}
+                      daoState={daoState}
+                      daoEthBalance={daoEthBalance}
+                      detailView
+                      proposalState={proposal}
+                      rewards={rewards}
+                      expired={expired}
+                    />
+                  </div>
+                  { // FAKE -- won't work until this is fixed:  https://github.com/daostack/client/issues/340
+                    (proposalPassed && this.state.crxRewarderProps) ? <div className={css.gotoCompetition}>
+                      {
+                        <Link to={`/dao/${daoState.address}/crx/proposal/${proposal.id}`}>Go to {this.state.crxRewarderProps.contractName}&nbsp;&gt;</Link>}
+                      }
+                    </div> : ""
+                  }
                 </div>
                 <h3 className={css.proposalTitleTop}>
                   <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>

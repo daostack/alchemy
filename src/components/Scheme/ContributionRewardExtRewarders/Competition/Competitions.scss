@@ -184,9 +184,14 @@ a.blueButton {
 
       .gotoProposal {
         display: inline-block;
+        font-size: 14px;
         flex: 3;
         position: relative;
-        top: 6px;
+        top: 8px;
+
+        a {
+          color: #0071ff;
+        }
       }
 
       .newSubmission {
