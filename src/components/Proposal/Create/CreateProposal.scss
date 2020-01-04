@@ -361,7 +361,9 @@
 }
 
 .contributionReward {
-  width: 540px;
+  width: 562px;
+  overflow-y: auto;
+  height: 630px;
 }
 
 .clearfix:after {
