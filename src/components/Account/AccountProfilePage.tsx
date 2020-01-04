@@ -14,6 +14,7 @@ import { copyToClipboard, ethErrorHandler, formatTokens } from "lib/util";
 import * as queryString from "query-string";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
@@ -97,7 +98,6 @@ class AccountProfilePage extends React.Component<IProps, null> {
     const [dao, accountInfo, ethBalance, genBalance] = this.props.data;
 
     const { accountAddress, accountProfile, currentAccountAddress } = this.props;
-    //const accountProfile = this.state.profile;
 
     if (!accountProfile) {
       return "Loading...";
@@ -116,6 +116,11 @@ class AccountProfilePage extends React.Component<IProps, null> {
         <BreadcrumbsItem to={`/profile/${accountAddress}`}>
           {editing ? (accountProfile && accountProfile.name ? "Edit 3Box Profile" : "Set 3Box Profile") : "View 3Box Profile"}
         </BreadcrumbsItem>
+        <Helmet>
+          <meta name="description" content={(accountProfile.name || accountProfile.ethereumAccountAddress) + " Profile on Alchemy by DAOstack"} />
+          <meta name="og:description" content={(accountProfile.name || accountProfile.ethereumAccountAddress) + " Profile on Alchemy by DAOstack"} />
+          <meta name="twitter:description" content={(accountProfile.name || accountProfile.ethereumAccountAddress) + " Profile on Alchemy by DAOstack"} />
+        </Helmet>
 
         <div className={profileContainerClass} data-test-id="profile-container">
           { editing && (!accountProfile || !accountProfile.name) ? <div className={css.setupProfile}>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}

@@ -8,6 +8,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import { schemeName, getSchemeIsActive} from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { Helmet } from "react-helmet";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { showNotification } from "reducers/notifications";
@@ -88,6 +89,11 @@ class SchemeContainer extends React.Component<IProps, null> {
     return (
       <div className={css.schemeContainer}>
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeName(schemeState, schemeState.address)}</BreadcrumbsItem>
+        <Helmet>
+          <meta name="description" content={daoState.name + " | " + schemeState.name + " proposals | Managed on Alchemy by DAOstack"} />
+          <meta name="og:description" content={daoState.name + " | " + schemeState.name + " proposals | Managed on Alchemy by DAOstack"} />
+          <meta name="twitter:description" content={daoState.name + " | " + schemeState.name + " proposals | Managed on Alchemy by DAOstack"} />
+        </Helmet>
 
         <Sticky enabled top={50} innerZ={10000}>
           <h2 className={css.schemeName}>
