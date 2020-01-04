@@ -6,7 +6,7 @@ import Countdown from "components/Shared/Countdown";
 import FollowButton from "components/Shared/FollowButton";
 import { humanProposalTitle } from "lib/util";
 import * as React from "react";
-import TrackVisibility from 'react-on-screen';
+import TrackVisibility from "react-on-screen";
 import { Link } from "react-router-dom";
 import { closingTime } from "reducers/arcReducer";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
