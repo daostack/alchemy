@@ -13,8 +13,8 @@ import { catchError } from "rxjs/operators";
 import BN = require("bn.js");
 import "moment";
 import * as moment from "moment-timezone";
+import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import { getArc } from "../arc";
-import { rewarderContractName } from 'components/Scheme/ContributionRewardExtRewarders/rewardersProps';
 
 
 const Web3 = require("web3");
