@@ -6,7 +6,7 @@ import gql from "graphql-tag";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
-import { RouteComponentProps } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { first } from "rxjs/operators";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
@@ -55,7 +55,8 @@ class DaoHistoryPage extends React.Component<IProps, null> {
             </p>
           }
         >
-          { proposals.length === 0 ? "There has been no activity to date" :
+          { proposals.length === 0 ?
+            <span>This DAO hasn’t passed any proposals yet. Checkout the <Link to={"/dao/" + daoState.id + "/proposal/"}>DAO's installed schemes</Link> for any open proposals.</span> :
             <table className={css.proposalHistoryTable}>
               <thead>
                 <tr className={css.proposalHistoryTableHeader}>
