@@ -139,7 +139,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const votingStartTime =   getDateWithTimezone(competition.votingStartTime);
     const endTime =           getDateWithTimezone(competition.endTime);
     const canSubmit =  now.isSameOrAfter(startTime) && now.isBefore(submissionsEndTime);
-    const inSubmissionsNotYetVoting = now.isSameOrAfter(submissionsEndTime) && now.isBefore(competition.votingStartTime);
+    const inSubmissionsNotYetVoting = now.isSameOrAfter(startTime) && now.isBefore(competition.votingStartTime);
     const distributionsHtml = () => {
       return competition.rewardSplit.map((split: number, index: number) => {
         return (<div key={split} className={css.winner}>
