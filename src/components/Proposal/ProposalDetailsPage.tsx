@@ -133,7 +133,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
         return (
           <div className={css.wrapper}>
             <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme.id}`}>{schemeName(proposal.scheme, proposal.scheme.address)}</BreadcrumbsItem>
-            <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
+            <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal, 40)}</BreadcrumbsItem>
             <div className={this.proposalClass} data-test-id={"proposal-" + proposal.id}>
               <div className={css.proposalInfo}>
                 <div>
