@@ -58,9 +58,19 @@ export function copyToClipboard(value: any) {
   document.body.removeChild(el);
 }
 
-export function humanProposalTitle(proposal: IProposalState) {
-  return proposal.title ||
+export const truncateWithEllipses = (str: string, length: number): string => {
+  const ellipse = "...";
+  if (str.length > length) {
+    return str.substring(0, length - ellipse.length) + ellipse;
+  } else {
+    return str;
+  }
+};
+
+export function humanProposalTitle(proposal: IProposalState, truncateToLength=0) {
+  const title = proposal.title ||
     "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
+  return truncateToLength ? truncateWithEllipses(title, truncateToLength): title;
 }
 
 // Convert a value to its base unit based on the number of decimals passed in (i.e. WEI if 18 decimals)
@@ -275,6 +285,8 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
   } else if (scheme.name) {
     if (scheme.name === "ContributionRewardExt") {
       name = rewarderContractName(scheme as ISchemeState);
+      // FAKE -- until this is fixed:  https://github.com/daostack/client/issues/340
+      name = name ? name : "Competition";
     } else {
       // add spaces before capital letters to approximate a human-readable title
       name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;
