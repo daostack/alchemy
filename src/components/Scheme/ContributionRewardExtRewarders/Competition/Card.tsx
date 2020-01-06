@@ -61,7 +61,7 @@ class CompetitionCard extends React.Component<IProps, null> {
           status.now.isBefore(status.votingStartTime) ? 
             <div className={css.countdown}>Voting starts in <Countdown toDate={status.votingStartTime}></Countdown></div> :
             status.now.isBefore(status.endTime) ?
-              <div className={css.countdown}>Voting ends in <Countdown toDate={status.endTime}></Countdown></div> : ""
+              <div className={css.countdown}><div className={css.text}>Voting ends in</div><Countdown toDate={status.endTime}></Countdown></div> : ""
         }
       </div>
       <div className={css.description}>

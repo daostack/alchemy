@@ -101,6 +101,11 @@ a.blueButton {
       height: 18px;
       font-weight: 500;
       white-space: nowrap;
+
+      .text {
+        display: inline-block;
+        margin-right: 7px;
+      }
     }
   }
 
