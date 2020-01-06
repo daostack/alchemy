@@ -90,13 +90,14 @@ class FollowButton extends React.Component<IProps, IState> {
     const { currentAccountProfile, id, type, style } = this.props;
 
     const isFollowing = currentAccountProfile && currentAccountProfile.follows && currentAccountProfile.follows[type].includes(id);
+    const isPending = this.state.pendingFollow;
 
     const buttonClass = classNames({
       [css.followButton]: true,
       [css.bigButton]: style === "bigButton",
       [css.white]: style === "white",
       [css.isFollowing]: isFollowing,
-      [css.pending]: this.state.pendingFollow,
+      [css.pending]: isPending,
     });
 
     return (
@@ -107,7 +108,11 @@ class FollowButton extends React.Component<IProps, IState> {
           data-test-id="follow-button"
         >
           <div className={css.spinner}></div>
-          <span className={css.followText}>{isFollowing ? "Following" : "Follow"}</span>
+          <span className={css.followText}>{
+            isFollowing && isPending ? "Unfollowing" :
+              isFollowing ? "Following" :
+                isPending ? "Following" : "Follow"}
+          </span>
           <span className={css.unfollowText}>Unfollow</span>
           {this.state.showThreeboxModal ?
             <ThreeboxModal action={this.doFollow} closeHandler={this.closeThreeboxModal} />
