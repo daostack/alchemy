@@ -11,7 +11,7 @@ import { connect } from "react-redux";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
-import { IProfileState } from "reducers/profilesReducer";
+import { IProfilesState } from "reducers/profilesReducer";
 import { combineLatest } from "rxjs";
 import Tooltip from "rc-tooltip";
 import * as css from "./Competitions.scss";
@@ -19,7 +19,7 @@ import * as css from "./Competitions.scss";
 const ReactMarkdown = require("react-markdown");
 
 interface IStateProps {
-  currentAccountProfile: IProfileState;
+  profiles: IProfilesState;
 }
 
 interface IExternalProps {
@@ -37,7 +37,7 @@ type IProps = IExternalProps & IStateProps & ISubscriptionProps<[ICompetitionSug
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
     ...ownProps,
-    currentAccountProfile: state.profiles[ownProps.currentAccountAddress],
+    profiles: state.profiles,
   };
 };
 
@@ -102,7 +102,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
 
         <div className={css.proposer}>
           <AccountPopup accountAddress={submission.suggester} daoState={this.props.daoState}/>
-          <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.currentAccountProfile} daoAvatarAddress={this.props.daoState.address} detailView={false} />
+          <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.profiles[submission.suggester]} daoAvatarAddress={this.props.daoState.address} detailView={false} />
         </div>
 
         {submission.url ?
