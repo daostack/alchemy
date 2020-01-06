@@ -133,7 +133,7 @@ const SubscribedCreateProposalPage = withSubscription({
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalStateProps) => {
-    const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
+    const arc = getArc();
     const scheme = arc.scheme(props.schemeId);
     return scheme.state();
   },

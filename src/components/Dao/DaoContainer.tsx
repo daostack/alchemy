@@ -139,7 +139,7 @@ const SubscribedDaoContainer = withSubscription({
   errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
+    const arc = getArc();
     const daoAddress = props.match.params.daoAvatarAddress;
     const dao = arc.dao(daoAddress);
     const observable = combineLatest(

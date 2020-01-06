@@ -60,7 +60,7 @@ export default withSubscription({
   errorComponent: null,
   checkForUpdate: [],
   createObservable: (props: IProps) => {
-    const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
+    const arc = getArc();
     return arc.proposal(props.proposalId).state( { subscribe: true });
   },
 });
