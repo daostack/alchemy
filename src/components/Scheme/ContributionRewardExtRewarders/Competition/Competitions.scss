@@ -59,7 +59,7 @@ a.blueButton {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  //align-content: space-evenly;
+  align-items: flex-start;
 }
 
 .competitionCardContainer {
@@ -70,7 +70,7 @@ a.blueButton {
   transition: all .25s ease;
   vertical-align: top;
   width: 477px;
-  height: 250px;
+  height: auto;
   overflow: visible; // for the account popup
   padding: 26px 36px ;
   box-sizing: border-box;
