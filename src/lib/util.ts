@@ -38,15 +38,10 @@ export function checkTotalPercent(split: any) {
 
 }
 
-export function getUnixTimestamp(date = "", time = "") {
-  if (!date || !time) {
-    return moment().unix();
-  }
-  return moment(date + " " + time).unix();
-}
-
-export function getJSDate(date: string, time: string) {
-  return new Date(date + " " + time);
+export function addSeconds(date: Date, seconds: Number) {
+  const result = new Date();
+  result.setTime(result.getTime() + 15000);
+  return result;
 }
 
 export function copyToClipboard(value: any) {
