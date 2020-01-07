@@ -1,4 +1,3 @@
-// import * as H from "history";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
@@ -10,7 +9,7 @@ import { connect } from "react-redux";
 import Countdown from "components/Shared/Countdown";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import classNames from "classnames";
 import { showNotification } from "reducers/notifications";
 import { enableWalletProvider } from "arc";
@@ -47,11 +46,10 @@ interface IStateProps {
   showingSubmissionDetails: ICompetitionSuggestion;
 }
 
-interface IExternalProps /* extends RouteComponentProps<any> */ {
+interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   daoState: IDAOState;
   proposalState: IProposalState;
-  // history: H.History;
 }
 
 type IProps = IExternalProps & IDispatchProps & IStateProps & ISubscriptionProps<ISubscriptionState>;
@@ -83,6 +81,24 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     };
   }
 
+  public componentDidMount() {
+    // const urlSubmissionId = this.props.match.params.submissionId;
+    const parts = window.location.pathname.split("/");
+    if (parts.length === 9) {
+      const urlSubmissionId = parts[8];
+      let urlSubmission: ICompetitionSuggestion = null;
+      if (urlSubmissionId) {
+        const urlSubmissions = this.props.data[0].filter((submission: ICompetitionSuggestion) => submission.id === urlSubmissionId);
+        if (urlSubmissions.length) {
+          urlSubmission = urlSubmissions[0];
+        }
+      }
+      if (this.state.showingSubmissionDetails !== urlSubmission) {
+        this.setState({ showingSubmissionDetails: urlSubmission });
+      }
+    }
+  }
+  
   private openNewSubmissionModal = async (): Promise<void> => {
     
     const { showNotification } = this.props;
@@ -103,8 +119,13 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   }
 
   private openSubmissionDetailsModal = (suggestion: ICompetitionSuggestion) => async (): Promise<void> => {
-
+    this.props.history.replace(`/dao/${this.props.daoState.address}/crx/proposal/${this.props.proposalState.id}/competition/submission/${suggestion.id}`);
     this.setState({ showingSubmissionDetails: suggestion });
+  }
+
+  private closeSubmissionDetailsModal = async (): Promise<void> => {
+    this.props.history.replace(`/dao/${this.props.daoState.address}/crx/proposal/${this.props.proposalState.id}`);
+    this.setState({ showingSubmissionDetails: null });
   }
 
   private voteOnSubmission = async (): Promise<void> => {
@@ -123,10 +144,6 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     await this.props.redeemForSubmission({ id: this.state.showingSubmissionDetails.id });
   }
 
-  private closeSubmissionDetailsModal = async (): Promise<void> => {
-    this.setState({ showingSubmissionDetails: null });
-  }
-
   public render(): RenderOutput {
     const { daoState, proposalState } = this.props;
     const submissions = this.props.data[0];
@@ -142,7 +159,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const inSubmissionsNotYetVoting = now.isSameOrAfter(startTime) && now.isBefore(competition.votingStartTime);
     const distributionsHtml = () => {
       return competition.rewardSplit.map((split: number, index: number) => {
-        return (<div key={split} className={css.winner}>
+        return (<div key={index} className={css.winner}>
           <div className={css.position}>{index+1}</div>
           <div className={css.proportion}>{split}%</div>
         </div>);

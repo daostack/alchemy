@@ -111,7 +111,7 @@ class DaoContainer extends React.Component<IProps, null> {
               render={this.daoProposalRoute}
             />
 
-            <Route exact path="/dao/:daoAvatarAddress/crx/proposal/:proposalId"
+            <Route path="/dao/:daoAvatarAddress/crx/proposal/:proposalId"
               render={this.daoCrxProposalRoute} />
 
             <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"

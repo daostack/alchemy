@@ -29,25 +29,28 @@ class DetailsPageRouter extends React.Component<IProps, IStateProps>
   }
 
   public async componentDidMount() {
-    const newState = {};
-
     if (!this.state.crxDetailsComponent) {
       // FAKE -- until this is fixed:  https://github.com/daostack/client/issues/340
-      Object.assign(newState, { crxDetailsComponent : (await import("components/Scheme/ContributionRewardExtRewarders/Competition/Details")).default });
-      // Object.apply(newState, { crxDetailsComponent: await getCrxRewarderComponent(this.props.data[0], CrxRewarderComponentType.Details) });
+      this.setState({ crxDetailsComponent : (await import("components/Scheme/ContributionRewardExtRewarders/Competition/Details")).default });
+      // this.setState({ crxDetailsComponent: await getCrxRewarderComponent(this.props.data[0], CrxRewarderComponentType.Details) });
     }
-
-    this.setState(newState);
   }
 
   public render(): RenderOutput {
-    const proposalState = this.props.data;
-
     if (!this.state.crxDetailsComponent) {
       return null;
     }
 
+    const proposalState = this.props.data;
+    /**
+     * can't supply `...this.props` here because it contains a bunch of `withSubscription` properties
+     * that will completely hose the crxDetailsComponent
+     */
     return <this.state.crxDetailsComponent
+      match= {this.props.match}
+      history= {this.props.history}
+      location = {this.props.location}
+      staticContext = {this.props.staticContext}
       currentAccountAddress= {this.props.currentAccountAddress}
       daoState={this.props.daoState}
       proposalState={proposalState} />;

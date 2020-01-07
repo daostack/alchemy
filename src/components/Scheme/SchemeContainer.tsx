@@ -189,8 +189,10 @@ const SubscribedSchemeContainer = withSubscription({
 
     // TODO: this may NOT be the best place to do this - we'd like to do this higher up
     // why are we doing this for all schemes and not just the scheme we care about here?
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    await props.daoState.dao.proposals({where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted, IProposalStage.Executed ]}}, { fetchAllData: true, subscribe: true }).pipe(first()).toPromise();
+    await props.daoState.dao.proposals(
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      {where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted, IProposalStage.Executed ]}},
+      { fetchAllData: true, subscribe: true }).pipe(first()).toPromise();
     // end cache priming
 
     const schemeState = await scheme.state().pipe(first()).toPromise();
