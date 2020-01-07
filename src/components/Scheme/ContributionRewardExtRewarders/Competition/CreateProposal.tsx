@@ -18,13 +18,13 @@ import { checkTotalPercent, addSeconds } from "lib/util";
 
 import {
   Grid,
-} from '@material-ui/core/';
+} from "@material-ui/core/";
 import {
   KeyboardDatePicker,
   KeyboardTimePicker,
   MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
+} from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -101,24 +101,24 @@ const CustomDateInput: React.SFC<any> = ({
 }) => (
   <MuiPickersUtilsProvider utils={DateFnsUtils}>
     <Grid container className={css.date}>
-    <KeyboardDatePicker
-      format="MM/dd/yyyy"
-      value={field.value}
-      onChange={date => form.setFieldValue(field.name, date) }
-      KeyboardButtonProps={{
-        'aria-label': 'change date',
-      }}
-    />
-    <KeyboardTimePicker
-      value={field.value}
-      onChange={date => form.setFieldValue(field.name, date)}
-      KeyboardButtonProps={{
-        'aria-label': 'change time',
-      }}
-    />
+      <KeyboardDatePicker
+        format="MM/dd/yyyy"
+        value={field.value}
+        onChange={date => form.setFieldValue(field.name, date)}
+        KeyboardButtonProps={{
+          "aria-label": "change date",
+        }}
+      />
+      <KeyboardTimePicker
+        value={field.value}
+        onChange={date => form.setFieldValue(field.name, date)}
+        KeyboardButtonProps={{
+          "aria-label": "change time",
+        }}
+      />
     </Grid>
   </MuiPickersUtilsProvider>
-)
+);
 
 export const SelectField: React.SFC<any> = ({options, field, form, _value }) => {
   // value={options ? options.find((option: any) => option.value === field.value) : ""}
@@ -160,9 +160,9 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
 
     // TODO: reward split should be fixed in client for now split here
-    let rewardSplit = []
+    let rewardSplit = [];
     if (values.rewardSplit === "") {
-      let unit = 100.0 / Number(values.numWinners)
+      const unit = 100.0 / Number(values.numWinners);
       rewardSplit = Array(values.numWinners).fill(unit);
     } else {
       rewardSplit = values.rewardSplit.split(",").map((s: string) => Number(s));
@@ -271,7 +271,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 errors.rewardSplit = "Please provide reward split summing upto 100";
             }
 
-            const now = new Date()
+            const now = new Date();
             // Check valid time for Competition Start and End
             if (values.compStartDate && values.compStartDate < now) {
               errors.compStartDate = "Competion start time can't be in past";

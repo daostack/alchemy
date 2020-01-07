@@ -38,10 +38,9 @@ export function checkTotalPercent(split: any) {
 
 }
 
-export function addSeconds(date: Date, seconds: Number) {
-  const result = new Date();
-  result.setTime(result.getTime() + 15000);
-  return result;
+export function addSeconds(date: Date, seconds: number) {
+  date.setTime(date.getTime() + seconds);
+  return date;
 }
 
 export function copyToClipboard(value: any) {
