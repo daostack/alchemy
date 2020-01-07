@@ -56,6 +56,7 @@
   font-size: $body;
   position: relative;
   z-index: 1000000;
+  padding-bottom: 20px;
 
   a {
     color: $black;
@@ -80,6 +81,8 @@
 }
 
 .detailLink {
+  color: $black;
+
   span {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -98,7 +101,7 @@
 }
 
 .summary {
-  margin: 0 20px 20px 20px;
+  margin: 0 20px 0px 20px;
 }
 
 .proposal:hover {
@@ -203,6 +206,7 @@
       opacity: 0;
       transition: all .25s ease;
       z-index: 100;
+      visibility: hidden;
 
       &.leftMenu {
         left: -118px;
@@ -212,6 +216,7 @@
     &:hover {
       .menu {
         opacity: 1;
+        visibility: visible;
       }
     }
 
@@ -234,7 +239,6 @@
 .proposalActions {
   position: relative;
   transition: all .25s ease;
-  margin-top: 15px;
   border-top: 1px solid rgba(215, 225, 237, 1.000);
   height: 64px;
   overflow: hidden;
