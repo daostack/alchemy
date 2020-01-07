@@ -1,12 +1,12 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
-import DAOcreator from "@dorgtech/daocreator-ui-v1";
 import * as web3Actions from "actions/web3Actions";
 import * as classNames from "classnames";
 import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
+import DaoCreator from "components/DaoCreator";
 import DaoContainer from "components/Dao/DaoContainer";
 import FeedPage from "components/Feed/FeedPage";
 import RedemptionsPage from "components/Redemptions/RedemptionsPage";
@@ -21,7 +21,7 @@ import { matchPath,Link, Route, RouteComponentProps, Switch } from "react-router
 import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification, INotification } from "reducers/notifications";
-import { getCachedAccount, cacheWeb3Info, uncacheWeb3Info, gotoReadonly, pollForAccountChanges, enableWalletProvider, getWeb3Provider } from "arc";
+import { getCachedAccount, cacheWeb3Info, uncacheWeb3Info, gotoReadonly, pollForAccountChanges } from "arc";
 import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
@@ -192,34 +192,12 @@ class AppContainer extends React.Component<IProps, IState> {
 
             <div className={css.contentWrapper}>
               <Switch>
+                <Route path="/dao-creator" component={DaoCreator} />
                 <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
                 <Route path="/profile/:accountAddress" component={AccountProfilePage} />
                 <Route path="/redemptions" component={RedemptionsPage} />
                 <Route path="/daos" component={DaosPage} />
                 <Route path="/" component={FeedPage} />
-                <Route path="/dao-creator" render={() => (
-                  <DAOcreator
-                    setWeb3Provider={async (): Promise<any> => {
-                      if (!await enableWalletProvider({ showNotification })) {
-                        return undefined;
-                      }
-
-                      return await getWeb3Provider();
-                    }}
-                    theme={{
-                      palette: {
-                        primary: {
-                          main: "#122e5b",
-                          contrastText: "#fafafa"
-                        },
-                        secondary: {
-                          main: "#0076ff",
-                          contrastText: "#fafafa"
-                        }
-                      }
-                    }}
-                  />
-                )}/>
               </Switch>
             </div>
 
