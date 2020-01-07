@@ -21,7 +21,7 @@ import {
 } from '@material-ui/core/';
 import {
   KeyboardDatePicker,
-/*  KeyboardTimePicker,*/
+  KeyboardTimePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
@@ -102,16 +102,18 @@ const CustomDateInput: React.SFC<any> = ({
   <MuiPickersUtilsProvider utils={DateFnsUtils}>
     <Grid container className={css.date}>
     <KeyboardDatePicker
-      id="compStartDateInput"
       format="MM/dd/yyyy"
       value={field.value}
-      onChange={date => { 
-        console.log("This is the date: ", date);
-        console.log("This is the field: ", field);
-        form.setFieldValue(field.name, date)
-      }}
+      onChange={date => form.setFieldValue(field.name, date) }
       KeyboardButtonProps={{
         'aria-label': 'change date',
+      }}
+    />
+    <KeyboardTimePicker
+      value={field.value}
+      onChange={date => form.setFieldValue(field.name, date)}
+      KeyboardButtonProps={{
+        'aria-label': 'change time',
       }}
     />
     </Grid>
@@ -210,14 +212,6 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     }
     const dao = data;
     const arc = getArc();
-    const halfs: string[] = ["00", "30"];
-    const timeSlots: Record<string, string>[] = [];
-    for(let i = 0; i < 24; i++){
-      const format = i.toString().padStart(2, "0") + ":" + halfs[0];
-      timeSlots.push({ value: format, label: format});
-      const formatHalf = i.toString().padStart(2, "0") + ":" + halfs[1];
-      timeSlots.push({ value: formatHalf, label: formatHalf});
-    }
 
     return (
       <div className={css.contributionReward}>
