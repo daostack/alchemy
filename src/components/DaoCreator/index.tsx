@@ -44,17 +44,17 @@ class DaoCreator extends React.Component<IProps> {
           palette: {
             primary: {
               main: "#122e5b",
-              contrastText: "#fafafa"
+              contrastText: "#fafafa",
             },
             secondary: {
               main: "#0076ff",
-              contrastText: "#fafafa"
-            }
-          }
+              contrastText: "#fafafa",
+            },
+          },
         }}
       />
     );
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DaoCreator)
+export default connect(mapStateToProps, mapDispatchToProps)(DaoCreator);
