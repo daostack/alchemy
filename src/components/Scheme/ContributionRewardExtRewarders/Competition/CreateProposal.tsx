@@ -14,13 +14,14 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 
-import { checkTotalPercent, getUnixTimestamp, getJSDate } from "lib/util";
+import { checkTotalPercent, /*getUnixTimestamp, getJSDate*/ } from "lib/util";
+
 import {
   Grid,
 } from '@material-ui/core/';
 import {
   KeyboardDatePicker,
-  KeyboardTimePicker,
+/*  KeyboardTimePicker,*/
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
@@ -33,7 +34,6 @@ interface IExternalProps {
 
 interface IStateProps {
   tags: Array<string>;
-  date: Date;
 }
 
 interface IDispatchProps {
@@ -58,6 +58,10 @@ interface IFormValues {
   reputationReward: number;
   title: string;
   url: string;
+  compStartDate: Date;
+  compEndDate: Date;
+  submissionEndDate: Date;
+  votingStartDate: Date;
 
   [key: string]: any;
 }
@@ -91,6 +95,29 @@ const customStyles = {
   }),
 };
 
+const CustomDateInput: React.SFC<any> = ({
+  field,
+  form,
+}) => (
+  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+    <Grid container className={css.date}>
+    <KeyboardDatePicker
+      id="compStartDateInput"
+      format="MM/dd/yyyy"
+      value={field.value}
+      onChange={date => { 
+        console.log("This is the date: ", date);
+        console.log("This is the field: ", field);
+        form.setFieldValue(field.name, date)
+      }}
+      KeyboardButtonProps={{
+        'aria-label': 'change date',
+      }}
+    />
+    </Grid>
+  </MuiPickersUtilsProvider>
+)
+
 export const SelectField: React.SFC<any> = ({options, field, form, _value }) => {
   // value={options ? options.find((option: any) => option.value === field.value) : ""}
   return <Select
@@ -110,13 +137,8 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     super(props);
     this.state = { 
       tags: new Array<string>(),
-      date: new Date()
     };
   }
-
-  public handleDateChange = (date: Date) => {
-    this.setState({date});
-  }; 
 
   public handleSubmit = async (values: IFormValues, { _setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { 
@@ -136,6 +158,8 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
 
     // Parameters to be passes to client
+
+    // TODO: reward split should be fixed in client for now split here
     let rewardSplit = []
     if (values.rewardSplit === "") {
       let unit = 100.0 / Number(values.numWinners)
@@ -143,15 +167,16 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     } else {
       rewardSplit = values.rewardSplit.split(",").map((s: string) => Number(s));
     }
-    const startTime = getJSDate(values.compStartDate, values.compStartTime);
-    const votingStartTime = getJSDate(values.votingStartDate, values.votingStartTime);
-    const endTime = getJSDate(values.compEndDate, values.compEndTime);
-    const suggestionsEndTime = getJSDate(values.suggestionsEndDate, values.suggestionsEndTime);
+
+    //const startTime = getJSDate(values.compStartDate, values.compStartTime);
+    //const votingStartTime = getJSDate(values.votingStartDate, values.votingStartTime);
+    //const endTime = getJSDate(values.compEndDate, values.compEndTime);
+    //const suggestionsEndTime = getJSDate(values.suggestionsEndDate, values.suggestionsEndTime);
 
     const proposalOptions: IProposalCreateOptionsCompetition  = {
       dao: this.props.daoAvatarAddress,
       description: values.description,
-      endTime,
+      endTime: values.compEndDate,
       ethReward: toWei(Number(values.ethReward)),
       externalTokenReward,
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
@@ -160,11 +185,11 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       reputationReward: toWei(Number(values.reputationReward)),
       rewardSplit,
       scheme: this.props.scheme.address,
-      startTime,
-      suggestionsEndTime,
+      startTime: values.compStartDate,
+      suggestionsEndTime: values.submissionEndDate,
       tags: this.state.tags,
       title: values.title,
-      votingStartTime,
+      votingStartTime: values.votingStartDate,
     };
 
     await this.props.createProposal(proposalOptions);
@@ -206,11 +231,17 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             externalTokenReward: 0,
             nativeTokenReward: 0,
             reputationReward: 0,
+            compStartDate: new Date(),
+            compEndDate: new Date(),
+            submissionEndDate: new Date(),
+            votingStartDate: new Date(),
+
             title: "",
             url: "",
           } as IFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
+            //console.log(values)
             const errors: any = {};
 
             const require = (name: string): void => {
@@ -249,6 +280,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
             // Check Valid Date and Time for Competition Start and End
             // Check Valid Date and Time for Vote Start and End
+            /*
             if (values.compStartTime && values.compStartDate && values.votingStartTime && values.votingStartDate) {
               const compStart = getUnixTimestamp(values.compStartDate, values.compStartTime);
               const voteStart = getUnixTimestamp(values.votingStartDate, values.votingStartTime);
@@ -273,6 +305,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               }
 
             }
+            */
 
             if (!isValidUrl(values.url)) {
               errors.url = "Invalid URL";
@@ -291,14 +324,14 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             require("title");
             require("numWinners");
             require("numberOfVotesPerVoter");
-            //require("compStartDate");
-            //require("compEndDate");
-            //require("compStartTime");
+            require("compStartDate");
+            require("compEndDate");
+           // require("compStartTime");
             //require("compEndTime");
             require("votingStartDate");
-            require("votingStartTime");
-            require("suggestionsEndDate");
-            require("suggestionsEndTime");
+            //require("votingStartTime");
+            //require("suggestionsEndDate");
+            //require("suggestionsEndTime");
 
             if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
               errors.rewards = "Please select at least some reward";
@@ -516,56 +549,33 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                   />
                 </div>
 
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <Grid container className={css.date}>
-                    <KeyboardDatePicker
-                      id="compStartDateInput"
-                      label="Competition start time"
-                      format="MM/dd/yyyy"
-                      value={this.state.date}
-                      onChange={date => this.handleDateChange(date)}
-                      KeyboardButtonProps={{
-                        'aria-label': 'change date',
-                      }}
-                    />
-                    <KeyboardTimePicker
-                      id="time-picker"
-                      label="Time picker"
-                      value={this.state.date}
-                      onChange={date => this.handleDateChange(date)}
-                      KeyboardButtonProps={{
-                        'aria-label': 'change time',
-                      }}
-                    />
-                  </Grid>
-                  </MuiPickersUtilsProvider>
-
                 <div className={css.date}>
-                  <img src="/assets/images/Icon/down.svg" className={css.downV}/>
-                  <label htmlFor="suggestionsEndDate">
-                    Suggestions end time
-                    <ErrorMessage name="suggestionsEndDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  <label htmlFor="compStartDate">
+                    Competition start time
+                    <ErrorMessage name="compStartDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="suggestionsEndDateInput"
-                    name="suggestionsEndDate"
-                    type="date"
-                    className={touched.endDate && errors.endDate ? css.error : null}
+                    id="compStartDateInput"
+                    name="compStartDate"
+                    component={CustomDateInput}
+                    className={touched.compStartDate && errors.compStartDate ? css.error : null}
                   />
-                  <div className={css.timeSelect}>
-                    <Field
-                      id="suggestionsEndTimeInput"
-                      name="suggestionsEndTime"
-                      type="time"
-                      component={SelectField}
-                      className={css.timeSelect}
-                      options={timeSlots}
-                    />
-                  </div>
                 </div>
 
                 <div className={css.date}>
-                  <img src="/assets/images/Icon/down.svg" className={css.downV}/>
+                  <label htmlFor="submissionEndDate">
+                    Submission end time
+                    <ErrorMessage name="submissionEndDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  </label>
+                  <Field
+                    id="submissionEndDateInput"
+                    name="submissionEndDate"
+                    component={CustomDateInput}
+                    className={touched.submissionEndDate && errors.submissionEndDate ? css.error : null}
+                  />
+                </div>
+
+                <div className={css.date}>
                   <label htmlFor="votingStartDate">
                     Voting start time
                     <ErrorMessage name="votingStartDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -573,23 +583,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                   <Field
                     id="votingStartDateInput"
                     name="votingStartDate"
-                    type="date"
-                    className={touched.startTime && errors.startTime ? css.error : null}
+                    component={CustomDateInput}
+                    className={touched.votingStartDate && errors.votingStartDate ? css.error : null}
                   />
-                  <div className={css.timeSelect}>
-                    <Field
-                      id="votingStartTimeInput"
-                      name="votingStartTime"
-                      type="time"
-                      component={SelectField}
-                      className={css.timeSelect}
-                      options={timeSlots}
-                    />
-                  </div>
                 </div>
 
                 <div className={css.date}>
-                  <img src="/assets/images/Icon/down.svg" className={css.downV}/>
                   <label htmlFor="compEndDate">
                     Competition end time
                     <ErrorMessage name="compEndDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -597,19 +596,9 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                   <Field
                     id="compEndDateInput"
                     name="compEndDate"
-                    type="date"
-                    className={touched.endDate && errors.endDate ? css.error : null}
+                    component={CustomDateInput}
+                    className={touched.compEndDate && errors.compEndDate ? css.error : null}
                   />
-                  <div className={css.timeSelect}>
-                    <Field
-                      id="compEndTimeInput"
-                      name="compEndTime"
-                      type="time"
-                      component={SelectField}
-                      className={css.timeSelect}
-                      options={timeSlots}
-                    />
-                  </div>
                 </div>
 
                 {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
