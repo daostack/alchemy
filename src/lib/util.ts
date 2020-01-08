@@ -279,8 +279,6 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
   } else if (scheme.name) {
     if (scheme.name === "ContributionRewardExt") {
       name = rewarderContractName(scheme as ISchemeState);
-      // FAKE -- until this is fixed:  https://github.com/daostack/client/issues/340
-      name = name ? name : "Competition";
     } else {
       // add spaces before capital letters to approximate a human-readable title
       name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;

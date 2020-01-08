@@ -4,6 +4,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import { getArc } from "arc";
 import { IDAOState, IProposalState, Address } from "@daostack/client";
 import Loading from "components/Shared/Loading";
+import { getCrxRewarderComponent, CrxRewarderComponentType } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import * as css from "../Scheme.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -30,9 +31,7 @@ class DetailsPageRouter extends React.Component<IProps, IStateProps>
 
   public async componentDidMount() {
     if (!this.state.crxDetailsComponent) {
-      // FAKE -- until this is fixed:  https://github.com/daostack/client/issues/340
-      this.setState({ crxDetailsComponent : (await import("components/Scheme/ContributionRewardExtRewarders/Competition/Details")).default });
-      // this.setState({ crxDetailsComponent: await getCrxRewarderComponent(this.props.data[0], CrxRewarderComponentType.Details) });
+      this.setState({ crxDetailsComponent: await getCrxRewarderComponent(this.props.data.scheme, CrxRewarderComponentType.Details) });
     }
   }
 

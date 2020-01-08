@@ -152,7 +152,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                       expired={expired}
                     />
                   </div>
-                  { // FAKE -- won't work until this is fixed:  https://github.com/daostack/client/issues/340
+                  {
                     (proposalPassed && crxContractName) ? <div className={css.gotoCompetition}>
                       {
                         <Link to={`/dao/${daoState.address}/crx/proposal/${proposal.id}`}>Go to {crxContractName}&nbsp;&gt;</Link>
