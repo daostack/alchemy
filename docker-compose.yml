@@ -71,18 +71,18 @@ services:
 
 
   ipfs:
-    image: daostack/subgraph-ipfs:0.0.1-rc.36-v1-3.0.21
+    image: daostack/subgraph-ipfs:0.0.1-rc.36-v1-3.0.22
     ports:
       - 5001:5001
 
   postgres4graphnode:
-    image: daostack/subgraph-postgres:0.0.1-rc.36-v1-3.0.21
+    image: daostack/subgraph-postgres:0.0.1-rc.36-v1-3.0.22
     ports:
       - 9432:5432
     environment:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    image: daostack/test-env:0.0.1-rc.36-v1-3.0.21
+    image: daostack/test-env:0.0.1-rc.36-v1-3.0.22
     ports:
       - 8545:8545
