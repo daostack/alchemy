@@ -158,7 +158,6 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       values.compStartDate = addSeconds(new Date(), 15000);
     }
 
-    console.log(values.compStartDate);
     // Parameters to be passed to client
     const proposalOptions: IProposalCreateOptionsCompetition  = {
       dao: this.props.daoAvatarAddress,
