@@ -737,11 +737,22 @@ a.blueButton {
     font-size: 13px;
   }
 
+  .description {
+    padding-bottom: 20px;
+    max-height: 100%;
+    overflow: auto;
+    margin-bottom: 16px;
+
+    h1:first-of-type, h2:first-of-type, h3:first-of-type, h4:first-of-type {
+      margin-top: 0;
+    }
+  }
+
   .attachmentLink, .attachmentLink:visited {
     font-size: 11px;
     color: rgba(0, 113, 255, 1.000);
     display: inline-block;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
 
     img {
       position: relative;
@@ -750,14 +761,8 @@ a.blueButton {
     }
   }
 
-  .description {
-    padding-bottom: 20px;
-    max-height: 100%;
-    overflow: auto;
-
-    h1:first-of-type, h2:first-of-type, h3:first-of-type, h4:first-of-type {
-      margin-top: 0;
-    }
+  .tagsContainer {
+    display: block;
   }
 }
 

@@ -14,6 +14,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import { IProfilesState } from "reducers/profilesReducer";
 import { combineLatest } from "rxjs";
 import Tooltip from "rc-tooltip";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -66,6 +67,8 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const isWinner = false;
     // FAKE -- until can know whether this is a winning submission. allso need submission.redeemedAt to be undefined when not redeemed
     const canRedeem = isWinner && status.complete && !submission.redeemedAt && (submission.suggester === this.props.currentAccountAddress);
+    // FAKE -- until client can supply them
+    const tags = null; // submission.tags;
 
     return (
       <div className={css.submissionDetails}>
@@ -105,14 +108,6 @@ class SubmissionDetails extends React.Component<IProps, null> {
           <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.profiles[submission.suggester]} daoAvatarAddress={this.props.daoState.address} detailView={false} />
         </div>
 
-        {submission.url ?
-          <a href={ensureHttps(submission.url)} className={css.attachmentLink} target="_blank" rel="noopener noreferrer">
-            <img src="/assets/images/Icon/Attachment.svg" />
-            Attachment&nbsp;&gt;
-          </a>
-          : " "
-        }
-
         { submission.description ?
           <div className={css.description}>
             <ReactMarkdown source={submission.description}
@@ -122,6 +117,19 @@ class SubmissionDetails extends React.Component<IProps, null> {
             />
           </div>
           : "" }
+
+        {submission.url ?
+          <a href={ensureHttps(submission.url)} className={css.attachmentLink} target="_blank" rel="noopener noreferrer">
+            <img src="/assets/images/Icon/Attachment.svg" />
+            Attachment&nbsp;&gt;
+          </a>
+          : " "
+        }
+
+        { tags && tags.length ? <div className={css.tagsContainer}>
+          <TagsSelector readOnly tags={tags}></TagsSelector>
+        </div> : "" }
+
       </div>
     );
   }
