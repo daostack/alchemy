@@ -7,7 +7,6 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import { formatTokens, humanProposalTitle, schemeName } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
@@ -23,6 +22,7 @@ interface IExternalProps {
   proposal: Proposal;
   daoState: IDAOState;
   currentAccountAddress: Address;
+  history: any;
 }
 
 interface IStateProps {
@@ -37,7 +37,7 @@ interface IDispatchProps {
 type SubscriptionData = [IProposalState, Stake[], Vote[], IMemberState];
 type IProps = IStateProps & IDispatchProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IExternalProps &  ISubscriptionProps<SubscriptionData> & IStateProps => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IExternalProps & ISubscriptionProps<SubscriptionData> & IStateProps => {
   const proposal = ownProps.data[0];
 
   return {
@@ -82,11 +82,16 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     }
   }
 
+  private gotoProposal = (e: any) => {
+    const { daoState, history, proposal } = this.props;
+    history.push("/dao/" + daoState.address + "/proposal/" + proposal.id);
+  }
+
   public render(): RenderOutput {
     const {
       creatorProfile,
       currentAccountAddress,
-      data, daoState, proposal } = this.props;
+      data, daoState } = this.props;
     const [proposalState, stakesOfCurrentUser, votesOfCurrentUser, currentMemberState] = data;
 
     const proposalClass = classNames({
@@ -152,16 +157,16 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
           <AccountPopup accountAddress={proposalState.proposer} daoState={daoState} width={this.state.isMobile ? 12 : 40} />
           <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} historyView/>
         </td>
-        <td className={css.endDate}>
-          {closingTime(proposalState).format("MMM D, YYYY")}
+        <td onClick={this.gotoProposal} className={css.endDate}>
+          {closingTime(proposalState) ? closingTime(proposalState).format("MMM D, YYYY") : ""}
         </td>
-        <td className={css.scheme}>
+        <td onClick={this.gotoProposal} className={css.scheme}>
           {schemeName(proposalState.scheme)}
         </td>
-        <td className={css.title}>
-          <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposalState)}</Link>
+        <td onClick={this.gotoProposal} className={css.title}>
+          {humanProposalTitle(proposalState)}
         </td>
-        <td className={css.votes}>
+        <td onClick={this.gotoProposal} className={css.votes}>
           <div className={voteControls}>
             <VoteBreakdown
               currentAccountAddress={currentAccountAddress}
@@ -170,13 +175,13 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
               proposal={proposalState} historyView />
           </div>
         </td>
-        <td className={css.predictions}>
+        <td onClick={this.gotoProposal} className={css.predictions}>
           <StakeGraph
             proposal={proposalState}
             historyView
           />
         </td>
-        <td className={closeReasonClass}>
+        <td onClick={this.gotoProposal} className={closeReasonClass}>
           <div className={css.decisionPassed}>
             <img src="/assets/images/Icon/vote/for.svg"/>
             <span>Passed</span>
@@ -192,7 +197,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
             </div>
           </div>
         </td>
-        <td className={myActionsClass}>
+        <td onClick={this.gotoProposal} className={myActionsClass}>
           <div className={css.myVote}>
             <span>{formatTokens(currentAccountVoteAmount, "Rep")}</span>
             <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg"/>
