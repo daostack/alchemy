@@ -8,7 +8,7 @@ a.blueButton {
   transition: all .25s ease;
   border-radius: 15px;
   display: inline-block;
-  padding: 0 22px;
+  padding: 0 18px;
   white-space: nowrap;
 
   &:hover {
@@ -35,6 +35,7 @@ a.blueButton {
   padding-left: 16px;
   box-sizing: border-box;
   width: fit-content;
+  white-space: nowrap;
 
   &.open {
     background-color: #00be90;
@@ -173,6 +174,9 @@ a.blueButton {
 
 .competitionDetailsContainer {
 
+  width: 100%;
+  max-width: 1440px;
+
   .topSection {
     margin-bottom: 26px;
 
@@ -237,6 +241,7 @@ a.blueButton {
 
     .leftSection {
       flex-grow: 1;
+      display: inline-grid;  // to prevent effects of overflow from long urls
 
       .tagsContainer {
         display: block;
@@ -246,6 +251,7 @@ a.blueButton {
         overflow-x: hidden;
         word-wrap: break-word;
         font-size: 14px;
+        padding-right: 20px;
 
         a {
           max-width: 100%;
@@ -752,7 +758,6 @@ a.blueButton {
     font-size: 11px;
     color: rgba(0, 113, 255, 1.000);
     display: inline-block;
-    margin-bottom: 16px;
 
     img {
       position: relative;
@@ -762,12 +767,22 @@ a.blueButton {
   }
 
   .tagsContainer {
-    display: block;
+    margin-bottom: 16px;
   }
 }
 
 @media only screen and (max-width: 425px) {
+
+  a.blueButton {
+    height: 22px;
+    line-height: 22px;
+    font-size: 11px;
+    padding: 0 10px;
+  }
+
   .competitionDetailsContainer {
+    padding-left: 10px;
+    padding-right: 10px;
     .middleSection {
       flex-wrap: wrap;
     }

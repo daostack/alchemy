@@ -109,6 +109,12 @@ class SubmissionDetails extends React.Component<IProps, null> {
           <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.profiles[submission.suggester]} daoAvatarAddress={this.props.daoState.address} detailView={false} />
         </div>
 
+
+        { tags && tags.length ?
+          <div className={css.tagsContainer}>
+            <TagsSelector readOnly tags={tags}></TagsSelector>
+          </div> : "" }
+
         { submission.description ?
           <div className={css.description}>
             <ReactMarkdown source={submission.description}
@@ -126,12 +132,6 @@ class SubmissionDetails extends React.Component<IProps, null> {
           </a>
           : ""
         }
-
-        { tags && tags.length ?
-          <div className={css.tagsContainer}>
-            <TagsSelector readOnly tags={tags}></TagsSelector>
-          </div> : "" }
-
       </div>
     );
   }
