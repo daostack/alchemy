@@ -269,6 +269,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
               if (!checkTotalPercent(split))
                 errors.rewardSplit = "Please provide reward split summing upto 100";
+            } else {
+              const unit = (100.0 / Number(values.numWinners)).toFixed(4);
+              if((Number(unit)) * values.numWinners !== 100.0)
+                errors.rewardSplit = "Please provide reward split summing upto 100 or update num of winners that to equal split";
             }
 
             const now = new Date();
