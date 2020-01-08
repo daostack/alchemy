@@ -17,11 +17,7 @@ import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField"
 import { checkTotalPercent, addSeconds } from "lib/util";
 
 import {
-  Grid,
-} from "@material-ui/core/";
-import {
-  KeyboardDatePicker,
-  KeyboardTimePicker,
+  DateTimePicker,
   MuiPickersUtilsProvider,
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
@@ -100,23 +96,11 @@ const CustomDateInput: React.SFC<any> = ({
   form,
 }) => (
   <MuiPickersUtilsProvider utils={DateFnsUtils}>
-    <Grid container className={css.date}>
-      <KeyboardDatePicker
-        format="MM/dd/yyyy"
-        value={field.value}
-        onChange={date => form.setFieldValue(field.name, date)}
-        KeyboardButtonProps={{
-          "aria-label": "change date",
-        }}
-      />
-      <KeyboardTimePicker
-        value={field.value}
-        onChange={date => form.setFieldValue(field.name, date)}
-        KeyboardButtonProps={{
-          "aria-label": "change time",
-        }}
-      />
-    </Grid>
+    <DateTimePicker
+      inputVariant="outlined"
+      value={field.value}
+      onChange={date => form.setFieldValue(field.name, date)}
+    />
   </MuiPickersUtilsProvider>
 );
 
@@ -272,7 +256,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             } else {
               const unit = (100.0 / Number(values.numWinners)).toFixed(4);
               if((Number(unit)) * values.numWinners !== 100.0)
-                errors.rewardSplit = "Please provide reward split summing upto 100 or update num of winners that to equal split";
+                errors.rewardSplit = "Please provide reward split summing upto 100 or use num winner that can have equal split";
             }
 
             const now = new Date();
