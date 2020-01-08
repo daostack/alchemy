@@ -97,7 +97,6 @@ const CustomDateInput: React.SFC<any> = ({
 }) => (
   <MuiPickersUtilsProvider utils={DateFnsUtils}>
     <DateTimePicker
-      inputVariant="outlined"
       value={field.value}
       onChange={date => form.setFieldValue(field.name, date)}
     />

@@ -126,48 +126,17 @@
     }
 
     .date {
-      float: left;
       width: 235px;
-      position: relative;
+      display: inline-block;
 
-      input {
+       input {
         width: 200px;
-      }
-
-      .timeSelect {
-        display: block;
-        font-size: 13PX;
-        color: $gray-1;
-        margin: 0;
-        border: 1px solid #aaa;
-        border-radius: 0;
-        -moz-appearance: none;
-        -webkit-appearance: none;
-        appearance: none;
-        background-color: #fff;
-        position: absolute;
-        bottom: 5px;
-        height: 35px;
-        padding: 0 0 0 0;
-        right: 0px;
-        border: 1px solid #bfcbd5;
-
-        div div div div:first-child {
-          left: 15px;
-        }
-
-        input {
-          margin-top: 0;
-          margin-left: 10px;
-          margin-bottom: 0;
-        }
       }
     }
 
     .date:nth-child(even) {
       margin-right: 10px;
     }
-
 
     .permissionCheckbox {
       font-size: 9px;
@@ -681,25 +650,11 @@ div.description {
       }
 
       .date {
-        width: 42%;
-
+        width: 100%;
+        
         input {
           width: 88%;
         }
-
-        .timeSelect {
-          right: -17px;
-          width: 50px;
-          padding: 0 18px 0 0px;
-
-          div div div div:first-child {
-            left: 8px;
-          }
-        }
-      }
-
-      .date:nth-child(even) {
-        margin-right: 30px;
       }
     }
   }
