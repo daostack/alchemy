@@ -124,12 +124,13 @@ class SubmissionDetails extends React.Component<IProps, null> {
             <img src="/assets/images/Icon/Attachment.svg" />
             Attachment&nbsp;&gt;
           </a>
-          : " "
+          : ""
         }
 
-        { tags && tags.length ? <div className={css.tagsContainer}>
-          <TagsSelector readOnly tags={tags}></TagsSelector>
-        </div> : "" }
+        { tags && tags.length ?
+          <div className={css.tagsContainer}>
+            <TagsSelector readOnly tags={tags}></TagsSelector>
+          </div> : "" }
 
       </div>
     );

@@ -156,7 +156,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const votingStartTime =   getDateWithTimezone(competition.votingStartTime);
     const endTime =           getDateWithTimezone(competition.endTime);
     const canSubmit =  now.isSameOrAfter(startTime) && now.isBefore(submissionsEndTime);
-    const inSubmissionsNotYetVoting = now.isSameOrAfter(startTime) && now.isBefore(competition.votingStartTime);
+    const inSubmissionsNotYetVoting = now.isSameOrAfter(startTime) && now.isBefore(votingStartTime);
+    const inVoting = now.isSameOrAfter(votingStartTime) && now.isBefore(endTime);
     const distributionsHtml = () => {
       return competition.rewardSplit.map((split: number, index: number) => {
         return (<div key={index} className={css.winner}>
@@ -224,7 +225,12 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             <div className={css.countdown}>
               <div className={css.startsIn}>Voting starts in:</div>
               <Countdown toDate={votingStartTime} />
-            </div> : ""
+            </div>
+            : inVoting ? 
+              <div className={css.countdown}>
+                <div className={css.startsIn}>Voting ends in:</div>
+                <Countdown toDate={endTime} />
+              </div> : ""
           }
         </div>
         <div className={css.middleSection}>
