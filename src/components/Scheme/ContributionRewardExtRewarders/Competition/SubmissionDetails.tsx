@@ -67,8 +67,9 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const isWinner = false;
     // FAKE -- until can know whether this is a winning submission. allso need submission.redeemedAt to be undefined when not redeemed
     const canRedeem = isWinner && status.complete && !submission.redeemedAt && (submission.suggester === this.props.currentAccountAddress);
+    //const tags = submission.tags;
     // FAKE -- until client can supply them
-    const tags = null; // submission.tags;
+    const tags: any = null; // submission.tags;
 
     return (
       <div className={css.submissionDetails}>
