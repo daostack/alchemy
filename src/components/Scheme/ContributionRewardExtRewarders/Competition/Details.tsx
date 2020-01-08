@@ -204,7 +204,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       
         <div className={css.topSection}>
           <div className={css.header}>
-            <StatusBlob competition={competition}></StatusBlob>
+            <StatusBlob competition={competition} submissions={submissions}></StatusBlob>
             <div className={css.gotoProposal}><Link to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>Go to Proposal&nbsp;&gt;</Link></div>
             <div className={css.newSubmission}>
               { canSubmit ? 
@@ -280,12 +280,13 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           </div>
         </div>
         
-        <div className={css.submissions}>
-          <div className={css.heading}>{submissions.length}&nbsp;Submissions</div>
-          <div className={css.list}>
-            {submissionsHtml()}
-          </div>
-        </div>
+        { submissions.length ?
+          <div className={css.submissions}>
+            <div className={css.heading}>{submissions.length}&nbsp;Submissions</div>
+            <div className={css.list}>
+              {submissionsHtml()}
+            </div>
+          </div> : "" }
       </div>
     
       {this.state.showingCreateSubmission ?

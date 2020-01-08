@@ -22,7 +22,10 @@ export interface ICompetitionStatus {
   votingStartTime: moment.Moment;
 }
 
-export const competitionStatus = (competition: ICompetitionProposal): ICompetitionStatus => {
+export const competitionStatus = (
+  competition: ICompetitionProposal,
+  submissions: Array<ICompetitionSuggestion>): ICompetitionStatus => {
+
   const now = moment();
   const startTime = moment(competition.startTime);
   const submissionsEndTime = moment(competition.suggestionsEndTime);
@@ -47,7 +50,7 @@ export const competitionStatus = (competition: ICompetitionProposal): ICompetiti
     }
   } else if (now.isBefore(endTime)) {
     voting = true;
-    text = "Voting started!";
+    text = submissions.length ? "Voting started!" : "No submissions";
   } else {
     complete = true;
     text = "Complete";

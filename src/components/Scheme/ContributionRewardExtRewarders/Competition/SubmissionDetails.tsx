@@ -57,7 +57,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const competition = this.props.proposalState.competition;
     const submission = this.props.data[0];
 
-    const status = competitionStatus(competition);
+    const status = competitionStatus(competition, [submission]);
     const currentAccountVotedForIt = this.props.data[1];
     // FAKE -- until can know how many votes per account per Competition
     const maxNumVotesReached = false;

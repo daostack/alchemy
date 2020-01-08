@@ -46,11 +46,11 @@ class CompetitionCard extends React.Component<IProps, null> {
     } = this.props;
 
     const competition = proposalState.competition;
-    const status = competitionStatus(competition);
     const submissions = this.props.data;
+    const status = competitionStatus(competition, submissions);
 
     return <div className={css.competitionCardContainer} data-test-id={"competition-card-" + proposalState.id}>
-      <StatusBlob competition={competition}></StatusBlob>
+      <StatusBlob competition={competition} submissions={submissions}></StatusBlob>
       <div className={css.createByContainer}>
         <div className={css.createdBy}>
           <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
@@ -60,7 +60,7 @@ class CompetitionCard extends React.Component<IProps, null> {
           <div className={css.countdown}>Suggestions open in <Countdown toDate={status.startTime}></Countdown></div> :
           status.now.isBefore(status.votingStartTime) ? 
             <div className={css.countdown}>Voting starts in <Countdown toDate={status.votingStartTime}></Countdown></div> :
-            status.now.isBefore(status.endTime) ?
+            (status.now.isBefore(status.endTime) && submissions.length) ?
               <div className={css.countdown}><div className={css.text}>Voting ends in</div><Countdown toDate={status.endTime}></Countdown></div> : ""
         }
       </div>

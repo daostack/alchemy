@@ -229,28 +229,32 @@ a.blueButton {
     }
   }
   
-  .tagsContainer {
-    display: block;
-  }
-
-  .description {
-    display: block;
-  }
-
   .middleSection {
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+    justify-content: flex-start;
     align-items: flex-start;
-    width: 100%;
     margin-bottom: 16px;
 
     .leftSection {
       flex-grow: 1;
+
+      .tagsContainer {
+        display: block;
+      }
+
+      .description {
+        overflow-x: hidden;
+        word-wrap: break-word;
+        font-size: 14px;
+
+        a {
+          max-width: 100%;
+        }
+      }
     }
 
     .rightSection {
-      flex-grow: 0;
+      flex-grow: 2;
       background-color: $white;
       padding-left:  20px;
       padding-right: 20px;
@@ -265,6 +269,7 @@ a.blueButton {
         padding-bottom: 12px;
         padding-top: 16px;
         font-size: 16px;
+        white-space: nowrap;
 
         .isWinner {
           padding-right: 6px;
@@ -322,6 +327,7 @@ a.blueButton {
         .period {
           font-size: 11px;
           display: table-row;
+          white-space: nowrap;
 
           .bullet, .label, .datetime {
             display: table-cell;
@@ -753,4 +759,14 @@ a.blueButton {
       margin-top: 0;
     }
   }
+}
+
+@media only screen and (max-width: 425px) {
+  .competitionDetailsContainer {
+    .middleSection {
+      flex-wrap: wrap;
+    }
+  }
+
+
 }
