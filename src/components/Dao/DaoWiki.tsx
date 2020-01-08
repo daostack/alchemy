@@ -2,17 +2,8 @@ import * as React from "react";
 import * as Sticky from "react-stickynode";
 
 import { IDAOState } from "@daostack/client";
-import { WikiContainer, actualHash } from "@dorgtech/daosmind";
+import { WikiContainer, actualHash, ReactiveWiki } from "@dorgtech/daosmind";
 import * as css from "./Dao.scss";
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      "module-container": any;
-      "simple-wiki": any;
-    }
-  }
-}
 
 interface IProps {
   dao: IDAOState;
@@ -20,7 +11,7 @@ interface IProps {
 }
 
 export default class DaoWiki extends React.Component<IProps, null> {
-  componentDidMount() {
+  componentWillMount() {
     const { daoAvatarAddress, perspectiveId, pageId } = this.props.match.params
     actualHash['dao'] = daoAvatarAddress
     actualHash['wiki'] = perspectiveId
@@ -34,9 +25,7 @@ export default class DaoWiki extends React.Component<IProps, null> {
         <Sticky enabled top={50} innerZ={10000}>
           <div className={css.daoHistoryHeader}>Wiki</div>
         </Sticky>
-        <module-container>
-          <simple-wiki />
-        </module-container>
+        <ReactiveWiki {...this.props} />
       </div>
     );
   }
