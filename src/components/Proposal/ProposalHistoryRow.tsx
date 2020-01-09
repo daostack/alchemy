@@ -82,7 +82,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     }
   }
 
-  private gotoProposal = (e: any) => {
+  private gotoProposal = () => {
     const { daoState, history, proposal } = this.props;
     history.push("/dao/" + daoState.address + "/proposal/" + proposal.id);
   }
