@@ -12,12 +12,16 @@ import Countdown from "components/Shared/Countdown";
 import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competition/StatusBlob";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as css from "./Competitions.scss";
-import { competitionStatus, getProposalSubmissions } from "./utils";
+import { competitionStatus, getProposalSubmissions, ICompetitionStatus } from "./utils";
 
 type ISubscriptionState = Array<ICompetitionSuggestion>;
 
-interface IStateProps {
+interface IExternalStateProps {
   creatorProfile: IProfileState;
+}
+
+interface IStateProps {
+  status: ICompetitionStatus;
 }
 
 interface IExternalProps {
@@ -25,9 +29,9 @@ interface IExternalProps {
   proposalState: IProposalState;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<ISubscriptionState>;
+type IProps = IExternalProps & IExternalStateProps & ISubscriptionProps<ISubscriptionState>;
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
 
   return {
     ...ownProps,
@@ -35,9 +39,27 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
   };
 };
 
-class CompetitionCard extends React.Component<IProps, null> {
+class CompetitionCard extends React.Component<IProps, IStateProps> {
+
+  constructor(props: IProps) {
+    super(props);
+    this.state = { 
+      status: this.getCompetitionState(),
+    };
+  }
+
+  private getCompetitionState = (): ICompetitionStatus => {
+    const competition = this.props.proposalState.competition;
+    const submissions = this.props.data;
+    return competitionStatus(competition, submissions);
+  }
+
+  private onEndCountdown = () => {
+    this.setState({ status: this.getCompetitionState() });
+  }
 
   public render(): RenderOutput {
+    const status = this.state.status;
 
     const {
       creatorProfile,
@@ -47,7 +69,6 @@ class CompetitionCard extends React.Component<IProps, null> {
 
     const competition = proposalState.competition;
     const submissions = this.props.data;
-    const status = competitionStatus(competition, submissions);
 
     return <div className={css.competitionCardContainer} data-test-id={"competition-card-" + proposalState.id}>
       <StatusBlob competition={competition} submissions={submissions}></StatusBlob>
@@ -57,11 +78,11 @@ class CompetitionCard extends React.Component<IProps, null> {
           <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
         </div>
         { status.now.isBefore(status.startTime) ?
-          <div className={css.countdown}>Suggestions open in <Countdown toDate={status.startTime}></Countdown></div> :
+          <div className={css.countdown}>Suggestions open in <Countdown toDate={status.startTime} onEnd={this.onEndCountdown}></Countdown></div> :
           status.now.isBefore(status.votingStartTime) ? 
-            <div className={css.countdown}>Voting starts in <Countdown toDate={status.votingStartTime}></Countdown></div> :
+            <div className={css.countdown}>Voting starts in <Countdown toDate={status.votingStartTime} onEnd={this.onEndCountdown}></Countdown></div> :
             (status.now.isBefore(status.endTime) && submissions.length) ?
-              <div className={css.countdown}><div className={css.text}>Voting ends in</div><Countdown toDate={status.endTime}></Countdown></div> : ""
+              <div className={css.countdown}><div className={css.text}>Voting ends in</div><Countdown toDate={status.endTime} onEnd={this.onEndCountdown}></Countdown></div> : ""
         }
       </div>
       <div className={css.description}>

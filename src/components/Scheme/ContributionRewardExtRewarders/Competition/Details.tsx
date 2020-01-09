@@ -25,7 +25,7 @@ import { concatMap } from "rxjs/operators";
 import { forkJoin, combineLatest, Observable, of } from "rxjs";
 
 import moment = require("moment");
-import { ICreateSubmissionOptions, getProposalSubmissions, getSubmissionVoterHasVoted } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { ICreateSubmissionOptions, getProposalSubmissions, getSubmissionVoterHasVoted, competitionStatus, ICompetitionStatus } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import Tooltip from "rc-tooltip";
 import * as css from "./Competitions.scss";
 
@@ -40,10 +40,14 @@ interface IDispatchProps {
   redeemForSubmission: typeof CompetitionActions.redeemForSubmission;
 }
 
-interface IStateProps {
+interface IExternalStateProps {
   creatorProfile: IProfileState;
+}
+
+interface IStateProps {
   showingCreateSubmission: boolean;
   showingSubmissionDetails: ICompetitionSuggestion;
+  status: ICompetitionStatus;
 }
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -52,14 +56,12 @@ interface IExternalProps extends RouteComponentProps<any> {
   proposalState: IProposalState;
 }
 
-type IProps = IExternalProps & IDispatchProps & IStateProps & ISubscriptionProps<ISubscriptionState>;
+type IProps = IExternalProps & IDispatchProps & IExternalStateProps & ISubscriptionProps<ISubscriptionState>;
 
-const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalProps): IExternalProps & IStateProps => {
+const mapStateToProps = (state: IRootState & IExternalStateProps, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
   return {
     ...ownProps,
     creatorProfile: state.profiles[ownProps.proposalState.proposer],
-    showingCreateSubmission: state.showingCreateSubmission,
-    showingSubmissionDetails: state.showingSubmissionDetails,
   };
 };
 
@@ -75,15 +77,30 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   constructor(props: IProps) {
     super(props);
     this.state = { 
-      creatorProfile: null,
       showingCreateSubmission: false,
       showingSubmissionDetails: null,
+      status: this.getCompetitionState(),
     };
   }
 
+  private getCompetitionState = (): ICompetitionStatus => {
+    const competition = this.props.proposalState.competition;
+    const submissions = this.props.data[0];
+    return competitionStatus(competition, submissions);
+  }
+
   public componentDidMount() {
-    // const urlSubmissionId = this.props.match.params.submissionId;
+    const newState = {};
+    /**
+     * use `window` because a route with these params isn't configured
+     * externally to the Competition code in Alchemy, and thus the params
+     * won't show up in `match`.  (Wasn't able to figure out a clean/easy way to
+     * configure such a route, and the behavior may be better this way anyway;
+     * not using React's router I believe helps to keep the history and 
+     * browser back/forward button behavior nice and clean.)
+     */
     const parts = window.location.pathname.split("/");
+    
     if (parts.length === 9) {
       const urlSubmissionId = parts[8];
       let urlSubmission: ICompetitionSuggestion = null;
@@ -93,12 +110,18 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           urlSubmission = urlSubmissions[0];
         }
       }
+
       if (this.state.showingSubmissionDetails !== urlSubmission) {
-        this.setState({ showingSubmissionDetails: urlSubmission });
+        Object.assign(newState, { showingSubmissionDetails: urlSubmission });
       }
     }
+    this.setState(newState);
   }
   
+  private onEndCountdown = () => {
+    this.setState({ status: this.getCompetitionState() });
+  }
+
   private openNewSubmissionModal = async (): Promise<void> => {
     
     const { showNotification } = this.props;
@@ -145,19 +168,35 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   }
 
   public render(): RenderOutput {
+    
+    const status = this.state.status;
     const { daoState, proposalState } = this.props;
     const submissions = this.props.data[0];
     const votersVotes = this.props.data[1];
     const tags = proposalState.tags;
     const competition = proposalState.competition;
     const now = moment();
-    const startTime =         getDateWithTimezone(competition.startTime);
-    const submissionsEndTime =  getDateWithTimezone(competition.suggestionsEndTime);
-    const votingStartTime =   getDateWithTimezone(competition.votingStartTime);
-    const endTime =           getDateWithTimezone(competition.endTime);
+    const startTime =           getDateWithTimezone(status.startTime);
+    const submissionsEndTime =  getDateWithTimezone(status.submissionsEndTime);
+    const votingStartTime =     getDateWithTimezone(status.votingStartTime);
+    const endTime =             getDateWithTimezone(status.endTime);
     const canSubmit =  now.isSameOrAfter(startTime) && now.isBefore(submissionsEndTime);
     const inSubmissionsNotYetVoting = now.isSameOrAfter(startTime) && now.isBefore(votingStartTime);
-    const inVoting = now.isSameOrAfter(votingStartTime) && now.isBefore(endTime);
+    const inVoting = now.isSameOrAfter(votingStartTime) && now.isBefore(endTime) && submissions.length;
+    // FAKE -- until we can identify winners
+    const winningSubmissions = [];
+    const noWinnersHtml = ()=> {
+      return <div className={css.noWinners}>
+        <div className={css.caption}>No Winners</div>
+        <div className={css.body}>
+          { 
+            winningSubmissions.length ?
+              "None of the competition submissions received any votes. Competition rewards will be returned to the DAO." :
+              "This competition received no submissions. Competition rewards will be returned to the DAO."
+          }
+        </div>
+      </div>;
+    };
     const distributionsHtml = () => {
       return competition.rewardSplit.map((split: number, index: number) => {
         return (<div key={index} className={css.winner}>
@@ -224,12 +263,12 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           { inSubmissionsNotYetVoting ? 
             <div className={css.countdown}>
               <div className={css.startsIn}>Voting starts in:</div>
-              <Countdown toDate={votingStartTime} />
+              <Countdown toDate={votingStartTime} onEnd={this.onEndCountdown}/>
             </div>
             : inVoting ? 
               <div className={css.countdown}>
                 <div className={css.startsIn}>Voting ends in:</div>
-                <Countdown toDate={endTime} />
+                <Countdown toDate={endTime} onEnd={this.onEndCountdown}/>
               </div> : ""
           }
         </div>
@@ -292,7 +331,10 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             <div className={css.list}>
               {submissionsHtml()}
             </div>
-          </div> : "" }
+          </div> : ""
+        }
+
+        { (!submissions.length || !winningSubmissions.length) ? noWinnersHtml() : "" }
       </div>
     
       {this.state.showingCreateSubmission ?
@@ -330,7 +372,7 @@ export default withSubscription({
   loadingComponent: null,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: [],
-  createObservable: (props: IExternalProps & IStateProps ) => {
+  createObservable: (props: IExternalProps & IExternalStateProps ) => {
     /**
      * HEADS UP:  we subscribe here because we can't rely on getting to this component via CompetitionCard
      */

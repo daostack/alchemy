@@ -362,10 +362,8 @@ a.blueButton {
   }
 
   .submissions {
-    display: block;
 
     .heading {
-      display: block;
       font-weight: 500;
       font-size: 20px;
       width: 100%;
@@ -461,6 +459,19 @@ a.blueButton {
             }
           }
       }
+    }
+  }
+
+  .noWinners {
+    text-align: center;
+    font-size: 21px;
+    
+    .caption {
+      margin-bottom: 20px;
+    }
+
+    .body {
+      display: block;
     }
   }
 }

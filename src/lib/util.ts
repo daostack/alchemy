@@ -591,7 +591,7 @@ export function arrayRemove(arr: any[], value: any) {
 
 const localTimezone = moment.tz.guess();
 
-export function getDateWithTimezone(date: Date) {
+export function getDateWithTimezone(date: Date|moment.Moment): moment.Moment {
   return moment.tz(date.toISOString(), localTimezone); 
 }
 
