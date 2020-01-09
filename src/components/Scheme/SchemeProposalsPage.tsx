@@ -4,7 +4,9 @@ import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
+import Analytics from "lib/analytics";
 import { schemeName} from "lib/util";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
@@ -56,6 +58,16 @@ const mapDispatchToProps = {
 };
 
 class SchemeProposalsPage extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": Page.SchemeProposals,
+      "DAO Address": this.props.daoState.address,
+      "DAO Name": this.props.daoState.name,
+      "Scheme Address": this.props.scheme.address,
+      "Scheme Name": this.props.scheme.name,
+    });
+  }
 
   private async handleNewProposal(daoAvatarAddress: Address, schemeId: any): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }

@@ -65,7 +65,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
-    Analytics.track_links(".buyGenLink", "Clicked Buy Gen Link", (link: any) => {
+    Analytics.trackLinks(".buyGenLink", "Clicked Buy Gen Link", (link: any) => {
       return {
         Origin: "Stake Popup",
         URL: link.getAttribute("href"),
@@ -94,7 +94,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
   private exchangeHtml = (item: any) => {
     return(
       <li key={item.name}>
-        <a href={item.url} target="_blank" rel="noopener noreferrer">
+        <a href={item.url} target="_blank" rel="noopener noreferrer" className="buyGenLink">
           <b><img src={item.logo}/></b>
           <span>{item.name}</span>
         </a>

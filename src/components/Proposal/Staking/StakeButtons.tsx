@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, Stake } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, Stake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 
@@ -102,7 +102,7 @@ class StakeButtons extends React.Component<IProps, IState> {
       stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount);
 
       Analytics.track("Stake", {
-        "DAO Address": proposal.dao.address,
+        "DAO Address": proposal.dao.id,
         "GEN Staked": amount,
         "Proposal Hash": proposal.id,
         "Proposal TItle": proposal.title,
@@ -121,7 +121,6 @@ class StakeButtons extends React.Component<IProps, IState> {
       currentAccountGenStakingAllowance,
       dao,
       expired,
-      historyView,
       parentPage,
       proposal,
       stakeProposal,

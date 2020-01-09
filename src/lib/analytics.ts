@@ -15,7 +15,7 @@ const actions = {
   track: (name: string, props = {}) => {
     if (doTracking) { Mixpanel.track(name, props); }
   },
-  track_links: (selector: string, name: string, callback: any) => {
+  trackLinks: (selector: string, name: string, callback: any) => {
     if (doTracking) { Mixpanel.track_links(selector, name, callback); }
   },
   register: (props: any) => {

@@ -7,5 +7,6 @@ export enum Page {
   DAOSchemes = "DAO Schemes",
   ProposalDetails = "Proposal Details",
   Redemptions = "Redemptions",
-  SchemeQueue = "Scheme Queue",
+  RedemptionsMenu = "Redemptions Menu",
+  SchemeProposals = "Scheme Proposals",
 }

@@ -218,7 +218,6 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                         currentAccountAddress={currentAccountAddress}
                         currentVote={currentAccountVote}
                         dao={daoState}
-                        detailView
                         expired={expired}
                         currentAccountState={member}
                         proposal={proposal}
@@ -252,7 +251,6 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                         currentAccountState={member}
                         currentVote={currentAccountVote}
                         dao={daoState}
-                        detailView
                         expired={expired}
                         proposal={proposal}
                         parentPage={Page.ProposalDetails}

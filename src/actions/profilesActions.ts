@@ -61,8 +61,8 @@ export function getProfile(accountAddress: string, currentAccount = false) {
         if (currentAccount) {
           // If getting profile for the current account then update our analytics services with the profile data
           Analytics.people.set({
-            Name: response.data.name,
-            Description: response.data.description,
+            Name: profile.name,
+            Description: profile.description,
           });
         }
       } else {

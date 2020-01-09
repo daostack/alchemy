@@ -111,7 +111,9 @@ export default class ProposalCard extends React.Component<IProps, null> {
               currentVote={currentAccountVote}
               dao={daoState}
               expired={expired}
-              proposal={proposal} />
+              proposal={proposal}
+              parentPage={Page.SchemeProposals}
+            />
           </div>
         </div>;
 
@@ -131,6 +133,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
               expired={expired}
               proposal={proposal}
               stakes={stakes}
+              parentPage={Page.SchemeProposals}
             />
           </div>
         </div>;
@@ -160,7 +163,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   proposalState={proposal}
                   rewards={rewards}
                   expired={expired}
-                  parentPage={Page.SchemeQueue}
+                  parentPage={Page.SchemeProposals}
                 />
 
                 <div className={css.contextMenu} data-test-id="proposalContextMenu">
@@ -180,7 +183,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                       expired={expired}
                       proposal={proposal}
                       contextMenu
-                      parentPage={Page.SchemeQueue}
+                      parentPage={Page.SchemeProposals}
                     />
 
                     <StakeButtons
@@ -193,7 +196,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                       expired={expired}
                       proposal={proposal}
                       stakes={stakes}
-                      parentPage={Page.SchemeQueue}
+                      parentPage={Page.SchemeProposals}
                     />
                   </div>
                 </div>

@@ -63,14 +63,14 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
   }
 
   public componentDidMount() {
-    Analytics.track_links(".externalLink", "Clicked External Link", (link: any) => {
+    Analytics.trackLinks(".externalLink", "Clicked External Link", (link: any) => {
       return {
         Page: link.innerText,
         URL: link.getAttribute("href"),
       };
     });
 
-    Analytics.track_links(".buyGenLink", "Clicked Buy Gen Link", (link: any) => {
+    Analytics.trackLinks(".buyGenLink", "Clicked Buy Gen Link", (link: any) => {
       return {
         Origin: "Side Bar",
         URL: link.getAttribute("href"),

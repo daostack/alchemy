@@ -7,6 +7,7 @@ import * as classNames from "classnames";
 import Reputation from "components/Account/Reputation";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Analytics from "lib/analytics";
+import { fromWei } from "lib/util";
 import { Page } from "pages";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -75,7 +76,7 @@ class VoteButtons extends React.Component<IProps, IState> {
       "DAO Address": dao.address,
       "Proposal Hash": proposal.id,
       "Proposal Title": proposal.title,
-      "Reputation Voted": Util.fromWei(currentAccountState.reputation),
+      "Reputation Voted": fromWei(currentAccountState.reputation),
       "Scheme Address": proposal.scheme.address,
       "Scheme Name": proposal.scheme.name,
       "Vote Type": this.state.currentVote === IProposalOutcome.Fail ? "Fail" : this.state.currentVote === IProposalOutcome.Pass ? "Pass" : "None",

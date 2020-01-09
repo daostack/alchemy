@@ -8,6 +8,7 @@ import ActionButton from "components/Proposal/ActionButton";
 import RedemptionsString from "components/Proposal/RedemptionsString";
 import ProposalSummary from "components/Proposal/ProposalSummary";
 import { ethErrorHandler, humanProposalTitle } from "lib/util";
+import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -179,6 +180,7 @@ class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
           expired
           proposalState={proposal}
           rewards={reward}
+          parentPage={Page.RedemptionsMenu}
         />
       </div>
     </React.Fragment>;
