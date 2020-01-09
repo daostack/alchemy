@@ -51,6 +51,8 @@ interface IFormValues {
   externalTokenAddress: string;
   externalTokenReward: number;
   nativeTokenReward: number;
+  numWinners: number;
+  numberOfVotesPerVoter: number;
   reputationReward: number;
   title: string;
   url: string;
@@ -207,7 +209,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             externalTokenAddress: arc.GENToken().address,
             externalTokenReward: 0,
             nativeTokenReward: 0,
+            numWinners: 0,
+            numberOfVotesPerVoter: 0,
             reputationReward: 0,
+            compStartDate: null,
             submissionEndDate: new Date(),
             votingStartDate: new Date(),
             compEndDate: new Date(),
@@ -517,9 +522,9 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 </div>
 
                 <div className={css.date}>
-                  <label htmlFor="compStartDate">
+                  <label htmlFor="compStartDateInput">
                     Competition start time
-                    <ErrorMessage name="compStartDateInput">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    <ErrorMessage name="compStartDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
                     id="compStartDateInput"
