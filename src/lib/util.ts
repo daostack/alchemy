@@ -31,6 +31,7 @@ export function checkTotalPercent(split: any) {
     try {
       sum += Number(p);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.warn(`Invalid percentage value passed: "${p}": ${err.message}`);
     }
   }

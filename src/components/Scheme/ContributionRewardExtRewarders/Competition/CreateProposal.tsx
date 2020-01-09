@@ -102,7 +102,7 @@ const CustomDateInput: React.SFC<any> = ({
   <MuiPickersUtilsProvider utils={DateFnsUtils}>
     <DateTimePicker
       value={field.value}
-      onChange={date => form.setFieldValue(field.name, date)}
+      onChange={(date: Date) => form.setFieldValue(field.name, date)}
     />
   </MuiPickersUtilsProvider>
 );
@@ -223,7 +223,6 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
           } as IFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
-            //console.log(values)
             const errors: any = {};
 
             const require = (name: string): void => {
@@ -323,7 +322,6 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
               errors.rewards = "Please select at least some reward";
             }
-            console.log(errors);
 
             return errors;
           }}
