@@ -216,8 +216,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         const isSelected = () => this.state.showingSubmissionDetails && (this.state.showingSubmissionDetails.suggestionId === submission.suggestionId);
         return (
           <div key={index} className={css.row} onClick={this.openSubmissionDetailsModal(submission)}>
-            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.winnerIcon]: true, [css.isWinner]: submission.isWinner })}>
-              <img src="/assets/images/Icon/winner.svg"></img>
+            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.winnerIcon]: true })}>
+              { submission.isWinner ? <img src="/assets/images/Icon/winner.svg"></img>  : "" }
             </div>
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.title]: true})}>
               { submission.title || "[No title is available]" }
