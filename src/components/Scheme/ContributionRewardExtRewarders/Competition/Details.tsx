@@ -2,7 +2,7 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
-import { IDAOState, IProposalState, ICompetitionSuggestion, Address } from "@daostack/client";
+import { IDAOState, IProposalState, ICompetitionSuggestion, Address, CompetitionSuggestion } from "@daostack/client";
 import { schemeName, humanProposalTitle, getDateWithTimezone, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
 import { connect } from "react-redux";
 
@@ -12,7 +12,7 @@ import RewardsString from "components/Proposal/RewardsString";
 import { Link, RouteComponentProps } from "react-router-dom";
 import classNames from "classnames";
 import { showNotification } from "reducers/notifications";
-import { enableWalletProvider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import CreateSubmission from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSubmission";
 import { Modal } from "react-router-modal";
 import SubmissionDetails from "components/Scheme/ContributionRewardExtRewarders/Competition/SubmissionDetails";
@@ -31,7 +31,11 @@ import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
 
-type ISubscriptionState = [Array<ICompetitionSuggestion>, Array<boolean>];
+// FAKE - until we have ICompetitionSuggestion.isWinner
+interface ICompetitionSubmissionFake extends ICompetitionSuggestion {
+  isWinner: boolean;
+}
+type ISubscriptionState = [Array<ICompetitionSubmissionFake>, Array<boolean>];
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -185,8 +189,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const hasEnded = now.isSameOrAfter(endTime);
     const inSubmissionsNotYetVoting = now.isSameOrAfter(startTime) && now.isBefore(votingStartTime);
     const inVoting = now.isSameOrAfter(votingStartTime) && now.isBefore(endTime) && submissions.length;
-    // FAKE -- until we can identify winners
-    const winningSubmissions = [];
+    const winningSubmissions = submissions.filter((submission) => submission.isWinner);
     const noWinnersHtml = ()=> {
       return <div className={css.noWinners}>
         <div className={css.caption}>No Winners</div>
@@ -209,14 +212,11 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     };
     const submissionsHtml = () => {
 
-      return submissions.map((submission: ICompetitionSuggestion, index: number) => {
+      return submissions.map((submission: ICompetitionSubmissionFake, index: number) => {
         const isSelected = () => this.state.showingSubmissionDetails && (this.state.showingSubmissionDetails.suggestionId === submission.suggestionId);
         return (
           <div key={index} className={css.row} onClick={this.openSubmissionDetailsModal(submission)}>
-            {/*
-              FAKE:  until we how to know if a winner.  Can't be a winner until competition is over
-              */}
-            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.winnerIcon]: true, [css.isWinner]: true })}>
+            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.winnerIcon]: true, [css.isWinner]: submission.isWinner })}>
               <img src="/assets/images/Icon/winner.svg"></img>
             </div>
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.title]: true})}>
@@ -295,8 +295,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           </div>
           <div className={css.rightSection}>
             <div className={css.header}>
-              { /* FAKE -- until can know what is a winner */ }
-              <div className={css.isWinner}><img src="/assets/images/Icon/winner.svg"></img></div>
+              <div className={css.isWinner}>{ winningSubmissions.length ? <img src="/assets/images/Icon/winner.svg"></img> : "" }</div>
               <div className={css.results}>
                 <RewardsString proposal={proposalState} dao={daoState} />
                 <img className={css.transferIcon} src="/assets/images/Icon/Transfer.svg" />
@@ -386,7 +385,27 @@ export default withSubscription({
     const submissions = getProposalSubmissions(props.proposalState.id, true);
 
     return combineLatest(
-      submissions,
+      submissions.pipe(
+        // FAKE - until we have ICompetitionSuggestion.isWinner
+        concatMap((submissions: Array<ICompetitionSuggestion>) => {
+          if (!submissions.length) {
+            return of([]);
+          } else {
+            // seems like there should be a more elegant rxjs way
+            const observables: Array<Promise<ICompetitionSubmissionFake>> = [];
+            submissions.forEach((theSubmission) => {
+              const submission = theSubmission as unknown as ICompetitionSubmissionFake;
+              observables.push(
+                (new CompetitionSuggestion(submission.id, getArc())).isWinner().then((isWinner: boolean) => {
+                  submission.isWinner = isWinner;
+                  return submission;
+                })
+              );
+            });
+            return forkJoin(observables);
+          }
+        })
+      ),
       submissions.pipe(
         concatMap((submissions: Array<ICompetitionSuggestion>) => {
           if (!submissions.length) {

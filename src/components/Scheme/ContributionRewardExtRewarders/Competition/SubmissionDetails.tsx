@@ -70,7 +70,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const isWinner = false;
     const isRedeemed = !!submission.redeemedAt;
     const canRedeem = isWinner && status.complete && !isRedeemed && (submission.suggester === this.props.currentAccountAddress);
-    // FAKE -- until client can supply them
+    // FAKE -- until client can supply tags
     const tags: any = null; // submission.tags;
     //const tags = submission.tags;
 

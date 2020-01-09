@@ -410,6 +410,10 @@ a.blueButton {
           .votes {
             text-align: right;
           }
+
+          .creator {
+            white-space: nowrap;
+          }
           
           .title, .creator {
             border-right: solid 1px #e9eef4;
