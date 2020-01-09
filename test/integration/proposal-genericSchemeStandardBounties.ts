@@ -1,4 +1,3 @@
-/*
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
 import { getArc } from "./utils";
@@ -59,10 +58,10 @@ describe("Proposals", () => {
     const tokenInput = await $("*[data-test-id=\"_token\"]");
     await tokenInput.setValue("0x0000000000000000000000000000000000000000");
 
-    const tokenVersionInput = await $("*[data-test-id=\"_tokenVersion"]");
+    const tokenVersionInput = await $("*[data-test-id=\"_tokenVersion\"]");
     await tokenVersionInput.setValue(0);
 
-    const depositAmountInput = await $("*[data-test-id=\"_depositAmount"]");
+    const depositAmountInput = await $("*[data-test-id=\"_depositAmount\"]");
     await depositAmountInput.setValue(0);
 
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
@@ -74,4 +73,3 @@ describe("Proposals", () => {
   });
 
 });
-*/
