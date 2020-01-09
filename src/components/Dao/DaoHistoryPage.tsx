@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Proposal, Vote, Stake } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, Proposal, Vote, Scheme, Stake } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -131,6 +131,7 @@ export default withSubscription({
       ${Proposal.fragments.ProposalFields}
       ${Vote.fragments.VoteFields}
       ${Stake.fragments.StakeFields}
+      ${Scheme.fragments.SchemeFields}
     `;
     await arc.getObservable(prefetchQuery, { subscribe: true }).pipe(first()).toPromise();
     return dao.proposals({
