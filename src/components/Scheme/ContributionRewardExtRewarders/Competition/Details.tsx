@@ -181,6 +181,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const votingStartTime =     getDateWithTimezone(status.votingStartTime);
     const endTime =             getDateWithTimezone(status.endTime);
     const canSubmit =  now.isSameOrAfter(startTime) && now.isBefore(submissionsEndTime);
+    const hasNotStarted = now.isBefore(startTime);
+    const hasEnded = now.isSameOrAfter(endTime);
     const inSubmissionsNotYetVoting = now.isSameOrAfter(startTime) && now.isBefore(votingStartTime);
     const inVoting = now.isSameOrAfter(votingStartTime) && now.isBefore(endTime) && submissions.length;
     // FAKE -- until we can identify winners
@@ -260,16 +262,21 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
           <div className={css.name}>{humanProposalTitle(proposalState)}</div>
 
-          { inSubmissionsNotYetVoting ? 
+          { hasNotStarted ?
             <div className={css.countdown}>
-              <div className={css.startsIn}>Voting starts in:</div>
-              <Countdown toDate={votingStartTime} onEnd={this.onEndCountdown}/>
-            </div>
-            : inVoting ? 
+              <div className={css.startsIn}>Submissions start in:</div>
+              <Countdown toDate={startTime} onEnd={this.onEndCountdown}/>
+            </div> :
+            inSubmissionsNotYetVoting ? 
               <div className={css.countdown}>
-                <div className={css.startsIn}>Voting ends in:</div>
-                <Countdown toDate={endTime} onEnd={this.onEndCountdown}/>
-              </div> : ""
+                <div className={css.startsIn}>Voting starts in:</div>
+                <Countdown toDate={votingStartTime} onEnd={this.onEndCountdown}/>
+              </div>
+              : inVoting ? 
+                <div className={css.countdown}>
+                  <div className={css.startsIn}>Voting ends in:</div>
+                  <Countdown toDate={endTime} onEnd={this.onEndCountdown}/>
+                </div> : ""
           }
         </div>
         <div className={css.middleSection}>
@@ -334,7 +341,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           </div> : ""
         }
 
-        { (!submissions.length || !winningSubmissions.length) ? noWinnersHtml() : "" }
+        { hasEnded && ((!submissions.length || !winningSubmissions.length)) ? noWinnersHtml() : "" }
       </div>
     
       {this.state.showingCreateSubmission ?

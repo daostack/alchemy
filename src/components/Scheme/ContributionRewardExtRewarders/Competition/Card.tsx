@@ -78,11 +78,11 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
           <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
         </div>
         { status.now.isBefore(status.startTime) ?
-          <div className={css.countdown}>Suggestions open in <Countdown toDate={status.startTime} onEnd={this.onEndCountdown}></Countdown></div> :
+          <div className={css.countdown}><div className={css.text}>Submissions open in:</div><Countdown toDate={status.startTime} onEnd={this.onEndCountdown}></Countdown></div> :
           status.now.isBefore(status.votingStartTime) ? 
-            <div className={css.countdown}>Voting starts in <Countdown toDate={status.votingStartTime} onEnd={this.onEndCountdown}></Countdown></div> :
+            <div className={css.countdown}><div className={css.text}>Voting starts in:</div><Countdown toDate={status.votingStartTime} onEnd={this.onEndCountdown}></Countdown></div> :
             (status.now.isBefore(status.endTime) && submissions.length) ?
-              <div className={css.countdown}><div className={css.text}>Voting ends in</div><Countdown toDate={status.endTime} onEnd={this.onEndCountdown}></Countdown></div> : ""
+              <div className={css.countdown}><div className={css.text}>Voting ends in:</div><Countdown toDate={status.endTime} onEnd={this.onEndCountdown}></Countdown></div> : ""
         }
       </div>
       <div className={css.description}>
