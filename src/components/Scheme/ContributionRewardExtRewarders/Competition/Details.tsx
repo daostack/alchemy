@@ -190,7 +190,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         <div className={css.caption}>No Winners</div>
         <div className={css.body}>
           { 
-            winningSubmissions.length ?
+            submissions.length ?
               "None of the competition submissions received any votes. Competition rewards will be returned to the DAO." :
               "This competition received no submissions. Competition rewards will be returned to the DAO."
           }
