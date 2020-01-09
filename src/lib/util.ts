@@ -354,17 +354,16 @@ export type AccountClaimableRewardsType = { [key: string]: BN };
  */
 export function getGpRewards(reward: IRewardState, daoBalances: { [key: string]: BN } = {}): AccountClaimableRewardsType {
   if (!reward) {
-    return null;
+    return {};
   }
 
   const result: AccountClaimableRewardsType = {};
   if (reward.reputationForProposer.gt(new BN(0)) && reward.reputationForProposerRedeemedAt === 0) {
     result.reputationForProposer = reward.reputationForProposer;
   }
-  if (reward.reputationForVoter.lte(new BN(0)) || reward.reputationForVoterRedeemedAt !== 0) {
+  if (reward.reputationForVoter.gt(new BN(0)) && reward.reputationForVoterRedeemedAt === 0) {
     result.reputationForVoter = reward.reputationForVoter;
   }
-
   /**
    * note the following assume that the GenesisProtocol is using GEN for staking
    */
@@ -406,47 +405,36 @@ export function getCRRewards(reward: IContributionReward, daoBalances: { [key: s
     && (daoBalances["eth"] === undefined || daoBalances["eth"]=== null|| daoBalances["eth"].gte(reward.ethReward))
     && reward.alreadyRedeemedEthPeriods < reward.periods
   ) {
-    result.ethReward = new BN(0);
+    result["eth"] = reward.ethReward;
   }
 
   if (
     reward.reputationReward &&
     !reward.reputationReward.isZero()
-    && (daoBalances["rep"] === undefined
-        || daoBalances["rep"].lt(reward.reputationReward)
-        || Number(reward.alreadyRedeemedReputationPeriods) >= Number(reward.periods))
+    && (daoBalances["rep"] === undefined || daoBalances["rep"].gte(reward.reputationReward))
+    && Number(reward.alreadyRedeemedReputationPeriods) < Number(reward.periods)
   ) {
-    result.reputationReward = new BN(0);
+    result["rep"] = reward.reputationReward;
   }
 
   if (
     reward.nativeTokenReward &&
     !reward.nativeTokenReward.isZero()
-    && (daoBalances["nativeToken"] === undefined
-        || daoBalances["nativeToken"].lt(reward.nativeTokenReward)
-        || Number(reward.alreadyRedeemedNativeTokenPeriods) >= Number(reward.periods))
+    && (daoBalances["nativeToken"] === undefined || daoBalances["nativeToken"].gte(reward.nativeTokenReward))
+    && Number(reward.alreadyRedeemedNativeTokenPeriods) < Number(reward.periods)
   ) {
-    result.nativeTokenReward = new BN(0);
+    result["nativeToken"] = reward.nativeTokenReward;
   }
 
   if (
     reward.externalTokenReward &&
     !reward.externalTokenReward.isZero()
-    && (daoBalances["externalToken"] === undefined
-        || daoBalances["externalToken"].lt(reward.externalTokenReward)
-        || Number(reward.alreadyRedeemedExternalTokenPeriods) >= Number(reward.periods))
+    && (daoBalances["externalToken"] === undefined || daoBalances["externalToken"].gte(reward.externalTokenReward))
+    && Number(reward.alreadyRedeemedExternalTokenPeriods) < Number(reward.periods)
   ) {
-    result.externalTokenReward = new BN(0);
+    result["externalToken"] = reward.externalTokenReward;
   }
-
-  if (!result.ethReward.isZero() ||
-      !result.reputationReward.isZero() ||
-      !result.nativeTokenReward.isZero() ||
-      !result.externalTokenReward.isZero()) {
-    return result;
-  } else {
-    return null;
-  }
+  return result;
 }
 
 export function splitByCamelCase(str: string) {
