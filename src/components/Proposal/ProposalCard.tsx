@@ -38,6 +38,8 @@ export default class ProposalCard extends React.Component<IProps, null> {
     super(props);
   }
 
+  private stopClick = (e: any) => { e.preventDefault(); e.stopPropagation(); }
+
   public render(): RenderOutput {
 
     const {
@@ -163,7 +165,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     expired={expired}
                   />
 
-                  <div className={css.contextMenu} data-test-id="proposalContextMenu">
+                  <div onClick={this.stopClick} className={css.contextMenu} data-test-id="proposalContextMenu">
                     <div className={css.menuIcon}>
                       <img src="/assets/images/Icon/Context-menu.svg"/>
                     </div>
