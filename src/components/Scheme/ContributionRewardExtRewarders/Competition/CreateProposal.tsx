@@ -37,6 +37,8 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
+const MAX_NUMBER_OF_WINNERS=100;
+
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
   showNotification,
@@ -56,10 +58,10 @@ interface IFormValues {
   reputationReward: number;
   title: string;
   url: string;
-  compStartDate: Date;
-  compEndDate: Date;
-  submissionEndDate: Date;
-  votingStartDate: Date;
+  compStartTime: Date;
+  compEndTime: Date;
+  suggestionEndTime: Date;
+  votingStartTime: Date;
 
   [key: string]: any;
 }
@@ -153,17 +155,17 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       rewardSplit = values.rewardSplit.split(",").map((s: string) => Number(s));
     }
 
-    // TODO: client should accept null compStartDate
-    if (!values.compStartDate) {
+    // TODO: client should accept null compStartTime
+    if (!values.compStartTime) {
       // If no start time then set to now + 15sec
-      values.compStartDate = addSeconds(new Date(), 15000);
+      values.compStartTime = addSeconds(new Date(), 15000);
     }
 
     // Parameters to be passed to client
     const proposalOptions: IProposalCreateOptionsCompetition  = {
       dao: this.props.daoAvatarAddress,
       description: values.description,
-      endTime: values.compEndDate,
+      endTime: values.compEndTime,
       ethReward: toWei(Number(values.ethReward)),
       externalTokenReward,
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
@@ -172,11 +174,11 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       reputationReward: toWei(Number(values.reputationReward)),
       rewardSplit,
       scheme: this.props.scheme.address,
-      startTime: values.compStartDate,
-      suggestionsEndTime: values.submissionEndDate,
+      startTime: values.compStartTime,
+      suggestionsEndTime: values.suggestionEndTime,
       tags: this.state.tags,
       title: values.title,
-      votingStartTime: values.votingStartDate,
+      votingStartTime: values.votingStartTime,
     };
 
     await this.props.createProposal(proposalOptions);
@@ -212,10 +214,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             numWinners: 0,
             numberOfVotesPerVoter: 0,
             reputationReward: 0,
-            compStartDate: null,
-            submissionEndDate: new Date(),
-            votingStartDate: new Date(),
-            compEndDate: new Date(),
+            compStartTime: null,
+            suggestionEndTime: new Date(),
+            votingStartTime: new Date(),
+            compEndTime: new Date(),
             title: "",
             url: "",
           } as IFormValues}
@@ -262,28 +264,39 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 errors.rewardSplit = "Please provide reward split summing upto 100 or use num winner that can have equal split";
             }
 
+            // Number of winners less than MAX_NUMBER_OF_WINNERS
+            if ( values.numWinners > MAX_NUMBER_OF_WINNERS) {
+              errors.numWinners = "Number of winners should be max 100";
+            }
+
             const now = new Date();
-            // Check valid time for Competition Start and End
-            if (values.compStartDate && values.compStartDate < now) {
-              errors.compStartDate = "Competion start time can't be in past";
-            }
-            if (!values.compEndDate) {
-              errors.compEndDate = "Competion end Required";
-            } else if (values.compEndDate < now) {
-              errors.compEndDate = "Competion end time should not be in past";
+            // Check valid time
+            if (values.compStartTime && values.compStartTime < now) {
+              errors.compStartTime = "Competion start time can't be in past";
             }
 
-            // Check valid time for Vote Start and Submission End
-            if (values.votingStartDate && values.votingStartDate < now) {
-              errors.votingStartDate = "Voting start time should not be in past";
+            if (values.compEndTime < now) {
+              errors.compEndTime = "Competion end time should not be in past";
             }
 
-            if (values.submissionEndDate && values.submissionEndDate < now) {
-              errors.submissionEndDate = "Submission end time should not be in past";
+            if (values.votingStartTime < now) {
+              errors.votingStartTime = "Voting start time should not be in past";
             }
 
-            if ( values.compEndDate < values.votingStartDate || values.compEndDate < values.submissionEndDate) {
-              errors.compEndDate = "Competion should not end before voting starts or submission ends";
+            if (values.compStartTime && (values.votingStartTime < values.compStartTime)) {
+              errors.votingStartTime = "Voting start time should not be before competition start";
+            }
+
+            if (values.compStartTime && (values.suggestionEndTime <= values.compStartTime)) {
+              errors.suggestionEndTime = "Voting start time should not be before competition start";
+            }
+
+            if (values.suggestionEndTime && values.suggestionEndTime < now) {
+              errors.suggestionEndTime = "Submission end time should not be in past";
+            }
+
+            if ( values.compEndTime < values.votingStartTime || values.compEndTime < values.suggestionEndTime) {
+              errors.compEndTime = "Competion should not end before voting starts or submission ends";
             }
 
             if (!isValidUrl(values.url)) {
@@ -303,9 +316,9 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             require("title");
             require("numWinners");
             require("numberOfVotesPerVoter");
-            require("compEndDate");
-            require("votingStartDate");
-            require("submissionEndDate");
+            require("compEndTime");
+            require("votingStartTime");
+            require("suggestionEndTime");
 
             if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
               errors.rewards = "Please select at least some reward";
@@ -522,57 +535,57 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 </div>
 
                 <div className={css.date}>
-                  <label htmlFor="compStartDateInput">
+                  <label htmlFor="compStartTimeInput">
                     Competition start time
-                    <ErrorMessage name="compStartDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    <ErrorMessage name="compStartTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="compStartDateInput"
-                    name="compStartDate"
+                    id="compStartTimeInput"
+                    name="compStartTime"
                     component={CustomDateInput}
-                    className={touched.compStartDate && errors.compStartDate ? css.error : null}
+                    className={touched.compStartTime && errors.compStartTime ? css.error : null}
                   />
                 </div>
 
                 <div className={css.date}>
-                  <label htmlFor="submissionEndDateInput">
+                  <label htmlFor="suggestionEndTimeInput">
                     Submission end time
-                    <ErrorMessage name="submissionEndDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    <ErrorMessage name="suggestionEndTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
                   </label>
                   <Field
-                    id="submissionEndDateInput"
-                    name="submissionEndDate"
+                    id="suggestionEndTimeInput"
+                    name="suggestionEndTime"
                     component={CustomDateInput}
-                    className={touched.submissionEndDate && errors.submissionEndDate ? css.error : null}
+                    className={touched.suggestionEndTime && errors.suggestionEndTime ? css.error : null}
                   />
                 </div>
 
                 <div className={css.date}>
-                  <label htmlFor="votingStartDateInput">
+                  <label htmlFor="votingStartTimeInput">
                     Voting start time
-                    <ErrorMessage name="votingStartDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    <ErrorMessage name="votingStartTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
                   </label>
                   <Field
-                    id="votingStartDateInput"
-                    name="votingStartDate"
+                    id="votingStartTimeInput"
+                    name="votingStartTime"
                     component={CustomDateInput}
-                    className={touched.votingStartDate && errors.votingStartDate ? css.error : null}
+                    className={touched.votingStartTime && errors.votingStartTime ? css.error : null}
                   />
                 </div>
 
                 <div className={css.date}>
-                  <label htmlFor="compEndDate">
+                  <label htmlFor="compEndTimeInput">
                     Competition end time
                     <div className={css.requiredMarker}>*</div>
-                    <ErrorMessage name="compEndDate">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    <ErrorMessage name="compEndTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="compEndDateInput"
-                    name="compEndDate"
-                    component={CustomDateInput}
-                    className={touched.compEndDate && errors.compEndDate ? css.error : null}
+                    id="compEndTimeInput"
+                    name="compEndTime"
+                    component={CustomTimeInput}
+                    className={touched.compEndTime && errors.compEndTime ? css.error : null}
                   />
                 </div>
 
