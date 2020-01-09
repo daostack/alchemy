@@ -288,15 +288,15 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             }
 
             if (values.compStartTime && (values.suggestionEndTime <= values.compStartTime)) {
-              errors.suggestionEndTime = "Voting start time should not be before competition start";
+              errors.suggestionEndTime = "Suggestion start time should not be before competition start";
             }
 
             if (values.suggestionEndTime && values.suggestionEndTime < now) {
-              errors.suggestionEndTime = "Submission end time should not be in past";
+              errors.suggestionEndTime = "Suggestion end time should not be in past";
             }
 
-            if ( values.compEndTime < values.votingStartTime || values.compEndTime < values.suggestionEndTime) {
-              errors.compEndTime = "Competion should not end before voting starts or submission ends";
+            if ( values.compEndTime <= values.votingStartTime || values.compEndTime < values.suggestionEndTime) {
+              errors.compEndTime = "Competion should not end before voting starts or Suggestion ends";
             }
 
             if (!isValidUrl(values.url)) {
@@ -584,7 +584,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                   <Field
                     id="compEndTimeInput"
                     name="compEndTime"
-                    component={CustomTimeInput}
+                    component={CustomDateInput}
                     className={touched.compEndTime && errors.compEndTime ? css.error : null}
                   />
                 </div>
