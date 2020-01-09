@@ -1,0 +1,253 @@
+{
+  "name": "EnsPublicResolver",
+  "addresses": {
+    "main": [
+      "0x1da022710df5002339274aadee8d58218e9d6ab5",
+      "0x226159d592e2b063810a10ebf6dcbada94ed68b8"
+    ],
+    "rinkeby": [
+      "0x2396A687f75f1a13e3927F1841B291350b0ED977"
+    ],
+    "private": [
+      "0x21d8c51e1bf068d17a9ba4b287dbc5a3ab4b7ec1"
+    ]
+  },
+  "actions": [
+    {
+      "id": "setAddr",
+      "label": "Set Ethereum Address",
+      "description": "Sets the Ethereum address associated with the provided node to addr. Only callable by the owner of node.",
+      "notes": "https://docs.ens.domains/contract-api-reference/publicresolver#set-ethereum-address",
+      "fields": [
+        {
+          "name": "node",
+          "label": "ENS Identifier Name",
+          "placeholder": "e.g. alice.eth",
+          "transformation": "namehash"
+        },
+        {
+          "name": "address",
+          "label": "Address"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "name": "address",
+            "type": "string"
+          }
+        ],
+        "name": "setAddr",
+        "outputs": [],
+        "payable": false,
+        "type": "function"
+      }
+    },
+    {
+      "id": "setName",
+      "label": "Set Canonical Name",
+      "description": "Updates the resolver associated with the name identified by node to resolver. Only callable by the current owner of the name. resolver must specify the address of a contract that implements the Resolver interface.",
+      "notes": "https://docs.ens.domains/contract-api-reference/publicresolver#set-canonical-name",
+      "fields": [
+        {
+          "label": "ENS Identifier Name",
+          "name": "node",
+          "placeholder": "e.g. alice.eth",
+          "transformation": "namehash"
+        },
+        {
+          "name": "name",
+          "label": "Name"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          }
+        ],
+        "name": "setName",
+        "outputs": [],
+        "payable": false,
+        "type": "function"
+      }
+    },
+    {
+      "id": "setContenthash",
+      "label": "Set Content Hash",
+      "description": "Sets the content hash for the provided node to hash. Only callable by the owner of node. Values are formatted as machine-readable multicodecs, as specified in EIP 1577.",
+      "notes": "https://docs.ens.domains/contract-api-reference/ens#set-content-hash",
+      "fields": [
+        {
+          "name": "node",
+          "label": "ENS Identifier Name",
+          "placeholder": "e.g. alice.eth",
+          "transformation": "namehash"
+        },
+        {
+          "name": "hash",
+          "label": "Content Hash (a multicodec)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "name": "hash",
+            "type": "bytes"
+          }
+        ],
+        "name": "setContenthash",
+        "outputs": [],
+        "payable": false,
+        "type": "function"
+      }
+    },
+    {
+      "id": "setABI",
+      "label": "Set Contract ABI",
+      "description": "Sets or updates ABI data for node. contentType specifies the content type ID (see Get Contract ABI for valid values); exactly one type ID must be specified. data contains the encoded ABI data. To clear ABI data for a name, specify the empty string for data. Only callable by the owner of node.",
+      "notes": "https://docs.ens.domains/contract-api-reference/ens#set-contract-abi",
+      "fields": [
+        {
+          "name": "node",
+          "label": "ENS Identifier Name",
+          "placeholder": "e.g. alice.eth",
+          "transformation": "namehash"
+        },
+        {
+          "name": "contentType",
+          "label": "Content Type",
+          "placeholder": "1 = JSON, 2 = zlib-compressed JSON, 4 = CBOR, 8 = URI"
+        },
+        {
+          "name": "data",
+          "label": "Data",
+          "placeholder": "Encoded ABI data, or empty string (0x) to clear"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "name": "contentType",
+            "type": "uint256"
+          },
+          {
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "setABI",
+        "outputs": [],
+        "payable": false,
+        "type": "function"
+      }
+    },
+    {
+      "id": "setPubkey",
+      "label": "Set Public Key",
+      "description": "Sets the ECDSA SECP256k1 public key for node to (x, y). Only callable by the owner of node.",
+      "notes": "https://docs.ens.domains/contract-api-reference/ens#set-public-key",
+      "fields": [
+        {
+          "name": "node",
+          "label": "ENS Identifier Name",
+          "placeholder": "e.g. alice.eth",
+          "transformation": "namehash"
+        },
+        {
+          "name": "x",
+          "label": "X"
+        },
+        {
+          "name": "y",
+          "label": "Y"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "name": "x",
+            "type": "bytes32"
+          },
+          {
+            "name": "y",
+            "type": "bytes32"
+          }
+        ],
+        "name": "setPubkey",
+        "outputs": [],
+        "payable": false,
+        "type": "function"
+      }
+    },
+    {
+      "id": "setText",
+      "label": "Set Text Data",
+      "description": "Sets text metadata for node with the unique key key to value, overwriting anything previously stored for node and key. To clear a text field, set it to the empty string. Only callable by the owner of node.",
+      "notes": "https://docs.ens.domains/contract-api-reference/ens#set-text-data",
+      "fields": [
+        {
+          "name": "node",
+          "label": "ENS Identifier Name",
+          "placeholder": "e.g. alice.eth",
+          "transformation": "namehash"
+        },
+        {
+          "name": "key",
+          "label": "Key"
+        },
+        {
+          "name": "value",
+          "label": "Value"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "name": "key",
+            "type": "string"
+          },
+          {
+            "name": "value",
+            "type": "string"
+          }
+        ],
+        "name": "setText",
+        "outputs": [],
+        "payable": false,
+        "type": "function"
+      }
+    }
+  ]
+}

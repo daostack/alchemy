@@ -12,48 +12,19 @@ a.historyView {
   overflow: hidden;
   height: 20px;
   position: relative;
-  top: -3px;
   left: 5px;
 }
 
 a.detailView {
   position: relative;
-  top: -6px;
   font-size: 13px;
   color: rgba(85, 85, 85, 1.000);
-  left: 17px;
+  left: 2px;
 }
 
-:global .membersPage {
-  border-radius: 3px;
-  height: 40px;
-  width: 40px;
-  float: left;
-  margin: 3px 20px 0 15px;
-}
-
-.detailView.targetAccount {
-  width: 35px;
-  height: 35px;
-  margin-right: 0;
-  margin-left: -6px;
-
-  .avatar img {
-    width: 35px;
-    height: 35px;
-  }
-}
-
-.historyView.targetAccount {
-  width: 40px;
-  height: 40px;
-  margin-top: 7px;
-  margin-left: 7px;
-
-  .avatar img {
-    width: 40px;
-    height: 40px;
-  }
+.accountImage {
+  border-radius: 15%;
+  vertical-align: middle;
 }
 
 .socialProof {
@@ -63,18 +34,12 @@ a.detailView {
 .targetAccount {
   position: relative;
   display: inline-block;
-  width: 22px;
-  height: 22px;
   overflow: visible;
-  margin-top: -14px;
   transition: all .25s ease;
-  top: 6px;
-  margin-right: 13px;
-  left: 7px;
+  margin-right: 6px;
+  vertical-align: middle;
 
   .avatar {
-    width: 12px;
-    height: 12px;
     z-index: 1;
     position: absolute;
     top: 50%;
@@ -82,7 +47,6 @@ a.detailView {
     transform: translate(-50%, -50%);
     background-color: rgba(255,255,255, 0);
     transition: all .25s ease;
-    border-radius: 2px;
 
     img {
       transition: all .25s ease;
@@ -90,19 +54,16 @@ a.detailView {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 12px;
-      border-radius: 0;
-      border-radius: 2px;
-      height: 12px;
     }
   }
+
   .accountInfo {
     position: absolute;
     z-index: 0;
     opacity: 0;
     left: 50%;
     top: -150px;
-    padding: 60px 0 0 0;
+    padding: 40px 0 0 0;
     width: 190px;
     font-size: $caption;
     color: $black;
@@ -180,8 +141,12 @@ a.detailView {
   }
 }
 
+.accountName {
+  vertical-align: middle;
+}
+
 .targetAccount:hover {
-    z-index: 10000000;
+  z-index: 10000000;
 
   .avatar {
     width: 80px;
@@ -192,6 +157,7 @@ a.detailView {
       height: 50px;
     }
   }
+
   .accountInfo {
     opacity: 1;
     top: 0px;
@@ -199,15 +165,6 @@ a.detailView {
   }
 }
 
-.saveProfile {
-  display: block;
-  text-align: right;
-}
-
-
-.profileData {
-  flex-grow: 2;
-}
 
 /***** Account Profile ******/
 .profileWrapper {
@@ -215,27 +172,16 @@ a.detailView {
   height: 100%;
 }
 
-.socialProof {
-  width: 50%;
-  left: 30%;
-  position: absolute;
-  font-size: 14px;
-  left: 200px;
-  top: 30px;
-
-  p {
-    font-size: 12px;
-    padding: 0;
-  }
+.profileData {
+  flex-grow: 2;
 }
 
 .profileContainer {
-  max-width: 800px;
+  max-width: 700px;
   width: 100%;
   border-radius: 15px;
   margin: 0 auto;
   margin-top: 40px;
-  padding: 0 20px;
   display: flex;
   flex-direction: column;
 
@@ -248,14 +194,19 @@ a.detailView {
   .profileContent {
     display: block;
     position: relative;
+
+    .followButton {
+      margin-top: 10px;
+    }
   }
 
   .userAvatarContainer {
     width: 100px;
-    img {
-      width: 70px;
-      border-radius: 10px;
-    }
+  }
+
+  .saveProfile {
+    display: block;
+    text-align: right;
   }
 
   .profileDataContainer {
@@ -334,9 +285,13 @@ a.detailView {
   }
 }
 
+.profileContainer.withDao {
+  padding-left: 0px;
+}
+
 .socialLogins {
   position: relative;
-  height: 180px;
+  padding-bottom: 20px;
   width: 100%;
 }
 
@@ -401,6 +356,20 @@ input {
   margin-top: 30px;
 }
 
+@media only screen and (max-width: 1430px) {
+  a.historyView {
+    width: 60%;
+  }
+}
+
+
+@media only screen and (max-width: 1280px) {
+  a.historyView {
+    width: 55px;
+    font-size: 12px;
+  }
+}
+
 
 @media only screen and (max-width: 425px) {
   .profileWrapper {
@@ -439,35 +408,12 @@ input {
   }
 
   .socialProof {
-    left: 70px;
     opacity: .6;
     width: 77%;
   }
 
-  :global .membersPage {
-    border-radius: 3px;
-    height: 40px;
-    width: 40px;
-    float: left;
-    margin: 3px 10px 0 0px;
-  }
-
-  .historyView.targetAccount {
-    width: 12px;
-    height: 12px;
-  }
-
-  .historyView.targetAccount .avatar {
-    top: 3px;
-  }
-
-  .historyView.targetAccount .avatar img {
-    height: 12px;
-    width: 12px;
-  }
-
   a.historyView {
     font-size: 11px;
-    top: 10px;
+    width: auto;
   }
 }

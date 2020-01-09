@@ -1,11 +1,11 @@
 export enum Page {
   AccountProfile = "Account Profile",
+  AllDAOs = "All Daos",
   CreateProposal = "Create Proposal",
   DAOHistory = "DAO History",
-  DAOList = "DAO List",
-  DAORedemptions = "DAO Redemptions",
+  DAOMembers = "DAO Members",
   DAOSchemes = "DAO Schemes",
   ProposalDetails = "Proposal Details",
-  ReputationHolders = "Reputation Holders",
+  Redemptions = "Redemptions",
   SchemeQueue = "Scheme Queue",
 }

@@ -80,6 +80,10 @@
   margin-top: 9px;
 }
 
+.historyView .voteUp {
+  margin-top: 0;
+}
+
 .detailView .voteUp {
   height: auto;
   margin-bottom: 10px;
@@ -99,34 +103,6 @@
 
 .votedFor .upvoted, .votedAgainst .downvoted {
   display: inline;
-}
-
-.upvotePending .upvote, .downvotePending .downvote {
-  opacity: 0;
-}
-
-.downvotePending .downvotePendingIcon {
-  opacity: 1;
-}
-
-.upvotePending .upvotePendingIcon {
-  opacity: 1;
-}
-
-.downvotePendingIcon, .upvotePendingIcon {
-  left: 0;
-  opacity: 0;
-  display: none;
-  width: 28px;
-  height: 15px;
-}
-
-.downvotePendingIcon {
-  top: 2px;
-}
-
-.upvotePendingIcon {
-  top: 3px;
 }
 
 .verifyMask {

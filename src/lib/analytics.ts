@@ -1,8 +1,8 @@
 import * as Mixpanel from "mixpanel-browser";
 
-const doTracking = process.env.NODE_ENV === 'production';
+const doTracking = process.env.NODE_ENV === "production";
 
-let actions = {
+const actions = {
   identify: (id: string) => {
     if (doTracking) { Mixpanel.identify(id); }
   },

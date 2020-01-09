@@ -5,97 +5,23 @@
       "0xb9812e2fa995ec53b5b6df34d21f9304762c5497"
     ],
     "rinkeby": [
-      "0xaaeb2035ff394fdb2c879190f95e7676f1a9444b",
-      "0x5663ca36e790f1f55198404f35ba3afb64949150"
+      "0xaaeb2035ff394fdb2c879190f95e7676f1a9444b"
     ],
     "private": [
-      "0xa6f8431c9eee4ac2859207af4004f7a948924c30"
+      "0xb279182d99e65703f0076e4812653aab85fca0f0"
     ]
   },
   "actions": [
     {
-      "id": "updateMasterCopy",
-      "label": "Update MasterCopy",
-      "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/DxUpgrade.sol#L17",
-      "fields": [
-        {
-          "label": "New master copy address",
-          "name": "_masterCopy"
-        }
-      ],
-      "abi": {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_masterCopy",
-            "type": "address"
-          }
-        ],
-        "name": "startMasterCopyCountdown",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      }
-    },
-    {
-      "id": "changeETHUSDOracle",
-      "label": "Change ETH:USD oracle",
-      "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/EthOracle.sol",
-      "fields": [
-        {
-          "label": "New ETH:USD oracle adddress",
-          "name": "_ethUSDOracle"
-        }
-      ],
-      "abi": {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_ethUSDOracle",
-            "type": "address"
-          }
-        ],
-        "name": "initiateEthUsdOracleUpdate",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      }
-    },
-    {
-      "id": "updateAuctioneer",
-      "label": "Change DutchX owner",
-      "notes": "https://github.com/gnosis/dx-contracts/blob/1fc99740a86a1635c9bf856a370b16295915b76d/contracts/base/AuctioneerManaged.sol",
-      "fields": [
-        {
-          "label": "New DutchX owner address",
-          "name": "_auctioneer"
-        }
-      ],
-      "abi": {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_auctioneer",
-            "type": "address"
-          }
-        ],
-        "name": "updateAuctioneer",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      }
-    },
-    {
       "id": "updateApprovalOfToken",
-      "label": "Add/Remove Tokens",
+      "label": "(De-)whitelist MGN generating tokens",
+      "description": "Only whitelisted tokens generate MGN when traded on the DutchX. Read about the details and whitelist <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#decentralized-trading-protocol-for-erc20-tokens\">here</a>. Multiple tokens can be added or removed at a time. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
       "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/TokenWhitelist.sol#L28",
       "fields": [
         {
           "label": "Token address",
-          "name": "token"
+          "name": "token",
+          "placeholder": "Address (0x0000…)"
         },
         {
           "name": "approved",
@@ -126,13 +52,16 @@
     },
     {
       "id": "updateThresholdNewTokenPair",
-      "label": "Update TokenPair Threshold",
+      "label": "Update Token Pair Listing Threshold",
+      "description": "This is the threshold that needs to be reached in order to trigger the very first auction of a token pair (to be entered in a round USD amount). Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>",
       "notes": "https://github.com/gnosis/dx-contracts/blob/c9a9bd0d73f96eed65dca5c5a947451adb8e80b6/contracts/DutchExchange.sol#L248",
       "fields": [
         {
           "decimals": 18,
           "label": "New token pair threshold",
-          "name": "_thresholdNewTokenPair"
+          "name": "_thresholdNewTokenPair",
+          "unit": "USD",
+          "placeholder": "New threshold: Amount in USD (1500)"
         }
       ],
       "abi": {
@@ -152,13 +81,16 @@
     },
     {
       "id": "updateThresholdNewAuction",
-      "label": "Update Auction Threshold",
+      "label": "Update New Auction Start Threshold",
+      "description": "This is the threshold that an auction deposit (i.e. the sellVolume) (of each opposite auction) has to reach before an auction commences (to be entered in a round USD amount). Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
       "notes": "https://github.com/gnosis/dx-contracts/blob/c9a9bd0d73f96eed65dca5c5a947451adb8e80b6/contracts/DutchExchange.sol#L252",
       "fields": [
         {
           "decimals": 18,
           "label": "New auction threshold",
-          "name": "_thresholdNewAuction"
+          "name": "_thresholdNewAuction",
+          "unit": "USD",
+          "placeholder": "New threshold: Amount in USD (1500)"
         }
       ],
       "abi": {
@@ -170,6 +102,87 @@
           }
         ],
         "name": "updateThresholdNewAuction",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "changeETHUSDOracle",
+      "label": "Change ETH:USD oracle",
+      "description": "This proposal can update the external ETH-USD price feed that the DutchX uses for a) fee calculation and b) threshold calculation. Check addresses <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/smart-contracts_addresses.html#mainnet\">here</a>. There is a 30-day time delay for this change after a proposal is accepted. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/EthOracle.sol",
+      "fields": [
+        {
+          "label": "New ETH:USD oracle adddress",
+          "name": "_ethUSDOracle",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_ethUSDOracle",
+            "type": "address"
+          }
+        ],
+        "name": "initiateEthUsdOracleUpdate",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "updateMasterCopy",
+      "label": "Update MasterCopy",
+      "description": "This proposal will update the DutchX master logic. Check addresses <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/smart-contracts_addresses.html#mainnet\">here</a>. There is a 30-day time delay for this change after a proposal is accepted. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/DxUpgrade.sol#L17",
+      "fields": [
+        {
+          "label": "New master copy address",
+          "name": "_masterCopy",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_masterCopy",
+            "type": "address"
+          }
+        ],
+        "name": "startMasterCopyCountdown",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "updateAuctioneer",
+      "label": "Change DutchX owner",
+      "description": "This proposal can change the owner of the DutchX. With this, you remove all DutchX rights from the dxDAO. After successful passing of the proposal, the effect is immediate and the dxDAO cannot change anything else regarding the DutchX from that point onwards. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/1fc99740a86a1635c9bf856a370b16295915b76d/contracts/base/AuctioneerManaged.sol",
+      "fields": [
+        {
+          "label": "New DutchX owner address",
+          "name": "_auctioneer",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_auctioneer",
+            "type": "address"
+          }
+        ],
+        "name": "updateAuctioneer",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",

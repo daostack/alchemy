@@ -1,2 +1,3 @@
- import ProposalSummary from "./ProposalSummary";
- export default ProposalSummary;
+import ProposalSummary from "./ProposalSummary";
+
+export default ProposalSummary;

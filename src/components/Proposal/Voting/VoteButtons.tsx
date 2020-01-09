@@ -1,40 +1,42 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { checkMetaMaskAndWarn, getArc } from "arc";
+import { enableWalletProvider } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Analytics from "lib/analytics";
-import Util from "lib/util";
 import { Page } from "pages";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
-import { of } from "rxjs";
 import * as css from "./VoteButtons.scss";
 
-interface IContainerProps {
+interface IExternalProps {
   altStyle?: boolean;
+  contextMenu?: boolean;
   currentAccountAddress: Address;
-  currentAccountState: IMemberState|undefined;
-  currentVote: number;
+  currentAccountState: IMemberState;
+  currentVote: IProposalOutcome|undefined;
   dao: IDAOState;
   expired?: boolean;
   parentPage: Page;
   proposal: IProposalState;
-  voteOnProposal: typeof arcActions.voteOnProposal;
-  showNotification: typeof showNotification;
-  isVotingNo?: boolean;
-  isVotingYes?: boolean;
 }
 
+interface IDispatchProps {
+  voteOnProposal: typeof arcActions.voteOnProposal;
+  showNotification: typeof showNotification;
+}
+
+type IProps = IExternalProps & IDispatchProps;
+
 interface IState {
-  currentVote: number;
+  contextMenu?: boolean;
+  currentVote: IProposalOutcome|undefined;
   showPreVoteModal: boolean;
-  detailView?: boolean;
 }
 
 const mapDispatchToProps = {
@@ -42,179 +44,205 @@ const mapDispatchToProps = {
   voteOnProposal: arcActions.voteOnProposal,
 };
 
-class VoteButtons extends React.Component<IContainerProps, IState> {
+class VoteButtons extends React.Component<IProps, IState> {
 
-  constructor(props: IContainerProps) {
+  constructor(props: IProps) {
     super(props);
 
     this.state = {
       currentVote: this.props.currentVote,
-      showPreVoteModal: false
+      showPreVoteModal: false,
     };
   }
 
-  public async handleClickVote(vote: number, event: any) {
-    if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
-    const { currentAccountState } = this.props;
+  public handleClickVote = (vote: number) => async (): Promise<void> => {
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    const currentAccountState = this.props.currentAccountState;
     if (currentAccountState.reputation.gt(new BN(0))) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
     }
   }
 
-  public closePreVoteModal(event: any) {
-    this.setState({ showPreVoteModal: false });
-  }
+  private closePreVoteModal = (_event: any): void => { this.setState({ showPreVoteModal: false }); }
 
-  public render() {
+  private handleVoteOnProposal = (): void => {
+    const { currentAccountState, dao, proposal } = this.props;
+
+    this.props.voteOnProposal(dao.address, proposal.id, this.state.currentVote);
+
+    Analytics.track("Vote", {
+      "DAO Address": dao.address,
+      "Proposal Hash": proposal.id,
+      "Proposal Title": proposal.title,
+      "Reputation Voted": Util.fromWei(currentAccountState.reputation),
+      "Scheme Address": proposal.scheme.address,
+      "Scheme Name": proposal.scheme.name,
+      "Vote Type": this.state.currentVote === IProposalOutcome.Fail ? "Fail" : this.state.currentVote === IProposalOutcome.Pass ? "Pass" : "None",
+    });
+  };
+
+  public render(): RenderOutput {
     const {
       altStyle,
+      contextMenu,
       currentVote,
       currentAccountState,
       parentPage,
       proposal,
       dao,
       expired,
-      isVotingNo,
-      isVotingYes,
-      voteOnProposal,
     } = this.props;
-
-    const isVoting = isVotingNo || isVotingYes;
 
     const votingDisabled = proposal.stage === IProposalStage.ExpiredInQueue ||
                             proposal.stage === IProposalStage.Executed ||
+                            (proposal.stage === IProposalStage.Queued && expired) ||
                             (proposal.stage === IProposalStage.Boosted && expired) ||
                             (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
-                            !currentAccountState ||
-                            currentAccountState.reputation.eq(new BN(0)) ||
-                            !!currentVote;
+                            (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ||
+                            currentVote === IProposalOutcome.Pass ||
+                            currentVote === IProposalOutcome.Fail
+                            ;
 
-    const tipContent = (vote: IProposalOutcome) =>
-      !currentAccountState ?
-        "Cannot vote - please log in" :
-      currentVote ?
+    /**
+     * only used when votingDisabled
+     */
+    const tipContent =
+      ((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)) ?
         "Can't change your vote" :
-      currentAccountState.reputation.eq(new BN(0)) ?
-        "Voting requires reputation in " + dao.name :
-      proposal.stage === IProposalStage.ExpiredInQueue || (proposal.stage === IProposalStage.Boosted && expired) || (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ?
-        "Can't vote on expired proposals" :
-      proposal.stage === IProposalStage.Executed ?
-        "Can't vote on executed proposals" :
-      isVoting ?
-        "Warning: Voting for this proposal is already in progress" :
-      `Vote ${vote === IProposalOutcome.Pass ? "for" : "against"}`
-    ;
+        (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
+          "Voting requires reputation in " + dao.name :
+          proposal.stage === IProposalStage.ExpiredInQueue ||
+              (proposal.stage === IProposalStage.Boosted && expired) ||
+              (proposal.stage === IProposalStage.QuietEndingPeriod && expired)  ||
+              (proposal.stage === IProposalStage.Queued && expired) ?
+            "Can't vote on expired proposals" :
+            proposal.stage === IProposalStage.Executed ?
+              "Can't vote on executed proposals" : "";
 
     const voteUpButtonClass = classNames({
-      [css.votedFor]: !isVotingYes && currentVote === IProposalOutcome.Pass,
-      [css.disabled]: votingDisabled
+      [css.votedFor]: currentVote === IProposalOutcome.Pass,
+      [css.disabled]: votingDisabled,
     });
     const voteDownButtonClass = classNames({
-      [css.votedAgainst]: !isVotingNo && currentVote === IProposalOutcome.Fail,
-      [css.disabled]: votingDisabled
+      [css.votedAgainst]: currentVote === IProposalOutcome.Fail,
+      [css.disabled]: votingDisabled,
     });
     const wrapperClass = classNames({
       [css.altStyle] : altStyle,
+      [css.contextMenu] : contextMenu,
       [css.wrapper]: true,
-      [css.hasVoted]: currentVote,
-      [css.votedFor]: !isVotingYes && currentVote === IProposalOutcome.Pass,
-      [css.votedAgainst]: !isVotingNo && currentVote === IProposalOutcome.Fail,
-      [css.hasNotVoted]: !currentVote,
-      [css.detailView]: parentPage === Page.ProposalDetails
+      [css.hasVoted]: ((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)),
+      [css.votedFor]: currentVote === IProposalOutcome.Pass,
+      [css.votedAgainst]: currentVote === IProposalOutcome.Fail,
+      [css.hasNotVoted]: ((currentVote === undefined) || (currentVote === IProposalOutcome.None)),
+      [css.detailView]: parentPage === Page.ProposalDetails,
     });
 
     return (
-      <div className={wrapperClass} >
+      <div className={wrapperClass}>
         {this.state.showPreVoteModal ?
           <PreTransactionModal
-            actionType={this.state.currentVote === 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
-            action={() => {
-              voteOnProposal(dao.address, proposal.id, this.state.currentVote);
-
-              Analytics.track("Vote", {
-                "DAO Address": proposal.dao.address,
-                "Proposal Hash": proposal.id,
-                "Proposal Title": proposal.title,
-                "Reputation Voted": Util.fromWei(currentAccountState.reputation),
-                "Scheme Address": proposal.scheme.address,
-                "Scheme Name": proposal.scheme.name,
-                "Vote Type": this.state.currentVote === IProposalOutcome.Fail ? "Fail" : this.state.currentVote === IProposalOutcome.Pass ? "Pass" : "None",
-              });
-            }}
-            closeAction={this.closePreVoteModal.bind(this)}
+            actionType={this.state.currentVote === IProposalOutcome.Pass ? ActionTypes.VoteUp : ActionTypes.VoteDown}
+            action={this.handleVoteOnProposal}
+            closeAction={this.closePreVoteModal}
             currentAccount={currentAccountState}
             dao={dao}
-            effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
+            effectText={<span>Your influence: <strong><Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
             parentPage={parentPage}
             proposal={proposal}
           /> : ""
         }
-
-        <div className={css.castVote}>
-          {!votingDisabled ?
-            <div>
-              <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
-                <img src={`/assets/images/Icon/vote/for-btn-selected${altStyle ? "-w" : ""}.svg`} />
-                <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
-                <span> For</span>
-              </button>
-              <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
-                <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`}/>
-                <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
-                <span> Against</span>
-              </button>
+        {contextMenu ?
+          <div>
+            <div className={css.contextTitle}>
+              <div>
+                <span className={css.hasVoted}>
+                You voted
+                </span>
+                <span className={css.hasNotVoted}>
+                Vote
+                </span>
+              </div>
             </div>
-            :
-            <div className={css.votingDisabled}>
-              <Tooltip overlay={tipContent}>
-                <span>Voting disabled</span>
-              </Tooltip>
+            <div className={css.contextContent}>
+              <div className={css.hasVoted}>
+                <div className={css.voteRecord}>
+                  <span className={css.castVoteFor} data-test-id="youVotedFor">
+                    <img src="/assets/images/Icon/vote/for-fill-green.svg"/>
+                    <br/>
+                 For
+                  </span>
+                  <span className={css.castVoteAgainst}>
+                    <img src="/assets/images/Icon/vote/against-btn-fill-red.svg"/>
+                    <br/>
+                 Against
+                  </span>
+                </div>
+              </div>
+              <div className={css.hasNotVoted}>
+                {!votingDisabled ?
+                  <div>
+                    <button onClick={this.handleClickVote(1)} className={voteUpButtonClass} data-test-id="voteFor">
+                      <img src={`/assets/images/Icon/vote/for-btn-selected${altStyle ? "-w" : ""}.svg`} />
+                      <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
+                      <span> For</span>
+                    </button>
+                    <button onClick={this.handleClickVote(2)} className={voteDownButtonClass}>
+                      <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`}/>
+                      <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
+                      <span> Against</span>
+                    </button>
+                  </div>
+                  :
+                  <div className={css.votingDisabled}>
+                    <Tooltip overlay={tipContent}>
+                      <span><img src="/assets/images/Icon/Alert-yellow-b.svg"/> Voting disabled</span>
+                    </Tooltip>
+                  </div>
+                }
+              </div>
             </div>
-          }
-        </div>
+          </div>
+          :
+          <div>
+            <div className={css.castVote}>
+              {!votingDisabled ?
+                <div>
+                  <button onClick={this.handleClickVote(1)} className={voteUpButtonClass} data-test-id="voteFor">
+                    <img src={`/assets/images/Icon/vote/for-btn-selected${altStyle ? "-w" : ""}.svg`} />
+                    <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
+                    <span> For</span>
+                  </button>
+                  <button onClick={this.handleClickVote(2)} className={voteDownButtonClass}>
+                    <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`}/>
+                    <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
+                    <span> Against</span>
+                  </button>
+                </div>
+                :
+                <div className={css.votingDisabled}>
+                  <Tooltip placement="bottom" overlay={tipContent}>
+                    <span>Voting disabled</span>
+                  </Tooltip>
+                </div>
+              }
+            </div>
 
-        <div className={css.voteRecord}>
-          You voted
-          <span className={css.castVoteFor} data-test-id="youVotedFor">
-            - For
-          </span>
-          <span className={css.castVoteAgainst}>
-            - Against
-          </span>
-        </div>
+            <div className={css.voteRecord}>
+            You voted
+              <span className={css.castVoteFor} data-test-id="youVotedFor">
+              - For
+              </span>
+              <span className={css.castVoteAgainst}>
+              - Against
+              </span>
+            </div>
+          </div>
+        }
       </div>
     );
   }
 }
-const ConnectedVoteButtons = connect(null, mapDispatchToProps)(VoteButtons);
 
-interface IProps {
-  altStyle?: boolean;
-  currentAccountAddress: Address;
-  currentVote: number;
-  dao: IDAOState;
-  expired?: boolean;
-  parentPage: Page;
-  proposal: IProposalState;
-  isVotingNo?: boolean;
-  isVotingYes?: boolean;
-}
-
-export default (props: IProps) => {
-
-  const arc = getArc();
-  const dao = arc.dao(props.dao.address);
-  const observable = props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null);
-
-  return <Subscribe observable={observable}>{
-    (state: IObservableState<IMemberState>): any => {
-      if (state.isLoading) {
-        return <div>Loading votebox...</div>;
-      } else if (state.error) {
-        return <div>{ state.error.message }</div>;
-      } else {
-        return <ConnectedVoteButtons currentAccountState={state.data} { ...props } />;
-      }
-    }
-  }</Subscribe>;
-};
+export default connect(null, mapDispatchToProps)(VoteButtons);

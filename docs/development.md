@@ -33,9 +33,6 @@ See [docker](./docker.md) for details about the docker containers.
 
 # Helpful scripts
 
-You can give all the Ganache test accounts a bunch of GEN to play with by running `ts-node ./scripts/mintGen.ts`.
-This requires first installing ts-node: `npm install -g ts-node`
-
 # Developing @daostack/client in tandem with alchemy with npm link
 
 ## The setup

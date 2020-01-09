@@ -1,14 +1,74 @@
 {
-    "extends": "eslint:recommended",
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:react/recommended"
+    ],
     "env": {
-      "amd": true,
+      "commonjs": true,
       "node": true,
       "es6": true,
+      "browser": true,
+      "mocha": true,
+      "jest": true
+    },
+    "settings": {
+      "react": {
+        "version": "detect", // React version. "detect" automatically picks the version you have installed.
+      }
     },
     "rules": {
-        "semi": 2,
-        "eol-last": 2,
+        /**
+         * disable or warn for perpetuity
+         */
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/explicit-member-accessibility": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "max-len": "off",
+        "react/display-name" : "off",
+        /**
+         * convert to error when all have been manually fixed
+         */
+        "require-atomic-updates": "warn",
+        "no-console": "warn",
+        "@typescript-eslint/ban-ts-ignore": "warn",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "react/jsx-no-bind": "warn",
+        /**
+         * outright errors
+        */
+        "no-useless-escape": "error",
+        "react/prop-types": "off",
+        "react/no-unescaped-entities": "error",
+        "indent": "off", // to not interfere with @typescript just below
+        "@typescript-eslint/indent": ["error", 2],
+        "@typescript-eslint/prefer-for-of": "error",
+        "@typescript-eslint/consistent-type-assertions": ["error", { "assertionStyle": "as", "objectLiteralTypeAssertions": "allow-as-parameter" }],
+        "no-empty-function": "off", // to not interfere with @typescript just below
+        "@typescript-eslint/no-empty-function": "error",
+        "@typescript-eslint/no-empty-interface": ["error", { "allowSingleExtends": true }],
+        "one-var": ["error", "never"],
+        "no-var": "error",
+        "react/jsx-boolean-value": "error",
+        "react/jsx-curly-spacing": "error",
+        "no-bitwise": "error",
+        "@typescript-eslint/interface-name-prefix": ["error", "always"],
+        "prefer-const": "error",
+        "no-unused-expressions": "error",
+        "no-unused-vars": "off", // to not interfere with @typescript just below
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "[_].*" }],
+        "quotes": ["error", "double"],
+        "import/order": "error",
+        "import/newline-after-import": "error",
+        "comma-dangle": ["error" ,"always-multiline"],
+        "semi": ["error", "always"],
+        "eol-last": "error",
         "eqeqeq": "error",
-        "no-console": 0
+    },
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint", "react", "import"],
+    "parserOptions": {
+      "project": "./tsconfig.eslint.json"
     }
 }

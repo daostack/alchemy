@@ -1,0 +1,49 @@
+.wrapper {
+  width: 100%;
+
+  h1 {
+    color: rgba(104, 155, 214, 1.000);
+    border-bottom: 1px solid rgba(195, 212, 231, 1.000);
+    width: 100%;
+    padding-top: 30px;
+    background-color: rgba(229, 235, 242, 1.000);
+    margin: 0;
+  }
+}
+
+.loading {
+  width: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%)
+}
+
+.fadeEnter {
+  opacity: 0.01;
+}
+
+.fadeEnter.fadeEnterActive {
+  opacity: 1;
+  transition: opacity 1000ms ease-in;
+}
+
+.fadeExit {
+  opacity: 1;
+}
+
+.fadeExit.fadeExitActive {
+  opacity: 0.01;
+  transition: opacity 1000ms ease-in;
+}
+
+.allSchemes {
+  padding-top: 30px;
+}
+
+
+@media only screen and (max-width: 425px) {
+  .wrapper h1 {
+    padding-left: 10px;
+  }
+}

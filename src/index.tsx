@@ -14,10 +14,10 @@ async function renderApp() {
   // Add icons we want to use from FontAwesome
   library.add(faGithub, faTwitter, faFacebook);
 
-  if (process.env.NODE_ENV === "PRODUCTION") {
+  if (process.env.NODE_ENV === "production") {
     Sentry.init({
       dsn: "https://748c6f9811fe407ca2853b64bf638690@sentry.io/1419793",
-      environment: process.env.NODE_ENV
+      environment: process.env.NODE_ENV,
     });
   }
 

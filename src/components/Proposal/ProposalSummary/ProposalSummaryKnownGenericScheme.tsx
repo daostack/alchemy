@@ -22,11 +22,12 @@ export default class ProposalSummary extends React.Component<IProps> {
     super(props);
   }
 
-  public render() {
+  private inputHtml = (x: any) => <span key={x.name}>{x.name} {x.type}, </span>;
+  private callDataHtml = (value: any) => <div key={value}>{value}</div>;
+
+
+  public render(): RenderOutput {
     const { proposal, detailView, transactionModal, genericSchemeInfo } = this.props;
-    // TODO: having this special case in the code for the DutchX scheme (and having a custom component for it)
-    // break the "generate the scheme forms from the DutchX.json file" idea
-    // we should try instead to generate this same UI using the json file, and drop the next 3 lines
     if (genericSchemeInfo.specs.name === "DutchX") {
       return <ProposalSummaryDutchX {...this.props} />;
     }
@@ -34,13 +35,12 @@ export default class ProposalSummary extends React.Component<IProps> {
       [css.detailView]: detailView,
       [css.transactionModal]: transactionModal,
       [css.proposalSummary]: true,
-      [css.withDetails]: true
+      [css.withDetails]: true,
     });
     let decodedCallData: any;
     try {
       decodedCallData = genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
     } catch (err) {
-      // TODO: we should only show this info when we cannot find any decodedCallData
       return (
         <div className={proposalSummaryClass}>
           <span className={css.summaryTitle}>Unknown function call</span>
@@ -58,12 +58,18 @@ export default class ProposalSummary extends React.Component<IProps> {
     return <div className={proposalSummaryClass}>
       <span className={css.summaryTitle}>
         <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-          { decodedCallData.action.label }
+        { decodedCallData.action.label }
       </span>
 
       {detailView ?
         <div className={css.summaryDetails}>
-          Calling function { decodedCallData.action.abi.name} with values { decodedCallData.values.map((value: any) => <div key={value}>{value}</div>) }
+          Executing this proposal will call the function
+          <pre>{ decodedCallData.action.abi.name}
+        ({ decodedCallData.action.abi.inputs.map(this.inputHtml) })
+          </pre>
+          with values <pre>{ decodedCallData.values.map(this.callDataHtml)}</pre>
+          on contract at
+          <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
         </div>
         : ""
       }

@@ -4,7 +4,6 @@ Alchemy uses a number of environment variables to determine how the app is built
 
 These are:
 ```
-    API_URL: "http://127.0.0.1:3001" // connection to alchemy server
     BASE_URL: "http://127.0.0.1:3000"
     DISQUS_SITE: "daostack-alchemy"
     NODE_ENV: "development"
@@ -26,3 +25,8 @@ This will start the development server in the following way:
 Now visit http://127.0.0.1:3000/ or http://127.0.0.1:3000/dao/0xa3f5411cfc9eee0dd108bf0d07433b6dd99037f1 and start profiling
 
 For _very_ rough statistics, open devTools -> Network and look at the line that says something like "64 requests; XMB transfered; etc." The "finish" time (after the page has rendered) gives a rough indication about when the page is rendered...
+
+
+## Subscriptions and queries
+
+For the performance of the app, it is important that we limit the amount of queries and subscriptions that alchemy creates when loading a page.

@@ -34,7 +34,7 @@
 }
 
 .proposal {
-  width: 315px;
+  width: 418px;
   border-radius: 0 15px 15px 15px;
   background-color: $white;
   margin-right: 20px;
@@ -43,9 +43,9 @@
   display: inline-block;
   position: relative;
   box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
-  overflow: hidden;
   transition: all .25s ease;
   vertical-align: top;
+  z-index: 0;
 
   .description, .url {
     display: none;
@@ -54,6 +54,8 @@
 
 .proposalInfo {
   font-size: $body;
+  position: relative;
+  z-index: 1000000;
 
   a {
     color: $black;
@@ -65,7 +67,7 @@
 
   h3 {
     font-size: $body;
-    margin: 4px 20px 10px 20px;
+    margin: 4px 20px 6px 20px;
   }
 
   .closedTime {
@@ -83,7 +85,7 @@
     overflow: hidden;
     display: inline-block;
     white-space: nowrap;
-    max-width: 250px;
+    max-width: 350px;
   }
 
   img {
@@ -95,19 +97,14 @@
   }
 }
 
-.proposal:hover {
-  z-index: 10000;
-  box-shadow: 0 0 15px 0 rgba(49, 120, 202, .300);
-  overflow: visible;
-  margin-bottom: -51px;
-
-  .proposalActions {
-    height: 114px;
-  }
+.summary {
+  margin: 0 20px 20px 20px;
 }
 
-.failedProposal .proposalInfo, .passedProposal .proposalInfo {
-  left: 60px;
+.proposal:hover {
+  z-index: 9000;
+  box-shadow: 0 0 15px 0 rgba(49, 120, 202, .300);
+  overflow: visible;
 }
 
 .voteBox {
@@ -115,12 +112,6 @@
   float: left;
   border-right: 1px solid rgba(215, 225, 237, 1.000);
   width: 49%;
-}
-
-.voteBox.unconfirmedVote {
-  .loading {
-    display: block;
-  }
 }
 
 .voteButtons {
@@ -173,6 +164,53 @@
       color: rgba(104, 155, 214, 1.000);
     }
   }
+
+  .contextMenu {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    position: relative;
+    top: 3px;
+    left: 3px;
+    float: right;
+
+    .menuIcon {
+      width: 3px;
+      height: 20px;
+      margin: 0 auto;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .menu {
+      width: 116px;
+      border-radius: 0 8px 8px 8px;
+      background-color: white;
+      padding: 5px 0;
+      box-shadow: 2px 2px 9px 0 rgba(12, 0, 51, 0.1);
+      position: absolute;
+      top: -90px;
+      left: -60px;
+      transform: scale(0);
+      opacity: 0;
+      transition: all .25s ease;
+    }
+
+    &:hover {
+      .menu {
+        transform: scale(1);
+        opacity: 1;
+        top: -7px;
+        left: 19px;
+      }
+    }
+
+    .followButton {
+      text-align: center;
+    }
+  }
 }
 
 .actionButton {
@@ -197,23 +235,31 @@
 .createdBy {
   font-size: $small;
   color: $black-thirdtone;
-  margin: 15px 10px 5px 10px;
-
-  .targetAccount {
-    top: 7px;
-    left: 4px;
-
-    img {
-      width: 16px;
-      height: 16px;
-    }
-  }
+  margin: 15px 10px 5px 13px;
+  position: relative;
+  left: 7px;
 }
 
+.tagsContainer {
+  padding-left: 18px;
+  padding-bottom: 12px;
+}
 
 @media only screen and (max-width: 425px) {
   .proposal {
     width: 100%;
   }
 
+  .cardTop .contextMenu {
+    z-index: 1000;
+
+    &:hover .menu {
+      left: auto;
+      right: 24px;
+    }
+
+    .menu {
+      border-radius: 8px 0 8px 8px;
+    }
+  }
 }

@@ -31,18 +31,26 @@ services:
       context: ./docker/alchemy-server
     links:
       - postgres
+      - redis
     ports:
       - 3001:3001
     working_dir: /alchemy-server/
     environment:
       WAIT_HOSTS: postgres:5432
+      REDIS_URL: redis://cache
 
   postgres:
     build:
       context: ./docker/postgres/
 
+  redis:
+    image: redis
+    container_name: cache
+    expose:
+      - 6379
+
   graph-node:
-    image: 'graphprotocol/graph-node:v0.12.0'
+    image: 'graphprotocol/graph-node@sha256:9441c934312ee087061f4a9849afba524890da98e67e4285eb7883407108cc66'
     ports:
       - 8000:8000
       - 8001:8001
@@ -57,22 +65,24 @@ services:
       postgres_pass: 'letmein'
       postgres_db: postgres
       ipfs: ipfs:5001
-      ethereum: development:http://ganache:8545
+      ethereum: private:http://ganache:8545
       GRAPH_LOG: "graph.log"
+      GRAPH_GRAPHQL_MAX_FIRST: 1000
+
 
   ipfs:
-    image: daostack/subgraph-ipfs:ganache-0.0.1-rc.19-v3-0.0.20
+    image: daostack/subgraph-ipfs:0.0.1-rc.36-v1-3.0.19
     ports:
       - 5001:5001
 
   postgres4graphnode:
-    image: daostack/subgraph-postgres:ganache-0.0.1-rc.19-v3-0.0.20
+    image: daostack/subgraph-postgres:0.0.1-rc.36-v1-3.0.19
     ports:
       - 9432:5432
     environment:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    image: daostack/migration:0.0.1-rc.19-v3
+    image: daostack/test-env:0.0.1-rc.36-v1-3.0.19
     ports:
       - 8545:8545

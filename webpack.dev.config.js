@@ -87,14 +87,20 @@ module.exports = merge(baseConfig, {
     // Prints more readable module names in the browser console on HMR updates
     new webpack.NamedModulesPlugin(),
 
-    new webpack.DefinePlugin({
-      'process.env': {
-        'API_URL': JSON.stringify(process.env.API_URL || "http://127.0.0.1:3001"),
-        'BASE_URL': JSON.stringify(process.env.BASE_URL || "http://127.0.0.1:3000"),
-        'DISQUS_SITE': JSON.stringify(process.env.DISQUS_SITE || 'daostack-alchemy'),
-        'NODE_ENV': JSON.stringify(process.env.NODE_ENV || "development"),
-        'MIXPANEL_TOKEN': JSON.stringify(process.env.MIXPANEL_TOKEN || "eac39430f2d26472411099a0407ad610")
-      }
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: "development",
+      BASE_URL: "http://127.0.0.1:3000",
+      DISQUS_SITE:'daostack-alchemy',
+      ARC_GRAPHQLHTTPPROVIDER: "",
+      ARC_GRAPHQLWSPROVIDER : "",
+      ARC_WEB3PROVIDER : "",
+      ARC_WEB3PROVIDERREAD : "",
+      ARC_IPFSPROVIDER: "",
+      ARC_IPFSPROVIDER_HOST : "",
+      ARC_IPFSPROVIDER_PORT : "",
+      ARC_IPFSPROVIDER_PROTOCOL : "",
+      ARC_IPFSPROVIDER_API_PATH : "",
+      MIXPANEL_TOKEN: "eac39430f2d26472411099a0407ad610",
     })
   ]
 });

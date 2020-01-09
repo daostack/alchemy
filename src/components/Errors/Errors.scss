@@ -43,3 +43,75 @@
 	color: blue;
 	cursor: pointer;
 }
+
+.errorContainer {
+  background-color: #e9eef4;
+  height: 100vh;
+  width: 100%;
+  text-align: center;
+
+  .content {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+
+    .banner {
+      padding-top: 100px;
+      padding-bottom: 40px;
+
+      .stars {
+        max-width:853px;
+      }
+    }
+
+    .title {
+      font-size: 45px;
+      font-weight: bold;
+      line-height: 0.73;
+      letter-spacing: 0.61px;
+      color: #689bd6;
+    }
+
+    .description {
+      opacity: 0.9;
+      font-size: 21px;
+      font-weight: bold;
+      line-height: 1.19;
+      letter-spacing: 0.29px;
+      color: #9aa9b5;
+  }
+    .title,
+    .description {
+      margin: auto;
+      margin-bottom: 30px;
+      max-width:600px;
+    }
+      
+    .report {
+      font-family: "Open Sans";
+      font-size: 13px;
+      color: #0071ff;
+      margin-right: 20px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .home {
+      width: 97px;
+      height: 30px;
+      border-radius: 15px;
+      background-color: #0076ff;
+
+      font-family: "Open Sans";
+      font-size: 13px;
+      font-weight: bold;
+      color: #ffffff;
+      border: none;
+    }
+
+    
+    button.home:focus {
+      outline: none;
+    }
+  }
+}

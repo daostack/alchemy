@@ -1,0 +1,165 @@
+{
+  "name": "GenesisProtocol",
+  "addresses": {
+    "main": [
+      "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
+    ],
+    "rinkeby": [
+      "0xE3692aD4ed2d2817bEa59AeD435CE17d28E884Eb"
+    ],
+    "private": [
+      "0xAffD1e5D27968889E25Ba045c53Ed608cE5Ee223"
+    ]
+  },
+  "actions": [
+    {
+      "id": "vote",
+      "label": "Vote for a proposal",
+      "description": "Vote on a proposal in the GenesisProtocol. Requires reputation on the DAO where the proposal was made",
+      "notes": "",
+      "fields": [
+        {
+          "label": "Proposal Id",
+          "name": "_proposalId",
+          "placeholder": "ProposalId (0x0000…)"
+        },
+        {
+          "name": "_vote",
+          "defaultValue": 1,
+          "label": "Vote (enter 1 for 'yes' and 2 for 'no')"
+        },
+        {
+          "name": "_rep",
+          "defaultValue": 0,
+          "label": "Amount of reputation to vote with (a value of 0 means: all available reputation)"
+        },
+        {
+          "name": "_voter",
+          "label": "Voter (only relevant if proposal allows to vote on behalf of others)",
+          "defaultValue": "0x0000000000000000000000000000000000000000"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_proposalId",
+            "type": "bytes32"
+          },
+          {
+            "name": "_vote",
+            "type": "uint256"
+          },
+          {
+            "name": "_amount",
+            "type": "uint256"
+          },
+          {
+            "name": "_voter",
+            "type": "address"
+          }
+        ],
+        "name": "vote",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "stake",
+      "label": "Stake on a proposal",
+      "description": "Stake on a  proposal in the genesisprotocol. The proposalId must exist in the target protocol, and you must have GEN tokens ΅pre-approved'",
+      "notes": "",
+      "fields": [
+        {
+          "label": "Proposal Id",
+          "name": "_proposalId",
+          "placeholder": "ProposalId (0x0000…)"
+        },
+        {
+          "name": "_vote",
+          "defaultValue": 1,
+          "label": "Outcome (enter 1 for 'yes' and 2 for 'no')"
+        },
+        {
+          "name": "_amount",
+          "label": "Amount of GEN to stake (must be > 0)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_proposalId",
+            "type": "bytes32"
+          },
+          {
+            "name": "_vote",
+            "type": "uint256"
+          },
+          {
+            "name": "_amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "stake",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "redeem",
+      "label": "Redeem GenesisProtocol",
+      "description": "Executing this proposal will redeem any pending rewards for voting and staking",
+      "notes": "",
+      "fields": [
+        {
+          "label": "Proposal Id",
+          "name": "_proposalId",
+          "placeholder": "ProposalId (0x0000…)"
+        },
+        {
+          "name": "_beneficiary",
+          "defaultValue": "_avatar",
+          "label": "Beneficiary address (this DAO is given as the default)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_proposalId",
+            "type": "bytes32"
+          },
+          {
+            "name": "_beneficiary",
+            "type": "address"
+          }
+        ],
+        "name": "redeem",
+        "outputs": [
+          {
+            "name": "rewards",
+            "type": "uint256[3]"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+.loading {
+  width: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%)
+}
+
+.fadeEnter {
+  opacity: 0.01;
+}
+
+.fadeEnter.fadeEnterActive {
+  opacity: 1;
+  transition: opacity 1000ms ease-in;
+}
+
+.fadeExit {
+  opacity: 1;
+}
+
+.fadeExit.fadeExitActive {
+  opacity: 0.01;
+  transition: opacity 1000ms ease-in;
+}
+
+.noDecisions {
+  padding: 50px;
+  text-align: center;
+  margin-top: 80px;
+
+  p {
+    color: rgba(154, 169, 181, 1.000);
+    font-size: 21px;
+    font-family: "AccordBold", sans-serif;
+    margin: 0 auto;
+    max-width: 450px;
+    text-align: center;
+  }
+
+  .relax {
+    width: 64px;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .proposalsHeader {
+    font-size: 45px;
+    padding-top: 30px;
+    border-top: none;
+    max-width: 100%;
+    color: rgba(104, 154, 214, 1.000);
+  }
+
+  .subheader {
+    font-size: $subheader;
+    color: $black-halftone;
+  }
+
+  .cta {
+    padding-top: 50px;
+
+    a {
+      color: rgba(6, 118, 255, 1.000);
+      font-size: 11px;
+      font-family: "Open Sans";
+      display: inline-block;
+      margin-right: 20px;
+
+      img {
+        height: 8px;
+        display: inline-block;
+        width: 8px;
+      }
+    }
+
+    a.blueButton {
+      height: 30px;
+      line-height: 30px;
+      font-size: 13px;
+      color: white;
+      background-color: rgba(5, 118, 255, 1.000);
+      transition: all .25s ease;
+      border-radius: 15px;
+      display: inline-block;
+      padding: 0 30px;
+
+      &:hover {
+        background-color: rgba(19, 46, 91, 1.000);
+        color: $white;
+      }
+
+      &.disabled, &disabled:hover {
+        background-color: rgba(200,200,200,.5);
+        border: 1px solid rgba(200,200,200,1);
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.boostedContainer, .regularContainer {
+  position: relative;
+  margin-top: 20px;
+}
+
+.proposalsContainer.boostedProposalsContainer {
+  margin: 10px 0 20px 0;
+}
+
+.boostedContainer .proposalsHeader {
+  border-top: none;
+}
+
+.proposalsHeader {
+  font-size: 16px;
+  position: relative;
+  text-align: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-top: $gray-border-2;
+  color: $gray-1;
+  font-weight: $bold;
+
+  img {
+    margin-top: 8px;
+  }
+}

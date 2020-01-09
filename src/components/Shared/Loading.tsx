@@ -5,15 +5,15 @@ const animationData = require("../../assets/animations/Loader.json");
 
 export default class Loading extends React.Component {
 
-  public render() {
+  public render(): RenderOutput {
 
     const defaultOptions = {
       loop: true,
       autoplay: true,
       animationData,
       rendererSettings: {
-        preserveAspectRatio: "xMidYMid slice"
-      }
+        preserveAspectRatio: "xMidYMid slice",
+      },
     };
 
     return <div>

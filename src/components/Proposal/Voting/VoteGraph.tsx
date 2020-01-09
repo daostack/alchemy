@@ -1,13 +1,13 @@
-import { IDAOState, IProposalStage, IProposalState, } from "@daostack/client";
+import { IProposalStage, IProposalState } from "@daostack/client";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import { default as Util } from "lib/util";
+import { fromWei } from "lib/util";
 import * as React from "react";
 
 import * as css from "./VoteGraph.scss";
 
 interface IProps {
-  dao: IDAOState;
   proposal: IProposalState;
   size: number;
   newVotesAgainst?: BN;
@@ -15,24 +15,24 @@ interface IProps {
 }
 
 export default class VoteGraph extends React.Component<IProps, null> {
-  public render() {
-    const { dao, newVotesAgainst, newVotesFor, proposal, size } = this.props;
+  public render(): RenderOutput {
+    const { newVotesAgainst, newVotesFor, proposal, size } = this.props;
 
-    const totalReputationSupply = Util.fromWei(dao.reputationTotalSupply);
-    const votesFor = Util.fromWei(proposal.votesFor.add(newVotesFor || new BN(0)));
-    const votesAgainst = Util.fromWei(proposal.votesAgainst.add(newVotesAgainst || new BN(0)));
+    const totalReputationSupply = fromWei(proposal.totalRepWhenCreated);
+    const votesFor = fromWei(proposal.votesFor.add(newVotesFor || new BN(0)));
+    const votesAgainst = fromWei(proposal.votesAgainst.add(newVotesAgainst || new BN(0)));
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
     const yesPercentage = totalReputationSupply && votesFor ? Math.max(2, +(votesFor / totalReputationSupply * 100).toFixed(2)) : 0;
     const noPercentage = totalReputationSupply && votesAgainst ? Math.max(2, +(votesAgainst / totalReputationSupply * 100).toFixed(2)) : 0;
 
     const yesWinning = yesPercentage > noPercentage;
-    const noWinning = noPercentage > yesPercentage;
+    const noWinning = noPercentage >= yesPercentage;
 
     const containerClass = classNames({
       [css.container]: true,
       [css.noWinning]: noWinning,
-      [css.yesWinning]: yesWinning
+      [css.yesWinning]: yesWinning,
     });
 
     const relative = proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod;
@@ -52,7 +52,7 @@ export default class VoteGraph extends React.Component<IProps, null> {
         </svg>
         <svg className={css.noVotesCircle} viewBox="0 0 33.83098862 33.83098862" width={size} height={size} xmlns="http://www.w3.org/2000/svg">
           {displayNoPercentage ?
-            <circle className={css.circleChartCircle + " " + css.circleChartCircleNegative} stroke="$accent-2" strokeWidth="2" strokeDasharray={displayNoPercentage + ",100"} strokeLinecap="round" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
+            <circle className={css.circleChartCircle + " " + css.circleChartCircleNegative} stroke="rgba(246, 80, 80, 1.000)" strokeWidth="2" strokeDasharray={displayNoPercentage + ",100"} strokeLinecap="round" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
             : ""
           }
         </svg>

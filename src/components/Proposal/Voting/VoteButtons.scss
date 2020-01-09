@@ -26,10 +26,129 @@
   }
 }
 
+.contextMenu.wrapper {
+  display: block;
+  width: 100%;
+}
+
 .hasVoted {
   .voteRecord {
     display: block;
   }
+}
+
+.hasVoted .votingDisabled {
+  display: none;
+}
+
+.contextContent .voteRecord {
+  height: auto;
+  padding: 0 7px;
+  width: 62px;
+  margin: 15px auto;
+  position: relative;
+  border: 1px solid rgba(233, 238, 244, 1.000);
+  border-radius: 0;
+
+  .castVoteFor, .castVoteAgainst {
+    color: rgba(78, 97, 118, 1.000);
+    font-size: 12px;
+    font-weight: normal;
+
+    img {
+      margin-bottom: -10px;
+    }
+  }
+}
+
+.hasNotVoted .contextContent .voteRecord {
+  display: none;
+}
+
+.hasNotVoted.contextMenu .contextTitle .hasNotVoted {
+  display: inline-block;
+}
+
+.contextContent .hasNotVoted {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.contextContent .hasNotVoted button {
+    display: block;
+    text-align: left;
+    width: 100%;
+    border: none;
+    background-color: rgba(240, 245, 251, 0);
+    transition: all .25s ease;
+    padding: 0 0 5px 0;
+
+    img {
+      margin-left: 15px;
+      position: relative;
+      top: 3px;
+      margin-right: 10px;
+    }
+
+    span {
+      display: inline-block;
+      position: relative;
+      top: -2px;
+      left: 2px;
+      color: rgba(78, 97, 118, 1.000);
+    }
+
+    &:hover {
+      background-color: rgba(240, 245, 251, 1.000);
+    }
+}
+
+.contextContent .hasNotVoted .buttton.disabled, .contextContent .hasNotVoted .buttton.votedFor, .contextContent .hasNotVoted .buttton.votedAgainst {
+  color: rgba(78, 97, 118, .3);
+
+  img {
+    opacity: .3;
+  }
+}
+
+.contextTitle {
+  width: 100%;
+  border-bottom: 1px solid rgba(233, 238, 244, 1.000);
+  text-align: left;
+  position: relative;
+  top: -5px;
+
+  span {
+    font-size: 11px;
+    font-family: "Open Sans";
+    color: rgba(154, 169, 181, 1.000);
+    padding: 3px;
+    background-color: white;
+    position: relative;
+    left: 5px;
+    top: 10px;
+  }
+
+  .hasVoted, .hasNotVoted {
+    display: none;
+  }
+}
+.hasVoted .contextTitle {
+    .hasVoted {
+      display: inline-block;
+    }
+}
+.contextContent {
+  width: 100%;
+  padding-bottom: 10px;
+}
+
+.contextMenu .hasVoted .hasVoted {
+    display: inline-block;
+}
+
+.contextMenu .hasNotVoted .hasNotVoted {
+    display: inline-block;
 }
 
 .hasNotVoted {
@@ -48,7 +167,7 @@
   color: $gray-1;
   padding-top: 0px;
   position: relative;
-  top: -5px;
+  text-align: center;
 }
 
 .detailView .votingDisabled {
@@ -78,7 +197,7 @@ button.disabled {
   display: inline-block;
   width: 75px;
   padding: 0 5px;
-  font-size: 11px;
+  outline: none;
 
   img {
     margin-right: 4px;
@@ -159,7 +278,6 @@ button.disabled {
 }
 
 .detailView .hasVoted .voteRecord {
-  display: inline-block;
   float: right;
   border: none;
   margin-top: 13px;
@@ -168,7 +286,6 @@ button.disabled {
 }
 
 .detailView .proposalInfo .hasVoted .voteRecord {
-  display: inline-block;
   float: left;
   margin-top: 13px;
   font-size: 13px;

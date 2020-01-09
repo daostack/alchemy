@@ -1,0 +1,385 @@
+.loading {
+  width: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%)
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+.wrapper {
+  flex-grow: 2;
+  padding: 30px 50px 100px 50px;
+  overflow: auto;
+  z-index: 0;
+  position: relative;
+}
+
+.outer {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.memberHeaderTable {
+  padding: 0 15px 0 15px;
+}
+
+.memberTable, .memberTableHeading {
+  width: 100%;
+
+  tr {
+    width: 100%;
+
+    .memberAvatar {
+      width: 40px;
+
+      img {
+        margin-right: 20px;
+      }
+    }
+
+    .memberName {
+      font-size: 13px;
+      color: rgba(0, 29, 53, 1.000);
+      text-align: left;
+      width: 200px;
+
+      // > div {
+      //   width: 200px;
+      //   overflow: hidden;
+      // }
+    }
+
+    .memberAddress {
+      font-size: 11px;
+      color: rgba(78, 97, 118, 1.000);
+      text-align: left;
+      width: 370px;
+    }
+
+    .memberReputation {
+      color: rgba(0, 29, 53, 1.000);
+      text-align: left;
+      width: 200px;
+      font-size: 13px;
+
+      .reputationAmount {
+        display: inline-block;
+        margin-right: 5px;
+      }
+
+      .reputationAmounts {
+        display: inline-block;
+      }
+    }
+
+
+    .memberSocial {
+      text-align: right;
+      min-width: 110px;
+
+      .icon {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+  }
+}
+
+.memberTableHeading {
+  font-size: 13px;
+  font-weight: bold;
+  color: rgba(0, 29, 53, 1.000);
+  text-align: center;
+
+  tr {
+    .memberAvatar {
+      min-width: 80px;
+    }
+
+    .memberAddress {
+      font-size: 13px;
+    }
+
+    .memberSocial {
+      min-width: 110px;
+    }
+
+  }
+
+}
+
+.proposalHistoryTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.proposalHistoryTableHeader {
+  font-size: 12px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.noticeWrapper {
+  width: 100%;
+  position: fixed;
+  display: flex;
+  height: 40px;
+  bottom: 0;
+  left: 0;
+  z-index: 100000;
+}
+
+.noticeBuffer {
+  min-width: 250px;
+  max-width: 250px;
+  flex-grow: 1;
+  height: 100%;
+}
+
+.notice {
+  flex-grow: 2;
+  background-color: white;
+  padding: 11px 8px;
+  color: rgba(78, 97, 118, 1.000);
+  font-size: 11px;
+  text-align: left;
+  font-family: "Open Sans";
+  width: 100%;
+
+  div {
+    padding-left: 15px;
+
+    img {
+      margin-right: 8px;
+    }
+
+    b {
+      color: $accent-3;
+    }
+  }
+
+  .notice::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+  .closeNotice {
+    position: absolute;
+    border: none;
+    outline: none;
+    right: 6px;
+    top: 13px;
+  }
+}
+
+.loading img {
+  margin: 0 auto;
+  display: block;
+}
+
+.membersContainer {
+  margin: 10px auto;
+  max-width: 980px;
+
+  table {
+    width: 100%;
+  }
+
+  h2 {
+    font-size: 28px;
+    color: rgba(104, 154, 214, 1.000);
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid rgba(195, 212, 231, 1.000);
+    margin-bottom: 15px;
+    padding-bottom: 3px;
+    background-color: rgba(229, 235, 242, 1.000);
+    padding-top: 10px;
+  }
+}
+
+.member {
+  padding: 5px 0;
+  display: flex;
+  font-family: $body-font;
+  justify-content: space-between;
+  font-size: 14px;
+  align-items: center;
+
+  img {
+    flex: none;
+    width: 40px;
+  }
+
+  .socialButton {
+    padding: 2px 4px;
+    display: inline-block;
+  }
+}
+
+.member {
+  padding: 5px 15px 5px 15px;
+  margin-bottom: 2px;
+  background-color: white;
+  border-radius: 3px;
+}
+
+a {
+  text-decoration: none;
+}
+
+.holdings {
+  float: right;
+  width: 180px;
+  text-align: right;
+  font-size: 14px;
+  margin-top: 10px;
+  text-transform: uppercase;
+
+  h4 {
+    font-weight: bold;
+    margin-bottom: 0;
+    margin-top: -7px;
+  }
+  div {
+    opacity: 0.75;
+  }
+}
+
+.daoInfo {
+  max-width: 500px;
+  position: relative;
+  float: left;
+
+  .daoReputationInfo {
+    font-size: $caption;
+    color: $black-halftone;
+
+    img {
+      position: relative;
+      top: 4px;
+      margin-right: 5px;
+    }
+
+    a {
+      opacity: .5;
+      text-decoration: underline;
+      color: $black-septone;
+    }
+
+    a:visited {
+      color: $black-halftone;
+    }
+  }
+
+}
+
+.daoHistoryHeader {
+    font-size: 28px;
+    color: rgba(104, 155, 214, 1.000);
+    border-bottom: 1px solid rgba(45, 109, 181, .2);
+    padding-bottom: 5px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    background-color: rgba(229, 235, 242, 1.000);
+    padding-top: 10px;
+}
+
+@media only screen and (max-width: 425px) {
+  .outer {
+    display: block;
+    position: relative;
+  }
+
+  .memberTable {
+    display: block;
+    width: 100%;
+
+    tr {
+      display: block;
+
+      .memberReputation .reputationAmount {
+        display: none;
+      }
+
+      td {
+        display: block;
+      }
+    }
+  }
+
+  .memberTable.memberTableHeading {
+    display: none;
+  }
+
+  .wrapper {
+    padding: 50px 0 100px 0;
+  }
+
+  .noticeWrapper {
+    height: 52px;
+
+    .noticeBuffer {
+      display: none;
+    }
+
+    .notice {
+      font-size: 10px;
+      padding-right: 70px;
+      box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.4);
+
+      div {
+        padding-left: 0;
+
+        img {
+          height: 18px;
+          float: left;
+          position: relative;
+          top: 5px;
+        }
+      }
+
+      .closeNotice {
+        background-color: transparent;
+      }
+    }
+  }
+
+  .reputationAmounts {
+    position: absolute;
+    right: 10px;
+    top: 21px;
+    font-size: 12px;
+    font-weight: normal;
+  }
+
+  a:visited {
+    color: rgba(0, 28, 53, 1.000);
+  }
+
+  .noProfile {
+    opacity: .4;
+  }
+
+  .member {
+    position: relative;
+  }
+
+  .membersContainer h2 {
+    padding-left: 10px;
+  }
+
+  .daoHistoryHeader {
+    padding-left: 10px;
+  }
+
+  .proposalHistoryTableHeader {
+    display: none;
+  }
+}

@@ -14,6 +14,3 @@ export interface IAsyncAction<Type extends string, Meta, Payload> {
   sequence: AsyncActionSequence;
   payload?: Payload;
 }
-
-export const isAsyncAction = (action: any): action is IAsyncAction<any, any, any> =>
-  typeof action.type === "string" && Object.keys(AsyncActionSequence).map((k: any) => AsyncActionSequence[k]).indexOf(action.sequence) !== -1;

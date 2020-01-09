@@ -3,19 +3,19 @@ import { formatTokens } from "lib/util";
 import * as React from "react";
 import * as css from "./Account.scss";
 
-interface Props {
+interface IProps {
   accountAddress: string;
   balance: BN;
   tokenSymbol: string;
 }
 
-export default class Balance extends React.Component<Props, null>  {
+export default class Balance extends React.Component<IProps, null>  {
 
-  constructor(props: Props) {
+  constructor(props: IProps) {
     super(props);
   }
 
-  public render() {
+  public render(): RenderOutput {
     const { balance, tokenSymbol } = this.props;
 
     return (

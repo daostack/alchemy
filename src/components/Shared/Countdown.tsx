@@ -32,7 +32,7 @@ class Countdown extends React.Component<IProps, IState> {
       days: 0,
       hours: 0,
       min: 0,
-      seconds: 0
+      seconds: 0,
     };
   }
 
@@ -56,7 +56,7 @@ class Countdown extends React.Component<IProps, IState> {
   }
 
   public calculateCountdown(endDate: Date | moment.Moment) {
-    const endDateMoment = moment(endDate), now = new Date();
+    const endDateMoment = moment(endDate); const now = new Date();
 
     const diff = endDateMoment.diff(now);
 
@@ -71,7 +71,7 @@ class Countdown extends React.Component<IProps, IState> {
       days: duration.days(),
       hours: duration.hours(),
       min: duration.minutes(),
-      seconds: duration.seconds()
+      seconds: duration.seconds(),
     };
 
     return timeLeft;
@@ -89,7 +89,7 @@ class Countdown extends React.Component<IProps, IState> {
     return value;
   }
 
-  public render() {
+  public render(): RenderOutput {
     const countDown = this.state;
 
     let percentageComplete = 0;

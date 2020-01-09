@@ -1,4 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import classNames = require("classnames");
 import Analytics from "lib/analytics";
 import * as React from "react";
@@ -27,7 +28,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      disabled: false
+      disabled: false,
     };
   }
 
@@ -39,8 +40,8 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
         this.popup.close();
         onSuccess(account);
         Analytics.track("Add Social Verification", {
-          Network: provider
-         });
+          Network: provider,
+        });
       });
     }
   }
@@ -63,7 +64,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
   // data to the appropriate socket on the connected client.
   public openPopup() {
     const { accountAddress, provider, socket } = this.props;
-    const width = 600, height = 600;
+    const width = 600; const height = 600;
     const left = (window.innerWidth / 2) - (width / 2);
     const top = (window.innerHeight / 2) - (height / 2);
     const url = `${process.env.API_URL}/auth/${provider}?ethereumAccountAddress=${accountAddress}&socketId=${socket.id}`;
@@ -78,7 +79,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
   // Kicks off the processes of opening the popup on the server and listening
   // to the popup. It also disables the login button so the user can not
   // attempt to login to the provider twice.
-  public startAuth(e: any) {
+  public startAuth = (e: any) => {
     if (!this.state.disabled) {
       e.preventDefault();
       this.popup = this.openPopup();
@@ -87,32 +88,32 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
     }
   }
 
-  public render() {
+  public render(): RenderOutput {
     const { className, editing, profile, provider } = this.props;
     const { disabled } = this.state;
 
     const buttonClass = classNames({
       [css.socialButton]: true,
-      [className]: !!className
+      [className]: !!className,
     });
 
     return (
       <div className={buttonClass}>
         {profile && profile.socialURLs[provider]
-          ? <a href={profile.socialURLs[provider]} className={css.socialButtonAuthenticated} target="_blank">
-              <FontAwesomeIcon icon={["fab", provider]} className={css.icon} />
-            </a>
+          ? <a href={profile.socialURLs[provider]} className={css.socialButtonAuthenticated} target="_blank" rel="noopener noreferrer">
+            <FontAwesomeIcon icon={["fab", provider]} className={css.icon} />
+          </a>
           : (editing
-              ? <div>
-                  <button
-                    onClick={this.startAuth.bind(this)}
-                    disabled={disabled}
-                  >
-                    <FontAwesomeIcon icon={["fab", provider]} className={css.icon}/>
-                  </button>
-                </div>
-              : ""
-            )
+            ? <div>
+              <button
+                onClick={this.startAuth}
+                disabled={disabled}
+              >
+                <FontAwesomeIcon icon={["fab", provider]} className={css.icon}/>
+              </button>
+            </div>
+            : ""
+          )
         }
       </div>
     );

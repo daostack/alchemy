@@ -32,17 +32,22 @@
   text-align: center;
   background-color: $accent-2;
   margin-right: 10px;
+  position: relative;
+  top: -3px;
 
   img {
     margin: 0;
     padding: 0;
     position: relative;
-    top: -3px;
-    left: -1px;
+    top: -1px;
+    left: 1px;
   }
 }
 
 .metaMaskModal .modalWindow .transactionHeader.stakePass .transactionIcon {
+  background-color: rgba(0, 190, 144, 1.000);
+  position: relative;
+  top: -3px;
   background-color: $accent-3;
 
   img {
@@ -517,8 +522,15 @@ input[type=number] {
 
       .transactionInfo {
         position: relative;
-        top: -2px;
+        top: -1px;
         display: inline;
+
+        .titleSeparator {
+          display: inline-block;
+          margin: 6px;
+          position: relative;
+          bottom: 2px;
+        }
 
         .transactionEffect {
           font-size: 12px;
@@ -757,5 +769,22 @@ input[type=number] {
         color: $accent-1;
       }
     }
+  }
+}
+
+.tipContainer {
+  padding-top: 8px;
+
+  .message {
+    padding-bottom: 6px;
+    border-bottom: $gray-border;
+    margin-bottom: 6px;
+    .icon {
+      display: inline-block;
+      margin-right:6px;
+      position: relative;
+      top: 2px;
+    }
+    .text { display: inline; }
   }
 }

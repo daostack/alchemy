@@ -33,7 +33,11 @@ script:
   - echo -en 'travis_fold:end:script.4\\r'
 
   # check lint
-  - npm run lint
+  - npm run lint -- --quiet
+  # unit tests
+  - npm run test:unit -- --forceExit
+
+  - docker-compose logs alchemy
   # run integration tests
   - npm run test:integration:headless
 
@@ -46,7 +50,9 @@ script:
   - ./scripts/checkDaos.sh
 
   # see if the app builds correctly
+  - echo 'npm run build-travis' && echo -en 'travis_fold:start:script.4\\r'
   - npm run build-travis
+  - echo -en 'travis_fold:end:script.4\\r'
 
 deploy:
   provider: pages

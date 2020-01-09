@@ -1,13 +1,15 @@
-import { INotificationsState } from "reducers/notifications";
+import { INotificationsState, INotification } from "reducers/notifications";
 import { createSelector } from "reselect";
 import { IRootState } from "../reducers";
 
-const notifications = (state: IRootState) => state.notifications;
+const notifications = (state: IRootState): INotificationsState => state.notifications;
 
-export const sortedNotifications =
-  () => createSelector(
+export type IStateChecker = (state: IRootState) => INotificationsState;
+
+export const sortedNotifications = (): IStateChecker => 
+  createSelector(
     [notifications],
     (notifications: INotificationsState): INotificationsState => {
-      return notifications.sort((a, b) => a.timestamp - b.timestamp);
+      return notifications.sort((a: INotification, b: INotification): number => a.timestamp - b.timestamp);
     }
   );

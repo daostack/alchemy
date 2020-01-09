@@ -1,49 +1,90 @@
 .pendingTransaction {
-  padding: 10px 0;
-  display: inline-block;
-  background-color: $black-halftone;
-  min-width: 240px;
-  box-shadow: $shadow-2;
-  margin: 3px 10px;
+  padding: 10px 15px;
+  display: block;
+  position: relative;
+  background-color: $white;
+  transition: all .25s ease;
+  line-height: 13px;
+
+  &:hover {
+    background-color: rgba(233, 238, 244, 1.000);
+
+    button {
+      opacity: 1;
+    }
+  }
+
+  .transactionBorder {
+    width: 100%;
+    animation: disappear 10s 1;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+    height: 1px;
+    position: absolute;
+    top: -1px;
+    left: 0;
+  }
+
+  &.pending {
+    .transactionBorder {
+      background-color: rgba(0, 118, 255, 1.000);
+    }
+
+    .statusIcon .pending {
+      background-color: rgba(0, 118, 255, 1.000);
+      display: inline-block;
+    }
+  }
+
+  &.success {
+    .transactionBorder {
+      background-color: rgba(0, 190, 144, 1.000);
+    }
+
+    .statusIcon .success {
+      background-color: rgba(0, 190, 144, 1.000);
+      display: inline-block;
+    }
+  }
+
+  &.error {
+    .transactionBorder {
+      background-color: rgba(246, 80, 80, 1.000);
+    }
+
+    .statusIcon .error {
+      background-color: rgba(246, 80, 80, 1.000);
+      display: inline-block;
+    }
+  }
 
   .pending, .success, .error {
     display: none;
   }
 
-  .statusIcon {
-    width: 50px;
-    text-align: center;
-    vertical-align: middle;
+  .statusIcon span {
+    width: 5px;
+    font-size: 11px;
+    border-radius: 10px;
+    position: relative;
+    top: -1px;
+    height: 5px;
   }
 
-  .statusIcon .pending {
-    height: 40px;
-    margin-top: -15px;
-    margin-bottom: -7px;
-    position: relative;
-    top: 9px;
-  }
+  .transactionTitle {
+    display: inline-block;
+    padding: 0 5px;
 
-  .statusIcon .success, .statusIcon .error {
-    height: 20px;
-    position: relative;
-    top: 5px;
+    span {
+      font-size: 11px;
+      font-weight: bold;
+      font-family: "Open Sans";
+    }
   }
 
   .transactionMessage {
-    min-width: 170px;
+    width: 253px;
     text-align: left;
-  }
-
-  .transactionMessage .left {
-    font-size: $small;
-    color: $white;
-  }
-
-  .transactionMessage .right {
-    font-size: $small;
-    color: $white;
-    font-weight: $bold;
   }
 
   a {
@@ -52,23 +93,24 @@
   }
 
   button {
+    outline: none;
     border: none;
     background: none;
+    opacity: .6;
+
+    img {
+      width: 11px;
+    }
   }
 
   .notificationControls {
-    width: 50px;
+    width: 11px;
+    height: 11px;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
     text-align: center;
-  }
-
-  .notificationControls .pending {
-    position: relative;
-    top: 2px;
-  }
-
-  .notificationControls .success, .notificationControls .error {
-    position: relative;
-    top: 3px;
   }
 }
 
@@ -95,22 +137,6 @@
   }
 }
 
-.pendingTransaction.success {
-  background-color: $accent-1;
-}
-
-.pendingTransaction.error {
-  background-color: $accent-3-halftone;
-}
-
-.right {
-  float: right;
-}
-
-.left {
-  float: left;
-}
-
 .statusIcon {
   float: left;
 }
@@ -124,10 +150,14 @@
 }
 
 .notificationMessage {
-  font-size: $caption;
-  color: $white;
+  font-size: 11px;
+  font-family: "Open Sans";
 }
 
 .transactionWrapper {
   display: inline;
+}
+
+@keyframes disappear {
+  to {width: 0%;}
 }
