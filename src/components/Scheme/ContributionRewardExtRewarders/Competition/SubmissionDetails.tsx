@@ -1,10 +1,10 @@
-import { IDAOState, IProposalState, Address, ICompetitionSuggestion } from "@daostack/client";
+import { IDAOState, IProposalState, Address, ICompetitionSuggestion, Reward, IRewardState } from "@daostack/client";
 import * as React from "react";
 
 // import UserSearchField from "components/Shared/UserSearchField";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
-import { formatTokens, ensureHttps } from "lib/util";
+import { formatTokens, ensureHttps, hasGpRewards } from "lib/util";
 import { competitionStatus, getProposalSubmission, getSubmissionVoterHasVoted } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
@@ -12,9 +12,10 @@ import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import { IProfilesState } from "reducers/profilesReducer";
-import { combineLatest } from "rxjs";
+import { combineLatest, of, Observable } from "rxjs";
 import Tooltip from "rc-tooltip";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import { map, mergeMap } from "rxjs/operators";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -33,7 +34,7 @@ interface IExternalProps {
   handleRedeem: () => any;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<[ICompetitionSuggestion, boolean]>;
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<[ICompetitionSuggestion, boolean, IRewardState]>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
@@ -57,19 +58,21 @@ class SubmissionDetails extends React.Component<IProps, null> {
 
     const competition = this.props.proposalState.competition;
     const submission = this.props.data[0];
+    const currentAccountVotedForIt = this.props.data[1];
+    const gpRewards = this.props.data[2];
+    const hasRedeemedProposal = !hasGpRewards(gpRewards);
 
     const status = competitionStatus(competition, [submission]);
-    const currentAccountVotedForIt = this.props.data[1];
     // FAKE -- until can know how many votes per account per Competition
     const maxNumVotesReached = false;
     const canVote = status.voting && !currentAccountVotedForIt && !maxNumVotesReached;
     // FAKE -- until can know whether this is a winning submission
     const isWinner = false;
-    // FAKE -- until can know whether this is a winning submission. allso need submission.redeemedAt to be undefined when not redeemed
-    const canRedeem = isWinner && status.complete && !submission.redeemedAt && (submission.suggester === this.props.currentAccountAddress);
-    //const tags = submission.tags;
+    const isRedeemed = !!submission.redeemedAt;
+    const canRedeem = isWinner && status.complete && !isRedeemed && (submission.suggester === this.props.currentAccountAddress);
     // FAKE -- until client can supply them
     const tags: any = null; // submission.tags;
+    //const tags = submission.tags;
 
     return (
       <div className={css.submissionDetails}>
@@ -81,15 +84,15 @@ class SubmissionDetails extends React.Component<IProps, null> {
           </div>
           <div className={css.actions}>
             { 
-              isWinner ? 
+              (isWinner && (!status.complete || isRedeemed)) ? 
                 <img src="/assets/images/Icon/winner.svg"></img> :
                 canRedeem ? 
-                  <Tooltip overlay="Redeem for your winning submission">
-                    <a className={classNames({[css.blueButton]: true, [css.redeemButton]: true})}
+                  <Tooltip overlay={!hasRedeemedProposal ? "Proposal has not yet been redeemed" : "Redeem for your winning submission"}>
+                    <a className={classNames({[css.blueButton]: true, [css.redeemButton]: true, [css.disabled]: !hasRedeemedProposal})}
                       href="javascript:void(0)"
-                      onClick={this.handleRedeem}
+                      onClick={hasRedeemedProposal ? this.handleRedeem : undefined}
                       data-test-id="redeemSuggestion"
-                    ><img src="/assets/images/Icon/vote/redeem.svg"/>Redeem</a>
+                    ><img src="/assets/images/Icon/redeem.svg"/>Redeem</a>
                   </Tooltip> :
                   <Tooltip overlay={!status.voting ? "Voting has not yet begun" : currentAccountVotedForIt ? "You have already voted" : maxNumVotesReached ? "You have already voted the maximum number of times" : "Vote for this submission"}>
                     <a className={classNames({[css.blueButton]: true, [css.voteButton]: true, [css.disabled]: !canVote})}
@@ -149,6 +152,9 @@ const SubmissionDetailsSubscription = withSubscription({
     return combineLatest(
       getProposalSubmission(props.proposalState.id, props.suggestionId),
       getSubmissionVoterHasVoted(props.suggestionId, props.currentAccountAddress, false),
+      props.proposalState.proposal.rewards({ where: { beneficiary: props.currentAccountAddress }})
+        .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
+        .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
     );
   },
 });

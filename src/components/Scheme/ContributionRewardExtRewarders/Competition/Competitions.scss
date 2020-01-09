@@ -721,6 +721,10 @@ a.blueButton {
       flex-grow: 1;
       vertical-align: middle;
 
+      a.blueButton {
+        padding: 0 14px;
+      }
+
       a.blueButton.voteButton {
         img {
           margin-left: 7px;
@@ -733,7 +737,6 @@ a.blueButton {
         img {
           margin-right: 7px;
           position: relative;
-          top: 6px;
         }
       }
 
