@@ -2,7 +2,7 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
-import { IDAOState, IProposalState, ICompetitionSuggestion, Address, CompetitionSuggestion } from "@daostack/client";
+import { IDAOState, IProposalState, ICompetitionSuggestion, Address } from "@daostack/client";
 import { schemeName, humanProposalTitle, getDateWithTimezone, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
 import { connect } from "react-redux";
 
@@ -12,7 +12,7 @@ import RewardsString from "components/Proposal/RewardsString";
 import { Link, RouteComponentProps } from "react-router-dom";
 import classNames from "classnames";
 import { showNotification } from "reducers/notifications";
-import { enableWalletProvider, getArc } from "arc";
+import { enableWalletProvider } from "arc";
 import CreateSubmission from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSubmission";
 import { Modal } from "react-router-modal";
 import SubmissionDetails from "components/Scheme/ContributionRewardExtRewarders/Competition/SubmissionDetails";
@@ -25,16 +25,12 @@ import { concatMap } from "rxjs/operators";
 import { forkJoin, combineLatest, Observable, of } from "rxjs";
 
 import moment = require("moment");
-import { ICreateSubmissionOptions, getProposalSubmissions, getSubmissionVoterHasVoted, competitionStatus, ICompetitionStatus } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { ICreateSubmissionOptions, getProposalSubmissions, getSubmissionVoterHasVoted, competitionStatus, ICompetitionStatus, ICompetitionSubmissionFake } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import Tooltip from "rc-tooltip";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
 
-// FAKE - until we have ICompetitionSuggestion.isWinner
-interface ICompetitionSubmissionFake extends ICompetitionSuggestion {
-  isWinner: boolean;
-}
 type ISubscriptionState = [Array<ICompetitionSubmissionFake>, Array<boolean>];
 
 interface IDispatchProps {
@@ -385,27 +381,7 @@ export default withSubscription({
     const submissions = getProposalSubmissions(props.proposalState.id, true);
 
     return combineLatest(
-      submissions.pipe(
-        // FAKE - until we have ICompetitionSuggestion.isWinner
-        concatMap((submissions: Array<ICompetitionSuggestion>) => {
-          if (!submissions.length) {
-            return of([]);
-          } else {
-            // seems like there should be a more elegant rxjs way
-            const observables: Array<Promise<ICompetitionSubmissionFake>> = [];
-            submissions.forEach((theSubmission) => {
-              const submission = theSubmission as unknown as ICompetitionSubmissionFake;
-              observables.push(
-                (new CompetitionSuggestion(submission.id, getArc())).isWinner().then((isWinner: boolean) => {
-                  submission.isWinner = isWinner;
-                  return submission;
-                })
-              );
-            });
-            return forkJoin(observables);
-          }
-        })
-      ),
+      submissions,
       submissions.pipe(
         concatMap((submissions: Array<ICompetitionSuggestion>) => {
           if (!submissions.length) {

@@ -6,8 +6,9 @@ import moment = require("moment");
 import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
-import { Observable } from "rxjs";
-import { map, first } from "rxjs/operators";
+import { Observable, forkJoin, of } from "rxjs";
+import { map, first, concatMap } from "rxjs/operators";
+import {  } from "rxjs/operators";
 
 export interface ICompetitionStatus {
   complete: boolean;
@@ -53,7 +54,7 @@ export const competitionStatus = (
     text = submissions.length ? "Voting started!" : "No submissions";
   } else {
     complete = true;
-    text = "Complete";
+    text = "Ended";
   }
 
   return {
@@ -139,11 +140,17 @@ export interface IGetSubmissionsOptions {
   // - and is not to be confused with suggestion.id
 }
 
+
+// FAKE - until we have ICompetitionSuggestion.isWinner
+export interface ICompetitionSubmissionFake extends ICompetitionSuggestion {
+  isWinner: boolean;
+}
+
 const getSubmissions = (
   proposalId: string,
   options?: IGetSubmissionsOptions,
   subscribe = false
-): Observable<Array<ICompetitionSuggestion>> => {
+): Observable<Array<ICompetitionSubmissionFake>> => {
   // FAKE -- until we have IProposalState.competition.suggestions()
   const competition = new Competition(proposalId, getArc());
   // return props.proposalState.competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true } )
@@ -156,7 +163,26 @@ const getSubmissions = (
       // map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion.staticState ))
 
       // work-around hack because CompetitionSuggestion actually contains all we need
-      map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion as unknown as ICompetitionSuggestion) )
+      map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion as unknown as ICompetitionSuggestion) ),
+      // FAKE - until we have ICompetitionSuggestion.isWinner
+      concatMap((submissions: Array<ICompetitionSuggestion>) => {
+        if (!submissions.length) {
+          return of([]);
+        } else {
+          // seems like there should be a more elegant rxjs way
+          const observables: Array<Promise<ICompetitionSubmissionFake>> = [];
+          submissions.forEach((theSubmission) => {
+            const submission = theSubmission as unknown as ICompetitionSubmissionFake;
+            observables.push(
+              (new CompetitionSuggestion(submission.id, getArc())).isWinner().then((isWinner: boolean) => {
+                submission.isWinner = isWinner;
+                return submission;
+              })
+            );
+          });
+          return forkJoin(observables);
+        }
+      })
     );
 };
 

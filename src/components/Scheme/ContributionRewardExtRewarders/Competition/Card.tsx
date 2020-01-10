@@ -96,6 +96,7 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
         <div className={css.winners}>{competition.numberOfWinners} anticipated winners</div>
       </div>
       <div className={css.activityContainer}>
+        { /* FAKE -- until we have votes */ }
         <div className={css.suggestions}>{submissions.length} Suggestions | [n] Votes</div>
         <div className={css.comments}></div>
       </div>

@@ -1,11 +1,10 @@
-import { IDAOState, IProposalState, Address, ICompetitionSuggestion, Reward, IRewardState } from "@daostack/client";
+import { IDAOState, IProposalState, Address, Reward, IRewardState } from "@daostack/client";
 import * as React from "react";
 
-// import UserSearchField from "components/Shared/UserSearchField";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
 import { formatTokens, ensureHttps, hasGpRewards } from "lib/util";
-import { competitionStatus, getProposalSubmission, getSubmissionVoterHasVoted } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { competitionStatus, getProposalSubmission, getSubmissionVoterHasVoted, ICompetitionSubmissionFake } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import classNames from "classnames";
@@ -34,7 +33,7 @@ interface IExternalProps {
   handleRedeem: () => any;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<[ICompetitionSuggestion, boolean, IRewardState]>;
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<[ICompetitionSubmissionFake, boolean, IRewardState]>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
@@ -66,8 +65,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
     // FAKE -- until can know how many votes per account per Competition
     const maxNumVotesReached = false;
     const canVote = status.voting && !currentAccountVotedForIt && !maxNumVotesReached;
-    // FAKE -- until can know whether this is a winning submission
-    const isWinner = false;
+    const isWinner = submission.isWinner;
     const isRedeemed = !!submission.redeemedAt;
     const canRedeem = isWinner && status.complete && !isRedeemed && (submission.suggester === this.props.currentAccountAddress);
     // FAKE -- until client can supply tags
