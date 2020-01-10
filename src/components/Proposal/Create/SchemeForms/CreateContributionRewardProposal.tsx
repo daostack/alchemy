@@ -389,7 +389,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               </div>
               <div className={css.createProposalActions}>
                 <TrainingTooltip overlay="Export proposal" placement="top">
-                  <button className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
                 </TrainingTooltip>
