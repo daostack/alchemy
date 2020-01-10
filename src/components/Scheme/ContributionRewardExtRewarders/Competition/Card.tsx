@@ -13,9 +13,9 @@ import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competi
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { combineLatest } from "rxjs";
 import * as css from "./Competitions.scss";
-import { competitionStatus, getProposalSubmissions, ICompetitionStatus, getCompetitionVotes } from "./utils";
+import { competitionStatus, getProposalSubmissions, ICompetitionStatus, getCompetitionVotes, ICompetitionSubmissionFake } from "./utils";
 
-type ISubscriptionState = [Array<ICompetitionSuggestion>, Array<CompetitionVote>];
+type ISubscriptionState = [Array<ICompetitionSubmissionFake>, Array<CompetitionVote>];
 
 interface IExternalStateProps {
   creatorProfile: IProfileState;
@@ -71,6 +71,8 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
     const competition = proposalState.competition;
     const submissions = this.props.data[0];
     const votes = this.props.data[1];
+    const numWinningSubmissions = submissions.filter((submission) => submission.isWinner).length;
+    const ended = status.now.isSameOrAfter(status.endTime);
 
     return <div className={css.competitionCardContainer} data-test-id={"competition-card-" + proposalState.id}>
       <StatusBlob competition={competition} submissions={submissions}></StatusBlob>
@@ -85,7 +87,7 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
             <div className={css.countdown}><div className={css.text}>Voting starts in:</div><Countdown toDate={status.votingStartTime} onEnd={this.onEndCountdown}></Countdown></div> :
             (status.now.isBefore(status.endTime) && submissions.length) ?
               <div className={css.countdown}><div className={css.text}>Voting ends in:</div><Countdown toDate={status.endTime} onEnd={this.onEndCountdown}></Countdown></div> :
-              (status.now.isSameOrAfter(status.endTime)) ?
+              ended ?
                 <div className={css.countdown}><div className={css.text}>Ended on:</div>{formatFriendlyDateForLocalTimezone(status.endTime)}</div> : ""
         }
       </div>
@@ -95,9 +97,15 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
         </Link>
       </div>
       <div className={css.rewards}>
+        <div className={css.winnerIcon}>
+          { numWinningSubmissions ? <img src="/assets/images/Icon/winner.svg"></img>  : "" }
+        </div>
         <div className={css.transferType}><RewardsString proposal={proposalState} dao={daoState} /></div>
         <img src="/assets/images/Icon/Transfer.svg" />
-        <div className={css.winners}>{competition.numberOfWinners} anticipated winners</div>
+        { ended && numWinningSubmissions ?
+          <div className={css.winners}>{numWinningSubmissions} winners</div> :
+          <div className={css.winners}>{competition.numberOfWinners} anticipated winners</div>
+        }
       </div>
       <div className={css.activityContainer}>
         <div className={css.suggestions}>{submissions.length} Suggestions | {votes.length} Votes</div>
