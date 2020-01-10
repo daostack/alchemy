@@ -21,7 +21,7 @@ type SubscriptionData = [ISchemeState, Proposal[]];
 type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 const ProposalSchemeCard = (props: IProps) => {
-  const { data, dao} = props;
+  const { data, dao } = props;
 
   const [schemeState, boostedProposals] = data;
 
@@ -32,7 +32,7 @@ const ProposalSchemeCard = (props: IProps) => {
   const headerHtml = <h2>{schemeName(schemeState, "[Unknown]")}</h2>;
 
   let trainingTooltipMessage: string;
-  
+
   switch(schemeState.name) {
     case "ContributionReward":
       trainingTooltipMessage = "Use this scheme to reward users (rep and/or funds) for their contributions to the DAO";
@@ -45,7 +45,7 @@ const ProposalSchemeCard = (props: IProps) => {
   return (
     <div className={css.wrapper} data-test-id={`schemeCard-${schemeState.name}`}>
       <Link className={css.headerLink} to={`/dao/${dao.address}/scheme/${schemeState.id}`}>
-        { trainingTooltipMessage ? 
+        { trainingTooltipMessage ?
           <TrainingTooltip placement="topLeft" overlay={trainingTooltipMessage}>
             {headerHtml}
           </TrainingTooltip> : headerHtml
@@ -63,6 +63,7 @@ const ProposalSchemeCard = (props: IProps) => {
           : " "
         }
       </Link>
+
       {proposals.length > 0 ?
         <div>
           {proposalsHTML}

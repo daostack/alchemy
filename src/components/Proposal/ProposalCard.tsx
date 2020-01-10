@@ -3,6 +3,7 @@ import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
+import FollowButton from "components/Shared/FollowButton";
 import { humanProposalTitle } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
@@ -165,6 +166,10 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     <img src="/assets/images/Icon/Context-menu.svg"/>
                   </div>
                   <div className={css.menu}>
+                    <div className={css.followButton}>
+                      <FollowButton id={proposal.id} type="proposals" />
+                    </div>
+
                     <VoteButtons
                       currentAccountAddress={currentAccountAddress}
                       currentAccountState={member}
@@ -190,7 +195,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
               </div>
             </div>
             <div className={css.createdBy}>
-              <AccountPopup accountAddress={proposal.proposer} daoState={daoState} detailView={false} />
+              <AccountPopup accountAddress={proposal.proposer} daoState={daoState} width={12} />
               <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
             </div>
             <div className={css.description}>

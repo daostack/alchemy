@@ -6,6 +6,41 @@
   - Features Added
   - Bugs Fixed
 
+## 2019-12-18
+
+  - Features Added
+    - upgrade subgraph to v36_4
+  - Bugs Fixed
+    - fix representation of timmes longer than a month
+    - respect node_env variables
+    - fix crashing on proposal page
+
+## 2019-12-10
+  - Features Added
+    - Use 3box profiles 
+    - Create a Feed of events
+    - add new cookie policy and privacy policy 
+  - Bugs Fixed
+    - do not error on bad token address
+    - convert deprecated React methods
+    - various UI cleanups and fixes
+    - add subscriptions for votes, stakes and rewards on the proposal page
+    - ignore externalTokenReward when address is null
+    - change old dai to sai, add new dai
+    - better position notifications 
+    - shorten token dropdown menu
+
+## 2019-12-03
+
+  - Features Added
+  - Bugs Fixed
+    - the proposal detail page now gets updates automatically if data changes
+    - rewards do not crash anymore when token address is null
+    - some UI fixes
+    - refactor all UNSAFE_ methods
+
+## 2019-12-03
+
 ## 2019-11-25
   - Features Added
     - prevent redemptions when nothing will happen due to insufficient DAO resources.  Warn on partial redemptions.

@@ -4,7 +4,6 @@ Alchemy uses a number of environment variables to determine how the app is built
 
 These are:
 ```
-    API_URL: "http://127.0.0.1:3001" // connection to alchemy server
     BASE_URL: "http://127.0.0.1:3000"
     DISQUS_SITE: "daostack-alchemy"
     NODE_ENV: "development"
