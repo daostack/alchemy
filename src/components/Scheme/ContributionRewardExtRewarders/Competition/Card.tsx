@@ -4,7 +4,7 @@ import { humanProposalTitle, formatFriendlyDateForLocalTimezone } from "lib/util
 import * as React from "react";
 import { Link } from "react-router-dom";
 import RewardsString from "components/Proposal/RewardsString";
-import { IDAOState, IProposalState, ICompetitionSuggestion, CompetitionVote } from "@daostack/client";
+import { IDAOState, IProposalState, CompetitionVote } from "@daostack/client";
 import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
