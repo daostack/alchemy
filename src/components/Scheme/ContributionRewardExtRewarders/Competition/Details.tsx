@@ -3,7 +3,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
 import { IDAOState, IProposalState, ICompetitionSuggestion, Address } from "@daostack/client";
-import { schemeName, humanProposalTitle, getDateWithTimezone, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
+import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
 import { connect } from "react-redux";
 
 import Countdown from "components/Shared/Countdown";
@@ -176,15 +176,11 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const tags = proposalState.tags;
     const competition = proposalState.competition;
     const now = moment();
-    const startTime =           getDateWithTimezone(status.startTime);
-    const submissionsEndTime =  getDateWithTimezone(status.submissionsEndTime);
-    const votingStartTime =     getDateWithTimezone(status.votingStartTime);
-    const endTime =             getDateWithTimezone(status.endTime);
-    const canSubmit =  now.isSameOrAfter(startTime) && now.isBefore(submissionsEndTime);
-    const hasNotStarted = now.isBefore(startTime);
-    const hasEnded = now.isSameOrAfter(endTime);
-    const inSubmissionsNotYetVoting = now.isSameOrAfter(startTime) && now.isBefore(votingStartTime);
-    const inVoting = now.isSameOrAfter(votingStartTime) && now.isBefore(endTime) && submissions.length;
+    const canSubmit =  now.isSameOrAfter(status.startTime) && now.isBefore(status.submissionsEndTime);
+    const hasNotStarted = now.isBefore(status.startTime);
+    const hasEnded = now.isSameOrAfter(status.endTime);
+    const inSubmissionsNotYetVoting = now.isSameOrAfter(status.startTime) && now.isBefore(status.votingStartTime);
+    const inVoting = now.isSameOrAfter(status.votingStartTime) && now.isBefore(status.endTime) && submissions.length;
     const winningSubmissions = submissions.filter((submission) => submission.isWinner);
     const noWinnersHtml = ()=> {
       return <div className={css.noWinners}>
@@ -261,17 +257,17 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           { hasNotStarted ?
             <div className={css.countdown}>
               <div className={css.startsIn}>Submissions start in:</div>
-              <Countdown toDate={startTime} onEnd={this.onEndCountdown}/>
+              <Countdown toDate={status.startTime} onEnd={this.onEndCountdown}/>
             </div> :
             inSubmissionsNotYetVoting ? 
               <div className={css.countdown}>
                 <div className={css.startsIn}>Voting starts in:</div>
-                <Countdown toDate={votingStartTime} onEnd={this.onEndCountdown}/>
+                <Countdown toDate={status.votingStartTime} onEnd={this.onEndCountdown}/>
               </div>
               : inVoting ? 
                 <div className={css.countdown}>
                   <div className={css.startsIn}>Voting ends in:</div>
-                  <Countdown toDate={endTime} onEnd={this.onEndCountdown}/>
+                  <Countdown toDate={status.endTime} onEnd={this.onEndCountdown}/>
                 </div> : ""
           }
         </div>
@@ -306,22 +302,22 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
               <div className={css.period}>
                 <div className={css.bullet}></div>
                 <div className={css.label}>Competition start time:</div>
-                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(startTime)}</div>
+                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(status.startTime)}</div>
               </div>
               <div className={css.period}>
                 <div className={css.bullet}></div>
                 <div className={css.label}>Submission end time:</div>
-                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(submissionsEndTime)}</div>
+                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(status.submissionsEndTime)}</div>
               </div>
               <div className={css.period}>
                 <div className={css.bullet}></div>
                 <div className={css.label}>Voting start time:</div>
-                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(votingStartTime)}</div>
+                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(status.votingStartTime)}</div>
               </div>
               <div className={css.period}>
                 <div className={css.bullet}></div>
                 <div className={css.label}>Competition end time:</div>
-                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(endTime)}</div>
+                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(status.endTime)}</div>
               </div>
             </div>
           </div>

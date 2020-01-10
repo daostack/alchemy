@@ -1,6 +1,6 @@
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
-import { humanProposalTitle } from "lib/util";
+import { humanProposalTitle, formatFriendlyDateForLocalTimezone } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import RewardsString from "components/Proposal/RewardsString";
@@ -84,7 +84,9 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
           status.now.isBefore(status.votingStartTime) ? 
             <div className={css.countdown}><div className={css.text}>Voting starts in:</div><Countdown toDate={status.votingStartTime} onEnd={this.onEndCountdown}></Countdown></div> :
             (status.now.isBefore(status.endTime) && submissions.length) ?
-              <div className={css.countdown}><div className={css.text}>Voting ends in:</div><Countdown toDate={status.endTime} onEnd={this.onEndCountdown}></Countdown></div> : ""
+              <div className={css.countdown}><div className={css.text}>Voting ends in:</div><Countdown toDate={status.endTime} onEnd={this.onEndCountdown}></Countdown></div> :
+              (status.now.isSameOrAfter(status.endTime)) ?
+                <div className={css.countdown}><div className={css.text}>Ended on:</div>{formatFriendlyDateForLocalTimezone(status.endTime)}</div> : ""
         }
       </div>
       <div className={css.description}>

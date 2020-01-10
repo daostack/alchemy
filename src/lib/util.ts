@@ -600,8 +600,8 @@ const dateFormat = "MMM DD, YYYY HH:mm z (Z) ";
  * looks like: "17:30 EST (-05:00) Dec 31, 2019"
  * @param date 
  */
-export function formatFriendlyDateForLocalTimezone(date: moment.Moment): string {
-  return date.format(dateFormat);
+export function formatFriendlyDateForLocalTimezone(date: Date|moment.Moment): string {
+  return getDateWithTimezone(date).format(dateFormat);
 }
 
 export function ensureHttps(url: string) {
