@@ -93,11 +93,13 @@ export const SelectField: React.SFC<any> = ({options, field, form }) => (
 );
 
 class CreateContributionReward extends React.Component<IProps, IStateProps> {
+
   initialFormValues: IFormValues;
+
   constructor(props: IProps) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.initialFormValues = importUrlValues({
+    this.initialFormValues = importUrlValues<IFormValues>({
       beneficiary: "",
       description: "",
       ethReward: 0,
@@ -385,14 +387,14 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 }
               </div>
               <div className={css.createProposalActions}>
+                <TrainingTooltip overlay="Export proposal" placement="top">
+                  <button className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                    <img src="/assets/images/Icon/share-blue.svg" />
+                  </button>
+                </TrainingTooltip>
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
                 </button>
-                <TrainingTooltip overlay="Export proposal" placement="top">
-                  <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={() => this.exportFormValues(values)}>
-                    Export proposal
-                  </button>
-                </TrainingTooltip>
                 <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                     Submit proposal

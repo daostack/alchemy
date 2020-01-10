@@ -61,12 +61,14 @@ interface IState {
 }
 
 class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
+
   initialFormValues: IFormValues;
+
   constructor(props: IProps) {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.initialFormValues = importUrlValues({
+    this.initialFormValues = importUrlValues<IFormValues>({
       description: "",
       otherScheme: "",
       schemeToAdd: "",
@@ -440,14 +442,14 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                   </div>
 
                   <div className={css.createProposalActions}>
+                    <TrainingTooltip overlay="Export proposal" placement="top">
+                      <button className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                        <img src="/assets/images/Icon/share-blue.svg" />
+                      </button>
+                    </TrainingTooltip>
                     <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                       Cancel
                     </button>
-                    <TrainingTooltip overlay="Export proposal" placement="top">
-                      <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={() => this.exportFormValues(values)}>
-                        Export proposal
-                      </button>
-                    </TrainingTooltip>
                     <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
                       <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                       Submit proposal

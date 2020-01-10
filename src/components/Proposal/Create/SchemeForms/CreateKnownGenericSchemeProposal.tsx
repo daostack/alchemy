@@ -18,6 +18,7 @@ import { isValidUrl } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
@@ -59,7 +60,9 @@ interface IState {
 }
 
 class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
+
   initialFormValues: IFormValues;
+
   constructor(props: IProps) {
     super(props);
 
@@ -235,7 +238,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
         }
       }
     }));
-    this.initialFormValues = importUrlValues(this.initialFormValues);
+    this.initialFormValues = importUrlValues<IFormValues>(this.initialFormValues);
   }
   public exportFormValues(values: IFormValues) {
     values = {
@@ -430,15 +433,19 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   </div>
 
                   <div className={css.createProposalActions}>
+                    <TrainingTooltip overlay="Export proposal" placement="top">
+                      <button className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                        <img src="/assets/images/Icon/share-blue.svg" />
+                      </button>
+                    </TrainingTooltip>
                     <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                       Cancel
                     </button>
-                    <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={() => this.exportFormValues(values)}>
-                      Export proposal
-                    </button>
-                    <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                      Submit proposal
-                    </button>
+                    <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
+                      <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
+                        Submit proposal
+                      </button>
+                    </TrainingTooltip>
                   </div>
                 </Form>
               );
