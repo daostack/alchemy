@@ -1,4 +1,4 @@
-import { ICompetitionProposal, Competition, CompetitionSuggestion, ICompetitionSuggestion, CompetitionVote } from "@daostack/client";
+import { ICompetitionProposal, Competition, CompetitionSuggestion, ICompetitionSuggestion, CompetitionVote, Address } from "@daostack/client";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 
@@ -207,10 +207,12 @@ export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: s
     .pipe(map((votes: Array<CompetitionVote>) => !!votes.length), first());
 };
 
-// export const getCompetitionVotes = (competitionId: string, subscribe = false): Observable<Array<CompetitionVote>> => {
-//   const submission = new CompetitionSuggestion(submissionId, getArc());
-//   return submission.votes({ where: options }, { subscribe, fetchAllData: true });
-// };
+export const getCompetitionVotes = (competitionId: string, voterAddress?: Address, _subscribe = false): Observable<Array<CompetitionVote>> => {
+  // FAKE -- until CompetitionVote.search is fixed
+  return of([]);
+  // const options = Object.assign({ competition: competitionId }, voterAddress ? { voter: voterAddress } : {} );
+  // return CompetitionVote.search(getArc(), { where: options}, { subscribe, fetchAllData: false });
+};
 
 export const getSubmissionVotes = (submissionId: string, subscribe = false): Observable<Array<CompetitionVote>> => {
   // submissionId is the actual id, not the count

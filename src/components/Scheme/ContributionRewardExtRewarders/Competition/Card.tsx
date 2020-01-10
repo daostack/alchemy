@@ -4,17 +4,18 @@ import { humanProposalTitle } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import RewardsString from "components/Proposal/RewardsString";
-import { IDAOState, IProposalState, ICompetitionSuggestion } from "@daostack/client";
+import { IDAOState, IProposalState, ICompetitionSuggestion, CompetitionVote } from "@daostack/client";
 import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import Countdown from "components/Shared/Countdown";
 import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competition/StatusBlob";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import { combineLatest } from "rxjs";
 import * as css from "./Competitions.scss";
-import { competitionStatus, getProposalSubmissions, ICompetitionStatus } from "./utils";
+import { competitionStatus, getProposalSubmissions, ICompetitionStatus, getCompetitionVotes } from "./utils";
 
-type ISubscriptionState = Array<ICompetitionSuggestion>;
+type ISubscriptionState = [Array<ICompetitionSuggestion>, Array<CompetitionVote>];
 
 interface IExternalStateProps {
   creatorProfile: IProfileState;
@@ -50,7 +51,7 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
 
   private getCompetitionState = (): ICompetitionStatus => {
     const competition = this.props.proposalState.competition;
-    const submissions = this.props.data;
+    const submissions = this.props.data[0];
     return competitionStatus(competition, submissions);
   }
 
@@ -68,7 +69,8 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
     } = this.props;
 
     const competition = proposalState.competition;
-    const submissions = this.props.data;
+    const submissions = this.props.data[0];
+    const votes = this.props.data[1];
 
     return <div className={css.competitionCardContainer} data-test-id={"competition-card-" + proposalState.id}>
       <StatusBlob competition={competition} submissions={submissions}></StatusBlob>
@@ -96,8 +98,7 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
         <div className={css.winners}>{competition.numberOfWinners} anticipated winners</div>
       </div>
       <div className={css.activityContainer}>
-        { /* FAKE -- until we have votes */ }
-        <div className={css.suggestions}>{submissions.length} Suggestions | [n] Votes</div>
+        <div className={css.suggestions}>{submissions.length} Suggestions | {votes.length} Votes</div>
         <div className={css.comments}></div>
       </div>
     </div>;
@@ -115,6 +116,9 @@ export default withSubscription({
     /**
      * Would be better to prime for all cards
      */
-    return getProposalSubmissions(props.proposalState.id, true);
+    return combineLatest(
+      getProposalSubmissions(props.proposalState.id, true),
+      getCompetitionVotes(props.proposalState.id, null, true),
+    );
   },
 });
