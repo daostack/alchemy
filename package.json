@@ -99,7 +99,6 @@
     "history": "4.9.0",
     "immutability-helper": "2.6.4",
     "interweave": "^11.1.0",
-    "lodash": "^4.17.15",
     "moment": "^2.23.0",
     "normalizr": "^3.3.0",
     "query-string": "^6.2.0",
