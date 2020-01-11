@@ -144,7 +144,7 @@ const SubmissionDetailsSubscription = withSubscription({
   wrappedComponent: SubmissionDetails,
   loadingComponent: null,
   errorComponent: (props) => <div>{ props.error.message }</div>,
-  checkForUpdate: [],
+  checkForUpdate: ["currentAccountAddress"],
   createObservable: async (props: IExternalProps) => {
     return combineLatest(
       // this query is assumed to already be in the cache and well-subscribed

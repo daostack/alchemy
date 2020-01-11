@@ -21,12 +21,12 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import * as CompetitionActions from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
-import { concatMap } from "rxjs/operators";
-import { forkJoin, combineLatest, Observable, of } from "rxjs";
+import { combineLatest, of } from "rxjs";
 
 import moment = require("moment");
-import { ICreateSubmissionOptions, getProposalSubmissions, getSubmissionVoterHasVoted, competitionStatus, ICompetitionStatus, ICompetitionSubmissionFake } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, ICompetitionStatus, ICompetitionSubmissionFake, getSubmissionVoterHasVoted } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import Tooltip from "rc-tooltip";
+import { concatMap, toArray, first } from "rxjs/operators";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -180,7 +180,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const hasNotStarted = now.isBefore(status.startTime);
     const hasEnded = now.isSameOrAfter(status.endTime);
     const inSubmissionsNotYetVoting = now.isSameOrAfter(status.startTime) && now.isBefore(status.votingStartTime);
-    const inVoting = now.isSameOrAfter(status.votingStartTime) && now.isBefore(status.endTime) && submissions.length;
+    const inVoting = now.isSameOrAfter(status.votingStartTime) && now.isBefore(status.endTime);
     const winningSubmissions = submissions.filter((submission) => submission.isWinner);
     const noWinnersHtml = ()=> {
       return <div className={css.noWinners}>
@@ -264,7 +264,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
                 <div className={css.startsIn}>Voting starts in:</div>
                 <Countdown toDate={status.votingStartTime} onEnd={this.onEndCountdown}/>
               </div>
-              : inVoting ? 
+              : (inVoting && submissions.length) ? 
                 <div className={css.countdown}>
                   <div className={css.startsIn}>Voting ends in:</div>
                   <Countdown toDate={status.endTime} onEnd={this.onEndCountdown}/>
@@ -332,7 +332,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           </div> : ""
         }
 
-        { hasEnded && ((!submissions.length || !winningSubmissions.length)) ? noWinnersHtml() : "" }
+        { (((inVoting && !submissions.length) || (hasEnded && !winningSubmissions.length))) ? noWinnersHtml() : "" }
       </div>
     
       {this.state.showingCreateSubmission ?
@@ -369,7 +369,7 @@ export default withSubscription({
   wrappedComponent: CompetitionDetailsConnected,
   loadingComponent: null,
   errorComponent: (props) => <div>{ props.error.message }</div>,
-  checkForUpdate: [],
+  checkForUpdate: ["currentAccountAddress"],
   createObservable: (props: IExternalProps & IExternalStateProps ) => {
     /**
      * HEADS UP:  we subscribe here because we can't rely on getting to this component via CompetitionCard
@@ -379,16 +379,12 @@ export default withSubscription({
     return combineLatest(
       submissions,
       submissions.pipe(
-        concatMap((submissions: Array<ICompetitionSuggestion>) => {
-          if (!submissions.length) {
-            return of([]);
-          } else {
-            // seems like there should be a more elegant rxjs way
-            const observables: Array<Observable<boolean>> = [];
-            submissions.forEach((submission) => observables.push(getSubmissionVoterHasVoted(submission.id, props.currentAccountAddress, true)));
-            return forkJoin(observables);
-          }
-        })
+        // work on each array individually so that toArray can perceive closure on the stream of items in the array
+        concatMap(submissions => of(submissions).pipe(
+          concatMap(submissions => submissions),
+          concatMap(submission => getSubmissionVoterHasVoted(submission.id, props.currentAccountAddress, true).pipe(first())),
+          toArray())
+        )
       )
     );
   },

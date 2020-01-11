@@ -7,7 +7,7 @@ import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
 import { Observable, forkJoin, of } from "rxjs";
-import { map, first, concatMap } from "rxjs/operators";
+import { map, concatMap } from "rxjs/operators";
 import {  } from "rxjs/operators";
 
 export interface ICompetitionStatus {
@@ -199,14 +199,6 @@ export const getProposalSubmission = (proposalId: string, id: string, subscribe 
     map((suggestions: Array<ICompetitionSuggestion>) => suggestions.length ? suggestions[0]: null ));
 };
 
-
-export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: string, subscribe = false): Observable<boolean> => {
-  // submissionId is the actual id, not the count
-  const submission = new CompetitionSuggestion(submissionId, getArc());
-  return submission.votes({ where: { voter: voterAddress, suggestion: submissionId} }, { subscribe, fetchAllData: false })
-    .pipe(map((votes: Array<CompetitionVote>) => !!votes.length), first());
-};
-
 export const getCompetitionVotes = (competitionId: string, voterAddress?: Address, _subscribe = false): Observable<Array<CompetitionVote>> => {
   // FAKE -- until CompetitionVote.search is fixed
   return of([]);
@@ -214,8 +206,14 @@ export const getCompetitionVotes = (competitionId: string, voterAddress?: Addres
   // return CompetitionVote.search(getArc(), { where: options}, { subscribe, fetchAllData: false });
 };
 
-export const getSubmissionVotes = (submissionId: string, subscribe = false): Observable<Array<CompetitionVote>> => {
+export const getSubmissionVotes = (submissionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
   // submissionId is the actual id, not the count
   const submission = new CompetitionSuggestion(submissionId, getArc());
-  return submission.votes({ }, { subscribe, fetchAllData: true });
+  return submission.votes(voterAddress ? { where: { voter: voterAddress } } : {}, { subscribe, fetchAllData: true });
+};
+
+export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: string, subscribe = false): Observable<boolean> => {
+  // submissionId is the actual id, not the count
+  return getSubmissionVotes(submissionId, voterAddress, subscribe)
+    .pipe(map((votes: Array<CompetitionVote>) => !!votes.length));
 };

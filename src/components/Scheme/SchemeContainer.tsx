@@ -1,6 +1,6 @@
 import * as H from "history";
-import { first, mergeMap, filter, toArray } from "rxjs/operators";
-import { Address, IProposalStage, IDAOState, ISchemeState, IProposalState, Proposal, IProposalOutcome } from "@daostack/client";
+import { first, filter, toArray, mergeMap } from "rxjs/operators";
+import { Address, IProposalStage, IDAOState, ISchemeState, IProposalState, IProposalOutcome } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
@@ -14,7 +14,7 @@ import { showNotification } from "reducers/notifications";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-import { combineLatest, Observable, from, of } from "rxjs";
+import { combineLatest, Observable, of } from "rxjs";
 import { ICrxRewarderProps, getCrxRewarderProps, hasRewarderContract, CrxRewarderComponentType, getCrxRewarderComponent } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
@@ -201,18 +201,22 @@ const SubscribedSchemeContainer = withSubscription({
     if (hasRewarderContract(schemeState)) {
       
       // TODO: can there please be a simpler way to do this???
-      approvedProposals = from((await props.daoState.dao.proposals(
+      approvedProposals = props.daoState.dao.proposals(
         // eslint-disable-next-line @typescript-eslint/camelcase
         { where: { scheme: scheme.id, stage_in: [IProposalStage.Executed]},
           orderBy: "closingAt",
           orderDirection: "desc",
         },
-        { fetchAllData: true })
-        .pipe(first()).toPromise()))
+        { subscribe: true, fetchAllData: true })
         .pipe(
-          mergeMap((proposal: Proposal): Promise<IProposalState> => proposal.state().pipe(first()).toPromise()),
-          filter((proposal: IProposalState) => proposal.winningOutcome === IProposalOutcome.Pass ),
-          toArray());
+          // work on each array individually so that toArray can perceive closure on the stream of items in the array
+          mergeMap(proposals => of(proposals).pipe(
+            mergeMap(proposals => proposals),
+            mergeMap(proposal => proposal.state().pipe(first())),
+            filter((proposal: IProposalState) => proposal.winningOutcome === IProposalOutcome.Pass ),
+            toArray())
+          )
+        );
     } else {
       approvedProposals = of([]);
     }
