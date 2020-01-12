@@ -3,7 +3,7 @@ import * as React from "react";
 
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
-import { formatTokens, ensureHttps, hasGpRewards } from "lib/util";
+import { formatTokens, ensureHttps, hasGpRewards, hasCrRewards } from "lib/util";
 import { competitionStatus, getProposalSubmission, getSubmissionVoterHasVoted, ICompetitionSubmissionFake, getCompetitionVotes } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
@@ -62,7 +62,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const currentAccountVotedForIt = this.props.data[1];
     const currentAccountVotes = this.props.data[2];
     const gpRewards = this.props.data[3];
-    const hasRedeemedProposal = !hasGpRewards(gpRewards);
+    const hasRedeemedProposal = !hasGpRewards(gpRewards) && !hasCrRewards(this.props.proposalState.contributionReward);
 
     const status = competitionStatus(competition, [submission]);
     const maxNumVotesReached = currentAccountVotes.length === competition.numberOfVotesPerVoter;
@@ -82,10 +82,9 @@ class SubmissionDetails extends React.Component<IProps, null> {
             <img src="/assets/images/Icon/vote/for-gray.svg"/>
             {formatTokens(submission.totalVotes)}
           </div>
-          <div className={css.actions}>
-            { 
-              (isWinner && (!status.complete || isRedeemed)) ? 
-                <img src="/assets/images/Icon/winner.svg"></img> :
+          { (canRedeem || !status.complete) ?
+            <div className={css.actions}>
+              { 
                 canRedeem ? 
                   <Tooltip overlay={!hasRedeemedProposal ? "Proposal has not yet been redeemed" : "Redeem for your winning submission"}>
                     <a className={classNames({[css.blueButton]: true, [css.redeemButton]: true, [css.disabled]: !hasRedeemedProposal})}
@@ -93,16 +92,19 @@ class SubmissionDetails extends React.Component<IProps, null> {
                       onClick={hasRedeemedProposal ? this.handleRedeem : undefined}
                       data-test-id="redeemSuggestion"
                     ><img src="/assets/images/Icon/redeem.svg"/>Redeem</a>
-                  </Tooltip> :
-                  <Tooltip overlay={!status.voting ? "Voting has not yet begun" : currentAccountVotedForIt ? "You have already voted" : maxNumVotesReached ? "You have already voted the maximum number of times" : "Vote for this submission"}>
-                    <a className={classNames({[css.blueButton]: true, [css.voteButton]: true, [css.disabled]: !canVote})}
-                      href="javascript:void(0)"
-                      onClick={canVote ? this.handleVote : undefined}
-                      data-test-id="voteSuggestion"
-                    >Vote<img src="/assets/images/Icon/vote/for-btn-selected-w.svg"/></a>
-                  </Tooltip>
-            }
-          </div>
+                  </Tooltip> : !status.complete ?
+                    <Tooltip overlay={!status.voting ? "Voting has not yet begun" : currentAccountVotedForIt ? "You have already voted" : maxNumVotesReached ? "You have already voted the maximum number of times" : "Vote for this submission"}>
+                      <a className={classNames({[css.blueButton]: true, [css.voteButton]: true, [css.disabled]: !canVote})}
+                        href="javascript:void(0)"
+                        onClick={canVote ? this.handleVote : undefined}
+                        data-test-id="voteSuggestion"
+                      >Vote<img src="/assets/images/Icon/vote/for-btn-selected-w.svg"/></a>
+                    </Tooltip> : ""
+              }
+            </div> : ""
+          } 
+          
+          {(status.complete && isWinner) ? <div className={css.winnerIcon} ><img src="/assets/images/Icon/winner.svg"></img></div> : ""}
         </div>
 
         <div className={css.title}>{submission.title}</div>

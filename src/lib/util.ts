@@ -477,6 +477,16 @@ export function getCRRewards(reward: IContributionReward, daoBalances: { [key: s
   return result;
 }
 
+export function hasCrRewards(reward: IContributionReward) {
+  const claimableRewards = getCRRewards(reward);
+  for (const key of Object.keys(claimableRewards)) {
+    if (claimableRewards[key].gt(new BN(0))) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function splitByCamelCase(str: string) {
   return str.replace(/([A-Z])/g, " $1");
 }

@@ -98,7 +98,7 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
       </div>
       <div className={css.rewards}>
         <div className={css.winnerIcon}>
-          { numWinningSubmissions ? <img src="/assets/images/Icon/winner.svg"></img>  : "" }
+          { ended && numWinningSubmissions ? <img src="/assets/images/Icon/winner.svg"></img>  : "" }
         </div>
         <div className={css.transferType}><RewardsString proposal={proposalState} dao={daoState} /></div>
         <img src="/assets/images/Icon/Transfer.svg" />

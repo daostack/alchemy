@@ -7,8 +7,7 @@ import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
 import { Observable, of, from } from "rxjs";
-import { map, mergeMap, first, toArray } from "rxjs/operators";
-import {  } from "rxjs/operators";
+import { map, mergeMap, toArray, first } from "rxjs/operators";
 
 export interface ICompetitionStatus {
   complete: boolean;
@@ -160,20 +159,25 @@ const getSubmissions = (
       // FAKE - until https://github.com/daostack/client/issues/351 is complete and we know whether `isWinner()` is still good
       mergeMap(submissions => of(submissions).pipe(
         mergeMap(submissions => submissions),
-        // FAKE - until https://github.com/daostack/client/issues/372 is fixed
+        // FAKE - competition.suggestions is supposed to return CompetitionSubmission[], but doesn't (https://github.com/daostack/client/issues/372)
         map(submission => new CompetitionSuggestion(submission.id, arc)),
-        mergeMap(submission => {
-          return from(submission.isWinner().then((isWinner: boolean) => {
-            const submissionX = submission as unknown as ICompetitionSubmissionFake;
-            submissionX.isWinner = isWinner;
-            return submission;
+        mergeMap((submission: CompetitionSuggestion) => {
+          return from((submission).isWinner().then((isWinner: boolean) => {
+            return { submission, isWinner };
           }));
         }),
         // get the state so we can return ICompetitionSuggestion
-        mergeMap(submission => submission.state().pipe(first())),
-        map((suggestion: ICompetitionSuggestion) => suggestion as unknown as ICompetitionSubmissionFake),
-        toArray())
-      )
+        mergeMap((fakeData: {submission: CompetitionSuggestion; isWinner: boolean }) => {
+          return fakeData.submission.state().pipe(first()).pipe(
+            map((submissionState: ICompetitionSuggestion) =>  {
+              const submissionX = submissionState as unknown as ICompetitionSubmissionFake;
+              submissionX.isWinner = fakeData.isWinner;
+              return submissionX;
+            })
+          );
+        }),
+        toArray()
+      ))
     );
 };
 

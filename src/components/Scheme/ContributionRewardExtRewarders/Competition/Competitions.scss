@@ -1,7 +1,7 @@
 /** <globally-scoped> */
 a.blueButton {
-  height: 30px;
-  line-height: 30px;
+  height: 26px;
+  line-height: 26px;
   font-size: 13px;
   color: white;
   background-color: rgba(5, 118, 255, 1.000);
@@ -154,7 +154,14 @@ a.blueButton {
     .winners {
       display: inline-block;
     }
-  }
+
+    .winnerIcon {
+      margin-bottom: 4px;
+      img {
+        height: 28px;
+      }
+    }
+}
 
   .activityContainer {
     display: flex;
@@ -278,8 +285,12 @@ a.blueButton {
         white-space: nowrap;
 
         .isWinner {
-          padding-right: 6px;
+          padding-right: 10px;
           display: inline-block;
+
+          img {
+            height: 28px;
+          }
         }
 
         .results {
@@ -440,13 +451,6 @@ a.blueButton {
 
             img {
               vertical-align: middle;
-              display: none;
-            }
-
-            &.didVote {
-              img {
-                display:inline-block;
-              }
             }
           }
 
@@ -454,6 +458,7 @@ a.blueButton {
             width: 22px;
 
             img {
+              height: 28px;
               vertical-align: middle;
             }
           }
@@ -691,7 +696,7 @@ a.blueButton {
     .closeButton {
       flex-grow: 2;
       position: relative;
-      top: 8px;
+      top: 6px;
       width: 60%;
       img {
         width: 13px;
@@ -702,10 +707,10 @@ a.blueButton {
     .reputationVoted {
       flex-grow: 1;
       position: relative;
-      top: 4px;
+      top: 1px;
       color: #9aa9b5;
-      padding-right: 12px;
       white-space: nowrap;
+      text-align: right;
 
       img {
         padding-right: 7px;
@@ -717,6 +722,7 @@ a.blueButton {
     .actions {
       flex-grow: 1;
       vertical-align: middle;
+      padding-left: 12px;
 
       a.blueButton {
         padding: 0 14px;
@@ -736,11 +742,14 @@ a.blueButton {
           position: relative;
         }
       }
+    }
 
-      // is winner icon
-      >img {
+    .winnerIcon {
+      padding-left: 8px;
+      img {
         position: relative;
-        top: 4px;
+        top: -1px;
+        height: 28px;
       }
     }
   }

@@ -208,9 +208,11 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         const isSelected = () => this.state.showingSubmissionDetails && (this.state.showingSubmissionDetails.suggestionId === submission.suggestionId);
         return (
           <div key={index} className={css.row} onClick={this.openSubmissionDetailsModal(submission)}>
-            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.winnerIcon]: true })}>
-              { submission.isWinner ? <img src="/assets/images/Icon/winner.svg"></img>  : "" }
-            </div>
+            { (hasEnded && winningSubmissions.length) ? 
+              <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.winnerIcon]: true })}>
+                {submission.isWinner ? <img src="/assets/images/Icon/winner.svg"></img> : ""}
+              </div> : ""
+            }
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.title]: true})}>
               { submission.title || "[No title is available]" }
             </div>
@@ -221,9 +223,9 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votes]: true})}>
               { formatTokens(submission.totalVotes) }
             </div>
-            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votedUp]: true, [css.didVote]: votersVotes[index] })}>
+            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votedUp]: true })}>
               <Tooltip placement="top" trigger={["hover"]} overlay={"You voted for this submission"}>
-                <img src="/assets/images/Icon/vote/for-gray.svg"></img>
+                {votersVotes[index] ? <img src="/assets/images/Icon/vote/for-fill-green.svg"></img> : <img src="/assets/images/Icon/vote/for-gray.svg"></img>}
               </Tooltip>
             </div>
           </div>);
@@ -287,7 +289,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           </div>
           <div className={css.rightSection}>
             <div className={css.header}>
-              <div className={css.isWinner}>{ winningSubmissions.length ? <img src="/assets/images/Icon/winner.svg"></img> : "" }</div>
+              <div className={css.isWinner}><img src="/assets/images/Icon/winner.svg"></img></div>
               <div className={css.results}>
                 <RewardsString proposal={proposalState} dao={daoState} />
                 <img className={css.transferIcon} src="/assets/images/Icon/Transfer.svg" />
