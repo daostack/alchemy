@@ -6,8 +6,8 @@ import moment = require("moment");
 import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
-import { Observable, forkJoin, of } from "rxjs";
-import { map, concatMap } from "rxjs/operators";
+import { Observable, of, from } from "rxjs";
+import { map, mergeMap, first, toArray } from "rxjs/operators";
 import {  } from "rxjs/operators";
 
 export interface ICompetitionStatus {
@@ -153,36 +153,27 @@ const getSubmissions = (
 ): Observable<Array<ICompetitionSubmissionFake>> => {
   // FAKE -- until we have IProposalState.competition.suggestions()
   const competition = new Competition(proposalId, getArc());
-  // return props.proposalState.competition.suggestions({ where: { proposal: props.proposalState.id }}, { subscribe: true } )
+  const arc = getArc();
+  // fetchAllData so .state() comes from cache
   return competition.suggestions({ where: options }, { subscribe, fetchAllData: true })
     .pipe(
-      // FAKE -- until .fetchStaticState() exists on CompetitionSuggestion
-      // mergeMap((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => from(suggestion.fetchStaticState()) )),
-      // concat()  (??)
-      // or:
-      // map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion.staticState ))
-
-      // work-around hack because CompetitionSuggestion actually contains all we need
-      map((suggestions: Array<CompetitionSuggestion>) => suggestions.map((suggestion) => suggestion as unknown as ICompetitionSuggestion) ),
-      // FAKE - until we have ICompetitionSuggestion.isWinner
-      concatMap((submissions: Array<ICompetitionSuggestion>) => {
-        if (!submissions.length) {
-          return of([]);
-        } else {
-          // seems like there should be a more elegant rxjs way
-          const observables: Array<Promise<ICompetitionSubmissionFake>> = [];
-          submissions.forEach((theSubmission) => {
-            const submission = theSubmission as unknown as ICompetitionSubmissionFake;
-            observables.push(
-              (new CompetitionSuggestion(submission.id, getArc())).isWinner().then((isWinner: boolean) => {
-                submission.isWinner = isWinner;
-                return submission;
-              })
-            );
-          });
-          return forkJoin(observables);
-        }
-      })
+      // FAKE - until https://github.com/daostack/client/issues/351 is complete and we know whether `isWinner()` is still good
+      mergeMap(submissions => of(submissions).pipe(
+        mergeMap(submissions => submissions),
+        // FAKE - until https://github.com/daostack/client/issues/372 is fixed
+        map(submission => new CompetitionSuggestion(submission.id, arc)),
+        mergeMap(submission => {
+          return from(submission.isWinner().then((isWinner: boolean) => {
+            const submissionX = submission as unknown as ICompetitionSubmissionFake;
+            submissionX.isWinner = isWinner;
+            return submission;
+          }));
+        }),
+        // get the state so we can return ICompetitionSuggestion
+        mergeMap(submission => submission.state().pipe(first())),
+        map((suggestion: ICompetitionSuggestion) => suggestion as unknown as ICompetitionSubmissionFake),
+        toArray())
+      )
     );
 };
 

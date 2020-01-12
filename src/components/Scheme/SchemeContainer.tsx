@@ -196,11 +196,15 @@ const SubscribedSchemeContainer = withSubscription({
     // end cache priming
 
     const schemeState = await scheme.state().pipe(first()).toPromise();
-    // hack alert (doesn't smell right to be doing Competition-specific stuff at this level)
+    /**
+     * hack alert.  These approvaed proposals are for the Competition scheme.
+     * Doesn't smell right to be doing Competition-specific stuff in the
+     * context of this component.
+     * However, it seems likely that this could be needed by other CrExt rewarder
+     * contracts that might come along.
+     */
     let  approvedProposals: Observable<Array<IProposalState>>;
     if (hasRewarderContract(schemeState)) {
-      
-      // TODO: can there please be a simpler way to do this???
       approvedProposals = props.daoState.dao.proposals(
         // eslint-disable-next-line @typescript-eslint/camelcase
         { where: { scheme: scheme.id, stage_in: [IProposalStage.Executed]},

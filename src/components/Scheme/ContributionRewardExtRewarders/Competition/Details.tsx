@@ -379,9 +379,14 @@ export default withSubscription({
     return combineLatest(
       submissions,
       submissions.pipe(
-        // work on each array individually so that toArray can perceive closure on the stream of items in the array
+        /**
+         * Use `concatMap` because we want this second array to be in the same order as the first array.
+         * Work on each array individually so that toArray can perceive closure on the stream of items in the array
+         */ 
         concatMap(submissions => of(submissions).pipe(
+          // spreads the array
           concatMap(submissions => submissions),
+          // gets the boolean
           concatMap(submission => getSubmissionVoterHasVoted(submission.id, props.currentAccountAddress, true).pipe(first())),
           toArray())
         )
