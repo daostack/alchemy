@@ -27,7 +27,6 @@ a.blueButton {
   height: 34px;
   text-align: center;
   border-radius: 4px;
-  background-color: #9aa9b5;
   color: $white;
   font-size: 13px;
   padding-top: 9px;
@@ -37,12 +36,16 @@ a.blueButton {
   width: fit-content;
   white-space: nowrap;
 
-  &.open {
+  &.open { // in submission period
     background-color: #00be90;
   }
 
   &.voting {
     background-color: #e2ae10;
+  }
+
+  &.complete, &.voting.noSubmissions {
+    background-color: #9aa9b5;
   }
 }
 

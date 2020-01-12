@@ -46,14 +46,14 @@ export const competitionStatus = (
       text = "Paused";
     } else {
       open = true;
-      text = "Open for suggestions";
+      text = "Open for submissions";
     }
   } else if (now.isBefore(endTime)) {
     voting = true;
-    text = submissions.length ? "Voting started!" : "No submissions";
+    text = submissions.length ? "Voting started!" : "Ended, no submissions";
   } else {
     complete = true;
-    text = "Ended";
+    text = submissions.length ? "Ended" : "Ended, no submissions";
   }
 
   return {
@@ -195,7 +195,6 @@ export const getProposalSubmission = (proposalId: string, id: string, subscribe 
 };
 
 export const getCompetitionVotes = (competitionId: string, voterAddress?: Address, _subscribe = false): Observable<Array<CompetitionVote>> => {
-  // FAKE -- until CompetitionVote.search is fixed
   return of([]);
   // const options = Object.assign({ competition: competitionId }, voterAddress ? { voter: voterAddress } : {} );
   // return CompetitionVote.search(getArc(), { where: options}, { subscribe, fetchAllData: false });

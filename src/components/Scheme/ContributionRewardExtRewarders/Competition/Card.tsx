@@ -108,7 +108,7 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
         }
       </div>
       <div className={css.activityContainer}>
-        <div className={css.suggestions}>{submissions.length} Suggestions | {votes.length} Votes</div>
+        <div className={css.suggestions}>{submissions.length} Submissions | {votes.length} Votes</div>
         <div className={css.comments}></div>
       </div>
     </div>;
