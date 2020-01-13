@@ -1,5 +1,5 @@
 import * as H from "history";
-import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Vote, Reward, Stake } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Vote, Reward, Scheme, Stake } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -253,6 +253,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
         ${Vote.fragments.VoteFields}
         ${Stake.fragments.StakeFields}
         ${Reward.fragments.RewardFields}
+        ${Scheme.fragments.SchemeFields}
       `;
     } else {
       bigProposalQuery = gql`
@@ -270,6 +271,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
           }
         }
         ${Proposal.fragments.ProposalFields}
+        ${Scheme.fragments.SchemeFields}
       `;
     }
 
