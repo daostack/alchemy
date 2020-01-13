@@ -194,9 +194,9 @@ export const getProposalSubmission = (proposalId: string, id: string, subscribe 
     map((suggestions: Array<ICompetitionSuggestion>) => suggestions.length ? suggestions[0]: null ));
 };
 
-export const getCompetitionVotes = (competitionId: string, voterAddress?: Address, _subscribe = false): Observable<Array<CompetitionVote>> => {
+export const getCompetitionVotes = (competitionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
   const options = Object.assign({ proposal: competitionId }, voterAddress ? { voter: voterAddress } : {} );
-  return CompetitionVote.search(getArc(), { where: options}, { subscribe: _subscribe, fetchAllData: false });
+  return CompetitionVote.search(getArc(), { where: options}, { subscribe: subscribe, fetchAllData: false });
 };
 
 export const getSubmissionVotes = (submissionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
