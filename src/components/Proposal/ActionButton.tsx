@@ -72,7 +72,7 @@ class ActionButton extends React.Component<IProps, IState> {
     this.handleRedeemProposal = this.handleRedeemProposal.bind(this);
   }
 
-  private handleClickExecute = async (): Promise<void> => {
+  private handleClickExecute = (type: string) => async (): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const { currentAccountAddress, daoState, parentPage, proposalState } = this.props;
@@ -87,7 +87,7 @@ class ActionButton extends React.Component<IProps, IState> {
       "Proposal Title": proposalState.title,
       "Scheme Address": proposalState.scheme.address,
       "Scheme Name": proposalState.scheme.name,
-      "Type": ActionTypes.Execute,
+      "Type": type,
     });
   }
 
@@ -227,23 +227,23 @@ class ActionButton extends React.Component<IProps, IState> {
         }
 
         { proposalState.stage === IProposalStage.Queued && proposalState.upstakeNeededToPreBoost.lt(new BN(0)) ?
-          <button className={css.preboostButton} onClick={this.handleClickExecute} data-test-id="buttonBoost">
+          <button className={css.preboostButton} onClick={this.handleClickExecute("Pre-Boost")} data-test-id="buttonBoost">
             <img src="/assets/images/Icon/boost.svg"/>
             { /* space after <span> is there on purpose */ }
             <span> Pre-Boost</span>
           </button> :
           proposalState.stage === IProposalStage.PreBoosted && expired && proposalState.downStakeNeededToQueue.lte(new BN(0)) ?
-            <button className={css.unboostButton} onClick={this.handleClickExecute} data-test-id="buttonBoost">
+            <button className={css.unboostButton} onClick={this.handleClickExecute("Un-boost")} data-test-id="buttonBoost">
               <img src="/assets/images/Icon/boost.svg"/>
               <span> Un-Boost</span>
             </button> :
             proposalState.stage === IProposalStage.PreBoosted && expired ?
-              <button className={css.boostButton} onClick={this.handleClickExecute} data-test-id="buttonBoost">
+              <button className={css.boostButton} onClick={this.handleClickExecute("Boost")} data-test-id="buttonBoost">
                 <img src="/assets/images/Icon/boost.svg"/>
                 <span> Boost</span>
               </button> :
               (proposalState.stage === IProposalStage.Boosted || proposalState.stage === IProposalStage.QuietEndingPeriod) && expired ?
-                <button className={css.executeButton} onClick={this.handleClickExecute}>
+                <button className={css.executeButton} onClick={this.handleClickExecute("Execute")}>
                   <img src="/assets/images/Icon/execute.svg"/>
                   { /* space after <span> is there on purpose */ }
                   <span> Execute</span>

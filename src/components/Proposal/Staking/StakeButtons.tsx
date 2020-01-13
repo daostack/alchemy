@@ -97,12 +97,13 @@ class StakeButtons extends React.Component<IProps, IState> {
     this.setState({ showApproveModal: false });
   }
 
-  private getStakeProposalAction = (stakeProposal: typeof arcActions.stakeProposal, proposal: IProposalState, pendingPrediction: number) =>
+  private getStakeProposalAction = (stakeProposal: typeof arcActions.stakeProposal, proposal: IProposalState, dao: IDAOState, pendingPrediction: number) =>
     (amount: number) => {
       stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount);
 
       Analytics.track("Stake", {
         "DAO Address": proposal.dao.id,
+        "DAO Name": dao.name,
         "GEN Staked": amount,
         "Proposal Hash": proposal.id,
         "Proposal TItle": proposal.title,
@@ -228,7 +229,7 @@ class StakeButtons extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction === VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={this.getStakeProposalAction(stakeProposal, proposal, pendingPrediction)}
+            action={this.getStakeProposalAction(stakeProposal, proposal, dao, pendingPrediction)}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreStakeModal}
             currentAccountGens={currentAccountGens}

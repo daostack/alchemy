@@ -74,6 +74,7 @@ class VoteButtons extends React.Component<IProps, IState> {
 
     Analytics.track("Vote", {
       "DAO Address": dao.address,
+      "DAo Name": dao.name,
       "Proposal Hash": proposal.id,
       "Proposal Title": proposal.title,
       "Reputation Voted": fromWei(currentAccountState.reputation),

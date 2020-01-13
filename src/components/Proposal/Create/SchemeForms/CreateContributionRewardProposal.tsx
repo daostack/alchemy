@@ -140,6 +140,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       "ETH Requested": values.ethReward,
       "External Token Requested": values.externalTokenAddress,
       "DAO Token Requested": values.externalTokenReward,
+      "Tags": proposalValues.tags,
     });
 
     this.props.handleClose();
