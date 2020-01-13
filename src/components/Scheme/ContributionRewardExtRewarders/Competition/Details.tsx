@@ -1,7 +1,7 @@
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
-import { IProfileState } from "reducers/profilesReducer";
+import { IProfileState, IProfilesState } from "reducers/profilesReducer";
 import { IDAOState, IProposalState, ICompetitionSuggestion, Address } from "@daostack/client";
 import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
 import { connect } from "react-redux";
@@ -41,7 +41,7 @@ interface IDispatchProps {
 }
 
 interface IExternalStateProps {
-  creatorProfile: IProfileState;
+  profiles: IProfilesState;
 }
 
 interface IStateProps {
@@ -61,7 +61,7 @@ type IProps = IExternalProps & IDispatchProps & IExternalStateProps & ISubscript
 const mapStateToProps = (state: IRootState & IExternalStateProps, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
   return {
     ...ownProps,
-    creatorProfile: state.profiles[ownProps.proposalState.proposer],
+    profiles: state.profiles,
   };
 };
 
@@ -217,8 +217,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
               { submission.title || "[No title is available]" }
             </div>
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.creator]: true})}>
-              <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
-              <AccountProfileName accountAddress={proposalState.proposer} accountProfile={this.props.creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
+              <AccountPopup accountAddress={submission.suggester} daoState={daoState}/>
+              <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.profiles[submission.suggester]} daoAvatarAddress={daoState.address} detailView={false} />
             </div>
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votes]: true})}>
               { formatTokens(submission.totalVotes) }
