@@ -1,0 +1,58 @@
+.reactTagsContainer {
+  display: inline-block;
+}
+
+:global {
+  div.ReactTags__suggestions {
+    position: absolute;
+    margin: -5px 0 0 0;
+    background-color: white;
+    z-index: 100000;
+  }
+  div.ReactTags__suggestions ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    border: 1px solid rgb(191, 203, 213);
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    overflow-y: auto;
+    max-height: 300px;
+  }
+  div.ReactTags__suggestions li {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+  div.ReactTags__suggestions li mark {
+    text-decoration: underline;
+    font-weight: bold;
+    background: none;
+  }
+  div.ReactTags__suggestions ul li.ReactTags__activeSuggestion {
+    background: #b7cfe0;
+    cursor: pointer;
+  } 
+  div.ReactTags__selected span.ReactTags__tag {
+      display: inline-block;
+      border-radius: 10px;
+      background-color: #e9eef4;
+      padding: 4px 10px;
+      margin: 3px 2px;
+      font-size: 11px;
+      font-family: "Open Sans";
+      font-weight: 500;
+  }
+  div.ReactTags__selected a.ReactTags__remove {
+      color: #aaa;
+      margin-left: 5px;
+      cursor: pointer;
+  }
+  div.darkTheme .ReactTags__selected span.ReactTags__tag {
+    border: 1px solid #bfcbd5;
+    background-color: transparent;
+  }
+
+  div.ReactTags__suggestions li .count {
+    display: inline;
+  }
+}

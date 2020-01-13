@@ -19,7 +19,7 @@ interface IProps {
 
 export default class ProposalSummary extends React.Component<IProps> {
 
-  public render() {
+  public render(): RenderOutput {
 
     const { proposal, detailView, transactionModal } = this.props;
 

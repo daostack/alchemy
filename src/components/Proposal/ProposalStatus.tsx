@@ -10,7 +10,7 @@ export default class ProposalStatus extends React.Component<IProps, null> {
     super(props);
   }
 
-  public render() {
+  public render(): RenderOutput {
     const {
       proposalState,
     } = this.props;
@@ -62,10 +62,16 @@ export default class ProposalStatus extends React.Component<IProps, null> {
                         [css.boosted]: true,
                       })}><img src="/assets/images/Icon/boosted.svg" />Boosted</div> :
 
-                      <div className={classNames({
-                        [css.status]: true,
-                        [css.expired]: true,
-                      })}>[unknown status]</div>
+                      (proposalState.stage === IProposalStage.QuietEndingPeriod) ?
+                        <div className={classNames({
+                          [css.status]: true,
+                          [css.quietEnding]: true,
+                        })}><img src="/assets/images/Icon/boosted.svg" />Quiet Ending</div> :
+
+                        <div className={classNames({
+                          [css.status]: true,
+                          [css.expired]: true,
+                        })}>[unknown status]</div>
         )
         }
       </div>

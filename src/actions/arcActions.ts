@@ -11,11 +11,11 @@ import { ThunkAction } from "redux-thunk";
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
-/** use like this (unfortunatly you need the @ts-ignore)
+/** use like this (unfortunately you need the @ts-ignore)
  * // @ts-ignore
  * transaction.send().observer(...operationNotifierObserver(dispatch, "Whatever"))
  */
-const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescription: string = "") => {
+const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescription = ""): [(update: ITransactionUpdate<any>) => void, (err: Error) => void] => {
   return [
     (update: ITransactionUpdate<any>) => {
       let msg: string;
@@ -31,9 +31,9 @@ const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescrip
       }
     },
     (err: Error) => {
-      const msg = `${txDescription}: transaction failed :-(`;
+      const msg = `${txDescription}: transaction failed :-( - ${err.message}`;
+      // eslint-disable-next-line no-console
       console.warn(msg);
-      console.warn(err.message);
       dispatch(showNotification(NotificationStatus.Failure, msg));
     },
   ];
@@ -47,9 +47,9 @@ export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAc
       const dao = new DAO(proposalOptions.dao, arc);
 
       const observer = operationNotifierObserver(dispatch, "Create proposal");
-      // @ts-ignore
       await dao.createProposal(proposalOptions).subscribe(...observer);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error(err);
       throw err;
     }
@@ -64,7 +64,6 @@ export function executeProposal(avatarAddress: string, proposalId: string, _acco
 
     // Call claimRewards to both execute the proposal and redeem the ContributionReward rewards,
     //   pass in null to not redeem any GenesisProtocol rewards
-    // @ts-ignore
     await proposalObj.claimRewards(null).subscribe(...observer);
   };
 }
@@ -86,7 +85,6 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Vote");
-    // @ts-ignore
     await proposalObj.vote(voteOption).subscribe(...observer);
   };
 }
@@ -107,8 +105,16 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Stake");
-    // @ts-ignore
     await proposalObj.stake(prediction, toWei(stakeAmount)).subscribe(...observer);
+  };
+}
+
+// Approve transfer of 100000 GENs from accountAddress to the GenesisProtocol contract for use in staking
+export function approveStakingGens(spender: Address) {
+  return async (dispatch: Redux.Dispatch<any, any>, ) => {
+    const arc = getArc();
+    const observer = operationNotifierObserver(dispatch, "Approve GEN");
+    await arc.approveForStaking(spender, toWei(100000)).subscribe(...observer);
   };
 }
 
@@ -130,7 +136,6 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Reward");
-    // @ts-ignore
     await proposalObj.claimRewards(accountAddress).subscribe(...observer);
   };
 }
@@ -138,6 +143,10 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
 export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string, privateKey: string|undefined, redeemerAddress: Address|undefined) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
+
+    // ensure that scheme.ReputationFromToken is set
+    await scheme.fetchStaticState();
+
     if (privateKey) {
       const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
       const state = await reputationFromTokenScheme.scheme.fetchStaticState();
@@ -147,10 +156,7 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       const redeemMethod = contract.methods.redeem(addressToRedeem);
       let gasPrice = await arc.web3.eth.getGasPrice();
       gasPrice = gasPrice * 1.2;
-      // console.log(redeemMethod);
-      // console.log(redeemMethod.encodeABI());
-      const txToSign
-      = {
+      const txToSign = {
         gas,
         gasPrice,
         data: redeemMethod.encodeABI(),
@@ -159,24 +165,17 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       };
       const gasEstimate = await arc.web3.eth.estimateGas(txToSign);
       txToSign.gas = gasEstimate;
-      console.log(`estimated gas cost           : ${gasEstimate  * gasPrice}`);
-      // console.log(txToSign);
       // if the gas cost is higher then the users balance, we lower it to fit
       const userBalance = await arc.web3.eth.getBalance(redeemerAddress);
-      console.log(`balance of ${redeemerAddress}: ${userBalance}`);
       if (userBalance < gasEstimate * gasPrice) {
         txToSign.gasPrice = Math.floor(userBalance/gasEstimate);
       }
-      console.log(`estimated gas cost after adjusting: ${gasEstimate  * txToSign.gasPrice}`);
       const signedTransaction = await arc.web3.eth.accounts.signTransaction(txToSign, privateKey);
-      // console.log(signedTransaction);
       dispatch(showNotification(NotificationStatus.Success, "Sending redeem transaction, please wait for it to be mined"));
-      const txHash = await arc.web3.utils.sha3(signedTransaction.rawTransaction);
-      console.log(`transaction hash: ${txHash}`);
+      // const txHash = await arc.web3.utils.sha3(signedTransaction.rawTransaction);
       try {
-        const receipt  = await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
         dispatch(showNotification(NotificationStatus.Success, "Transaction was succesful!"));
-        console.log(receipt);
       } catch(err) {
         dispatch(showNotification(NotificationStatus.Failure, `Transaction failed: ${err.message}`));
       }
@@ -186,7 +185,6 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
 
       // send the transaction and get notifications
       if (reputationFromTokenScheme) {
-        // @ts-ignore
         reputationFromTokenScheme.redeem(addressToRedeem).subscribe(...observer);
       }
     }

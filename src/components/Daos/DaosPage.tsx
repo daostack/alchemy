@@ -2,33 +2,43 @@ import { DAO } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as React from "react";
 import * as Sticky from "react-stickynode";
-import { combineLatest} from "rxjs";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 
-type SubscriptionData = [DAO[], DAO[]];
+type SubscriptionData = DAO[];
 
 type IProps = ISubscriptionProps<SubscriptionData>;
 
 class DaosPage extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { data } = this.props;
 
-    const daos = data[1];
-    if (data[0].length > 0) {
-      daos.unshift(data[0][0]);
+    let daos: DAO[];
+    if (process.env.NODE_ENV === "staging") {
+      // on staging we show all daos (registered or not)
+      daos = data.filter((d: DAO) => d.staticState.name === "Genesis Alpha")
+        .concat(data.filter((d: DAO) => d.staticState.name !== "Genesis Alpha"));
+    } else {
+      daos = data.filter((d: DAO) => d.staticState.name === "Genesis Alpha")
+        .concat(data.filter((d: DAO) => d.staticState.name !== "Genesis Alpha" && d.staticState.register === "registered"));
     }
 
     const daoNodes = daos.map((dao: DAO) => {
       return (
-        <DaoCard key={dao.id}  dao={dao}/>
+        <DaoCard
+          key={dao.id}
+          dao={dao}
+        />
       );
     });
     return (
       <div className={css.wrapper}>
+        <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
+
         <Sticky enabled top={50} innerZ={10000}>
           <div className={css.daoListHeader + " clearfix"}>
             <h2 data-test-id="header-all-daos">All DAOs</h2>
@@ -52,10 +62,8 @@ export default withSubscription({
 
   createObservable: () => {
     const arc = getArc();
-    return combineLatest(
-      arc.daos({ where: { name: "Genesis Alpha" }}),
-      // eslint-disable-next-line
-      arc.daos({ where: { name_not_contains: "Genesis Alpha", register: "registered" }, orderBy: "name", orderDirection: "asc"}),
-    );
+    return arc.daos({
+      // where: { register: "registered" },
+      orderBy: "name", orderDirection: "asc"}, { fetchAllData: true, subscribe: true });
   },
 });

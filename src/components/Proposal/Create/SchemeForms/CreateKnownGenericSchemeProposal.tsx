@@ -1,7 +1,7 @@
 // const BN = require("bn.js");
 import { IProposalType, ISchemeState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";
@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { isValidUrl } from "lib/util";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
@@ -47,14 +48,13 @@ interface IFormValues {
 interface IState {
   actions: Action[];
   currentAction: Action;
+  tags: Array<string>;
 }
 
 class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
-
-    this.handleSubmit = this.handleSubmit.bind(this);
 
     if (!props.genericSchemeInfo) {
       throw Error("GenericSchemeInfo should be provided");
@@ -64,11 +64,12 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     this.state = {
       actions,
       currentAction:  actions[0],
+      tags: new Array<string>(),
     };
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+  private handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const currentAction = this.state.currentAction;
 
@@ -83,8 +84,6 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     try {
       callData = this.props.genericSchemeInfo.encodeABI(currentAction, callValues);
     } catch (err) {
-      // alert(err.message);
-      console.log(err.message);
       showNotification(NotificationStatus.Failure, err.message);
       setSubmitting(false);
       return;
@@ -96,6 +95,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       callData,
       dao: this.props.daoAvatarAddress,
       scheme: this.props.scheme.address,
+      tags: this.state.tags,
       type: IProposalType.GenericScheme,
       value: 0, // amount of eth to send with the call
     };
@@ -145,6 +145,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
         </div>;
       default:
         if (field.type.includes("[]")) {
+          // eslint-disable-next-line react/jsx-no-bind
           return <FieldArray name={field.name} render={(arrayHelpers) => (
             <div className={css.arrayFieldContainer}>
               {values[field.name] && values[field.name].length > 0 ? (
@@ -166,7 +167,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   </div>
                 ))
               ) : ""}
-              <button className={css.addItemButton} type="button" onClick={() => arrayHelpers.push("")}>
+              <button className={css.addItemButton} data-test-id={field.name + ".add"} type="button" onClick={() => arrayHelpers.push("")}>
                 Add {field.label}
               </button>
             </div>
@@ -186,8 +187,12 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     />;
   }
 
-  public render() {
-    const { handleClose } = this.props;
+  private onTagsChange = (tags: any[]): void => {
+    this.setState({tags});
+  }
+
+  public render(): RenderOutput {
+    const { handleClose, daoAvatarAddress } = this.props;
     const arc = getArc();
 
     const actions = this.state.actions;
@@ -201,12 +206,17 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
     actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
       if (typeof(field.defaultValue) !== "undefined") {
-        initialFormValues[field.name] = field.defaultValue;
+        if (field.defaultValue === "_avatar") {
+          initialFormValues[field.name] = daoAvatarAddress;
+        } else {
+          initialFormValues[field.name] = field.defaultValue;
+        }
       } else {
         switch (field.type) {
+          case "uint64":
           case "uint256":
-            initialFormValues[field.name] = "";
-            break;
+          case "bytes32":
+          case "bytes":
           case "address":
           case "string":
             initialFormValues[field.name] = "";
@@ -242,7 +252,8 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
         <div className={css.formWrapper}>
           <Formik
             initialValues={initialFormValues}
-            validate={(values: IFormValues) => {
+            // eslint-disable-next-line react/jsx-no-bind
+            validate={(values: IFormValues): void => {
               const errors: any = {};
 
               const valueIsRequired = (name: string) => {
@@ -267,33 +278,38 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
               }
 
               for (const field of this.state.currentAction.getFields()) {
-                if (field.type !== "bool") {
+                if (field.type !== "bool" && !field.optional) {
                   valueIsRequired(field.name);
                 }
 
-                if (field.type === "uint256") {
-                  const value = values[field.name];
-                  try {
-                    field.callValue(value);
-                  } catch (error) {
-                    if (error.message === "Assertion failed") {
-                      // thank you BN.js for your helpful error messages
-                      errors[field.name] = "Invalid number value";
-                    } else {
-                      errors[field.name] = error.message;
-                    }
+                // Check if value can be interpreted correctly for this particular field
+                let value = values[field.name];
+                try {
+                  value = field.callValue(value);
+                } catch (error) {
+                  if (error.message === "Assertion failed") {
+                    // thank you BN.js for your helpful error messages
+                    errors[field.name] = "Invalid number value";
+                  } else {
+                    errors[field.name] = error.message;
                   }
                 }
+
                 if (field.type === "address") {
-                  const value = values[field.name];
                   if (!arc.web3.utils.isAddress(value)) {
                     errors[field.name] = "Invalid address";
                   }
                 }
 
+                if (field.type.includes("bytes")) {
+                  if (!arc.web3.utils.isHexStrict(value)) {
+                    errors[field.name] = "Must be a hex value";
+                  }
+                }
+
                 if (field.type === "address[]") {
-                  for (const value of values[field.name]) {
-                    if (!arc.web3.utils.isAddress(value)) {
+                  for (const i of value) {
+                    if (!arc.web3.utils.isAddress(i)) {
                       errors[field.name] = "Invalid address";
                     }
                   }
@@ -301,7 +317,8 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
               }
               return errors;
             }}
-            onSubmit={this.handleSubmit.bind(this)}
+            onSubmit={this.handleSubmit}
+            // eslint-disable-next-line react/jsx-no-bind
             render={({
               errors,
               touched,
@@ -316,7 +333,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                     <Interweave content={currentAction.description} />
                   </div>
                   <label htmlFor="titleInput">
-                    Title
+                      Title
                     <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
                   </label>
@@ -331,7 +348,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   />
 
                   <label htmlFor="descriptionInput">
-                    Description
+                      Description
                     <div className={css.requiredMarker}>*</div>
                     <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                     <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -344,6 +361,14 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                     name="description"
                     className={touched.description && errors.description ? css.error : null}
                   />
+
+                  <label className={css.tagSelectorLabel}>
+                    Tags
+                  </label>
+
+                  <div className={css.tagSelectorContainer}>
+                    <TagsSelector onChange={this.onTagsChange}></TagsSelector>
+                  </div>
 
                   <label htmlFor="urlInput">
                     URL
@@ -372,7 +397,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                             <label htmlFor={field.name}>
                               { field.label }
                               <ErrorMessage name={field.name}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                              {field.type !== "bool" ? <div className={css.requiredMarker}>*</div> : ""}
+                              {field.type !== "bool" && !field.optional ? <div className={css.requiredMarker}>*</div> : ""}
                             </label>
                             {this.renderField(field, values, touched, errors)}
                           </div>

@@ -2,7 +2,6 @@
   position: relative;
   max-width: $max-width;
   margin: 0 auto;
-  padding: 0 30px;
 }
 
 .loading img {
@@ -93,7 +92,7 @@ a.daoLink {
 	.daoInfo {
 		color: $black;
 		font-size: $body;
-		width: 33%;
+		width: 100%;
 		display: inline-block;
 		padding: 30px 0;
 
@@ -110,6 +109,13 @@ a.daoLink {
 			color: $gray-1;
 		}
 	}
+
+  .followButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
 }
 
 .daoListHeader {
@@ -144,11 +150,24 @@ a.daoLink {
 	}
 }
 
-@media only screen and (max-width: 425px) {
+table.daoInfoContainer {
+  width: 100%;
+  tr > td {
+    width:40%;
+    border: 0;
+    padding:0;
+  }
+  tr > td:first-child,
+  tr > td:last-child {
+    width:10%;
+  }
+}
+
+@media only screen and (max-width: 550px) {
 	.wrapper {
 		width: auto;
 		padding: 0;
-		text-align: center;
+    text-align: center;
 	}
 
   .daoListHeader {
@@ -158,20 +177,20 @@ a.daoLink {
     h2 {
       margin-top: 0;
       padding: 10px 0 10px 15px;
-      text-align: left;
+      text-align: center;
       font-size: 18px;
     }
   }
 
   .daoList {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 
 	.dao {
 		width: 100%;
 		border-radius: 15px;
-		margin: 0 0 15px 0;
+		margin: 0 0 20px 0;
 		left: 0;
 	}
 
@@ -183,13 +202,34 @@ a.daoLink {
 		font-size: 20px;
 	}
 
-	.daoLink .daoInfo {
-
-
+	a.daoLink .daoInfo {
 		span {
 			font-size: 13px;
 			font-weight: normal;
 			font-family: "Open Sans";
 		}
 	}
+
+	a.daoLink .daoInfo {
+    padding: 18px 0;
+  }
+
+	a.daoLink .daoTitle {
+    padding-top: 16px;
+    padding-bottom:16px;
+		padding-left: 18px;
+		margin: 0;
+		margin-bottom: 10px;
+  }
+
+  table.daoInfoContainer {
+    tr > td {
+      width:45%;
+    }
+
+    tr > td:first-child,
+    tr > td:last-child {
+      width:10%;
+    }
+  }
 }

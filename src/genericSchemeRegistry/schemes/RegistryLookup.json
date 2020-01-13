@@ -1,0 +1,103 @@
+{
+  "name": "RegistryLookup",
+  "addresses": {
+    "main": [
+      "0xc6e6060f3c32de9615320ab047bb93919c8f6324",
+      "0xf52fa064a4077fa1a5ec50604304715d63f2b309",
+      "0xd9f3c5eab7b86b9992a65a385026aa46b0d04896"
+    ],
+    "rinkeby": [
+      "0xb5f95a7118c7b778746ae35adbb16fc95f021ae9",
+      "0xf268dc803924f6d9d06c7ddbfc06bf7cc6daf7d4"
+    ],
+    "private": [
+      "0x538aa59d0346e7682842dfba8ef6d42e1d182ddf"
+    ]
+  },
+  "actions": [
+    {
+      "id": "addNewTokens",
+      "label": "Add new tokens",
+      "description": "Add new tokens.",
+      "notes": "",
+      "fields": [
+        {
+          "name": "_tokens",
+          "label": "Tokens",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "address[]",
+            "name": "_tokens",
+            "type": "address[]"
+          }
+        ],
+        "name": "addNewTokens",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "removeTokens",
+      "label": "Remove tokens",
+      "description": "Remove tokens.",
+      "notes": "",
+      "fields": [
+        {
+          "label": "Tokens to remove",
+          "name": "_tokens",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "address[]",
+            "name": "_tokens",
+            "type": "address[]"
+          }
+        ],
+        "name": "removeTokens",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "transferOwnership",
+      "label": "Transfer Ownership",
+      "description": "...",
+      "notes": "",
+      "fields": [
+        {
+          "label": "new owner",
+          "name": "newOwner",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }
+  ]
+}

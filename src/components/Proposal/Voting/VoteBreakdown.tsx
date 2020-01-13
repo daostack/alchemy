@@ -1,29 +1,29 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalState } from "@daostack/client";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import Reputation from "components/Account/Reputation";
-import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
-import { of } from "rxjs";
 import * as css from "./VoteBreakdown.scss";
 
 interface IExternalProps {
   currentAccountAddress: Address;
   currentVote: number;
-  dao: IDAOState;
+  daoState: IDAOState;
   detailView?: boolean;
+  currentAccountState: IMemberState;
   proposal: IProposalState;
+  historyView?: boolean;
 }
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<IMemberState>;
+type IProps = IExternalProps & IDispatchProps;
 
 interface IState {
   currentVote: number;
@@ -46,11 +46,9 @@ class VoteBreakdown extends React.Component<IProps, IState> {
   }
 
   public async handleClickVote(vote: number, _event: any): Promise<void> {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    const currentAccountState = this.props.data;
-
-    if (currentAccountState.reputation.gt(new BN(0))) {
+    if (this.props.currentAccountState.reputation.gt(new BN(0))) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
     }
   }
@@ -59,17 +57,19 @@ class VoteBreakdown extends React.Component<IProps, IState> {
     this.setState({ showPreVoteModal: false });
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const {
       currentVote,
       detailView,
+      historyView,
       proposal,
-      dao,
+      daoState,
     } = this.props;
 
     const wrapperClass = classNames({
       [css.wrapper]: true,
       [css.detailView]: detailView,
+      [css.historyView]: historyView,
     });
 
     const voteUpClass = classNames({
@@ -92,7 +92,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
           <span className={css.reputation}>
             <span className={css.label}>For</span>
             <br className={css.label}/>
-            <Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesFor} hideSymbol hideTooltip={!detailView} />
+            <Reputation daoName={daoState.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesFor} hideSymbol hideTooltip={!detailView} />
             <b className={css.label}> Rep</b>
           </span>
         </div>
@@ -102,7 +102,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
           <span className={css.reputation}>
             <span className={css.label}>Against</span>
             <br className={css.label}/>
-            <Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesAgainst} hideSymbol hideTooltip={!detailView} />
+            <Reputation daoName={daoState.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesAgainst} hideSymbol hideTooltip={!detailView} />
             <b className={css.label}> Rep</b>
           </span>
         </div>
@@ -111,19 +111,4 @@ class VoteBreakdown extends React.Component<IProps, IState> {
   }
 }
 
-const SubscribedVoteBreakdown = withSubscription({
-  wrappedComponent: VoteBreakdown,
-  loadingComponent: <div>Loading...</div>,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
-
-  checkForUpdate: ["currentAccountAddress"],
-
-  createObservable: (props: IExternalProps) => {
-    const arc = getArc();
-    const dao = arc.dao(props.dao.address);
-    return props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null);
-  },
-});
-
-export default connect(null, mapDispatchToProps)(SubscribedVoteBreakdown);
-
+export default connect(null, mapDispatchToProps)(VoteBreakdown);

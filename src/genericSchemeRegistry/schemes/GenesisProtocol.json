@@ -122,7 +122,7 @@
     },
     {
       "id": "redeem",
-      "label": "Redeem GensisProtocol",
+      "label": "Redeem GenesisProtocol",
       "description": "Executing this proposal will redeem any pending rewards for voting and staking",
       "notes": "",
       "fields": [
@@ -133,8 +133,8 @@
         },
         {
           "name": "_beneficiary",
-          "defaultValue": "0x0000000000000000000000000000000000000000",
-          "label": "Beneficiary (leave zero-address to redeem for this DAO)"
+          "defaultValue": "_avatar",
+          "label": "Beneficiary address (this DAO is given as the default)"
         }
       ],
       "abi": {

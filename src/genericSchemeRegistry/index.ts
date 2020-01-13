@@ -2,13 +2,20 @@
 /*
  */
 import BN = require("bn.js");
+const namehash = require("eth-ens-namehash");
 const Web3 = require("web3");
 const dutchXInfo = require("./schemes/DutchX.json");
 const gpInfo = require("./schemes/GenesisProtocol.json");
+const ensRegistryInfo = require("./schemes/ENSRegistry.json");
+const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
+const registryLookupInfo = require("./schemes/RegistryLookup.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
+  ensRegistryInfo,
+  ensPublicResolverInfo,
   gpInfo,
+  registryLookupInfo,
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
@@ -42,10 +49,12 @@ export interface IActionFieldOptions {
   labelTrue?: string;
   labelFalse?: string;
   type?: string;
+  optional?: boolean;
   placeholder?: string;
+  transformation?: string;
 }
 
-export  class ActionField {
+export class ActionField {
   public decimals?: number;
   public defaultValue?: any;
   public name: string;
@@ -53,7 +62,9 @@ export  class ActionField {
   public labelTrue?: string;
   public labelFalse?: string;
   public type?: string;
+  public optional?: boolean;
   public placeholder?: string;
+  public transformation?: string;
 
   constructor(options: IActionFieldOptions) {
     this.decimals = options.decimals;
@@ -63,20 +74,39 @@ export  class ActionField {
     this.labelTrue = options.labelTrue;
     this.labelFalse = options.labelFalse;
     this.type = options.type;
+    this.optional = options.optional;
     this.placeholder = options.placeholder;
+    this.transformation = options.transformation;
   }
   /**
    * the value to pass to the contract call (as calculated from the user's input data)
    * @return [description]
    */
-  public callValue(userValue: any) {
+  public callValue(userValue: string|string[]) {
+    if (Array.isArray(userValue)) {
+      userValue = userValue.map((val: string) => Object.prototype.hasOwnProperty.call(val, "trim") ? val.trim() : val);
+    } else if (Object.prototype.hasOwnProperty.call(userValue, "trim")) {
+      userValue = userValue.trim();
+    }
+
     if (this.type === "bool") {
-      return parseInt(userValue, 10) === 1;
+      return parseInt(userValue as string, 10) === 1;
     }
 
     if (this.decimals) {
-      return (new BN(userValue).mul(new BN(10).pow(new BN(this.decimals)))).toString();
+      return (new BN(userValue as string).mul(new BN(10).pow(new BN(this.decimals)))).toString();
     }
+
+    switch (this.transformation) {
+      case "namehash": {
+        return namehash.hash(userValue);
+      }
+      case "keccak256": {
+        const web3 = new Web3();
+        return web3.utils.keccak256(userValue);
+      }
+    }
+
     return userValue;
   }
 }
@@ -218,7 +248,7 @@ export class GenericSchemeRegistry {
           network = "main";
       }
     }
-    const spec = SCHEMEADDRESSES[network][address];
+    const spec = SCHEMEADDRESSES[network][address.toLowerCase()];
     if (spec) {
       return new GenericSchemeInfo(spec);
     }

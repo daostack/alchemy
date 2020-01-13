@@ -6,32 +6,16 @@
   transform: translate(-50%,-50%)
 }
 
-.menuDot {
-    height: 8px;
-    width: 8px;
-    margin-left: 0;
-    display: inline-block;
-
-  &.red {
-    background-color: #f65050;
-    border-radius: 50%;
-  }
-}
-
 button:hover {
   cursor: pointer;
 }
 
 .wrapper {
   flex-grow: 2;
-  padding: 30px 50px 100px 300px;
+  padding: 30px 50px 100px 50px;
   overflow: auto;
   z-index: 0;
   position: relative;
-}
-
-.proposalHistory {
-  display: block;
 }
 
 .outer {
@@ -40,29 +24,8 @@ button:hover {
   width: 100%;
 }
 
-.emptyRedemptions {
-  padding: 100px 0;
-  text-align: center;
-
-  img {
-    margin-right: -35px;
-  }
-
-  h2 {
-    height: 55px;
-    font-size: 45px;
-    color: rgba(104, 155, 214, 1.000);
-  }
-
-  p {
-    color: $gray-1;
-    font-size: 21px;
-    padding-top: 0;
-    margin-top: 0;
-    font-family: "AccordBold", sans-serif;
-    width: 602px;
-    margin: 0 auto;
-  }
+.memberHeaderTable {
+  padding: 0 15px 0 15px;
 }
 
 .memberTable, .memberTableHeading {
@@ -73,6 +36,10 @@ button:hover {
 
     .memberAvatar {
       width: 40px;
+
+      img {
+        margin-right: 20px;
+      }
     }
 
     .memberName {
@@ -80,6 +47,11 @@ button:hover {
       color: rgba(0, 29, 53, 1.000);
       text-align: left;
       width: 200px;
+
+      // > div {
+      //   width: 200px;
+      //   overflow: hidden;
+      // }
     }
 
     .memberAddress {
@@ -103,21 +75,27 @@ button:hover {
       .reputationAmounts {
         display: inline-block;
       }
-
     }
+
 
     .memberSocial {
       text-align: right;
       min-width: 110px;
+
+      .icon {
+        width: 24px;
+        height: 24px;
+      }
     }
+
   }
 }
 
 .memberTableHeading {
-    font-size: 13px;
-    font-weight: bold;
-    color: rgba(0, 29, 53, 1.000);
-    text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  color: rgba(0, 29, 53, 1.000);
+  text-align: center;
 
   tr {
     .memberAvatar {
@@ -131,57 +109,21 @@ button:hover {
     .memberSocial {
       min-width: 110px;
     }
+
   }
 
 }
 
-.closedProposalsHeader {
-  display: block;
+.proposalHistoryTable {
   width: 100%;
-  margin: 0 auto 10px auto;
-  display: flex;
+  border-collapse: collapse;
+}
+
+.proposalHistoryTableHeader {
   font-size: 12px;
   font-weight: bold;
   text-align: left;
-
-  .votes {
-    width: 103px;
-  }
-
-  .predictions {
-    width: 110px;
-  }
-
-  .proposalCreator {
-    width: 180px;
-  }
-
-  .endDate {
-    width: 60px;
-    padding-right: 10px;
-  }
-
-  .scheme {
-    width: 80px;
-  }
-
-  .title {
-    width: 250px;
-    padding: 0 15px;
-    flex-grow: 1;
-  }
-
-  .closeReason {
-    width: 150px;
-    position: relative;
-  }
-
-  .myActions {
-    text-align: left;
-    width: 130px;
-  }
 }
-
 
 .noticeWrapper {
   width: 100%;
@@ -236,387 +178,9 @@ button:hover {
   }
 }
 
-.menuWrapper {
-  bottom: 0;
-  position: absolute;
-  height: 270px;
-  left: 0;
-  width: 100%;
-  border-top: 2px solid rgba(78, 137, 208, 1.000);
-  transition: all .25s ease;
-  padding-top: 20px;
-
-  ul {
-    width: 100%;
-    margin: 0;
-    transition: all .25s ease;
-    padding: 0;
-    position: relative;
-
-    li {
-      position: initial;
-      list-style: none;
-      margin: 0;
-      width: 100%;
-      height: 24px;
-
-      a {
-        color: rgba(196, 215, 236, 1.000);
-        text-decoration: none;
-        padding: 5px 0 5px 30px;
-        width: auto;
-        display: block;
-        font-family: "Open Sans";
-        font-size: 12px;
-        transition: all .25s ease;
-      }
-
-      &:hover a {
-        background-color: rgba(32, 104, 188, 1.000);
-        cursor: pointer;
-      }
-
-      &:hover ul li a {
-        background-color: rgba(255,255,255,0);
-      }
-
-      ul {
-        left: 50px;
-        top: -80px;
-        width: 130px;
-        opacity: 0;
-        transform: scale(0);
-        transition: all .25s ease;
-        padding: 10px 0 10px 0;
-        background-color: rgba(255,255,255,1);
-        border-radius: 0 10px 10px 0;
-
-        .diamond {
-          width: 10px;
-          height: 10px;
-          background-color: #fff;
-          position: absolute;
-          z-index: 0;
-          top: 50%;
-          transform: translateY(-5px) rotate(45deg);
-          left: -5px;
-        }
-
-        li {
-          text-align: left;
-          position: relative;
-          z-index: 1000;
-          height: auto;
-
-          a {
-            padding: 8px 10px;
-            color: rgba(78, 97, 118, 1.000);
-
-            b {
-              display: inline-block;
-              width: 35px;
-              text-align: center;
-            }
-          }
-
-          &:hover a {
-            background-color: rgba(240, 245, 251, 1.000);
-          }
-
-          img {
-            position: relative;
-            top: 0;
-            height: 14px;
-            left: 0;
-            margin-right: 5px;
-          }
-        }
-      }
-      &:hover ul {
-        left: 10px;
-        opacity: 1;
-        top: -90px;
-        transform: translateX(100%) scale(1);
-        background-color: rgba(255,255,255,1);
-      }
-    }
-
-    li.daoStack {
-      padding-top: 10px;
-
-      a {
-        color: white;
-        font-family: "AccordBold";
-        font-size: 13px;
-      }
-
-      img {
-        margin-top: -3px;
-        top: 5px;
-        position: relative;
-      }
-    }
-  }
-}
-
-.daoIcon {
-  width: 40px;
-  height: 40px;
-  display: inline-block;
-  border-radius: 40px;
-  background-repeat: repeat;
-}
-
-
-.daoSidebar {
-  min-width: 250px;
-  position: relative;
-  max-width: 250px;
-  height: 100%;
-  background-color: $sky;
-  color: $white;
-  flex-grow: 1;
-  overflow-y: auto;
-  position: fixed;
-  top: 0;
-  padding-top: 50px;
-  z-index: 1000;
-
-  &:hover {
-    z-index: 1000;
-  }
-}
-
-.daoDescription {
-  padding: 0px 20px 0px 20px;
-
-  p {
-    padding: 0;
-    margin: 0;
-    font-size: 13px;
-  }
-
-  a {
-    color: silver;
-  }
-
-  a:hover {
-    color: white;
-  }
-}
-
-.navHeading {
-  font-family: "Open Sans";
-  font-size: 11px;
-  border-bottom: 1px solid rgba(78, 137, 209, 1.000);
-  width: 100%;
-  display: block;
-
-  b {
-    display: inline-block;
-    background-color: #3178ca;
-    margin-right: 10px;
-    position: relative;
-    left: 15px;
-    top: 17px;
-    padding: 10px;
-    font-weight: normal;
-    color: rgba(255,255,255,.5);
-  }
-
-}
-
-.homeNotification, .holdersNotification, .historyNotification, .redemptionNoticication {
-  opacity: 0;
-}
-
-.redemptionNoticication {
-  opacity: 1;
-}
-
-.daoNavigation {
-  position: relative;
-  height: 100%;
-  min-height: 780px;
-  background-color: rgba(48, 120, 202, 1.000);
-  height: -webkit-fill-available;
-  height: -opera-fill-available;
-
-  .daoName {
-    padding: 20px;
-
-    a {
-      display: block;
-      position: relative;
-      font-size: 29px;
-      line-height: 29px;
-      font-weight: bold;
-
-      em {
-        width: 50px;
-        height: 50px;
-        position: absolute;
-        opacity: .5;
-        z-index: 0;
-        background-color: rgba(255,255,255,.5);
-        top: -5px;
-        left: -5px;
-        border-radius: 50px;
-      }
-
-      b {
-        position: relative;
-        z-index: 100;
-      }
-      span {
-        position: absolute;
-        padding-left: 60px;
-        top: 50%;
-        left: 0;
-        margin-top: -3px;
-        transform: translateY(-50%);
-      }
-    }
-
-    a:visited {
-      color: $white;
-    }
-
-    p {
-      font-size: 14px;
-      opacity: .7;
-      padding: 0;
-    }
-  }
-  .navigation {
-    font-family: "Open Sans";
-
-    ul {
-      margin-top: 15px;
-      padding: 0;
-    }
-
-    li {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-
-      .notification {
-        width: 4px;
-        height: 8px;
-        border-radius: 8px;
-        position: relative;
-        top: -2px;
-        background-color: $accent-2;
-        display: inline-block;
-        opacity: 0;
-      }
-
-      img {
-        margin-left: 2px;
-        position: relative;
-        top: 2px;
-        margin-right: 8px;
-      }
-
-    }
-    li a {
-      display: block;
-      font-size: 14px;
-      color: $white;
-      padding: 8px 23px 8px 8px;
-      background-color: rgba(32, 104, 188, 0);
-      transition: all .25s ease;
-    }
-
-    li a:visited {
-      color: $white;
-    }
-
-    li a:hover {
-      background-color: rgba(32, 104, 188, 1.000);
-    }
-  }
-}
-
-.daoHoldings {
-  display: block;
-
-  .navHeading b {
-    padding: 10px 25px 10px 10px;
-  }
-
-  .navHeading {
-    margin-top: -30px;
-  }
-
-  .navHeading a {
-    display: inline-block;
-    position: relative;
-    top: 19px;
-    left: -14px;
-  }
-
-  ul {
-    margin-top: 15px;
-    padding: 0;
-
-    li {
-      padding: 8px 23px;
-      font-size: 14px;
-      list-style: none;
-    }
-  }
-}
-
-
-
-.menuToggle {
-  display: none;
-}
-
 .loading img {
   margin: 0 auto;
   display: block;
-}
-
-.nav {
-  padding: 0 30px;
-  position: relative;
-
-  span {
-    padding: 10px;
-  }
-
-  .borderBottom {
-    height: 3px;
-    width: 100%;
-    position: absolute;
-    background-color: rgba(216, 216, 216, 1.000);
-    z-index: 0;
-    bottom: 0;
-    left: 0;
-    opacity: .4;
-  }
-}
-
-.columnHeader {
-  width: 100%;
-  font-size: $small;
-  text-transform: uppercase;
-  opacity: 0.5;
-
-  .votes {
-    float: left;
-    width: 55px;
-    text-align: center;
-  }
-
-  .predictions {
-    width: 140px;
-    text-align: center;
-    float: right;
-  }
 }
 
 .membersContainer {
@@ -660,7 +224,7 @@ button:hover {
 }
 
 .member {
-  padding: 15px;
+  padding: 5px 15px 5px 15px;
   margin-bottom: 2px;
   background-color: white;
   border-radius: 3px;
@@ -668,136 +232,6 @@ button:hover {
 
 a {
   text-decoration: none;
-}
-
-a.navItem {
-  font-size: $body;
-  color: $black-halftone;
-  padding: 10px 0;
-  position: relative;
-  z-index: 100;
-  transition: all .25s ease;
-  display: inline-block;
-  height: 50px;
-  line-height: 50px;
-  vertical-align: middle;
-  margin: 0 30px;
-  border-bottom: 3px solid $accent-4-transparent;
-}
-
-a.navRedemption {
-  font-size: $body;
-  color: rgba(34, 159, 110, 1.000);
-  padding: 10px 0;
-  position: relative;
-  z-index: 100;
-  transition: all .25s ease;
-  display: inline-block;
-  height: 50px;
-  line-height: 50px;
-  vertical-align: middle;
-  margin: 0 0 0 30px;
-  border-bottom: 3px solid $accent-4-transparent;
-}
-
-a.navRedemption:hover {
-  font-size: $headline-2;
-  color: rgba(34, 159, 110, 1.000);
-  border-bottom: 3px solid rgba(34, 159, 110, 1.000);
-}
-
-.nav a.navItem:nth-child(1) {
-  margin-left: 0;
-}
-
-.redeemAllRewardsButton {
-  border: 1px solid $accent-1;
-  font-weight: bold;
-  float: right;
-  color: $accent-1;
-  font-size: $body;
-  padding: 8px 11px;
-  transition: all .25s ease;
-  background-color: rgba(0, 211, 167, 0);
-  vertical-align: middle;
-  float: right;
-  cursor: pointer;
-  position: relative;
-  top: 30px;
-}
-
-.redeemAllContainer {
-  position: absolute;
-  right: 30px;
-}
-
-.pendingRewards {
-  float: right;
-  position: relative;
-  top: 38px;
-  font-size: $body;
-  right: 10px;
-}
-
-
-.nav span.redemptionNotification {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  background: none;
-  border: 1px solid rgba(34, 159, 110, 1.000);
-  color: rgba(34, 159, 110, 1.000);
-  padding: 1px 1px 1px 1px;
-  text-align: center;
-  line-height: 13px;
-  border-radius: 28px;
-  font-size: 10px;
-  position: absolute;
-  top: 51%;
-  transform: translateY(-50%);
-  left: -24px;
-}
-
-.buyGen {
-  font-size: $small;
-}
-
-
-a.navItem.selected {
-  font-size: $headline-2;
-  color: $black;
-  border-bottom: 3px solid rgba(67, 67, 67, 1.000);
-}
-
-a.navItem:hover {
-  font-size: $headline-2;
-  color: $black;
-  border-bottom: 3px solid rgba(67, 67, 67, 1.000);
-}
-
-.daoAvatar {
-  background-color: $white;
-  box-shadow: $shadow-2;
-  width: 50px;
-  height: 50px;
-  text-align: center;
-  transform: rotate(45deg);
-  position: absolute;
-  top: 0;
-  left: 13px;
-
-  img {
-    max-width: 30px;
-    max-height: 30px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%) rotate(-45deg);
-  }
-}
-
-.daoAvatarCircles {
-  background-color: gray;
 }
 
 .holdings {
@@ -846,54 +280,6 @@ a.navItem:hover {
 
 }
 
-.daoPrefs {
-  display: inline;
-  background-color: transparent;
-  border: $gray-border-halftone;
-  padding: 5px 5px 4px 5px;
-  border-radius: 50px;
-  position: relative;
-  top: -3px;
-  left: 6px;
-  opacity: .5;
-}
-
-.genTitle {
-    font-weight: 700;
-    font-size: 32px;
-    width: 80px;
-    float: left;
-    text-align: center;
-    position: relative;
-    top: 2px;
-}
-
-.genStats {
-  width: 90px;
-  float: left;
-
-  .caption {
-    padding-top: 10px;
-  }
-}
-
-.small {
-  font-size: $small;
-}
-
-.caption {
-  font-size: $caption;
-}
-
-.leftAlign {
-  text-align: left;
-}
-
-.rightAlign {
-  text-align: right;
-}
-
-
 .daoHistoryHeader {
     font-size: 28px;
     color: rgba(104, 155, 214, 1.000);
@@ -905,192 +291,10 @@ a.navItem:hover {
     padding-top: 10px;
 }
 
-.redemptionsHeader {
-  font-size: 28px;
-  font-weight: bold;
-  color: rgba(104, 155, 214, 1);
-  padding-bottom: 5px;
-  border-bottom: 1px solid rgba(191, 203, 213, 1);
-  padding-top: 10px;
-  background-color: rgba(229, 235, 242, 1.000);
-
-  span {
-    font-size: 13px;
-    font-weight: bold;
-    color: rgba(104, 155, 214, 1.000);
-    border-left: 1px solid rgba( 191, 203, 213, 1);
-    display: inline-block;
-    margin-left: 15px;
-    padding-left: 15px;
-
-
-    span {
-      border-left: none;
-      margin-left: 0;
-      padding-left: 0;
-    }
-  }
-
-}
-
-.hidden {
-  display: none;
-}
-
-.tourModal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10000000;
-  width: 100%;
-  height: 100%;
-  overflow: scroll;
-
-  .accessTour {
-    position: absolute;
-    z-index: 100;
-    right: 65px;
-    top: 77px;
-
-    button {
-      position: absolute;
-      right: 0;
-      border: none;
-      background: none;
-      outline: none;
-    }
-
-    div {
-      color: white;
-      position: relative;
-      top: 47px;
-    }
-  }
-
-  .bg {
-    position: absolute;
-    z-index: 0;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,.85);
-  }
-
-  .tourStart {
-    h1 {
-      margin-bottom: 0;
-      line-height: 24px;
-      font-size: 34px;
-    }
-    span {
-      font-size: $body;
-      opacity: .7;
-
-      img {
-        position: relative;
-        top: 6px;
-        margin-left: 5px;
-      }
-    }
-  }
-
-  .tourStart, .tourEnd {
-    text-align: center;
-    padding: 30px;
-    position: absolute;
-    width: 480px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    z-index: 100;
-    color: $white;
-
-    button {
-      font-size: $subheader;
-      color: $white;
-      border: 1px solid $white;
-      margin: 0 10px;
-      background-color: rgba(255,255,255,0);
-      padding: 10px 15px;
-      line-height: $subheader;
-      font-family: $body-font;
-
-      img {
-        margin-right: 8px;
-      }
-
-      &:hover {
-        background-color: $white-halftone;
-      }
-    }
-
-    button.startButton {
-      color: $black;
-      background-color: $white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    h1 {
-      font-family: $heading-1-font;
-      font-size: 34px;
-    }
-
-    p {
-      margin: 30px 0;
-    }
-
-    a {
-      color: $white;
-      text-decoration: underline;
-    }
-  }
-}
-
-@media only screen and (min-width: 645px) {
-  .tourModal {
-    .accessTour {
-      right: 66px;
-      top: 61px;
-    }
-  }
-}
-
-@media only screen and (min-width: 768px) {
-  .wrapper {
-  }
-}
-
-
-@media only screen and (min-width: 850px) {
-  .wrapper {
-
-  }
-
-  .tourModal .tourStart h1, .tourModal .tourEnd h1 {
-    font-size: 48px;
-  }
-}
-
-
-@media only screen and (min-width: 1127px) {
-  .tourModal {
-    .accessTour {
-      top: 47px;
-    }
-  }
-}
-
 @media only screen and (max-width: 425px) {
   .outer {
     display: block;
     position: relative;
-  }
-
-  .redemptionsHeader {
-    padding: 10px 0 10px 15px;
-    font-size: 18px;
   }
 
   .memberTable {
@@ -1114,119 +318,8 @@ a.navItem:hover {
     display: none;
   }
 
-  .daoSidebar {
-    width: 50px;
-    max-width: 100%;
-    height: auto;
-    flex-grow: unset;
-    z-index: 100000;
-    background-color: rgba(49, 120, 202, 0);
-
-    &:hover {
-      z-index: 100000;
-    }
-
-    .daoNavigation {
-      height: 0px;
-      min-height: auto;
-      overflow: hidden;
-      transition: all .25s ease;
-
-      .daoName {
-        padding: 20px 20px 23px 20px;
-      }
-
-      .daoName a span {
-        position: absolute;
-        padding-left: 0;
-        top: -5px;
-        left: 64px;
-        margin-top: -3px;
-        transform: translateY(0);
-        font-size: 13px;
-      }
-
-      .navigation li a {
-        padding: 4px 23px 4px 8px;
-      }
-    }
-  }
-
-  .daoSidebar.openMenu {
-      z-index: 1000000;
-      width: 100%;
-      background-color: rgba(49, 120, 202, 1.000);
-      padding-bottom: 50px;
-
-      .daoNavigation {
-        height: 520px;
-      }
-
-      .menuClosed {
-        display: none;
-      }
-
-      .menuOpen {
-        display: block;
-      }
-    }
-
-  .menuWrapper {
-    position: relative;
-    height: auto;
-    padding-bottom: 20px;
-
-    ul li {
-      height: auto;
-
-      a {
-        padding: 3px 0 3px 30px;
-      }
-    }
-
-    ul li:hover ul {
-      left: 40px;
-      top: -20px;
-    }
-
-    ul li ul {
-      position: absolute;
-    }
-  }
-
-  .daoDescription {
-    position: absolute;
-    top: 35px;
-    left: 64px;
-    font-size: 12px;
-  }
-
-  .navHeading {
-    margin-top: -40px;
-  }
-
-  .daoHoldings ul li {
-    display: inline-block;
-  }
-
-  .menuToggle {
-    display: block;
-    position: absolute;
-    top: -30px;
-    top: 16px;
-    left: 12px;
-
-    .menuClosed {
-      display: block;
-    }
-
-    .menuOpen {
-      display: none;
-    }
-  }
-
   .wrapper {
-    padding: 0px 0 100px 0;
+    padding: 50px 0 100px 0;
   }
 
   .noticeWrapper {
@@ -1258,30 +351,6 @@ a.navItem:hover {
     }
   }
 
-  .queueType {
-    font-size: 18px;
-    padding-left: 15px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-  }
-
-  .createProposal {
-    top: 8px;
-    right: 15px;
-    height: 26px;
-    line-height: 26px;
-    color: #fff;
-  }
-
-  a.createProposal:visited {
-    color: #fff;
-  }
-
-  .proposalsHeader {
-    padding-top: 10px;
-    padding-bottom: 0px;
-  }
-
   .reputationAmounts {
     position: absolute;
     right: 10px;
@@ -1302,26 +371,15 @@ a.navItem:hover {
     position: relative;
   }
 
-  .membersContainer {
-    margin: 0px auto 10px auto;
-
-    h2 {
-      padding-left: 15px;
-      font-size: 18px;
-      padding-bottom: 10px;
-      padding-top: 10px;
-      margin: 0;
-    }
+  .membersContainer h2 {
+    padding-left: 10px;
   }
 
-    .daoHistoryHeader {
-      padding-left: 15px;
-      padding-top: 10px;
-      padding-bottom: 10px;
-      font-size: 18px;
-    }
+  .daoHistoryHeader {
+    padding-left: 10px;
+  }
 
-    .closedProposalsHeader {
-      display: none;
-    }
+  .proposalHistoryTableHeader {
+    display: none;
+  }
 }

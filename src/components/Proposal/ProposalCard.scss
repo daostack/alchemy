@@ -67,7 +67,7 @@
 
   h3 {
     font-size: $body;
-    margin: 4px 20px 10px 20px;
+    margin: 4px 20px 6px 20px;
   }
 
   .closedTime {
@@ -95,6 +95,10 @@
     position: relative;
     top: -3px;
   }
+}
+
+.summary {
+  margin: 0 20px 20px 20px;
 }
 
 .proposal:hover {
@@ -184,7 +188,7 @@
       width: 116px;
       border-radius: 0 8px 8px 8px;
       background-color: white;
-      height: 180px;
+      padding: 5px 0;
       box-shadow: 2px 2px 9px 0 rgba(12, 0, 51, 0.1);
       position: absolute;
       top: -90px;
@@ -203,6 +207,9 @@
       }
     }
 
+    .followButton {
+      text-align: center;
+    }
   }
 }
 
@@ -228,19 +235,15 @@
 .createdBy {
   font-size: $small;
   color: $black-thirdtone;
-  margin: 15px 10px 5px 10px;
-
-  .targetAccount {
-    top: 7px;
-    left: 4px;
-
-    img {
-      width: 16px;
-      height: 16px;
-    }
-  }
+  margin: 15px 10px 5px 13px;
+  position: relative;
+  left: 7px;
 }
 
+.tagsContainer {
+  padding-left: 18px;
+  padding-bottom: 12px;
+}
 
 @media only screen and (max-width: 425px) {
   .proposal {

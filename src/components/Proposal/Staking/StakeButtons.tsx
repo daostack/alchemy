@@ -1,22 +1,18 @@
 import { Address, IDAOState, IProposalStage, IProposalState, Stake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import * as web3Actions from "actions/web3Actions";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { formatTokens } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
-//@ts-ignore
 import { Modal } from "react-router-modal";
 import { VoteOptions } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, of } from "rxjs";
 
 import * as css from "./StakeButtons.scss";
 
@@ -31,26 +27,28 @@ interface IExternalProps {
   beneficiaryProfile?: IProfileState;
   contextMenu?: boolean;
   currentAccountAddress?: Address;
+  currentAccountGens: BN|null;
+  currentAccountGenStakingAllowance: BN;
   dao: IDAOState;
   detailView?: boolean;
   expired?: boolean;
   historyView?: boolean;
+  stakes: Stake[];
 }
 
 interface IDispatchProps {
   stakeProposal: typeof arcActions.stakeProposal;
   showNotification: typeof showNotification;
-  approveStakingGens: typeof web3Actions.approveStakingGens;
+  approveStakingGens: typeof arcActions.approveStakingGens;
 }
 
 const mapDispatchToProps = {
-  approveStakingGens: web3Actions.approveStakingGens,
+  approveStakingGens: arcActions.approveStakingGens,
   stakeProposal: arcActions.stakeProposal,
   showNotification,
 };
 
-type SubscriptionData = [BN, BN, Stake[]];
-type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
+type IProps = IExternalProps & IDispatchProps;
 
 class StakeButtons extends React.Component<IProps, IState> {
 
@@ -65,9 +63,9 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public showApprovalModal = async (_event: any): Promise<void> => {
-    if ((await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
-      this.setState({ showApproveModal: true });
-    }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    this.setState({ showApproveModal: true });
   }
 
   public closeApprovalModal = (_event: any): void => {
@@ -78,34 +76,40 @@ class StakeButtons extends React.Component<IProps, IState> {
     this.setState({ showPreStakeModal: false });
   }
 
-  public showPreStakeModal = (prediction: number): (_event: any) => void => (_event: any): void => {
-    if (!this.props.currentAccountAddress) {
-      enableWeb3ProviderAndWarn(this.props.showNotification.bind(this));
-    } else {
-      this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
-    }
+  public showPreStakeModal = (prediction: number): (_event: any) => void => async (_event: any): Promise<void> => {
+    if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
+    this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
+  }
+
+  public handleCancelPreApprove = async (_event: any): Promise<void> => {
+    this.setState({ showApproveModal: false });
   }
 
   public handleClickPreApprove = async (_event: any): Promise<void> => {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
+    if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
+
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.proposal.votingMachine);
     this.setState({ showApproveModal: false });
   }
 
-  public render(): any {
-    const [currentAccountGens, currentAccountGenStakingAllowance, stakesOfCurrentUser] = this.props.data;
+  private getStakeProposalAction = (stakeProposal: typeof arcActions.stakeProposal, proposal: IProposalState, pendingPrediction: number) => 
+    (amount: number) => { stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount); };
 
+  public render(): RenderOutput {
     const {
       beneficiaryProfile,
       contextMenu,
       currentAccountAddress,
+      currentAccountGens,
+      currentAccountGenStakingAllowance,
       dao,
       detailView,
       expired,
       historyView,
       proposal,
       stakeProposal,
+      stakes,
     } = this.props;
 
     const {
@@ -116,8 +120,8 @@ class StakeButtons extends React.Component<IProps, IState> {
 
     let currentStake: Stake;
     let currentAccountPrediction = 0;
-    if (stakesOfCurrentUser.length > 0) {
-      currentStake = stakesOfCurrentUser[0];
+    if (stakes.length > 0) {
+      currentStake = stakes[0];
     }
     if (currentStake) {
       currentAccountPrediction = currentStake.staticState.outcome;
@@ -137,7 +141,8 @@ class StakeButtons extends React.Component<IProps, IState> {
                 will be authorized to receive up to 100000 GENs. This transaction will not
                 cost you GEN or commit you in any way to spending your GENs in the future.
               </p>
-              <div>
+              <div className={css.preapproveButtonsWrapper}>
+                <button onClick={this.handleCancelPreApprove} data-test-id="button-cancel">Cancel</button>
                 <button onClick={this.handleClickPreApprove} data-test-id="button-preapprove">Preapprove</button>
               </div>
             </div>
@@ -157,7 +162,7 @@ class StakeButtons extends React.Component<IProps, IState> {
     const stakingEnabled = (proposal.stage === IProposalStage.Queued && !expired) ||
       (proposal.stage === IProposalStage.PreBoosted);
 
-    const hasGens = currentAccountGens.gt(new BN(0));
+    const hasGens = currentAccountGens && currentAccountGens.gt(new BN(0));
     // show staking buttons when !this.props.currentAccountAddress, even if no GENs
     const disableStakePass = (currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.No;
     const disableStakeFail = (currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.Yes;
@@ -176,10 +181,7 @@ class StakeButtons extends React.Component<IProps, IState> {
       !hasGens ?
         "Insufficient GENs" :
         currentAccountPrediction === prediction ?
-          "Can't change prediction" :
-          isPredicting ?
-            "Warning: Staking on this proposal is already in progress" :
-            ""
+          "Can't change prediction" : ""
       ;
 
     const passButton = (
@@ -211,9 +213,9 @@ class StakeButtons extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction === VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={(amount: number) => { stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount); }}
+            action={this.getStakeProposalAction(stakeProposal, proposal, pendingPrediction)}
             beneficiaryProfile={beneficiaryProfile}
-            closeAction={this.closePreStakeModal.bind(this)}
+            closeAction={this.closePreStakeModal}
             currentAccountGens={currentAccountGens}
             dao={dao}
             proposal={proposal}
@@ -260,34 +262,4 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 }
 
-const SubscribedStakeButtons = withSubscription({
-  wrappedComponent: StakeButtons,
-  loadingComponent: <div>Loading PredictionBox</div>,
-  errorComponent: (props) => <div>{props.error.message}</div>,
-
-  checkForUpdate: (oldProps, newProps) => {
-    return oldProps.currentAccountAddress !== newProps.currentAccountAddress || oldProps.proposal.id !== newProps.proposal.id;
-  },
-
-  createObservable: (props: IExternalProps) => {
-    const arc = getArc();
-    const spender = props.proposal.votingMachine;
-    const currentAccountAddress = props.currentAccountAddress;
-
-    if (currentAccountAddress) {
-      return combineLatest(
-        arc.GENToken().balanceOf(currentAccountAddress),
-        arc.allowance(currentAccountAddress, spender),
-        props.proposal.proposal.stakes({where: { staker: currentAccountAddress }})
-      );
-    } else {
-      return combineLatest(
-        of(new BN("0")),
-        of(undefined),
-        of([]),
-      );
-    }
-  },
-});
-
-export default connect(null, mapDispatchToProps)(SubscribedStakeButtons);
+export default connect(null, mapDispatchToProps)(StakeButtons);

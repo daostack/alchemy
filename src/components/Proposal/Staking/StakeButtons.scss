@@ -38,6 +38,7 @@
     display: inline-block;
     width: 60px;
     top: 0;
+    outline: none;
 
     strong {
       opacity: 1;
@@ -146,7 +147,6 @@
 
 .failButton {
   border-radius: 0 10px 10px 0;
-  top: 1px !important;
 }
 
 .predictions.unconfirmedPrediction {
@@ -170,7 +170,6 @@
     height: auto;
     padding-left: 5px;
     padding-right: 6px;
-    font-size: 11px;
     line-height: initial;
     padding-top: 5px;
     padding-bottom: 7px;
@@ -303,24 +302,35 @@
   line-height: 24px;
 
   p {
-    padding: 0 15px;
+    padding: 0 15px 6px 15px;
     font-size: 14px;
     opacity: .6;
   }
 
-  button {
-    width: 100px;
-    margin: 0 auto;
-    border: none;
-    cursor: pointer;
-    height: 30px;
-    line-height: 30px;
-    font-size: 13px;
-    color: white;
-    background-color: #0376ff;
-    border-radius: 15px;
-    display: block;
-    padding: 0 15px;
+  .preapproveButtonsWrapper {
+    text-align: center;
+    
+    button {
+      width: 100px;
+      margin-left: 3px;
+      margin-right: 3px;
+      border: none;
+      cursor: pointer;
+      height: 30px;
+      line-height: 30px;
+      font-size: 13px;
+      color: white;
+      background-color: #0376ff;
+      border-radius: 15px;
+      display: inline-block;
+      padding: 0 15px;
+      outline: none;
+    }
+
+    button:first-of-type {
+      background-color: rgba(225, 235, 247, 1.000);
+      color: rgba(0, 113, 255, 1.000);
+    }
   }
 }
 
@@ -358,7 +368,6 @@
     padding: 5px 0;
     border-radius: 0;
     margin: 0 0 0 0;
-    font-size: 11px;
     color: rgba(78, 97, 118, 1.000);
     font-weight: normal;
 

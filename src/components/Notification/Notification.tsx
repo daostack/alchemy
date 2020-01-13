@@ -46,7 +46,7 @@ export default class Notification extends React.Component<IProps, null> {
     showNotification(NotificationStatus.Success, "Copied to clipboard!");
   }
 
-  public render() {
+  public render(): RenderOutput {
     const { title, message, status, url, fullErrorMessage } = this.props;
 
     const transactionClass = classNames({
@@ -56,6 +56,9 @@ export default class Notification extends React.Component<IProps, null> {
       [css.error]: status === NotificationViewStatus.Failure,
       [css.success]: status === NotificationViewStatus.Success,
     });
+
+    // start the countdown to close after displaying
+    setTimeout((): void => { setTimeout( this.handleClose, 10000 ); }, 0);
 
     return (
       <div className={transactionClass}>

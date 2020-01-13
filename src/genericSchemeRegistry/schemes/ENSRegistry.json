@@ -1,0 +1,166 @@
+{
+  "name": "EnsRegistry",
+  "addresses": {
+    "main": [
+      "0x314159265dd8dbb310642f98f50c066173c1259b"
+    ],
+    "rinkeby": [
+      "0xe7410170f87102df0055eb195163a03b7f2bff4a"
+    ],
+    "private": [
+      "0xe7410170f87102df0055eb195163a03b7f2bff4a"
+    ]
+  },
+  "actions": [
+    {
+      "id": "setOwner",
+      "label": "Set Owner",
+      "description": "Reassigns ownership of the name identified by node to owner. Only callable by the current owner of the name.",
+      "notes": "https://docs.ens.domains/contract-api-reference/ens#set-owner",
+      "fields": [
+        {
+          "name": "node",
+          "label": "ENS Identifier Name",
+          "placeholder": "e.g. alice.eth",
+          "transformation": "namehash"
+        },
+        {
+          "name": "owner",
+          "label": "Owner Address"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "name": "owner",
+            "type": "address"
+          }
+        ],
+        "name": "setOwner",
+        "outputs": [],
+        "payable": false,
+        "type": "function"
+      }
+    },
+    {
+      "id": "setResolver",
+      "label": "Set Resolver",
+      "description": "Updates the resolver associated with the name identified by node to resolver. Only callable by the current owner of the name. resolver must specify the address of a contract that implements the Resolver interface.",
+      "notes": "https://docs.ens.domains/contract-api-reference/ens#set-resolver",
+      "fields": [
+        {
+          "label": "ENS Identifier Name",
+          "name": "node",
+          "placeholder": "e.g. alice.eth",
+          "transformation": "namehash"
+        },
+        {
+          "name": "resolver",
+          "label": "Resolver address"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "name": "resolver",
+            "type": "address"
+          }
+        ],
+        "name": "setResolver",
+        "outputs": [],
+        "payable": false,
+        "type": "function"
+      }
+    },
+    {
+      "id": "setTTL",
+      "label": "Set TTL",
+      "description": "Updates the caching time-to-live of the name identified by node. Only callable by the current owner of the name.",
+      "notes": "https://docs.ens.domains/contract-api-reference/ens#set-ttl",
+      "fields": [
+        {
+          "name": "node",
+          "label": "ENS Identifier Name",
+          "placeholder": "e.g. alice.eth",
+          "transformation": "namehash"
+        },
+        {
+          "name": "ttl",
+          "label": "Time to live"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "name": "ttl",
+            "type": "uint64"
+          }
+        ],
+        "name": "setTTL",
+        "outputs": [],
+        "payable": false,
+        "type": "function"
+      }
+    },
+    {
+      "id": "setSubnodeOwner",
+      "label": "Create Subdomain",
+      "description": "Creates a new subdomain of node, assigning ownership of it to the specified owner. If the domain already exists, ownership is reassigned but the resolver and TTL are left unmodified. label is the keccak256 hash of the subdomain label to create. For example, if you own alice.eth and want to create the subdomain iam.alice.eth, supply namehash('alice.eth') as the node, and keccak256('iam') as the label.",
+      "notes": "https://docs.ens.domains/contract-api-reference/ens#set-ttl",
+      "fields": [
+        {
+          "name": "node",
+          "label": "ENS Identifier Name",
+          "placeholder": "e.g. alice.eth",
+          "transformation": "namehash"
+        },
+        {
+          "name": "label",
+          "label": "Label",
+          "placeholder": "e.g. iam",
+          "transformation": "keccak256"
+        },
+        {
+          "name": "owner",
+          "label": "Owner Address"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "name": "label",
+            "type": "bytes32"
+          },
+          {
+            "name": "owner",
+            "type": "address"
+          }
+        ],
+        "name": "setSubnodeOwner",
+        "outputs": [],
+        "payable": false,
+        "type": "function"
+      }
+    }
+  ]
+}

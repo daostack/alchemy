@@ -1,3 +1,6 @@
+import { Arc } from "@daostack/client";
+import { settings } from "../../src/settings";
+
 const chai = require("chai");
 
 global.expect = chai.expect;
@@ -43,3 +46,22 @@ export function getContractAddresses() {
 export const userAddresses = [
   "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
 ];
+
+export function getArc() {
+  const arc = new Arc(settings.dev);
+  return arc;
+}
+
+/**
+ * Note this won't work until you've browsed into the app.
+ */
+export async function hideCookieAcceptWindow(): Promise<void> {
+  const acceptCookiesButton = await $("*[data-test-id=\"acceptCookiesButton\"]");
+  if (!acceptCookiesButton.error && await acceptCookiesButton.isDisplayedInViewport()) {
+    await acceptCookiesButton.click();
+  }
+}
+
+export async function hideTrainingTooltips() {
+  localStorage.setItem("trainingTooltipsEnabled", "false");
+}

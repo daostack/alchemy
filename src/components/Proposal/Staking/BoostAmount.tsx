@@ -15,7 +15,7 @@ interface IProps {
 
 export default class BoostAmount extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const {
       detailView,
       expired,

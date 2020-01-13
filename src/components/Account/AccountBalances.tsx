@@ -1,5 +1,5 @@
 import { Address, IDAOState, IMemberState } from "@daostack/client";
-import { getArc } from "arc";
+import { ethErrorHandler } from "lib/util";
 
 import BN = require("bn.js");
 import AccountBalance from "components/Account/AccountBalance";
@@ -14,11 +14,11 @@ interface IExternalProps {
   address: Address;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<[IMemberState, BN, BN]>
+type IProps = IExternalProps & ISubscriptionProps<[IMemberState, BN|null, BN|null]>
 
 class AccountBalances extends React.Component<IProps, null>  {
 
-  public render(): any {
+  public render(): RenderOutput {
     const { dao, data } = this.props;
 
     if (!data) {
@@ -33,7 +33,7 @@ class AccountBalances extends React.Component<IProps, null>  {
         { dao ?
           <div className={css.daoBalance}>
             <b>{dao.name}</b>
-            <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation}/>
+            <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} hideTooltip/>
           </div>
           :
           <div className={css.noReputation}>
@@ -67,13 +67,12 @@ export default withSubscription({
     if (!dao) {
       return of(null);
     }
-
-    const arc = getArc();
-    const arcDAO = arc.dao(dao.address);
+    const daoState = dao;
+    const arc = daoState.dao.context;
     return combineLatest(
-      address && arcDAO.member(address).state() || of(null),
-      arc.ethBalance(address),
-      arc.GENToken().balanceOf(address),
+      address && daoState.dao.member(address).state( { subscribe: true }) || of(null),
+      arc.ethBalance(address).pipe(ethErrorHandler()),
+      arc.GENToken().balanceOf(address).pipe(ethErrorHandler()),
     );
   },
 });

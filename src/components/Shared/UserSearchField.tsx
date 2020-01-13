@@ -97,7 +97,7 @@ class UserSearchField extends React.Component<IProps, IState> {
     return (
       <span>
         <span className={css.suggestionAvatar}>
-          <AccountImage accountAddress={suggestion.ethereumAccountAddress} />
+          <AccountImage accountAddress={suggestion.ethereumAccountAddress} profile={suggestion} width={24} />
         </span>
         <span className={css.suggestionText}>{suggestion.name + " " + suggestion.ethereumAccountAddress}</span>
       </span>
@@ -109,7 +109,7 @@ class UserSearchField extends React.Component<IProps, IState> {
   // input value for every given suggestion.
   public getSuggestionValue = (suggestion: IProfileState) => suggestion.ethereumAccountAddress;
 
-  public render() {
+  public render(): RenderOutput {
     const { value, suggestions } = this.state;
 
     // Autosuggest will pass through all these props to the input.

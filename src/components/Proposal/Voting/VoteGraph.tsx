@@ -15,7 +15,7 @@ interface IProps {
 }
 
 export default class VoteGraph extends React.Component<IProps, null> {
-  public render() {
+  public render(): RenderOutput {
     const { newVotesAgainst, newVotesFor, proposal, size } = this.props;
 
     const totalReputationSupply = fromWei(proposal.totalRepWhenCreated);

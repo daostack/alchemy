@@ -25,27 +25,49 @@ export interface ISubscriptionProps<ObservableType> {
 // For the props that can get passed into the wrapped component, removing the ISubscriptionProps since those get passed down by WithSubscription
 type OnlyWrappedComponentProps<T extends ISubscriptionProps<any>> = Subtract<T, ISubscriptionProps<any>>;
 
+/**
+ * Parameters for `withSubscription`
+ */
 interface IWithSubscriptionOptions<Props extends ISubscriptionProps<ObservableType>, ObservableType extends Record<string, any>> {
+  /**
+   * Specifies when to recreate the subscription. Either an array of prop names or a function that returns boolean.
+   */
   checkForUpdate: (keyof Props)[] | ((oldProps: OnlyWrappedComponentProps<Props>, newProps: OnlyWrappedComponentProps<Props>) => boolean);
-  createObservable: (props: OnlyWrappedComponentProps<Props>) => Observable<ObservableType>;
+  /**
+   * A function that given the props returns the observable to which we will subscribe.
+   */
+  createObservable: (props: OnlyWrappedComponentProps<Props>) => Promise<Observable<ObservableType>> | Observable<ObservableType>;
+  /**
+   * Optional commonet to display when there is an error fetching the data.
+   */
   errorComponent?: React.ReactElement<any> | React.ComponentType<{error: Error}>;
+  /**
+   * Optional function used by `fetchMore` to combine old data and new data.
+   */
   fetchMoreCombine?: (oldState: ObservableType, newData: any) => ObservableType;
+  /**
+   *  Optional function used by `fetchMore`. Should return an updated observable.
+   */
   getFetchMoreObservable?: (props: OnlyWrappedComponentProps<Props>, currentData: ObservableType) => Observable<any>;
+  /**
+   * Optional component to display while waiting for the first bit of data to arrive
+   */
   loadingComponent?: React.ReactElement<any> | React.ComponentType<Props>;
+  /**
+   * Optional as a hacky way to determine if when paging there is more data to load.
+   */
   pageSize?: number;
+  /**
+   * The component to render with the subscribed data.
+   */
   wrappedComponent: React.ComponentType<Props>;
 }
 
 /**
-   * Higher Order Component that subscribes to the observables required by the wrappedComponent and passes along the data observed as it comes in
-   * @param {React.ComponentType} wrappedComponent : The component to render with the subscribed data
-   * @param {string[] | ((oldProps, newProps) => boolean)} checkForUpdate :
-   *         Either an array of props to check for changes or a function that accepts the props and returns whether to update the subscription or not
-   * @param {(props) => Observable} createObservable : A function that given the props returns the observable to subscribe to
-   * @param {(props, currentData) => Observable} getFetchMoreObservable? : A function to call when the component wants to fetch more which should return the updated observable
-   * @param {(oldState, newData) => combinedData} fetchMoreCombine? : A function that combines old data and new data when fetchMore is called
-   * @param {number} pageSize? : Used for hacky way to determine if when paging there is more to load
-   */
+ * Higher Order Component that subscribes to the observables
+ * required by the wrappedComponent and passes along the data observed as it comes in.
+ * @oarams options See `IWithSubscriptionOptions`
+ */
 const withSubscription = <Props extends ISubscriptionProps<ObservableType>, ObservableType extends Record<string, any>>(options: IWithSubscriptionOptions<Props, ObservableType>) => {
 
   // The props that can get passed into the wrapped component, removing the ISubscriptionProps since those get passed down by WithSubscription
@@ -70,13 +92,18 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       };
     }
 
-    public setupSubscription(observable?: Observable<any>) {
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-      }
+    public async setupSubscription(observable?: Observable<any>) {
+
+      this.teardownSubscription();
+
       const { createObservable, wrappedComponent } = options;
 
-      this.observable = observable || createObservable(this.props);
+      try {
+        this.observable = observable || await createObservable(this.props);
+      } catch(ex) {
+        // this will go to the error page
+        this.setState(() => { throw ex; });
+      }
 
       this.subscription = this.observable.subscribe(
         (next: ObservableType) => {
@@ -86,14 +113,15 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
           });
         },
         (error: Error) => {
+          // eslint-disable-next-line no-console
           console.error(getDisplayName(wrappedComponent), "Error in subscription", error);
-
-          this.setState({
-            isLoading: false,
-            error,
-          });
+          // this will go to the error page
+          this.setState(() => { throw error; });
         },
-        () => { this.setState({complete: true}); }
+        () => { this.setState({
+          complete: true,
+          isLoading: false,
+        }); }
       );
     }
 
@@ -103,11 +131,11 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       }
     }
 
-    public componentDidMount() {
-      this.setupSubscription();
+    public async componentDidMount() {
+      await this.setupSubscription();
     }
 
-    public componentDidUpdate(prevProps: InputProps) {
+    public async componentDidUpdate(prevProps: InputProps) {
       const { checkForUpdate } = options;
 
       let shouldUpdate = false;
@@ -122,7 +150,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
         });
       }
       if (shouldUpdate) {
-        this.setupSubscription();
+        await this.setupSubscription();
       }
     }
 
@@ -130,8 +158,10 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       this.teardownSubscription();
     }
 
-    public render() {
-      if (this.state.isLoading && typeof options.loadingComponent !== "undefined") {
+
+    public render(): RenderOutput {
+      if (!this.state.complete && this.state.isLoading && typeof options.loadingComponent !== "undefined") {
+
         if (typeof options.loadingComponent === "function") {
           return <options.loadingComponent {...this.props as Props} />;
         }

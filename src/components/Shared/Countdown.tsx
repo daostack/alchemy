@@ -89,7 +89,7 @@ class Countdown extends React.Component<IProps, IState> {
     return value;
   }
 
-  public render() {
+  public render(): RenderOutput {
     const countDown = this.state;
 
     let percentageComplete = 0;
