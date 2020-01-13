@@ -1,7 +1,7 @@
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
-import { IProfileState, IProfilesState } from "reducers/profilesReducer";
+import { IProfilesState } from "reducers/profilesReducer";
 import { IDAOState, IProposalState, ICompetitionSuggestion, Address } from "@daostack/client";
 import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
 import { connect } from "react-redux";
