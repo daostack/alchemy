@@ -148,10 +148,10 @@ const SubmissionDetailsSubscription = withSubscription({
   createObservable: async (props: IExternalProps) => {
     return combineLatest(
       // this query is assumed to already be in the cache and well-subscribed
-      getProposalSubmission(props.proposalState.id, props.suggestionId),
+      getProposalSubmission(props.proposalState.id, props.suggestionId, true),
       getSubmissionVoterHasVoted(props.suggestionId, props.currentAccountAddress, true),
-      getCompetitionVotes(props.proposalState.id, props.currentAccountAddress),
-      props.proposalState.proposal.rewards({ where: { beneficiary: props.currentAccountAddress }})
+      getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true),
+      props.proposalState.proposal.rewards({ where: { beneficiary: props.currentAccountAddress, subscribe: true }})
         .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
         .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
     );

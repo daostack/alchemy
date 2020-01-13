@@ -186,10 +186,6 @@ export const getProposalSubmissions = (proposalId: string, subscribe = false): O
 };
 
 export const getProposalSubmission = (proposalId: string, id: string, subscribe = false): Observable<ICompetitionSuggestion> => {
-  /** 
-   * won't subscribe here because the only use case is SubmissionDetails where we can assume the suggestion has
-   * been subscribed by CompetitionDetails from where SubmissionDetails is loaded.
-   **/
   return getSubmissions(proposalId, { id }, subscribe).pipe(
     map((suggestions: Array<ICompetitionSuggestion>) => suggestions.length ? suggestions[0]: null ));
 };
