@@ -224,7 +224,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
               { formatTokens(submission.totalVotes) }
             </div>
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votedUp]: true })}>
-              <Tooltip placement="top" trigger={["hover"]} overlay={"You voted for this submission"}>
+              <Tooltip placement="top" trigger={votersVotes[index] ? ["hover"] : []} overlay={"You voted for this submission"}>
                 {votersVotes[index] ? <img src="/assets/images/Icon/vote/for-fill-green.svg"></img> : <img src="/assets/images/Icon/vote/for-gray.svg"></img>}
               </Tooltip>
             </div>
