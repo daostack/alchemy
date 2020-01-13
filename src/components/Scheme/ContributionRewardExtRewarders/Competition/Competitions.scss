@@ -48,6 +48,10 @@ a.blueButton {
   &.voting.noSubmissions {
     background-color: #9aa9b5;
   }
+
+  &.complete {
+    display: inherit;
+  }
 }
 
 .submissionsModalBackdrop {
