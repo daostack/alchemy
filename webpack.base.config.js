@@ -31,9 +31,9 @@ module.exports = {
       'ipfs-api': 'ipfs-api/dist',
       'ipfs-http-client': 'ipfs-http-client/dist',
       'bn.js': 'bn.js/lib/bn.js',
-      'lit-element': path.resolve('./node_modules/@dorgtech/daosmind/node_modules/lit-element'),
-      'lit-html': path.resolve('./node_modules/@dorgtech/daosmind/node_modules/lit-html'),
-      'graphql': path.resolve('./node_modules/@dorgtech/daosmind/node_modules/graphql')
+      'lit-element': path.resolve('./node_modules/lit-element'),
+      'lit-html': path.resolve('./node_modules/lit-html'),
+      'graphql': path.resolve('./node_modules/graphql')
     },
   },
 
@@ -62,7 +62,11 @@ module.exports = {
           /node_modules\/zen-observable-ts/,
           /node_modules\/graphql-request/,
           /node_modules\/https-did-resolver/,
-          path.join(process.cwd(), 'node_modules/@dorgtech/daosmind')
+          /node_modules\/@material/,
+          /node_modules\/graphql-tools/,
+          /node_modules\/ethereumjs-tx/,
+          /node_modules\/ethereumjs-common/,
+          /node_modules\/deprecated-decorator/
         ]
       },
 
