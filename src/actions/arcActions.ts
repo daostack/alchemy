@@ -184,7 +184,8 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
 
       // send the transaction and get notifications
       if (reputationFromTokenScheme) {
-        reputationFromTokenScheme.redeem(addressToRedeem).subscribe(...observer);
+        const agreementHash = await reputationFromTokenScheme.getAgreementHash();
+        reputationFromTokenScheme.redeem(addressToRedeem, agreementHash).subscribe(...observer);
       }
     }
   };
