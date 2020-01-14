@@ -1,9 +1,9 @@
-import { IDAOState, IProposalState, Address, Reward, IRewardState, CompetitionVote } from "@daostack/client";
+import { IDAOState, IProposalState, Address, CompetitionVote } from "@daostack/client";
 import * as React from "react";
 
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
-import { formatTokens, ensureHttps, hasGpRewards } from "lib/util";
+import { formatTokens, ensureHttps} from "lib/util";
 import { getProposalSubmission, getSubmissionVoterHasVoted, ICompetitionSubmissionFake, getCompetitionVotes, ICompetitionStatus } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
@@ -11,15 +11,14 @@ import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import { IProfilesState } from "reducers/profilesReducer";
-import { combineLatest, of, Observable } from "rxjs";
+import { combineLatest, of } from "rxjs";
 import Tooltip from "rc-tooltip";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
-import { map, mergeMap } from "rxjs/operators";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
 
-type ISubscriptionState = [ICompetitionSubmissionFake, boolean, Array<CompetitionVote>, IRewardState];
+type ISubscriptionState = [ICompetitionSubmissionFake, boolean, Array<CompetitionVote>];
 
 interface IExternalStateProps {
   profiles: IProfilesState;
@@ -62,8 +61,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const submission = this.props.data[0];
     const currentAccountVotedForIt = this.props.data[1];
     const currentAccountVotes = this.props.data[2];
-    const gpRewards = this.props.data[3];
-    const hasRedeemedProposal = !hasGpRewards(gpRewards);
+    const hasRedeemedProposal = true; // FAKE -- until we can figure out a way to know
     const status = this.props.status;
     const maxNumVotesReached = currentAccountVotes.length === competition.numberOfVotesPerVoter;
     const canVote = status.voting && !currentAccountVotedForIt && !maxNumVotesReached;
@@ -149,10 +147,10 @@ const SubmissionDetailsSubscription = withSubscription({
     return combineLatest(
       getProposalSubmission(props.proposalState.id, props.suggestionId, true),
       getSubmissionVoterHasVoted(props.suggestionId, props.currentAccountAddress, true),
-      getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true),
-      props.proposalState.proposal.rewards({ where: { beneficiary: props.currentAccountAddress} }, {subscribe: true })
-        .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
-        .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
+      props.currentAccountAddress ? getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true) : of([])
+      // , props.proposalState.proposal.rewards({ where: { beneficiary: props.currentAccountAddress} }, {subscribe: true })
+      //   .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
+      //   .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
     );
   },
 });

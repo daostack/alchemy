@@ -202,6 +202,9 @@ export const getSubmissionVotes = (submissionId: string, voterAddress?: Address,
 };
 
 export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: string, subscribe = false): Observable<boolean> => {
+  if (!voterAddress) {
+    return of(false);
+  }
   // submissionId is the actual id, not the count
   return getSubmissionVotes(submissionId, voterAddress, subscribe)
     .pipe(map((votes: Array<CompetitionVote>) => !!votes.length));
