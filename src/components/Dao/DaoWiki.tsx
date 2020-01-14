@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as Sticky from "react-stickynode";
-import { IDAOState, ISchemeState, Scheme } from "@daostack/client";
+import { IDAOState, ISchemeState, Scheme, IProposalType } from "@daostack/client";
 import { WikiContainer, actualHash, ReactiveWiki } from "@dorgtech/daosmind";
 import classNames from "classnames";
 
@@ -12,8 +12,8 @@ import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import Loading from "components/Shared/Loading";
-import * as daoStyle from "./Dao.scss";
 import * as proposalStyle from "../Scheme/SchemeProposals.scss";
+import * as daoStyle from "./Dao.scss";
 
 type IExternalProps = {
   daoState: IDAOState;
@@ -22,7 +22,7 @@ type IExternalProps = {
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
-  showNotification
+  showNotification,
 };
 
 interface IDispatchProps {
@@ -73,8 +73,23 @@ function DaoWiki(props: IProps) {
     checkIfWikiSchemeExists();
   }, []);
 
-  const registerWikiScheme = () => {
-    console.log("si dime");
+  const registerWikiScheme = async () => {
+    const permissions = 17;
+
+    const proposalValues = {
+      dao: props.daoState.address,
+      type: IProposalType.SchemeRegistrarAdd,
+      permissions: "0x" + permissions.toString(16).padStart(8, "0"),
+      value: 0, // amount of eth to send with the call
+      tags: ["Wiki"],
+      title: "Creation of WikiUpdate scheme",
+      //scheme
+      //hashParams
+    };
+
+    await props.createProposal(proposalValues)
+
+    console.log(proposalValues)
   };
 
   const NoWikiScheme = (
@@ -88,7 +103,7 @@ function DaoWiki(props: IProps) {
         </Link>
         <a
           className={classNames({
-            [proposalStyle.blueButton]: true
+            [proposalStyle.blueButton]: true,
           })}
           onClick={registerWikiScheme}
           data-test-id="createProposal"
@@ -123,12 +138,12 @@ const SubscribedDaoWiki = withSubscription({
     return dao.schemes(
       {
         where: {
-          name: "GenericScheme"
-        }
+          name: "GenericScheme",
+        },
       },
       { fetchAllData: true }
     );
-  }
+  },
 });
 
 export default connect(
