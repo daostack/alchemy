@@ -8,10 +8,10 @@ export const settings = {
     txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
   },
   staging: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/jellegerbrandy/daostackjelle",
-    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs/name/jellegerbrandy/daostackjelle",
-    web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
-    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/daostack/v36_7_xdai",
+    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs/name/daostack/v36_7_xdai",
+    web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://poa.api.nodesmith.io/v1/core/jsonrpc/ws?apiKey=128059b9320a462699aef283a7ae2546",
+    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://poa.api.nodesmith.io/v1/core/jsonrpc/ws?apiKey=128059b9320a462699aef283a7ae2546",
     ipfsProvider: process.env.ARC_IPFSPROVIDER || {
       "host": process.env.ARC_IPFSPROVIDER_HOST || "api.thegraph.com",
       "port": process.env.ARC_IPFSPROVIDER_PORT || "443",
