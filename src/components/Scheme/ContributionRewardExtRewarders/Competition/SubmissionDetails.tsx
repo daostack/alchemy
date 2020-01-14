@@ -147,7 +147,6 @@ const SubmissionDetailsSubscription = withSubscription({
   checkForUpdate: ["currentAccountAddress"],
   createObservable: async (props: IExternalProps) => {
     return combineLatest(
-      // this query is assumed to already be in the cache and well-subscribed
       getProposalSubmission(props.proposalState.id, props.suggestionId, true),
       getSubmissionVoterHasVoted(props.suggestionId, props.currentAccountAddress, true),
       getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true),
