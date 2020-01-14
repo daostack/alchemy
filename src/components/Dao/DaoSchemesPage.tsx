@@ -44,7 +44,7 @@ class DaoSchemesPage extends React.Component<IProps, null> {
     const knownSchemes = allSchemes.filter((scheme: Scheme) => scheme.staticState.name !== "ContributionReward" && KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) >= 0);
     const unknownSchemes = allSchemes.filter((scheme: Scheme) =>  KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) === -1 );
     const allKnownSchemes = [...contributionReward, ...knownSchemes];
-
+    console.log(unknownSchemes)
     const schemeCardsHTML = (
       <TransitionGroup>
         { allKnownSchemes.map((scheme: Scheme) => (
