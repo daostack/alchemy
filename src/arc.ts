@@ -164,6 +164,7 @@ async function getProviderNetworkName(provider?: any): Promise<string> {
  * @param provider web3Provider
  * @return the expected network nameif not correct
  */
+// @ts-ignore 
 async function checkWeb3ProviderIsForNetwork(provider: any): Promise<string> {
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
@@ -272,13 +273,14 @@ async function ensureCorrectNetwork(provider: any): Promise<void> {
   /**
    * It is required that the provider be the correct one for the current platform
    */
-  const correctNetworkErrorMsg = await checkWeb3ProviderIsForNetwork(provider);
+  // const correctNetworkErrorMsg = await checkWeb3ProviderIsForNetwork(provider);
 
-  if (correctNetworkErrorMsg) {
-    // eslint-disable-next-line no-console
-    console.error(`connected to the wrong network, should be ${correctNetworkErrorMsg}`);
-    throw new Error(`Please connect your wallet provider to ${correctNetworkErrorMsg}`);
-  }
+  console.warn(`POA Network version - disabled check for network...`)
+  // if (correctNetworkErrorMsg) {
+  //   // eslint-disable-next-line no-console
+  //   console.error(`connected to the wrong network, should be ${correctNetworkErrorMsg}`);
+  //   throw new Error(`Please connect your wallet provider to ${correctNetworkErrorMsg}`);
+  // }
 }
 
 function inTesting(): boolean {
