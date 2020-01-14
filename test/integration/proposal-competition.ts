@@ -60,38 +60,41 @@ describe("Proposals", () => {
     await numVotesInput.setValue(3);
 
     const ethRewardInput = await $("*[id=\"ethRewardInput\"]");
+    await ethRewardInput.scrollIntoView();
     await ethRewardInput.setValue(22);
 
     const compStartDateInput = await $("*[id=\"compStartDateInput\"]");
-    await compStartDateInput.setValue("01/01/1970");
+    await compStartDateInput.scrollIntoView();
+    await compStartDateInput.setValue("01/01/1921");
     // const compStartTimeInput = await $("*[name=\"compStartTime\"]");
     // await compStartTimeInput.setValue('00:00');
 
-    const compEndDateInput = await $("*[id=\"compEndDateInput\"]");
-    await compEndDateInput.setValue("01/01/2021");
-    // const compEndTimeInput = await $("*[id=\"compEndTimeInput\"]");
-    // await compEndTimeInput.setValue('00:00');
-
-    const votingStartDateInput = await $("*[id=\"votingStartDateInput\"]");
-    await votingStartDateInput.setValue("01/01/1970");
-    // const votingStartTimeInput = await $("*[id=\"votingStartTimeInput\"]");
-    // await votingStartTimeInput.setValue('00:00');
-
     const suggestionsEndDateInput = await $("*[id=\"suggestionsEndDateInput\"]");
-    await suggestionsEndDateInput.setValue("01/01/2022");
+    await suggestionsEndDateInput.scrollIntoView();
+    await suggestionsEndDateInput.setValue("01/02/2021");
     // const suggestionsEndTimeInput = await $("*[id=\"suggestionsEndTimeInput\"]");
     // await suggestionsEndTimeInput.setValue('00:00');
 
-    // we cannot click sumbit because it is outside of the window and the form is not scrollabele (sigh..)
-    // const createProposalSubmitButton = await $("*[type=\"submit\"]");
-    // await createProposalSubmitButton.scrollIntoView()
-    // await createProposalSubmitButton.click();
+    const votingStartDateInput = await $("*[id=\"votingStartDateInput\"]");
+    await votingStartDateInput.scrollIntoView();
+    await votingStartDateInput.setValue("01/03/1921");
+    // const votingStartTimeInput = await $("*[id=\"votingStartTimeInput\"]");
+    // await votingStartTimeInput.setValue('00:00');
+
+    const compEndDateInput = await $("*[id=\"compEndDateInput\"]");
+    await compEndDateInput.scrollIntoView();
+    await compEndDateInput.setValue("01/04/2021");
+    // const compEndTimeInput = await $("*[id=\"compEndTimeInput\"]");
+    // await compEndTimeInput.setValue('00:00');
+
+    const createProposalSubmitButton = await $("*[type=\"submit\"]");
+    await createProposalSubmitButton.scrollIntoView();
+    await createProposalSubmitButton.click();
 
     // check that the proposal appears in the list
     // test for the title
-    // const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
-    // await titleElement.waitForExist();
-
+    const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
+    await titleElement.waitForExist();
   });
 
 });
