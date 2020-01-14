@@ -39,11 +39,11 @@ export function setCurrentAccount(accountAddress: string) {
     const web3ProviderInfo = getWeb3ProviderInfo();
     Analytics.register({
       address: accountAddress,
-      wallet: web3ProviderInfo.name,
+      wallet: web3ProviderInfo ? web3ProviderInfo.name : "none",
     });
     Analytics.people.set({
       address: accountAddress,
-      wallet: web3ProviderInfo.name,
+      wallet: web3ProviderInfo ? web3ProviderInfo.name : "none",
     });
 
     dispatch(getProfile(accountAddress, true));
