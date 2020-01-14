@@ -151,7 +151,7 @@ const SubmissionDetailsSubscription = withSubscription({
       getProposalSubmission(props.proposalState.id, props.suggestionId, true),
       getSubmissionVoterHasVoted(props.suggestionId, props.currentAccountAddress, true),
       getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true),
-      props.proposalState.proposal.rewards({ where: { beneficiary: props.currentAccountAddress, subscribe: true }})
+      props.proposalState.proposal.rewards({ where: { beneficiary: props.currentAccountAddress}, {subscribe: true })
         .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
         .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
     );
