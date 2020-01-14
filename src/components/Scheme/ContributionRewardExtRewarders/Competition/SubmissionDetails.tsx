@@ -3,7 +3,7 @@ import * as React from "react";
 
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
-import { formatTokens, ensureHttps, hasGpRewards, hasCrRewards } from "lib/util";
+import { formatTokens, ensureHttps, hasGpRewards } from "lib/util";
 import { getProposalSubmission, getSubmissionVoterHasVoted, ICompetitionSubmissionFake, getCompetitionVotes, ICompetitionStatus } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
@@ -63,7 +63,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const currentAccountVotedForIt = this.props.data[1];
     const currentAccountVotes = this.props.data[2];
     const gpRewards = this.props.data[3];
-    const hasRedeemedProposal = !hasGpRewards(gpRewards) && !hasCrRewards(this.props.proposalState.contributionReward);
+    const hasRedeemedProposal = !hasGpRewards(gpRewards);
     const status = this.props.status;
     const maxNumVotesReached = currentAccountVotes.length === competition.numberOfVotesPerVoter;
     const canVote = status.voting && !currentAccountVotedForIt && !maxNumVotesReached;
