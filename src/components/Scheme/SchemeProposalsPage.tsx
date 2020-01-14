@@ -187,6 +187,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
               </div>
               <div className={css.proposalsContainer}>
                 <InfiniteScroll
+                  style={{overflow: "visible"}}
                   dataLength={proposalsQueued.length} //This is important field to render the next data
                   next={fetchMore}
                   hasMore={proposalsQueued.length < scheme.numberOfQueuedProposals}
