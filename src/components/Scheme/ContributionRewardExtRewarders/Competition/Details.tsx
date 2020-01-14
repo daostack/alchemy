@@ -119,7 +119,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   }
   
   private onEndCountdown = () => {
-    this.setState({ status: this.getCompetitionState() });
+    // give it a couple seconds to catch up with timer inprecision
+    setTimeout(() => this.setState({ status: this.getCompetitionState() }), 2000);
   }
 
   private openNewSubmissionModal = async (): Promise<void> => {
@@ -352,6 +353,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           backdropClassName={css.submissionsModalBackdrop}>
           <SubmissionDetails
             currentAccountAddress={this.props.currentAccountAddress}
+            status= {this.state.status}
             suggestionId={this.state.showingSubmissionDetails.id}
             proposalState={proposalState}
             daoState={daoState}

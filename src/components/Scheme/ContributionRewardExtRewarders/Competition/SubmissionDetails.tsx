@@ -4,7 +4,7 @@ import * as React from "react";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
 import { formatTokens, ensureHttps, hasGpRewards, hasCrRewards } from "lib/util";
-import { competitionStatus, getProposalSubmission, getSubmissionVoterHasVoted, ICompetitionSubmissionFake, getCompetitionVotes } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { competitionStatus, getProposalSubmission, getSubmissionVoterHasVoted, ICompetitionSubmissionFake, getCompetitionVotes, ICompetitionStatus } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import classNames from "classnames";
@@ -21,7 +21,7 @@ const ReactMarkdown = require("react-markdown");
 
 type ISubscriptionState = [ICompetitionSubmissionFake, boolean, Array<CompetitionVote>, IRewardState];
 
-interface IStateProps {
+interface IExternalStateProps {
   profiles: IProfilesState;
 }
 
@@ -29,15 +29,16 @@ interface IExternalProps {
   currentAccountAddress: Address;
   daoState: IDAOState;
   proposalState: IProposalState;
+  status: ICompetitionStatus;
   suggestionId: string; // this is the real id (not the counter)
   handleClose: () => any;
   handleVote: () => any;
   handleRedeem: () => any;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<ISubscriptionState>;
+type IProps = IExternalProps & IExternalStateProps & ISubscriptionProps<ISubscriptionState>;
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
   return {
     ...ownProps,
     profiles: state.profiles,
@@ -63,8 +64,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const currentAccountVotes = this.props.data[2];
     const gpRewards = this.props.data[3];
     const hasRedeemedProposal = !hasGpRewards(gpRewards) && !hasCrRewards(this.props.proposalState.contributionReward);
-
-    const status = competitionStatus(competition, [submission]);
+    const status = this.props.status;
     const maxNumVotesReached = currentAccountVotes.length === competition.numberOfVotesPerVoter;
     const canVote = status.voting && !currentAccountVotedForIt && !maxNumVotesReached;
     const isWinner = submission.isWinner;
