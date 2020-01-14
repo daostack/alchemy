@@ -36,7 +36,7 @@ interface IDispatchProps {
 }
 
 const mapDispatchToProps = {
-  hideMenu: uiActions.hideMenu
+  hideMenu: uiActions.hideMenu,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[IDAOState, IHasNewPosts]>;
@@ -44,14 +44,14 @@ type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const match = matchPath(ownProps.location.pathname, {
     path: "/dao/:daoAvatarAddress",
-    strict: false
+    strict: false,
   });
   const queryValues = queryString.parse(ownProps.location.search);
 
   return {
     ...ownProps,
     daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
-    menuOpen: state.ui.menuOpen
+    menuOpen: state.ui.menuOpen,
   };
 };
 
@@ -135,7 +135,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                 <span
                   className={classNames({
                     [css.notification]: true,
-                    [css.homeNotification]: true
+                    [css.homeNotification]: true,
                   })}
                 />
                 <img src="/assets/images/Icon/menu/home.svg" />
@@ -152,7 +152,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   <span
                     className={classNames({
                       [css.notification]: true,
-                      [css.holdersNotification]: true
+                      [css.holdersNotification]: true,
                     })}
                   />
                   <img src="/assets/images/Icon/menu/holders.svg" />
@@ -166,7 +166,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                 <span
                   className={classNames({
                     [css.notification]: true,
-                    [css.historyNotification]: true
+                    [css.historyNotification]: true,
                   })}
                 />
                 <img src="/assets/images/Icon/menu/history.svg" />
@@ -179,13 +179,13 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   <span
                     className={classNames({
                       [css.menuDot]: true,
-                      [css.red]: hasNewPosts
+                      [css.red]: hasNewPosts,
                     })}
                   />
                   <span
                     className={classNames({
                       [css.notification]: true,
-                      [css.discussionNotification]: true
+                      [css.discussionNotification]: true,
                     })}
                   />
                   <img src="/assets/images/Icon/menu/chat.svg" />
@@ -194,18 +194,18 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
             </li>
             <li>
-            <TrainingTooltip placement="topLeft" overlay={"Space designated for general questions, statements and comments"}>
+              <TrainingTooltip placement="topLeft" overlay={"Space designated for general questions, statements and comments"}>
                 <Link to={"/dao/" + dao.address + "/wiki/"} onClick={this.handleCloseMenu}>
                   <span
                     className={classNames({
                       [css.menuDot]: true,
-                      [css.red]: hasNewPosts
+                      [css.red]: hasNewPosts,
                     })}
                   />
                   <span
                     className={classNames({
                       [css.notification]: true,
-                      [css.discussionNotification]: true
+                      [css.discussionNotification]: true,
                     })}
                   />
                   <img src="/assets/images/Icon/menu/chat.svg" />
@@ -239,7 +239,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
       [css.menuOpen]: this.props.menuOpen,
       [css.sidebarWrapper]: true,
       [css.noDAO]: !this.props.daoAvatarAddress,
-      clearfix: true
+      clearfix: true,
     });
 
     return (
@@ -348,7 +348,7 @@ const SubscribedEthBalance = withSubscription({
       .dao(props.dao.address)
       .ethBalance()
       .pipe(ethErrorHandler());
-  }
+  },
 });
 
 /***** Token Balance *****/
@@ -389,7 +389,7 @@ const SubscribedTokenBalance = withSubscription({
     const arc = getArc();
     const token = new Token(props.tokenAddress, arc);
     return token.balanceOf(props.dao.address).pipe(ethErrorHandler());
-  }
+  },
 });
 
 const SubscribedSidebarMenu = withSubscription({
@@ -435,7 +435,7 @@ const SubscribedSidebarMenu = withSubscription({
     } else {
       return of(null);
     }
-  }
+  },
 });
 
 export default connect(

@@ -15,12 +15,12 @@ import * as css from "./Dao.scss";
 
 type IExternalProps = {
   daoState: IDAOState;
-  match: Object;
+  match: Record<string, any>;
 } & RouteComponentProps<any>;
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
-  showNotification
+  showNotification,
 };
 
 interface IDispatchProps {
@@ -31,17 +31,26 @@ interface IDispatchProps {
 type IProps = IDispatchProps & IExternalProps & ISubscriptionProps<Scheme[]>;
 
 function DaoWiki(props: IProps) {
-  React.useEffect(() => {
-    checkIfWikiSchemeExists();
-  }, []);
+
+  const renderWikiComponent = () => {
+    const { daoAvatarAddress, perspectiveId, pageId } = props.match.params;
+    actualHash["dao"] = daoAvatarAddress;
+    actualHash["wiki"] = perspectiveId;
+    actualHash["page"] = pageId;
+    return WikiContainer.getInstance({});
+  };
 
   const checkIfWikiSchemeExists = async () => {
     const genericSchemes = props.data;
     const states: ISchemeState[] = [];
     const getSchemeState = () => {
       return new Promise((resolve, reject) => {
-        genericSchemes.map((scheme: Scheme) => scheme.state().subscribe(state => states.push(state)));
-        resolve();
+        try {
+          genericSchemes.map((scheme: Scheme) => scheme.state().subscribe(state => states.push(state)));
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
       });
     };
     await getSchemeState();
@@ -53,17 +62,13 @@ function DaoWiki(props: IProps) {
     if (hasWikiScheme) {
       renderWikiComponent();
     } else {
-      // here we create the proposal
+      // here we create the proposal to scheme registrar for the creatio of generic scheme wikiupdate
     }
   };
 
-  const renderWikiComponent = () => {
-    const { daoAvatarAddress, perspectiveId, pageId } = props.match.params;
-    actualHash["dao"] = daoAvatarAddress;
-    actualHash["wiki"] = perspectiveId;
-    actualHash["page"] = pageId;
-    return WikiContainer.getInstance({});
-  };
+  React.useEffect(() => {
+    checkIfWikiSchemeExists();
+  }, []);
 
   return (
     <div>
@@ -90,12 +95,12 @@ const SubscribedDaoWiki = withSubscription({
     return dao.schemes(
       {
         where: {
-          name: "GenericScheme"
-        }
+          name: "GenericScheme",
+        },
       },
       { fetchAllData: true }
     );
-  }
+  },
 });
 
 export default connect(

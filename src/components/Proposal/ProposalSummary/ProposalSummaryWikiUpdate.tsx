@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
 import { IProposalState } from "@daostack/client";
 
@@ -11,9 +11,6 @@ interface IProps {
 
 export default class ProposalSummaryWikiUpdate extends React.Component<IProps> {
   public render(): RenderOutput {
-    return (
-      <div>
-      </div>
-    )
+    return <div />;
   }
 }
