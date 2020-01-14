@@ -1,17 +1,19 @@
 import * as React from "react";
 import * as Sticky from "react-stickynode";
+import { IDAOState, ISchemeState, Scheme } from "@daostack/client";
+import { WikiContainer, actualHash, ReactiveWiki } from "@dorgtech/daosmind";
+import classNames from "classnames";
+
+import { Link } from "react-router-dom";
 import * as arcActions from "actions/arcActions";
 import { showNotification } from "reducers/notifications";
 import { schemeName } from "lib/util";
-
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import Loading from "components/Shared/Loading";
-
-import { IDAOState, ISchemeState, Scheme } from "@daostack/client";
-import { WikiContainer, actualHash, ReactiveWiki } from "@dorgtech/daosmind";
-import * as css from "./Dao.scss";
+import * as daoStyle from "./Dao.scss";
+import * as proposalStyle from "../Scheme/SchemeProposals.scss";
 
 type IExternalProps = {
   daoState: IDAOState;
@@ -20,7 +22,7 @@ type IExternalProps = {
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
-  showNotification,
+  showNotification
 };
 
 interface IDispatchProps {
@@ -31,6 +33,7 @@ interface IDispatchProps {
 type IProps = IDispatchProps & IExternalProps & ISubscriptionProps<Scheme[]>;
 
 function DaoWiki(props: IProps) {
+  const [hasWikiScheme, setHasWikiScheme] = React.useState<boolean>(false);
 
   const renderWikiComponent = () => {
     const { daoAvatarAddress, perspectiveId, pageId } = props.match.params;
@@ -57,12 +60,12 @@ function DaoWiki(props: IProps) {
     const checkSchemes = (schemeState: ISchemeState) => {
       return "WikiUpdate" === schemeName(schemeState, "[Unknown]");
     };
-    const hasWikiScheme = states.some(checkSchemes);
-
-    if (hasWikiScheme) {
+    const wikiSchemeExists = states.some(checkSchemes);
+    setHasWikiScheme(wikiSchemeExists);
+    if (wikiSchemeExists) {
       renderWikiComponent();
     } else {
-      // here we create the proposal to scheme registrar for the creatio of generic scheme wikiupdate
+      // here we create the proposal to scheme registrar for the creation of generic scheme wikiupdate
     }
   };
 
@@ -70,12 +73,37 @@ function DaoWiki(props: IProps) {
     checkIfWikiSchemeExists();
   }, []);
 
+  const registerWikiScheme = () => {
+    console.log("si dime");
+  };
+
+  const NoWikiScheme = (
+    <div className={proposalStyle.noDecisions}>
+      <img className={proposalStyle.relax} src="/assets/images/yogaman.svg" />
+      <div className={proposalStyle.proposalsHeader}>Wiki scheme not registered on this DAO yet</div>
+      <p>You can create the proposal to register it today! (:</p>
+      <div className={proposalStyle.cta}>
+        <Link to={"/dao/" + props.daoState.address}>
+          <img className={proposalStyle.relax} src="/assets/images/lt.svg" /> Back to home
+        </Link>
+        <a
+          className={classNames({
+            [proposalStyle.blueButton]: true
+          })}
+          onClick={registerWikiScheme}
+          data-test-id="createProposal"
+        >
+          + Register wiki scheme
+        </a>
+      </div>
+    </div>
+  );
   return (
     <div>
       <Sticky enabled top={50} innerZ={10000}>
-        <div className={css.daoHistoryHeader}>Wiki</div>
+        <div className={daoStyle.daoHistoryHeader}>Wiki</div>
       </Sticky>
-      <ReactiveWiki {...props} />
+      {hasWikiScheme ? <ReactiveWiki {...props} /> : NoWikiScheme }
     </div>
   );
 }
@@ -83,7 +111,7 @@ function DaoWiki(props: IProps) {
 const SubscribedDaoWiki = withSubscription({
   wrappedComponent: DaoWiki,
   loadingComponent: (
-    <div className={css.loading}>
+    <div className={daoStyle.loading}>
       {" "}
       <Loading />
     </div>
@@ -95,12 +123,12 @@ const SubscribedDaoWiki = withSubscription({
     return dao.schemes(
       {
         where: {
-          name: "GenericScheme",
-        },
+          name: "GenericScheme"
+        }
       },
       { fetchAllData: true }
     );
-  },
+  }
 });
 
 export default connect(
