@@ -122,7 +122,6 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
         }
 
         const url = ensureHttps(proposal.url);
-        const proposalPassed = !!proposal.executedAt && (proposal.winningOutcome === IProposalOutcome.Pass);
         const crxContractName = rewarderContractName(proposal.scheme);
 
         const voteWrapperClass = classNames({
@@ -153,7 +152,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                     />
                   </div>
                   {
-                    (proposalPassed && crxContractName) ? <div className={css.gotoCompetition}>
+                    (crxContractName) ? <div className={css.gotoCompetition}>
                       {
                         <Link to={`/dao/${daoState.address}/crx/proposal/${proposal.id}`}>Go to {crxContractName}&nbsp;&gt;</Link>
                       }
