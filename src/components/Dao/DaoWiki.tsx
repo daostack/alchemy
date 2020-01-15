@@ -3,6 +3,7 @@ import * as Sticky from "react-stickynode";
 import { IDAOState, ISchemeState, Scheme, IProposalType } from "@daostack/client";
 import { WikiContainer, actualHash, ReactiveWiki } from "@dorgtech/daosmind";
 import classNames from "classnames";
+import { enableWalletProvider } from "arc";
 
 import { Link } from "react-router-dom";
 import * as arcActions from "actions/arcActions";
@@ -34,6 +35,7 @@ type IProps = IDispatchProps & IExternalProps & ISubscriptionProps<Scheme[]>;
 
 function DaoWiki(props: IProps) {
   const [hasWikiScheme, setHasWikiScheme] = React.useState<boolean>(false);
+  const schemes = props.data;
 
   const renderWikiComponent = () => {
     const { daoAvatarAddress, perspectiveId, pageId } = props.match.params;
@@ -44,7 +46,7 @@ function DaoWiki(props: IProps) {
   };
 
   const checkIfWikiSchemeExists = async () => {
-    const genericSchemes = props.data;
+    const genericSchemes = schemes.filter((scheme: Scheme) => scheme.staticState.name === "GenericScheme")
     const states: ISchemeState[] = [];
     const getSchemeState = () => {
       return new Promise((resolve, reject) => {
@@ -74,17 +76,30 @@ function DaoWiki(props: IProps) {
   }, []);
 
   const registerWikiScheme = async () => {
-    const permissions = 17;
+    if (!await enableWalletProvider({ showNotification: props.showNotification })) { return; }
+    
+    const registrarScheme = schemes.filter((scheme: Scheme) => scheme.staticState.name === "SchemeRegistrar").pop();
+    const registrarSchemeState = () => {
+      return new Promise<string>((resolve, reject) => {
+        registrarScheme.state().subscribe((scheme: ISchemeState) => {
+          resolve(scheme.address);
+        })
+      })
+    }
 
+    const schemeAddress: string = await registrarSchemeState()
     const proposalValues = {
       dao: props.daoState.address,
       type: IProposalType.SchemeRegistrarAdd,
-      permissions: "0x" + permissions.toString(16).padStart(8, "0"),
+      permissions: "0x" + (17).toString(16).padStart(8, "0"),
       value: 0, // amount of eth to send with the call
       tags: ["Wiki"],
       title: "Creation of WikiUpdate scheme",
-      //scheme
-      //hashParams
+      description: "This will allow DAO to have Wiki functionality",
+      parametersHash: '0x00000000000000000000000000000000000000000',
+      scheme: schemeAddress,
+      // this is going to be changed with the generic scheme deployed to call uprtcl's contract
+      schemeToRegister: '0x9a543aef934c21da5814785e38f9a7892d3cde6e'
     };
 
     await props.createProposal(proposalValues)
@@ -135,14 +150,7 @@ const SubscribedDaoWiki = withSubscription({
   checkForUpdate: [],
   createObservable: async (props: IExternalProps) => {
     const dao = props.daoState.dao;
-    return dao.schemes(
-      {
-        where: {
-          name: "GenericScheme",
-        },
-      },
-      { fetchAllData: true }
-    );
+    return dao.schemes({}, { fetchAllData: true });
   },
 });
 

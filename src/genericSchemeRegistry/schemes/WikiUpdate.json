@@ -9,25 +9,23 @@
   },
   "actions": [
     {
-      "id": "Vote",
-      "label": "Vote",
-      "description": "Vote",
-      "fields": [
-        {
-          "label": "Number of proposal",
-          "name": "Number of proposal"
-        }
-      ],
+      "id": "authorizeRequest",
+      "label": "Authorize Wiki Merge",
+      "description": "Authorize Wiki Merge",
+      "fields": [ ],
       "abi": {
         "constant": false,
         "inputs": [
           {
-            "internalType": "uint8",
-            "name": "toProposal",
+            "name": "requestId",
+            "type": "bytes32"
+          },
+          {
+            "name": "authorized",
             "type": "uint8"
           }
         ],
-        "name": "vote",
+        "name": "setRequestAuthorized",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
