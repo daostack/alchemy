@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, Stake } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, Stake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 
@@ -10,7 +10,6 @@ import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Modal } from "react-router-modal";
-import { VoteOptions } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 
@@ -93,7 +92,7 @@ class StakeButtons extends React.Component<IProps, IState> {
     this.setState({ showApproveModal: false });
   }
 
-  private getStakeProposalAction = (stakeProposal: typeof arcActions.stakeProposal, proposal: IProposalState, pendingPrediction: number) => 
+  private getStakeProposalAction = (stakeProposal: typeof arcActions.stakeProposal, proposal: IProposalState, pendingPrediction: number) =>
     (amount: number) => { stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount); };
 
   public render(): RenderOutput {
@@ -164,20 +163,20 @@ class StakeButtons extends React.Component<IProps, IState> {
 
     const hasGens = currentAccountGens && currentAccountGens.gt(new BN(0));
     // show staking buttons when !this.props.currentAccountAddress, even if no GENs
-    const disableStakePass = (currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.No;
-    const disableStakeFail = (currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.Yes;
+    const disableStakePass = (currentAccountAddress && !hasGens) || currentAccountPrediction === IProposalOutcome.Fail;
+    const disableStakeFail = (currentAccountAddress && !hasGens) || currentAccountPrediction === IProposalOutcome.Pass;
 
     const passButtonClass = classNames({
-      [css.pendingPrediction]: pendingPrediction === VoteOptions.Yes,
+      [css.pendingPrediction]: pendingPrediction === IProposalOutcome.Pass,
       [css.passButton]: true,
     });
 
     const failButtonClass = classNames({
-      [css.pendingPrediction]: pendingPrediction === VoteOptions.No,
+      [css.pendingPrediction]: pendingPrediction === IProposalOutcome.Fail,
       [css.failButton]: true,
     });
 
-    const tip = (prediction: VoteOptions) =>
+    const tip = (prediction: IProposalOutcome) =>
       !hasGens ?
         "Insufficient GENs" :
         currentAccountPrediction === prediction ?
@@ -212,7 +211,7 @@ class StakeButtons extends React.Component<IProps, IState> {
       <div className={wrapperClass}>
         {showPreStakeModal ?
           <PreTransactionModal
-            actionType={pendingPrediction === VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
+            actionType={pendingPrediction === IProposalOutcome.Pass ? ActionTypes.StakePass : ActionTypes.StakeFail}
             action={this.getStakeProposalAction(stakeProposal, proposal, pendingPrediction)}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreStakeModal}
@@ -238,15 +237,15 @@ class StakeButtons extends React.Component<IProps, IState> {
           {stakingEnabled ?
             <div>
               {
-                (!currentAccountAddress ? "" : tip(VoteOptions.No) !== "") ?
-                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
+                (!currentAccountAddress ? "" : tip(IProposalOutcome.Fail) !== "") ?
+                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(IProposalOutcome.Fail)}>
                     {passButton}
                   </Tooltip> :
                   passButton
               }
               {
-                (!currentAccountAddress ? "" : tip(VoteOptions.Yes) !== "") ?
-                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
+                (!currentAccountAddress ? "" : tip(IProposalOutcome.Pass) !== "") ?
+                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(IProposalOutcome.Pass)}>
                     {failButton}
                   </Tooltip> :
                   failButton
