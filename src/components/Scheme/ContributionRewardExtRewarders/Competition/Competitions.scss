@@ -765,19 +765,17 @@ a.blueButton {
   .title {
     font-size: 21px;
     font-weight: bold;
-    margin-bottom: 16px;
   }
 
   .proposer {
-    margin-bottom: 16px;
+    margin-top: 16px;
     font-size: 13px;
   }
 
   .description {
-    padding-bottom: 20px;
     max-height: 100%;
     overflow: auto;
-    margin-bottom: 16px;
+    margin-top: 16px;
 
     h1:first-of-type, h2:first-of-type, h3:first-of-type, h4:first-of-type {
       margin-top: 0;
@@ -785,6 +783,7 @@ a.blueButton {
   }
 
   .attachmentLink, .attachmentLink:visited {
+    margin-top: 16px;
     font-size: 11px;
     color: rgba(0, 113, 255, 1.000);
     display: inline-block;
@@ -797,7 +796,7 @@ a.blueButton {
   }
 
   .tagsContainer {
-    margin-bottom: 16px;
+    margin-top: 16px;
   }
 }
 
