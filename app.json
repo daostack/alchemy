@@ -3,17 +3,13 @@
   "description": "",
   "scripts": {},
   "env": {
-    "API_URL": {
-      "required": true
-    },
     "NODE_ENV": {
-      "required": true
+      "required": true,
+      "value": "staging"
     },
     "DISQUS_SITE": {
-      "required": true
-    },
-    "NODE_MODULES_CACHE": {
-      "required": true
+      "required": true,
+      "value": "daostack-alchemy-staging"
     }
   },
   "formation": {
