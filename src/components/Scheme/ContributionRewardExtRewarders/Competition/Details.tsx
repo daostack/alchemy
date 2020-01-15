@@ -177,7 +177,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const tags = proposalState.tags;
     const competition = proposalState.competition;
     const now = moment();
-    const canSubmit =  now.isSameOrAfter(status.startTime) && now.isBefore(status.submissionsEndTime);
+    const canSubmit =  now.isSameOrAfter(status.startTime) && now.isBefore(status.submissionsEndTime) && proposalState.executedAt;
     const hasNotStarted = now.isBefore(status.startTime);
     const hasEnded = now.isSameOrAfter(status.endTime);
     const inSubmissionsNotYetVoting = now.isSameOrAfter(status.startTime) && now.isBefore(status.votingStartTime);
