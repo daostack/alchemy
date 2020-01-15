@@ -6,6 +6,15 @@
   - Features Added
   - Bugs Fixed
 
+## 2019-12-18
+
+  - Features Added
+    - upgrade subgraph to v36_4
+  - Bugs Fixed
+    - fix representation of timmes longer than a month
+    - respect node_env variables
+    - fix crashing on proposal page
+
 ## 2019-12-10
   - Features Added
     - Use 3box profiles 
