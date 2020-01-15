@@ -5,6 +5,7 @@
 ## Next release
   - Features Added
   - Bugs Fixed
+    - Fix bug where tooltips in sidebar would cover other menu items. Move them to the right of the sidebar
 
 ## 2019-12-18
 
@@ -17,9 +18,9 @@
 
 ## 2019-12-10
   - Features Added
-    - Use 3box profiles 
+    - Use 3box profiles
     - Create a Feed of events
-    - add new cookie policy and privacy policy 
+    - add new cookie policy and privacy policy
   - Bugs Fixed
     - do not error on bad token address
     - convert deprecated React methods
@@ -27,7 +28,7 @@
     - add subscriptions for votes, stakes and rewards on the proposal page
     - ignore externalTokenReward when address is null
     - change old dai to sai, add new dai
-    - better position notifications 
+    - better position notifications
     - shorten token dropdown menu
 
 ## 2019-12-03
