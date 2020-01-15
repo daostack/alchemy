@@ -66,8 +66,6 @@ function DaoWiki(props: IProps) {
     setHasWikiScheme(wikiSchemeExists);
     if (wikiSchemeExists) {
       renderWikiComponent();
-    } else {
-      // here we create the proposal to scheme registrar for the creation of generic scheme wikiupdate
     }
   };
 
@@ -87,7 +85,7 @@ function DaoWiki(props: IProps) {
       })
     }
 
-    const schemeAddress: string = await registrarSchemeState()
+    const registrarSchemeAddress: string = await registrarSchemeState()
     const proposalValues = {
       dao: props.daoState.address,
       type: IProposalType.SchemeRegistrarAdd,
@@ -97,7 +95,7 @@ function DaoWiki(props: IProps) {
       title: "Creation of WikiUpdate scheme",
       description: "This will allow DAO to have Wiki functionality",
       parametersHash: '0x00000000000000000000000000000000000000000',
-      scheme: schemeAddress,
+      scheme: registrarSchemeAddress,
       // this is going to be changed with the generic scheme deployed to call uprtcl's contract
       schemeToRegister: '0x9a543aef934c21da5814785e38f9a7892d3cde6e'
     };
