@@ -177,11 +177,12 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const tags = proposalState.tags;
     const competition = proposalState.competition;
     const now = moment();
-    const canSubmit =  now.isSameOrAfter(status.startTime) && now.isBefore(status.submissionsEndTime) && proposalState.executedAt;
+    const inSubmissions =  now.isSameOrAfter(status.startTime) && now.isBefore(status.submissionsEndTime);
+    const canSubmit =  inSubmissions && proposalState.executedAt;
     const hasNotStarted = now.isBefore(status.startTime);
     const hasEnded = now.isSameOrAfter(status.endTime);
-    const inSubmissionsNotYetVoting = now.isSameOrAfter(status.startTime) && now.isBefore(status.votingStartTime);
     const inVoting = now.isSameOrAfter(status.votingStartTime) && now.isBefore(status.endTime);
+    const inBetweenSubmissionsAndVoting = status.paused;
     const winningSubmissions = submissions.filter((submission) => submission.isWinner);
     const noWinnersHtml = ()=> {
       return <div className={css.noWinners}>
@@ -262,16 +263,21 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
               <div className={css.startsIn}>Submissions start in:</div>
               <Countdown toDate={status.startTime} onEnd={this.onEndCountdown}/>
             </div> :
-            inSubmissionsNotYetVoting ? 
+            inSubmissions ? 
               <div className={css.countdown}>
-                <div className={css.startsIn}>Voting starts in:</div>
-                <Countdown toDate={status.votingStartTime} onEnd={this.onEndCountdown}/>
-              </div>
-              : (inVoting && submissions.length) ? 
+                <div className={css.startsIn}>Submissions end in:</div>
+                <Countdown toDate={status.submissionsEndTime} onEnd={this.onEndCountdown}/>
+              </div> :
+              (inBetweenSubmissionsAndVoting && submissions.length) ? 
                 <div className={css.countdown}>
-                  <div className={css.startsIn}>Voting ends in:</div>
-                  <Countdown toDate={status.endTime} onEnd={this.onEndCountdown}/>
-                </div> : ""
+                  <div className={css.startsIn}>Voting starts in:</div>
+                  <Countdown toDate={status.votingStartTime} onEnd={this.onEndCountdown}/>
+                </div> :
+                (inVoting && submissions.length) ? 
+                  <div className={css.countdown}>
+                    <div className={css.startsIn}>Voting ends in:</div>
+                    <Countdown toDate={status.endTime} onEnd={this.onEndCountdown}/>
+                  </div> : ""
           }
         </div>
         <div className={css.middleSection}>
