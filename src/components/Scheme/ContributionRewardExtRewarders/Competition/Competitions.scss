@@ -263,10 +263,13 @@ a.blueButton {
       }
 
       .description {
+        max-height: 330px;
         overflow-x: hidden;
+        overflow-y: auto;
         word-wrap: break-word;
         font-size: 14px;
-        padding-right: 20px;
+        padding-right: 4px;
+        margin-right: 16px;
 
         a {
           max-width: 100%;
