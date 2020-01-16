@@ -302,7 +302,8 @@ a.blueButton {
         }
 
         .results {
-          display: inline-grid;
+          display: inline;
+          white-space: break-spaces;
           position: relative;
           bottom: 4px;
 
