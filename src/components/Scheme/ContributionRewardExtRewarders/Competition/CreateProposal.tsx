@@ -313,6 +313,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             require("title");
             require("numWinners");
             require("numberOfVotesPerVoter");
+            require("compStartTime");
             require("compEndTime");
             require("votingStartTime");
             require("suggestionEndTime");
@@ -532,6 +533,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
                 <div className={css.date}>
                   <label htmlFor="compStartTimeInput">
+                    <div className={css.requiredMarker}>*</div>
                     Competition start time {localTimezone}
                     <ErrorMessage name="compStartTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
