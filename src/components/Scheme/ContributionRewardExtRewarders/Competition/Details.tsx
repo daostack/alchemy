@@ -247,7 +247,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             <div className={css.newSubmission}>
               { canSubmit ? 
                 <a className={css.blueButton}
-                  href="javascript:void(0)"
+                  href="#!"
                   onClick={this.openNewSubmissionModal}
                   data-test-id="createSuggestion"
                 >+ New Submission</a>

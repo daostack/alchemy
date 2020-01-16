@@ -131,7 +131,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
                 [css.blueButton]: true,
                 [css.disabled]: !isActive,
               })}
-              href="javascript:void(0)"
+              href="#!"
               onClick={isActive ? this._handleNewProposal : null}
               data-test-id="createProposal"
               >+ New Proposal</a>

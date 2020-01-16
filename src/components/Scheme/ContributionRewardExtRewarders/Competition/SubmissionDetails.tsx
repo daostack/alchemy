@@ -84,14 +84,14 @@ class SubmissionDetails extends React.Component<IProps, null> {
                 canRedeem ? 
                   <Tooltip overlay={!hasRedeemedProposal ? "Proposal has not yet been redeemed" : "Redeem for your winning submission"}>
                     <a className={classNames({[css.blueButton]: true, [css.redeemButton]: true, [css.disabled]: !hasRedeemedProposal})}
-                      href="javascript:void(0)"
+                      href="#!"
                       onClick={hasRedeemedProposal ? this.handleRedeem : undefined}
                       data-test-id="redeemSuggestion"
                     ><img src="/assets/images/Icon/redeem.svg"/>Redeem</a>
                   </Tooltip> : !status.complete ?
                     <Tooltip overlay={!status.voting ? "Voting has not yet begun" : currentAccountVotedForIt ? "You have already voted" : maxNumVotesReached ? "You have already voted the maximum number of times" : "Vote for this submission"}>
                       <a className={classNames({[css.blueButton]: true, [css.voteButton]: true, [css.disabled]: !canVote})}
-                        href="javascript:void(0)"
+                        href="#!"
                         onClick={canVote ? this.handleVote : undefined}
                         data-test-id="voteSuggestion"
                       >Vote<img src="/assets/images/Icon/vote/for-btn-selected-w.svg"/></a>

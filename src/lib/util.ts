@@ -605,13 +605,20 @@ export function getDateWithTimezone(date: Date|moment.Moment): moment.Moment {
   return moment.tz(date.toISOString(), localTimezone); 
 }
 
-const dateFormat = "MMM DD, YYYY HH:mm z (Z) ";
+const tzFormat = "z (Z)";
+const dateFormat = `MMM DD, YYYY HH:mm ${tzFormat}`;
 /**
  * looks like: "17:30 EST (-05:00) Dec 31, 2019"
  * @param date 
  */
 export function formatFriendlyDateForLocalTimezone(date: Date|moment.Moment): string {
   return getDateWithTimezone(date).format(dateFormat);
+}
+/**
+ * looks like: "EST (-05:00)"
+ */
+export function getLocalTimezone(): string {
+  return getDateWithTimezone(new Date()).format(tzFormat);
 }
 
 export function ensureHttps(url: string) {

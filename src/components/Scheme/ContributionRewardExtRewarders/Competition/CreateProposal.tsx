@@ -4,7 +4,7 @@ import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
+import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, getLocalTimezone } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
@@ -15,12 +15,7 @@ import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 
 import { checkTotalPercent, addSeconds } from "lib/util";
-
-import {
-  DateTimePicker,
-  MuiPickersUtilsProvider,
-} from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
+import DatePicker from "react-datepicker";
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -95,17 +90,19 @@ const customStyles = {
   }),
 };
 
-const CustomDateInput: React.SFC<any> = ({
-  field,
-  form,
-}) => (
-  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-    <DateTimePicker
-      value={field.value}
-      onChange={(date: Date) => form.setFieldValue(field.name, date)}
-    />
-  </MuiPickersUtilsProvider>
-);
+const CustomDateInput: React.SFC<any> = ({ field, form }) => {
+  const onChange = (date: Date) => { form.setFieldValue(field.name, date); };
+  return <DatePicker
+    selected={field.value}
+    onChange={onChange}
+    showTimeSelect
+    timeFormat="HH:mm"
+    timeIntervals={15}
+    timeCaption="Time"
+    dateFormat="MMMM d, yyyy h:mm aa"
+    minDate={new Date()}
+  />;
+};
 
 export const SelectField: React.SFC<any> = ({options, field, form, _value }) => {
   // value={options ? options.find((option: any) => option.value === field.value) : ""}
@@ -199,6 +196,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     }
     const dao = data;
     const arc = getArc();
+    const localTimezone = getLocalTimezone();
 
     return (
       <div className={css.contributionReward}>
@@ -214,7 +212,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             numWinners: 0,
             numberOfVotesPerVoter: 0,
             reputationReward: 0,
-            compStartTime: null,
+            compStartTime: new Date(),
             suggestionEndTime: new Date(),
             votingStartTime: new Date(),
             compEndTime: new Date(),
@@ -344,9 +342,9 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
               <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
                 <label htmlFor="titleInput">
-                Title
-                  <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   <div className={css.requiredMarker}>*</div>
+                  Title
+                  <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>
               <Field
@@ -361,8 +359,8 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
               <TrainingTooltip overlay={this.fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
-                Description
                   <div className={css.requiredMarker}>*</div>
+                  Description
                   <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
@@ -403,9 +401,9 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               <div>
                 <TrainingTooltip overlay="The anticipated number of winning Submissions for this competition" placement="right">
                   <label htmlFor="numWinnersInput">
-                  Number of winners
-                    <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
+                    Number of winners
+                    <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                 </TrainingTooltip>
             
@@ -440,9 +438,9 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               <div>
                 <TrainingTooltip overlay="Number of Submissions for which each member can vote" placement="right">
                   <label htmlFor="numVotesInput">
-                  Number of votes
-                    <ErrorMessage name="numberOfVotesPerVoter">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
+                    Number of votes
+                    <ErrorMessage name="numberOfVotesPerVoter">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                 </TrainingTooltip>
             
@@ -534,7 +532,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
                 <div className={css.date}>
                   <label htmlFor="compStartTimeInput">
-                    Competition start time
+                    Competition start time {localTimezone}
                     <ErrorMessage name="compStartTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
@@ -547,9 +545,9 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
                 <div className={css.date}>
                   <label htmlFor="suggestionEndTimeInput">
-                    Submission end time
-                    <ErrorMessage name="suggestionEndTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
+                    Submission end time {localTimezone}
+                    <ErrorMessage name="suggestionEndTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
                     id="suggestionEndTimeInput"
@@ -561,9 +559,9 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
                 <div className={css.date}>
                   <label htmlFor="votingStartTimeInput">
-                    Voting start time
-                    <ErrorMessage name="votingStartTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
+                    Voting start time {localTimezone}
+                    <ErrorMessage name="votingStartTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
                     id="votingStartTimeInput"
@@ -575,8 +573,8 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
                 <div className={css.date}>
                   <label htmlFor="compEndTimeInput">
-                    Competition end time
                     <div className={css.requiredMarker}>*</div>
+                    Competition end time {localTimezone}
                     <ErrorMessage name="compEndTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field

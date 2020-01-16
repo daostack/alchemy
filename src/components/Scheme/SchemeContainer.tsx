@@ -156,7 +156,7 @@ class SchemeContainer extends React.Component<IProps, IStateProps> {
                   [css.disabled]: !isActive,
                 })}
               data-test-id="createProposal"
-              href="javascript:void(0)"
+              href="#!"
               onClick={isActive ? this.handleNewProposal : null}
               >
             + New { `${this.state.crxRewarderProps ? this.state.crxRewarderProps.contractName : schemeFriendlyName } `}Proposal</a>

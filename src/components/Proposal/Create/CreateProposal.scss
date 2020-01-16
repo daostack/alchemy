@@ -1,4 +1,7 @@
 @import "./react-mde.css";
+:global {
+  @import "../../../../node_modules/react-datepicker/dist/react-datepicker.min";
+}
 
 .hidden {
   display: none !important;
@@ -152,11 +155,10 @@
       position: relative;
 
       .requiredMarker {
-        position: absolute;
-        top: 26px;
+        display: inline-block;
         color: rgba(104, 154, 214, 1.000);
         font-weight: bold;
-        left: 5px;
+        margin-right: 4px;
       }
 
 
@@ -169,6 +171,7 @@
     }
 
     .errorMessage {
+      display:block;
       font-weight: normal;
       padding-left: 10px;
       color: rgba(246, 80, 80, 1.000);
@@ -326,7 +329,7 @@
   position: absolute;
   right: 20px;
   bottom: 21px;
-  z-index: 1000;
+  z-index: 1;
 }
 
 .contributionReward {
