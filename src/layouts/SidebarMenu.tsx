@@ -208,7 +208,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                       [css.discussionNotification]: true,
                     })}
                   />
-                  <img src="/assets/images/Icon/menu/chat.svg" />
+                  <img src="/assets/images/Icon/menu/bookTest.png" />
                   Wiki
                 </Link>
               </TrainingTooltip>
