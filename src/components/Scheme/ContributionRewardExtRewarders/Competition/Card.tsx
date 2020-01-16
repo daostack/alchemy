@@ -4,7 +4,7 @@ import { humanProposalTitle, formatFriendlyDateForLocalTimezone } from "lib/util
 import * as React from "react";
 import { Link } from "react-router-dom";
 import RewardsString from "components/Proposal/RewardsString";
-import { IDAOState, IProposalState, CompetitionVote } from "@daostack/client";
+import { IDAOState, IProposalState, CompetitionVote, ICompetitionSuggestionState } from "@daostack/client";
 import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
@@ -13,9 +13,9 @@ import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competi
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { combineLatest } from "rxjs";
 import * as css from "./Competitions.scss";
-import { competitionStatus, getProposalSubmissions, ICompetitionStatus, getCompetitionVotes, ICompetitionSubmissionFake } from "./utils";
+import { competitionStatus, getProposalSubmissions, ICompetitionStatus, getCompetitionVotes } from "./utils";
 
-type ISubscriptionState = [Array<ICompetitionSubmissionFake>, Array<CompetitionVote>];
+type ISubscriptionState = [Array<ICompetitionSuggestionState>, Array<CompetitionVote>];
 
 interface IExternalStateProps {
   creatorProfile: IProfileState;

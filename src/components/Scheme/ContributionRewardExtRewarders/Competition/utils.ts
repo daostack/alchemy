@@ -1,4 +1,4 @@
-import { ICompetitionProposal, Competition, CompetitionSuggestion, ICompetitionSuggestion, CompetitionVote, Address } from "@daostack/client";
+import { ICompetitionProposalState, Competition, CompetitionSuggestion, ICompetitionSuggestionState, CompetitionVote, Address } from "@daostack/client";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 
@@ -6,8 +6,8 @@ import moment = require("moment");
 import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
-import { Observable, of, from } from "rxjs";
-import { map, mergeMap, toArray, first } from "rxjs/operators";
+import { Observable, of } from "rxjs";
+import { map, mergeMap, toArray } from "rxjs/operators";
 
 export interface ICompetitionStatus {
   complete: boolean;
@@ -23,8 +23,8 @@ export interface ICompetitionStatus {
 }
 
 export const competitionStatus = (
-  competition: ICompetitionProposal,
-  submissions: Array<ICompetitionSuggestion>): ICompetitionStatus => {
+  competition: ICompetitionProposalState,
+  submissions: Array<ICompetitionSuggestionState>): ICompetitionStatus => {
 
   const now = moment();
   const startTime = moment(competition.startTime);
@@ -131,7 +131,7 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkActi
 
 
 /**
- * must be an exact subset of ICompetitionSuggestionQueryOptions
+ * must be an exact subset of ICompetitionSuggestionStateQueryOptions
  */
 export interface IGetSubmissionsOptions {
   id?: string; // id of the competition
@@ -140,54 +140,30 @@ export interface IGetSubmissionsOptions {
 }
 
 
-// FAKE - until we have ICompetitionSuggestion.isWinner
-export interface ICompetitionSubmissionFake extends ICompetitionSuggestion {
-  isWinner: boolean;
-}
-
 const getSubmissions = (
   proposalId: string,
   options?: IGetSubmissionsOptions,
   subscribe = false
-): Observable<Array<ICompetitionSubmissionFake>> => {
-  // FAKE -- until we have IProposalState.competition.suggestions()
+): Observable<Array<ICompetitionSuggestionState>> => {
   const competition = new Competition(proposalId, getArc());
-  const arc = getArc();
   // fetchAllData so .state() comes from cache
   return competition.suggestions({ where: options }, { subscribe, fetchAllData: true })
     .pipe(
-      // FAKE - until https://github.com/daostack/client/issues/351 is complete and we know whether `isWinner()` is still good
       mergeMap(submissions => of(submissions).pipe(
         mergeMap(submissions => submissions),
-        // FAKE - competition.suggestions is supposed to return CompetitionSubmission[], but doesn't (https://github.com/daostack/client/issues/372)
-        map(submission => new CompetitionSuggestion(submission.id, arc)),
-        mergeMap((submission: CompetitionSuggestion) => {
-          return from((submission).isWinner().then((isWinner: boolean) => {
-            return { submission, isWinner };
-          }));
-        }),
-        // get the state so we can return ICompetitionSuggestion
-        mergeMap((fakeData: {submission: CompetitionSuggestion; isWinner: boolean }) => {
-          return fakeData.submission.state().pipe(first()).pipe(
-            map((submissionState: ICompetitionSuggestion) =>  {
-              const submissionX = submissionState as unknown as ICompetitionSubmissionFake;
-              submissionX.isWinner = fakeData.isWinner;
-              return submissionX;
-            })
-          );
-        }),
+        mergeMap((submission: CompetitionSuggestion) => submission.state()),
         toArray()
       ))
     );
 };
 
-export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestion>> => {
+export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestionState>> => {
   return getSubmissions(proposalId, undefined, subscribe);
 };
 
-export const getProposalSubmission = (proposalId: string, id: string, subscribe = false): Observable<ICompetitionSuggestion> => {
+export const getProposalSubmission = (proposalId: string, id: string, subscribe = false): Observable<ICompetitionSuggestionState> => {
   return getSubmissions(proposalId, { id }, subscribe).pipe(
-    map((suggestions: Array<ICompetitionSuggestion>) => suggestions.length ? suggestions[0]: null ));
+    map((suggestions: Array<ICompetitionSuggestionState>) => suggestions.length ? suggestions[0]: null ));
 };
 
 export const getCompetitionVotes = (competitionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {

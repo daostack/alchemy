@@ -1,10 +1,10 @@
-import { IDAOState, IProposalState, Address, CompetitionVote } from "@daostack/client";
+import { IDAOState, IProposalState, Address, ICompetitionSuggestionState, CompetitionVote } from "@daostack/client";
 import * as React from "react";
 
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
 import { formatTokens, ensureHttps} from "lib/util";
-import { getProposalSubmission, getSubmissionVoterHasVoted, ICompetitionSubmissionFake, getCompetitionVotes, ICompetitionStatus } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { getProposalSubmission, getSubmissionVoterHasVoted, getCompetitionVotes, ICompetitionStatus } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import classNames from "classnames";
@@ -18,7 +18,7 @@ import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
 
-type ISubscriptionState = [ICompetitionSubmissionFake, boolean, Array<CompetitionVote>];
+type ISubscriptionState = [ICompetitionSuggestionState, boolean, Array<CompetitionVote>];
 
 interface IExternalStateProps {
   profiles: IProfilesState;

@@ -1,12 +1,12 @@
-import { ICompetitionProposal, ICompetitionSuggestion } from "@daostack/client";
+import { ICompetitionProposalState, ICompetitionSuggestionState } from "@daostack/client";
 import * as React from "react";
 import { competitionStatus } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import classNames from "classnames";
 import * as css from "./Competitions.scss";
 
 export interface IExternalProps {
-  competition: ICompetitionProposal;
-  submissions: Array<ICompetitionSuggestion>;
+  competition: ICompetitionProposalState;
+  submissions: Array<ICompetitionSuggestionState>;
 }
 
 export default class StatusBlob extends React.Component<IExternalProps, null> {

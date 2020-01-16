@@ -2,7 +2,7 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
-import { IDAOState, IProposalState, ICompetitionSuggestion, Address } from "@daostack/client";
+import { IDAOState, IProposalState, ICompetitionSuggestionState, Address } from "@daostack/client";
 import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
 import { connect } from "react-redux";
 
@@ -24,14 +24,14 @@ import * as CompetitionActions from "components/Scheme/ContributionRewardExtRewa
 import { combineLatest, of } from "rxjs";
 
 import moment = require("moment");
-import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, ICompetitionStatus, ICompetitionSubmissionFake, getSubmissionVoterHasVoted } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, ICompetitionStatus, getSubmissionVoterHasVoted } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import Tooltip from "rc-tooltip";
 import { concatMap, toArray, first } from "rxjs/operators";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
 
-type ISubscriptionState = [Array<ICompetitionSubmissionFake>, Array<boolean>];
+type ISubscriptionState = [Array<ICompetitionSuggestionState>, Array<boolean>];
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -46,7 +46,7 @@ interface IExternalStateProps {
 
 interface IStateProps {
   showingCreateSubmission: boolean;
-  showingSubmissionDetails: ICompetitionSuggestion;
+  showingSubmissionDetails: ICompetitionSuggestionState;
   status: ICompetitionStatus;
 }
 
@@ -103,9 +103,9 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     
     if (parts.length === 9) {
       const urlSubmissionId = parts[8];
-      let urlSubmission: ICompetitionSuggestion = null;
+      let urlSubmission: ICompetitionSuggestionState = null;
       if (urlSubmissionId) {
-        const urlSubmissions = this.props.data[0].filter((submission: ICompetitionSuggestion) => submission.id === urlSubmissionId);
+        const urlSubmissions = this.props.data[0].filter((submission: ICompetitionSuggestionState) => submission.id === urlSubmissionId);
         if (urlSubmissions.length) {
           urlSubmission = urlSubmissions[0];
         }
@@ -142,7 +142,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     this.setState({ showingCreateSubmission: false });
   }
 
-  private openSubmissionDetailsModal = (suggestion: ICompetitionSuggestion) => async (): Promise<void> => {
+  private openSubmissionDetailsModal = (suggestion: ICompetitionSuggestionState) => async (): Promise<void> => {
     this.props.history.replace(`/dao/${this.props.daoState.address}/crx/proposal/${this.props.proposalState.id}/competition/submission/${suggestion.id}`);
     this.setState({ showingSubmissionDetails: suggestion });
   }
@@ -206,7 +206,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     };
     const submissionsHtml = () => {
 
-      return submissions.map((submission: ICompetitionSubmissionFake, index: number) => {
+      return submissions.map((submission: ICompetitionSuggestionState, index: number) => {
         const isSelected = () => this.state.showingSubmissionDetails && (this.state.showingSubmissionDetails.suggestionId === submission.suggestionId);
         return (
           <div key={index} className={css.row} onClick={this.openSubmissionDetailsModal(submission)}>
