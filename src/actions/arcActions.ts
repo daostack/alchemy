@@ -64,6 +64,11 @@ export function executeProposal(avatarAddress: string, proposalId: string, _acco
 
     // Call claimRewards to both execute the proposal and redeem the ContributionReward rewards,
     //   pass in null to not redeem any GenesisProtocol rewards
+    const originalErrorHandler = observer[1];
+    observer[1] = async (_error: any): Promise<any> => {
+      observer[1] = originalErrorHandler;
+      return await proposalObj.execute().subscribe(...observer);
+    };
     await proposalObj.claimRewards(null).subscribe(...observer);
   };
 }

@@ -2,7 +2,7 @@ import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/clie
 
 import BN = require("bn.js");
 import Reputation from "components/Account/Reputation";
-import { formatTokens, tokenSymbol } from "lib/util";
+import { formatTokens, tokenDecimals, tokenSymbol } from "lib/util";
 import * as React from "react";
 
 interface IProps {
@@ -42,7 +42,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
         rewardComponents.push(formatTokens(contributionReward.ethReward, "ETH"));
       }
       if (contributionReward.externalTokenReward.gt(zero)) {
-        rewardComponents.push(formatTokens(contributionReward.externalTokenReward, tokenSymbol(contributionReward.externalToken)));
+        rewardComponents.push(formatTokens(contributionReward.externalTokenReward, tokenSymbol(contributionReward.externalToken), tokenDecimals(contributionReward.externalToken)));
       }
       if (contributionReward.nativeTokenReward.gt(zero)) {
         rewardComponents.push(formatTokens(contributionReward.nativeTokenReward, dao.tokenSymbol));

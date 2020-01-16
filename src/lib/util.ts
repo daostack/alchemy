@@ -167,6 +167,11 @@ export function tokenSymbol(tokenAddress: string) {
   return token ? token["symbol"] : "?";
 }
 
+export function tokenDecimals(tokenAddress: string) {
+  const token = supportedTokens()[tokenAddress.toLowerCase()];
+  return token ? token["decimals"] : 18;
+}
+
 export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut = 1000) {
   return new Promise((resolve, reject) => {
     const timerId = setInterval(async () => {
