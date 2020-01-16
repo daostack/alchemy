@@ -40,10 +40,6 @@
     vertical-align: -.125em;
   }
 
-  .mde-header button:focus {
-    outline: 0;
-  }
-
   .mde-header ul.mde-header-group {
     margin: 0;
     padding: 10px;
