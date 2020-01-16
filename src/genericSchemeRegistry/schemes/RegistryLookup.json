@@ -4,14 +4,15 @@
     "main": [
       "0xc6e6060f3c32de9615320ab047bb93919c8f6324",
       "0xf52fa064a4077fa1a5ec50604304715d63f2b309",
-      "0xd9f3c5eab7b86b9992a65a385026aa46b0d04896"
+      "0xd9f3c5eab7b86b9992a65a385026aa46b0d04896",
+      "0x2d4d3c4fbc4029efff244d82734fa0adf1226b2e"
     ],
     "rinkeby": [
       "0xb5f95a7118c7b778746ae35adbb16fc95f021ae9",
       "0xf268dc803924f6d9d06c7ddbfc06bf7cc6daf7d4"
     ],
     "private": [
-      "0xe7410170f87102df0055eb195163a03b7f2bff4a"
+      "0x538aa59d0346e7682842dfba8ef6d42e1d182ddf"
     ]
   },
   "actions": [
