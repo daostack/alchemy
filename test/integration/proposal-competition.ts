@@ -65,7 +65,7 @@ describe("Proposals", () => {
 
     const compStartDateInput = await $("*[id=\"compStartDateInput\"]");
     await compStartDateInput.scrollIntoView();
-    await compStartDateInput.setValue("01/01/1921");
+    await compStartDateInput.setValue("01/01/2021");
     // const compStartTimeInput = await $("*[name=\"compStartTime\"]");
     // await compStartTimeInput.setValue('00:00');
 
@@ -77,7 +77,7 @@ describe("Proposals", () => {
 
     const votingStartDateInput = await $("*[id=\"votingStartDateInput\"]");
     await votingStartDateInput.scrollIntoView();
-    await votingStartDateInput.setValue("01/03/1921");
+    await votingStartDateInput.setValue("01/03/2021");
     // const votingStartTimeInput = await $("*[id=\"votingStartTimeInput\"]");
     // await votingStartTimeInput.setValue('00:00');
 
