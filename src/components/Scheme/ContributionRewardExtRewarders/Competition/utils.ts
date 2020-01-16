@@ -7,7 +7,7 @@ import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
 import { Observable, of } from "rxjs";
-import { map, mergeMap, toArray } from "rxjs/operators";
+import { map, mergeMap, toArray, first } from "rxjs/operators";
 
 export interface ICompetitionStatus {
   complete: boolean;
@@ -131,7 +131,7 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkActi
 
 
 /**
- * must be an exact subset of ICompetitionSuggestionStateQueryOptions
+ * must be an exact subset of ICompetitionSuggestionQueryOptions
  */
 export interface IGetSubmissionsOptions {
   id?: string; // id of the competition
@@ -151,7 +151,7 @@ const getSubmissions = (
     .pipe(
       mergeMap(submissions => of(submissions).pipe(
         mergeMap(submissions => submissions),
-        mergeMap((submission: CompetitionSuggestion) => submission.state()),
+        mergeMap((submission: CompetitionSuggestion) => submission.state().pipe(first())),
         toArray()
       ))
     );
