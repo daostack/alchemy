@@ -421,6 +421,26 @@ a.blueButton {
             }
           }
 
+          .cell:first-of-type {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            border-left: 1px solid transparent;
+
+            &.selected {
+              border-left: 1px solid #0076ff;
+            }
+          }
+          
+          .cell:last-of-type {
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            border-right: 1px solid transparent;
+
+            &.selected {
+              border-right: 1px solid #0076ff;
+            }
+          }
+
           .title {
             flex-grow: 2;
             width: 70%;
@@ -439,24 +459,10 @@ a.blueButton {
           }
 
           .winnerIcon {
-            border-top-left-radius: 5px;
-            border-bottom-left-radius: 5px;
-            border-left: 1px solid transparent;
-
-            &.selected {
-              border-left: 1px solid #0076ff;
-            }
+            display: inherit;
           }
 
           .votedUp {
-            border-top-right-radius: 5px;
-            border-bottom-right-radius: 5px;
-            border-right: 1px solid transparent;
-
-            &.selected {
-              border-right: 1px solid #0076ff;
-            }
-
             img {
               vertical-align: middle;
             }
