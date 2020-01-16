@@ -62,14 +62,15 @@ class SchemeContainer extends React.Component<IProps, null> {
     this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
   };
 
-  private schemeInfoPageHtml = (daoState: IDAOState) => (props: any) => <SchemeInfoPage {...props} daoState={daoState} scheme={this.props.data} />;
-  private schemeProposalsPageHtml = (isActive: boolean, daoState: IDAOState) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data} />;
+  private isWikiScheme = schemeName(this.props.data, this.props.data.address) === 'WikiUpdate'
+  private schemeInfoPageHtml = (daoState: IDAOState) => (props: any) => <SchemeInfoPage {...props} daoState={daoState} scheme={this.props.data}  />;
+  private schemeProposalsPageHtml = (isActive: boolean, daoState: IDAOState) => (props: any) => <SchemeProposalsPage isWikiScheme={this.isWikiScheme} {...props} isActive={isActive} daoState={daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data} />;
 
   public render(): RenderOutput {
     const { schemeId, daoState } = this.props;
     const daoAvatarAddress = daoState.address;
     const schemeState = this.props.data;
-
+    
     if (schemeState.name === "ReputationFromToken") {
       return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
     }
@@ -85,6 +86,7 @@ class SchemeContainer extends React.Component<IProps, null> {
       [css.active]: this.props.location.pathname.includes("info"),
     });
 
+
     return (
       <div className={css.schemeContainer}>
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeName(schemeState, schemeState.address)}</BreadcrumbsItem>
@@ -99,7 +101,7 @@ class SchemeContainer extends React.Component<IProps, null> {
             <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
               <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Info</Link>
             </TrainingTooltip>
-            <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+            { this.isWikiScheme ? <></> :<TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
               <a className={
                 classNames({
                   [css.createProposal]: true,
@@ -110,6 +112,7 @@ class SchemeContainer extends React.Component<IProps, null> {
               onClick={isActive ? this.handleNewProposal : null}
               >+ New proposal</a>
             </TrainingTooltip>
+            }
           </div>
         </Sticky>
 

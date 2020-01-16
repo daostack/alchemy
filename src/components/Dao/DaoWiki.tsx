@@ -78,15 +78,14 @@ function DaoWiki(props: IProps) {
     
     const registrarScheme = schemes.filter((scheme: Scheme) => scheme.staticState.name === "SchemeRegistrar").pop();
     const registrarSchemeState = () => {
-      return new Promise<string>((resolve, reject) => {
+      return new Promise<ISchemeState>((resolve, reject) => {
         registrarScheme.state().subscribe((scheme: ISchemeState) => {
-          console.log(scheme)
-          resolve(scheme.address);
+          resolve(scheme);
         })
       })
     }
 
-    const scheme: string = await registrarSchemeState()
+    const schemeRegistrar: ISchemeState = await registrarSchemeState()
     const dao = props.daoState.address
     const proposalValues = {
       dao,
@@ -97,13 +96,15 @@ function DaoWiki(props: IProps) {
       title: "Creation of WikiUpdate scheme",
       description: "This will allow DAO to have Wiki functionality",
       parametersHash: '0x00000000000000000000000000000000000000000',
-      scheme,
+      scheme: schemeRegistrar.address,
       // this is going to be changed with the generic scheme deployed to call uprtcl's contract
       schemeToRegister: '0x9a543aef934c21da5814785e38f9a7892d3cde6e'
     };
 
-    await props.createProposal(proposalValues);
-    // props.history.replace(`/dao/${dao}/scheme/${scheme}`);
+    const proposal = await props.createProposal(proposalValues);
+    console.log(proposal)
+    console.log(schemeRegistrar.address)
+    // props.history.replace(`/dao/${dao}/scheme/${schemeRegistrar.id}`);
     console.log(proposalValues);
   };
 

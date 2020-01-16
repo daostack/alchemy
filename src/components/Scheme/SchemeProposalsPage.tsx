@@ -42,6 +42,7 @@ interface IExternalProps {
   isActive: boolean;
   scheme: ISchemeState;
   daoState: IDAOState;
+  isWikiScheme: boolean;
 }
 
 interface IDispatchProps {
@@ -72,7 +73,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
     const { data } = this.props;
 
     const [proposalsQueued, proposalsPreBoosted, proposalsBoosted ] = data;
-    const { currentAccountAddress, daoState, fetchMore, isActive, scheme } = this.props;
+    const { currentAccountAddress, daoState, fetchMore, isActive, scheme, isWikiScheme } = this.props;
     let proposalCount=0;
 
     const queuedProposalsHTML = (
@@ -120,20 +121,36 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             <div className={css.proposalsHeader}>
               No upcoming proposals
             </div>
-            <p>You can be the first one to create a {scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || scheme.address} proposal today! (:</p>
-            <div className={css.cta}>
-              <Link to={"/dao/" + daoState.address}>
-                <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
-              </Link>
-              <a className={classNames({
-                [css.blueButton]: true,
-                [css.disabled]: !isActive,
-              })}
-              href="javascript:void(0)"
-              onClick={isActive ? this._handleNewProposal : null}
-              data-test-id="createProposal"
-              >+ New Proposal</a>
-            </div>
+              { isWikiScheme ? 
+                <>
+                  <p>You can be the first one to create a Wiki merge proposal today! (:</p>
+                  <div className={css.cta}>
+                    <Link to={"/dao/" + daoState.address}>
+                      <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
+                    </Link>
+                    <Link to={"/dao/" + daoState.address + "/wiki"}>
+                      Go to wiki
+                    </Link>
+                  </div>
+                </>
+              :
+                <>
+              <p>You can be the first one to create a {scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || scheme.address} proposal today! (:</p>
+              <div className={css.cta}>
+                <Link to={"/dao/" + daoState.address}>
+                  <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
+                </Link>
+                <a className={classNames({
+                  [css.blueButton]: true,
+                  [css.disabled]: !isActive,
+                })}
+                href="javascript:void(0)"
+                onClick={isActive ? this._handleNewProposal : null}
+                data-test-id="createProposal"
+                >+ New Proposal</a>
+              </div>
+            </>
+            }
           </div>
           :
           <div>
