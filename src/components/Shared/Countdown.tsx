@@ -2,7 +2,7 @@ import { IProposalOutcome, IProposalStage, IProposalState } from "@daostack/clie
 import * as classNames from "classnames";
 import * as moment from "moment";
 import * as React from "react";
-import { closingTime } from "reducers/arcReducer";
+import { closingTime } from "lib/proposalHelpers";
 
 import BN = require("bn.js");
 
