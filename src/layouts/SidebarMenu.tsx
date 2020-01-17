@@ -120,7 +120,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               </Link>
             </li>
             <li>
-              <TrainingTooltip placement="topLeft" overlay={"List of entities (DAOs and individuals) that have voting power in the DAO"}>
+              <TrainingTooltip placement="right" overlay={"List of entities (DAOs and individuals) that have voting power in the DAO"}>
                 <Link to={"/dao/" + dao.address + "/members/"} onClick={this.handleCloseMenu}>
                   <span className={css.menuDot} />
                   <span className={
@@ -148,7 +148,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               </Link>
             </li>
             <li>
-              <TrainingTooltip placement="topLeft" overlay={"Space designated for general questions, statements and comments"}>
+              <TrainingTooltip placement="right" overlay={"Space designated for general questions, statements and comments"}>
                 <Link to={"/dao/" + dao.address + "/discussion/"} onClick={this.handleCloseMenu}>
                   <span className={
                     classNames({

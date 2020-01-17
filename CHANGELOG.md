@@ -10,8 +10,10 @@
     - Improve copy of home page when not logged in
     - Improve and clean up header text for feed items
   - Bugs Fixed
+    - Fix bug where tooltips in sidebar would cover other menu items. Move them to the right of the sidebar
     - Log out of 3box when clicking the Log Out button
     - Fix styling of Feed items
+
 
 ## 2019-12-18
 
