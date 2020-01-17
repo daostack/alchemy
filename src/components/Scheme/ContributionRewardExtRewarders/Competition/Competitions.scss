@@ -293,10 +293,11 @@ a.blueButton {
         padding-bottom: 12px;
         padding-top: 16px;
         font-size: 16px;
-        white-space: nowrap;
+        display: grid;
 
         .isWinner {
           padding-right: 10px;
+          padding-bottom: 6px;
           display: inline-block;
 
           img {
@@ -305,8 +306,7 @@ a.blueButton {
         }
 
         .results {
-          display: inline;
-          white-space: break-spaces;
+          display: inline-block;
           position: relative;
           bottom: 4px;
 
@@ -460,10 +460,6 @@ a.blueButton {
           
           .title, .creator {
             border-right: solid 1px #e9eef4;
-          }
-
-          .winnerIcon {
-            display: inherit;
           }
 
           .votedUp {
