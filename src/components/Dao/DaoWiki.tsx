@@ -79,16 +79,8 @@ function DaoWiki(props: IProps) {
   const registerWikiScheme = async () => {
     if (!await enableWalletProvider({ showNotification: props.showNotification })) { return; }
     
-    const registrarScheme = schemes.filter((scheme: Scheme) => scheme.staticState.name === "SchemeRegistrar").pop();
-    const registrarSchemeState = () => {
-      return new Promise<ISchemeState>((resolve, reject) => {
-        registrarScheme.state().subscribe((scheme: ISchemeState) => {
-          resolve(scheme);
-        })
-      })
-    }
-
-    const schemeRegistrar: ISchemeState = await registrarSchemeState()
+    const schemeRegistrar = schemes.filter((scheme: Scheme) => scheme.staticState.name === "SchemeRegistrar").pop();
+  
     const dao = props.daoState.address
     const proposalValues = {
       dao,
@@ -99,16 +91,13 @@ function DaoWiki(props: IProps) {
       title: "Creation of WikiUpdate scheme",
       description: "This will allow DAO to have Wiki functionality",
       parametersHash: '0x00000000000000000000000000000000000000000',
-      scheme: schemeRegistrar.address,
+      scheme: schemeRegistrar.staticState.address,
       // this is going to be changed with the generic scheme deployed to call uprtcl's contract
       schemeToRegister: '0x9a543aef934c21da5814785e38f9a7892d3cde6e'
     };
 
-    const proposal = await props.createProposal(proposalValues);
-    console.log(proposal)
-    console.log(schemeRegistrar.address)
-    // props.history.replace(`/dao/${dao}/scheme/${schemeRegistrar.id}`);
-    console.log(proposalValues);
+    await props.createProposal(proposalValues);
+    props.history.replace(`/dao/${dao}/scheme/${schemeRegistrar.id}`);
   };
 
   const NoWikiScheme = (
