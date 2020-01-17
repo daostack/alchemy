@@ -4,8 +4,16 @@
 
 ## Next release
   - Features Added
+    - Improve performance of 3box actions like follow items for feed.
+    - Add informational popup before any action that interacts with 3box.
+    - Add follow button to DAO sidebar
+    - Improve copy of home page when not logged in
+    - Improve and clean up header text for feed items
   - Bugs Fixed
     - Fix bug where tooltips in sidebar would cover other menu items. Move them to the right of the sidebar
+    - Log out of 3box when clicking the Log Out button
+    - Fix styling of Feed items
+
 
 ## 2019-12-18
 
