@@ -156,8 +156,7 @@
 .enablePredictions {
   display: block;
   width: 100%;
-  position: absolute;
-  top: 84px;
+  position: relative;
   text-align: center;
 
   button {
@@ -309,7 +308,7 @@
 
   .preapproveButtonsWrapper {
     text-align: center;
-    
+
     button {
       width: 100px;
       margin-left: 3px;
@@ -336,6 +335,7 @@
 
 .contextMenu {
   margin-top: -15px;
+  min-height: 30px;
 
   .contextTitle {
     width: 100%;

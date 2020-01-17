@@ -1,5 +1,6 @@
 import { Address, IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
+import { threeBoxLogout } from "actions/profilesActions";
 import { enableWalletProvider, getAccountIsEnabled, getArc, gotoReadonly, getWeb3ProviderInfo } from "arc";
 import * as classNames from "classnames";
 import AccountBalances from "components/Account/AccountBalances";
@@ -30,6 +31,7 @@ interface IStateProps {
   currentAccountAddress: string | null;
   daoAvatarAddress: Address;
   menuOpen: boolean;
+  threeBox: any;
 }
 
 const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalProps): IExternalProps & IStateProps => {
@@ -45,6 +47,7 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
     menuOpen: state.ui.menuOpen,
+    threeBox: state.profiles.threeBox,
   };
 };
 
@@ -56,6 +59,7 @@ interface IDispatchProps {
   disableTrainingTooltipsOnHover: typeof uiActions.disableTrainingTooltipsOnHover;
   enableTrainingTooltipsShowAll: typeof  uiActions.enableTrainingTooltipsShowAll;
   disableTrainingTooltipsShowAll: typeof uiActions.disableTrainingTooltipsShowAll;
+  threeBoxLogout: typeof threeBoxLogout;
 }
 
 const mapDispatchToProps = {
@@ -66,11 +70,12 @@ const mapDispatchToProps = {
   disableTrainingTooltipsOnHover: uiActions.disableTrainingTooltipsOnHover,
   enableTrainingTooltipsShowAll: uiActions.enableTrainingTooltipsShowAll,
   disableTrainingTooltipsShowAll: uiActions.disableTrainingTooltipsShowAll,
+  threeBoxLogout,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
 
-class Header extends React.Component<IProps, IStateProps> {
+class Header extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
@@ -114,6 +119,7 @@ class Header extends React.Component<IProps, IStateProps> {
 
   public handleClickLogout = async (_event: any): Promise<void> => {
     await gotoReadonly(this.props.showNotification);
+    await this.props.threeBoxLogout();
   }
 
   private handleToggleMenu = (_event: any): void => {
