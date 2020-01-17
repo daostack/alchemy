@@ -85,6 +85,20 @@ export function getProfile(accountAddress: string, currentAccount = false) {
   };
 }
 
+export function threeBoxLogout() {
+  return async (dispatch: any, _getState: any) => {
+    const state = _getState();
+    if (state.profiles.threeBox) {
+      state.profiles.threeBox.logout();
+      dispatch({
+        type: ActionTypes.SAVE_THREEBOX,
+        sequence: AsyncActionSequence.Success,
+        payload: { threeBox: null, threeBoxSpace: null },
+      });
+    }
+  };
+}
+
 export type UpdateProfileAction = IAsyncAction<"UPDATE_PROFILE", { accountAddress: string }, { description: string; name: string; socialURLs?: any }>;
 
 export function updateProfile(accountAddress: string, name: string, description: string) {
@@ -96,17 +110,17 @@ export function updateProfile(accountAddress: string, name: string, description:
     } as UpdateProfileAction);
 
     const state = _getState();
-    let box;
+    let threeBox;
 
     try {
-      if (state.threeBox) {
-        box = state.threeBox;
+      if (state.profiles.threeBox) {
+        threeBox = state.profiles.threeBox;
       } else {
         const web3Provider = await getWeb3Provider();
-        box = await Box.openBox(accountAddress, web3Provider);
+        threeBox = await Box.openBox(accountAddress, web3Provider);
       }
-      await box.syncDone;
-      await box.public.setMultiple(["name", "description"], [name, description]);
+      await threeBox.syncDone;
+      await threeBox.public.setMultiple(["name", "description"], [name, description]);
     } catch (e) {
       const errorMsg = e.message;
 
@@ -127,7 +141,7 @@ export function updateProfile(accountAddress: string, name: string, description:
       type: ActionTypes.UPDATE_PROFILE,
       sequence: AsyncActionSequence.Success,
       meta: { accountAddress },
-      payload: { name, description, threeBox: box },
+      payload: { name, description, threeBox },
     } as UpdateProfileAction);
 
     Analytics.track("Update Profile", {
@@ -150,26 +164,31 @@ export type FollowItemAction = IAsyncAction<"FOLLOW_ITEM", { accountAddress: str
 export function toggleFollow(accountAddress: string, type: FollowType, id: string) {
   return async (dispatch: any, _getState: any) => {
     const state = _getState();
-    let box;
-    let space;
+    let threeBox;
+    let threeBoxSpace;
 
     try {
-      if (state.threeBox) {
-        box = state.threeBox;
+      if (state.profiles.threeBox) {
+        threeBox = state.profiles.threeBox;
       } else {
         const web3Provider = await getWeb3Provider();
-        box = await Box.openBox(accountAddress, web3Provider);
+        threeBox = await Box.openBox(accountAddress, web3Provider);
       }
 
-      await box.syncDone;
-      space = await box.openSpace("DAOstack") ;
-      await space.syncDone;
+      await threeBox.syncDone;
+
+      if (state.profiles.threeBoxSpace) {
+        threeBoxSpace = state.profiles.threeBoxSpace;
+      } else {
+        threeBoxSpace = await threeBox.openSpace("DAOstack") ;
+      }
+      await threeBoxSpace.syncDone;
     } catch (e) {
       dispatch(showNotification(NotificationStatus.Failure, `Failed to connect to 3box: ${e.message}`));
       return false;
     }
 
-    let follows = await space.public.get("follows");
+    let follows = await threeBoxSpace.public.get("follows");
     if (!follows) {
       follows = {
         daos: [],
@@ -191,13 +210,13 @@ export function toggleFollow(accountAddress: string, type: FollowType, id: strin
     }
 
     // TODO: check success?
-    await space.public.set("follows", follows);
+    await threeBoxSpace.public.set("follows", follows);
 
     dispatch({
       type: ActionTypes.FOLLOW_ITEM,
       sequence: AsyncActionSequence.Success,
       meta: { accountAddress },
-      payload: { type, id, isFollowing },
+      payload: { type, id, isFollowing, threeBox, threeBoxSpace },
     } as FollowItemAction);
 
     dispatch(showNotification(NotificationStatus.Success, (isFollowing ? "Now following" : "No longer following") + ` ${type.slice(0, -1)} ${id.slice(0, 8)}...`));

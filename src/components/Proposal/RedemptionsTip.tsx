@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalState, IProposalOutcome } from "@daostack/client";
 import Reputation from "components/Account/Reputation";
-import { formatTokens, fromWei, tokenSymbol, AccountClaimableRewardsType } from "lib/util";
+import { formatTokens, fromWei, tokenDecimals, tokenSymbol, AccountClaimableRewardsType } from "lib/util";
 import * as React from "react";
 import * as css from "components/Shared/PreTransactionModal.scss";
 
@@ -84,7 +84,7 @@ export default (props: IProps) => {
             }
             {contributionRewards["externalToken"] ?
               <li>
-                {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken))}
+                {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken), tokenDecimals(contributionReward.externalToken))}
               </li> : ""
             }
             {contributionRewards["rep"] ? <li><Reputation reputation={contributionRewards["rep"]} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}

@@ -7,6 +7,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
+import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as GeoPattern from "geopattern";
 import Analytics from "lib/analytics";
@@ -118,6 +119,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   : <p>Anyone can make a proposal to the DAO! Click the button on the top right.</p>
           }
         </div>
+        <div className={css.followButton}><FollowButton id={dao.address} type="daos" style="white" /></div>
         <div className={css.daoNavigation}>
           <span className={css.daoNavHeading}><b>Menu</b></span>
           <ul>
@@ -135,7 +137,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               </Link>
             </li>
             <li>
-              <TrainingTooltip placement="topLeft" overlay={"List of entities (DAOs and individuals) that have voting power in the DAO"}>
+              <TrainingTooltip placement="right" overlay={"List of entities (DAOs and individuals) that have voting power in the DAO"}>
                 <Link to={"/dao/" + dao.address + "/members/"} onClick={this.handleCloseMenu}>
                   <span className={css.menuDot} />
                   <span className={
@@ -163,7 +165,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               </Link>
             </li>
             <li>
-              <TrainingTooltip placement="topLeft" overlay={"Space designated for general questions, statements and comments"}>
+              <TrainingTooltip placement="right" overlay={"Space designated for general questions, statements and comments"}>
                 <Link to={"/dao/" + dao.address + "/discussion/"} onClick={this.handleCloseMenu}>
                   <span className={
                     classNames({
@@ -244,7 +246,6 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               <li><a className="externalLink" href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">Help Center</a></li>
               <li><a className="externalLink" href="https://hub.gendao.org/" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
               <li><Link to="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link></li>
-              <li><a className="externalLink" href="https://cloudflare-ipfs.com/ipfs/Qmf4HafH1QiryBun7j2g9inp78Njrkt635WJ943rBQyWyy" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
               <li className={css.daoStack}>
                 <a className="externalLink" href="http://daostack.io" target="_blank" rel="noopener noreferrer">
                   <img src={this.props.daoAvatarAddress ? "/assets/images/Icon/dao-logo.svg" : "/assets/images/Icon/dao-logo-gray.svg"} /> DAOstack

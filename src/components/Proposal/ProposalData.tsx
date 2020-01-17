@@ -8,7 +8,7 @@ import * as moment from "moment";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
-import { closingTime } from "reducers/arcReducer";
+import { closingTime } from "lib/proposalHelpers";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of, Observable } from "rxjs";
 import { map, mergeMap } from "rxjs/operators";

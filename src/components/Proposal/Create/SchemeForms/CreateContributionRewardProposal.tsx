@@ -1,17 +1,19 @@
-import { IDAOState, ISchemeState } from "@daostack/client";
-import * as arcActions from "actions/arcActions";
-import { enableWalletProvider, getArc } from "arc";
-import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import UserSearchField from "components/Shared/UserSearchField";
-import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import Analytics from "lib/analytics";
-import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
-import { showNotification } from "reducers/notifications";
+import { IDAOState, ISchemeState } from "@daostack/client";
+import { enableWalletProvider, getArc } from "arc";
+import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
+
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import UserSearchField from "components/Shared/UserSearchField";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
+import * as arcActions from "actions/arcActions";
+import Analytics from "lib/analytics";
+import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
+import { showNotification, NotificationStatus } from "reducers/notifications";
+import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
@@ -94,11 +96,25 @@ export const SelectField: React.SFC<any> = ({options, field, form }) => (
 
 class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
+  initialFormValues: IFormValues;
+
   constructor(props: IProps) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.initialFormValues = importUrlValues<IFormValues>({
+      beneficiary: "",
+      description: "",
+      ethReward: 0,
+      externalTokenAddress: getArc().GENToken().address,
+      externalTokenReward: 0,
+      nativeTokenReward: 0,
+      reputationReward: 0,
+      title: "",
+      url: "",
+      tags: [],
+    });
     this.state = {
-      tags: new Array<string>(),
+      tags: this.initialFormValues.tags,
     };
   }
 
@@ -146,8 +162,14 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     this.props.handleClose();
   }
 
-  private onTagsChange = (tags: string[]): void => {
-    this.setState({tags});
+  // Exports data from form to a shareable url.
+  public exportFormValues(values: IFormValues) {
+    exportUrl({ ...values, ...this.state });
+    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
+  }
+
+  private onTagsChange = () => (tags: string[]): void => {
+    this.setState({ tags });
   }
 
   public render(): RenderOutput {
@@ -165,17 +187,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       <div className={css.contributionReward}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={{
-            beneficiary: "",
-            description: "",
-            ethReward: 0,
-            externalTokenAddress: arc.GENToken().address,
-            externalTokenReward: 0,
-            nativeTokenReward: 0,
-            reputationReward: 0,
-            title: "",
-            url: "",
-          } as IFormValues}
+          initialValues={this.initialFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
@@ -224,10 +236,10 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
             errors,
             touched,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            handleSubmit,
             isSubmitting,
             setFieldTouched,
             setFieldValue,
+            values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <label className={css.description}>What to Expect</label>
@@ -273,7 +285,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
 
               <div className={css.tagSelectorContainer}>
-                <TagsSelector onChange={this.onTagsChange}></TagsSelector>
+                <TagsSelector onChange={this.onTagsChange()} tags={this.state.tags}></TagsSelector>
               </div>
 
               <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
@@ -305,6 +317,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                     name="beneficiary"
                     onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                     onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
+                    defaultValue={this.initialFormValues.beneficiary}
                   />
                 </div>
 
@@ -389,12 +402,17 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 }
               </div>
               <div className={css.createProposalActions}>
+                <TrainingTooltip overlay="Export proposal" placement="top">
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                    <img src="/assets/images/Icon/share-blue.svg" />
+                  </button>
+                </TrainingTooltip>
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
                 </button>
                 <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                  Submit proposal
+                    Submit proposal
                   </button>
                 </TrainingTooltip>
               </div>
