@@ -1,6 +1,7 @@
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
+import Reputation from "components/Account/Reputation";
 import * as GeoPattern from "geopattern";
 import { fromWei } from "lib/util";
 
@@ -19,15 +20,15 @@ interface IProps {
   userProfile: IProfileState;
 }
 
-const accountTitle = (event: any, userProfile: IProfileState, text: string) => {
-  return <span>
+const accountTitle = (event: any, userProfile: IProfileState, text: string | React.ReactElement) => {
+  return <span className={css.accountTitle}>
     <AccountImage accountAddress={event.user} width={17} profile={userProfile} />
     <span className={css.accountName}><AccountProfileName accountAddress={event.user} accountProfile={userProfile} daoAvatarAddress={event.dao.id} /></span>
     <span>{text}</span>
   </span>;
 };
 
-const daoTitle = (event: any, text = "") => {
+const daoTitle = (event: any, text: string | React.ReactElement = "") => {
   const bgPattern = GeoPattern.generate(event.dao.id + event.dao.name);
 
   return <span>
@@ -67,13 +68,35 @@ const FeedItem = (props: IProps) => {
       icon = <img src="/assets/images/Icon/new-person.svg" />;
       content = <UserFeedItem event={event} />;
       break;
-    case "ProposalStageChange":
+    case "ProposalStageChange": {
+      let statusText;
+      switch (eventData.stage) {
+        case "Executed":
+          statusText = event.proposal.winningOutcome === "Fail" ? "has failed" : "has passed";
+          break;
+        case "Boosted":
+          statusText = <span>is <b>boosted</b></span>;
+          break;
+        case "PreBoosted":
+          statusText = <span>is now <b>pending</b></span>;
+          break;
+        case "QuietEndingPeriod":
+          statusText = <span>is in <b>overtime</b></span>;
+          break;
+        case "Queued":
+          statusText = <span>is no longer boosted</span>;
+          break;
+        case "ExpiredInQueue":
+          statusText = <span>is no longer boosted</span>;
+          break;
+      }
       title = event.from === "dao"
-        ? daoTitle(event, ` - proposal is ${eventData.stage}`)
-        : `Proposal is ${eventData.stage}`;
+        ? daoTitle(event, <span> &mdash; proposal {statusText}</span>)
+        : <span>Proposal {statusText}</span>;
       icon = <img src="/assets/images/Icon/Info.svg" />;
       content = <ProposalFeedItem event={event} />;
       break;
+    }
     case "VoteFlip": {
       const voteFlipForAgainst = eventData.outcome === "Pass" ? "Pass" : "Fail";
       title = event.from === "dao"
@@ -92,14 +115,14 @@ const FeedItem = (props: IProps) => {
       break;
     case "Stake": {
       const stakeForAgainst = eventData.outcome === "Pass" ? "Pass" : "Fail";
-      title = accountTitle(event, userProfile, `staked on ${stakeForAgainst} with ${fromWei(new BN(eventData.stakeAmount))} GEN`);
+      title = accountTitle(event, userProfile, `staked on ${stakeForAgainst} with ${fromWei(new BN(eventData.stakeAmount)).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} GEN`);
       icon = <img src="/assets/images/Icon/v-small-line.svg" />;
       content = <ProposalFeedItem event={event} />;
       break;
     }
     case "Vote": {
       const voteForAgainst = eventData.outcome === "Pass" ? "For" : "Against";
-      title = accountTitle(event, userProfile, `voted ${voteForAgainst} with ${fromWei(new BN(eventData.reputationAmount))} REP`);
+      title = accountTitle(event, userProfile, <span>voted {voteForAgainst} with <Reputation reputation={new BN(eventData.reputationAmount)} totalReputation={new BN(event.dao.nativeReputation.totalSupply)} daoName={event.dao.name} /></span>);
       icon = <img src="/assets/images/Icon/vote/for-gray.svg" />;
       content = <ProposalFeedItem event={event} />;
       break;

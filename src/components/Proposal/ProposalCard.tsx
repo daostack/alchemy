@@ -8,7 +8,7 @@ import { humanProposalTitle } from "lib/util";
 import * as React from "react";
 import TrackVisibility from "react-on-screen";
 import { Link } from "react-router-dom";
-import { closingTime } from "reducers/arcReducer";
+import { closingTime } from "lib/proposalHelpers";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ActionButton from "./ActionButton";

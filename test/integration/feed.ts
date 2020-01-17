@@ -17,7 +17,7 @@ describe("Home page feed", () => {
     await hideCookieAcceptWindow();
     const excuseMe = await $("*[data-test-id=\"not-logged-in-banner\"] > h1");
     await excuseMe.waitForExist();
-    (await excuseMe.getText()).should.be.equal("Excuse me, who are you?");
+    (await excuseMe.getText()).should.be.equal("Hi there! Have we met before?");
     const daosHeader = await $("*[data-test-id=\"header-all-daos\"]");
     await daosHeader.waitForExist();
     const daoLink = await $("*[data-test-id=\"dao-link\"]");
