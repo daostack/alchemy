@@ -1,9 +1,10 @@
 import * as React from "react";
 import * as Sticky from "react-stickynode";
-import { IDAOState, ISchemeState, Scheme, IProposalType } from "@daostack/client";
+import { IDAOState, ISchemeState, Scheme, IProposalType, Proposal } from "@daostack/client";
 import { WikiContainer, actualHash, ReactiveWiki } from "@dorgtech/daosmind";
 import classNames from "classnames";
 import { enableWalletProvider } from "arc";
+import { combineLatest } from "rxjs";
 
 import { Link } from "react-router-dom";
 import * as arcActions from "actions/arcActions";
@@ -31,11 +32,12 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type IProps = IDispatchProps & IExternalProps & ISubscriptionProps<Scheme[]>;
+type SubscriptionData = ISubscriptionProps<[Scheme[], Proposal[]]>
+type IProps = IDispatchProps & IExternalProps & SubscriptionData;
 
 function DaoWiki(props: IProps) {
   const [hasWikiScheme, setHasWikiScheme] = React.useState<boolean>(false);
-  const schemes = props.data;
+  const [schemes, proposals] = props.data;
 
   const renderWikiComponent = () => {
     const { daoAvatarAddress, perspectiveId, pageId } = props.match.params;
@@ -71,6 +73,7 @@ function DaoWiki(props: IProps) {
 
   React.useEffect(() => {
     checkIfWikiSchemeExists();
+    console.log(proposals)
   }, []);
 
   const registerWikiScheme = async () => {
@@ -151,7 +154,10 @@ const SubscribedDaoWiki = withSubscription({
   checkForUpdate: [],
   createObservable: async (props: IExternalProps) => {
     const dao = props.daoState.dao;
-    return dao.schemes({}, { fetchAllData: true });
+    return combineLatest(
+      dao.schemes({}, { fetchAllData: true }),
+      dao.proposals({}, { subscribe: true, fetchAllData: true })
+    )
   },
 });
 
