@@ -1,7 +1,7 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
 import { DAO, Arc } from "@daostack/client";
-import { getArc } from "./utils";
+import { getArc, setCalendarDate } from "./utils";
 
 describe("Proposals", () => {
   let dao: DAO;
@@ -63,29 +63,21 @@ describe("Proposals", () => {
     await ethRewardInput.scrollIntoView();
     await ethRewardInput.setValue(22);
 
-    const compStartDateInput = await $("*[id=\"compStartDateInput\"]");
+    const compStartDateInput = await $("*[id=\"compStartTimeInput\"]");
     await compStartDateInput.scrollIntoView();
-    await compStartDateInput.setValue("01/01/2021");
-    // const compStartTimeInput = await $("*[name=\"compStartTime\"]");
-    // await compStartTimeInput.setValue('00:00');
+    await setCalendarDate(compStartDateInput, "01/01/2021");
 
-    const suggestionsEndDateInput = await $("*[id=\"suggestionsEndDateInput\"]");
+    const suggestionsEndDateInput = await $("*[id=\"suggestionEndTimeInput\"]");
     await suggestionsEndDateInput.scrollIntoView();
-    await suggestionsEndDateInput.setValue("01/02/2021");
-    // const suggestionsEndTimeInput = await $("*[id=\"suggestionsEndTimeInput\"]");
-    // await suggestionsEndTimeInput.setValue('00:00');
+    await setCalendarDate(suggestionsEndDateInput, "01/02/2021");
 
-    const votingStartDateInput = await $("*[id=\"votingStartDateInput\"]");
+    const votingStartDateInput = await $("*[id=\"votingStartTimeInput\"]");
     await votingStartDateInput.scrollIntoView();
-    await votingStartDateInput.setValue("01/03/2021");
-    // const votingStartTimeInput = await $("*[id=\"votingStartTimeInput\"]");
-    // await votingStartTimeInput.setValue('00:00');
+    await setCalendarDate(votingStartDateInput, "01/03/2021");
 
-    const compEndDateInput = await $("*[id=\"compEndDateInput\"]");
+    const compEndDateInput = await $("*[id=\"compEndTimeInput\"]");
     await compEndDateInput.scrollIntoView();
-    await compEndDateInput.setValue("01/04/2021");
-    // const compEndTimeInput = await $("*[id=\"compEndTimeInput\"]");
-    // await compEndTimeInput.setValue('00:00');
+    await setCalendarDate(compEndDateInput, "01/04/2021");
 
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
     await createProposalSubmitButton.scrollIntoView();

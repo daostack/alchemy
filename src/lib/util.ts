@@ -633,3 +633,7 @@ export function ensureHttps(url: string) {
 
   return url;
 }
+
+export function inTesting(): boolean {
+  return (process.env.NODE_ENV === "development" && navigator.webdriver);
+}

@@ -65,3 +65,11 @@ export async function hideCookieAcceptWindow(): Promise<void> {
 export async function hideTrainingTooltips() {
   localStorage.setItem("trainingTooltipsEnabled", "false");
 }
+
+export const setCalendarDate = async (element: any, date: string): Promise<void> => {
+  await element.click(); // make sure no other calendar still has focus or the calendar component will get very confused
+  /**
+   * note this will not work if there is already a value in the calendar field
+   */
+  await element.setValue(date);
+};
