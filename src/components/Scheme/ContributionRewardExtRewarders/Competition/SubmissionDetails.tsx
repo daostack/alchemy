@@ -3,7 +3,7 @@ import * as React from "react";
 
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
-import { formatTokens, ensureHttps} from "lib/util";
+import { ensureHttps} from "lib/util";
 import { getProposalSubmission, getSubmissionVoterHasVoted, getCompetitionVotes, ICompetitionStatus } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
@@ -14,6 +14,7 @@ import { IProfilesState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import Tooltip from "rc-tooltip";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import Reputation from "components/Account/Reputation";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -58,6 +59,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
   public render(): RenderOutput {
 
     const competition = this.props.proposalState.competition;
+    const daoState = this.props.daoState;
     const submission = this.props.data[0];
     const currentAccountVotedForIt = this.props.data[1];
     const currentAccountVotes = this.props.data[2];
@@ -76,7 +78,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
           <div className={css.closeButton}><img onClick={this.props.handleClose} src="/assets/images/Icon/x-grey.svg"/></div>
           <div className={css.reputationVoted}>
             <img src="/assets/images/Icon/vote/for-gray.svg"/>
-            {formatTokens(submission.totalVotes)}
+            { <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol />}
           </div>
           { (canRedeem || !status.complete) ?
             <div className={css.actions}>

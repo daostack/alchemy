@@ -3,7 +3,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
 import { IDAOState, IProposalState, ICompetitionSuggestionState, Address } from "@daostack/client";
-import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
+import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone } from "lib/util";
 import { connect } from "react-redux";
 
 import Countdown from "components/Shared/Countdown";
@@ -27,6 +27,7 @@ import moment = require("moment");
 import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, ICompetitionStatus, getSubmissionVoterHasVoted } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import Tooltip from "rc-tooltip";
 import { concatMap, toArray, first } from "rxjs/operators";
+import Reputation from "components/Account/Reputation";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -223,7 +224,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
               <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.profiles[submission.suggester]} daoAvatarAddress={daoState.address} detailView={false} />
             </div>
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votes]: true})}>
-              { formatTokens(submission.totalVotes) }
+              { <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol/> }
             </div>
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votedUp]: true })}>
               <Tooltip placement="top" trigger={votersVotes[index] ? ["hover"] : []} overlay={"You voted for this submission"}>
