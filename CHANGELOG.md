@@ -4,12 +4,21 @@
 
 ## Next release
   - Features Added
+    - Many tweaks to the language throughout the app
+    - Can click on whole proposal card to go to proposal details page
+    - Can click on whole proposal history row to go to proposal details page
+    - Can click on DAO member row to go to account profile page
+    - Improvements to language of disabled vote and stake buttons
+    - Improvements to language of proposal countdown to show what status it will change to
+    - Can now press enter to vote or stake from pre transaction modal, or ESC to close the modal
+  - Bugs Fixed
+    - Fixed up meta tags for various pages and when sharing to Twitter and Facebook
+    - If proposal card action menu would go off screen to the right then it now appears to the left of the button
     - Improve performance of 3box actions like follow items for feed.
     - Add informational popup before any action that interacts with 3box.
     - Add follow button to DAO sidebar
     - Improve copy of home page when not logged in
     - Improve and clean up header text for feed items
-  - Bugs Fixed
     - Fix bug where tooltips in sidebar would cover other menu items. Move them to the right of the sidebar
     - Log out of 3box when clicking the Log Out button
     - Fix styling of Feed items

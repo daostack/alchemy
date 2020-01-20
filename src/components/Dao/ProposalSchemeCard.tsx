@@ -7,7 +7,6 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import { humanProposalTitle, schemeName } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { closingTime } from "lib/proposalHelpers";
 import { combineLatest } from "rxjs";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "./SchemeCard.scss";
@@ -51,7 +50,7 @@ const ProposalSchemeCard = (props: IProps) => {
           </TrainingTooltip> : headerHtml
         }
         <div>
-          <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
+          <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending Boosting</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
         </div>
         {proposals.length === 0 ?
           <div className={css.loading}>
@@ -122,7 +121,7 @@ const ProposalDetail = (props: IProposalDetailProps) => {
         {humanProposalTitle(proposalState)}
       </span>
       <b>
-        <Countdown toDate={closingTime(proposalState)} detailView={false} schemeView />
+        <Countdown proposal={proposalState} schemeView />
       </b>
     </Link>
   );

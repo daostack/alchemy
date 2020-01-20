@@ -62,10 +62,8 @@ describe("Proposals", () => {
 
     // await proposal.scrollIntoView(true);
 
-    // vote for the proposal
+    // Vote for the proposal
     // Click on context menu so voting controls appear
-    await proposal.click();
-
     const contextMenu = await proposal.$("[data-test-id=\"proposalContextMenu\"]");
     await contextMenu.waitForDisplayed();
     await contextMenu.click();
