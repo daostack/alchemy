@@ -167,6 +167,8 @@
         max-height: 150px;
         overflow: hidden;
         margin-bottom: 10px;
+        white-space: pre-wrap;
+        word-break: break-word;
 
         > p { margin-top: 0; }
 
