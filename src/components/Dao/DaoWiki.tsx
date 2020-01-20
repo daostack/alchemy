@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as Sticky from "react-stickynode";
-import { IDAOState, ISchemeState, Scheme, IProposalType, Proposal, IProposalStage, IProposalState } from "@daostack/client";
+import { IDAOState, ISchemeState, Scheme, IProposalType, Proposal, IProposalStage, IProposalState, IProposalCreateOptions } from "@daostack/client";
 import { WikiContainer, actualHash, ReactiveWiki } from "@dorgtech/daosmind";
 import classNames from "classnames";
 import { enableWalletProvider } from "arc";
@@ -29,22 +29,31 @@ const mapDispatchToProps = {
 
 interface IDispatchProps {
   createProposal: typeof arcActions.createProposal;
+  voteOnProposal: typeof arcActions.voteOnProposal;
   showNotification: typeof showNotification;
 }
 
 type SubscriptionData = ISubscriptionProps<[Scheme[], Proposal[]]>
 type IProps = IDispatchProps & IExternalProps & SubscriptionData;
 
+type DispatchMethods = 'createProposal';
+type DispatchParams = IProposalCreateOptions;
+
 function DaoWiki(props: IProps) {
   const [hasWikiScheme, setHasWikiScheme] = React.useState<boolean>(false);
   const [schemes, proposals] = props.data;
+
+
+  const ownDispatcher = (method: DispatchMethods, params: DispatchParams) => {
+    return props[method](params)
+  }
 
   const renderWikiComponent = () => {
     const { daoAvatarAddress, perspectiveId, pageId } = props.match.params;
     actualHash["dao"] = daoAvatarAddress;
     actualHash["wiki"] = perspectiveId;
     actualHash["page"] = pageId;
-    return WikiContainer.getInstance({});
+    return WikiContainer.getInstance(ownDispatcher);
   };
 
   const checkIfWikiSchemeExists = async () => {
