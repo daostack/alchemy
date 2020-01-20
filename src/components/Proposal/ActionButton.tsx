@@ -72,7 +72,9 @@ class ActionButton extends React.Component<IProps, IState> {
     this.handleRedeemProposal = this.handleRedeemProposal.bind(this);
   }
 
-  private handleClickExecute = (type: string) => async (): Promise<void> => {
+  private handleClickExecute = (type: string) => async (e: any): Promise<void> => {
+    e.preventDefault();
+
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const { currentAccountAddress, daoState, parentPage, proposalState } = this.props;
@@ -91,7 +93,8 @@ class ActionButton extends React.Component<IProps, IState> {
     });
   }
 
-  private handleClickRedeem = async (): Promise<void> => {
+  private handleClickRedeem = async (e: any): Promise<void> => {
+    e.preventDefault();
 
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 

@@ -65,12 +65,18 @@ class PreTransactionModal extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
+    document.addEventListener("keydown", this.handleKeyPress, false);
+
     Analytics.trackLinks(".buyGenLink", "Clicked Buy Gen Link", (link: any) => {
       return {
         Origin: "Stake Popup",
         URL: link.getAttribute("href"),
       };
     });
+  }
+
+  public componentWillUnmount(){
+    document.removeEventListener("keydown", this.handleKeyPress, false);
   }
 
   private handleClickAction = async (): Promise<void> => {
@@ -83,6 +89,27 @@ class PreTransactionModal extends React.Component<IProps, IState> {
       this.props.action();
     }
     this.props.closeAction();
+  }
+
+  private handleKeyPress = (e: any) => {
+    const { actionType, closeAction, currentAccountGens } = this.props;
+
+    // Close modal on ESC key press
+    if (e.keyCode === 27) {
+      closeAction();
+    }
+
+    // Do action on Enter key press
+    if (e.keyCode === 13) {
+      if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
+        console.log(this.state.stakeAmount, fromWei(currentAccountGens), this.state.stakeAmount > 0);
+        if (this.state.stakeAmount > 0 && this.state.stakeAmount <= fromWei(currentAccountGens)) {
+          this.handleClickAction();
+        }
+      } else {
+        this.handleClickAction();
+      }
+    }
   }
 
   public toggleInstructions = () => {
@@ -332,6 +359,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                           onChange={this.stakeOnChange}
                           placeholder="0"
                         />
+                        <div className={css.xToBoost}>{formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " needed to boost this proposal"}</div>
                         <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
                         <div className={css.yourBalance}>
                           <div>Your balance: {formatTokens(currentAccountGens)} GEN</div>

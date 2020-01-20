@@ -71,9 +71,9 @@ class DaoMembersPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.membersContainer}>
-        <BreadcrumbsItem to={"/dao/" + daoState.address + "/members"}>Reputation Holders</BreadcrumbsItem>
+        <BreadcrumbsItem to={"/dao/" + daoState.address + "/members"}>DAO Members</BreadcrumbsItem>
         <Sticky enabled top={50} innerZ={10000}>
-          <h2>Reputation Holders</h2>
+          <h2>DAO Members</h2>
         </Sticky>
         <table className={css.memberHeaderTable}>
           <tbody className={css.memberTable + " " + css.memberTableHeading}>

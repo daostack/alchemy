@@ -81,7 +81,7 @@ class DaoSchemesPage extends React.Component<IProps, null> {
         <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
 
         <Sticky enabled top={50} innerZ={10000}>
-          <h1>All Schemes</h1>
+          <h1>All Plugins</h1>
         </Sticky>
         {(allKnownSchemes.length + unknownSchemes.length) === 0
           ? <div>

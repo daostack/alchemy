@@ -132,7 +132,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             <div className={css.proposalsHeader}>
               No upcoming proposals
             </div>
-            <p>You can be the first one to create a {scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || scheme.address} proposal today! (:</p>
+            <p>You can be the first one to create a {schemeName(scheme)} proposal today! (:</p>
             <div className={css.cta}>
               <Link to={"/dao/" + daoState.address}>
                 <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
@@ -169,8 +169,8 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
-                <TrainingTooltip placement="bottom" overlay={"Pending proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
-                  <span>Pending Proposals ({scheme.numberOfPreBoostedProposals})</span>
+                <TrainingTooltip placement="bottom" overlay={"Pending boosting proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
+                  <span>Pending Boosting Proposals ({scheme.numberOfPreBoostedProposals})</span>
                 </TrainingTooltip>
                 {proposalsPreBoosted.length === 0
                   ?

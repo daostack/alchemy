@@ -156,24 +156,26 @@
 .enablePredictions {
   display: block;
   width: 100%;
-  position: relative;
   text-align: center;
+  margin-bottom: 10px;
 
   button {
     width: auto;
     display: block;
-    border-radius: 3px;
-    opacity: .5;
+    border-radius: 12.5px;
     position: relative;
     top: 3px;
     height: auto;
     padding-left: 5px;
     padding-right: 6px;
-    line-height: initial;
     padding-top: 5px;
     padding-bottom: 7px;
     margin: 0 auto;
+    border-radius: 12.5px;
+    background-color: #0076ff;
+    color: white;
     font-weight: normal;
+    font-family: LucidaGrande;
   }
 
   span {
@@ -181,6 +183,12 @@
     margin-top: 25px;
     margin-bottom: 8px;
   }
+}
+
+.toBoostMessage {
+  font-size: 11px;
+  letter-spacing: 0.2px;
+  color: #689bd6;
 }
 
 .detailView {
@@ -191,7 +199,6 @@
 
   .passButton {
     position: relative;
-    top: 1px;
   }
 
   h3 {
@@ -207,10 +214,9 @@
     }
   }
 
-  .predictions {
-    background-color: $white;
-    border-radius: 0 15px 15px 15px;
-    margin: 0 0 20px 20px;
+  .disabledPredictions {
+    position: relative;
+    top: 3px;
   }
 
   .enablePredictions {

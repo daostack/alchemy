@@ -4,9 +4,9 @@ import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Analytics from "lib/analytics";
 import { formatTokens } from "lib/util";
+import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import { Page } from "pages";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -177,7 +177,13 @@ class StakeButtons extends React.Component<IProps, IState> {
     const stakingEnabled = (proposal.stage === IProposalStage.Queued && !expired) ||
       (proposal.stage === IProposalStage.PreBoosted);
 
+    const disabledMessage =
+      (proposal.stage === IProposalStage.Queued && expired) || proposal.stage === IProposalStage.ExpiredInQueue ? "Can't predict on expired proposals" :
+        (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) ? "Can't predict on boosted proposals" :
+          (proposal.stage === IProposalStage.Executed) ? `Can't predict on ${proposal.winningOutcome === IProposalOutcome.Pass ? "passed" : "failed"} proposals` : "";
+
     const hasGens = currentAccountGens && currentAccountGens.gt(new BN(0));
+
     // show staking buttons when !this.props.currentAccountAddress, even if no GENs
     const disableStakePass = (currentAccountAddress && !hasGens) || currentAccountPrediction === IProposalOutcome.Fail;
     const disableStakeFail = (currentAccountAddress && !hasGens) || currentAccountPrediction === IProposalOutcome.Pass;
@@ -196,7 +202,7 @@ class StakeButtons extends React.Component<IProps, IState> {
       !hasGens ?
         "Insufficient GENs" :
         currentAccountPrediction === prediction ?
-          "Can't change prediction" : ""
+          "Can't change your prediction" : ""
       ;
 
     const passButton = (
@@ -216,8 +222,20 @@ class StakeButtons extends React.Component<IProps, IState> {
     if (stakingEnabled && (currentAccountAddress && currentAccountGenStakingAllowance && currentAccountGenStakingAllowance.eq(new BN(0)))) {
       return (
         <div className={wrapperClass}>
+
+          {contextMenu ?
+            <div className={css.contextTitle}>
+              <div>
+                <span>
+                  Predict
+                </span>
+              </div>
+            </div>
+            : ""
+          }
+
           <div className={css.enablePredictions}>
-            <button onClick={this.showApprovalModal} data-test-id="button-enable-predicting">Enable Predicting</button>
+            <button onClick={this.showApprovalModal} data-test-id="button-enable-predicting">Enable Predictions</button>
           </div>
         </div>
       );
@@ -235,7 +253,7 @@ class StakeButtons extends React.Component<IProps, IState> {
             dao={dao}
             parentPage={parentPage}
             proposal={proposal}
-            secondaryHeader={"> " + formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " for boost!"}
+
           /> : ""
         }
 
@@ -254,22 +272,28 @@ class StakeButtons extends React.Component<IProps, IState> {
           {stakingEnabled ?
             <div>
               {
-                (!currentAccountAddress ? "" : tip(IProposalOutcome.Fail) !== "") ?
+                (currentAccountAddress && tip(IProposalOutcome.Fail) !== "") ?
                   <Tooltip placement="left" trigger={["hover"]} overlay={tip(IProposalOutcome.Fail)}>
                     {passButton}
                   </Tooltip> :
                   passButton
               }
+              {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.Queued && !expired ?
+                <div className={css.toBoostMessage}>{formatTokens(proposal.upstakeNeededToPreBoost, "GEN to boost")}</div>
+                : ""}
               {
-                (!currentAccountAddress ? "" : tip(IProposalOutcome.Pass) !== "") ?
+                (currentAccountAddress && tip(IProposalOutcome.Pass) !== "") ?
                   <Tooltip placement="left" trigger={["hover"]} overlay={tip(IProposalOutcome.Pass)}>
                     {failButton}
                   </Tooltip> :
                   failButton
               }
+              {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.PreBoosted && !expired ?
+                <div className={css.toBoostMessage}>{formatTokens(proposal.downStakeNeededToQueue, " GEN to un-boost")}</div>
+                : ""}
             </div>
             : <span className={css.disabledPredictions}>
-              Predictions are disabled
+              {disabledMessage}
             </span>
           }
         </div>
