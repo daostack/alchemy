@@ -99,6 +99,7 @@ class FeedPage extends React.Component<IProps, null> {
 
     const eventsByDao = (data[2] as any[])
       .filter((event) => ["NewProposal", "NewReputationHolder", "ProposalStageChange", "VoteFlip"].includes(event.type) && !Object.prototype.hasOwnProperty.call(eventIds, event.id))
+      .filter((event) => !event.data.includes("ExpiredInQueue"))
       .map((event) => { event.from = "dao"; eventIds[event.id] = true; return event; });
 
     const events = eventsByProposal.concat(eventsByUser).concat(eventsByDao).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
