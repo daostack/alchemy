@@ -35,34 +35,35 @@ export default class CompetitionsList extends React.Component<IProps, null> {
     }
   }
 
+  private compareCompetitions(a: IProposalStateEx, b: IProposalStateEx): number {
+
+    if (!(a.competition.__status && b.competition.__status)) {
+      return 0; // the data may not yet have been supplied
+    }
+
+    // sorts by the ordinal position of the CompetitionStatusEnum values
+    const positionA = Object.values(CompetitionStatusEnum).indexOf(a.competition.__status.status);
+    const positionB = Object.values(CompetitionStatusEnum).indexOf(b.competition.__status.status);
+
+    if (positionA < positionB)
+      return -1;
+    else if (positionA > positionB)
+      return 1;
+    else return 0;
+  }
+
+
   public render(): RenderOutput {
 
     const { daoState, scheme, proposals} = this.props;
     const daoAvatarAddress = daoState.address;
-
-    const compareCompetitions = (a: IProposalStateEx, b: IProposalStateEx): number => {
-
-      if (!(a.competition.__status && b.competition.__status)) {
-        return 0; // the data isn't ready, see componentDidMount
-      }
-
-      // sorts by the ordinal position of the CompetitionStatusEnum values
-      const positionA = Object.values(CompetitionStatusEnum).indexOf(a.competition.__status.status);
-      const positionB = Object.values(CompetitionStatusEnum).indexOf(b.competition.__status.status);
-
-      if (positionA < positionB)
-        return -1;
-      else if (positionA > positionB)
-        return 1;
-      else return 0;
-    };
 
     return <React.Fragment>
       <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/crx`}>Competitions</BreadcrumbsItem>
       <div className={css.competitionCards}>
         {
           proposals
-            .sort(compareCompetitions)
+            .sort(this.compareCompetitions)
             .map((proposal: IProposalState) => {
               return <Card key={proposal.id} proposalState={proposal} daoState={daoState} handleStatusChange={this.handleStatusChange}></Card>;
             })

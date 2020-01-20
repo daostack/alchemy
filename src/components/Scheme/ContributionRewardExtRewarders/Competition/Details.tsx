@@ -168,12 +168,71 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     await this.props.redeemForSubmission({ id: this.state.showingSubmissionDetails.id });
   }
 
+  private distributionsHtml() {
+    return this.props.proposalState.competition.rewardSplit.map((split: number, index: number) => {
+      return (<div key={index} className={css.winner}>
+        <div className={css.position}>{index+1}</div>
+        <div className={css.proportion}>{split}%</div>
+      </div>);
+    });
+  }
+
+  private noWinnersHtml() {
+    return <div className={css.noWinners}>
+      <div className={css.caption}>No Winners</div>
+      <div className={css.body}>
+        { 
+          this.props.data[0].length ?
+            "None of the competition submissions received any votes. Competition rewards will be returned to the DAO." :
+            "This competition received no submissions. Competition rewards will be returned to the DAO."
+        }
+      </div>
+    </div>;
+  }
+
+  private submissionsHtml() {
+    const votersVotes = this.props.data[1];
+    const submissions = this.props.data[0];
+    const { daoState, proposalState } = this.props;
+    const competition = proposalState.competition;
+    const status = this.state.status;
+    const now = status.now;
+    const hasEnded = now.isSameOrAfter(competition.endTime);
+    const winningSubmissions = submissions.filter((submission) => submission.isWinner);
+    return submissions.map((submission: ICompetitionSuggestionState, index: number) => {
+      const isSelected = () => this.state.showingSubmissionDetails && (this.state.showingSubmissionDetails.suggestionId === submission.suggestionId);
+      return (
+        <div key={index} className={css.row} onClick={this.openSubmissionDetailsModal(submission)}>
+          { (hasEnded && winningSubmissions.length) ? 
+            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.winnerIcon]: true })}>
+              {submission.isWinner ? <img src="/assets/images/Icon/winner.svg"></img> : ""}
+            </div> : ""
+          }
+          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.title]: true})}>
+            { submission.title || "[No title is available]" }
+          </div>
+          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.creator]: true})}>
+            <AccountPopup accountAddress={submission.suggester} daoState={daoState}/>
+            <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.profiles[submission.suggester]} daoAvatarAddress={daoState.address} detailView={false} />
+          </div>
+          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votes]: true})}>
+            { <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol/> }
+          </div>
+          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votedUp]: true })}>
+            <Tooltip placement="top" trigger={votersVotes[index] ? ["hover"] : []} overlay={"You voted for this submission"}>
+              {votersVotes[index] ? <img src="/assets/images/Icon/vote/for-fill-green.svg"></img> : <img src="/assets/images/Icon/vote/for-gray.svg"></img>}
+            </Tooltip>
+          </div>
+        </div>);
+    });
+  }
+
+
   public render(): RenderOutput {
     
     const status = this.state.status;
     const { daoState, proposalState } = this.props;
     const submissions = this.props.data[0];
-    const votersVotes = this.props.data[1];
     const tags = proposalState.tags;
     const competition = proposalState.competition;
     const now = status.now;
@@ -184,55 +243,6 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const inVoting = now.isSameOrAfter(competition.votingStartTime) && now.isBefore(competition.endTime);
     const inBetweenSubmissionsAndVoting = status.paused;
     const winningSubmissions = submissions.filter((submission) => submission.isWinner);
-    const noWinnersHtml = ()=> {
-      return <div className={css.noWinners}>
-        <div className={css.caption}>No Winners</div>
-        <div className={css.body}>
-          { 
-            submissions.length ?
-              "None of the competition submissions received any votes. Competition rewards will be returned to the DAO." :
-              "This competition received no submissions. Competition rewards will be returned to the DAO."
-          }
-        </div>
-      </div>;
-    };
-    const distributionsHtml = () => {
-      return competition.rewardSplit.map((split: number, index: number) => {
-        return (<div key={index} className={css.winner}>
-          <div className={css.position}>{index+1}</div>
-          <div className={css.proportion}>{split}%</div>
-        </div>);
-      });
-    };
-    const submissionsHtml = () => {
-
-      return submissions.map((submission: ICompetitionSuggestionState, index: number) => {
-        const isSelected = () => this.state.showingSubmissionDetails && (this.state.showingSubmissionDetails.suggestionId === submission.suggestionId);
-        return (
-          <div key={index} className={css.row} onClick={this.openSubmissionDetailsModal(submission)}>
-            { (hasEnded && winningSubmissions.length) ? 
-              <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.winnerIcon]: true })}>
-                {submission.isWinner ? <img src="/assets/images/Icon/winner.svg"></img> : ""}
-              </div> : ""
-            }
-            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.title]: true})}>
-              { submission.title || "[No title is available]" }
-            </div>
-            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.creator]: true})}>
-              <AccountPopup accountAddress={submission.suggester} daoState={daoState}/>
-              <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.profiles[submission.suggester]} daoAvatarAddress={daoState.address} detailView={false} />
-            </div>
-            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votes]: true})}>
-              { <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol/> }
-            </div>
-            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votedUp]: true })}>
-              <Tooltip placement="top" trigger={votersVotes[index] ? ["hover"] : []} overlay={"You voted for this submission"}>
-                {votersVotes[index] ? <img src="/assets/images/Icon/vote/for-fill-green.svg"></img> : <img src="/assets/images/Icon/vote/for-gray.svg"></img>}
-              </Tooltip>
-            </div>
-          </div>);
-      });
-    };
 
     return <React.Fragment>
       <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}/crx`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
@@ -304,7 +314,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
               </div>
             </div>
             <div className={css.distribution}>
-              { distributionsHtml() }
+              { this.distributionsHtml() }
             </div>
             <div className={css.allowedVote}>Up to {competition.numberOfVotesPerVoter} vote(s) allowed per account</div>
             <div className={css.periods}>
@@ -336,12 +346,12 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           <div className={css.submissions}>
             <div className={css.heading}>{submissions.length}&nbsp;Submissions</div>
             <div className={css.list}>
-              {submissionsHtml()}
+              {this.submissionsHtml()}
             </div>
           </div> : ""
         }
 
-        { (((inVoting && !submissions.length) || (hasEnded && !winningSubmissions.length))) ? noWinnersHtml() : "" }
+        { (((inVoting && !submissions.length) || (hasEnded && !winningSubmissions.length))) ? this.noWinnersHtml() : "" }
       </div>
     
       {this.state.showingCreateSubmission ?
