@@ -43,9 +43,8 @@ function DaoWiki(props: IProps) {
   const [hasWikiScheme, setHasWikiScheme] = React.useState<boolean>(false);
   const [schemes, proposals] = props.data;
 
-
-  const ownDispatcher = (method: DispatchMethods, params: DispatchParams) => {
-    return props[method](params)
+  const ownDispatcher = async (method: DispatchMethods, params: DispatchParams) => {
+    return await props[method](params)
   }
 
   const renderWikiComponent = () => {
@@ -92,7 +91,7 @@ function DaoWiki(props: IProps) {
       return state.title === "Creation of WikiUpdate scheme"
     })
     const dao = props.daoState.address
-    const schemeRegistrar = schemes.filter((scheme: Scheme) => scheme.staticState.name === "SchemeRegistrar").pop();
+    const schemeRegistrar = schemes.find((scheme: Scheme) => scheme.staticState.name === "SchemeRegistrar")
     
     if (wikiProposalAlreadyExists) {
       props.showNotification(NotificationStatus.Pending, "Wiki Scheme proposal has already been created!");
