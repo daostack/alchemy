@@ -1,7 +1,7 @@
 import { ICompetitionProposalState, ICompetitionSuggestionState } from "@daostack/client";
 import * as React from "react";
-import { competitionStatus } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import classNames from "classnames";
+import { competitionStatus } from "./utils";
 import * as css from "./Competitions.scss";
 
 export interface IExternalProps {

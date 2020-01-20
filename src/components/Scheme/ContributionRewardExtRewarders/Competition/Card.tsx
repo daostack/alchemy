@@ -9,11 +9,11 @@ import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import Countdown from "components/Shared/Countdown";
-import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competition/StatusBlob";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { combineLatest } from "rxjs";
+import StatusBlob from "./StatusBlob";
 import * as css from "./Competitions.scss";
-import { competitionStatus, getProposalSubmissions, ICompetitionStatus, getCompetitionVotes } from "./utils";
+import { competitionStatus, getProposalSubmissions, getCompetitionVotes, CompetitionStatus } from "./utils";
 
 type ISubscriptionState = [Array<ICompetitionSuggestionState>, Array<CompetitionVote>];
 
@@ -22,12 +22,13 @@ interface IExternalStateProps {
 }
 
 interface IStateProps {
-  status: ICompetitionStatus;
+  status: CompetitionStatus;
 }
 
 interface IExternalProps {
   daoState: IDAOState;
   proposalState: IProposalState;
+  handleStatusChange: (proposal: IProposalState, newStatus: CompetitionStatus) => void;
 }
 
 type IProps = IExternalProps & IExternalStateProps & ISubscriptionProps<ISubscriptionState>;
@@ -49,14 +50,22 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
     };
   }
 
-  private getCompetitionState = (): ICompetitionStatus => {
+  private getCompetitionState = (): CompetitionStatus => {
     const competition = this.props.proposalState.competition;
     const submissions = this.props.data[0];
     return competitionStatus(competition, submissions);
   }
 
   private onEndCountdown = () => {
-    this.setState({ status: this.getCompetitionState() });
+    // paranoia about timer inprecision
+    setTimeout(() => {
+      const newState = this.getCompetitionState();
+      if (this.props.handleStatusChange) {
+        this.props.handleStatusChange(this.props.proposalState, newState);
+      }
+
+      this.setState({ status: newState });
+    }, 2000);
   }
 
   public render(): RenderOutput {
@@ -72,7 +81,11 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
     const submissions = this.props.data[0];
     const votes = this.props.data[1];
     const numWinningSubmissions = submissions.filter((submission) => submission.isWinner).length;
-    const ended = status.now.isSameOrAfter(status.endTime);
+    const ended = status.now.isSameOrAfter(competition.endTime);
+    const inSubmissions =  status.now.isSameOrAfter(competition.startTime) && status.now.isBefore(competition.suggestionsEndTime);
+    const inBetweenSubmissionsAndVoting = status.paused;
+    const inVoting = status.now.isSameOrAfter(competition.votingStartTime) && status.now.isBefore(competition.endTime);
+    const hasNotStarted = status.now.isBefore(competition.startTime);
 
     return <div className={css.competitionCardContainer} data-test-id={"competition-card-" + proposalState.id}>
       <StatusBlob competition={competition} submissions={submissions}></StatusBlob>
@@ -81,14 +94,28 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
           <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
           <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
         </div>
-        { status.now.isBefore(status.startTime) ?
-          <div className={css.countdown}><div className={css.text}>Submissions open in:</div><Countdown toDate={status.startTime} onEnd={this.onEndCountdown}></Countdown></div> :
-          status.now.isBefore(status.votingStartTime) ? 
-            <div className={css.countdown}><div className={css.text}>Voting starts in:</div><Countdown toDate={status.votingStartTime} onEnd={this.onEndCountdown}></Countdown></div> :
-            (status.now.isBefore(status.endTime) && submissions.length) ?
-              <div className={css.countdown}><div className={css.text}>Voting ends in:</div><Countdown toDate={status.endTime} onEnd={this.onEndCountdown}></Countdown></div> :
-              ended ?
-                <div className={css.countdown}><div className={css.text}>Ended on:</div>{formatFriendlyDateForLocalTimezone(status.endTime)}</div> : ""
+        { hasNotStarted ?
+          <div className={css.countdown}>
+            <div className={css.startsIn}>Submissions start in:</div>
+            <Countdown toDate={competition.startTime} onEnd={this.onEndCountdown}/>
+          </div> :
+          inSubmissions ? 
+            <div className={css.countdown}>
+              <div className={css.startsIn}>Submissions end in:</div>
+              <Countdown toDate={competition.suggestionsEndTime} onEnd={this.onEndCountdown}/>
+            </div> :
+            (inBetweenSubmissionsAndVoting && submissions.length) ? 
+              <div className={css.countdown}>
+                <div className={css.startsIn}>Voting starts in:</div>
+                <Countdown toDate={competition.votingStartTime} onEnd={this.onEndCountdown}/>
+              </div> :
+              (inVoting && submissions.length) ? 
+                <div className={css.countdown}>
+                  <div className={css.startsIn}>Voting ends in:</div>
+                  <Countdown toDate={competition.endTime} onEnd={this.onEndCountdown}/>
+                </div> : 
+                ended ?
+                  <div className={css.countdown}><div className={css.text}>Ended on:</div>{formatFriendlyDateForLocalTimezone(competition.endTime)}</div> : ""
         }
       </div>
       <div className={css.description}>

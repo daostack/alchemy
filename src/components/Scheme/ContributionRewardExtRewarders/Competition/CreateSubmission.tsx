@@ -5,7 +5,7 @@ import * as React from "react";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
-import { ICreateSubmissionOptions } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
+import { ICreateSubmissionOptions } from "./utils";
 import * as css from "./Competitions.scss";
 
 interface IExternalProps {

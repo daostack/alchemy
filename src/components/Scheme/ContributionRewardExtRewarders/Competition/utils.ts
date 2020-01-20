@@ -9,65 +9,60 @@ import { IRootState } from "reducers";
 import { Observable, of } from "rxjs";
 import { map, mergeMap, toArray, first } from "rxjs/operators";
 
-export interface ICompetitionStatus {
-  complete: boolean;
-  endTime: moment.Moment;
-  now: moment.Moment;
-  open: boolean;
-  paused: boolean;
-  startTime: moment.Moment;
-  submissionsEndTime: moment.Moment;
-  text: string;
-  voting: boolean;
-  votingStartTime: moment.Moment;
+/**
+ * Defined in the order that Competition cards should be sorted in the List component.
+ * The string values are how the stati should appear in the GUI.
+ */
+export enum CompetitionStatusEnum {
+  VotingStarted = "Voting started!",
+  Paused = "Paused",
+  OpenForSubmissions = "Open for submissions",
+  NotOpenYet = "Not open yet",
+  EndingNoSubmissions = "Ending, no submissions",
+  Ended = "Ended",
+  EndedNoWinners = "Ended, no winners",
+  EndedNoSubmissions = "Ended, no submissions",
+}
+
+export class CompetitionStatus {
+  constructor(public status: CompetitionStatusEnum, public now: moment.Moment) {
+  }
+
+  public get open() { return ( this.status === CompetitionStatusEnum.OpenForSubmissions); }
+  public get paused() { return ( this.status === CompetitionStatusEnum.Paused); }
+  public get voting() { return ( this.status === CompetitionStatusEnum.VotingStarted) || ( this.status === CompetitionStatusEnum.EndingNoSubmissions); }
+  public get complete() { return ( this.status === CompetitionStatusEnum.EndedNoSubmissions) || ( this.status === CompetitionStatusEnum.EndingNoSubmissions); }
+  public get text(): string { return this.status; }
 }
 
 export const competitionStatus = (
   competition: ICompetitionProposalState,
-  submissions: Array<ICompetitionSuggestionState>): ICompetitionStatus => {
+  submissions: Array<ICompetitionSuggestionState>): CompetitionStatus => {
 
   const now = moment();
   const startTime = moment(competition.startTime);
   const submissionsEndTime = moment(competition.suggestionsEndTime);
   const votingStartTime = moment(competition.votingStartTime);
   const endTime = moment(competition.endTime);
+  const hasWinners = !!submissions.filter((submission) => submission.isWinner).length;
 
-  let complete = false;
-  let voting = false;
-  let open = false;
-  let paused = false;
-  let text = "";
+  let status: CompetitionStatusEnum;
 
   if (now.isBefore(startTime)){
-    text = "Not open yet";
+    status = CompetitionStatusEnum.NotOpenYet;
   } else if (now.isBefore(votingStartTime)) {
     if (now.isSameOrAfter(submissionsEndTime)) {
-      paused = true;
-      text = "Paused";
+      status = CompetitionStatusEnum.Paused;
     } else {
-      open = true;
-      text = "Open for submissions";
+      status = CompetitionStatusEnum.OpenForSubmissions;
     }
   } else if (now.isBefore(endTime)) {
-    voting = true;
-    text = submissions.length ? "Voting started!" : "Ended, no submissions";
+    status = submissions.length ? CompetitionStatusEnum.VotingStarted : CompetitionStatusEnum.EndingNoSubmissions;
   } else {
-    complete = true;
-    text = submissions.length ? "Ended" : "Ended, no submissions";
+    status = submissions.length ? (hasWinners ? CompetitionStatusEnum.Ended : CompetitionStatusEnum.EndedNoWinners) : CompetitionStatusEnum.EndedNoSubmissions;
   }
 
-  return {
-    complete,
-    endTime,
-    now,
-    open,
-    paused,
-    submissionsEndTime,
-    startTime,
-    text,
-    voting,
-    votingStartTime,
-  };
+  return new CompetitionStatus(status, now);
 };
 
 export interface ICreateSubmissionOptions {

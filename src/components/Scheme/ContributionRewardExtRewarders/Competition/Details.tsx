@@ -13,22 +13,21 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import classNames from "classnames";
 import { showNotification } from "reducers/notifications";
 import { enableWalletProvider } from "arc";
-import CreateSubmission from "components/Scheme/ContributionRewardExtRewarders/Competition/CreateSubmission";
 import { Modal } from "react-router-modal";
-import SubmissionDetails from "components/Scheme/ContributionRewardExtRewarders/Competition/SubmissionDetails";
-import StatusBlob from "components/Scheme/ContributionRewardExtRewarders/Competition/StatusBlob";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
-import * as CompetitionActions from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import { combineLatest, of } from "rxjs";
 
-import moment = require("moment");
-import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, ICompetitionStatus, getSubmissionVoterHasVoted } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import Tooltip from "rc-tooltip";
 import { concatMap, toArray, first } from "rxjs/operators";
 import Reputation from "components/Account/Reputation";
+import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, CompetitionStatus, getSubmissionVoterHasVoted } from "./utils";
+import CreateSubmission from "./CreateSubmission";
+import SubmissionDetails from "./SubmissionDetails";
+import StatusBlob from "./StatusBlob";
 import * as css from "./Competitions.scss";
+import * as CompetitionActions from "./utils";
 
 const ReactMarkdown = require("react-markdown");
 
@@ -48,7 +47,7 @@ interface IExternalStateProps {
 interface IStateProps {
   showingCreateSubmission: boolean;
   showingSubmissionDetails: ICompetitionSuggestionState;
-  status: ICompetitionStatus;
+  status: CompetitionStatus;
 }
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -84,7 +83,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     };
   }
 
-  private getCompetitionState = (): ICompetitionStatus => {
+  private getCompetitionState = (): CompetitionStatus => {
     const competition = this.props.proposalState.competition;
     const submissions = this.props.data[0];
     return competitionStatus(competition, submissions);
@@ -177,12 +176,12 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const votersVotes = this.props.data[1];
     const tags = proposalState.tags;
     const competition = proposalState.competition;
-    const now = moment();
-    const inSubmissions =  now.isSameOrAfter(status.startTime) && now.isBefore(status.submissionsEndTime);
+    const now = status.now;
+    const inSubmissions =  now.isSameOrAfter(competition.startTime) && now.isBefore(competition.suggestionsEndTime);
     const canSubmit =  inSubmissions && proposalState.executedAt;
-    const hasNotStarted = now.isBefore(status.startTime);
-    const hasEnded = now.isSameOrAfter(status.endTime);
-    const inVoting = now.isSameOrAfter(status.votingStartTime) && now.isBefore(status.endTime);
+    const hasNotStarted = now.isBefore(competition.startTime);
+    const hasEnded = now.isSameOrAfter(competition.endTime);
+    const inVoting = now.isSameOrAfter(competition.votingStartTime) && now.isBefore(competition.endTime);
     const inBetweenSubmissionsAndVoting = status.paused;
     const winningSubmissions = submissions.filter((submission) => submission.isWinner);
     const noWinnersHtml = ()=> {
@@ -262,22 +261,22 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           { hasNotStarted ?
             <div className={css.countdown}>
               <div className={css.startsIn}>Submissions start in:</div>
-              <Countdown toDate={status.startTime} onEnd={this.onEndCountdown}/>
+              <Countdown toDate={competition.startTime} onEnd={this.onEndCountdown}/>
             </div> :
             inSubmissions ? 
               <div className={css.countdown}>
                 <div className={css.startsIn}>Submissions end in:</div>
-                <Countdown toDate={status.submissionsEndTime} onEnd={this.onEndCountdown}/>
+                <Countdown toDate={competition.suggestionsEndTime} onEnd={this.onEndCountdown}/>
               </div> :
               (inBetweenSubmissionsAndVoting && submissions.length) ? 
                 <div className={css.countdown}>
                   <div className={css.startsIn}>Voting starts in:</div>
-                  <Countdown toDate={status.votingStartTime} onEnd={this.onEndCountdown}/>
+                  <Countdown toDate={competition.votingStartTime} onEnd={this.onEndCountdown}/>
                 </div> :
                 (inVoting && submissions.length) ? 
                   <div className={css.countdown}>
                     <div className={css.startsIn}>Voting ends in:</div>
-                    <Countdown toDate={status.endTime} onEnd={this.onEndCountdown}/>
+                    <Countdown toDate={competition.endTime} onEnd={this.onEndCountdown}/>
                   </div> : ""
           }
         </div>
@@ -312,22 +311,22 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
               <div className={css.period}>
                 <div className={css.bullet}></div>
                 <div className={css.label}>Competition start time:</div>
-                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(status.startTime)}</div>
+                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.startTime)}</div>
               </div>
               <div className={css.period}>
                 <div className={css.bullet}></div>
                 <div className={css.label}>Submission end time:</div>
-                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(status.submissionsEndTime)}</div>
+                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.suggestionsEndTime)}</div>
               </div>
               <div className={css.period}>
                 <div className={css.bullet}></div>
                 <div className={css.label}>Voting start time:</div>
-                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(status.votingStartTime)}</div>
+                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.votingStartTime)}</div>
               </div>
               <div className={css.period}>
                 <div className={css.bullet}></div>
                 <div className={css.label}>Competition end time:</div>
-                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(status.endTime)}</div>
+                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.endTime)}</div>
               </div>
             </div>
           </div>

@@ -4,7 +4,6 @@ import * as React from "react";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
 import { ensureHttps} from "lib/util";
-import { getProposalSubmission, getSubmissionVoterHasVoted, getCompetitionVotes, ICompetitionStatus } from "components/Scheme/ContributionRewardExtRewarders/Competition/utils";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import classNames from "classnames";
@@ -15,6 +14,7 @@ import { combineLatest, of } from "rxjs";
 import Tooltip from "rc-tooltip";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import Reputation from "components/Account/Reputation";
+import { getProposalSubmission, getSubmissionVoterHasVoted, getCompetitionVotes, CompetitionStatus } from "./utils";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -29,7 +29,7 @@ interface IExternalProps {
   currentAccountAddress: Address;
   daoState: IDAOState;
   proposalState: IProposalState;
-  status: ICompetitionStatus;
+  status: CompetitionStatus;
   suggestionId: string; // this is the real id (not the counter)
   handleClose: () => any;
   handleVote: () => any;
