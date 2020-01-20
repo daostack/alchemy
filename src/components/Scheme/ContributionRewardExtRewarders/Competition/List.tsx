@@ -1,5 +1,3 @@
-/* tslint:disable:max-classes-per-file */
-
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { ISchemeState, IDAOState, IProposalState, ICompetitionProposalState } from "@daostack/client";
