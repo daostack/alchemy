@@ -1,6 +1,6 @@
 import * as Mixpanel from "mixpanel-browser";
 
-const doTracking = process.env.NODE_ENV === "production";
+const doTracking = process.env.NODE_ENV === "staging" || process.env.NODE_ENV === "production";
 
 const actions = {
   identify: (id: string) => {

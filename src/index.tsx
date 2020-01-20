@@ -21,7 +21,9 @@ async function renderApp() {
     });
   }
 
-  Mixpanel.init(process.env.MIXPANEL_TOKEN);
+  if (process.env.NODE_ENV === "staging" || process.env.NODE_ENV === "production") {
+    Mixpanel.init(process.env.MIXPANEL_TOKEN);
+  }
 
   ReactDOM.render(
     <AppContainer>
