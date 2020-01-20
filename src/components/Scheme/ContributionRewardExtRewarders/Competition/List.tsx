@@ -2,11 +2,8 @@
 
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { ISchemeState, IDAOState, IProposalState, ICompetitionProposalState, ICompetitionSuggestionState } from "@daostack/client";
-import { toArray, concatMap, first } from "rxjs/operators";
-import { of } from "rxjs";
-import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { CompetitionStatusEnum, CompetitionStatus, getProposalSubmissions, competitionStatus } from "./utils";
+import { ISchemeState, IDAOState, IProposalState, ICompetitionProposalState } from "@daostack/client";
+import { CompetitionStatusEnum, CompetitionStatus } from "./utils";
 import Card from "./Card";
 import * as css from "./Competitions.scss";
 
@@ -18,35 +15,26 @@ interface IProposalStateEx extends IProposalState {
   competition: ICompetitionProposalStateEx;
 }
 
-type ISubscriptionState = Array<Array<ICompetitionSuggestionState>>;
-
 interface IExternalProps {
   daoState: IDAOState;
   scheme: ISchemeState;
   proposals: Array<IProposalStateEx>;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<ISubscriptionState>;
+type IProps = IExternalProps;
 
-class CompetitionsList extends React.Component<IProps, null> {
+export default class CompetitionsList extends React.Component<IProps, null> {
 
-  private handleStatusChange = (alteredProposal: IProposalStateEx, newStatus: CompetitionStatus) => {
+  private handleStatusChange = (alteredProposal: IProposalStateEx, status: CompetitionStatus) => {
     /**
-     * poke the new status into the competition, then force a rerender
+     * the Cards compute the status for us and give it here.  Poke that status into the competition, then force a rerender
      */
     const foundProposals = this.props.proposals.filter((proposal) => proposal.id === alteredProposal.id);
     if (foundProposals[0]) {
-      foundProposals[0].competition.__status = newStatus;
+      foundProposals[0].competition.__status = status;
       // force render
       this.setState({ state: this.state });
     }
-  }
-
-  public componentDidMount() {
-    const proposalSubmissions = this.props.data;
-    this.props.proposals.forEach((proposalState: IProposalStateEx, index: number) => {
-      proposalState.competition.__status = competitionStatus(proposalState.competition, proposalSubmissions[index]);
-    });
   }
 
   public render(): RenderOutput {
@@ -56,7 +44,7 @@ class CompetitionsList extends React.Component<IProps, null> {
 
     const compareCompetitions = (a: IProposalStateEx, b: IProposalStateEx): number => {
 
-      if (!(a.competition.__status && a.competition.__status)) {
+      if (!(a.competition.__status && b.competition.__status)) {
         return 0; // the data isn't ready, see componentDidMount
       }
 
@@ -86,22 +74,3 @@ class CompetitionsList extends React.Component<IProps, null> {
     </React.Fragment>;
   }
 }
-
-export default withSubscription({
-  wrappedComponent: CompetitionsList,
-  loadingComponent: null,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
-  checkForUpdate: [],
-  createObservable: (props: IExternalProps) => {
-
-    return of(props.proposals).pipe(
-      concatMap((proposals) => of(proposals).pipe(
-        // spreads the array
-        concatMap(proposals => proposals),
-        // gets the submissions for the proposal
-        concatMap(proposalState => getProposalSubmissions(proposalState.id, true).pipe(first())),
-        toArray())
-      )
-    );
-  },
-});

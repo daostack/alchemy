@@ -45,9 +45,10 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
-    this.state = { 
-      status: this.getCompetitionState(),
-    };
+    const status = this.getCompetitionState();
+    this.state = { status };
+    // give the status to who wants it
+    this.fireHandleChange(status);
   }
 
   private getCompetitionState = (): CompetitionStatus => {
@@ -56,15 +57,20 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
     return competitionStatus(competition, submissions);
   }
 
+  private fireHandleChange(status: CompetitionStatus) {
+    if (this.props.handleStatusChange) {
+      this.props.handleStatusChange(this.props.proposalState, status);
+    }
+  }
   private onEndCountdown = () => {
     // paranoia about timer inprecision
     setTimeout(() => {
-      const newState = this.getCompetitionState();
+      const status = this.getCompetitionState();
       if (this.props.handleStatusChange) {
-        this.props.handleStatusChange(this.props.proposalState, newState);
+        this.fireHandleChange(status);
       }
 
-      this.setState({ status: newState });
+      this.setState({ status: status });
     }, 2000);
   }
 
