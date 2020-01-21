@@ -1,6 +1,16 @@
 import * as React from "react";
 import * as Sticky from "react-stickynode";
-import { IDAOState, ISchemeState, Scheme, IProposalType, Proposal, IProposalStage, IProposalState, IProposalCreateOptions } from "@daostack/client";
+import {
+  IDAOState,
+  ISchemeState,
+  Scheme,
+  IProposalType,
+  Proposal,
+  IProposalStage,
+  IProposalState,
+  IProposalCreateOptions,
+  IProposalOutcome
+} from "@daostack/client";
 import { WikiContainer, actualHash, ReactiveWiki } from "@dorgtech/daosmind";
 import classNames from "classnames";
 import { enableWalletProvider } from "arc";
@@ -24,7 +34,7 @@ type IExternalProps = {
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
-  showNotification,
+  showNotification
 };
 
 interface IDispatchProps {
@@ -33,19 +43,21 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type SubscriptionData = ISubscriptionProps<[Scheme[], Proposal[]]>
+type SubscriptionData = ISubscriptionProps<[Scheme[], Proposal[]]>;
 type IProps = IDispatchProps & IExternalProps & SubscriptionData;
-
-type DispatchMethods = 'createProposal';
-type DispatchParams = IProposalCreateOptions;
 
 function DaoWiki(props: IProps) {
   const [hasWikiScheme, setHasWikiScheme] = React.useState<boolean>(false);
   const [schemes, proposals] = props.data;
 
-  const ownDispatcher = async (method: DispatchMethods, params: DispatchParams) => {
-    return await props[method](params)
-  }
+  const ownDispatcher = {
+    createProposal: async (proposalOptions: IProposalCreateOptions) => {
+      await props.createProposal(proposalOptions);
+    },
+    voteOnProposal: async (daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) => {
+      await props.voteOnProposal(daoAvatarAddress, proposalId, voteOption);
+    }
+  };
 
   const renderWikiComponent = () => {
     const { daoAvatarAddress, perspectiveId, pageId } = props.match.params;
@@ -56,7 +68,7 @@ function DaoWiki(props: IProps) {
   };
 
   const checkIfWikiSchemeExists = async () => {
-    const genericSchemes = schemes.filter((scheme: Scheme) => scheme.staticState.name === "GenericScheme")
+    const genericSchemes = schemes.filter((scheme: Scheme) => scheme.staticState.name === "GenericScheme");
     const states: ISchemeState[] = [];
     const getSchemeState = () => {
       return new Promise((resolve, reject) => {
@@ -84,19 +96,23 @@ function DaoWiki(props: IProps) {
   }, []);
 
   const registerWikiScheme = async () => {
-    if (!await enableWalletProvider({ showNotification: props.showNotification })) { return; }
+    if (!(await enableWalletProvider({ showNotification: props.showNotification }))) {
+      return;
+    }
     
-    const wikiProposalAlreadyExists =  proposals.some(proposal => {
-      const state = proposal.staticState as IProposalState
-      return state.title === "Creation of WikiUpdate scheme"
-    })
-    const dao = props.daoState.address
-    const schemeRegistrar = schemes.find((scheme: Scheme) => scheme.staticState.name === "SchemeRegistrar")
+    const checkProposals = (proposal: Proposal) => {
+      const state = proposal.staticState as IProposalState;
+      return state.title === "Creation of WikiUpdate scheme";
+    }
     
+    const wikiProposalAlreadyExists = proposals.some(checkProposals);
+    const dao = props.daoState.address;
+    const schemeRegistrar = schemes.find((scheme: Scheme) => scheme.staticState.name === "SchemeRegistrar");
+
     if (wikiProposalAlreadyExists) {
-      props.showNotification(NotificationStatus.Pending, "Wiki Scheme proposal has already been created!");
+      props.showNotification(NotificationStatus.Success, "Wiki Scheme proposal has already been created!");
       props.history.replace(`/dao/${dao}/scheme/${schemeRegistrar.id}`);
-    } else {  
+    } else {
       const proposalValues = {
         dao,
         type: IProposalType.SchemeRegistrarAdd,
@@ -105,10 +121,10 @@ function DaoWiki(props: IProps) {
         tags: ["Wiki"],
         title: "Creation of WikiUpdate scheme",
         description: "This will allow DAO to have Wiki functionality",
-        parametersHash: '0x00000000000000000000000000000000000000000',
+        parametersHash: "0x00000000000000000000000000000000000000000",
         scheme: schemeRegistrar.staticState.address,
         // this is going to be changed with the generic scheme deployed to call uprtcl's contract
-        schemeToRegister: '0x9a543aef934c21da5814785e38f9a7892d3cde6e'
+        schemeToRegister: "0x9a543aef934c21da5814785e38f9a7892d3cde6e"
       };
       await props.createProposal(proposalValues);
     }
@@ -125,7 +141,7 @@ function DaoWiki(props: IProps) {
         </Link>
         <a
           className={classNames({
-            [proposalStyle.blueButton]: true,
+            [proposalStyle.blueButton]: true
           })}
           onClick={registerWikiScheme}
           data-test-id="createProposal"
@@ -135,12 +151,13 @@ function DaoWiki(props: IProps) {
       </div>
     </div>
   );
+  
   return (
     <div>
       <Sticky enabled top={50} innerZ={10000}>
         <div className={daoStyle.daoHistoryHeader}>Wiki</div>
       </Sticky>
-      {hasWikiScheme ? <ReactiveWiki {...props} /> : NoWikiScheme }
+      {hasWikiScheme ? <ReactiveWiki {...props} /> : NoWikiScheme}
     </div>
   );
 }
@@ -160,8 +177,8 @@ const SubscribedDaoWiki = withSubscription({
     return combineLatest(
       dao.schemes({}, { fetchAllData: true }),
       dao.proposals({ where: { stage: IProposalStage.Queued } }, { subscribe: true, fetchAllData: true })
-    )
-  },
+    );
+  }
 });
 
 export default connect(
