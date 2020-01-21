@@ -87,7 +87,7 @@ const FeedItem = (props: IProps) => {
           statusText = <span>is no longer boosted</span>;
           break;
         case "ExpiredInQueue":
-          statusText = <span>is no longer boosted</span>;
+          statusText = <span>expired</span>;
           break;
       }
       title = event.from === "dao"
