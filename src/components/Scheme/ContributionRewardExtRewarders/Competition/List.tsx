@@ -1,55 +1,78 @@
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { ISchemeState, IDAOState, IProposalState, ICompetitionProposalState } from "@daostack/client";
+import { ISchemeState, IDAOState, IProposalState } from "@daostack/client";
+import { SortService } from "lib/sortService";
 import { CompetitionStatusEnum, CompetitionStatus } from "./utils";
 import Card from "./Card";
 import * as css from "./Competitions.scss";
 
-interface ICompetitionProposalStateEx extends ICompetitionProposalState {
-  __status: CompetitionStatus;
-}
-
-interface IProposalStateEx extends IProposalState {
-  competition: ICompetitionProposalStateEx;
-}
-
 interface IExternalProps {
   daoState: IDAOState;
   scheme: ISchemeState;
-  proposals: Array<IProposalStateEx>;
+  proposals: Array<IProposalState>;
+}
+
+interface IStateProps {
+  statusMap: Map<string, CompetitionStatus>;
 }
 
 type IProps = IExternalProps;
 
-export default class CompetitionsList extends React.Component<IProps, null> {
+export default class CompetitionsList extends React.Component<IProps, IStateProps> {
 
-  private handleStatusChange = (alteredProposal: IProposalStateEx, status: CompetitionStatus) => {
-    /**
-     * the Cards compute the status for us and give it here.  Poke that status into the competition, then force a rerender
-     */
-    const foundProposals = this.props.proposals.filter((proposal) => proposal.id === alteredProposal.id);
-    if (foundProposals[0]) {
-      foundProposals[0].competition.__status = status;
-      // force render
-      this.setState({ state: this.state });
-    }
+  constructor(props: IProps) {
+    super(props);
+    this.state = { statusMap: new Map() };
   }
 
-  private compareCompetitions(a: IProposalStateEx, b: IProposalStateEx): number {
+  private handleStatusChange = (alteredProposal: IProposalState, status: CompetitionStatus) => {
+    /**
+     * the Cards maintain, through countdowns, the Copetition status, and provide it here
+     * where we save the status and force a rerender
+     */
+    this.state.statusMap.set(alteredProposal.id, status);
+    // force render
+    this.setState({ statusMap: this.state.statusMap });
+  }
 
-    if (!(a.competition.__status && b.competition.__status)) {
-      return 0; // the data may not yet have been supplied
+  private compareCompetitions = (a: IProposalState, b: IProposalState): number => {
+
+    const statusA = this.state.statusMap.get(a.id);
+    const statusB = this.state.statusMap.get(b.id);
+
+    if (!(statusA && statusB)) {
+      return 0;
     }
 
-    // sorts by the ordinal position of the CompetitionStatusEnum values
-    const positionA = Object.values(CompetitionStatusEnum).indexOf(a.competition.__status.status);
-    const positionB = Object.values(CompetitionStatusEnum).indexOf(b.competition.__status.status);
-
-    if (positionA < positionB)
-      return -1;
-    else if (positionA > positionB)
-      return 1;
-    else return 0;
+    const statusIndexA = Object.values(CompetitionStatusEnum).indexOf(statusA.status);
+    const statusIndexB = Object.values(CompetitionStatusEnum).indexOf(statusB.status);
+    /**
+     * sort by the ordinal position of the CompetitionStatusEnum values
+     */
+    const retval = SortService.evaluateNumber(statusIndexA, statusIndexB);
+    if (retval)
+      return retval;
+    else {
+      const competitionA = a.competition;
+      const competitionB = b.competition;
+      /**
+       * There is a tie in status.  Compare the dates of the next stage
+       */
+      switch(statusA.status) {
+        case CompetitionStatusEnum.VotingStarted:
+        case CompetitionStatusEnum.EndingNoSubmissions:
+        case CompetitionStatusEnum.Ended:
+        case CompetitionStatusEnum.EndedNoWinners:
+        case CompetitionStatusEnum.EndedNoSubmissions:
+          return SortService.evaluateDateTime(competitionA.endTime, competitionB.endTime);
+        case CompetitionStatusEnum.Paused:
+          return SortService.evaluateDateTime(competitionA.votingStartTime, competitionB.votingStartTime);
+        case CompetitionStatusEnum.OpenForSubmissions:
+          return SortService.evaluateDateTime(competitionA.suggestionsEndTime, competitionB.suggestionsEndTime);
+        case CompetitionStatusEnum.NotOpenYet:
+          return SortService.evaluateDateTime(competitionA.startTime, competitionB.startTime);
+      }
+    }
   }
 
 

@@ -55,7 +55,6 @@ class SubmissionDetails extends React.Component<IProps, null> {
     this.props.handleRedeem();
   }
 
-
   public render(): RenderOutput {
 
     const competition = this.props.proposalState.competition;

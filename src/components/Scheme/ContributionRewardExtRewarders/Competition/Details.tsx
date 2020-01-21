@@ -243,6 +243,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const inVoting = now.isSameOrAfter(competition.votingStartTime) && now.isBefore(competition.endTime);
     const inBetweenSubmissionsAndVoting = status.paused;
     const winningSubmissions = submissions.filter((submission) => submission.isWinner);
+    const ended = status.now.isSameOrAfter(competition.endTime);
 
     return <React.Fragment>
       <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}/crx`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
@@ -283,11 +284,16 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
                   <div className={css.startsIn}>Voting starts in:</div>
                   <Countdown toDate={competition.votingStartTime} onEnd={this.onEndCountdown}/>
                 </div> :
-                (inVoting && submissions.length) ? 
+                inVoting ? (submissions.length ?
                   <div className={css.countdown}>
                     <div className={css.startsIn}>Voting ends in:</div>
                     <Countdown toDate={competition.endTime} onEnd={this.onEndCountdown}/>
-                  </div> : ""
+                  </div> :
+                  <div className={css.countdown}><div className={css.text}>Ending on:</div>{formatFriendlyDateForLocalTimezone(competition.endTime)}</div>
+                ) :
+                  ended ?
+                    <div className={css.countdown}><div className={css.text}>Ended on:</div>{formatFriendlyDateForLocalTimezone(competition.endTime)}</div> :  ""
+
           }
         </div>
         <div className={css.middleSection}>
