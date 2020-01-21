@@ -4,7 +4,8 @@
     "main": [ "" ],
     "rinkeby": [ "" ],
     "private": [
-      "0xA10f1c26d7D4BCB1a93F84652177D2E2b320378B"
+      "0xA10f1c26d7D4BCB1a93F84652177D2E2b320378B",
+      "0xdbD6fB1F0E9CB1282d13DF95C2cA5Eb6377e984B"
     ]
   },
   "actions": [
@@ -19,13 +20,76 @@
           {
             "name": "requestId",
             "type": "bytes32"
-          },
-          {
+          }, {
             "name": "authorized",
             "type": "uint8"
           }
         ],
         "name": "setRequestAuthorized",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }, {
+      "id": "setHomePerspective",
+      "label": "Set home perspective",
+      "description": "This allow the wiki to set the home perspective",
+      "fields": [ 
+        {
+          "label": "Wiki hash ID",
+          "name": "perspectiveIdHash",
+          "placeholder": "Hash (0x0000…)"
+        }, {
+          "label": "New home perspective",
+          "name": "pidHome",
+          "placeholder": "Hash (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "perspectiveIdHash",
+            "type": "bytes32"
+          }, {
+            "name": "pidHome",
+            "type": "bytes32"
+          }
+        ],
+        "name": "setHomePerspective",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }, {
+      "id": "changeOwner",
+      "label": "Change owner of Wiki",
+      "fields": [ 
+        {
+          "label": "Wiki hash ID",
+          "name": "perspectiveIdHash",
+          "placeholder": "Hash (0x0000…)"
+        }, {
+          "label": "New owner of Wiki",
+          "name": "newOwner",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "perspectiveIdHash",
+            "type": "bytes32"
+          },
+          {
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "changeOwner",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",

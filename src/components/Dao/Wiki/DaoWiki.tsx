@@ -8,8 +8,6 @@ import {
   Proposal,
   IProposalStage,
   IProposalState,
-  IProposalCreateOptions,
-  IProposalOutcome
 } from "@daostack/client";
 import { WikiContainer, actualHash, ReactiveWiki } from "@dorgtech/daosmind";
 import classNames from "classnames";
@@ -24,8 +22,9 @@ import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import Loading from "components/Shared/Loading";
-import * as proposalStyle from "../Scheme/SchemeProposals.scss";
-import * as daoStyle from "./Dao.scss";
+import * as proposalStyle from "../../Scheme/SchemeProposals.scss";
+import * as daoStyle from "../Dao.scss";
+import { CustomDispatcher } from './CustomDispatcher'
 
 type IExternalProps = {
   daoState: IDAOState;
@@ -50,21 +49,21 @@ function DaoWiki(props: IProps) {
   const [hasWikiScheme, setHasWikiScheme] = React.useState<boolean>(false);
   const [schemes, proposals] = props.data;
 
-  const ownDispatcher = {
-    createProposal: async (proposalOptions: IProposalCreateOptions) => {
-      await props.createProposal(proposalOptions);
-    },
-    voteOnProposal: async (daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) => {
-      await props.voteOnProposal(daoAvatarAddress, proposalId, voteOption);
-    }
+  const { createProposal, voteOnProposal } = props;
+
+  const wikiMethods = {
+    createProposal,
+    voteOnProposal
   };
+
+  const dispatcher = new CustomDispatcher(wikiMethods)
 
   const renderWikiComponent = () => {
     const { daoAvatarAddress, perspectiveId, pageId } = props.match.params;
     actualHash["dao"] = daoAvatarAddress;
     actualHash["wiki"] = perspectiveId;
     actualHash["page"] = pageId;
-    return WikiContainer.getInstance(ownDispatcher);
+    return WikiContainer.getInstance(dispatcher);
   };
 
   const checkIfWikiSchemeExists = async () => {
@@ -126,7 +125,7 @@ function DaoWiki(props: IProps) {
         // this is going to be changed with the generic scheme deployed to call uprtcl's contract
         schemeToRegister: "0x9a543aef934c21da5814785e38f9a7892d3cde6e"
       };
-      await props.createProposal(proposalValues);
+      await createProposal(proposalValues);
     }
   };
 
