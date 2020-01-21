@@ -1,10 +1,8 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import Select from "react-select";
 import { IDAOState, ISchemeState } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UserSearchField from "components/Shared/UserSearchField";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
@@ -15,6 +13,8 @@ import { showNotification, NotificationStatus } from "reducers/notifications";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+
+const Select = React.lazy(() => import("react-select"));
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -82,15 +82,17 @@ const customStyles = {
 };
 
 export const SelectField: React.SFC<any> = ({options, field, form }) => (
-  <Select
-    options={options}
-    name={field.name}
-    value={options ? options.find((option: any) => option.value === field.value) : ""}
-    maxMenuHeight={100}
-    onChange={(option: any) => form.setFieldValue(field.name, option.value)}
-    onBlur={field.onBlur}
-    styles={customStyles}
-  />
+  <React.Suspense fallback={<div>Loading...</div>}>
+    <Select
+      options={options}
+      name={field.name}
+      value={options ? options.find((option: any) => option.value === field.value) : ""}
+      maxMenuHeight={100}
+      onChange={(option: any) => form.setFieldValue(field.name, option.value)}
+      onBlur={field.onBlur}
+      styles={customStyles}
+    />
+  </React.Suspense>
 );
 
 class CreateContributionReward extends React.Component<IProps, IStateProps> {
@@ -147,7 +149,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     await this.props.createProposal(proposalValues);
     this.props.handleClose();
   }
-  
+
   // Exports data from form to a shareable url.
   public exportFormValues(values: IFormValues) {
     exportUrl({ ...values, ...this.state });
