@@ -109,11 +109,14 @@ a.blueButton {
       color: #689bd6;
       height: 18px;
       font-weight: 500;
-      white-space: nowrap;
+      text-align: right;
 
-      .text {
-        display: inline-block;
+      .startsIn {
         margin-right: 7px;
+      }
+
+      .startsIn, .container {
+        display: inline-block;
       }
     }
   }
@@ -231,18 +234,16 @@ a.blueButton {
       margin-bottom: 6px;
       padding-bottom: 16px;
     }
-
+ 
     .countdown {
       font-size: 13px;
       color: #9aa9b5;
-      white-space: nowrap;
 
       .startsIn {
-        display: inline-block;
-        margin-right: 8px;
+        margin-right: 7px;
       }
-      /* Countdown component */
-      .container {
+
+      .startsIn, .container {
         display: inline-block;
       }
     }

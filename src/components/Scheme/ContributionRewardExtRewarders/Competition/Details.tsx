@@ -6,7 +6,6 @@ import { IDAOState, IProposalState, ICompetitionSuggestionState, Address } from 
 import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone } from "lib/util";
 import { connect } from "react-redux";
 
-import Countdown from "components/Shared/Countdown";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
 import { Link, RouteComponentProps } from "react-router-dom";
@@ -22,6 +21,7 @@ import { combineLatest, of } from "rxjs";
 import Tooltip from "rc-tooltip";
 import { concatMap, toArray, first } from "rxjs/operators";
 import Reputation from "components/Account/Reputation";
+import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
 import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, CompetitionStatus, getSubmissionVoterHasVoted } from "./utils";
 import CreateSubmission from "./CreateSubmission";
 import SubmissionDetails from "./SubmissionDetails";
@@ -119,8 +119,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   }
   
   private onEndCountdown = () => {
-    // give it a couple seconds to catch up with timer inprecision
-    setTimeout(() => this.setState({ status: this.getCompetitionState() }), 2000);
+    // give it time to catch up with timer inprecision
+    setTimeout(() => this.setState({ status: this.getCompetitionState() }), 1000);
   }
 
   private openNewSubmissionModal = async (): Promise<void> => {
@@ -238,12 +238,9 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const now = status.now;
     const inSubmissions =  now.isSameOrAfter(competition.startTime) && now.isBefore(competition.suggestionsEndTime);
     const canSubmit =  inSubmissions && proposalState.executedAt;
-    const hasNotStarted = now.isBefore(competition.startTime);
     const hasEnded = now.isSameOrAfter(competition.endTime);
     const inVoting = now.isSameOrAfter(competition.votingStartTime) && now.isBefore(competition.endTime);
-    const inBetweenSubmissionsAndVoting = status.paused;
     const winningSubmissions = submissions.filter((submission) => submission.isWinner);
-    const ended = status.now.isSameOrAfter(competition.endTime);
 
     return <React.Fragment>
       <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}/crx`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
@@ -268,33 +265,9 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           </div>
 
           <div className={css.name}>{humanProposalTitle(proposalState)}</div>
-
-          { hasNotStarted ?
-            <div className={css.countdown}>
-              <div className={css.startsIn}>Submissions start in:</div>
-              <Countdown toDate={competition.startTime} onEnd={this.onEndCountdown}/>
-            </div> :
-            inSubmissions ? 
-              <div className={css.countdown}>
-                <div className={css.startsIn}>Submissions end in:</div>
-                <Countdown toDate={competition.suggestionsEndTime} onEnd={this.onEndCountdown}/>
-              </div> :
-              (inBetweenSubmissionsAndVoting && submissions.length) ? 
-                <div className={css.countdown}>
-                  <div className={css.startsIn}>Voting starts in:</div>
-                  <Countdown toDate={competition.votingStartTime} onEnd={this.onEndCountdown}/>
-                </div> :
-                inVoting ? (submissions.length ?
-                  <div className={css.countdown}>
-                    <div className={css.startsIn}>Voting ends in:</div>
-                    <Countdown toDate={competition.endTime} onEnd={this.onEndCountdown}/>
-                  </div> :
-                  <div className={css.countdown}><div className={css.text}>Ending on:</div>{formatFriendlyDateForLocalTimezone(competition.endTime)}</div>
-                ) :
-                  ended ?
-                    <div className={css.countdown}><div className={css.text}>Ended on:</div>{formatFriendlyDateForLocalTimezone(competition.endTime)}</div> :  ""
-
-          }
+          <div className={css.countdown}>
+            <CountdownText status={status} competition={competition} submissions={submissions} onEndCountdown={this.onEndCountdown}></CountdownText>
+          </div>
         </div>
         <div className={css.middleSection}>
           <div className={css.leftSection}>

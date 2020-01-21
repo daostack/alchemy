@@ -25,12 +25,12 @@ export default class CompetitionsList extends React.Component<IProps, IStateProp
     this.state = { statusMap: new Map() };
   }
 
-  private handleStatusChange = (alteredProposal: IProposalState, status: CompetitionStatus) => {
+  private handleStatusChange = (proposalState: IProposalState, status: CompetitionStatus) => {
     /**
      * the Cards maintain, through countdowns, the Copetition status, and provide it here
      * where we save the status and force a rerender
      */
-    this.state.statusMap.set(alteredProposal.id, status);
+    this.state.statusMap.set(proposalState.id, status);
     // force render
     this.setState({ statusMap: this.state.statusMap });
   }
