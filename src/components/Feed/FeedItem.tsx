@@ -2,7 +2,7 @@ import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
-import * as GeoPattern from "geopattern";
+import { generate } from "geopattern";
 import { fromWei } from "lib/util";
 
 import moment = require("moment");
@@ -29,7 +29,7 @@ const accountTitle = (event: any, userProfile: IProfileState, text: string | Rea
 };
 
 const daoTitle = (event: any, text: string | React.ReactElement = "") => {
-  const bgPattern = GeoPattern.generate(event.dao.id + event.dao.name);
+  const bgPattern = generate(event.dao.id + event.dao.name);
 
   return <span>
     <Link to={"/dao/" + event.dao.id}>

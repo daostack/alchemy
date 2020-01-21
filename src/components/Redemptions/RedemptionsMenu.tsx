@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalState, IRewardState, Proposal, Reward } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
-import * as arcActions from "actions/arcActions";
+import { redeemProposal } from "actions/arcActions";
 
 import BN = require("bn.js");
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -35,12 +35,12 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps) => {
 };
 
 interface IDispatchProps {
-  redeemProposal: typeof arcActions.redeemProposal;
+  redeemProposal: typeof redeemProposal;
   showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
-  redeemProposal: arcActions.redeemProposal,
+  redeemProposal,
   showNotification,
 };
 
