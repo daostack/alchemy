@@ -167,6 +167,8 @@
         max-height: 150px;
         overflow: hidden;
         margin-bottom: 10px;
+        white-space: pre-wrap;
+        word-break: break-word;
 
         > p { margin-top: 0; }
 
@@ -178,7 +180,7 @@
           content: "";
           position: absolute;
           z-index: 1;
-          bottom: 2em;
+          bottom: 43px;
           left: 0;
           pointer-events: none;
           background-image: linear-gradient(to bottom, rgba(255,255,255, 0), rgba(255,255,255, 1) 90%);

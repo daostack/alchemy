@@ -50,7 +50,7 @@ services:
       - 6379
 
   graph-node:
-    image: 'graphprotocol/graph-node@sha256:9441c934312ee087061f4a9849afba524890da98e67e4285eb7883407108cc66'
+    image: 'graphprotocol/graph-node:v0.17.1'
     ports:
       - 8000:8000
       - 8001:8001
@@ -70,19 +70,19 @@ services:
       GRAPH_GRAPHQL_MAX_FIRST: 1000
 
   ipfs:
-    image: daostack/test-env-ipfs:3.0.23
+    image: daostack/test-env-ipfs:3.0.24
     ports:
       - 5001:5001
 
   postgres4graphnode:
-    image: daostack/test-env-postgres:3.0.23
+    image: daostack/test-env-postgres:3.0.24
     ports:
       - 9432:5432
     environment:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    image: daostack/test-env-ganache:3.0.23
+    image: daostack/test-env-ganache:3.0.24
     ports:
       - 8545:8545
     

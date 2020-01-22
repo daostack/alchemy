@@ -79,8 +79,7 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
       createSchemeComponent = <this.state.createCrxProposalComponent {...props} />;
     } else if (scheme.name === "ContributionReward") {
       createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
-    }
-    else if (scheme.name === "SchemeRegistrar") {
+    } else if (scheme.name === "SchemeRegistrar") {
       createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
     } else if (scheme.name === "GenericScheme") {
       const genericSchemeRegistry = new GenericSchemeRegistry();
