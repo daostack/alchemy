@@ -2,7 +2,7 @@ import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionSta
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import { toWei } from "lib/util";
-import { IRedemptionState } from "reducers/arcReducer";
+import { IRedemptionState } from "lib/proposalHelpers";
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as Redux from "redux";

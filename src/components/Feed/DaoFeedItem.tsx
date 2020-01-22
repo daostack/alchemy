@@ -1,6 +1,7 @@
 import { IDAOState } from "@daostack/client";
 import { getArc } from "arc";
 import * as GeoPattern from "geopattern";
+import FollowButton from "components/Shared/FollowButton";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
@@ -27,8 +28,9 @@ const DaoFeedItem = (props: IProps) => {
       <Link to={"/dao/" + dao.address} className={css.daoName}>
         <span>{dao.name}</span>
       </Link>
+      <div className={css.followButton}><FollowButton id={event.dao.id} type="daos" /></div>
       <br/>
-      <span>{dao.memberCount} Reputation Holders</span>
+      <span>{dao.memberCount} DAO Members</span>
     </div>
   );
 };

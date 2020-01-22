@@ -5,11 +5,8 @@ import * as React from "react";
 import * as css from "./Countdown.scss";
 
 interface IProps {
-  detailView?: boolean;
   toDate: Date | moment.Moment;
   fromDate?: Date | moment.Moment;
-  overTime?: boolean;
-  schemeView?: boolean;
   onEnd?(): any;
 }
 
@@ -21,7 +18,7 @@ interface IState {
   seconds: number;
 }
 
-class Countdown extends React.Component<IProps, IState> {
+export default class Countdown extends React.Component<IProps, IState> {
   public interval: any;
 
   constructor(props: IProps) {
@@ -120,9 +117,7 @@ class Countdown extends React.Component<IProps, IState> {
     }
 
     const containerClass = classNames({
-      [css.detailView]: this.props.detailView,
       [css.container]: true,
-      [css.schemeView]: this.props.schemeView,
     });
 
     return (
@@ -130,10 +125,6 @@ class Countdown extends React.Component<IProps, IState> {
         <div className={css.percentageContainer}>
           <div style={{ backgroundColor: "blue", height: "2px", width: percentageComplete + "%" }}></div>
         </div>
-        {this.props.detailView ?
-          <span className={css.label}>Proposal ends:</span>
-          : " "
-        }
         {
           countDown.days ? <span className={css.timeSection}><strong>{this.addLeadingZeros(countDown.days)}d</strong><span className={css.colon}>:</span></span> : ""
         }
@@ -142,15 +133,7 @@ class Countdown extends React.Component<IProps, IState> {
         {
           countDown.days ? "" : <span className={css.timeSection}><span className={css.colon}>:</span><strong>{this.addLeadingZeros(countDown.seconds)}s</strong></span>
         }
-        {this.props.overTime ?
-          <strong className={css.overTime}>
-            <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME
-          </strong>
-          : " "
-        }
       </div>
     );
   }
 }
-
-export default Countdown;

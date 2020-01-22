@@ -5,7 +5,8 @@ import { AsyncActionSequence } from "actions/async";
 export enum ActionTypes {
   GET_PROFILE_DATA = "GET_PROFILE_DATA",
   UPDATE_PROFILE = "UPDATE_PROFILE",
-  FOLLOW_ITEM = "FOLLOW_ITEM"
+  FOLLOW_ITEM = "FOLLOW_ITEM",
+  SAVE_THREEBOX = "SAVE_THREEBOX",
 }
 
 export type FollowType = "daos" | "proposals" | "users";
@@ -26,6 +27,7 @@ export type IProfileState = {
 
 export interface IProfilesState {
   threeBox: any; // To store the opened 3box box so we dont have to wait to open it every time we want to update data in it
+  threeBoxSpace: any; // To store the opened 3box DAOstack space so we dont have to wait to open it every time we want to update data in it
   [accountAddress: string]: IProfileState;
 }
 
@@ -44,14 +46,19 @@ export function newProfile(ethereumAccountAddress: string): IProfileState {
   };
 }
 
-const initialState: IProfilesState = { threeBox: null };
+const initialState: IProfilesState = { threeBox: null, threeBoxSpace: null };
 
 const profilesReducer = (state = initialState, action: any) => {
   const { payload, meta } = action;
 
-  if (payload && payload.threeBox) {
-    update(state, { threeBox: { $set: payload.threeBox } });
+  if (payload && Object.prototype.hasOwnProperty.call(payload, "threeBox")) {
+    state = update(state, { threeBox: { $set: payload.threeBox } });
     delete payload.threeBox;
+  }
+
+  if (payload && Object.prototype.hasOwnProperty.call(payload, "threeBoxSpace")) {
+    state = update(state, { threeBoxSpace: { $set: payload.threeBoxSpace } });
+    delete payload.threeBoxSpace;
   }
 
   switch (action.type) {

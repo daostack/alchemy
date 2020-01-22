@@ -6,7 +6,6 @@ import BN = require("bn.js");
 import * as classNames from "classnames";
 import Reputation from "components/Account/Reputation";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
@@ -91,18 +90,18 @@ class VoteButtons extends React.Component<IProps, IState> {
     /**
      * only used when votingDisabled
      */
-    const tipContent = 
+    const disabledMessage =
       ((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)) ?
         "Can't change your vote" :
         (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
-          "Voting requires reputation in " + dao.name :
+          "Voting requires reputation in this DAO" :
           proposal.stage === IProposalStage.ExpiredInQueue ||
               (proposal.stage === IProposalStage.Boosted && expired) ||
               (proposal.stage === IProposalStage.QuietEndingPeriod && expired)  ||
               (proposal.stage === IProposalStage.Queued && expired) ?
             "Can't vote on expired proposals" :
             proposal.stage === IProposalStage.Executed ?
-              "Can't vote on executed proposals" : "";
+              `Can't vote on ${proposal.winningOutcome === IProposalOutcome.Pass ? "passed" : "failed"} proposals` : "";
 
     const voteUpButtonClass = classNames({
       [css.votedFor]: currentVote === IProposalOutcome.Pass,
@@ -179,9 +178,7 @@ class VoteButtons extends React.Component<IProps, IState> {
                   </div>
                   :
                   <div className={css.votingDisabled}>
-                    <Tooltip overlay={tipContent}>
-                      <span><img src="/assets/images/Icon/Alert-yellow-b.svg"/> Voting disabled</span>
-                    </Tooltip>
+                    <span><img src="/assets/images/Icon/Alert-yellow-b.svg"/> {disabledMessage}</span>
                   </div>
                 }
               </div>
@@ -205,9 +202,7 @@ class VoteButtons extends React.Component<IProps, IState> {
                 </div>
                 :
                 <div className={css.votingDisabled}>
-                  <Tooltip placement="bottom" overlay={tipContent}>
-                    <span>Voting disabled</span>
-                  </Tooltip>
+                  <span>{disabledMessage}</span>
                 </div>
               }
             </div>

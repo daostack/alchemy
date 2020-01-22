@@ -2,7 +2,7 @@ import { Address, IDAOState, IProposalStage, Vote, IProposalState } from "@daost
 import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
-import Countdown from "components/Shared/Countdown";
+import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
 import { DiscussionEmbed } from "disqus-react";
 import { humanProposalTitle, schemeName, ensureHttps } from "lib/util";
@@ -10,8 +10,7 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 
 import { Link, RouteComponentProps } from "react-router-dom";
-import { proposalEnded } from "reducers/arcReducer";
-import { closingTime } from "reducers/arcReducer";
+import { closingTime, proposalEnded } from "lib/proposalHelpers";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import SocialShareModal from "../Shared/SocialShareModal";
@@ -167,7 +166,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                   {!proposalEnded(proposal) ?
                     <span className={css.content}>
                       {!expired ?
-                        <Countdown toDate={closingTime(proposal)} detailView /> :
+                        <ProposalCountdown proposal={proposal} detailView /> :
                         <span className={css.closedTime}>
                           {proposal.stage === IProposalStage.Queued ? "Expired" :
                             proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
