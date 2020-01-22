@@ -444,7 +444,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 <TrainingTooltip overlay="Number of Submissions for which each member can vote" placement="right">
                   <label htmlFor="numVotesInput">
                     <div className={css.requiredMarker}>*</div>
-                    Number of votes
+                    Number of votes per voter
                     <ErrorMessage name="numberOfVotesPerVoter">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                 </TrainingTooltip>
@@ -462,7 +462,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               <div className={css.clearfix}>
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
-                    ETH Reward
+                    ETH Reward to split
                     <ErrorMessage name="ethReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
@@ -478,7 +478,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
                 <div className={css.reward}>
                   <label htmlFor="reputationRewardInput">
-                    Reputation Reward
+                    Reputation Reward to split
                     <ErrorMessage name="reputationReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
@@ -494,7 +494,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 <div className={css.reward}>
                   <img src="/assets/images/Icon/down.svg" className={css.downV}/>
                   <label htmlFor="externalRewardInput">
-                    External Token Reward
+                    External Token Reward to split
                     <ErrorMessage name="externalTokenReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
@@ -522,7 +522,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
                 <div className={css.reward}>
                   <label htmlFor="nativeTokenRewardInput">
-                    DAO token ({dao.tokenSymbol}) Reward
+                    DAO token ({dao.tokenSymbol}) Reward to split
                     <ErrorMessage name="nativeTokenReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
