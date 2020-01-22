@@ -73,7 +73,7 @@
     "test:unit": "jest"
   },
   "dependencies": {
-    "3box": "^1.14.0",
+    "3box": "^1.16.0",
     "@daostack/client": "^0.2.44",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
@@ -101,6 +101,7 @@
     "immutability-helper": "2.6.4",
     "interweave": "^11.1.0",
     "moment-timezone": "^0.5.27",
+    "multicodec": "0.5.6",
     "normalizr": "^3.3.0",
     "query-string": "^6.2.0",
     "rc-tooltip": "^3.7.3",
@@ -132,11 +133,11 @@
     "redux-devtools-extension": "^2.13.7",
     "redux-thunk": "2.2.0",
     "reselect": "^4.0.0",
-    "rxjs": "^6.4.0",
+    "rxjs": "6.4.0",
     "ts-node": "^5.0.1",
     "utility-types": "^3.7.0",
     "web3": "1.0.0-beta.37",
-    "web3connect": "^1.0.0-beta.23",
+    "web3connect": "1.0.0-beta.23",
     "webpack": "^4.36.1",
     "ws": "^7.1.0"
   },
