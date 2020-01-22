@@ -70,13 +70,16 @@ class ActionButton extends React.Component<IProps, IState> {
     this.handleRedeemProposal = this.handleRedeemProposal.bind(this);
   }
 
-  private handleClickExecute = async (): Promise<void> => {
+  private handleClickExecute = async (e: any): Promise<void> => {
+    e.preventDefault();
+
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     await this.props.executeProposal(this.props.daoState.address, this.props.proposalState.id, this.props.currentAccountAddress);
   }
 
-  private handleClickRedeem = async (): Promise<void> => {
+  private handleClickRedeem = async (e: any): Promise<void> => {
+    e.preventDefault();
 
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
@@ -164,7 +167,7 @@ class ActionButton extends React.Component<IProps, IState> {
     /**
      * Don't show redeem button unless proposal is executed and the current account has GP rewards or
      * some account has CR rewards (either one redeemable or not), where for CR rewards, the winning proposal outcome was Pass.
-     * 
+     *
      * We'll disable the redeem button if the DAO can't pay any of the redemptions, and warn
      * if it can only pay some of them.
      *

@@ -109,7 +109,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         <table className={css.infoCardContent}>
           <tbody>
             <tr>
-              <th>Address of scheme: <a href={linkToEtherScan(scheme.address)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></th>
+              <th>Address of plugin: <a href={linkToEtherScan(scheme.address)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></th>
               <td>
                 <span>{scheme.address}</span>
               </td>
@@ -150,7 +150,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
               </td>
             </tr>
             <tr>
-              <th>Can Register Schemes?</th>
+              <th>Can Register Plugins?</th>
               <td>
                 {scheme.canRegisterSchemes ? "Yes" : "No"}
               </td>
@@ -214,7 +214,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
 
       {scheme.schemeRegistrarParams ?
         <div className={css.schemeInfoContainer}>
-          <h3>Genesis Protocol Params for Scheme Registration -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
+          <h3>Genesis Protocol Params for Plugin Registration -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
           <table className={css.infoCardContent}>
             {renderVotingMachineLink(votingMachine)}
             {renderGpParams(scheme.schemeRegistrarParams.voteRegisterParams)}
@@ -225,7 +225,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
 
       {scheme.schemeRegistrarParams ?
         <div className={css.schemeInfoContainer}>
-          <h3>Genesis Protocol Params for Scheme Removal -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
+          <h3>Genesis Protocol Params for Plugin Removal -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
           <table className={css.infoCardContent}>
             {renderVotingMachineLink(votingMachine)}
             {renderGpParams(scheme.schemeRegistrarParams.voteRemoveParams)}

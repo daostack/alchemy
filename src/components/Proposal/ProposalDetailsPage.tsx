@@ -10,8 +10,7 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 
 import { Link, RouteComponentProps } from "react-router-dom";
-import { proposalEnded } from "reducers/arcReducer";
-import { closingTime } from "reducers/arcReducer";
+import { closingTime, proposalEnded } from "lib/proposalHelpers";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import SocialShareModal from "../Shared/SocialShareModal";
 import ActionButton from "./ActionButton";
@@ -150,7 +149,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                   {!proposalEnded(proposal) ?
                     <span className={css.content}>
                       {!expired ?
-                        <Countdown toDate={closingTime(proposal)} detailView /> :
+                        <Countdown proposal={proposal} detailView /> :
                         <span className={css.closedTime}>
                           {proposal.stage === IProposalStage.Queued ? "Expired" :
                             proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :

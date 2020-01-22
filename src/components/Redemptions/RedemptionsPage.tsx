@@ -6,7 +6,7 @@ import BN = require("bn.js");
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
-import { formatTokens, tokenSymbol } from "lib/util";
+import { formatTokens, tokenDecimals, tokenSymbol } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
@@ -192,7 +192,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
       totalRewards.push(formatTokens(genReward, "GEN"));
     }
     Object.keys(externalTokenRewards).forEach((tokenAddress) => {
-      totalRewards.push(formatTokens(externalTokenRewards[tokenAddress], tokenSymbol(tokenAddress)));
+      totalRewards.push(formatTokens(externalTokenRewards[tokenAddress], tokenSymbol(tokenAddress), tokenDecimals(tokenAddress)));
     });
     if (reputationRewardDaos.size > 0) {
       totalRewards.push(<span>reputation in {reputationRewardDaos.size}&nbsp;DAOs</span>);

@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Proposal, Vote, Stake } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, Proposal, Vote, Scheme, Stake } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -6,7 +6,7 @@ import gql from "graphql-tag";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
-import { RouteComponentProps } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { first } from "rxjs/operators";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
@@ -30,7 +30,7 @@ class DaoHistoryPage extends React.Component<IProps, null> {
     const proposals = data;
 
     const proposalsHTML = proposals.map((proposal: Proposal) => {
-      return (<ProposalHistoryRow key={"proposal_" + proposal.id} proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress}/>);
+      return (<ProposalHistoryRow key={"proposal_" + proposal.id} history={this.props.history} proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} />);
     });
 
     return(
@@ -55,13 +55,14 @@ class DaoHistoryPage extends React.Component<IProps, null> {
             </p>
           }
         >
-          { proposals.length === 0 ? "There has been no activity to date" :
+          { proposals.length === 0 ?
+            <span>This DAO hasn&apos;t passed any proposals yet. Checkout the <Link to={"/dao/" + daoState.id + "/proposal/"}>DAO&apos;s installed schemes</Link> for any open proposals.</span> :
             <table className={css.proposalHistoryTable}>
               <thead>
                 <tr className={css.proposalHistoryTableHeader}>
                   <th>Proposed by</th>
                   <th>End date</th>
-                  <th>Scheme</th>
+                  <th>Plugin</th>
                   <th>Title</th>
                   <th>Votes</th>
                   <th>Predictions</th>
@@ -130,6 +131,7 @@ export default withSubscription({
       ${Proposal.fragments.ProposalFields}
       ${Vote.fragments.VoteFields}
       ${Stake.fragments.StakeFields}
+      ${Scheme.fragments.SchemeFields}
     `;
     await arc.getObservable(prefetchQuery, { subscribe: true }).pipe(first()).toPromise();
     return dao.proposals({

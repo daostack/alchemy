@@ -40,7 +40,7 @@ type SubscriptionData = [any[], any[], any[]];
 
 type IProps = IStateProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
 
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 20;
 
 class FeedPage extends React.Component<IProps, null> {
 
@@ -67,7 +67,7 @@ class FeedPage extends React.Component<IProps, null> {
     if (!currentAccountAddress) {
       return <div className={css.emptyFeedBanner} data-test-id="not-logged-in-banner">
         <img src="/assets/images/unplugged.svg" />
-        <h1>Excuse me, who are you?</h1>
+        <h1>Hi there! Have we met before?</h1>
         <h3>Please Log In to see your personal feed</h3>
         <button onClick={this.handleConnect} className={css.connectButton}>
           <span>Log In</span>
@@ -80,7 +80,7 @@ class FeedPage extends React.Component<IProps, null> {
     }
 
     if (!data) {
-      return this.renderEmptyFeed();
+      return <div className={css.loading}><Loading/></div>;
     }
 
     // Create the feed
@@ -99,6 +99,7 @@ class FeedPage extends React.Component<IProps, null> {
 
     const eventsByDao = (data[2] as any[])
       .filter((event) => ["NewProposal", "NewReputationHolder", "ProposalStageChange", "VoteFlip"].includes(event.type) && !Object.prototype.hasOwnProperty.call(eventIds, event.id))
+      .filter((event) => !event.data.includes("ExpiredInQueue"))
       .map((event) => { event.from = "dao"; eventIds[event.id] = true; return event; });
 
     const events = eventsByProposal.concat(eventsByUser).concat(eventsByDao).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
@@ -158,11 +159,16 @@ const getFeedObservable = (props: IStateProps, existingData?: SubscriptionData) 
         name
       }
       stage
+      winningOutcome
     }
     user
     dao {
       id
       name
+      nativeReputation {
+        id
+        totalSupply
+      }
     }
     timestamp
   }`;

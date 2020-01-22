@@ -167,6 +167,11 @@ export function tokenSymbol(tokenAddress: string) {
   return token ? token["symbol"] : "?";
 }
 
+export function tokenDecimals(tokenAddress: string) {
+  const token = supportedTokens()[tokenAddress.toLowerCase()];
+  return token ? token["decimals"] : 18;
+}
+
 export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut = 1000) {
   return new Promise((resolve, reject) => {
     const timerId = setInterval(async () => {
@@ -236,11 +241,18 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       if (genericSchemeInfo) {
         name = genericSchemeInfo.specs.name;
       } else {
-        name = "Generic Scheme";
+        // Adding the address is a bit long for a title
+        // name = `Blockchain Interaction (${contractToCall})`;
+        name = "Blockchain Interaction";
       }
     } else {
-      name = "Generic Scheme";
+      // this should never happen...
+      name = "Blockchain Interaction";
     }
+  } else if (scheme.name === "ContributionReward") {
+    name ="Funding and Voting Power";
+  } else if (scheme.name === "SchemeRegistrar") {
+    name ="Plugin Manager";
   } else if (scheme.name) {
     // add spaces before capital letters to approximate a human-readable title
     name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;
