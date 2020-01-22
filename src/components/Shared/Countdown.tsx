@@ -1,4 +1,3 @@
-import * as classNames from "classnames";
 import * as moment from "moment";
 import * as React from "react";
 
@@ -116,12 +115,8 @@ export default class Countdown extends React.Component<IProps, IState> {
       }
     }
 
-    const containerClass = classNames({
-      [css.container]: true,
-    });
-
     return (
-      <div className={containerClass}>
+      <div className={css.container}>
         <div className={css.percentageContainer}>
           <div style={{ backgroundColor: "blue", height: "2px", width: percentageComplete + "%" }}></div>
         </div>
