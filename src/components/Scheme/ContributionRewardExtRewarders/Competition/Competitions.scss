@@ -384,6 +384,10 @@ a.blueButton {
           .label {
             color: #4f6176;
             padding-right: 8px;
+
+            &.inPeriod {
+              color: $accent-1;
+            }
           }
 
           .datetime {

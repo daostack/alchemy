@@ -2,7 +2,7 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
-import { IDAOState, IProposalState, ICompetitionSuggestionState, Address } from "@daostack/client";
+import { IDAOState, IProposalState, ICompetitionSuggestionState, Address, CompetitionVote } from "@daostack/client";
 import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone } from "lib/util";
 import { connect } from "react-redux";
 
@@ -16,13 +16,12 @@ import { Modal } from "react-router-modal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
-import { combineLatest, of } from "rxjs";
+import { combineLatest } from "rxjs";
 
 import Tooltip from "rc-tooltip";
-import { concatMap, toArray, first } from "rxjs/operators";
 import Reputation from "components/Account/Reputation";
 import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
-import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, CompetitionStatus, getSubmissionVoterHasVoted } from "./utils";
+import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, CompetitionStatus, getCompetitionVotes } from "./utils";
 import CreateSubmission from "./CreateSubmission";
 import SubmissionDetails from "./SubmissionDetails";
 import StatusBlob from "./StatusBlob";
@@ -31,7 +30,7 @@ import * as CompetitionActions from "./utils";
 
 const ReactMarkdown = require("react-markdown");
 
-type ISubscriptionState = [Array<ICompetitionSuggestionState>, Array<boolean>];
+type ISubscriptionState = [Array<ICompetitionSuggestionState>, Array<CompetitionVote>];
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -48,6 +47,7 @@ interface IStateProps {
   showingCreateSubmission: boolean;
   showingSubmissionDetails: ICompetitionSuggestionState;
   status: CompetitionStatus;
+  votedSuggestions: Set<string>;
 }
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -80,6 +80,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       showingCreateSubmission: false,
       showingSubmissionDetails: null,
       status: this.getCompetitionState(),
+      votedSuggestions: new Set(),
     };
   }
 
@@ -115,6 +116,13 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         Object.assign(newState, { showingSubmissionDetails: urlSubmission });
       }
     }
+
+    // const votes = this.props.data[1];
+    // FAKE -- until vote.staticState.suggestion is provided by the client
+    // votes.forEach(vote => {
+    //   this.state.votedSuggestions.add(vote.staticState.suggestion);
+    // });
+    // Object.assign(newState, { votedSuggestions: this.state.votedSuggestions });
     this.setState(newState);
   }
   
@@ -158,6 +166,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     if (!await enableWalletProvider({ showNotification })) { return; }
 
     await this.props.voteForSubmission({ id: this.state.showingSubmissionDetails.id });
+    // this.state.votedSuggestions.add(this.state.showingSubmissionDetails.id);
+    // this.setState({ votedSuggestions: this.state.votedSuggestions });
   }
 
   private redeemSubmission = async (): Promise<void> => {
@@ -191,7 +201,6 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   }
 
   private submissionsHtml() {
-    const votersVotes = this.props.data[1];
     const submissions = this.props.data[0];
     const { daoState, proposalState } = this.props;
     const competition = proposalState.competition;
@@ -201,6 +210,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const winningSubmissions = submissions.filter((submission) => submission.isWinner);
     return submissions.map((submission: ICompetitionSuggestionState, index: number) => {
       const isSelected = () => this.state.showingSubmissionDetails && (this.state.showingSubmissionDetails.suggestionId === submission.suggestionId);
+      const voted = this.state.votedSuggestions.has(submission.id);
       return (
         <div key={index} className={css.row} onClick={this.openSubmissionDetailsModal(submission)}>
           { (hasEnded && winningSubmissions.length) ? 
@@ -219,8 +229,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             { <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol/> }
           </div>
           <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votedUp]: true })}>
-            <Tooltip placement="top" trigger={votersVotes[index] ? ["hover"] : []} overlay={"You voted for this submission"}>
-              {votersVotes[index] ? <img src="/assets/images/Icon/vote/for-fill-green.svg"></img> : <img src="/assets/images/Icon/vote/for-gray.svg"></img>}
+            <Tooltip placement="top" trigger={voted ? ["hover"] : []} overlay={"You voted for this submission"}>
+              {voted ? <img src="/assets/images/Icon/vote/for-fill-green.svg"></img> : <img src="/assets/images/Icon/vote/for-gray.svg"></img>}
             </Tooltip>
           </div>
         </div>);
@@ -235,11 +245,12 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const submissions = this.props.data[0];
     const tags = proposalState.tags;
     const competition = proposalState.competition;
-    const now = status.now;
-    const inSubmissions =  now.isSameOrAfter(competition.startTime) && now.isBefore(competition.suggestionsEndTime);
+    const notStarted = status.notStarted;
+    const inSubmissions = status.open;
+    const isPaused = status.paused;
+    const inVoting = status.voting;
+    const hasEnded = status.ended;
     const canSubmit =  inSubmissions && proposalState.executedAt;
-    const hasEnded = now.isSameOrAfter(competition.endTime);
-    const inVoting = now.isSameOrAfter(competition.votingStartTime) && now.isBefore(competition.endTime);
     const winningSubmissions = submissions.filter((submission) => submission.isWinner);
 
     return <React.Fragment>
@@ -299,22 +310,22 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             <div className={css.periods}>
               <div className={css.period}>
                 <div className={css.bullet}></div>
-                <div className={css.label}>Competition start time:</div>
+                <div className={classNames({ [css.label] : true, [css.inPeriod]: notStarted })}>Competition start time:</div>
                 <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.startTime)}</div>
               </div>
               <div className={css.period}>
                 <div className={css.bullet}></div>
-                <div className={css.label}>Submission end time:</div>
+                <div className={classNames({ [css.label] : true, [css.inPeriod]: inSubmissions })}>Submission end time:</div>
                 <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.suggestionsEndTime)}</div>
               </div>
               <div className={css.period}>
                 <div className={css.bullet}></div>
-                <div className={css.label}>Voting start time:</div>
+                <div className={classNames({ [css.label] : true, [css.inPeriod]: isPaused })}>Voting start time:</div>
                 <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.votingStartTime)}</div>
               </div>
               <div className={css.period}>
                 <div className={css.bullet}></div>
-                <div className={css.label}>Competition end time:</div>
+                <div className={classNames({ [css.label] : true, [css.inPeriod]: inVoting })}>Competition end time:</div>
                 <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.endTime)}</div>
               </div>
             </div>
@@ -373,23 +384,9 @@ export default withSubscription({
     /**
      * HEADS UP:  we subscribe here because we can't rely on getting to this component via CompetitionCard
      */
-    const submissions = getProposalSubmissions(props.proposalState.id, true);
-
     return combineLatest(
-      submissions,
-      submissions.pipe(
-        /**
-         * Use `concatMap` because we want this second array to be in the same order as the first array.
-         * Work on each array individually so that toArray can perceive closure on the stream of items in the array
-         */ 
-        concatMap(submissions => of(submissions).pipe(
-          // spreads the array
-          concatMap(submissions => submissions),
-          // gets the boolean
-          concatMap(submission => getSubmissionVoterHasVoted(submission.id, props.currentAccountAddress, true).pipe(first())),
-          toArray())
-        )
-      )
+      getProposalSubmissions(props.proposalState.id, true),
+      getCompetitionVotes(props.proposalState.competition.id, props.currentAccountAddress, true)
     );
   },
 });

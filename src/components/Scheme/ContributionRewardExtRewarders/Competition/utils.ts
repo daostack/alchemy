@@ -19,7 +19,7 @@ export enum CompetitionStatusEnum {
   OpenForSubmissions = "Open for submissions",
   NotOpenYet = "Not open yet",
   EndingNoSubmissions = "Ending, no submissions",
-  Ended = "Ended",
+  Ended = "Ended with winners",
   EndedNoWinners = "Ended, no winners",
   EndedNoSubmissions = "Ended, no submissions",
 }
@@ -27,11 +27,29 @@ export enum CompetitionStatusEnum {
 export class CompetitionStatus {
   constructor(public status: CompetitionStatusEnum, public now: moment.Moment) {
   }
-
-  public get open() { return ( this.status === CompetitionStatusEnum.OpenForSubmissions); }
-  public get paused() { return ( this.status === CompetitionStatusEnum.Paused); }
-  public get voting() { return ( this.status === CompetitionStatusEnum.VotingStarted) || ( this.status === CompetitionStatusEnum.EndingNoSubmissions); }
-  public get complete() { return ( this.status === CompetitionStatusEnum.EndedNoSubmissions) || ( this.status === CompetitionStatusEnum.EndingNoSubmissions); }
+  public get notStarted() { return this.status === CompetitionStatusEnum.NotOpenYet; }
+  /**
+   * open for submissions
+   */
+  public get open() { return this.status === CompetitionStatusEnum.OpenForSubmissions; }
+  /**
+   * In between submissions and voting period, and there exist submissions.
+   */
+  public get paused() { return this.status === CompetitionStatusEnum.Paused; }
+  public get voting() { return (this.status === CompetitionStatusEnum.VotingStarted) || (this.status === CompetitionStatusEnum.EndingNoSubmissions); }
+  /**
+   * Voting can no longer occur.  Does not imply any voting has occurred,
+   * nor that the competition has reached its end datetime.
+   */
+  public get votingIsOver() { 
+    return ((this.status === CompetitionStatusEnum.Ended) || 
+            (this.status === CompetitionStatusEnum.EndedNoWinners) ||
+            (this.status === CompetitionStatusEnum.EndedNoSubmissions)); 
+  }
+  /**
+   * Competition has reached its end time, with or without any submissions or winners
+   */
+  public get ended() { return this.status === CompetitionStatusEnum.Ended; }
   public get text(): string { return this.status; }
 }
 
@@ -52,7 +70,7 @@ export const competitionStatus = (
     status = CompetitionStatusEnum.NotOpenYet;
   } else if (now.isBefore(votingStartTime)) {
     if (now.isSameOrAfter(submissionsEndTime)) {
-      status = CompetitionStatusEnum.Paused;
+      status = submissions.length ? CompetitionStatusEnum.Paused : CompetitionStatusEnum.EndingNoSubmissions;
     } else {
       status = CompetitionStatusEnum.OpenForSubmissions;
     }

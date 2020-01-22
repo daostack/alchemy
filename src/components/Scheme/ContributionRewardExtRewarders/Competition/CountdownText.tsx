@@ -2,7 +2,7 @@ import * as React from "react";
 import { ICompetitionProposalState, ICompetitionSuggestionState } from "@daostack/client";
 import Countdown from "components/Shared/Countdown";
 import { formatFriendlyDateForLocalTimezone } from "lib/util";
-import { CompetitionStatus } from "./utils";
+import { CompetitionStatus, CompetitionStatusEnum } from "./utils";
 import * as css from "./Competitions.scss";
 
 export interface IExternalProps {
@@ -22,9 +22,10 @@ export default class CountdownText extends React.Component<IExternalProps, null>
 
     const {status, competition, submissions} = this.props;
     const inSubmissions =  status.now.isSameOrAfter(competition.startTime) && status.now.isBefore(competition.suggestionsEndTime);
-    const inBetweenSubmissionsAndVoting = status.paused;
-    const inVoting = status.now.isSameOrAfter(competition.votingStartTime) && status.now.isBefore(competition.endTime);
+    const pausedWithSubmissions = status.paused;
+    const inVotingWithSubmissions = submissions.length && (status.now.isSameOrAfter(competition.votingStartTime) && status.now.isBefore(competition.endTime));
     const hasNotStarted = status.now.isBefore(competition.startTime);
+    const endingNoSubmissions = status.status === CompetitionStatusEnum.EndingNoSubmissions;
     const ended = status.now.isSameOrAfter(competition.endTime);
 
     return <React.Fragment>
@@ -38,26 +39,25 @@ export default class CountdownText extends React.Component<IExternalProps, null>
             <div className={css.startsIn}>Submissions end in:</div>
             <Countdown toDate={competition.suggestionsEndTime} onEnd={this.onEndCountdown}/>
           </div> :
-          (inBetweenSubmissionsAndVoting && submissions.length) ? 
+          pausedWithSubmissions ? 
             <div className={css.countdown}>
               <div className={css.startsIn}>Voting starts in:</div>
               <Countdown toDate={competition.votingStartTime} onEnd={this.onEndCountdown}/>
             </div> :
-            inVoting ? (submissions.length ?
+            inVotingWithSubmissions ?
               <div className={css.countdown}>
                 <div className={css.startsIn}>Voting ends in:</div>
                 <Countdown toDate={competition.endTime} onEnd={this.onEndCountdown}/>
               </div> :
-              <div className={css.countdown}>
+              endingNoSubmissions ? <div className={css.countdown}>
                 <div className={css.startsIn}>Ending on:</div>
                 <div className={css.container}>{formatFriendlyDateForLocalTimezone(competition.endTime)}</div>
-              </div>
-            ) :
-              ended ?
-                <div className={css.countdown}>
-                  <div className={css.startsIn}>Ended on:</div>
-                  <div className={css.container}>{formatFriendlyDateForLocalTimezone(competition.endTime)}</div>
-                </div> :  ""
+              </div> :
+                ended ?
+                  <div className={css.countdown}>
+                    <div className={css.startsIn}>Ended on:</div>
+                    <div className={css.container}>{formatFriendlyDateForLocalTimezone(competition.endTime)}</div>
+                  </div> :  ""
       }
     </React.Fragment>;
   }
