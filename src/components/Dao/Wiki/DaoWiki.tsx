@@ -1,14 +1,6 @@
 import * as React from "react";
 import * as Sticky from "react-stickynode";
-import {
-  IDAOState,
-  ISchemeState,
-  Scheme,
-  IProposalType,
-  Proposal,
-  IProposalStage,
-  IProposalState,
-} from "@daostack/client";
+import { IDAOState, ISchemeState, Scheme, IProposalType, Proposal, IProposalStage, IProposalState } from "@daostack/client";
 import { WikiContainer, actualHash, ReactiveWiki } from "@dorgtech/daosmind";
 import classNames from "classnames";
 import { enableWalletProvider } from "arc";
@@ -24,7 +16,8 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import Loading from "components/Shared/Loading";
 import * as proposalStyle from "../../Scheme/SchemeProposals.scss";
 import * as daoStyle from "../Dao.scss";
-import { CustomDispatcher } from './CustomDispatcher'
+import { CustomDispatcher } from "./CustomDispatcher";
+import { IDaoInformation } from "./types";
 
 type IExternalProps = {
   daoState: IDAOState;
@@ -56,9 +49,7 @@ function DaoWiki(props: IProps) {
     voteOnProposal
   };
 
-  const dispatcher = new CustomDispatcher(wikiMethods)
-
-  const renderWikiComponent = () => {
+  const renderWikiComponent = (dispatcher: CustomDispatcher) => {
     const { daoAvatarAddress, perspectiveId, pageId } = props.match.params;
     actualHash["dao"] = daoAvatarAddress;
     actualHash["wiki"] = perspectiveId;
@@ -80,13 +71,20 @@ function DaoWiki(props: IProps) {
       });
     };
     await getSchemeState();
-    const checkSchemes = (schemeState: ISchemeState) => {
+    const hasWikiScheme = (schemeState: ISchemeState) => {
       return "WikiUpdate" === schemeName(schemeState, "[Unknown]");
     };
-    const wikiSchemeExists = states.some(checkSchemes);
+    const wikiSchemeExists = states.some(hasWikiScheme);
     setHasWikiScheme(wikiSchemeExists);
     if (wikiSchemeExists) {
-      renderWikiComponent();
+      const { dao, address, genericSchemeParams } = states.find(hasWikiScheme);
+      const daoInformation: IDaoInformation = {
+        dao,
+        scheme: address,
+        contractToCall: genericSchemeParams.contractToCall
+      };
+      const dispatcher = new CustomDispatcher(wikiMethods, daoInformation);
+      renderWikiComponent(dispatcher);
     }
   };
 
@@ -98,12 +96,12 @@ function DaoWiki(props: IProps) {
     if (!(await enableWalletProvider({ showNotification: props.showNotification }))) {
       return;
     }
-    
+
     const checkProposals = (proposal: Proposal) => {
       const state = proposal.staticState as IProposalState;
       return state.title === "Creation of WikiUpdate scheme";
-    }
-    
+    };
+
     const wikiProposalAlreadyExists = proposals.some(checkProposals);
     const dao = props.daoState.address;
     const schemeRegistrar = schemes.find((scheme: Scheme) => scheme.staticState.name === "SchemeRegistrar");
@@ -150,7 +148,7 @@ function DaoWiki(props: IProps) {
       </div>
     </div>
   );
-  
+
   return (
     <div>
       <Sticky enabled top={50} innerZ={10000}>

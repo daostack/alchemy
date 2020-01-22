@@ -1,34 +1,48 @@
-import {
-  IProposalOutcome
-} from "@daostack/client";
-import * as arcActions from "actions/arcActions";
+import { IProposalOutcome, IProposalType } from "@daostack/client";
 import { GenericSchemeRegistry, Action } from "genericSchemeRegistry";
-
-interface IDispatcherMethods {
-  createProposal: typeof arcActions.createProposal;
-  voteOnProposal: typeof arcActions.voteOnProposal;
-}
-
+import {
+  IDispatcherMethods,
+  IDaoInformation,
+  IProposalWikiOptions
+} from "./types";
 export class CustomDispatcher {
   private methods: IDispatcherMethods;
+  private daoInformation: IDaoInformation;
 
-  constructor(methods: IDispatcherMethods) {
+  constructor(methods: IDispatcherMethods, daoInformation: IDaoInformation) {
     this.methods = methods;
+    this.daoInformation = daoInformation;
   }
 
-  public createProposal = async (proposalOptions: any) => {
+  public createProposal = async (proposalWikiOptions: IProposalWikiOptions) => {
+    const { dao, scheme, contractToCall } = this.daoInformation;
     const genericSchemeRegistry = new GenericSchemeRegistry();
-    // this is going to be changed - maybe we create a script to show dynamic address based on network
-    const uprtclContractAddress = '0xb279182d99e65703f0076e4812653aab85fca0f0'
-    const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(uprtclContractAddress);
-    const availableActions = genericSchemeInfo.actions()
-    const actionCalled = availableActions.find((action: Action) => action.id === proposalOptions.methodName)
-    proposalOptions['callData'] = genericSchemeInfo.encodeABI(actionCalled, proposalOptions.methodParams);
+    const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
+    const availableActions = genericSchemeInfo.actions();
+    const actionCalled = availableActions.find(
+      (action: Action) => action.id === proposalWikiOptions.methodName
+    );
+    const dataEncoded = genericSchemeInfo.encodeABI(
+      actionCalled,
+      proposalWikiOptions.methodParams
+    );
+    const proposalOptions = {
+      dao,
+      scheme,
+      type: IProposalType.GenericScheme,
+      value: 0, // amount of eth to send with the call
+      title: actionCalled.label,
+      description: actionCalled.description,
+      callData: dataEncoded
+    };
     await this.methods.createProposal(proposalOptions);
-  }
+  };
 
-  public voteOnProposal = async (daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) => {
+  public voteOnProposal = async (
+    daoAvatarAddress: string,
+    proposalId: string,
+    voteOption: IProposalOutcome
+  ) => {
     await this.methods.voteOnProposal(daoAvatarAddress, proposalId, voteOption);
-  }
-
+  };
 }
