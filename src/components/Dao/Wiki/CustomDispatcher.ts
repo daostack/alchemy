@@ -1,9 +1,10 @@
-import { IProposalOutcome, IProposalType } from "@daostack/client";
+import { IProposalType } from "@daostack/client";
 import { GenericSchemeRegistry, Action } from "genericSchemeRegistry";
 import {
   IDispatcherMethods,
   IDaoInformation,
-  IProposalWikiOptions
+  IProposalWikiOptions,
+  IVoteOptions
 } from "./types";
 export class CustomDispatcher {
   private methods: IDispatcherMethods;
@@ -17,7 +18,9 @@ export class CustomDispatcher {
   public createProposal = async (proposalWikiOptions: IProposalWikiOptions) => {
     const { dao, scheme, contractToCall } = this.daoInformation;
     const genericSchemeRegistry = new GenericSchemeRegistry();
-    const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
+    const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(
+      contractToCall
+    );
     const availableActions = genericSchemeInfo.actions();
     const actionCalled = availableActions.find(
       (action: Action) => action.id === proposalWikiOptions.methodName
@@ -38,11 +41,8 @@ export class CustomDispatcher {
     await this.methods.createProposal(proposalOptions);
   };
 
-  public voteOnProposal = async (
-    daoAvatarAddress: string,
-    proposalId: string,
-    voteOption: IProposalOutcome
-  ) => {
-    await this.methods.voteOnProposal(daoAvatarAddress, proposalId, voteOption);
+  public voteOnProposal = async (voteParams: IVoteOptions) => {
+    const { proposalId, voteOption } = voteParams;
+    await this.methods.voteOnProposal(this.daoInformation.dao, proposalId, voteOption);
   };
 }

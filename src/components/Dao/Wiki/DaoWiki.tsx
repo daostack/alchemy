@@ -26,6 +26,7 @@ type IExternalProps = {
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
+  voteOnProposal: arcActions.voteOnProposal,
   showNotification
 };
 

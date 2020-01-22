@@ -11,7 +11,12 @@ export interface IProposalWikiOptions {
 }
 
 export interface IDaoInformation {
-  dao: string,
-  scheme: string,
-  contractToCall: string
+  dao: string;
+  scheme: string;
+  contractToCall: string;
+}
+
+export interface IVoteOptions {
+  proposalId: string;
+  voteOption: IProposalOutcome;
 }
