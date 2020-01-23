@@ -3,7 +3,7 @@ import * as React from "react";
 
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
-import { ensureHttps} from "lib/util";
+import { ensureHttps, formatFriendlyDateForLocalTimezone} from "lib/util";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import classNames from "classnames";
@@ -111,7 +111,6 @@ class SubmissionDetails extends React.Component<IProps, null> {
           <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.profiles[submission.suggester]} daoAvatarAddress={this.props.daoState.address} detailView={false} />
         </div>
 
-
         { tags && tags.length ?
           <div className={css.tagsContainer}>
             <TagsSelector readOnly tags={tags}></TagsSelector>
@@ -134,6 +133,8 @@ class SubmissionDetails extends React.Component<IProps, null> {
           </a>
           : ""
         }
+
+        <div className={css.createdOn}>Created: <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.createdAt)}</div></div>
       </div>
     );
   }

@@ -309,23 +309,23 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             <div className={css.allowedVote}>Up to {competition.numberOfVotesPerVoter} vote(s) allowed per account</div>
             <div className={css.periods}>
               <div className={css.period}>
-                <div className={css.bullet}></div>
-                <div className={classNames({ [css.label] : true, [css.inPeriod]: notStarted })}>Competition start time:</div>
+                <div className={classNames({ [css.bullet]: true, [css.inPeriod]: notStarted })}></div>
+                <div className={css.label}>Competition start time:</div>
                 <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.startTime)}</div>
               </div>
               <div className={css.period}>
-                <div className={css.bullet}></div>
-                <div className={classNames({ [css.label] : true, [css.inPeriod]: inSubmissions })}>Submission end time:</div>
+                <div className={classNames({ [css.bullet]: true, [css.inPeriod]: inSubmissions })}></div>
+                <div className={css.label}>Submission end time:</div>
                 <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.suggestionsEndTime)}</div>
               </div>
               <div className={css.period}>
-                <div className={css.bullet}></div>
-                <div className={classNames({ [css.label] : true, [css.inPeriod]: isPaused })}>Voting start time:</div>
+                <div className={classNames({ [css.bullet]: true, [css.inPeriod]: isPaused })}></div>
+                <div className={css.label}>Voting start time:</div>
                 <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.votingStartTime)}</div>
               </div>
               <div className={css.period}>
-                <div className={css.bullet}></div>
-                <div className={classNames({ [css.label] : true, [css.inPeriod]: inVoting })}>Competition end time:</div>
+                <div className={classNames({ [css.bullet]: true, [css.inPeriod]: inVoting })}></div>
+                <div className={css.label}>Competition end time:</div>
                 <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.endTime)}</div>
               </div>
             </div>

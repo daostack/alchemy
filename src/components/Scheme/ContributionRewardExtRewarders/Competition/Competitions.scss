@@ -381,13 +381,15 @@ a.blueButton {
             bottom: 2px;
           }
 
+          
+          .bullet.inPeriod:after {
+            content: '\25b6';
+            bottom: 0;
+          }
+
           .label {
             color: #4f6176;
             padding-right: 8px;
-
-            &.inPeriod {
-              color: $accent-1;
-            }
           }
 
           .datetime {
@@ -792,6 +794,16 @@ a.blueButton {
   .proposer {
     margin-top: 16px;
     font-size: 13px;
+  }
+
+  .createdOn {
+    margin-top: 16px;
+    font-size: 13px;
+
+    .datetime {
+      color: #9aa9b5;
+      display: inline-block;
+    }
   }
 
   .description {
