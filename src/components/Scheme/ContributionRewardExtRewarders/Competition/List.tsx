@@ -59,7 +59,7 @@ export default class CompetitionsList extends React.Component<IProps, IStateProp
        * There is a tie in status.  Compare the dates of the next stage
        */
       switch(statusA.status) {
-        case CompetitionStatusEnum.VotingStarted:
+        case CompetitionStatusEnum.Voting:
         case CompetitionStatusEnum.EndingNoSubmissions:
         case CompetitionStatusEnum.Ended:
         case CompetitionStatusEnum.EndedNoWinners:

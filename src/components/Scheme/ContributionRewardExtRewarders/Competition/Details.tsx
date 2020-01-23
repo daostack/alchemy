@@ -202,18 +202,15 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
   private submissionsHtml() {
     const submissions = this.props.data[0];
-    const { daoState, proposalState } = this.props;
-    const competition = proposalState.competition;
+    const { daoState } = this.props;
     const status = this.state.status;
-    const now = status.now;
-    const hasEnded = now.isSameOrAfter(competition.endTime);
-    const winningSubmissions = submissions.filter((submission) => submission.isWinner);
+
     return submissions.map((submission: ICompetitionSuggestionState, index: number) => {
       const isSelected = () => this.state.showingSubmissionDetails && (this.state.showingSubmissionDetails.suggestionId === submission.suggestionId);
       const voted = this.state.votedSuggestions.has(submission.id);
       return (
         <div key={index} className={css.row} onClick={this.openSubmissionDetailsModal(submission)}>
-          { (hasEnded && winningSubmissions.length) ? 
+          { status.overWithWinners ? 
             <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.winnerIcon]: true })}>
               {submission.isWinner ? <img src="/assets/images/Icon/winner.svg"></img> : ""}
             </div> : ""
@@ -248,10 +245,11 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const notStarted = status.notStarted;
     const inSubmissions = status.open;
     const isPaused = status.paused;
-    const inVoting = status.voting;
-    const hasEnded = status.ended;
+    const inVoting = status.inVotingPeriod;
+    const voting = status.voting;
+    const isOver = status.over;
+    const overWithWinners = status.overWithWinners;
     const canSubmit =  inSubmissions && proposalState.executedAt;
-    const winningSubmissions = submissions.filter((submission) => submission.isWinner);
 
     return <React.Fragment>
       <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}/crx`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
@@ -341,7 +339,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           </div> : ""
         }
 
-        { (((inVoting && !submissions.length) || (hasEnded && !winningSubmissions.length))) ? this.noWinnersHtml() : "" }
+        { ((inVoting && !voting) || (isOver && !overWithWinners)) ? this.noWinnersHtml() : "" }
       </div>
     
       {this.state.showingCreateSubmission ?

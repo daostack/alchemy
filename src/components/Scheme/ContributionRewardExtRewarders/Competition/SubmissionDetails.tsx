@@ -68,7 +68,9 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const canVote = status.voting && !currentAccountVotedForIt && !maxNumVotesReached;
     const isWinner = submission.isWinner;
     const isRedeemed = !!submission.redeemedAt;
-    const canRedeem = isWinner && status.ended && !isRedeemed && (submission.suggester === this.props.currentAccountAddress);
+    const competitionIsOver = status.over;
+    const inVotingPeriod = status.inVotingPeriod;
+    const canRedeem = isWinner && competitionIsOver && !isRedeemed && (submission.suggester === this.props.currentAccountAddress);
     const tags = submission.tags;
 
     return (
@@ -79,7 +81,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
             <img src="/assets/images/Icon/vote/for-gray.svg"/>
             { <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol />}
           </div>
-          { (canRedeem || !status.votingIsOver) ?
+          { (canRedeem || !competitionIsOver) ?
             <div className={css.actions}>
               { 
                 canRedeem ? 
@@ -89,8 +91,11 @@ class SubmissionDetails extends React.Component<IProps, null> {
                       onClick={hasRedeemedProposal ? this.handleRedeem : undefined}
                       data-test-id="redeemSuggestion"
                     ><img src="/assets/images/Icon/redeem.svg"/>Redeem</a>
-                  </Tooltip> : !status.votingIsOver ?
-                    <Tooltip overlay={!status.voting ? "Voting has not yet begun" : currentAccountVotedForIt ? "You have already voted" : maxNumVotesReached ? "You have already voted the maximum number of times" : "Vote for this submission"}>
+                  </Tooltip> :
+                  !competitionIsOver ?
+                    <Tooltip overlay={!inVotingPeriod ? "Voting has not yet begun" :
+                      currentAccountVotedForIt ? "You have already voted" :
+                        maxNumVotesReached ? "You have already voted the maximum number of times" : "Vote for this submission"}>
                       <a className={classNames({[css.blueButton]: true, [css.voteButton]: true, [css.disabled]: !canVote})}
                         href="#!"
                         onClick={canVote ? this.handleVote : undefined}
@@ -101,7 +106,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
             </div> : ""
           } 
           
-          {(status.votingIsOver && isWinner) ? <div className={css.winnerIcon} ><img src="/assets/images/Icon/winner.svg"></img></div> : ""}
+          {(competitionIsOver && isWinner) ? <div className={css.winnerIcon} ><img src="/assets/images/Icon/winner.svg"></img></div> : ""}
         </div>
 
         <div className={css.title}>{submission.title}</div>

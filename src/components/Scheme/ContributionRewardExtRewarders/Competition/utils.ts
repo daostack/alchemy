@@ -14,7 +14,7 @@ import { map, mergeMap, toArray, first } from "rxjs/operators";
  * The string values are how the stati should appear in the GUI.
  */
 export enum CompetitionStatusEnum {
-  VotingStarted = "Voting started!",
+  Voting = "Voting started!",
   Paused = "Paused",
   OpenForSubmissions = "Open for submissions",
   NotOpenYet = "Not open yet",
@@ -25,7 +25,10 @@ export enum CompetitionStatusEnum {
 }
 
 export class CompetitionStatus {
-  constructor(public status: CompetitionStatusEnum, public now: moment.Moment) {
+  constructor(
+    public status: CompetitionStatusEnum,
+    public now: moment.Moment,
+    public competition: ICompetitionProposalState) {
   }
   public get notStarted() { return this.status === CompetitionStatusEnum.NotOpenYet; }
   /**
@@ -36,10 +39,19 @@ export class CompetitionStatus {
    * In between submissions and voting period, and there exist submissions.
    */
   public get paused() { return this.status === CompetitionStatusEnum.Paused; }
-  public get voting() { return (this.status === CompetitionStatusEnum.VotingStarted) || (this.status === CompetitionStatusEnum.EndingNoSubmissions); }
   /**
-   * Voting can no longer occur.  Does not imply any voting has occurred,
-   * nor that the competition has reached its end datetime.
+   * in voting period, but not implying there are any submissions
+   */
+  public get inVotingPeriod() { 
+    return this.now.isSameOrAfter(this.competition.votingStartTime) && (this.status !== CompetitionStatusEnum.Ended); 
+  }
+  /**
+   * in voting period and there are submissions
+   */
+  public get voting() { return this.status === CompetitionStatusEnum.Voting; }
+  /**
+   * Voting can no longer occur. Implies neither thatn any voting has occurred,
+   * nor the actual current stage (entire competition may or may not be over).
    */
   public get votingIsOver() { 
     return ((this.status === CompetitionStatusEnum.Ended) || 
@@ -47,9 +59,13 @@ export class CompetitionStatus {
             (this.status === CompetitionStatusEnum.EndedNoSubmissions)); 
   }
   /**
-   * Competition has reached its end time, with or without any submissions or winners
+   * competition is over, with or without submissions or winners
    */
-  public get ended() { return this.status === CompetitionStatusEnum.Ended; }
+  public get over() { return this.now.isSameOrAfter(this.competition.endTime); }
+  /**
+   * Competition is over with winners
+   */
+  public get overWithWinners() { return this.status === CompetitionStatusEnum.Ended; }
   public get text(): string { return this.status; }
 }
 
@@ -75,12 +91,12 @@ export const competitionStatus = (
       status = CompetitionStatusEnum.OpenForSubmissions;
     }
   } else if (now.isBefore(endTime)) {
-    status = submissions.length ? CompetitionStatusEnum.VotingStarted : CompetitionStatusEnum.EndingNoSubmissions;
+    status = submissions.length ? CompetitionStatusEnum.Voting : CompetitionStatusEnum.EndingNoSubmissions;
   } else {
     status = submissions.length ? (hasWinners ? CompetitionStatusEnum.Ended : CompetitionStatusEnum.EndedNoWinners) : CompetitionStatusEnum.EndedNoSubmissions;
   }
 
-  return new CompetitionStatus(status, now);
+  return new CompetitionStatus(status, now, competition);
 };
 
 export interface ICreateSubmissionOptions {

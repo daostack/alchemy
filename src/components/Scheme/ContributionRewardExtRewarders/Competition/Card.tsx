@@ -83,7 +83,7 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
     const submissions = this.props.data[0];
     const votes = this.props.data[1];
     const numWinningSubmissions = submissions.filter((submission) => submission.isWinner).length;
-    const ended = status.now.isSameOrAfter(competition.endTime);
+    const overWithWinners = status.overWithWinners;
 
     return <div className={css.competitionCardContainer} data-test-id={"competition-card-" + proposalState.id}>
       <StatusBlob competition={competition} submissions={submissions}></StatusBlob>
@@ -103,11 +103,11 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
       </div>
       <div className={css.rewards}>
         <div className={css.winnerIcon}>
-          { ended && numWinningSubmissions ? <img src="/assets/images/Icon/winner.svg"></img>  : "" }
+          { overWithWinners ? <img src="/assets/images/Icon/winner.svg"></img>  : "" }
         </div>
         <div className={css.transferType}><RewardsString proposal={proposalState} dao={daoState} /></div>
         <img src="/assets/images/Icon/Transfer.svg" />
-        { ended && numWinningSubmissions ?
+        { overWithWinners ?
           <div className={css.winners}>{numWinningSubmissions} winners</div> :
           <div className={css.winners}>{competition.numberOfWinners} anticipated winners</div>
         }
