@@ -50,16 +50,18 @@
     padding: 20px 30px 30px 30px;
 
     input {
+      width: calc(100% - 32px);
       margin-top: 3px;
       margin-bottom: 5px;
-      width: 445px;
+      padding: 0 15px;
       display: block;
       border: none;
       background-color: transparent;
       border: $gray-border-2;
       font-size: 13px;
-      padding: 12px 12px;
       font-family: $body-font;
+      height: 35px;
+      line-height: 35px;
 
       &.error {
         border: 1px solid rgba(246, 80, 80, 1.000);
@@ -70,14 +72,8 @@
       }
     }
 
-    input {
-      padding: 0 15px;
-      height: 35px;
-      line-height: 35px;
-    }
-
     input::placeholder, textarea::placeholder {
-        color: rgba(154, 169, 181, 1.000);
+      color: rgba(154, 169, 181, 1.000);
     }
 
     .contributionReward {
@@ -85,60 +81,83 @@
       display: inline-block;
     }
 
-    .reward {
-      float: left;
-      width: 235px;
-      position: relative;
-
-      input {
-        width: 200px;
-      }
-
-      .externalTokenSelect {
-        display: block;
-        font-size: 13PX;
-        color: $gray-1;
-        margin: 0;
-        border: 1px solid #aaa;
-        border-radius: 0;
-        -moz-appearance: none;
-        -webkit-appearance: none;
-        appearance: none;
-        background-color: #fff;
-        position: absolute;
-        bottom: 5px;
-        height: 35px;
-        padding: 0 0 0 0;
-        right: 0px;
-        border: 1px solid #bfcbd5;
-
-        div div div div:first-child {
-          left: 15px;
-        }
-
-        input {
-          margin-top: 0;
-          margin-left: 10px;
-          margin-bottom: 0;
-        }
-      }
-    }
-
-    .reward:nth-child(even) {
-      margin-right: 10px;
-    }
-
     .date {
-      width: 235px;
-      display: inline-block;
-
-       input {
-        width: 200px;
+      input {
+        width: 205px;
       }
     }
 
-    .date:nth-child(even) {
-      margin-right: 10px;
+    .reward {
+      input {
+        width: 207px;
+      }
+
+      .externalTokenInput {
+        border: 1px solid #bfcbd5;
+        border-bottom-left-radius: 2px;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
+        margin-top: 3px;
+        margin-bottom: 5px;
+        max-height: 37px;
+        box-sizing: border-box;
+
+        .amount {
+          display: inline-block;
+
+          input {
+            border-width: 0;
+            width: 123px;
+            height: 35px;
+            margin-top: 0;
+            margin-bottom: 0px;
+          }
+        }
+
+        .select {
+          font-size: 13px;
+          font-family: "Open Sans";
+          font-weight: 400;
+          width: 82px;
+          display: inline-block;
+          height: 35px;
+
+          input {
+            margin: 0;
+            line-height: unset;
+            height: unset;
+          }
+
+          :global .react-select-container {
+            .react-select__control {
+              min-height: 34px;
+              border-radius: 0;
+              border-width: 0;
+              border-left: 1px solid #bfcbd5;
+              height: 34px;
+              margin-top: 0;
+              margin-bottom: 1px;
+              border-bottom-left-radius: 0;
+              border-top-left-radius: 0;
+              top: .5px;
+              box-shadow: none;
+            }
+          }
+        }
+      }
+    }
+    
+    .date, .reward {
+      display: inline-block;
+    }
+
+    .dates .date:nth-last-child(), .rewards .reward:nth-last-child() {
+      display: block;
+    }
+
+    .dates .date:nth-child(odd), .rewards .reward:nth-child(odd) {
+      margin-right: 8px;
     }
 
     .permissionCheckbox {
@@ -334,23 +353,10 @@
   }
 }
 
-.downV {
-  position: absolute;
-  right: 20px;
-  bottom: 21px;
-  z-index: 1;
-}
-
 .contributionReward {
   width: 562px;
   overflow-y: auto;
   height: 630px;
-}
-
-.clearfix:after {
-  content: "";
-  clear: both;
-  display: table;
 }
 
 .createWrapperWithSidebar {
@@ -529,8 +535,6 @@
 
       input {
         display: inline;
-        width: 20px;
-        height: 13px;
       }
 
       label {
@@ -587,7 +591,7 @@ div.description {
   margin-top: 4px;
 }
 
-@media only screen and (max-width: 425px) {
+@media only screen and (max-width: 475px) {
 
   .createWrapperWithSidebar {
     width: 100%;
@@ -608,10 +612,6 @@ div.description {
     }
   }
 
-  .downV {
-    right: -3px;
-  }
-
   .createProposalWrapper {
     top: 0;
     left: 0;
@@ -624,10 +624,6 @@ div.description {
     form {
       padding: 15px 15px 155px 15px;
 
-      input, textarea, label {
-        width: 90%;
-      }
-
       textarea {
         border: none;
         width: 100%;
@@ -636,37 +632,43 @@ div.description {
       .encodedData textarea {
         border: $gray-border-2;
         padding: 9px 15px 12px 15px;
-        width: 90%;
       }
 
+      .date {
+        :global .react-datepicker-wrapper {
+          width: calc(100% - 15px);
+        }
+      }
       .reward {
-        width: 42%;
-
+        width: calc(50% - 6px);
         input {
-          width: 88%;
+          width: 75%;
         }
 
-        .externalTokenSelect {
-          right: -17px;
-          width: 50px;
-          padding: 0 18px 0 0px;
+        .externalTokenInput {
+          width: 136px;
 
-          div div div div:first-child {
-            left: 8px;
+          .amount {
+            width: 60px;
+            input {
+              width: 100%;
+              padding: 0 6px;
+            }
+          }
+
+          .select {
+            width: 73px;
+            :global .react-select-container {
+              .react-select__indicators {
+                width: 28px;
+              }
+            }
           }
         }
       }
 
-      .reward:nth-child(even) {
-        margin-right: 30px;
-      }
-
-      .date {
-        width: 100%;
-        
-        input {
-          width: 88%;
-        }
+      .dates .date:nth-child(odd), .rewards .reward:nth-child(odd) {
+        margin-right: 0px;
       }
     }
   }

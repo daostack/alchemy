@@ -1,5 +1,4 @@
-import { IDAOState, ISchemeState , IProposalCreateOptionsCompetition, 
-} from "@daostack/client";
+import { IDAOState, ISchemeState, IProposalCreateOptionsCompetition } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -64,24 +63,8 @@ interface IFormValues {
 }
 
 const customStyles = {
-  control: () => ({
-    // none of react-select's styles are passed to <Control />
-    width: 117,
-    height: 35,
-  }),
-  indicatorsContainer: () => ({
-    display: "none",
-  }),
   indicatorSeparator: () => ({
     display: "none",
-  }),
-  input: () => ({
-    height: 31,
-    marginTop: 0,
-    marginBottom: 0,
-  }),
-  valueContainer: () => ({
-    height: 35,
   }),
   menu: (provided: any) => ({
     ... provided,
@@ -116,6 +99,8 @@ export const SelectField: React.SFC<any> = ({options, field, form, _value }) => 
     maxMenuHeight={100}
     onChange={(option: any) => form.setFieldValue(field.name, option.value)}
     onBlur={field.onBlur}
+    className="react-select-container"
+    classNamePrefix="react-select"
     styles={customStyles}
   />;
 };
@@ -124,14 +109,14 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
-    this.state = { 
+    this.state = {
       tags: new Array<string>(),
     };
   }
 
   public handleSubmit = async (values: IFormValues, { _setSubmitting }: any ): Promise<void> => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { 
-      return; 
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) {
+      return;
     }
 
     const externalTokenDetails = tokenDetails(values.externalTokenAddress);
@@ -411,7 +396,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                     <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                 </TrainingTooltip>
-            
+
                 <Field
                   id="numWinnersInput"
                   maxLength={120}
@@ -429,7 +414,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                     <ErrorMessage name="rewardSplit">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                 </TrainingTooltip>
-            
+
                 <Field
                   id="rewardSplitInput"
                   maxLength={120}
@@ -448,7 +433,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                     <ErrorMessage name="numberOfVotesPerVoter">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                 </TrainingTooltip>
-            
+
                 <Field
                   id="numVotesInput"
                   maxLength={120}
@@ -459,7 +444,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 />
               </div>
 
-              <div className={css.clearfix}>
+              <section className={css.rewards}>
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
                     ETH Reward to split
@@ -492,31 +477,33 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 </div>
 
                 <div className={css.reward}>
-                  <img src="/assets/images/Icon/down.svg" className={css.downV}/>
                   <label htmlFor="externalRewardInput">
-                    External Token Reward to split
+                        External Token Reward to split
                     <ErrorMessage name="externalTokenReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
-                  <Field
-                    id="externalTokenRewardInput"
-                    placeholder={"How many tokens to reward"}
-                    name="externalTokenReward"
-                    type="number"
-                    className={touched.externalTokenReward && errors.externalTokenReward ? css.error : null}
-                    min={0}
-                    step={0.1}
-                  />
-                  <div className={css.externalTokenSelect}>
-                    <Field
-                      id="externalTokenInput"
-                      name="externalTokenAddress"
-                      component={SelectField}
-                      className={css.externalTokenSelect}
-                      options={Object.keys(supportedTokens()).map((tokenAddress) => {
-                        const token = supportedTokens()[tokenAddress];
-                        return { value: tokenAddress, label: token["symbol"] };
-                      })}
-                    />
+                  <div className={css.externalTokenInput}>
+                    <div className={css.amount}>
+                      <Field
+                        id="externalRewardInput"
+                        placeholder={"How many tokens to reward"}
+                        name="externalTokenReward"
+                        type="number"
+                        className={touched.externalTokenReward && errors.externalTokenReward ? css.error : null}
+                        min={0}
+                        step={0.1}
+                      />
+                    </div>
+                    <div className={css.select}>
+                      <Field
+                        id="externalTokenAddress"
+                        name="externalTokenAddress"
+                        component={SelectField}
+                        options={Object.keys(supportedTokens()).map((tokenAddress) => {
+                          const token = supportedTokens()[tokenAddress];
+                          return { value: tokenAddress, label: token["symbol"] };
+                        })}
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -534,7 +521,9 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                     className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
                   />
                 </div>
+              </section>
 
+              <section className={css.dates}>
                 <div className={css.date}>
                   <label htmlFor="compStartTimeInput">
                     <div className={css.requiredMarker}>*</div>
@@ -590,12 +579,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                     className={touched.compEndTimeInput && errors.compEndTimeInput ? css.error : null}
                   />
                 </div>
+              </section>
 
-                {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
+              {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
                     && touched.reputationReward && errors.rewards &&
                 <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
-                }
-              </div>
+              }
               <div className={css.createProposalActions}>
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
