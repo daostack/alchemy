@@ -88,6 +88,7 @@
       grid-template-columns: 50% 50%;
 
       .date {
+        min-width: 221px; // ensure equal widths
         input {
           min-width: 206px; // calendar input
         }
@@ -633,7 +634,8 @@ div.description {
 
       .dates {
         grid-template-columns: 100%;
-      }
+        justify-items: center;
+       }
     }
   }
 
