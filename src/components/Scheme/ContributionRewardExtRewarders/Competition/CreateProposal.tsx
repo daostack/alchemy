@@ -444,7 +444,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 />
               </div>
 
-              <section className={css.rewards}>
+              <div className={css.rewards}>
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
                     ETH Reward to split
@@ -521,9 +521,9 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                     className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
                   />
                 </div>
-              </section>
+              </div>
 
-              <section className={css.dates}>
+              <div className={css.dates}>
                 <div className={css.date}>
                   <label htmlFor="compStartTimeInput">
                     <div className={css.requiredMarker}>*</div>
@@ -579,7 +579,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                     className={touched.compEndTimeInput && errors.compEndTimeInput ? css.error : null}
                   />
                 </div>
-              </section>
+              </div>
 
               {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
                     && touched.reputationReward && errors.rewards &&

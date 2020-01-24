@@ -120,7 +120,7 @@ class UserSearchField extends React.Component<IProps, IState> {
       "name": this.props.name,
       "onBlur": this.handleBlur,
       "onChange": this.handleChange,
-      "placeholder": "name / public key",
+      "placeholder": "Name or public key",
       value,
     };
 

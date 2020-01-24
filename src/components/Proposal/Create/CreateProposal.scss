@@ -50,11 +50,11 @@
     padding: 20px 30px 30px 30px;
 
     input {
-      width: calc(100% - 32px);
+      width: 100%;
       margin-top: 3px;
       margin-bottom: 5px;
       padding: 0 15px;
-      display: block;
+      box-sizing: border-box;
       border: none;
       background-color: transparent;
       border: $gray-border-2;
@@ -81,85 +81,82 @@
       display: inline-block;
     }
 
-    .date {
-      input {
-        width: 205px;
+    .dates {
+      display: grid;
+      grid-column-gap: 12px;
+      grid-row-gap: 8px;
+      grid-template-columns: 50% 50%;
+
+      .date {
+        input {
+          min-width: 206px; // calendar input
+        }
       }
     }
 
-    .reward {
-      input {
-        width: 207px;
-      }
+    .rewards {
+      display: grid;
+      grid-column-gap: 12px;
+      grid-row-gap: 0;
+      grid-template-columns: calc(50% - 6px) calc(50% - 6px);
+      align-items: end;
 
-      .externalTokenInput {
-        border: 1px solid #bfcbd5;
-        border-bottom-left-radius: 2px;
-        border-top-left-radius: 2px;
-        border-top-right-radius: 2px;
-        border-bottom-right-radius: 2px;
-        margin-top: 3px;
-        margin-bottom: 5px;
-        max-height: 37px;
-        box-sizing: border-box;
+      .reward {
+        .externalTokenInput {
+          display: flex;
+          border: 1px solid #bfcbd5;
+          border-bottom-left-radius: 2px;
+          border-top-left-radius: 2px;
+          border-top-right-radius: 2px;
+          border-bottom-right-radius: 2px;
+          margin-top: 3px;
+          margin-bottom: 5px;
+          max-height: 37px;
+          box-sizing: border-box;
 
-        .amount {
-          display: inline-block;
-
-          input {
-            border-width: 0;
-            width: 123px;
-            height: 35px;
-            margin-top: 0;
-            margin-bottom: 0px;
-          }
-        }
-
-        .select {
-          font-size: 13px;
-          font-family: "Open Sans";
-          font-weight: 400;
-          width: 82px;
-          display: inline-block;
-          height: 35px;
-
-          input {
-            margin: 0;
-            line-height: unset;
-            height: unset;
-          }
-
-          :global .react-select-container {
-            .react-select__control {
-              min-height: 34px;
-              border-radius: 0;
+          .amount {
+            input {
               border-width: 0;
-              border-left: 1px solid #bfcbd5;
-              height: 34px;
+              height: 35px;
               margin-top: 0;
-              margin-bottom: 1px;
-              border-bottom-left-radius: 0;
-              border-top-left-radius: 0;
-              top: .5px;
-              box-shadow: none;
+              margin-bottom: 0px;
+            }
+          }
+
+          .select {
+            flex-shrink: 2;
+            font-size: 13px;
+            font-family: "Open Sans";
+            font-weight: 400;
+            min-width: 82px;
+            height: 35px;
+
+            input {
+              margin: 0;
+              line-height: unset;
+              height: unset;
+            }
+
+            :global .react-select-container {
+              .react-select__control {
+                min-height: 34px;
+                border-radius: 0;
+                border-width: 0;
+                border-left: 1px solid #bfcbd5;
+                height: 34px;
+                margin-top: 0;
+                margin-bottom: 1px;
+                border-bottom-left-radius: 0;
+                border-top-left-radius: 0;
+                top: .5px;
+                box-shadow: none;
+              }
             }
           }
         }
       }
     }
     
-    .date, .reward {
-      display: inline-block;
-    }
-
-    .dates .date:nth-last-child(), .rewards .reward:nth-last-child() {
-      display: block;
-    }
-
-    .dates .date:nth-child(odd), .rewards .reward:nth-child(odd) {
-      margin-right: 8px;
-    }
-
     .permissionCheckbox {
       font-size: 9px;
     }
@@ -634,41 +631,8 @@ div.description {
         padding: 9px 15px 12px 15px;
       }
 
-      .date {
-        :global .react-datepicker-wrapper {
-          width: calc(100% - 15px);
-        }
-      }
-      .reward {
-        width: calc(50% - 6px);
-        input {
-          width: 75%;
-        }
-
-        .externalTokenInput {
-          width: 136px;
-
-          .amount {
-            width: 60px;
-            input {
-              width: 100%;
-              padding: 0 6px;
-            }
-          }
-
-          .select {
-            width: 73px;
-            :global .react-select-container {
-              .react-select__indicators {
-                width: 28px;
-              }
-            }
-          }
-        }
-      }
-
-      .dates .date:nth-child(odd), .rewards .reward:nth-child(odd) {
-        margin-right: 0px;
+      .dates {
+        grid-template-columns: 100%;
       }
     }
   }

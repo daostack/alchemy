@@ -292,7 +292,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 />
               </div>
 
-              <section className={css.rewards}>
+              <div className={css.rewards}>
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
                     ETH Reward
@@ -372,9 +372,9 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
                 {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
                     && touched.reputationReward && errors.rewards &&
-                <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
+                  <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
                 }
-              </section>
+              </div>
               <div className={css.createProposalActions}>
                 <TrainingTooltip overlay="Export proposal" placement="top">
                   <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
