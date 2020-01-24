@@ -100,6 +100,7 @@
     "immutability-helper": "2.6.4",
     "interweave": "^11.1.0",
     "moment": "^2.23.0",
+    "multicodec": "^0.5.6",
     "normalizr": "^3.3.0",
     "query-string": "^6.2.0",
     "rc-tooltip": "^3.7.3",
