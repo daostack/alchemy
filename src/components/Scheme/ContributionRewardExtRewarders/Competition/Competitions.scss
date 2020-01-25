@@ -4,21 +4,22 @@ a.blueButton {
   line-height: 26px;
   font-size: 13px;
   color: white;
-  background-color: rgba(5, 118, 255, 1.000);
-  transition: all .25s ease;
+  background-color: rgba(5, 118, 255, 1);
+  transition: all 0.25s ease;
   border-radius: 15px;
   display: inline-block;
   padding: 0 18px;
   white-space: nowrap;
 
   &:hover {
-    background-color: rgba(19, 46, 91, 1.000);
+    background-color: rgba(19, 46, 91, 1);
     color: $white;
   }
 
-  &.disabled, &disabled:hover {
-    background-color: rgba(200,200,200,.5);
-    border: 1px solid rgba(200,200,200,1);
+  &.disabled,
+  &disabled:hover {
+    background-color: rgba(200, 200, 200, 0.5);
+    border: 1px solid rgba(200, 200, 200, 1);
     cursor: not-allowed;
   }
 }
@@ -37,7 +38,8 @@ a.blueButton {
   white-space: nowrap;
   background-color: #9aa9b5;
 
-  &.open { // in submission period
+  &.open {
+    // in submission period
     background-color: #00be90;
   }
 
@@ -69,15 +71,14 @@ a.blueButton {
 
 .competitionCardContainer {
   border-radius: 14px;
-  box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
+  box-shadow: 0 0 15px 0 rgba(133, 168, 208, 0.15);
   background-color: $white;
-  overflow: hidden;
-  transition: all .25s ease;
+  transition: all 0.25s ease;
   vertical-align: top;
   width: 477px;
   height: auto;
   overflow: visible; // for the account popup
-  padding: 26px 36px ;
+  padding: 26px 36px;
   box-sizing: border-box;
   margin-bottom: 12px; // for when there are multiple columns
 
@@ -116,7 +117,8 @@ a.blueButton {
         font-family: "Open Sans";
       }
 
-      .startsIn, .container {
+      .startsIn,
+      .container {
         display: inline-block;
       }
     }
@@ -130,10 +132,10 @@ a.blueButton {
     .detailLink {
       display: block;
 
-      .name{
+      .name {
         display: inline-block;
       }
-      
+
       img {
         display: inline-block;
       }
@@ -141,7 +143,7 @@ a.blueButton {
   }
 
   .rewards {
-    border: 1px solid rgba(229, 235, 242, 1.000);
+    border: 1px solid rgba(229, 235, 242, 1);
     border-radius: 2px;
     font-size: 11px;
     padding: 5px;
@@ -151,14 +153,14 @@ a.blueButton {
     margin-bottom: 16px;
 
     img {
-      padding-left:  10px;
+      padding-left: 10px;
       padding-right: 10px;
     }
 
     .transferType {
       display: inline-block;
 
-      >strong>span {
+      > strong > span {
         font-weight: normal;
       }
     }
@@ -173,7 +175,7 @@ a.blueButton {
         height: 28px;
       }
     }
-}
+  }
 
   .activityContainer {
     display: flex;
@@ -192,7 +194,6 @@ a.blueButton {
 }
 
 .competitionDetailsContainer {
-
   width: 100%;
   max-width: 1440px;
 
@@ -201,19 +202,16 @@ a.blueButton {
 
     .header {
       display: flex;
-      flex-wrap: wrap;
+      margin-bottom: 30px;
 
       .statusBlob {
-        display: inline-block;
-        margin-bottom: 30px;
-        flex: 1;
+        flex-grow: 1;
         margin-right: 20px;
       }
 
       .gotoProposal {
-        display: inline-block;
         font-size: 14px;
-        flex: 3;
+        flex-grow: 3;
         position: relative;
         top: 8px;
 
@@ -224,7 +222,7 @@ a.blueButton {
 
       .newSubmission {
         text-align: right;
-        flex: 3;
+        flex-grow: 3;
       }
     }
 
@@ -235,7 +233,7 @@ a.blueButton {
       margin-bottom: 6px;
       padding-bottom: 16px;
     }
- 
+
     .countdown {
       font-size: 13px;
       color: #9aa9b5;
@@ -249,12 +247,13 @@ a.blueButton {
         font-family: "Open Sans";
       }
 
-      .startsIn, .container {
+      .startsIn,
+      .container {
         display: inline-block;
       }
     }
   }
-  
+
   .middleSection {
     display: flex;
     justify-content: flex-start;
@@ -263,7 +262,7 @@ a.blueButton {
 
     .leftSection {
       flex-grow: 1;
-      display: inline-grid;  // to prevent effects of overflow from long urls
+      display: inline-grid; // to prevent effects of overflow from long urls
 
       .tagsContainer {
         display: block;
@@ -287,7 +286,7 @@ a.blueButton {
     .rightSection {
       flex-grow: 2;
       background-color: $white;
-      padding-left:  20px;
+      padding-left: 20px;
       padding-right: 20px;
       padding-bottom: 16px;
       border-radius: 4px;
@@ -331,7 +330,7 @@ a.blueButton {
 
       .distribution {
         display: flex;
-        flex-wrap:  wrap;
+        flex-wrap: wrap;
         margin-bottom: 12px;
         font-size: 13px;
 
@@ -357,7 +356,7 @@ a.blueButton {
       }
 
       .periods {
-        display:  table;
+        display: table;
         width: 100%;
 
         .period {
@@ -365,21 +364,22 @@ a.blueButton {
           display: table-row;
           white-space: nowrap;
 
-          .bullet, .label, .datetime {
+          .bullet,
+          .label,
+          .datetime {
             display: table-cell;
             padding-bottom: 6px;
           }
 
           .bullet::after {
-            content: '\E50';
+            content: "\E50";
             padding-right: 4px;
             position: relative;
             bottom: 2px;
           }
 
-          
           .bullet.inPeriod:after {
-            content: '\25b6';
+            content: "\25b6";
             bottom: 0;
           }
 
@@ -391,14 +391,12 @@ a.blueButton {
           .datetime {
             color: #9aa9b5;
           }
-
         }
       }
     }
   }
 
   .submissions {
-
     margin-bottom: 20px;
 
     .heading {
@@ -410,86 +408,99 @@ a.blueButton {
     }
 
     .list {
-      display: table;
-      width: 100%;
-      border-spacing: 0px 6px;
+      display: grid;
+      grid-template-columns: 10fr 2fr 1fr;
+      grid-row-gap: 8px;
+      align-content: center;
 
-      .row {
-        display: table-row;
-        width: 100%;
+      .cell.title {
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        border-left: 1px solid transparent;
+
+        &.selected {
+          border-left: 1px solid #0076ff;
+        }
+      }
+
+      &.overWithWinners {
+        grid-template-columns: 1fr 10fr 2fr 1fr;
+
+        .cell.title {
+          border-top-left-radius: unset;
+          border-bottom-left-radius: unset;
+          border-left: unset;
+
+          &.selected {
+            border-left: unset;
+          }
+        }
+
+        .cell.winnerIcon {
+          border-top-left-radius: 5px;
+          border-bottom-left-radius: 5px;
+          border-left: 1px solid transparent;
+
+          &.selected {
+            border-left: 1px solid #0076ff;
+          }
+        }
+      }
+
+      .cell {
         cursor: pointer;
+        font-size: 16px;
+        background-color: $white;
+        padding-top: 9px;
+        padding-bottom: 7px;
+        padding-left: 8px;
+        padding-right: 8px;
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
 
-          .cell {
-            display: table-cell;
-            font-size: 16px;
-            background-color: $white;
-            vertical-align: middle;
-            padding-top: 7px;
-            padding-bottom: 7px;
-            padding-left: 8px;
-            padding-right: 8px;
-            flex-grow: 1;
-            border-top: 1px solid transparent;
-            border-bottom: 1px solid transparent;
+        &.selected {
+          border-top: 1px solid #0076ff;
+          border-bottom: 1px solid #0076ff;
+        }
 
-            &.selected {
-              border-top: 1px solid #0076ff;
-              border-bottom: 1px solid #0076ff;
-            }
+        &.winnerIcon {
+          padding-top: 0;
+          padding-bottom: 0;
+          img {
+            height: 28px;
+            position: relative;
+            top: 4px;
           }
+        }
 
-          .cell:first-of-type {
-            border-top-left-radius: 5px;
-            border-bottom-left-radius: 5px;
-            border-left: 1px solid transparent;
+        &.creator {
+          white-space: nowrap;
+        }
 
-            &.selected {
-              border-left: 1px solid #0076ff;
-            }
-          }
-          
-          .cell:last-of-type {
-            border-top-right-radius: 5px;
-            border-bottom-right-radius: 5px;
-            border-right: 1px solid transparent;
+        &.votingSection {
+          text-align: right;
+          display: flex;
+          justify-content: flex-end;
+          border-left: solid 1px #e9eef4;
+          border-top-right-radius: 5px;
+          border-bottom-right-radius: 5px;
+          border-right: 1px solid transparent;
 
-            &.selected {
-              border-right: 1px solid #0076ff;
-            }
-          }
-
-          .title {
-            flex-grow: 2;
-            width: 70%;
+          &.selected {
+            border-right: 1px solid #0076ff;
           }
 
           .votes {
+            flex-grow: 1;
             text-align: right;
             white-space: nowrap;
-          }
-
-          .creator {
-            white-space: nowrap;
-          }
-          
-          .title, .creator {
-            border-right: solid 1px #e9eef4;
+            padding-right: 6px;
           }
 
           .votedUp {
-            img {
-              vertical-align: middle;
-            }
+            flex-grow: 2;
           }
-
-          .winnerIcon {
-            width: 22px;
-
-            img {
-              height: 28px;
-              vertical-align: middle;
-            }
-          }
+        }
       }
     }
   }
@@ -514,7 +525,7 @@ a.blueButton {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   box-shadow: $shadow-3;
   max-width: 445px;
 
@@ -542,7 +553,7 @@ a.blueButton {
       top: 3px;
       display: inline-block;
       font-weight: normal;
-      opacity: .5;
+      opacity: 0.5;
       font-size: 14px;
       overflow-x: hidden;
       text-overflow: ellipsis;
@@ -569,20 +580,21 @@ a.blueButton {
       line-height: 35px;
 
       &.error {
-        border: 1px solid rgba(246, 80, 80, 1.000);
+        border: 1px solid rgba(246, 80, 80, 1);
       }
       &:focus {
         outline: none;
-        border: 1px solid rgba(46, 168, 122, 1.000);
+        border: 1px solid rgba(46, 168, 122, 1);
       }
     }
 
-    input::placeholder, textarea::placeholder {
-        color: rgba(154, 169, 181, 1.000);
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(154, 169, 181, 1);
     }
 
     label {
-      color: rgba(80, 97, 118, 1.000);
+      color: rgba(80, 97, 118, 1);
       display: block;
       width: fit-content;
       font-size: 13px;
@@ -593,11 +605,10 @@ a.blueButton {
       .requiredMarker {
         position: absolute;
         top: 26px;
-        color: rgba(104, 154, 214, 1.000);
+        color: rgba(104, 154, 214, 1);
         font-weight: bold;
         left: 5px;
       }
-
 
       .infoTooltip {
         position: absolute;
@@ -610,7 +621,7 @@ a.blueButton {
     .errorMessage {
       font-weight: normal;
       padding-left: 10px;
-      color: rgba(246, 80, 80, 1.000);
+      color: rgba(246, 80, 80, 1);
       font-size: 11px;
       font-weight: 300;
     }
@@ -635,11 +646,11 @@ a.blueButton {
     font-size: 13px;
     padding: 0 25px 2px 25px;
     font-family: $body-font;
-    transition: all .25s ease;
+    transition: all 0.25s ease;
     border: none;
-    background-color: rgba(225, 235, 247, 1.000);
+    background-color: rgba(225, 235, 247, 1);
     border-radius: 15px;
-    color: rgba(0, 113, 255, 1.000);
+    color: rgba(0, 113, 255, 1);
   }
 
   .submitProposal {
@@ -647,13 +658,12 @@ a.blueButton {
     border: none;
     display: inline-block;
     margin: 0 5px;
-    font-weight: normal;
     font-size: 13px;
     padding: 0 25px 2px 25px;
     font-family: $body-font;
     font-weight: bold;
-    transition: all .25s ease;
-    background-color: rgba(0, 113, 255, 1.000);
+    transition: all 0.25s ease;
+    background-color: rgba(0, 113, 255, 1);
     border-radius: 15px;
     color: $white;
 
@@ -686,9 +696,9 @@ a.blueButton {
   }
 
   .submitProposal:disabled {
-    background-color: rgba(200,200,200,.5);
-    border: 1px solid rgba(200,200,200,1);
-    color: rgba(75,75,75,1);
+    background-color: rgba(200, 200, 200, 0.5);
+    border: 1px solid rgba(200, 200, 200, 1);
+    color: rgba(75, 75, 75, 1);
   }
 
   .submitProposal:disabled .sendIcon {
@@ -807,7 +817,10 @@ a.blueButton {
     overflow: auto;
     margin-top: 16px;
 
-    h1:first-of-type, h2:first-of-type, h3:first-of-type, h4:first-of-type {
+    h1:first-of-type,
+    h2:first-of-type,
+    h3:first-of-type,
+    h4:first-of-type {
       margin-top: 0;
     }
 
@@ -818,10 +831,11 @@ a.blueButton {
     }
   }
 
-  .attachmentLink, .attachmentLink:visited {
+  .attachmentLink,
+  .attachmentLink:visited {
     margin-top: 16px;
     font-size: 11px;
-    color: rgba(0, 113, 255, 1.000);
+    color: rgba(0, 113, 255, 1);
     display: inline-block;
 
     img {
@@ -837,7 +851,6 @@ a.blueButton {
 }
 
 @media only screen and (max-width: 425px) {
-
   a.blueButton {
     height: 22px;
     line-height: 22px;
@@ -857,4 +870,34 @@ a.blueButton {
     padding: 0 8px;
   }
 
+  .competitionDetailsContainer {
+    .topSection {
+      .header {
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+
+        .statusBlob {
+          margin-bottom: 8px;
+          margin-right: 0;
+        }
+
+        .gotoProposal {
+          margin-bottom: 8px;
+          top: 0;
+        }
+
+        .newSubmission {
+          text-align: left;
+        }
+      }
+    }
+    .submissions {
+      .row {
+        .creator {
+          white-space: nowrap;
+        }
+      }
+    }
+  }
 }

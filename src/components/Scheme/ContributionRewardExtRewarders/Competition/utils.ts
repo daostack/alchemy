@@ -28,7 +28,8 @@ export class CompetitionStatus {
   constructor(
     public status: CompetitionStatusEnum,
     public now: moment.Moment,
-    public competition: ICompetitionProposalState) {
+    public competition: ICompetitionProposalState,
+    public hasWinners: boolean) {
   }
   public get notStarted() { return this.status === CompetitionStatusEnum.NotOpenYet; }
   /**
@@ -96,7 +97,7 @@ export const competitionStatus = (
     status = submissions.length ? (hasWinners ? CompetitionStatusEnum.Ended : CompetitionStatusEnum.EndedNoWinners) : CompetitionStatusEnum.EndedNoSubmissions;
   }
 
-  return new CompetitionStatus(status, now, competition);
+  return new CompetitionStatus(status, now, competition, hasWinners);
 };
 
 export interface ICreateSubmissionOptions {

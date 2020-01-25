@@ -209,31 +209,45 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       const isSelected = () => this.state.showingSubmissionDetails && (this.state.showingSubmissionDetails.suggestionId === submission.suggestionId);
       const voted = this.state.votedSuggestions.has(submission.id);
       return (
-        <div key={index} className={css.row} onClick={this.openSubmissionDetailsModal(submission)}>
+        // <React.Fragment key={index}>
+        //   <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.title]: true})}>blah1</div>
+        //   <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.creator]: true})}>blah2</div>
+        //   <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votingSection]: true})}>blah3</div>
+        // </React.Fragment>
+        <React.Fragment key={index}>
           { status.overWithWinners ? 
-            <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.winnerIcon]: true })}>
+            <div className={classNames({
+              [css.cell]: true,
+              [css.selected]: isSelected(),
+              [css.winnerIcon]: true })}
+            onClick={this.openSubmissionDetailsModal(submission)}>
               {submission.isWinner ? <img src="/assets/images/Icon/winner.svg"></img> : ""}
-            </div> : ""
-          }
-          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.title]: true})}>
+            </div> : "" }
+          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.title]: true})}
+            onClick={this.openSubmissionDetailsModal(submission)}>
             { submission.title || "[No title is available]" }
           </div>
-          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.creator]: true})}>
+          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.creator]: true})}
+            onClick={this.openSubmissionDetailsModal(submission)}>
             <AccountPopup accountAddress={submission.suggester} daoState={daoState}/>
             <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.profiles[submission.suggester]} daoAvatarAddress={daoState.address} detailView={false} />
           </div>
-          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votes]: true})}>
-            { <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol/> }
+          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votingSection]: true})}>
+            <div className={css.votes}
+              onClick={this.openSubmissionDetailsModal(submission)}>
+              { <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol/> }
+            </div>
+            <div className={css.votedUp}
+              onClick={this.openSubmissionDetailsModal(submission)}>
+              <Tooltip placement="top" trigger={voted ? ["hover"] : []} overlay={"You voted for this submission"}>
+                {voted ? <img src="/assets/images/Icon/vote/for-fill-green.svg"></img> : <img src="/assets/images/Icon/vote/for-gray.svg"></img>}
+              </Tooltip>
+            </div>
           </div>
-          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votedUp]: true })}>
-            <Tooltip placement="top" trigger={voted ? ["hover"] : []} overlay={"You voted for this submission"}>
-              {voted ? <img src="/assets/images/Icon/vote/for-fill-green.svg"></img> : <img src="/assets/images/Icon/vote/for-gray.svg"></img>}
-            </Tooltip>
-          </div>
-        </div>);
+        </React.Fragment>
+      );
     });
   }
-
 
   public render(): RenderOutput {
     
@@ -333,7 +347,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         { submissions.length ?
           <div className={css.submissions}>
             <div className={css.heading}>{submissions.length}&nbsp;Submissions</div>
-            <div className={css.list}>
+            <div className={classNames({[css.list]: true, [css.overWithWinners]: status.overWithWinners})}>
               {this.submissionsHtml()}
             </div>
           </div> : ""
