@@ -209,11 +209,6 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       const isSelected = () => this.state.showingSubmissionDetails && (this.state.showingSubmissionDetails.suggestionId === submission.suggestionId);
       const voted = this.state.votedSuggestions.has(submission.id);
       return (
-        // <React.Fragment key={index}>
-        //   <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.title]: true})}>blah1</div>
-        //   <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.creator]: true})}>blah2</div>
-        //   <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votingSection]: true})}>blah3</div>
-        // </React.Fragment>
         <React.Fragment key={index}>
           { status.overWithWinners ? 
             <div className={classNames({

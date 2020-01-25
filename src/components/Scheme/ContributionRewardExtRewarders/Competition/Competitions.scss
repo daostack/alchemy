@@ -569,7 +569,6 @@ a.blueButton {
       margin-bottom: 5px;
       width: 100%;
       display: block;
-      border: none;
       background-color: transparent;
       border: $gray-border-2;
       font-size: 13px;
@@ -619,7 +618,6 @@ a.blueButton {
     }
 
     .errorMessage {
-      font-weight: normal;
       padding-left: 10px;
       color: rgba(246, 80, 80, 1);
       font-size: 11px;
