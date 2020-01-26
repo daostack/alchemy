@@ -208,48 +208,37 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     return submissions.map((submission: ICompetitionSuggestionState, index: number) => {
       const isSelected = () => this.state.showingSubmissionDetails && (this.state.showingSubmissionDetails.suggestionId === submission.suggestionId);
       const voted = this.state.votedSuggestions.has(submission.id);
-      const winnerHtml = () => {
-        return <div className={classNames({
-          [css.cell]: true,
-          [css.selected]: isSelected(),
-          [css.winnerIcon]: true })}
-        onClick={this.openSubmissionDetailsModal(submission)}>
-          {submission.isWinner ? <img src="/assets/images/Icon/winner.svg"></img> : ""}
-        </div>;
-      };
-      const titleHtml = () => {
-        return <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.title]: true})}
-          onClick={this.openSubmissionDetailsModal(submission)}>
-          { submission.title || "[No title is available]" }
-        </div>;
-      };
-      const creatorHtml = () => {
-        return <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.creator]: true})}
-          onClick={this.openSubmissionDetailsModal(submission)}>
-          <AccountPopup accountAddress={submission.suggester} daoState={daoState}/>
-          <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.profiles[submission.suggester]} daoAvatarAddress={daoState.address} detailView={false} />
-        </div>;
-      };
-      const votersHtml = () => {
-        return <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votingSection]: true})}>
-          <div className={css.votes}
-            onClick={this.openSubmissionDetailsModal(submission)}>
-            { <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol/> }
-          </div>
-          <div className={css.votedUp}
-            onClick={this.openSubmissionDetailsModal(submission)}>
-            <Tooltip placement="top" trigger={voted ? ["hover"] : []} overlay={"You voted for this submission"}>
-              {voted ? <img src="/assets/images/Icon/vote/for-fill-green.svg"></img> : <img src="/assets/images/Icon/vote/for-gray.svg"></img>}
-            </Tooltip>
-          </div>
-        </div>;
-      };
       return (
         <React.Fragment key={index}>
-          { status.overWithWinners ? winnerHtml() : "" }
-          { titleHtml() }
-          { creatorHtml() }
-          { votersHtml() }
+          { status.overWithWinners ? 
+            <div className={classNames({
+              [css.cell]: true,
+              [css.selected]: isSelected(),
+              [css.winnerIcon]: true })}
+            onClick={this.openSubmissionDetailsModal(submission)}>
+              {submission.isWinner ? <img src="/assets/images/Icon/winner.svg"></img> : ""}
+            </div> : "" }
+          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.title]: true})}
+            onClick={this.openSubmissionDetailsModal(submission)}>
+            { submission.title || "[No title is available]" }
+          </div>
+          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.creator]: true})}
+            onClick={this.openSubmissionDetailsModal(submission)}>
+            <AccountPopup accountAddress={submission.suggester} daoState={daoState}/>
+            <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.profiles[submission.suggester]} daoAvatarAddress={daoState.address} detailView={false} />
+          </div>
+          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votingSection]: true})}>
+            <div className={css.votes}
+              onClick={this.openSubmissionDetailsModal(submission)}>
+              { <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol/> }
+            </div>
+            <div className={css.votedUp}
+              onClick={this.openSubmissionDetailsModal(submission)}>
+              <Tooltip placement="top" trigger={voted ? ["hover"] : []} overlay={"You voted for this submission"}>
+                {voted ? <img src="/assets/images/Icon/vote/for-fill-green.svg"></img> : <img src="/assets/images/Icon/vote/for-gray.svg"></img>}
+              </Tooltip>
+            </div>
+          </div>
         </React.Fragment>
       );
     });
