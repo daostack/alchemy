@@ -195,7 +195,7 @@ a.blueButton {
 
 .competitionDetailsContainer {
   width: 100%;
-  max-width: 1440px;
+  box-sizing: border-box;
 
   .topSection {
     margin-bottom: 26px;
@@ -332,6 +332,7 @@ a.blueButton {
       .distribution {
         display: flex;
         flex-wrap: wrap;
+        justify-content: center;
         margin-bottom: 12px;
         font-size: 13px;
 
@@ -404,8 +405,111 @@ a.blueButton {
       font-weight: 500;
       font-size: 20px;
       width: 100%;
-      text-align: center;
+      // text-align: center;
       margin-bottom: 18px;
+    }
+
+    .list {
+      display: grid;
+      grid-template-columns: 10fr 2fr 1fr;
+      grid-row-gap: 8px;
+      align-content: center;
+
+      .cell.title {
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        border-left: 1px solid transparent;
+
+        &.selected {
+          border-left: 1px solid #0076ff;
+        }
+      }
+
+      &.overWithWinners {
+        grid-template-columns: 1fr 10fr 2fr 1fr;
+
+        .cell.title {
+          border-top-left-radius: unset;
+          border-bottom-left-radius: unset;
+          border-left: unset;
+
+          &.selected {
+            border-left: unset;
+          }
+        }
+
+        .cell.winnerIcon {
+          border-top-left-radius: 5px;
+          border-bottom-left-radius: 5px;
+          border-left: 1px solid transparent;
+
+          &.selected {
+            border-left: 1px solid #0076ff;
+          }
+        }
+      }
+
+      .cell {
+        cursor: pointer;
+        font-size: 16px;
+        background-color: $white;
+        padding-top: 9px;
+        padding-bottom: 7px;
+        padding-left: 8px;
+        padding-right: 8px;
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+
+        &.selected {
+          border-top: 1px solid #0076ff;
+          border-bottom: 1px solid #0076ff;
+        }
+
+        &.winnerIcon {
+          padding-top: 0;
+          padding-bottom: 0;
+          img {
+            height: 28px;
+            position: relative;
+            top: 4px;
+          }
+        }
+
+        &.creator {
+          white-space: nowrap;
+          padding-right: 10px;
+
+          a {
+            position: relative;
+            bottom: 1px;
+          }
+        }
+
+        &.votingSection {
+          text-align: right;
+          display: flex;
+          justify-content: flex-end;
+          border-left: solid 1px #e9eef4;
+          border-top-right-radius: 5px;
+          border-bottom-right-radius: 5px;
+          border-right: 1px solid transparent;
+
+          &.selected {
+            border-right: 1px solid #0076ff;
+          }
+
+          .votes {
+            flex-grow: 1;
+            text-align: right;
+            white-space: nowrap;
+            padding-right: 6px;
+          }
+
+          .votedUp {
+            flex-grow: 2;
+          }
+        }
+      }
     }
   }
 
@@ -752,113 +856,6 @@ a.blueButton {
   }
 }
 
-// @media only screen and (min-width: 426px) {
-.submissions {
-  .list {
-    display: grid;
-    grid-template-columns: 10fr 2fr 1fr;
-    grid-row-gap: 8px;
-    align-content: center;
-
-    .cell.title {
-      border-top-left-radius: 5px;
-      border-bottom-left-radius: 5px;
-      border-left: 1px solid transparent;
-
-      &.selected {
-        border-left: 1px solid #0076ff;
-      }
-    }
-
-    &.overWithWinners {
-      grid-template-columns: 1fr 10fr 2fr 1fr;
-
-      .cell.title {
-        border-top-left-radius: unset;
-        border-bottom-left-radius: unset;
-        border-left: unset;
-
-        &.selected {
-          border-left: unset;
-        }
-      }
-
-      .cell.winnerIcon {
-        border-top-left-radius: 5px;
-        border-bottom-left-radius: 5px;
-        border-left: 1px solid transparent;
-
-        &.selected {
-          border-left: 1px solid #0076ff;
-        }
-      }
-    }
-
-    .cell {
-      cursor: pointer;
-      font-size: 16px;
-      background-color: $white;
-      padding-top: 9px;
-      padding-bottom: 7px;
-      padding-left: 8px;
-      padding-right: 8px;
-      border-top: 1px solid transparent;
-      border-bottom: 1px solid transparent;
-
-      &.selected {
-        border-top: 1px solid #0076ff;
-        border-bottom: 1px solid #0076ff;
-      }
-
-      &.winnerIcon {
-        padding-top: 0;
-        padding-bottom: 0;
-        img {
-          height: 28px;
-          position: relative;
-          top: 4px;
-        }
-      }
-
-      &.creator {
-        white-space: nowrap;
-        padding-right: 10px;
-
-        a {
-          position: relative;
-          bottom: 1px;
-        }
-      }
-
-      &.votingSection {
-        text-align: right;
-        display: flex;
-        justify-content: flex-end;
-        border-left: solid 1px #e9eef4;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-        border-right: 1px solid transparent;
-
-        &.selected {
-          border-right: 1px solid #0076ff;
-        }
-
-        .votes {
-          flex-grow: 1;
-          text-align: right;
-          white-space: nowrap;
-          padding-right: 6px;
-        }
-
-        .votedUp {
-          flex-grow: 2;
-        }
-      }
-    }
-  }
-}
-// }
-
 @media only screen and (max-width: 425px) {
   a.blueButton {
     height: 22px;
@@ -902,24 +899,95 @@ a.blueButton {
       }
     }
 
-    // .rightSection {
-    //   max-width: calc(100% - 48px) !important;
-    // }
+    .middleSection {
+      .leftSection {
+        margin-bottom: 20px;
+
+        .description {
+          padding-left: 4px;
+          margin-right: 0;
+        }
+      }
+      .rightSection {
+        max-width: unset;
+        text-align: center;
+
+        .periods {
+          display: block;
+
+          .period {
+            display: block;
+
+            .bullet {
+              display: none;
+
+              &.inPeriod {
+                display: inline-block;
+              }
+            }
+
+            .label {
+              display: inline-block;
+            }
+
+            .datetime {
+              display: block;
+              margin-bottom: 8px;
+              padding-left: 10px;
+            }
+          }
+        }
+      }
+    }
 
     .submissions {
+      text-align: center;
+
       .list {
-        // grid-template-columns: repeat(3, 1fr);
+        // grid-template-columns: 1fr 10fr 87px;
         // // grid-template-rows: repeat(autofill, 1fr);
         grid-row-gap: 0;
         grid-column-gap: 0;
 
+        &.overWithWinners {
+          // grid-template-columns: 1fr 5fr 2fr 1fr;
+
+          .cell.title {
+            border-top-left-radius: unset;
+            border-bottom-left-radius: unset;
+            border-left: unset;
+
+            &.selected {
+              border-left: unset;
+            }
+          }
+
+          .cell.winnerIcon {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            border-left: 1px solid transparent;
+
+            &.selected {
+              border-left: 1px solid #0076ff;
+            }
+          }
+        }
+
         .cell {
-          // &.winnerIcon {
-          // }
+          // box-sizing: border-box;
+
+          &.winnerIcon {
+            padding-top: 0;
+            padding-bottom: 0;
+            img {
+              height: 28px;
+              position: relative;
+              top: 4px;
+            }
+          }
 
           &.title {
             grid-column-start: span 3;
-            margin-right: 26px;
             border-top-right-radius: 5px;
             border-bottom-left-radius: 0;
             text-align: center;
@@ -938,6 +1006,7 @@ a.blueButton {
             border-top-right-radius: 0;
             border-bottom-right-radius: 5px;
             border-left: none;
+            // box-sizing: border-box;
             // border-top: 1px solid #e9eef4;
             // grid-column: 2 / 3;
             // grid-row: 2 / 3;
