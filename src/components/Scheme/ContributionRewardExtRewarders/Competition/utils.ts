@@ -165,7 +165,7 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkActi
  */
 export interface IGetSubmissionsOptions {
   id?: string; // id of the competition
-  suggestionId?: string; // the "suggestionId" is a counter that is unique to the scheme
+  suggestionId?: number; // the "suggestionId" is a counter that is unique to the scheme
   // - and is not to be confused with suggestion.id
 }
 
