@@ -117,12 +117,11 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       }
     }
 
-    // const votes = this.props.data[1];
-    // FAKE -- until vote.staticState.suggestion is provided by the client
-    // votes.forEach(vote => {
-    //   this.state.votedSuggestions.add(vote.staticState.suggestion);
-    // });
-    // Object.assign(newState, { votedSuggestions: this.state.votedSuggestions });
+    const votes = this.props.data[1];
+    votes.forEach(vote => {
+      this.state.votedSuggestions.add(vote.staticState.suggestion);
+    });
+    Object.assign(newState, { votedSuggestions: this.state.votedSuggestions });
     this.setState(newState);
   }
   
