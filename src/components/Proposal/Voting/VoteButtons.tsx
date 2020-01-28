@@ -94,7 +94,7 @@ class VoteButtons extends React.Component<IProps, IState> {
       ((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)) ?
         "Can't change your vote" :
         (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
-          "Voting requires reputation in this DAO" :
+          "Requires reputation in this DAO" :
           proposal.stage === IProposalStage.ExpiredInQueue ||
               (proposal.stage === IProposalStage.Boosted && expired) ||
               (proposal.stage === IProposalStage.QuietEndingPeriod && expired)  ||

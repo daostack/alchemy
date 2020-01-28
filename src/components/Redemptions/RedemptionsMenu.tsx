@@ -153,8 +153,7 @@ type IMenuItemContentProps = IMenuItemProps & IMenuItemContentStateProps & ISubs
 class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
   public render(): RenderOutput {
     const { beneficiaryProfile, currentAccountAddress, data, proposal } = this.props;
-    const [dao, daoEthBalance, reward] = data;
-    const rewards = reward && [reward] || [];
+    const [dao, daoEthBalance, rewards] = data;
     return <React.Fragment>
       <ProposalSummary
         proposal={proposal}
@@ -178,7 +177,7 @@ class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
           expanded
           expired
           proposalState={proposal}
-          rewards={reward}
+          rewards={rewards}
         />
       </div>
     </React.Fragment>;
