@@ -1,9 +1,9 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
-import * as arcActions from "actions/arcActions";
+import { voteOnProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
-import * as classNames from "classnames";
+import classNames from "classnames";
 import Reputation from "components/Account/Reputation";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Analytics from "lib/analytics";
@@ -27,7 +27,7 @@ interface IExternalProps {
 }
 
 interface IDispatchProps {
-  voteOnProposal: typeof arcActions.voteOnProposal;
+  voteOnProposal: typeof voteOnProposal;
   showNotification: typeof showNotification;
 }
 
@@ -41,7 +41,7 @@ interface IState {
 
 const mapDispatchToProps = {
   showNotification,
-  voteOnProposal: arcActions.voteOnProposal,
+  voteOnProposal,
 };
 
 class VoteButtons extends React.Component<IProps, IState> {
@@ -112,7 +112,7 @@ class VoteButtons extends React.Component<IProps, IState> {
       ((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)) ?
         "Can't change your vote" :
         (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
-          "Voting requires reputation in this DAO" :
+          "Requires reputation in this DAO" :
           proposal.stage === IProposalStage.ExpiredInQueue ||
               (proposal.stage === IProposalStage.Boosted && expired) ||
               (proposal.stage === IProposalStage.QuietEndingPeriod && expired)  ||

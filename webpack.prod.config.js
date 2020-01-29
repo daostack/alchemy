@@ -17,14 +17,15 @@ const config = merge(baseConfig, {
   entry: {
     // the entry point of our app
     app: __dirname + '/src/index.tsx',
-    'ipfs-http-client': ['ipfs-http-client'],
+    // 'ipfs-http-client': ['ipfs-http-client'],
     // '@daostack/migration': ['@daostack/migration/']
   },
 
   output: {
     filename: "[name].bundle-[hash:8].js",
+    chunkFilename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/'
+    publicPath: '/',
   },
 
   optimization: {
@@ -37,13 +38,14 @@ const config = merge(baseConfig, {
       })
     ],
     splitChunks: {
+      chunks: 'all',
       cacheGroups: {
-        "ipfs-http-client": {
-          chunks: "initial",
-          test: "ipfs-http-client",
-          name: "ipfs-http-client",
-          enforce: true
-        },
+        // "ipfs-http-client": {
+        //   chunks: "initial",
+        //   test: "ipfs-http-client",
+        //   name: "ipfs-http-client",
+        //   enforce: true
+        // },
         // "@daostack/migration": {
         //   chunks: "initial",
         //   test: "@daostack/migration",

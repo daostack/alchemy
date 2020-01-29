@@ -8,7 +8,7 @@ import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import Analytics from "lib/analytics";
-import * as H from "history";
+import { History } from "history";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -22,7 +22,7 @@ type IExternalProps = RouteComponentProps<any>;
 
 interface IStateProps {
   daoAvatarAddress: string;
-  history: H.History;
+  history: History;
   schemeId: string;
 }
 

@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { IProposalType, ISchemeState, Scheme } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 
 import Loading from "components/Shared/Loading";
@@ -10,7 +10,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 
-import * as arcActions from "actions/arcActions";
+import { createProposal } from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
 import { schemeNameAndAddress, isValidUrl, GetSchemeIsActiveActions, getSchemeIsActive } from "lib/util";
@@ -26,12 +26,12 @@ interface IExternalProps {
 }
 
 interface IDispatchProps {
-  createProposal: typeof arcActions.createProposal;
+  createProposal: typeof createProposal;
   showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
-  createProposal: arcActions.createProposal,
+  createProposal,
   showNotification,
 };
 
@@ -84,7 +84,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       },
       title: "",
       url: "",
-      currentTab: "",
+      currentTab: "addScheme",
       tags: [],
     });
     this.state = {

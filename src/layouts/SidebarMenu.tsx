@@ -1,18 +1,18 @@
 import axios, { AxiosResponse } from "axios";
 import { IDAOState, Token } from "@daostack/client";
-import * as uiActions from "actions/uiActions";
+import { hideMenu } from "actions/uiActions";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 
 import BN = require("bn.js");
-import * as classNames from "classnames";
+import classNames from "classnames";
 import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import * as GeoPattern from "geopattern";
+import { generate } from "geopattern";
 import Analytics from "lib/analytics";
 import { ethErrorHandler, formatTokens, getExchangesList, supportedTokens } from "lib/util";
-import * as queryString from "query-string";
+import { parse } from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
 import { first } from "rxjs/operators";
@@ -34,11 +34,11 @@ interface IHasNewPosts {
 }
 
 interface IDispatchProps {
-  hideMenu: typeof uiActions.hideMenu;
+  hideMenu: typeof hideMenu;
 }
 
 const mapDispatchToProps = {
-  hideMenu: uiActions.hideMenu,
+  hideMenu,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[IDAOState, IHasNewPosts]>;
@@ -48,7 +48,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
     path: "/dao/:daoAvatarAddress",
     strict: false,
   });
-  const queryValues = queryString.parse(ownProps.location.search);
+  const queryValues = parse(ownProps.location.search);
 
   return {
     ...ownProps,
@@ -87,7 +87,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
     const [ dao, { hasNewPosts } ] = this.props.data ;
 
     const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
-    const bgPattern = GeoPattern.generate(dao.address + dao.name);
+    const bgPattern = generate(dao.address + dao.name);
 
     return (
       <div>

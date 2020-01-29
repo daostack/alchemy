@@ -2,7 +2,7 @@ import { IDAOState, IMemberState, IProposalState  } from "@daostack/client";
 import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
-import * as classNames from "classnames";
+import classNames from "classnames";
 import Reputation from "components/Account/Reputation";
 import ProposalSummary from "components/Proposal/ProposalSummary";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";

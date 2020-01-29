@@ -2,9 +2,9 @@ import { IDAOState, IMemberState, DAO } from "@daostack/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import BN = require("bn.js");
-import * as profileActions from "actions/profilesActions";
+import { getProfile, updateProfile } from "actions/profilesActions";
 import { getArc, enableWalletProvider } from "arc";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import Reputation from "components/Account/Reputation";
 import FollowButton from "components/Shared/FollowButton";
@@ -14,7 +14,7 @@ import { Field, Formik, FormikProps } from "formik";
 import Analytics from "lib/analytics";
 import { copyToClipboard, ethErrorHandler, formatTokens } from "lib/util";
 import { Page } from "pages";
-import * as queryString from "query-string";
+import { parse } from "query-string";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Helmet } from "react-helmet";
@@ -38,8 +38,8 @@ interface IStateProps {
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
-  getProfile: typeof profileActions.getProfile;
-  updateProfile: typeof profileActions.updateProfile;
+  getProfile: typeof getProfile;
+  updateProfile: typeof updateProfile;
 }
 
 type SubscriptionData = [IDAOState, IMemberState, BN|null, BN|null];
@@ -47,7 +47,7 @@ type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const accountAddress = ownProps.match.params.accountAddress ? ownProps.match.params.accountAddress.toLowerCase() : null;
-  const queryValues = queryString.parse(ownProps.location.search);
+  const queryValues = parse(ownProps.location.search);
   const daoAvatarAddress = queryValues.daoAvatarAddress as string;
 
   return {
@@ -61,8 +61,8 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 };
 
 const mapDispatchToProps = {
-  getProfile: profileActions.getProfile,
-  updateProfile: profileActions.updateProfile,
+  getProfile,
+  updateProfile,
   showNotification,
 };
 
@@ -322,7 +322,7 @@ const SubscribedAccountProfilePage = withSubscription({
   createObservable: (props: IProps) => {
     const arc = getArc();
 
-    const queryValues = queryString.parse(props.location.search);
+    const queryValues = parse(props.location.search);
     const daoAvatarAddress = queryValues.daoAvatarAddress as string;
     const accountAddress = props.match.params.accountAddress;
     let dao: DAO;

@@ -1,6 +1,6 @@
 import { Address, IDAOState, Proposal } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
-import * as arcActions from "actions/arcActions";
+import { redeemProposal } from "actions/arcActions";
 
 import BN = require("bn.js");
 import Loading from "components/Shared/Loading";
@@ -31,12 +31,12 @@ const mapStateToProps = (state: IRootState) => {
 };
 
 interface IDispatchProps {
-  redeemProposal: typeof arcActions.redeemProposal;
+  redeemProposal: typeof redeemProposal;
   showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
-  redeemProposal: arcActions.redeemProposal,
+  redeemProposal,
   showNotification,
 };
 

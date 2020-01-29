@@ -2,7 +2,7 @@ import { DAO, IDAOState } from "@daostack/client";
 import classNames from "classnames";
 import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import * as GeoPattern from "geopattern";
+import { generate } from "geopattern";
 import * as moment from "moment";
 import * as React from "react";
 import { Link } from "react-router-dom";
@@ -18,7 +18,7 @@ type IProps = IExternalProps & ISubscriptionProps<IDAOState>
 const DaoCard = (props: IProps) => {
   const { dao } = props;
   const daoState = props.data;
-  const bgPattern = GeoPattern.generate(dao.id + daoState.name);
+  const bgPattern = generate(dao.id + daoState.name);
   const dxDaoActivationDate = moment("2019-07-14T12:00:00.000+0000");
   const inActive = (daoState.name === "dxDAO") && dxDaoActivationDate.isSameOrAfter(moment());
   const handleClick = (e: any) => { if (inActive) { e.preventDefault(); } };

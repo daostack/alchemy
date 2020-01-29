@@ -1,9 +1,9 @@
 import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, Stake } from "@daostack/client";
-import * as arcActions from "actions/arcActions";
+import { approveStakingGens, stakeProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
-import * as classNames from "classnames";
+import classNames from "classnames";
 import Analytics from "lib/analytics";
 import { formatTokens } from "lib/util";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
@@ -37,14 +37,14 @@ interface IExternalProps {
 }
 
 interface IDispatchProps {
-  stakeProposal: typeof arcActions.stakeProposal;
+  stakeProposal: typeof stakeProposal;
   showNotification: typeof showNotification;
-  approveStakingGens: typeof arcActions.approveStakingGens;
+  approveStakingGens: typeof approveStakingGens;
 }
 
 const mapDispatchToProps = {
-  approveStakingGens: arcActions.approveStakingGens,
-  stakeProposal: arcActions.stakeProposal,
+  approveStakingGens,
+  stakeProposal,
   showNotification,
 };
 
@@ -96,7 +96,7 @@ class StakeButtons extends React.Component<IProps, IState> {
     this.setState({ showApproveModal: false });
   }
 
-  private getStakeProposalAction = (stakeProposal: typeof arcActions.stakeProposal, proposal: IProposalState, dao: IDAOState, pendingPrediction: number) =>
+  private getStakeProposalAction = (proposal: IProposalState, dao: IDAOState, pendingPrediction: number) =>
     (amount: number) => {
       stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount);
 
@@ -123,7 +123,6 @@ class StakeButtons extends React.Component<IProps, IState> {
       expired,
       parentPage,
       proposal,
-      stakeProposal,
       stakes,
     } = this.props;
 
@@ -246,7 +245,7 @@ class StakeButtons extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction === IProposalOutcome.Pass ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={this.getStakeProposalAction(stakeProposal, proposal, dao, pendingPrediction)}
+            action={this.getStakeProposalAction(proposal, dao, pendingPrediction)}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreStakeModal}
             currentAccountGens={currentAccountGens}

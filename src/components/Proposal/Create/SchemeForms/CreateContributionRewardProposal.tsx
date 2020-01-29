@@ -1,21 +1,21 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import Select from "react-select";
 import { IDAOState, ISchemeState } from "@daostack/client";
+import { createProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UserSearchField from "components/Shared/UserSearchField";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-import * as arcActions from "actions/arcActions";
 import Analytics from "lib/analytics";
 import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+
+const Select = React.lazy(() => import("react-select"));
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -28,12 +28,12 @@ interface IStateProps {
 }
 
 interface IDispatchProps {
-  createProposal: typeof arcActions.createProposal;
+  createProposal: typeof createProposal;
   showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
-  createProposal: arcActions.createProposal,
+  createProposal,
   showNotification,
 };
 
@@ -83,15 +83,17 @@ const customStyles = {
 };
 
 export const SelectField: React.SFC<any> = ({options, field, form }) => (
-  <Select
-    options={options}
-    name={field.name}
-    value={options ? options.find((option: any) => option.value === field.value) : ""}
-    maxMenuHeight={100}
-    onChange={(option: any) => form.setFieldValue(field.name, option.value)}
-    onBlur={field.onBlur}
-    styles={customStyles}
-  />
+  <React.Suspense fallback={<div>Loading...</div>}>
+    <Select
+      options={options}
+      name={field.name}
+      value={options ? options.find((option: any) => option.value === field.value) : ""}
+      maxMenuHeight={100}
+      onChange={(option: any) => form.setFieldValue(field.name, option.value)}
+      onBlur={field.onBlur}
+      styles={customStyles}
+    />
+  </React.Suspense>
 );
 
 class CreateContributionReward extends React.Component<IProps, IStateProps> {

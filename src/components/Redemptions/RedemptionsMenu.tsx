@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalState, IRewardState, Proposal, Reward } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
-import * as arcActions from "actions/arcActions";
+import { redeemProposal } from "actions/arcActions";
 
 import BN = require("bn.js");
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -36,12 +36,12 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps) => {
 };
 
 interface IDispatchProps {
-  redeemProposal: typeof arcActions.redeemProposal;
+  redeemProposal: typeof redeemProposal;
   showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
-  redeemProposal: arcActions.redeemProposal,
+  redeemProposal,
   showNotification,
 };
 
@@ -154,8 +154,7 @@ type IMenuItemContentProps = IMenuItemProps & IMenuItemContentStateProps & ISubs
 class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
   public render(): RenderOutput {
     const { beneficiaryProfile, currentAccountAddress, data, proposal } = this.props;
-    const [dao, daoEthBalance, reward] = data;
-    const rewards = reward && [reward] || [];
+    const [dao, daoEthBalance, rewards] = data;
     return <React.Fragment>
       <ProposalSummary
         proposal={proposal}
@@ -179,7 +178,7 @@ class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
           expanded
           expired
           proposalState={proposal}
-          rewards={reward}
+          rewards={rewards}
           parentPage={Page.RedemptionsMenu}
         />
       </div>

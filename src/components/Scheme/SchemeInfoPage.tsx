@@ -28,27 +28,27 @@ export default class SchemeInfo extends React.Component<IProps, null> {
 
       const duration = moment.duration(durationSeconds * 1000);
 
-      const days = duration.asDays() ? <strong>{duration.asDays()}d</strong> : "";
-      const hours = duration.hours() ? <strong>{duration.hours()}h</strong> : "";
-      const minutes = duration.minutes() ? <strong>{duration.minutes()}m</strong> : "";
-      const seconds = duration.seconds() ? <strong>{duration.seconds()}s</strong> : "";
+      const days = Math.floor(duration.asDays());
+      const hours = duration.hours();
+      const minutes = duration.minutes();
+      const seconds = duration.seconds();
       // there won't ever be milliseconds
-      const colon = <span className={css.colon}>:</span>;
+      const colon = <span className={css.colon}>: </span>;
 
-      const first = days ? days : hours ? hours : minutes ? minutes : seconds ? seconds : null;
+      const first = days ? "days" : hours ? "hours" : minutes ? "minutes" : seconds ? "seconds" : null;
 
       return <span>
         {
-          days ? <span className={css.timeSection}>{days}</span> : ""
+          days ? <span className={css.timeSection}><strong>{days} day{days > 1 ? "s" : ""}</strong></span> : ""
         }
         {
-          hours ? <span className={css.timeSection}><span>{first !== hours ? colon : ""} {hours}</span></span> : ""
+          hours ? <span className={css.timeSection}>{first !== "hours" ? colon : ""}<strong>{hours} hour{hours > 1 ? "s" : ""}</strong></span> : ""
         }
         {
-          minutes ? <span className={css.timeSection}><span>{first !== minutes ? colon : ""} {minutes}</span></span> : ""
+          minutes ? <span className={css.timeSection}><span>{first !== "minutes" ? colon : ""}<strong>{minutes} minute{minutes > 1 ? "s" : ""}</strong></span></span> : ""
         }
         {
-          seconds ? <span className={css.timeSection}><span>{first !== seconds ? colon : ""} {seconds}</span></span> : ""
+          seconds ? <span className={css.timeSection}><span>{first !== "seconds" ? colon : ""}<strong>{seconds} second{seconds > 1 ? "s" : ""}</strong></span></span> : ""
         }
       </span>;
     };
