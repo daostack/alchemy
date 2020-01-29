@@ -28,6 +28,7 @@ module.exports = {
       selectors: path.resolve(basePath, 'src/selectors'),
       schemas: path.resolve(basePath, 'src/schemas'),
       src: path.resolve(basePath, 'src'),
+      'ipfs-http-client': 'ipfs-http-client/dist',
       'ipfs-api': 'ipfs-api/dist',
       'bn.js': 'bn.js/lib/bn.js',
       'lit-element': path.resolve('./node_modules/lit-element'),
