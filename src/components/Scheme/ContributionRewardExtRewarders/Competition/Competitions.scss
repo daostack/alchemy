@@ -1025,4 +1025,20 @@ a.blueButton {
       }
     }
   }
+
+  .submissionDetails {
+    box-sizing: border-box;
+    padding: 12px;
+    // padding-top: 20px;
+    // position: fixed;
+    // top: 50px;
+    // margin-bottom: 20px;
+    right: 10px;
+    left: 10px;
+    box-shadow: unset;
+    max-width: unset;
+    min-width: unset;
+    max-height: calc(100vh - 152px);
+    min-height: calc(100vh - 152px);
+  }
 }
