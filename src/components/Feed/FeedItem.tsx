@@ -64,7 +64,7 @@ const FeedItem = (props: IProps) => {
       content = <DaoFeedItem event={event} />;
       break;
     case "NewReputationHolder":
-      title = daoTitle(event, "has a new reputation holder");
+      title = daoTitle(event, "has a new member");
       icon = <img src="/assets/images/Icon/new-person.svg" />;
       content = <UserFeedItem event={event} />;
       break;
@@ -87,7 +87,7 @@ const FeedItem = (props: IProps) => {
           statusText = <span>is no longer boosted</span>;
           break;
         case "ExpiredInQueue":
-          statusText = <span>is no longer boosted</span>;
+          statusText = <span>expired</span>;
           break;
       }
       title = event.from === "dao"
