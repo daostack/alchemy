@@ -415,40 +415,6 @@ a.blueButton {
       grid-row-gap: 8px;
       align-content: center;
 
-      .cell.title {
-        border-top-left-radius: 5px;
-        border-bottom-left-radius: 5px;
-        border-left: 1px solid transparent;
-
-        &.selected {
-          border-left: 1px solid #0076ff;
-        }
-      }
-
-      &.overWithWinners {
-        grid-template-columns: 1fr 10fr 2fr 1fr;
-
-        .cell.title {
-          border-top-left-radius: unset;
-          border-bottom-left-radius: unset;
-          border-left: unset;
-
-          &.selected {
-            border-left: unset;
-          }
-        }
-
-        .cell.winnerIcon {
-          border-top-left-radius: 5px;
-          border-bottom-left-radius: 5px;
-          border-left: 1px solid transparent;
-
-          &.selected {
-            border-left: 1px solid #0076ff;
-          }
-        }
-      }
-
       .cell {
         cursor: pointer;
         font-size: 16px;
@@ -463,6 +429,16 @@ a.blueButton {
         &.selected {
           border-top: 1px solid #0076ff;
           border-bottom: 1px solid #0076ff;
+        }
+
+        &.title {
+          border-top-left-radius: 5px;
+          border-bottom-left-radius: 5px;
+          border-left: 1px solid transparent;
+
+          &.selected {
+            border-left: 1px solid #0076ff;
+          }
         }
 
         &.winnerIcon {
@@ -507,6 +483,32 @@ a.blueButton {
 
           .votedUp {
             flex-grow: 2;
+          }
+        }
+      }
+
+      &.overWithWinners {
+        grid-template-columns: 1fr 10fr 2fr 1fr;
+
+        .cell {
+          &.winnerIcon {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            border-left: 1px solid transparent;
+
+            &.selected {
+              border-left: 1px solid #0076ff;
+            }
+          }
+
+          &.title {
+            border-top-left-radius: unset;
+            border-bottom-left-radius: unset;
+            border-left: unset;
+
+            &.selected {
+              border-left: unset;
+            }
           }
         }
       }
@@ -944,73 +946,80 @@ a.blueButton {
       text-align: center;
 
       .list {
-        // grid-template-columns: 1fr 10fr 87px;
-        // // grid-template-rows: repeat(autofill, 1fr);
         grid-row-gap: 0;
         grid-column-gap: 0;
 
-        &.overWithWinners {
-          // grid-template-columns: 1fr 5fr 2fr 1fr;
-
-          .cell.title {
-            border-top-left-radius: unset;
-            border-bottom-left-radius: unset;
-            border-left: unset;
-
-            &.selected {
-              border-left: unset;
-            }
-          }
-
-          .cell.winnerIcon {
-            border-top-left-radius: 5px;
-            border-bottom-left-radius: 5px;
-            border-left: 1px solid transparent;
-
-            &.selected {
-              border-left: 1px solid #0076ff;
-            }
-          }
-        }
-
         .cell {
-          // box-sizing: border-box;
-
-          &.winnerIcon {
-            padding-top: 0;
-            padding-bottom: 0;
-            img {
-              height: 28px;
-              position: relative;
-              top: 4px;
-            }
-          }
-
           &.title {
             grid-column-start: span 3;
             border-top-right-radius: 5px;
             border-bottom-left-radius: 0;
             text-align: center;
+            &.selected {
+              border-bottom: 1px solid transparent;
+              border-right: 1px solid #0076ff;
+            }
           }
 
           &.creator {
+            grid-column-start: 1;
+            grid-column-end: 3;
+            text-align: left;
+            padding-left: 12px;
             margin-bottom: 8px;
             border-bottom-left-radius: 5px;
-            // border-top: 1px solid #e9eef4;
-            // grid-column: 1 / 2;
-            // grid-row: 2 / 3;
+            &.selected {
+              border-top: 1px solid transparent;
+              border-bottom: 1px solid #0076ff;
+              border-left: 1px solid #0076ff;
+            }
           }
 
           &.votingSection {
+            grid-column-end: 4;
             margin-bottom: 8px;
             border-top-right-radius: 0;
             border-bottom-right-radius: 5px;
             border-left: none;
-            // box-sizing: border-box;
-            // border-top: 1px solid #e9eef4;
-            // grid-column: 2 / 3;
-            // grid-row: 2 / 3;
-            // border-left: none;
+            &.selected {
+              border-top: 1px solid transparent;
+              border-bottom: 1px solid #0076ff;
+            }
+          }
+        }
+
+        &.overWithWinners {
+          // grid-template-columns: 1fr 10fr 2fr 1fr;
+          .cell {
+            &.winnerIcon {
+              border-bottom-left-radius: unset;
+              &.selected {
+                border-bottom: 1px solid transparent;
+              }
+            }
+
+            &.title {
+              &.selected {
+                border-bottom: 1px solid transparent;
+              }
+            }
+
+            &.creator {
+              grid-column-start: 1;
+              grid-column-end: 4;
+              &.selected {
+                border-top: 1px solid transparent;
+                border-bottom: 1px solid #0076ff;
+              }
+            }
+
+            &.votingSection {
+              grid-column-end: 5;
+              &.selected {
+                border-top: 1px solid transparent;
+                border-bottom: 1px solid #0076ff;
+              }
+            }
           }
         }
       }
