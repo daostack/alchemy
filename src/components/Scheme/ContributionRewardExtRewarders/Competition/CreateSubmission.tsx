@@ -5,6 +5,8 @@ import * as React from "react";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
+import { getArc } from "arc";
+import UserSearchField from "components/Shared/UserSearchField";
 import { ICreateSubmissionOptions } from "./utils";
 import * as css from "./Competitions.scss";
 
@@ -35,6 +37,7 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
   }
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
+    if (values.beneficiary && !values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
     const submissionValues: ICreateSubmissionOptions = {...values,
       tags: this.state.tags,
     };
@@ -51,6 +54,7 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
 
   public render(): RenderOutput {
     const { handleCancel, proposalState } = this.props;
+    const arc = getArc();
 
     return (
       <div className={css.createSubmissionForm}>
@@ -61,6 +65,7 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           initialValues={{
+            beneficiary: "",
             description: "",
             title: "",
             url: "",
@@ -79,6 +84,9 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
               errors.title = "Title is too long (max 120 characters)";
             }
 
+            if (values.beneficiary && !arc.web3.utils.isAddress(values.beneficiary)) {
+              errors.beneficiary = "Invalid address";
+            }
 
             if (!isValidUrl(values.url)) {
               errors.url = "Invalid URL";
@@ -160,6 +168,22 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
                 type="text"
                 className={touched.url && errors.url ? css.error : null}
               />
+
+              <div>
+                <TrainingTooltip overlay="Ethereum Address or Alchemy Username to receive rewards, if not you" placement="right">
+                  <label htmlFor="beneficiary">
+                    Recipient, if not you
+                    <ErrorMessage name="beneficiary">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  </label>
+                </TrainingTooltip>
+                <UserSearchField
+                  daoAvatarAddress={this.props.daoState.address}
+                  name="beneficiary"
+                  onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
+                  onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
+                  defaultValue={undefined}
+                />
+              </div>
 
               <div className={css.createProposalActions}>
                 <button className={css.exitProposalCreation} type="button" onClick={handleCancel}>

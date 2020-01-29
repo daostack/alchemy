@@ -58,6 +58,7 @@ interface IFormValues {
   compEndTimeInput: Date;
   suggestionEndTimeInput: Date;
   votingStartTimeInput: Date;
+  proposerIsAdmin: boolean;
 
   [key: string]: any;
 }
@@ -150,6 +151,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
       numberOfVotesPerVoter:  Number(values.numberOfVotesPerVoter),
       proposalType: "competition", // this makes `createPRoposal` create a competition rather then a 'normal' contributionRewardExt
+      proposerIsAdmin: values.proposerIsAdmin,
       reputationReward: toWei(Number(values.reputationReward)),
       rewardSplit,
       scheme: this.props.scheme.address,
@@ -195,6 +197,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             nativeTokenReward: 0,
             numWinners: 0,
             numberOfVotesPerVoter: 0,
+            proposerIsAdmin: false,
             reputationReward: 0,
             compStartTimeInput: testing ? undefined : now,
             suggestionEndTimeInput: testing ? undefined : now,
@@ -441,6 +444,22 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                   name="numberOfVotesPerVoter"
                   type="number"
                   className={touched.numberOfVotesPerVoter && errors.numberOfVotesPerVoter ? css.error : null}
+                />
+              </div>
+
+              <div className={css.proposerIsAdminCheckbox}>
+                <TrainingTooltip overlay="You are the only account that will be able to create submissions" placement="right">
+                  <label htmlFor="proposerIsAdmin">
+                    <div className={css.requiredMarker}>*</div>
+                    Submissions can only be created by you
+                    <ErrorMessage name="proposerIsAdmin">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  </label>
+                </TrainingTooltip>
+                <Field
+                  id="proposerIsAdmin"
+                  name="proposerIsAdmin"
+                  type="checkbox"
+                  className={touched.proposerIsAdmin && errors.proposerIsAdmin ? css.error : null}
                 />
               </div>
 

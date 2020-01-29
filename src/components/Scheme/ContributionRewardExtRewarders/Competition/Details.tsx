@@ -21,6 +21,7 @@ import { combineLatest } from "rxjs";
 import Tooltip from "rc-tooltip";
 import Reputation from "components/Account/Reputation";
 import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
+import { map } from "rxjs/operators";
 import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, CompetitionStatus, getCompetitionVotes } from "./utils";
 import CreateSubmission from "./CreateSubmission";
 import SubmissionDetails from "./SubmissionDetails";
@@ -30,7 +31,7 @@ import * as CompetitionActions from "./utils";
 
 const ReactMarkdown = require("react-markdown");
 
-type ISubscriptionState = [Array<ICompetitionSuggestionState>, Array<CompetitionVote>];
+type ISubscriptionState = [Array<ICompetitionSuggestionState>, Set<string>];
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -47,7 +48,6 @@ interface IStateProps {
   showingCreateSubmission: boolean;
   showingSubmissionDetails: ICompetitionSuggestionState;
   status: CompetitionStatus;
-  votedSuggestions: Set<string>;
 }
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -80,7 +80,6 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       showingCreateSubmission: false,
       showingSubmissionDetails: null,
       status: this.getCompetitionState(),
-      votedSuggestions: new Set(),
     };
   }
 
@@ -116,13 +115,6 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         Object.assign(newState, { showingSubmissionDetails: urlSubmission });
       }
     }
-
-    const votes = this.props.data[1];
-    votes.forEach(vote => {
-      this.state.votedSuggestions.add(vote.staticState.suggestion);
-    });
-    Object.assign(newState, { votedSuggestions: this.state.votedSuggestions });
-    this.setState(newState);
   }
   
   private onEndCountdown = () => {
@@ -206,7 +198,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
     return submissions.map((submission: ICompetitionSuggestionState, index: number) => {
       const isSelected = () => this.state.showingSubmissionDetails && (this.state.showingSubmissionDetails.suggestionId === submission.suggestionId);
-      const voted = this.state.votedSuggestions.has(submission.id);
+      const votesMap = this.props.data[1];
+      const voted = votesMap.has(submission.id);
       return (
         <React.Fragment key={index}>
           { status.overWithWinners ? 
@@ -388,11 +381,29 @@ export default withSubscription({
   checkForUpdate: ["currentAccountAddress"],
   createObservable: (props: IExternalProps & IExternalStateProps ) => {
     /**
-     * HEADS UP:  we subscribe here because we can't rely on getting to this component via CompetitionCard
+     * We subscribe here because we can't rely on arriving at
+     * this component via CompetitionCard, and thus must create our own subscription.
      */
     return combineLatest(
       getProposalSubmissions(props.proposalState.id, true),
       getCompetitionVotes(props.proposalState.competition.id, props.currentAccountAddress, true)
-    );
+        .pipe(
+          map((votes: Array<CompetitionVote>) => {
+            const set = new Set<string>();
+            votes.forEach(vote => {
+              set.add(vote.staticState.suggestion);               
+            });
+            return set;
+          })
+        ));
+    // .pipe(
+    //   mergeMap(votes => of(votes).pipe(
+    //     mergeMap(votes => votes),
+    //     scan((set: Set<string>, vote: CompetitionVote) => {
+    //       set = set ? set : new Set<string>(); 
+    //       return set.add(vote.staticState.suggestion);
+    //     })
+    //   ))
+    // ));
   },
 });

@@ -101,6 +101,7 @@ export const competitionStatus = (
 };
 
 export interface ICreateSubmissionOptions {
+  beneficiary?: Address;
   description: string;
   title: string;
   url: string;

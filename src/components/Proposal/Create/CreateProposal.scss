@@ -13,7 +13,7 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   box-shadow: $shadow-3;
 
   .header {
@@ -36,7 +36,7 @@
 
       b {
         font-weight: normal;
-        opacity: .5;
+        opacity: 0.5;
         font-size: 14px;
       }
     }
@@ -64,16 +64,17 @@
       line-height: 35px;
 
       &.error {
-        border: 1px solid rgba(246, 80, 80, 1.000);
+        border: 1px solid rgba(246, 80, 80, 1);
       }
       &:focus {
         outline: none;
-        border: 1px solid rgba(46, 168, 122, 1.000);
+        border: 1px solid rgba(46, 168, 122, 1);
       }
     }
 
-    input::placeholder, textarea::placeholder {
-      color: rgba(154, 169, 181, 1.000);
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(154, 169, 181, 1);
     }
 
     .contributionReward {
@@ -92,6 +93,19 @@
         input {
           min-width: 206px; // calendar input
         }
+      }
+    }
+
+    .proposerIsAdminCheckbox {
+      label {
+        display: inline-block;
+        position: relative;
+        bottom: 14px;
+        margin-right: 4px;
+      }
+
+      input {
+        width: auto;
       }
     }
 
@@ -149,7 +163,7 @@
                 margin-bottom: 1px;
                 border-bottom-left-radius: 0;
                 border-top-left-radius: 0;
-                top: .5px;
+                top: 0.5px;
                 box-shadow: none;
               }
             }
@@ -157,13 +171,13 @@
         }
       }
     }
-    
+
     .permissionCheckbox {
       font-size: 9px;
     }
 
     label {
-      color: rgba(80, 97, 118, 1.000);
+      color: rgba(80, 97, 118, 1);
       display: block;
       width: fit-content;
       font-size: 13px;
@@ -173,11 +187,10 @@
 
       .requiredMarker {
         display: inline-block;
-        color: rgba(104, 154, 214, 1.000);
+        color: rgba(104, 154, 214, 1);
         font-weight: bold;
         margin-right: 4px;
       }
-
 
       .infoTooltip {
         position: absolute;
@@ -188,10 +201,10 @@
     }
 
     .errorMessage {
-      display:block;
+      display: block;
       font-weight: normal;
       padding-left: 10px;
-      color: rgba(246, 80, 80, 1.000);
+      color: rgba(246, 80, 80, 1);
       font-size: 11px;
       font-weight: 300;
     }
@@ -205,12 +218,11 @@
       z-index: -10;
       font-weight: 300;
     }
-
   }
 
   .recommendedTemplate {
-    border: 1px solid rgba(56, 175, 244, .2);
-    color: rgba(34, 167, 243, 1.000);
+    border: 1px solid rgba(56, 175, 244, 0.2);
+    color: rgba(34, 167, 243, 1);
     font-size: $small;
     border-radius: 3px;
     position: relative;
@@ -279,9 +291,9 @@
     cursor: pointer;
     height: 30px;
     float: left;
-    transition: all .25s ease;
+    transition: all 0.25s ease;
     border: none;
-    background-color: rgba(0, 0, 0, 0.000);
+    background-color: rgba(0, 0, 0, 0);
   }
 
   .exitProposalCreation {
@@ -293,11 +305,11 @@
     font-size: 13px;
     padding: 0 25px 2px 25px;
     font-family: $body-font;
-    transition: all .25s ease;
+    transition: all 0.25s ease;
     border: none;
-    background-color: rgba(225, 235, 247, 1.000);
+    background-color: rgba(225, 235, 247, 1);
     border-radius: 15px;
-    color: rgba(0, 113, 255, 1.000);
+    color: rgba(0, 113, 255, 1);
   }
 
   .submitProposal {
@@ -310,8 +322,8 @@
     padding: 0 25px 2px 25px;
     font-family: $body-font;
     font-weight: bold;
-    transition: all .25s ease;
-    background-color: rgba(0, 113, 255, 1.000);
+    transition: all 0.25s ease;
+    background-color: rgba(0, 113, 255, 1);
     border-radius: 15px;
     color: $white;
 
@@ -336,9 +348,9 @@
   }
 
   .submitProposal:disabled {
-    background-color: rgba(200,200,200,.5);
-    border: 1px solid rgba(200,200,200,1);
-    color: rgba(75,75,75,1);
+    background-color: rgba(200, 200, 200, 0.5);
+    border: 1px solid rgba(200, 200, 200, 1);
+    color: rgba(75, 75, 75, 1);
   }
 
   .submitProposal:disabled .sendIcon {
@@ -379,7 +391,7 @@
       outline: none;
       font-size: 13px;
       font-weight: bold;
-      color: rgba(80, 97, 118, 1.000);
+      color: rgba(80, 97, 118, 1);
       margin: 0;
       padding: 15px 30px;
       width: 100%;
@@ -390,8 +402,9 @@
       }
     }
 
-    button:hover, button.selected {
-      background-color: rgba(233, 238, 244, 1.000);
+    button:hover,
+    button.selected {
+      background-color: rgba(233, 238, 244, 1);
 
       span {
         width: 25px;
@@ -444,21 +457,24 @@
 
       button {
         border: none;
-        background-color: rgba(245, 247, 250, 1.000);
+        background-color: rgba(245, 247, 250, 1);
         height: 30px;
         line-height: 30px;
         padding: 0 15px;
         margin-right: 8px;
         border-radius: 3px;
         outline: none;
-        color: rgba(104, 155, 214, 1.000);
+        color: rgba(104, 155, 214, 1);
         font-weight: bold;
         text-align: center;
       }
     }
   }
 
-  .addEditSchemeFields, .removeSchemeFields, .addSchemeSelectContainer, .editSchemeSelectContainer {
+  .addEditSchemeFields,
+  .removeSchemeFields,
+  .addSchemeSelectContainer,
+  .editSchemeSelectContainer {
     display: none;
     position: relative;
   }
@@ -467,7 +483,9 @@
     height: 63px;
   }
 
-  .addScheme .addEditSchemeFields, .removeScheme .removeSchemeFields, .editScheme .addEditSchemeFields {
+  .addScheme .addEditSchemeFields,
+  .removeScheme .removeSchemeFields,
+  .editScheme .addEditSchemeFields {
     display: block;
   }
 
@@ -523,10 +541,10 @@
     .permissionsLabel {
       font-size: 13px;
       font-weight: bold;
-      color: rgba(80, 97, 118, 1.000);
+      color: rgba(80, 97, 118, 1);
     }
 
-    .permissionCheckbox  {
+    .permissionCheckbox {
       width: 50%;
       display: inline-block;
       padding: 4px 0 0 0;
@@ -564,7 +582,6 @@ form .radioButtons {
     .requiredMarker {
       display: none;
     }
-
   }
 }
 
@@ -576,7 +593,8 @@ div.description {
   font-size: 11px;
   margin-bottom: 12px;
 
-  a, a:hover {
+  a,
+  a:hover {
     color: #0071ff;
   }
 }
@@ -590,7 +608,6 @@ div.description {
 }
 
 @media only screen and (max-width: 475px) {
-
   .createWrapperWithSidebar {
     width: 100%;
 
@@ -613,7 +630,7 @@ div.description {
   .createProposalWrapper {
     top: 0;
     left: 0;
-    transform: translate(0,0);
+    transform: translate(0, 0);
 
     .header {
       border-radius: 0 0 0 0;
@@ -634,7 +651,11 @@ div.description {
 
       .dates {
         grid-template-columns: 1fr;
-       }
+      }
+
+      // .proposerIsAdminCheckbox {
+      //   width: auto;
+      // }
     }
   }
 
