@@ -99,7 +99,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                 A curated registry of identities on the Ethereum blockchain.&nbsp;
                     <a href="https://docs.google.com/document/d/1_aS41bvA6D83aTPv6QNehR3PfIRHJKkELnU76Sds5Xk" target="_blank" rel="noopener noreferrer">How to register.</a>
                   </p>
-                  : <p>Anyone can make a proposal to the DAO! Click the button on the top right.</p>
+                  : <p>New to DAOstack? Visit the <a href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">help center</a> to get started.</p>
           }
         </div>
         <div className={css.followButton}><FollowButton id={dao.address} type="daos" style="white" /></div>
@@ -130,7 +130,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                     })
                   }></span>
                   <img src="/assets/images/Icon/menu/holders.svg" />
-                Reputation Holders
+                  DAO Members
                 </Link>
               </TrainingTooltip>
             </li>
@@ -167,7 +167,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
             </li>
             <li>
-              <TrainingTooltip placement="topLeft" overlay={"Space designated for general questions, statements and comments"}>
+              <TrainingTooltip placement="right" overlay={"DAO official documentation"}>
                 <Link to={"/dao/" + dao.address + "/wiki/"} onClick={this.handleCloseMenu}>
                   <span
                     className={classNames({

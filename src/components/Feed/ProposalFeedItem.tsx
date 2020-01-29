@@ -53,7 +53,7 @@ const ProposalFeedItem = (props: IProps) => {
       </div>
 
       <Link to={`/dao/${dao.address}/proposal/${event.proposal.id}`}>
-        <h3>Proposal {humanProposalTitle(event.proposal)}</h3>
+        <h3>{humanProposalTitle(event.proposal)}</h3>
       </Link>
 
       <div className={css.followButton}><FollowButton id={event.proposal.id} type="proposals" /></div>

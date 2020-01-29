@@ -30,7 +30,7 @@ const DaoFeedItem = (props: IProps) => {
       </Link>
       <div className={css.followButton}><FollowButton id={event.dao.id} type="daos" /></div>
       <br/>
-      <span>{dao.memberCount} Reputation Holders</span>
+      <span>{dao.memberCount} DAO Members</span>
     </div>
   );
 };

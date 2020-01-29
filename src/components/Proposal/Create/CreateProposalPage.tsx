@@ -13,6 +13,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { RouteComponentProps } from "react-router-dom";
+import { schemeName } from "lib/util";
 import * as css from "./CreateProposal.scss";
 
 type IExternalProps = RouteComponentProps<any>;
@@ -44,11 +45,11 @@ class CreateProposalPage extends React.Component<IProps, null> {
     const { daoAvatarAddress } = this.props;
     const scheme = this.props.data;
 
-    const arc = getArc();
-    let schemeName = arc.getContractInfo(scheme.address).name;
-    if (!schemeName) {
-      throw Error(`Unknown Scheme: ${scheme}`);
-    }
+    // const arc = getArc();
+    // let schemeName = arc.getContractInfo(scheme.address).name;
+    // if (!schemeName) {
+    //   throw Error(`Unknown Scheme: ${scheme}`);
+    // }
 
     let createSchemeComponent = <div />;
     const props = {
@@ -56,11 +57,13 @@ class CreateProposalPage extends React.Component<IProps, null> {
       handleClose: this.handleClose.bind(this),
       scheme,
     };
-    if (schemeName === "ContributionReward") {
+    const schemeTitle = schemeName(scheme);
+
+    if (scheme.name === "ContributionReward") {
       createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
-    } else if (schemeName === "SchemeRegistrar") {
+    } else if (scheme.name === "SchemeRegistrar") {
       createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
-    } else if (schemeName === "GenericScheme") {
+    } else if (scheme.name === "GenericScheme") {
       const genericSchemeRegistry = new GenericSchemeRegistry();
       let contractToCall: string;
       if (scheme.genericSchemeParams) {
@@ -74,16 +77,14 @@ class CreateProposalPage extends React.Component<IProps, null> {
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
       if (genericSchemeInfo) {
         createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
-        schemeName = genericSchemeInfo.specs.name;
       } else {
         createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
       }
-    } else if (schemeName === "UGenericScheme") {
+    } else if (scheme.name === "UGenericScheme") {
       const genericSchemeRegistry = new GenericSchemeRegistry();
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(props.scheme.uGenericSchemeParams.contractToCall);
       if (genericSchemeInfo) {
         createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
-        schemeName = genericSchemeInfo.specs.name;
       } else {
         createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
       }
@@ -91,9 +92,9 @@ class CreateProposalPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.createProposalWrapper}>
-        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/create`}>Create {schemeName.replace(/([A-Z])/g, " $1")} Proposal</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/create`}>Create {schemeTitle} Proposal</BreadcrumbsItem>
         <h2 className={css.header}>
-          <span>+ New proposal <b>| {schemeName}</b></span>
+          <span>+ New proposal <b>| {schemeTitle}</b></span>
         </h2>
         { createSchemeComponent }
       </div>

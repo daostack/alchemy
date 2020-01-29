@@ -4,7 +4,7 @@ import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
-import { schemeName} from "lib/util";
+import { schemeName } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
@@ -174,8 +174,8 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
-                <TrainingTooltip placement="bottom" overlay={"Pending proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
-                  <span>Pending Proposals ({scheme.numberOfPreBoostedProposals})</span>
+                <TrainingTooltip placement="bottom" overlay={"Pending boosting proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
+                  <span>Pending Boosting Proposals ({scheme.numberOfPreBoostedProposals})</span>
                 </TrainingTooltip>
                 {proposalsPreBoosted.length === 0
                   ?
