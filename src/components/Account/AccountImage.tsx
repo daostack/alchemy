@@ -1,4 +1,4 @@
-import * as blockies from "ethereum-blockies-png";
+import { createDataURL } from "ethereum-blockies-png";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 
@@ -20,7 +20,7 @@ export default class AccountImage extends React.Component<IProps, null> {
       url = "https://ipfs.infura.io/ipfs/" + profile.image[0].contentUrl["/"];
     }
     if (!url) {
-      url = blockies.createDataURL({
+      url = createDataURL({
         seed: accountAddress,
       });
     }

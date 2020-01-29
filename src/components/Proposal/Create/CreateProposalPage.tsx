@@ -6,7 +6,7 @@ import CreateUnknownGenericSchemeProposal from "components/Proposal/Create/Schem
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
-import * as H from "history";
+import { History } from "history";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
@@ -21,7 +21,7 @@ type IExternalProps = RouteComponentProps<any>;
 
 interface IExternalStateProps {
   daoAvatarAddress: string;
-  history: H.History;
+  history: History;
   schemeId: string;
 }
 

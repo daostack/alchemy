@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Vote, IProposalState } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, Vote } from "@daostack/client";
 import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -42,8 +42,6 @@ interface IState {
 }
 
 export default class ProposalDetailsPage extends React.Component<IProps, IState> {
-
-  proposal: IProposalState; // work-around for lack of access to ProposalData.props in componentDidMount
 
   constructor(props: IProps) {
     super(props);
@@ -100,9 +98,6 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
           stakes,
           votes,
         } = props;
-
-        // work-around for lack of access to ProposalData.props in componentDidMount
-        this.proposal = proposal;
 
         this.disqusConfig.title = proposal.title;
         this.disqusConfig.url = process.env.BASE_URL + this.props.location.pathname;

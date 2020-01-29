@@ -1,5 +1,5 @@
 import { Address, IDAOState, IProposalStage, Vote, Proposal } from "@daostack/client";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
