@@ -495,7 +495,7 @@ export function getCRRewards(proposalState: IProposalState, daoBalances: { [key:
   return result;
 }
 
-export function hasCrRewards(reward: IContributionReward) {
+export function hasCrRewards(reward: IProposalState) {
   const claimableRewards = getCRRewards(reward);
   for (const key of Object.keys(claimableRewards)) {
     if (claimableRewards[key].gt(new BN(0))) {
