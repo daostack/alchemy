@@ -1023,6 +1023,30 @@ a.blueButton {
     }
   }
 
+  .createSubmissionForm {
+    top: 0;
+    left: 0;
+    transform: translate(0, 0);
+
+    .header {
+      border-radius: 0 0 0 0;
+    }
+
+    form {
+      padding: 15px 15px 155px 15px;
+
+      textarea {
+        border: none;
+        width: 100%;
+      }
+
+      .encodedData textarea {
+        border: $gray-border-2;
+        padding: 9px 15px 12px 15px;
+      }
+    }
+  }
+
   .submissionDetails {
     box-sizing: border-box;
     padding: 10px;
