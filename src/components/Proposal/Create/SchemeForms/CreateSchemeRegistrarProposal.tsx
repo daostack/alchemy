@@ -83,7 +83,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       },
       title: "",
       url: "",
-      currentTab: "",
+      currentTab: "addScheme",
       tags: [],
     });
     this.state = {
@@ -91,8 +91,8 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       tags: this.initialFormValues.tags,
     };
   }
-  
-  
+
+
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ):  Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
@@ -152,7 +152,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     exportUrl(values);
     this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
   }
-  
+
   public render(): RenderOutput {
     // "schemes" are the schemes registered in this DAO
     const schemes = this.props.data;
