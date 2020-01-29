@@ -1,5 +1,5 @@
 import { IProposalStage, IProposalState } from "@daostack/client";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import * as React from "react";
 import { proposalExpired, proposalFailed, proposalPassed } from "lib/proposalHelpers";
 import * as css from "./ProposalStatus.scss";

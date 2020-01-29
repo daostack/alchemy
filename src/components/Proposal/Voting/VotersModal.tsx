@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalOutcome, IProposalState, Vote } from "@daostack/client";
 import { getArc } from "arc";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
@@ -136,7 +136,7 @@ class VotersModal extends React.Component<IProps, null> {
               <div className={css.yesVotes}>
                 {yesVotes.length ?
                   <div className={css.container}>{yesVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} accountProfile={profiles[vote.staticState.voter]} />)}</div>
-                  : 
+                  :
                   <div className={votersDownClass}><div className={css.notAnyVotes}>No one has voted For</div></div>
                 }
               </div>

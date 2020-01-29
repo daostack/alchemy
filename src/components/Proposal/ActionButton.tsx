@@ -1,7 +1,7 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Token, IProposalOutcome } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import { getCRRewards, getGpRewards, ethErrorHandler, fromWei } from "lib/util";
 import Tooltip from "rc-tooltip";

@@ -1,4 +1,4 @@
-import * as H from "history";
+import { History } from "history";
 import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Vote, Reward, Scheme, Stake } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
@@ -38,7 +38,7 @@ const Fade = ({ children, ...props }: any): any => (
 
 interface IExternalProps {
   currentAccountAddress: Address;
-  history: H.History;
+  history: History;
   isActive: boolean;
   scheme: ISchemeState;
   daoState: IDAOState;

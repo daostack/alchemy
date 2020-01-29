@@ -2,14 +2,14 @@ import { Address, IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
 import { threeBoxLogout } from "actions/profilesActions";
 import { enableWalletProvider, getAccountIsEnabled, getArc, gotoReadonly, getWeb3ProviderInfo } from "arc";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import RedemptionsButton from "components/Redemptions/RedemptionsButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { copyToClipboard } from "lib/util";
-import * as queryString from "query-string";
+import { parse } from "query-string";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom";
@@ -39,7 +39,7 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
     path: "/dao/:daoAvatarAddress",
     strict: false,
   });
-  const queryValues = queryString.parse(ownProps.location.search);
+  const queryValues = parse(ownProps.location.search);
 
   return {
     ...ownProps,
