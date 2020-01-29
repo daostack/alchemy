@@ -820,7 +820,8 @@ a.blueButton {
 
   .description {
     max-height: 100%;
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: auto;
     margin-top: 16px;
 
     h1:first-of-type,
@@ -1033,11 +1034,12 @@ a.blueButton {
     box-shadow: unset;
     max-width: 100%;
     min-width: 100%;
-    max-height: unset;
-    min-height: calc(100vh - 102px);
+    // max-height: unset;
+    min-height: calc(100% - 60px);
 
     .description {
-      overflow: auto visible;
+      max-height: unset;
+      border-bottom: $gray-border-2;
     }
   }
 }
