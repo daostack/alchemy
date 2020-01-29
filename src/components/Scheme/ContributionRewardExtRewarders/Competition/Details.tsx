@@ -396,14 +396,5 @@ export default withSubscription({
             return set;
           })
         ));
-    // .pipe(
-    //   mergeMap(votes => of(votes).pipe(
-    //     mergeMap(votes => votes),
-    //     scan((set: Set<string>, vote: CompetitionVote) => {
-    //       set = set ? set : new Set<string>(); 
-    //       return set.add(vote.staticState.suggestion);
-    //     })
-    //   ))
-    // ));
   },
 });
