@@ -1,7 +1,7 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Token, IProposalOutcome } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import { getCRRewards, getGpRewards, ethErrorHandler, fromWei } from "lib/util";
 import Tooltip from "rc-tooltip";
@@ -137,12 +137,12 @@ class ActionButton extends React.Component<IProps, IState> {
       /**
        * unredeemed by the beneficiary
        */
-      contributionRewards = getCRRewards(proposalState.contributionReward);
+      contributionRewards = getCRRewards(proposalState);
       beneficiaryNumUnredeemedCrRewards = Object.keys(contributionRewards).length;
       /**
        * unredeemed and available to the beneficiary
        */
-      const availableCrRewards = getCRRewards(proposalState.contributionReward, daoBalances);
+      const availableCrRewards = getCRRewards(proposalState, daoBalances);
       // only true if there are rewards and the DAO can't pay them. false if there are no rewards or they can be paid.
       daoLacksRequiredCrRewards = Object.keys(availableCrRewards).length < beneficiaryNumUnredeemedCrRewards;
       daoLacksAllRequiredCrRewards = (Object.keys(availableCrRewards).length === 0) && (beneficiaryNumUnredeemedCrRewards > 0);

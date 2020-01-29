@@ -2,7 +2,7 @@ import { promisify } from "util";
 import {
   Address,
   IContractInfo,
-  IContributionReward,
+  IProposalStage,
   IProposalState,
   IRewardState,
   ISchemeState } from "@daostack/client";
@@ -409,8 +409,14 @@ export function hasGpRewards(reward: IRewardState) {
  * @param  reward unredeemed CR rewards
  * @param daoBalances
  */
-export function getCRRewards(reward: IContributionReward, daoBalances: { [key: string]: BN|null } = {}): AccountClaimableRewardsType {
+export function getCRRewards(proposalState: IProposalState, daoBalances: { [key: string]: BN|null } = {}): AccountClaimableRewardsType {
   const result: AccountClaimableRewardsType = {};
+
+  if (proposalState.stage === IProposalStage.ExpiredInQueue) {
+    return {};
+  }
+
+  const reward = proposalState.contributionReward;
   if (
     reward.ethReward &&
     !reward.ethReward.isZero()

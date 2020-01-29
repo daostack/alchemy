@@ -23,8 +23,9 @@ const config = merge(baseConfig, {
 
   output: {
     filename: "[name].bundle-[hash:8].js",
+    chunkFilename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/'
+    publicPath: '/',
   },
 
   optimization: {
@@ -37,6 +38,7 @@ const config = merge(baseConfig, {
       })
     ],
     splitChunks: {
+      chunks: 'all',
       cacheGroups: {
         // "ipfs-http-client": {
         //   chunks: "initial",
@@ -90,7 +92,7 @@ plugins: [
       modules: true
     }),
     new webpack.EnvironmentPlugin({
-      NODE_ENV: "production", 
+      NODE_ENV: "production",
       BASE_URL: "https://alchemy.daostack.io",
       DISQUS_SITE: 'daostack-alchemy',
       ARC_GRAPHQLHTTPPROVIDER: "",

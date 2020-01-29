@@ -1,6 +1,6 @@
 import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/client";
-import * as arcActions from "actions/arcActions";
-import * as classNames from "classnames";
+import { executeProposal, redeemProposal } from "actions/arcActions";
+import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -29,8 +29,8 @@ interface IStateProps {
 }
 
 interface IDispatchProps {
-  redeemProposal: typeof arcActions.redeemProposal;
-  executeProposal: typeof arcActions.executeProposal;
+  redeemProposal: typeof redeemProposal;
+  executeProposal: typeof executeProposal;
 }
 
 type SubscriptionData = [IProposalState, Stake[], Vote[], IMemberState];
@@ -46,8 +46,8 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscrip
 };
 
 const mapDispatchToProps = {
-  redeemProposal: arcActions.redeemProposal,
-  executeProposal: arcActions.executeProposal,
+  redeemProposal,
+  executeProposal,
 };
 
 interface IState {
