@@ -432,7 +432,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 <TrainingTooltip overlay="Number of Submissions for which each member can vote" placement="right">
                   <label htmlFor="numVotesInput">
                     <div className={css.requiredMarker}>*</div>
-                    Number of votes per voter
+                    Number of votes per reputation holder
                     <ErrorMessage name="numberOfVotesPerVoter">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                 </TrainingTooltip>
