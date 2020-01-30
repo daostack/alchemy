@@ -87,6 +87,8 @@ const CustomDateInput: React.SFC<any> = ({ field, form }) => {
     dateFormat="MMMM D, YYYY"
     timeFormat="HH:mm"
     viewDate={moment()}
+    // used by tests
+    inputProps={{ name: field.name }}
   />;
 };
 
@@ -181,7 +183,6 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     const arc = getArc();
     const localTimezone = getLocalTimezone();
     const now = moment();
-    // const testing = inTesting();
 
     return (
       <div className={css.contributionReward}>
@@ -537,7 +538,6 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                     <ErrorMessage name="compStartTimeInput">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="compStartTimeInput"
                     name="compStartTimeInput"
                     component={CustomDateInput}
                     className={touched.compStartTimeInput && errors.compStartTimeInput ? css.error : null}
@@ -551,7 +551,6 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                     <ErrorMessage name="suggestionEndTimeInput">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="suggestionEndTimeInput"
                     name="suggestionEndTimeInput"
                     component={CustomDateInput}
                     className={touched.suggestionEndTimeInput && errors.suggestionEndTimeInput ? css.error : null}
@@ -565,7 +564,6 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                     <ErrorMessage name="votingStartTimeInput">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="votingStartTimeInput"
                     name="votingStartTimeInput"
                     component={CustomDateInput}
                     className={touched.votingStartTimeInput && errors.votingStartTimeInput ? css.error : null}
@@ -579,7 +577,6 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                     <ErrorMessage name="compEndTimeInput">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="compEndTimeInput"
                     name="compEndTimeInput"
                     component={CustomDateInput}
                     className={touched.compEndTimeInput && errors.compEndTimeInput ? css.error : null}

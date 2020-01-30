@@ -1,7 +1,7 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
 import { DAO, Arc } from "@daostack/client";
-import { getArc, setCalendarDate } from "./utils";
+import { getArc, setCalendarDate, hideCookieAcceptWindow } from "./utils";
 
 describe("Proposals", () => {
   let dao: DAO;
@@ -12,7 +12,7 @@ describe("Proposals", () => {
     // TODO: create a test_env with a nameed DAO so we can find it consistently
     arc = getArc();
     await arc.fetchContractInfos();
-    const ARC_VERSION = "0.0.1-rc.36";
+    const ARC_VERSION = "0.0.1-rc.39";
     const contributionRewardExtContract  = arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);
 
     // find the corresponding scheme object
@@ -63,21 +63,25 @@ describe("Proposals", () => {
     await ethRewardInput.scrollIntoView();
     await ethRewardInput.setValue(22);
 
-    const compStartDateInput = await $("*[id=\"compStartTimeInput\"]");
+    const compStartDateInput = await $("input[name='compStartTimeInput']");
     await compStartDateInput.scrollIntoView();
-    await setCalendarDate(compStartDateInput, "01/01/2021");
+    await setCalendarDate(compStartDateInput, "June 1, 2030 00:00");
 
-    const suggestionsEndDateInput = await $("*[id=\"suggestionEndTimeInput\"]");
+    const suggestionsEndDateInput = await $("input[name='suggestionEndTimeInput']");
     await suggestionsEndDateInput.scrollIntoView();
-    await setCalendarDate(suggestionsEndDateInput, "01/02/2021");
+    await setCalendarDate(suggestionsEndDateInput, "June 2, 2030 00:00");
 
-    const votingStartDateInput = await $("*[id=\"votingStartTimeInput\"]");
+    const votingStartDateInput = await $("input[name='votingStartTimeInput']");
     await votingStartDateInput.scrollIntoView();
-    await setCalendarDate(votingStartDateInput, "01/03/2021");
+    await setCalendarDate(votingStartDateInput, "June 3, 2030 00:00");
 
-    const compEndDateInput = await $("*[id=\"compEndTimeInput\"]");
+    const compEndDateInput = await $("input[name='compEndTimeInput']");
     await compEndDateInput.scrollIntoView();
-    await setCalendarDate(compEndDateInput, "01/04/2021");
+    await setCalendarDate(compEndDateInput, "June 4, 2030 00:00");
+
+    // hack to close any open calendar
+    await ethRewardInput.click();
+    await hideCookieAcceptWindow();
 
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
     await createProposalSubmitButton.scrollIntoView();

@@ -67,9 +67,6 @@ export async function hideTrainingTooltips() {
 }
 
 export const setCalendarDate = async (element: any, date: string): Promise<void> => {
-  await element.click(); // make sure no other calendar still has focus or the calendar component will get very confused
-  /**
-   * note this will not work if there is already a value in the calendar field
-   */
+  await element.click(); // hide previous calendar
   await element.setValue(date);
 };
