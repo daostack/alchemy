@@ -7,7 +7,9 @@ import CreateUnknownGenericSchemeProposal from "components/Proposal/Create/Schem
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
+import Analytics from "lib/analytics";
 import { History } from "history";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
@@ -35,6 +37,14 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 };
 
 class CreateProposalPage extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": Page.CreateProposal,
+      "DAO Address": this.props.daoAvatarAddress,
+      "Scheme Address": this.props.schemeId,
+    });
+  }
 
   public handleClose(): void {
     const { daoAvatarAddress, history, schemeId } = this.props;

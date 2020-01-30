@@ -65,7 +65,6 @@ export default (props: IProps) => {
     rewardComponents.push(c);
   }
 
-
   let ContributionRewardDiv = <div />;
   if (contributionRewards) {
     const contributionReward = proposal.contributionReward;

@@ -86,9 +86,10 @@ module.exports = merge(baseConfig, {
 
     // Prints more readable module names in the browser console on HMR updates
     new webpack.NamedModulesPlugin(),
+
     new webpack.EnvironmentPlugin({
-      NODE_ENV: "development", 
-      BASE_URL: "http://127.0.0.1:3000", 
+      NODE_ENV: "development",
+      BASE_URL: "http://127.0.0.1:3000",
       DISQUS_SITE:'daostack-alchemy',
       ARC_GRAPHQLHTTPPROVIDER: "",
       ARC_GRAPHQLWSPROVIDER : "",
@@ -99,6 +100,7 @@ module.exports = merge(baseConfig, {
       ARC_IPFSPROVIDER_PORT : "",
       ARC_IPFSPROVIDER_PROTOCOL : "",
       ARC_IPFSPROVIDER_API_PATH : "",
+      MIXPANEL_TOKEN: "eac39430f2d26472411099a0407ad610",
     })
   ]
 });

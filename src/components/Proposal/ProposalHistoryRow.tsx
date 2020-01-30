@@ -1,5 +1,4 @@
 import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/client";
-import { executeProposal, redeemProposal } from "actions/arcActions";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -28,13 +27,8 @@ interface IStateProps {
   creatorProfile?: IProfileState;
 }
 
-interface IDispatchProps {
-  redeemProposal: typeof redeemProposal;
-  executeProposal: typeof executeProposal;
-}
-
 type SubscriptionData = [IProposalState, Stake[], Vote[], IMemberState];
-type IProps = IStateProps & IDispatchProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
+type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IExternalProps & ISubscriptionProps<SubscriptionData> & IStateProps => {
   const proposal = ownProps.data[0];
@@ -45,14 +39,8 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscrip
   };
 };
 
-const mapDispatchToProps = {
-  redeemProposal,
-  executeProposal,
-};
-
 interface IState {
   isMobile: boolean;
-  preRedeemModalOpen: boolean;
 }
 
 class ProposalHistoryRow extends React.Component<IProps, IState> {
@@ -62,7 +50,6 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
 
     this.state = {
       isMobile: false,
-      preRedeemModalOpen: false,
     };
   }
 
@@ -213,7 +200,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedProposalHistoryRow = connect(mapStateToProps, mapDispatchToProps)(ProposalHistoryRow);
+const ConnectedProposalHistoryRow = connect(mapStateToProps)(ProposalHistoryRow);
 
 // In this case we wrap the Connected component because mapStateToProps requires the subscribed proposal state
 export default withSubscription({

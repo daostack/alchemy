@@ -2,6 +2,7 @@ import { ISchemeState } from "@daostack/client";
 import { createProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
+import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification, NotificationStatus } from "reducers/notifications";
@@ -75,6 +76,14 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
 
     setSubmitting(false);
     await this.props.createProposal(proposalValues);
+
+    Analytics.track("Submit Proposal", {
+      "DAO Address": this.props.daoAvatarAddress,
+      "Proposal Title": values.title,
+      "Scheme Address": this.props.scheme.address,
+      "Scheme Name": this.props.scheme.name,
+    });
+
     this.props.handleClose();
   }
 

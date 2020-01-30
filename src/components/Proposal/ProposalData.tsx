@@ -35,7 +35,7 @@ type SubscriptionData = [IProposalState, Vote[], Stake[], IRewardState, IMemberS
 type IPreProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
-interface IInjectedProposalProps {
+export interface IInjectedProposalProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
   currentAccountGenBalance: BN;

@@ -11,6 +11,7 @@ import DaoContainer from "components/Dao/DaoContainer";
 import FeedPage from "components/Feed/FeedPage";
 import RedemptionsPage from "components/Redemptions/RedemptionsPage";
 import { History } from "history";
+import Analytics from "lib/analytics";
 import Header from "layouts/Header";
 import SidebarMenu from "layouts/SidebarMenu";
 import { parse } from "query-string";
@@ -76,6 +77,7 @@ interface IState {
 }
 
 class AppContainer extends React.Component<IProps, IState> {
+  public unlisten: any;
 
   private static hasAcceptedCookiesKey = "acceptedCookies";
 
@@ -101,6 +103,12 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   public async componentDidMount (): Promise<void> {
+    this.unlisten = this.props.history.listen((location) => {
+      Analytics.register({
+        URL: process.env.BASE_URL + location.pathname,
+      });
+    });
+
     /**
      * Heads up that there is a chance this cached account may differ from an account
      * that the user has already selected in a provider but have
@@ -167,6 +175,10 @@ class AppContainer extends React.Component<IProps, IState> {
         minimize={this.minimizeNotif}
       />
     </div>;
+  }
+
+  public componentWillUnmount() {
+    this.unlisten();
   }
 
   public render(): RenderOutput {
