@@ -5,17 +5,32 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState, IGenesisProtocolParams, IDAOState } from "@daostack/client";
 import { copyToClipboard, fromWei, linkToEtherScan, schemeName, roundUp } from "lib/util";
 import * as moment from "moment";
+import { NotificationStatus, showNotification } from "reducers/notifications";
+import { connect } from "react-redux";
 import Tooltip from "rc-tooltip";
 import * as css from "./SchemeInfo.scss";
 
-interface IProps {
+interface IDispatchProps {
+  showNotification: typeof showNotification;
+}
+
+interface IExternalProps {
   daoState: IDAOState;
   scheme: ISchemeState;
 }
 
-export default class SchemeInfo extends React.Component<IProps, null> {
+type IProps = IExternalProps & IDispatchProps;
 
-  private copyToClipboardHandler = (str: string) => (_event: any) => { copyToClipboard(str); };
+const mapDispatchToProps = {
+  showNotification,
+};
+
+class SchemeInfo extends React.Component<IProps, null> {
+
+  private copyToClipboardHandler = (str: string) => (_event: any) => {
+    copyToClipboard(str);
+    this.props.showNotification(NotificationStatus.Success, "Copied to clipboard!");
+  };
 
   public render(): RenderOutput {
     const { daoState, scheme } = this.props;
@@ -114,7 +129,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
                 <span>{scheme.address}</span>
               </td>
               <td>
-                <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.address)} />
+                <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.address)} />
               </td>
             </tr>
             { scheme.genericSchemeParams ?
@@ -124,7 +139,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
                   <span>{scheme.genericSchemeParams.contractToCall}</span>
                 </td>
                 <td>
-                  <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.genericSchemeParams.contractToCall)} />
+                  <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.genericSchemeParams.contractToCall)} />
                 </td>
               </tr> : undefined
             }
@@ -135,7 +150,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
                   <span>{scheme.uGenericSchemeParams.contractToCall}</span>
                 </td>
                 <td>
-                  <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.uGenericSchemeParams.contractToCall)} />
+                  <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.uGenericSchemeParams.contractToCall)} />
                 </td>
               </tr> : undefined
             }
@@ -146,7 +161,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
                 <span>{scheme.paramsHash}</span>
               </td>
               <td>
-                <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.paramsHash)} />
+                <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.paramsHash)} />
               </td>
             </tr>
             <tr>
@@ -236,3 +251,5 @@ export default class SchemeInfo extends React.Component<IProps, null> {
     </div>;
   }
 }
+
+export default connect(null, mapDispatchToProps)(SchemeInfo);

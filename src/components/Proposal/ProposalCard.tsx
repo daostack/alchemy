@@ -5,6 +5,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
 import { humanProposalTitle } from "lib/util";
+import { Page } from "pages";
 import * as React from "react";
 import TrackVisibility from "react-on-screen";
 import { Link } from "react-router-dom";
@@ -113,7 +114,9 @@ export default class ProposalCard extends React.Component<IProps, null> {
               currentVote={currentAccountVote}
               dao={daoState}
               expired={expired}
-              proposal={proposal} />
+              proposal={proposal}
+              parentPage={Page.SchemeProposals}
+            />
           </div>
         </div>;
 
@@ -133,6 +136,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
               expired={expired}
               proposal={proposal}
               stakes={stakes}
+              parentPage={Page.SchemeProposals}
             />
           </div>
         </div>;
@@ -163,6 +167,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     proposalState={proposal}
                     rewards={rewards}
                     expired={expired}
+                    parentPage={Page.SchemeProposals}
                   />
 
                   <div onClick={this.stopClick} className={css.contextMenu} data-test-id="proposalContextMenu">
@@ -182,7 +187,9 @@ export default class ProposalCard extends React.Component<IProps, null> {
                           dao={daoState}
                           expired={expired}
                           proposal={proposal}
-                          contextMenu/>
+                          contextMenu
+                          parentPage={Page.SchemeProposals}
+                        />
 
                         <StakeButtons
                           beneficiaryProfile={beneficiaryProfile}
@@ -194,6 +201,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                           expired={expired}
                           proposal={proposal}
                           stakes={stakes}
+                          parentPage={Page.SchemeProposals}
                         />
                       </div>
                     }

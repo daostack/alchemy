@@ -91,6 +91,7 @@ plugins: [
       chunkFilename: "[id].[hash].css",
       modules: true
     }),
+
     new webpack.EnvironmentPlugin({
       NODE_ENV: "production",
       BASE_URL: "https://alchemy.daostack.io",
@@ -104,7 +105,9 @@ plugins: [
       ARC_IPFSPROVIDER_PORT : "",
       ARC_IPFSPROVIDER_PROTOCOL : "",
       ARC_IPFSPROVIDER_API_PATH : "",
+      MIXPANEL_TOKEN: "",
     }),
+
     new CopyWebpackPlugin([
       { from: 'src/assets', to: 'assets' }
     ]),

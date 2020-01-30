@@ -25,6 +25,7 @@ module.exports = {
       crxRegistry: path.resolve(basePath, 'src/crxRegistry'),
       layouts: path.resolve(basePath, 'src/layouts'),
       lib: path.resolve(basePath, 'src/lib'),
+      pages: path.resolve(basePath, 'src/pages'),
       reducers: path.resolve(basePath, 'src/reducers'),
       selectors: path.resolve(basePath, 'src/selectors'),
       src: path.resolve(basePath, 'src'),
