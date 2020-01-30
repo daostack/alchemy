@@ -268,9 +268,8 @@ a.blueButton {
       }
 
       .description {
-        max-height: 330px;
         overflow-x: hidden;
-        overflow-y: auto;
+        overflow-y: visible;
         word-wrap: break-word;
         font-size: 14px;
         padding-right: 4px;
@@ -278,6 +277,11 @@ a.blueButton {
 
         a {
           max-width: 100%;
+        }
+
+        &.hasSubmissions {
+          overflow-y: auto;
+          max-height: 330px;
         }
       }
     }

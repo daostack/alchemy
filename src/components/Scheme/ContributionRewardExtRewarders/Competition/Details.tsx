@@ -285,7 +285,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
               <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
             </div> : "" }
 
-            <div className={css.description}>
+            <div className={classNames({[css.description]: true, [css.hasSubmissions]: submissions.length })}>
               <ReactMarkdown source={proposalState.description}
                 renderers={{link: (props: { href: string; children: React.ReactNode }) => {
                   return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
