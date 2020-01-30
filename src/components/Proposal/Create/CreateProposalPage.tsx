@@ -64,6 +64,10 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     });
     const newState = {};
 
+    /**
+     * Get the "CreateProposal" modal dialog component supplied by the rewarder contract associated
+     * with this CrExt scheme (if it is a CrExt scheme -- very cheap if not a CrExt).
+     */
     if (!this.state.createCrxProposalComponent) {
       Object.assign(newState, { createCrxProposalComponent: await getCrxRewarderComponent(this.props.data, CrxRewarderComponentType.CreateProposal) });
     }
