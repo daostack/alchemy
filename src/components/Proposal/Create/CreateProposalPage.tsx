@@ -50,13 +50,6 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     };
   }
 
-  public componentDidMount() {
-    Analytics.track("Page View", {
-      "Page Name": Page.CreateProposal,
-      "DAO Address": this.props.daoAvatarAddress,
-      "Scheme Address": this.props.schemeId,
-    });
-  }
 
   public handleClose(): void {
     const { daoAvatarAddress, history, schemeId } = this.props;
@@ -64,6 +57,11 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
   }
 
   public async componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": Page.CreateProposal,
+      "DAO Address": this.props.daoAvatarAddress,
+      "Scheme Address": this.props.schemeId,
+    })
     const newState = {};
 
     if (!this.state.createCrxProposalComponent) {
