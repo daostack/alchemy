@@ -6,7 +6,9 @@ import BN = require("bn.js");
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
+import Analytics from "lib/analytics";
 import { formatTokens, tokenDecimals, tokenSymbol } from "lib/util";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
@@ -41,6 +43,14 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps & ISubscriptionProps<[IDAOState[], any[]]>
 
 class RedemptionsPage extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": Page.Redemptions,
+      "Account Address": this.props.currentAccountAddress,
+    });
+  }
+
   public render(): RenderOutput {
     const { data } = this.props;
 

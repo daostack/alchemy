@@ -4,8 +4,10 @@ import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
 import classNames from "classnames";
+import Analytics from "lib/analytics";
 import { formatTokens } from "lib/util";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import { Page } from "pages";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -29,9 +31,8 @@ interface IExternalProps {
   currentAccountGens: BN|null;
   currentAccountGenStakingAllowance: BN;
   dao: IDAOState;
-  detailView?: boolean;
   expired?: boolean;
-  historyView?: boolean;
+  parentPage: Page;
   stakes: Stake[];
 }
 
@@ -89,11 +90,27 @@ class StakeButtons extends React.Component<IProps, IState> {
 
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.proposal.votingMachine);
+
+    Analytics.track("Enable predictions");
+
     this.setState({ showApproveModal: false });
   }
 
-  private getStakeProposalAction = (proposal: IProposalState, pendingPrediction: number) =>
-    (amount: number) => { stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount); };
+  private getStakeProposalAction = (proposal: IProposalState, dao: IDAOState, pendingPrediction: number) =>
+    (amount: number) => {
+      stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount);
+
+      Analytics.track("Stake", {
+        "DAO Address": proposal.dao.id,
+        "DAO Name": dao.name,
+        "GEN Staked": amount,
+        "Proposal Hash": proposal.id,
+        "Proposal TItle": proposal.title,
+        "Scheme Address": proposal.scheme.address,
+        "Scheme Name": proposal.scheme.name,
+        "Stake Type": pendingPrediction === IProposalOutcome.Fail ? "Fail" : pendingPrediction === IProposalOutcome.Pass ? "Pass" : "None",
+      });
+    };
 
   public render(): RenderOutput {
     const {
@@ -103,9 +120,8 @@ class StakeButtons extends React.Component<IProps, IState> {
       currentAccountGens,
       currentAccountGenStakingAllowance,
       dao,
-      detailView,
       expired,
-      historyView,
+      parentPage,
       proposal,
       stakes,
     } = this.props;
@@ -151,9 +167,9 @@ class StakeButtons extends React.Component<IProps, IState> {
 
     const wrapperClass = classNames({
       [css.predictions]: true,
+      [css.detailView]: parentPage === Page.ProposalDetails,
       [css.contextMenu]: contextMenu,
-      [css.detailView]: detailView,
-      [css.historyView]: historyView,
+      [css.historyView]: parentPage === Page.DAOHistory,
       [css.unconfirmedPrediction]: isPredicting,
     });
 
@@ -229,11 +245,12 @@ class StakeButtons extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction === IProposalOutcome.Pass ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={this.getStakeProposalAction(proposal, pendingPrediction)}
+            action={this.getStakeProposalAction(proposal, dao, pendingPrediction)}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreStakeModal}
             currentAccountGens={currentAccountGens}
             dao={dao}
+            parentPage={parentPage}
             proposal={proposal}
 
           /> : ""
@@ -260,7 +277,7 @@ class StakeButtons extends React.Component<IProps, IState> {
                   </Tooltip> :
                   passButton
               }
-              {!detailView && proposal.stage === IProposalStage.Queued && !expired ?
+              {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.Queued && !expired ?
                 <div className={css.toBoostMessage}>{formatTokens(proposal.upstakeNeededToPreBoost, "GEN to boost")}</div>
                 : ""}
               {
@@ -270,7 +287,7 @@ class StakeButtons extends React.Component<IProps, IState> {
                   </Tooltip> :
                   failButton
               }
-              {!detailView && proposal.stage === IProposalStage.PreBoosted && !expired ?
+              {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.PreBoosted && !expired ?
                 <div className={css.toBoostMessage}>{formatTokens(proposal.downStakeNeededToQueue, " GEN to un-boost")}</div>
                 : ""}
             </div>

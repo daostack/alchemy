@@ -12,6 +12,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 
 import { createProposal } from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
+import Analytics from "lib/analytics";
 import { schemeNameAndAddress, isValidUrl, GetSchemeIsActiveActions, getSchemeIsActive } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
@@ -133,6 +134,14 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     };
     setSubmitting(false);
     await this.props.createProposal(proposalValues);
+
+    Analytics.track("Submit Proposal", {
+      "DAO Address": this.props.daoAvatarAddress,
+      "Proposal Title": values.title,
+      "Scheme Address": this.props.scheme.address,
+      "Scheme Name": this.props.scheme.name,
+    });
+
     this.props.handleClose();
   }
 
