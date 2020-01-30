@@ -2,7 +2,8 @@
   "name": "EnsRegistry",
   "addresses": {
     "main": [
-      "0x314159265dd8dbb310642f98f50c066173c1259b"
+      "0x314159265dd8dbb310642f98f50c066173c1259b",
+      "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
     ],
     "rinkeby": [
       "0xe7410170f87102df0055eb195163a03b7f2bff4a",
