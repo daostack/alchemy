@@ -36,7 +36,7 @@ interface IExternalStateProps {
   schemeId: Address;
 }
 
-interface IStateProps {
+interface IState {
   crxListComponent: any;
   crxRewarderProps: ICrxRewarderProps;
 }
@@ -56,7 +56,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-class SchemeContainer extends React.Component<IProps, IStateProps> {
+class SchemeContainer extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
