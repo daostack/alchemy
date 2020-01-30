@@ -186,159 +186,158 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                     </span>
                   }
                 </span>
-               : " "};
-            }
-        </div>
+                : " "};
+            </div>
 
-        <div className={css.createdBy}>
-          <AccountPopup accountAddress={proposal.proposer} daoState={daoState} width={35} />
-          <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView />
-        </div>
+            <div className={css.createdBy}>
+              <AccountPopup accountAddress={proposal.proposer} daoState={daoState} width={35} />
+              <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView />
+            </div>
 
-        <div className={css.description}>
-          <ReactMarkdown source={proposal.description}
-            renderers={{link: (props: { href: string; children: React.ReactNode }) => {
-              return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
-            }}}
-          />
-        </div>
+            <div className={css.description}>
+              <ReactMarkdown source={proposal.description}
+                renderers={{link: (props: { href: string; children: React.ReactNode }) => {
+                  return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
+                }}}
+              />
+            </div>
 
-        {url ?
-          <a href={url} className={css.attachmentLink} target="_blank" rel="noopener noreferrer">
-            <img src="/assets/images/Icon/Attachment.svg" />
+            {url ?
+              <a href={url} className={css.attachmentLink} target="_blank" rel="noopener noreferrer">
+                <img src="/assets/images/Icon/Attachment.svg" />
             Attachment &gt;
-          </a>
-          : " "
+              </a>
+              : " "
+            }
+
+            <div className={classNames({
+              [css.proposalSummaryContainer]: true,
+              [css.hasTags]: tags && tags.length,
+            })}>
+              <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView />
+            </div>
+
+            { tags && tags.length ? <div className={css.tagsContainer}>
+              <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
+            </div> : "" }
+
+            <div className={css.buttonBar}>
+              <div className={css.voteButtonsBottom}>
+                <span className={css.voteLabel}>Vote:</span>
+                <div className={css.altVoteButtons}>
+                  <VoteButtons
+                    altStyle
+                    currentAccountAddress={currentAccountAddress}
+                    currentVote={currentAccountVote}
+                    dao={daoState}
+                    expired={expired}
+                    currentAccountState={member}
+                    proposal={proposal}
+                    parentPage={Page.ProposalDetails}
+                  />
+                </div>
+              </div>
+
+              <button onClick={this.showShareModal} className={css.shareButton} data-test-id="share">
+                <img src={"/assets/images/Icon/share-white.svg"} />
+                <span>Share</span>
+              </button>
+
+              <div className={css.followButton}><FollowButton type="proposals" id={proposal.id} style="bigButton" /></div>
+            </div>
+          </div>
+
+          <div className={css.proposalActions + " clearfix"}>
+            <div className={voteWrapperClass}>
+              <div>
+                <div className={css.statusTitle}>
+                  <h3>Votes</h3>
+                  <span onClick={this.showVotersModal(proposal.votesCount)} className={classNames({ [css.clickable]: proposal.votesCount > 0 })}>
+                    {proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"} &gt;
+                  </span>
+                </div>
+
+                <div className={css.voteButtons}>
+                  <VoteButtons
+                    currentAccountAddress={currentAccountAddress}
+                    currentAccountState={member}
+                    currentVote={currentAccountVote}
+                    dao={daoState}
+                    expired={expired}
+                    proposal={proposal}
+                    parentPage={Page.ProposalDetails}
+                  />
+                </div>
+              </div>
+
+              <div className={css.voteStatus + " clearfix"}>
+                <div className={css.voteGraph}>
+                  <VoteGraph size={90} proposal={proposal} />
+                </div>
+
+                <VoteBreakdown
+                  currentAccountAddress={currentAccountAddress}
+                  currentAccountState={member}
+                  currentVote={currentAccountVote}
+                  daoState={daoState}
+                  detailView
+                  proposal={proposal} />
+              </div>
+            </div>
+
+            <div className={css.predictions}>
+              <div className={css.statusTitle}>
+                <h3>Predictions</h3>
+              </div>
+
+              <div className={css.stakeButtons}>
+                <StakeButtons
+                  beneficiaryProfile={beneficiaryProfile}
+                  currentAccountAddress={currentAccountAddress}
+                  currentAccountGens={currentAccountGenBalance}
+                  currentAccountGenStakingAllowance={currentAccountGenAllowance}
+                  dao={daoState}
+                  parentPage={Page.ProposalDetails}
+                  expired={expired}
+                  proposal={proposal}
+                  stakes={stakes}
+                />
+              </div>
+
+              <div className={css.predictionStatus}>
+                <StakeGraph
+                  proposal={proposal}
+                  detailView
+                />
+                <BoostAmount detailView expired={expired} proposal={proposal} />
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <h3 className={css.discussionTitle}>Discussion</h3>
+        <div className={css.disqus}>
+          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
+        </div>
+
+        {this.state.showVotersModal ?
+          <VotersModal
+            closeAction={this.closeVotersModal}
+            currentAccountAddress={this.props.currentAccountAddress}
+            dao={daoState}
+            proposal={proposal}
+            accountProfile={creatorProfile}
+          /> : ""
         }
 
-        <div className={classNames({
-          [css.proposalSummaryContainer]: true,
-          [css.hasTags]: tags && tags.length,
-        })}>
-          <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView />
-        </div>
-
-        { tags && tags.length ? <div className={css.tagsContainer}>
-          <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
-        </div> : "" }
-
-        <div className={css.buttonBar}>
-          <div className={css.voteButtonsBottom}>
-            <span className={css.voteLabel}>Vote:</span>
-            <div className={css.altVoteButtons}>
-              <VoteButtons
-                altStyle
-                currentAccountAddress={currentAccountAddress}
-                currentVote={currentAccountVote}
-                dao={daoState}
-                expired={expired}
-                currentAccountState={member}
-                proposal={proposal}
-                parentPage={Page.ProposalDetails}
-              />
-            </div>
-          </div>
-
-          <button onClick={this.showShareModal} className={css.shareButton} data-test-id="share">
-            <img src={"/assets/images/Icon/share-white.svg"} />
-            <span>Share</span>
-          </button>
-
-          <div className={css.followButton}><FollowButton type="proposals" id={proposal.id} style="bigButton" /></div>
-        </div>
+        {this.state.showShareModal ?
+          <SocialShareModal
+            closeHandler={this.closeShareModal}
+            url={`https://alchemy.daostack.io/dao/${daoState.address}/proposal/${proposal.id}`}
+          /> : ""
+        }
       </div>
-
-      <div className={css.proposalActions + " clearfix"}>
-        <div className={voteWrapperClass}>
-          <div>
-            <div className={css.statusTitle}>
-              <h3>Votes</h3>
-              <span onClick={this.showVotersModal(proposal.votesCount)} className={classNames({ [css.clickable]: proposal.votesCount > 0 })}>
-                {proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"} &gt;
-              </span>
-            </div>
-
-            <div className={css.voteButtons}>
-              <VoteButtons
-                currentAccountAddress={currentAccountAddress}
-                currentAccountState={member}
-                currentVote={currentAccountVote}
-                dao={daoState}
-                expired={expired}
-                proposal={proposal}
-                parentPage={Page.ProposalDetails}
-              />
-            </div>
-          </div>
-
-          <div className={css.voteStatus + " clearfix"}>
-            <div className={css.voteGraph}>
-              <VoteGraph size={90} proposal={proposal} />
-            </div>
-
-            <VoteBreakdown
-              currentAccountAddress={currentAccountAddress}
-              currentAccountState={member}
-              currentVote={currentAccountVote}
-              daoState={daoState}
-              detailView
-              proposal={proposal} />
-          </div>
-        </div>
-
-        <div className={css.predictions}>
-          <div className={css.statusTitle}>
-            <h3>Predictions</h3>
-          </div>
-
-          <div className={css.stakeButtons}>
-            <StakeButtons
-              beneficiaryProfile={beneficiaryProfile}
-              currentAccountAddress={currentAccountAddress}
-              currentAccountGens={currentAccountGenBalance}
-              currentAccountGenStakingAllowance={currentAccountGenAllowance}
-              dao={daoState}
-              parentPage={Page.ProposalDetails}
-              expired={expired}
-              proposal={proposal}
-              stakes={stakes}
-            />
-          </div>
-
-          <div className={css.predictionStatus}>
-            <StakeGraph
-              proposal={proposal}
-              detailView
-            />
-            <BoostAmount detailView expired={expired} proposal={proposal} />
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <h3 className={css.discussionTitle}>Discussion</h3>
-    <div className={css.disqus}>
-      <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
-    </div>
-
-    {this.state.showVotersModal ?
-      <VotersModal
-        closeAction={this.closeVotersModal}
-        currentAccountAddress={this.props.currentAccountAddress}
-        dao={daoState}
-        proposal={proposal}
-        accountProfile={creatorProfile}
-      /> : ""
-    }
-
-    {this.state.showShareModal ?
-      <SocialShareModal
-        closeHandler={this.closeShareModal}
-        url={`https://alchemy.daostack.io/dao/${daoState.address}/proposal/${proposal.id}`}
-      /> : ""
-    }
-    </div>
     );
   }
 }

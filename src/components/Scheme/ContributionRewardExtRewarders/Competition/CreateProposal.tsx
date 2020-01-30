@@ -3,7 +3,7 @@ import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, getLocalTimezone, inTesting } from "lib/util";
+import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, getLocalTimezone } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
@@ -14,7 +14,7 @@ import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 
 import { checkTotalPercent } from "lib/util";
-import DatePicker from "react-datepicker";
+import * as Datetime from "react-datetime";
 
 import moment = require("moment");
 
@@ -54,10 +54,10 @@ interface IFormValues {
   reputationReward: number;
   title: string;
   url: string;
-  compStartTimeInput: Date;
-  compEndTimeInput: Date;
-  suggestionEndTimeInput: Date;
-  votingStartTimeInput: Date;
+  compStartTimeInput: moment.Moment;
+  compEndTimeInput: moment.Moment;
+  suggestionEndTimeInput: moment.Moment;
+  votingStartTimeInput: moment.Moment;
   proposerIsAdmin: boolean;
 
   [key: string]: any;
@@ -77,17 +77,16 @@ const customStyles = {
 };
 
 const CustomDateInput: React.SFC<any> = ({ field, form }) => {
-  const onChange = (date: Date) => { form.setFieldValue(field.name, date); };
-  return <DatePicker
-    id={field.name}
-    selected={field.value}
+  const onChange = (date: moment.Moment) => {
+    form.setFieldValue(field.name, date);
+    return true;
+  };
+  return <Datetime
+    value={field.value}
     onChange={onChange}
-    showTimeSelect
+    dateFormat="MMMM D, YYYY"
     timeFormat="HH:mm"
-    timeIntervals={15}
-    timeCaption="Time"
-    dateFormat="MMMM d, yyyy h:mm aa"
-    minDate={new Date()}
+    viewDate={moment()}
   />;
 };
 
@@ -145,7 +144,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     const proposalOptions: IProposalCreateOptionsCompetition  = {
       dao: this.props.daoAvatarAddress,
       description: values.description,
-      endTime: values.compEndTimeInput,
+      endTime: values.compEndTimeInput.toDate(),
       ethReward: toWei(Number(values.ethReward)),
       externalTokenReward,
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
@@ -155,11 +154,11 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       reputationReward: toWei(Number(values.reputationReward)),
       rewardSplit,
       scheme: this.props.scheme.address,
-      startTime: values.compStartTimeInput,
-      suggestionsEndTime: values.suggestionEndTimeInput,
+      startTime: values.compStartTimeInput.toDate(),
+      suggestionsEndTime: values.suggestionEndTimeInput.toDate(),
       tags: this.state.tags,
       title: values.title,
-      votingStartTime: values.votingStartTimeInput,
+      votingStartTime: values.votingStartTimeInput.toDate(),
     };
 
     await this.props.createProposal(proposalOptions);
@@ -181,8 +180,8 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     const dao = data;
     const arc = getArc();
     const localTimezone = getLocalTimezone();
-    const now = new Date();
-    const testing = inTesting();
+    const now = moment();
+    // const testing = inTesting();
 
     return (
       <div className={css.contributionReward}>
@@ -199,10 +198,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             numberOfVotesPerVoter: 0,
             proposerIsAdmin: false,
             reputationReward: 0,
-            compStartTimeInput: testing ? undefined : now,
-            suggestionEndTimeInput: testing ? undefined : now,
-            votingStartTimeInput: testing ? undefined : now,
-            compEndTimeInput: testing ? undefined : now,
+            compStartTimeInput: now, // testing ? undefined : now,
+            suggestionEndTimeInput: now, // testing ? undefined : now,
+            votingStartTimeInput: now, // testing ? undefined : now,
+            compEndTimeInput: now, // testing ? undefined : now,
             title: "",
             url: "",
           } as IFormValues}
@@ -255,37 +254,25 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
             const now = moment();
             // Check valid time
-            const compStartTimeInput = moment(values.compStartTimeInput);
-            const compEndTimeInput = moment(values.compEndTimeInput);
-            const votingStartTimeInput = moment(values.votingStartTimeInput);
-            const suggestionEndTimeInput = moment(values.suggestionEndTimeInput);
+            const compStartTimeInput = values.compStartTimeInput;
+            const compEndTimeInput = values.compEndTimeInput;
+            const votingStartTimeInput = values.votingStartTimeInput;
+            const suggestionEndTimeInput = values.suggestionEndTimeInput;
 
-            if (compStartTimeInput && compStartTimeInput.isBefore(now)) {
-              errors.compStartTimeInput = "Competion start time cannot be in past";
-            }
-
-            if (compEndTimeInput && compEndTimeInput.isBefore(now)) {
-              errors.compEndTimeInput = "Competion end time cannot be in past";
-            }
-
-            if (votingStartTimeInput && votingStartTimeInput.isBefore(now)) {
-              errors.votingStartTimeInput = "Voting start time cannot be in past";
-            }
-
-            if (votingStartTimeInput && (votingStartTimeInput.isBefore(compStartTimeInput))) {
-              errors.votingStartTimeInput = "Voting start time cannot be before competition start";
+            if (compStartTimeInput && compStartTimeInput.isSameOrBefore(now)) {
+              errors.compStartTimeInput = "Competition must start in the future";
             }
 
             if (suggestionEndTimeInput && (suggestionEndTimeInput.isSameOrBefore(compStartTimeInput))) {
-              errors.suggestionEndTimeInput = "Suggestion period start time cannot be before competition start";
+              errors.suggestionEndTimeInput = "Submission period must end after competition starts";
             }
 
-            if (suggestionEndTimeInput && suggestionEndTimeInput.isBefore(now)) {
-              errors.suggestionEndTimeInput = "Suggestion period end time cannot be in past";
+            if (votingStartTimeInput && suggestionEndTimeInput && (votingStartTimeInput.isBefore(suggestionEndTimeInput))) {
+              errors.votingStartTimeInput = "Voting must start on or after submission period ends";
             }
 
-            if (compEndTimeInput && compEndTimeInput.isSameOrBefore(votingStartTimeInput) || compEndTimeInput.isBefore(suggestionEndTimeInput)) {
-              errors.compEndTimeInput = "Competion cannot end before voting starts or suggestion period ends";
+            if (compEndTimeInput && compEndTimeInput.isSameOrBefore(votingStartTimeInput)) {
+              errors.compEndTimeInput = "Competion must end after voting starts";
             }
 
             if (!isValidUrl(values.url)) {
@@ -547,7 +534,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                   <label htmlFor="compStartTimeInput">
                     <div className={css.requiredMarker}>*</div>
                     Competition start time {localTimezone}
-                    <ErrorMessage name="compStartTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    <ErrorMessage name="compStartTimeInput">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
                     id="compStartTimeInput"

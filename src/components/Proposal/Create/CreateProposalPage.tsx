@@ -61,7 +61,7 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
       "Page Name": Page.CreateProposal,
       "DAO Address": this.props.daoAvatarAddress,
       "Scheme Address": this.props.schemeId,
-    })
+    });
     const newState = {};
 
     if (!this.state.createCrxProposalComponent) {

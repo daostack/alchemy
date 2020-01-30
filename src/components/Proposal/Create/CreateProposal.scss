@@ -1,6 +1,6 @@
 @import "./react-mde.css";
 :global {
-  @import "../../../../node_modules/react-datepicker/dist/react-datepicker.min";
+  @import "../../../../node_modules/react-datetime/css/react-datetime";
 }
 
 .hidden {
@@ -651,6 +651,10 @@ div.description {
 
       .dates {
         grid-template-columns: 1fr;
+
+        :global(.rdtPicker) {
+          position: unset; // show date picker inline
+        }
       }
     }
   }
