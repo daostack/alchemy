@@ -11,7 +11,9 @@ import FollowButton from "components/Shared/FollowButton";
 import ThreeboxModal from "components/Shared/ThreeboxModal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { Field, Formik, FormikProps } from "formik";
+import Analytics from "lib/analytics";
 import { copyToClipboard, ethErrorHandler, formatTokens } from "lib/util";
+import { Page } from "pages";
 import { parse } from "query-string";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -93,6 +95,15 @@ class AccountProfilePage extends React.Component<IProps, IState> {
     const { accountAddress, getProfile } = this.props;
 
     getProfile(accountAddress);
+
+    const dao = this.props.data[0];
+
+    Analytics.track("Page View", {
+      "Page Name": Page.AccountProfile,
+      "DAO Address": dao.address,
+      "DAO Name": dao.name,
+      "Profile Address": this.props.accountAddress,
+    });
   }
 
   public copyAddress = (e: any): void => {

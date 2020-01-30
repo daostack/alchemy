@@ -1,6 +1,9 @@
 import * as Sentry from "@sentry/browser";
 import { getProfile } from "actions/profilesActions";
+import { getWeb3ProviderInfo } from "arc";
+import Analytics from "lib/analytics";
 import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
+
 import * as Redux from "redux";
 import { IAsyncAction } from "./async";
 
@@ -26,9 +29,23 @@ export function setCurrentAccount(accountAddress: string) {
 
     // if the accountAddress is undefined, we are done
     if (accountAddress === undefined) {
+      Analytics.reset();
       return;
     }
 
-    dispatch(getProfile(accountAddress));
+    // TODO: call alias? https://help.mixpanel.com/hc/en-us/articles/115004497803#avoid-calling-mixpanelalias-on-a-user-more-than-once
+    Analytics.identify(accountAddress);
+
+    const web3ProviderInfo = getWeb3ProviderInfo();
+    Analytics.register({
+      address: accountAddress,
+      wallet: web3ProviderInfo ? web3ProviderInfo.name : "none",
+    });
+    Analytics.people.set({
+      address: accountAddress,
+      wallet: web3ProviderInfo ? web3ProviderInfo.name : "none",
+    });
+
+    dispatch(getProfile(accountAddress, true));
   };
 }

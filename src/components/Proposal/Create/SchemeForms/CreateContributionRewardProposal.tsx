@@ -1,13 +1,14 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { IDAOState, ISchemeState } from "@daostack/client";
+import { createProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UserSearchField from "components/Shared/UserSearchField";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-import { createProposal } from "actions/arcActions";
+import Analytics from "lib/analytics";
 import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
@@ -147,6 +148,19 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
     setSubmitting(false);
     await this.props.createProposal(proposalValues);
+
+    Analytics.track("Submit Proposal", {
+      "DAO Address": this.props.daoAvatarAddress,
+      "Proposal Title": values.title,
+      "Scheme Address": this.props.scheme.address,
+      "Scheme Name": this.props.scheme.name,
+      "Reputation Requested": values.reputationReward,
+      "ETH Requested": values.ethReward,
+      "External Token Requested": values.externalTokenAddress,
+      "DAO Token Requested": values.externalTokenReward,
+      "Tags": proposalValues.tags,
+    });
+
     this.props.handleClose();
   }
 

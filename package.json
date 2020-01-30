@@ -41,6 +41,7 @@
       "^genericSchemeRegistry(.*)$": "<rootDir>/src/genericSchemeRegistry$1",
       "^layouts/(.*)$": "<rootDir>/src/layouts/$1",
       "^lib/(.*)$": "<rootDir>/src/lib/$1",
+      "^pages": "<rootDir>/src/pages",
       "^reducers/(.*)$": "<rootDir>/src/reducers/$1",
       "^selectors/(.*)$": "<rootDir>/src/selectors/$1",
       "^src/(.*)$": "<rootDir>/src/$1"
@@ -96,6 +97,7 @@
     "history": "4.9.0",
     "immutability-helper": "2.6.4",
     "interweave": "^11.1.0",
+    "mixpanel-browser": "^2.29.0",
     "moment": "^2.23.0",
     "multicodec": "^0.5.6",
     "query-string": "^6.2.0",
@@ -146,6 +148,7 @@
     "@types/graphql": "^14.0.4",
     "@types/jest": "^24.0.22",
     "@types/jquery": "^3.3.31",
+    "@types/mixpanel-browser": "^2.23.1",
     "@types/node": "^12.6.8",
     "@types/object-hash": "^1.2.0",
     "@types/prop-types": "^15.5.8",
