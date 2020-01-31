@@ -8,7 +8,9 @@ export interface IExternalProps {
   competition: ICompetitionProposalState;
   submissions: Array<ICompetitionSuggestionState>;
 }
-
+/**
+ * displays the current status of a competition
+ */
 export default class StatusBlob extends React.Component<IExternalProps, null> {
 
   public render(): RenderOutput {
