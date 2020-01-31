@@ -345,7 +345,7 @@ function inTesting(): boolean {
 /**
  * Prompt user to select a web3Provider and enable their account.
  * Initializes Arc with the newly-selected web3Provider.
- * No-op if `selectedProvider` is already set (one can manuallygo to readonly mode to clear it)
+ * No-op if `selectedProvider` is already set (one can manually go to readonly mode to clear it)
  * Side-effect is that `selectedProvider` will be set on success.
  * @returns Throws exception on error.
  */
