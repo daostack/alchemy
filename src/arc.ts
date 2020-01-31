@@ -387,7 +387,7 @@ async function enableWeb3Provider(): Promise<void> {
 
   web3Connect.on("error", (error: Error): any => {
     // eslint-disable-next-line no-console
-    console.error(`web3Connect closed on error:  ${error.message}`);
+    console.error(`web3Connect closed on error:  ${error ? error.message : "cancelled or unknown error"}`);
     return rejectOnClosePromise(error);
   });
 
