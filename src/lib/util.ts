@@ -11,6 +11,9 @@ import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
 import BN = require("bn.js");
+/**
+ * gotta load moment in order to use moment-timezone directly
+ */
 import "moment";
 import * as moment from "moment-timezone";
 import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
