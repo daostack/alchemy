@@ -18,6 +18,7 @@ import * as proposalStyle from "../../Scheme/SchemeProposals.scss";
 import * as daoStyle from "../Dao.scss";
 import { CustomDispatcher } from "./CustomDispatcher";
 import { IDaoInformation } from "./types";
+import { IGenericSchemeParams } from "@daostack/client/dist/types/schemes/base";
 
 type IExternalProps = {
   daoState: IDAOState;
@@ -78,11 +79,12 @@ function DaoWiki(props: IProps) {
     const wikiSchemeExists = states.some(hasWikiScheme);
     setHasWikiScheme(wikiSchemeExists);
     if (wikiSchemeExists) {
-      const { dao, address, genericSchemeParams } = states.find(hasWikiScheme);
+      const { dao, address, schemeParams } = states.find(hasWikiScheme);
+      const { contractToCall } = schemeParams as IGenericSchemeParams
       const daoInformation: IDaoInformation = {
         dao,
         scheme: address,
-        contractToCall: genericSchemeParams.contractToCall
+        contractToCall
       };
       const dispatcher = new CustomDispatcher(wikiMethods, daoInformation);
       renderWikiComponent(dispatcher);
