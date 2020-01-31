@@ -330,13 +330,13 @@ export function getCachedAccount(): Address | null {
 }
 
 function inTesting(): boolean {
-  // if (process.env.NODE_ENV === "development" && navigator.webdriver) {
-  //   // in test mode, we have an unlocked ganache and we are not using any wallet
-  //   // eslint-disable-next-line no-console
-  //   console.log("not using any wallet, because we are in automated test");
-  //   selectedProvider = new Web3(settings.dev.web3Provider);
-  //   return true;
-  // }
+  if (process.env.NODE_ENV === "development" && navigator.webdriver) {
+    // in test mode, we have an unlocked ganache and we are not using any wallet
+    // eslint-disable-next-line no-console
+    console.log("not using any wallet, because we are in automated test");
+    selectedProvider = new Web3(settings.dev.web3Provider);
+    return true;
+  }
   return false;
 }
 
