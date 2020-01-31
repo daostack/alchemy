@@ -1,8 +1,8 @@
-import * as H from "history";
+import { History } from "history";
 import { first } from "rxjs/operators";
 import { Address, IProposalStage, IDAOState, ISchemeState } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { schemeName, getSchemeIsActive} from "lib/util";
@@ -26,7 +26,7 @@ interface IDispatchProps {
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
-  history: H.History;
+  history: History;
   daoState: IDAOState;
 }
 

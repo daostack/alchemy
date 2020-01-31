@@ -1,6 +1,6 @@
 import { IDAOState } from "@daostack/client";
 import { getArc } from "arc";
-import * as GeoPattern from "geopattern";
+import { generate } from "geopattern";
 import FollowButton from "components/Shared/FollowButton";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -20,7 +20,7 @@ type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 const DaoFeedItem = (props: IProps) => {
   const { data, event } = props;
   const dao = data;
-  const bgPattern = GeoPattern.generate(dao.address + dao.name);
+  const bgPattern = generate(dao.address + dao.name);
 
   return (
     <div data-test-id={`eventCardContent-${event.id}`} className={css.daoItem}>

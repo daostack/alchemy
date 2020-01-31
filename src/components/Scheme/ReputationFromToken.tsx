@@ -2,8 +2,8 @@ import { promisify } from "util";
 import { Address, ISchemeState, Token } from "@daostack/client";
 import axios from "axios";
 import { getWeb3Provider, getArcSettings } from "arc";
-import * as ethABI from "ethereumjs-abi";
-import * as queryString from "query-string";
+import { soliditySHA3 } from "ethereumjs-abi";
+import { parse } from "query-string";
 import { RouteComponentProps } from "react-router-dom";
 import { NotificationStatus } from "reducers/notifications";
 import { redeemReputationFromToken } from "actions/arcActions";
@@ -66,7 +66,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     let redeemerAddress: Address;
-    const queryValues = queryString.parse(this.props.location.search);
+    const queryValues = parse(this.props.location.search);
     let pk = queryValues["pk"] as string;
     if (pk) {
       const arc = getArc();
@@ -151,7 +151,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     } else if (values.useTxSenderService === true) {
       // construct the message to sign
       // const signatureType = 1
-      const messageToSign = "0x"+ ethABI.soliditySHA3(
+      const messageToSign = "0x"+ soliditySHA3(
         ["address","address"],
         [schemeAddress, values.accountAddress]
       ).toString("hex");

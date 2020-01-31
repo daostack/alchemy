@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as Sentry from "@sentry/browser";
+import { showReportDialog } from "@sentry/browser";
 import { Link } from "react-router-dom";
 import * as appCss from "../../layouts/App.scss";
 import * as css from "./Errors.scss";
@@ -12,7 +12,7 @@ interface IExternalProps {
 
 export default class ErrorUncaught extends React.PureComponent<IExternalProps> {
   handleReport = () => {
-    Sentry.showReportDialog({ eventId: this.props.sentryEventId });
+    showReportDialog({ eventId: this.props.sentryEventId });
   }
 
   render() {

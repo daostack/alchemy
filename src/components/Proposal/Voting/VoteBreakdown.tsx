@@ -2,7 +2,7 @@ import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalState } fr
 import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
-import * as classNames from "classnames";
+import classNames from "classnames";
 import Reputation from "components/Account/Reputation";
 import * as React from "react";
 import { connect } from "react-redux";

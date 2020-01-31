@@ -1,8 +1,8 @@
 import { Address } from "@daostack/client";
-import * as Sentry from "@sentry/browser";
+import { captureException, withScope } from "@sentry/browser";
 import { threeBoxLogout } from "actions/profilesActions";
-import * as web3Actions from "actions/web3Actions";
-import * as classNames from "classnames";
+import { setCurrentAccount } from "actions/web3Actions";
+import classNames from "classnames";
 import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
@@ -10,10 +10,11 @@ import Notification, { NotificationViewStatus } from "components/Notification/No
 import DaoContainer from "components/Dao/DaoContainer";
 import FeedPage from "components/Feed/FeedPage";
 import RedemptionsPage from "components/Redemptions/RedemptionsPage";
-import * as History from "history";
+import { History } from "history";
+import Analytics from "lib/analytics";
 import Header from "layouts/Header";
 import SidebarMenu from "layouts/SidebarMenu";
-import * as queryString from "query-string";
+import { parse } from "query-string";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
@@ -27,7 +28,7 @@ import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
-  history: History.History;
+  history: History;
 }
 
 interface IStateProps {
@@ -42,7 +43,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IStatePro
     path: "/dao/:daoAvatarAddress",
     strict: false,
   });
-  const queryValues = queryString.parse(ownProps.location.search);
+  const queryValues = parse(ownProps.location.search);
 
   return {
     ...ownProps,
@@ -55,14 +56,14 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IStatePro
 
 interface IDispatchProps {
   dismissNotification: typeof dismissNotification;
-  setCurrentAccount: typeof web3Actions.setCurrentAccount;
+  setCurrentAccount: typeof setCurrentAccount;
   showNotification: typeof showNotification;
   threeBoxLogout: typeof threeBoxLogout;
 }
 
 const mapDispatchToProps = {
   dismissNotification,
-  setCurrentAccount: web3Actions.setCurrentAccount,
+  setCurrentAccount,
   showNotification,
   threeBoxLogout,
 };
@@ -76,6 +77,7 @@ interface IState {
 }
 
 class AppContainer extends React.Component<IProps, IState> {
+  public unlisten: any;
 
   private static hasAcceptedCookiesKey = "acceptedCookies";
 
@@ -92,15 +94,21 @@ class AppContainer extends React.Component<IProps, IState> {
     this.setState({ error });
 
     if (process.env.NODE_ENV === "production") {
-      Sentry.withScope((scope): void => {
+      withScope((scope): void => {
         scope.setExtras(errorInfo);
-        const sentryEventId = Sentry.captureException(error);
+        const sentryEventId = captureException(error);
         this.setState({ sentryEventId });
       });
     }
   }
 
   public async componentDidMount (): Promise<void> {
+    this.unlisten = this.props.history.listen((location) => {
+      Analytics.register({
+        URL: process.env.BASE_URL + location.pathname,
+      });
+    });
+
     /**
      * Heads up that there is a chance this cached account may differ from an account
      * that the user has already selected in a provider but have
@@ -167,6 +175,10 @@ class AppContainer extends React.Component<IProps, IState> {
         minimize={this.minimizeNotif}
       />
     </div>;
+  }
+
+  public componentWillUnmount() {
+    this.unlisten();
   }
 
   public render(): RenderOutput {

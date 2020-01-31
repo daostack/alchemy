@@ -1,5 +1,5 @@
 import { IDAOState, Member } from "@daostack/client";
-import * as profilesActions from "actions/profilesActions";
+import { getProfilesForAddresses } from "actions/profilesActions";
 import { getArc } from "arc";
 import CreateProposalPage from "components/Proposal/Create/CreateProposalPage";
 import ProposalDetailsPage from "components/Proposal/ProposalDetailsPage";
@@ -33,7 +33,7 @@ interface IStateProps  {
 }
 
 interface IDispatchProps {
-  getProfilesForAddresses: typeof profilesActions.getProfilesForAddresses;
+  getProfilesForAddresses: typeof getProfilesForAddresses;
   showNotification: typeof showNotification;
 }
 
@@ -49,7 +49,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 };
 
 const mapDispatchToProps = {
-  getProfilesForAddresses: profilesActions.getProfilesForAddresses,
+  getProfilesForAddresses,
   showNotification,
 };
 
