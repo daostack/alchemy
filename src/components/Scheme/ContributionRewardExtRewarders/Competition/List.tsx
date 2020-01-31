@@ -50,8 +50,9 @@ export default class CompetitionsList extends React.Component<IProps, IStateProp
      * sort by the ordinal position of the CompetitionStatusEnum values
      */
     const retval = SortService.evaluateNumber(statusIndexA, statusIndexB);
-    if (retval)
+    if (retval) {
       return retval;
+    }
     else {
       const competitionA = a.competition;
       const competitionB = b.competition;
