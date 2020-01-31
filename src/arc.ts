@@ -290,6 +290,41 @@ async function ensureCorrectNetwork(provider: any): Promise<void> {
   }
 }
 
+const ACCOUNT_STORAGEKEY = "currentAddress";
+
+export function cacheWeb3Info(account: Address): void {
+  if (account) {
+    localStorage.setItem(ACCOUNT_STORAGEKEY, account);
+  } else {
+    localStorage.removeItem(ACCOUNT_STORAGEKEY);
+  }
+}
+
+export function uncacheWeb3Info(accountToo = true): void {
+  if (accountToo) {
+    localStorage.removeItem(ACCOUNT_STORAGEKEY);
+  }
+  if (web3ConnectCore) {
+    web3ConnectCore.clearCachedProvider();
+  }
+  /**
+     * close is not yet a standard, but soon will be.
+     * Sadly closing the connection is the only way to clear the WalletConnect cache.
+     * But clearing its cache will ensure that
+     * the user can rescan a qrcode when changing WalletConnect provider.
+     */
+  if (selectedProvider && selectedProvider.close) {
+    selectedProvider.close(); // no need to await
+  }
+}
+
+export function getCachedAccount(): Address | null {
+  return localStorage.getItem(ACCOUNT_STORAGEKEY);
+}export interface IEnableWalletProviderParams {
+  suppressNotifyOnSuccess?: boolean;
+  showNotification: any;
+}
+
 function inTesting(): boolean {
   // if (process.env.NODE_ENV === "development" && navigator.webdriver) {
   //   // in test mode, we have an unlocked ganache and we are not using any wallet
@@ -374,6 +409,7 @@ async function enableWeb3Provider(): Promise<void> {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(`Unable to connect to web3 provider:  ${error.message}`);
+    uncacheWeb3Info(false);
     throw new Error("Unable to connect to web3 provider");
   }
 
@@ -381,6 +417,10 @@ async function enableWeb3Provider(): Promise<void> {
     // should only be cancelled, errors should have been handled above
     // eslint-disable-next-line no-console
     console.warn("uncaught error or user cancelled out");
+    /**
+     * workaround until web3connect delays caching until successful connection
+     */
+    uncacheWeb3Info(false);
     return;
   }
 
@@ -428,39 +468,6 @@ async function getCurrentAccountFromProvider(): Promise<Address | null> {
     return null;
   }
   return _getCurrentAccountFromProvider();
-}
-
-const ACCOUNT_STORAGEKEY = "currentAddress";
-
-export function cacheWeb3Info(account: Address): void {
-  if (account) {
-    localStorage.setItem(ACCOUNT_STORAGEKEY, account);
-  } else {
-    localStorage.removeItem(ACCOUNT_STORAGEKEY);
-  }
-}
-
-export function uncacheWeb3Info(): void {
-  localStorage.removeItem(ACCOUNT_STORAGEKEY);
-  if (web3ConnectCore) {
-    web3ConnectCore.clearCachedProvider();
-  }
-  /**
-     * close is not yet a standard, but soon will be.
-     * Sadly closing the connection is the only way to clear the WalletConnect cache.
-     * But clearing its cache will ensure that
-     * the user can rescan a qrcode when changing WalletConnect provider.
-     */
-  if (selectedProvider && selectedProvider.close) {
-    selectedProvider.close(); // no need to await
-  }
-}
-
-export function getCachedAccount(): Address | null {
-  return localStorage.getItem(ACCOUNT_STORAGEKEY);
-}export interface IEnableWalletProviderParams {
-  suppressNotifyOnSuccess?: boolean;
-  showNotification: any;
 }
 
 /**
