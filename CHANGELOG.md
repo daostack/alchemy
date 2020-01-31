@@ -5,7 +5,9 @@
 ## Next release
   - Features Added
     - support for ContributionRewardExt using the Competition rewarder contract in an architecture that enables other rewarder contracts to be "plugged-in" with minimum impact on the rest of Alchemy.
+
   - Bugs Fixed
+    - fixes breakage to ReputationFromToken due to changes in the contract ABI
 
 ## 2020-01-22
 
