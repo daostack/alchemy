@@ -104,13 +104,9 @@ class AppContainer extends React.Component<IProps, IState> {
 
   public async componentDidMount (): Promise<void> {
     this.unlisten = this.props.history.listen((location) => {
-      // if (window.location.origin === process.env.BASE_URL) {
-        // const base_url = process.env.BASE_URL
-        const base_url = 'http://lfdsajfdslkajfd.com'
-        Analytics.register({
-          URL: base_url + location.pathname,
-        });
-      // }
+      Analytics.register({
+        URL: process.env.BASE_URL + location.pathname,
+      });
     });
 
     /**

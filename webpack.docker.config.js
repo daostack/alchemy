@@ -17,7 +17,7 @@ module.exports = merge(baseConfig, {
     hot: true,
     publicPath: '/',
     historyApiFallback: true,
-    port: 3001,
+    port: 3000,
     host: '0.0.0.0'
   },
 
@@ -34,7 +34,7 @@ module.exports = merge(baseConfig, {
 
     // bundle the client for webpack-dev-server
     // and connect to the provided endpoint
-    'webpack-dev-server/client?http://127.0.0.1:3001',
+    'webpack-dev-server/client?http://127.0.0.1:3000',
 
     // bundle the client for hot reloading
     // only- means to only hot reload for successful updates
@@ -91,7 +91,7 @@ module.exports = merge(baseConfig, {
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify('development'),
-        'BASE_URL': JSON.stringify(process.env.BASE_URL || "http://127.0.0.1:3001"),
+        'BASE_URL': JSON.stringify(process.env.BASE_URL || "http://127.0.0.1:3000"),
         'DISQUS_SITE': JSON.stringify(process.env.DISQUS_SITE || 'daostack-alchemy')
       }
     })
