@@ -38,7 +38,7 @@ const web3ConnectProviderOptions =
         },
         burnerconnect: {
           package: BurnerConnectProvider,
-          options: { },
+          options: { defaultNetwork: "1" },
         },
         portis: {
           package: Portis,
@@ -69,7 +69,7 @@ const web3ConnectProviderOptions =
           },
           burnerconnect: {
             package: BurnerConnectProvider,
-            options: { },
+            options: { defaultNetwork: "4" },
           },
           portis: {
             package: Portis,
