@@ -431,8 +431,16 @@ async function enableWeb3Provider(): Promise<void> {
   }
 
   /**
- * bail if provider is not correct for the current platform
- */
+   * Make sure Web3Connect and its providers are behaving properly.  Ensure the
+   * provider is connected.  BurnerWallet motivated this check.
+   */
+  if (!provider.connected) {
+    uncacheWeb3Info(false);
+    throw new Error("Provider is not connected");
+  }
+  /**
+   * bail if provider is not correct for the current platform
+   */
   await ensureCorrectNetwork(provider);
 
   /**
