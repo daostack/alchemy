@@ -2,6 +2,8 @@ import { IDAOState, Member } from "@daostack/client";
 import { getProfile } from "actions/profilesActions";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import Analytics from "lib/analytics";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
@@ -48,6 +50,12 @@ class DaoMembersPage extends React.Component<IProps, null> {
       if (!this.props.profiles[member.staticState.address]) {
         this.props.getProfile(member.staticState.address);
       }
+    });
+
+    Analytics.track("Page View", {
+      "Page Name": Page.DAOMembers,
+      "DAO Address": this.props.daoState.address,
+      "DAO Name": this.props.daoState.name,
     });
   }
 

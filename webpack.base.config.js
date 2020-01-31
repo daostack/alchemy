@@ -24,9 +24,9 @@ module.exports = {
       genericSchemeRegistry: path.resolve(basePath, 'src/genericSchemeRegistry'),
       layouts: path.resolve(basePath, 'src/layouts'),
       lib: path.resolve(basePath, 'src/lib'),
+      pages: path.resolve(basePath, 'src/pages'),
       reducers: path.resolve(basePath, 'src/reducers'),
       selectors: path.resolve(basePath, 'src/selectors'),
-      schemas: path.resolve(basePath, 'src/schemas'),
       src: path.resolve(basePath, 'src'),
       'ipfs-api': 'ipfs-api/dist',
       'bn.js': 'bn.js/lib/bn.js'
@@ -53,7 +53,6 @@ module.exports = {
           /node_modules\/apollo-link/,
           /node_modules\/apollo-link-http/,
           /node_modules\/apollo-link-ws/,
-          /node_modules\/ethereumjs-util/,
           /node_modules\/xhr2-cookies/,
           /node_modules\/rlp/,
           /node_modules\/subscriptions-transport-ws/,
