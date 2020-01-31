@@ -324,7 +324,9 @@ export function uncacheWeb3Info(accountToo = true): void {
 
 export function getCachedAccount(): Address | null {
   return localStorage.getItem(ACCOUNT_STORAGEKEY);
-}export interface IEnableWalletProviderParams {
+}
+
+export interface IEnableWalletProviderParams {
   suppressNotifyOnSuccess?: boolean;
   showNotification: any;
 }
