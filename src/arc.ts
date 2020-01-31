@@ -38,7 +38,7 @@ const web3ConnectProviderOptions =
         },
         burnerconnect: {
           package: BurnerConnectProvider,
-          options: {},
+          options: { },
         },
         portis: {
           package: Portis,
@@ -66,6 +66,10 @@ const web3ConnectProviderOptions =
             options: {
               infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
             },
+          },
+          burnerconnect: {
+            package: BurnerConnectProvider,
+            options: { },
           },
           portis: {
             package: Portis,
