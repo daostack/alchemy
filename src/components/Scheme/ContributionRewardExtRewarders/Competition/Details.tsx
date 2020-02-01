@@ -90,7 +90,6 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   }
 
   public componentDidMount() {
-    const newState = {};
     /**
      * use `window` because a route with these params isn't configured
      * externally to the Competition code in Alchemy, and thus the params
@@ -112,7 +111,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       }
 
       if (this.state.showingSubmissionDetails !== urlSubmission) {
-        Object.assign(newState, { showingSubmissionDetails: urlSubmission });
+        this.setState({ showingSubmissionDetails: urlSubmission });
       }
     }
   }
