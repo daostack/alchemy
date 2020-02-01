@@ -415,7 +415,6 @@ async function enableWeb3Provider(): Promise<void> {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(`Unable to connect to web3 provider:  ${error.message}`);
-    uncacheWeb3Info(false);
     throw new Error("Unable to connect to web3 provider");
   }
 
@@ -423,10 +422,6 @@ async function enableWeb3Provider(): Promise<void> {
     // should only be cancelled, errors should have been handled above
     // eslint-disable-next-line no-console
     console.warn("uncaught error or user cancelled out");
-    /**
-     * workaround until web3connect delays caching until successful connection
-     */
-    uncacheWeb3Info(false);
     return;
   }
 
@@ -570,6 +565,9 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
     if (msg.match(/response has no error or result for request/g)) {
       msg = "Unable to connect to ethereum provider, sorry :-(";
     }
+
+    uncacheWeb3Info(false);
+
     if (options.showNotification) {
       options.showNotification(NotificationStatus.Failure, msg);
     } else {
