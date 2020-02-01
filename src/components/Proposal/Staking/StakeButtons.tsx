@@ -98,7 +98,7 @@ class StakeButtons extends React.Component<IProps, IState> {
 
   private getStakeProposalAction = (proposal: IProposalState, dao: IDAOState, pendingPrediction: number) =>
     (amount: number) => {
-      stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount);
+      this.props.stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount);
 
       Analytics.track("Stake", {
         "DAO Address": proposal.dao.id,
