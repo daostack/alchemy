@@ -159,6 +159,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
             <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
               <a className={
                 classNames({
+                  [css.createProposal]: true,
                   [css.disabled]: !isActive,
                 })}
               data-test-id="createProposal"
