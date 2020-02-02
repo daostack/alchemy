@@ -90,7 +90,6 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   }
 
   public componentDidMount() {
-    const newState = {};
     /**
      * use `window` because a route with these params isn't configured
      * externally to the Competition code in Alchemy, and thus the params
@@ -112,7 +111,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       }
 
       if (this.state.showingSubmissionDetails !== urlSubmission) {
-        Object.assign(newState, { showingSubmissionDetails: urlSubmission });
+        this.setState({ showingSubmissionDetails: urlSubmission });
       }
     }
   }
@@ -216,8 +215,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           </div>
           <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.creator]: true})}
             onClick={this.openSubmissionDetailsModal(submission)}>
-            <AccountPopup accountAddress={submission.suggester} daoState={daoState}/>
-            <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.profiles[submission.suggester]} daoAvatarAddress={daoState.address} detailView={false} />
+            <AccountPopup accountAddress={submission.beneficiary} daoState={daoState}/>
+            <AccountProfileName accountAddress={submission.beneficiary} accountProfile={this.props.profiles[submission.beneficiary]} daoAvatarAddress={daoState.address} detailView={false} />
           </div>
           <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votingSection]: true})}>
             <div className={css.votes}

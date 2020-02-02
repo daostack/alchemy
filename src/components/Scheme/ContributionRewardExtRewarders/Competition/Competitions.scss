@@ -20,6 +20,10 @@ a.blueButton {
     border: 1px solid rgba(200, 200, 200, 1);
     cursor: not-allowed;
   }
+
+  :visited {
+    color: white;
+  }
 }
 
 .statusBlob {
@@ -200,6 +204,8 @@ a.blueButton {
 
     .header {
       display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       margin-bottom: 30px;
 
       .statusBlob {
@@ -212,6 +218,8 @@ a.blueButton {
         flex-grow: 3;
         position: relative;
         top: 8px;
+        white-space: nowrap;
+        padding-right: 12px;
 
         a {
           color: #0071ff;
@@ -862,47 +870,43 @@ a.blueButton {
 }
 
 @media only screen and (max-width: 425px) {
-  // a.blueButton {
-  //   font-size: 11px;
-  //   padding: 0 10px 0 10px;
-  // }
+  .competitionCards {
+    padding: 0 0;
+
+    .competitionCardContainer {
+      padding: 26px 26px;
+    }
+  }
 
   .competitionDetailsContainer {
     padding-left: 10px;
     padding-right: 10px;
-    .middleSection {
-      flex-wrap: wrap;
-    }
-  }
-
-  .competitionCards {
-    padding: 0 8px;
-  }
-
-  .competitionDetailsContainer {
     .topSection {
       .header {
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-
+        padding-top: 10px;
         .statusBlob {
+          flex-grow: 1;
           margin-bottom: 8px;
-          margin-right: 0;
+          // margin-right: 0;
         }
 
         .gotoProposal {
-          margin-bottom: 8px;
-          top: 0;
+          flex-grow: 1;
+          text-align: right;
+          // margin-bottom: 8px;
+          // top: 0;
         }
 
         .newSubmission {
-          text-align: left;
+          flex-grow: 2;
+          text-align: center;
+          //text-align: left;
         }
       }
     }
 
     .middleSection {
+      flex-wrap: wrap;
       .leftSection {
         margin-bottom: 20px;
 
@@ -1063,7 +1067,7 @@ a.blueButton {
     max-width: 100%;
     min-width: 100%;
     // max-height: unset;
-    min-height: calc(100% - 60px);
+    min-height: calc(100% - 50px);
 
     .description {
       max-height: unset;

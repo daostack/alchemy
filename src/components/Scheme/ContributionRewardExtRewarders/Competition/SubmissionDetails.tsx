@@ -70,7 +70,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const isRedeemed = !!submission.redeemedAt;
     const competitionIsOver = status.over;
     const inVotingPeriod = status.inVotingPeriod;
-    const canRedeem = isWinner && competitionIsOver && !isRedeemed && (submission.suggester === this.props.currentAccountAddress);
+    const canRedeem = isWinner && competitionIsOver && !isRedeemed && (submission.beneficiary === this.props.currentAccountAddress);
     const tags = submission.tags;
 
     return (
@@ -112,8 +112,8 @@ class SubmissionDetails extends React.Component<IProps, null> {
         <div className={css.title}>{submission.title}</div>
 
         <div className={css.proposer}>
-          <AccountPopup accountAddress={submission.suggester} daoState={this.props.daoState}/>
-          <AccountProfileName accountAddress={submission.suggester} accountProfile={this.props.profiles[submission.suggester]} daoAvatarAddress={this.props.daoState.address} detailView={false} />
+          <AccountPopup accountAddress={submission.beneficiary} daoState={this.props.daoState}/>
+          <AccountProfileName accountAddress={submission.beneficiary} accountProfile={this.props.profiles[submission.beneficiary]} daoAvatarAddress={this.props.daoState.address} detailView={false} />
         </div>
 
         { tags && tags.length ?
