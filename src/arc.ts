@@ -603,7 +603,7 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
                    * Also handles how the Burner provider switches from a Fortmatic address to the 
                    * burner address at the time of connecting.
                    */
-                  await initializeArc();
+                  await initializeArc(selectedProvider);
                 }
                 observer.next(account);
                 // eslint-disable-next-line require-atomic-updates
