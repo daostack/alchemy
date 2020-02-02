@@ -272,7 +272,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     }
   } catch (reason) {
     // eslint-disable-next-line no-console
-    console.error(reason.message);
+    console.error(reason ? reason.message : "unknown error");
   }
 
   (window as any).arc = success ? arc : null;
@@ -414,7 +414,7 @@ async function enableWeb3Provider(): Promise<void> {
 
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(`Unable to connect to web3 provider:  ${error.message}`);
+    console.error(`Unable to connect to web3 provider:  ${error ? error.message : "unknown error"}`);
     throw new Error("Unable to connect to web3 provider");
   }
 
@@ -441,7 +441,7 @@ async function enableWeb3Provider(): Promise<void> {
     console.log(`Connected to network provider ${getWeb3ProviderInfo(provider).name}`);
   } catch (ex) {
   // eslint-disable-next-line no-console
-    console.error(`Unable to enable provider: ${ex.message}`);
+    console.error(`Unable to enable provider: ${ex.message ? ex : "unknown error"}`);
     throw new Error("Unable to enable provider");
   }
 
@@ -561,7 +561,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
 
   } catch(err) {
     let msg: string;
-    msg = err.message || "Unable to connect to the ethereum provider";
+    msg = err ? err.message : "Unable to connect to the ethereum provider";
     if (msg.match(/response has no error or result for request/g)) {
       msg = "Unable to connect to ethereum provider, sorry :-(";
     }
@@ -599,9 +599,11 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
               if (prevAccount !== account) {
                 if (account && initializedAccount && (account !== initializedAccount)) {
                   /**
-                   * handle when user changes account in MetaMask while already connected to Alchemy.
+                   * Handle when user changes account in MetaMask while already connected to Alchemy.
+                   * Also handles how the Burner provider switches from a Fortmatic address to the 
+                   * burner address at the time of connecting.
                    */
-                  await logout();
+                  await initializeArc();
                 }
                 observer.next(account);
                 // eslint-disable-next-line require-atomic-updates
@@ -609,10 +611,10 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
               }
             })
             // eslint-disable-next-line no-console
-            .catch((err): void => {console.error(err.message); });
+            .catch((err): void => {console.error(err ? err.message : "unknown error"); });
         } catch (ex) {
           // eslint-disable-next-line no-console
-          console.error(ex.message);
+          console.error(ex ? ex.message : "unknown error");
         }
         finally {
           running = false;
