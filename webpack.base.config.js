@@ -65,6 +65,7 @@ module.exports = {
           /node_modules\/graphql-tools/,
           /node_modules\/ethereumjs-tx/,
           /node_modules\/ethereumjs-common/,
+          /node_modules\/ethereumjs-util/,
           /node_modules\/deprecated-decorator/
         ]
       },
