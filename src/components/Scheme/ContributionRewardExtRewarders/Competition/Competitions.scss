@@ -822,6 +822,7 @@ a.blueButton {
 
   .createdOn {
     margin-top: 16px;
+    margin-bottom: 16px;
     font-size: 13px;
 
     .datetime {
@@ -866,6 +867,21 @@ a.blueButton {
 
   .tagsContainer {
     margin-top: 16px;
+  }
+
+  .discussionContainer {
+    .title {
+      font-size: 18px;
+      color: #689bd6;
+      width: 100%;
+      border-bottom: 1px solid #bfcbd5;
+      padding-bottom: 5px;
+      margin-bottom: 16px;
+    }
+
+    .disqus {
+      padding: 15px;
+    }
   }
 }
 
