@@ -76,7 +76,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const canRedeem = isWinner && competitionIsOver && !isRedeemed && (submission.beneficiary === this.props.currentAccountAddress);
     const tags = submission.tags;
 
-    this.disqusConfig.title = this.props.proposalState.title;
+    this.disqusConfig.title = submission.title;
     this.disqusConfig.url = window.location.toString();
     this.disqusConfig.identifier = submission.id;
 
