@@ -278,7 +278,7 @@ class StakeButtons extends React.Component<IProps, IState> {
                   passButton
               }
               {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.Queued && !expired ?
-                <div className={css.toBoostMessage}>{formatTokens(proposal.upstakeNeededToPreBoost, "GEN to boost")}</div>
+                <div className={css.toBoostMessage}>&gt;{formatTokens(proposal.upstakeNeededToPreBoost, "GEN to boost")}</div>
                 : ""}
               {
                 (currentAccountAddress && tip(IProposalOutcome.Pass) !== "") ?

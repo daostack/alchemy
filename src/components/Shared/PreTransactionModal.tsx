@@ -371,7 +371,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                               }
                             </ul>
                           </div>
-                          <div className={css.xToBoost}>{formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " needed to boost this proposal"}</div>
+                          <div className={css.xToBoost}>&gt; {formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " needed to boost this proposal"}</div>
                         </div>
                       </div>
                     </div>
