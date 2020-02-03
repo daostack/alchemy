@@ -1,18 +1,21 @@
-import { IDAOState, ISchemeState } from "@daostack/client";
-import * as arcActions from "actions/arcActions";
-import { enableWalletProvider, getArc } from "arc";
-import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import UserSearchField from "components/Shared/UserSearchField";
-import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
-import Select from "react-select";
-import { showNotification } from "reducers/notifications";
+import { IDAOState, ISchemeState } from "@daostack/client";
+import { createProposal } from "actions/arcActions";
+import { enableWalletProvider, getArc } from "arc";
+import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import UserSearchField from "components/Shared/UserSearchField";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
+import Analytics from "lib/analytics";
+import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
+import { showNotification, NotificationStatus } from "reducers/notifications";
+import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+
+const Select = React.lazy(() => import("react-select"));
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -25,12 +28,12 @@ interface IStateProps {
 }
 
 interface IDispatchProps {
-  createProposal: typeof arcActions.createProposal;
+  createProposal: typeof createProposal;
   showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
-  createProposal: arcActions.createProposal,
+  createProposal,
   showNotification,
 };
 
@@ -51,24 +54,8 @@ interface IFormValues {
 }
 
 const customStyles = {
-  control: () => ({
-    // none of react-select's styles are passed to <Control />
-    width: 117,
-    height: 35,
-  }),
-  indicatorsContainer: () => ({
-    display: "none",
-  }),
   indicatorSeparator: () => ({
     display: "none",
-  }),
-  input: () => ({
-    height: 31,
-    marginTop: 0,
-    marginBottom: 0,
-  }),
-  valueContainer: () => ({
-    height: 35,
   }),
   menu: (provided: any) => ({
     ... provided,
@@ -80,23 +67,42 @@ const customStyles = {
 };
 
 export const SelectField: React.SFC<any> = ({options, field, form }) => (
-  <Select
-    options={options}
-    name={field.name}
-    value={options ? options.find((option: any) => option.value === field.value) : ""}
-    maxMenuHeight={100}
-    onChange={(option: any) => form.setFieldValue(field.name, option.value)}
-    onBlur={field.onBlur}
-    styles={customStyles}
-  />
+  <React.Suspense fallback={<div>Loading...</div>}>
+    <Select
+      options={options}
+      name={field.name}
+      value={options ? options.find((option: any) => option.value === field.value) : ""}
+      maxMenuHeight={100}
+      onChange={(option: any) => form.setFieldValue(field.name, option.value)}
+      onBlur={field.onBlur}
+      className="react-select-container"
+      classNamePrefix="react-select"
+      styles={customStyles}
+    />
+  </React.Suspense>
 );
 
 class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
+  initialFormValues: IFormValues;
+
   constructor(props: IProps) {
     super(props);
-    this.state = { 
-      tags: new Array<string>(),
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.initialFormValues = importUrlValues<IFormValues>({
+      beneficiary: "",
+      description: "",
+      ethReward: 0,
+      externalTokenAddress: getArc().GENToken().address,
+      externalTokenReward: 0,
+      nativeTokenReward: 0,
+      reputationReward: 0,
+      title: "",
+      url: "",
+      tags: [],
+    });
+    this.state = {
+      tags: this.initialFormValues.tags,
     };
   }
 
@@ -130,11 +136,30 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
     setSubmitting(false);
     await this.props.createProposal(proposalValues);
+
+    Analytics.track("Submit Proposal", {
+      "DAO Address": this.props.daoAvatarAddress,
+      "Proposal Title": values.title,
+      "Scheme Address": this.props.scheme.address,
+      "Scheme Name": this.props.scheme.name,
+      "Reputation Requested": values.reputationReward,
+      "ETH Requested": values.ethReward,
+      "External Token Requested": values.externalTokenAddress,
+      "DAO Token Requested": values.externalTokenReward,
+      "Tags": proposalValues.tags,
+    });
+
     this.props.handleClose();
   }
 
-  private onTagsChange = (tags: string[]): void => {
-    this.setState({tags});
+  // Exports data from form to a shareable url.
+  public exportFormValues(values: IFormValues) {
+    exportUrl({ ...values, ...this.state });
+    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
+  }
+
+  private onTagsChange = () => (tags: string[]): void => {
+    this.setState({ tags });
   }
 
   public render(): RenderOutput {
@@ -150,17 +175,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       <div className={css.contributionReward}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={{
-            beneficiary: "",
-            description: "",
-            ethReward: 0,
-            externalTokenAddress: arc.GENToken().address,
-            externalTokenReward: 0,
-            nativeTokenReward: 0,
-            reputationReward: 0,
-            title: "",
-            url: "",
-          } as IFormValues}
+          initialValues={this.initialFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
@@ -209,19 +224,19 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
             errors,
             touched,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            handleSubmit,
             isSubmitting,
             setFieldTouched,
             setFieldValue,
+            values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <label className={css.description}>What to Expect</label>
               <div className={css.description}>This proposal can send eth / erc20 token, mint new DAO tokens ({dao.tokenSymbol}) and mint / slash reputation in the DAO. Each proposal can have one of each of these actions. e.g. 100 rep for completing a project + 0.05 ETH for covering expenses.</div>
               <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
                 <label htmlFor="titleInput">
+                  <div className={css.requiredMarker}>*</div>
                 Title
                   <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  <div className={css.requiredMarker}>*</div>
                 </label>
               </TrainingTooltip>
               <Field
@@ -236,8 +251,8 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
               <TrainingTooltip overlay={this.fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
-                Description
                   <div className={css.requiredMarker}>*</div>
+                Description
                   <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
@@ -258,7 +273,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
 
               <div className={css.tagSelectorContainer}>
-                <TagsSelector onChange={this.onTagsChange}></TagsSelector>
+                <TagsSelector onChange={this.onTagsChange()} tags={this.state.tags}></TagsSelector>
               </div>
 
               <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
@@ -276,23 +291,24 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 className={touched.url && errors.url ? css.error : null}
               />
 
-              <div className={css.clearfix}>
-                <div>
-                  <TrainingTooltip overlay="Ethereum Address or Alchemy Username to receive rewards" placement="right">
-                    <label htmlFor="beneficiary">
+              <div>
+                <TrainingTooltip overlay="Ethereum Address or Alchemy Username to receive rewards" placement="right">
+                  <label htmlFor="beneficiary">
+                    <div className={css.requiredMarker}>*</div>
                     Recipient
-                      <ErrorMessage name="beneficiary">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      <div className={css.requiredMarker}>*</div>
-                    </label>
-                  </TrainingTooltip>
-                  <UserSearchField
-                    daoAvatarAddress={daoAvatarAddress}
-                    name="beneficiary"
-                    onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
-                    onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                  />
-                </div>
+                    <ErrorMessage name="beneficiary">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  </label>
+                </TrainingTooltip>
+                <UserSearchField
+                  daoAvatarAddress={daoAvatarAddress}
+                  name="beneficiary"
+                  onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
+                  onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
+                  defaultValue={this.initialFormValues.beneficiary}
+                />
+              </div>
 
+              <div className={css.rewards}>
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
                     ETH Reward
@@ -325,31 +341,33 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 </div>
 
                 <div className={css.reward}>
-                  <img src="/assets/images/Icon/down.svg" className={css.downV}/>
                   <label htmlFor="externalRewardInput">
                     External Token Reward
                     <ErrorMessage name="externalTokenReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
-                  <Field
-                    id="externalTokenRewardInput"
-                    placeholder={"How many tokens to reward"}
-                    name="externalTokenReward"
-                    type="number"
-                    className={touched.externalTokenReward && errors.externalTokenReward ? css.error : null}
-                    min={0}
-                    step={0.1}
-                  />
-                  <div className={css.externalTokenSelect}>
-                    <Field
-                      id="externalTokenInput"
-                      name="externalTokenAddress"
-                      component={SelectField}
-                      className={css.externalTokenSelect}
-                      options={Object.keys(supportedTokens()).map((tokenAddress) => {
-                        const token = supportedTokens()[tokenAddress];
-                        return { value: tokenAddress, label: token["symbol"] };
-                      })}
-                    />
+                  <div className={css.externalTokenInput}>
+                    <div className={css.amount}>
+                      <Field
+                        id="externalRewardInput"
+                        placeholder={"How many tokens to reward"}
+                        name="externalTokenReward"
+                        type="number"
+                        className={touched.externalTokenReward && errors.externalTokenReward ? css.error : null}
+                        min={0}
+                        step={0.1}
+                      />
+                    </div>
+                    <div className={css.select}>
+                      <Field
+                        id="externalTokenAddress"
+                        name="externalTokenAddress"
+                        component={SelectField}
+                        options={Object.keys(supportedTokens()).map((tokenAddress) => {
+                          const token = supportedTokens()[tokenAddress];
+                          return { value: tokenAddress, label: token["symbol"] };
+                        })}
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -370,16 +388,21 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
                 {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
                     && touched.reputationReward && errors.rewards &&
-                <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
+                  <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
                 }
               </div>
               <div className={css.createProposalActions}>
+                <TrainingTooltip overlay="Export proposal" placement="top">
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                    <img src="/assets/images/Icon/share-blue.svg" />
+                  </button>
+                </TrainingTooltip>
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
                 </button>
                 <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                  Submit proposal
+                    Submit proposal
                   </button>
                 </TrainingTooltip>
               </div>

@@ -2,7 +2,7 @@ import { promisify } from "util";
 import {
   Address,
   IContractInfo,
-  IContributionReward,
+  IProposalStage,
   IProposalState,
   IRewardState,
   ISchemeState} from "@daostack/client";
@@ -11,6 +11,9 @@ import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
 import BN = require("bn.js");
+/**
+ * gotta load moment in order to use moment-timezone directly
+ */
 import "moment";
 import * as moment from "moment-timezone";
 import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
@@ -199,6 +202,11 @@ export function tokenSymbol(tokenAddress: string) {
   return token ? token["symbol"] : "?";
 }
 
+export function tokenDecimals(tokenAddress: string) {
+  const token = supportedTokens()[tokenAddress.toLowerCase()];
+  return token ? token["decimals"] : 18;
+}
+
 export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut = 1000) {
   return new Promise((resolve, reject) => {
     const timerId = setInterval(async () => {
@@ -272,11 +280,18 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       if (genericSchemeInfo) {
         name = genericSchemeInfo.specs.name;
       } else {
-        name = "Generic Scheme";
+        // Adding the address is a bit long for a title
+        // name = `Blockchain Interaction (${contractToCall})`;
+        name = "Blockchain Interaction";
       }
     } else {
-      name = "Generic Scheme";
+      // this should never happen...
+      name = "Blockchain Interaction";
     }
+  } else if (scheme.name === "ContributionReward") {
+    name ="Funding and Voting Power";
+  } else if (scheme.name === "SchemeRegistrar") {
+    name ="Plugin Manager";
   } else if (scheme.name) {
     if (scheme.name === "ContributionRewardExt") {
       name = rewarderContractName(scheme as ISchemeState);
@@ -437,8 +452,14 @@ export function hasGpRewards(reward: IRewardState) {
  * @param  reward unredeemed CR rewards
  * @param daoBalances
  */
-export function getCRRewards(reward: IContributionReward, daoBalances: { [key: string]: BN|null } = {}): AccountClaimableRewardsType {
+export function getCRRewards(proposalState: IProposalState, daoBalances: { [key: string]: BN|null } = {}): AccountClaimableRewardsType {
   const result: AccountClaimableRewardsType = {};
+
+  if (proposalState.stage === IProposalStage.ExpiredInQueue) {
+    return {};
+  }
+
+  const reward = proposalState.contributionReward;
   if (
     reward.ethReward &&
     !reward.ethReward.isZero()
@@ -477,7 +498,7 @@ export function getCRRewards(reward: IContributionReward, daoBalances: { [key: s
   return result;
 }
 
-export function hasCrRewards(reward: IContributionReward) {
+export function hasCrRewards(reward: IProposalState) {
   const claimableRewards = getCRRewards(reward);
   for (const key of Object.keys(claimableRewards)) {
     if (claimableRewards[key].gt(new BN(0))) {
@@ -605,13 +626,20 @@ export function getDateWithTimezone(date: Date|moment.Moment): moment.Moment {
   return moment.tz(date.toISOString(), localTimezone); 
 }
 
-const dateFormat = "MMM DD, YYYY HH:mm z (Z) ";
+const tzFormat = "z (Z)";
+const dateFormat = `MMM DD, YYYY HH:mm ${tzFormat}`;
 /**
  * looks like: "17:30 EST (-05:00) Dec 31, 2019"
  * @param date 
  */
 export function formatFriendlyDateForLocalTimezone(date: Date|moment.Moment): string {
   return getDateWithTimezone(date).format(dateFormat);
+}
+/**
+ * looks like: "EST (-05:00)"
+ */
+export function getLocalTimezone(): string {
+  return getDateWithTimezone(new Date()).format(tzFormat);
 }
 
 export function ensureHttps(url: string) {
@@ -625,4 +653,8 @@ export function ensureHttps(url: string) {
   }
 
   return url;
+}
+
+export function inTesting(): boolean {
+  return (process.env.NODE_ENV === "development" && navigator.webdriver);
 }

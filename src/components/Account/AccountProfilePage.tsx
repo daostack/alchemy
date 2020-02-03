@@ -2,18 +2,22 @@ import { IDAOState, IMemberState, DAO } from "@daostack/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import BN = require("bn.js");
-import * as profileActions from "actions/profilesActions";
+import { getProfile, updateProfile } from "actions/profilesActions";
 import { getArc, enableWalletProvider } from "arc";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import Reputation from "components/Account/Reputation";
 import FollowButton from "components/Shared/FollowButton";
+import ThreeboxModal from "components/Shared/ThreeboxModal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { Field, Formik, FormikProps } from "formik";
+import Analytics from "lib/analytics";
 import { copyToClipboard, ethErrorHandler, formatTokens } from "lib/util";
-import * as queryString from "query-string";
+import { Page } from "pages";
+import { parse } from "query-string";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
@@ -29,12 +33,13 @@ interface IStateProps {
   accountProfile?: IProfileState;
   currentAccountAddress: string;
   daoAvatarAddress: string;
+  threeBox: any;
 }
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
-  getProfile: typeof profileActions.getProfile;
-  updateProfile: typeof profileActions.updateProfile;
+  getProfile: typeof getProfile;
+  updateProfile: typeof updateProfile;
 }
 
 type SubscriptionData = [IDAOState, IMemberState, BN|null, BN|null];
@@ -42,7 +47,7 @@ type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const accountAddress = ownProps.match.params.accountAddress ? ownProps.match.params.accountAddress.toLowerCase() : null;
-  const queryValues = queryString.parse(ownProps.location.search);
+  const queryValues = parse(ownProps.location.search);
   const daoAvatarAddress = queryValues.daoAvatarAddress as string;
 
   return {
@@ -51,12 +56,13 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
     accountProfile: state.profiles[accountAddress],
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress,
+    threeBox: state.profiles.threeBox,
   };
 };
 
 const mapDispatchToProps = {
-  getProfile: profileActions.getProfile,
-  updateProfile: profileActions.updateProfile,
+  getProfile,
+  updateProfile,
   showNotification,
 };
 
@@ -65,16 +71,39 @@ interface IFormValues {
   name: string;
 }
 
-class AccountProfilePage extends React.Component<IProps, null> {
+interface IState {
+  description: string;
+  name: string;
+  showThreeBoxModal: boolean;
+}
+
+class AccountProfilePage extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
+
+    const accountProfile = props.accountProfile;
+
+    this.state = {
+      description: accountProfile ? accountProfile.description || "" : "",
+      name: accountProfile ? accountProfile.name || "" : "",
+      showThreeBoxModal: false,
+    };
   }
 
   public async componentDidMount(): Promise<void> {
     const { accountAddress, getProfile } = this.props;
 
     getProfile(accountAddress);
+
+    const dao = this.props.data[0];
+
+    Analytics.track("Page View", {
+      "Page Name": Page.AccountProfile,
+      "DAO Address": dao.address,
+      "DAO Name": dao.name,
+      "Profile Address": this.props.accountAddress,
+    });
   }
 
   public copyAddress = (e: any): void => {
@@ -84,20 +113,33 @@ class AccountProfilePage extends React.Component<IProps, null> {
     e.preventDefault();
   }
 
+  public doUpdateProfile = async() => {
+    const { currentAccountAddress, updateProfile } = this.props;
+    await updateProfile(currentAccountAddress, this.state.name, this.state.description);
+  }
+
   public handleFormSubmit = async (values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> => {
     const { currentAccountAddress, showNotification, updateProfile } = this.props;
 
-    if (!await enableWalletProvider({ showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification })) { setSubmitting(false); return; }
 
-    await updateProfile(currentAccountAddress, values.name, values.description);
+    if (this.props.threeBox || parseInt(localStorage.getItem("dontShowThreeboxModal"))) {
+      await updateProfile(currentAccountAddress, values.name, values.description);
+    } else {
+      this.setState({ showThreeBoxModal: true,  description: values.description, name: values.name });
+    }
+
     setSubmitting(false);
+  }
+
+  private closeThreeboxModal = (_e: any): void => {
+    this.setState({ showThreeBoxModal: false });
   }
 
   public render(): RenderOutput {
     const [dao, accountInfo, ethBalance, genBalance] = this.props.data;
 
     const { accountAddress, accountProfile, currentAccountAddress } = this.props;
-    //const accountProfile = this.state.profile;
 
     if (!accountProfile) {
       return "Loading...";
@@ -116,6 +158,15 @@ class AccountProfilePage extends React.Component<IProps, null> {
         <BreadcrumbsItem to={`/profile/${accountAddress}`}>
           {editing ? (accountProfile && accountProfile.name ? "Edit 3Box Profile" : "Set 3Box Profile") : "View 3Box Profile"}
         </BreadcrumbsItem>
+        <Helmet>
+          <meta name="description" content={(accountProfile.name || accountProfile.ethereumAccountAddress) + " Profile on Alchemy by DAOstack"} />
+          <meta name="og:description" content={(accountProfile.name || accountProfile.ethereumAccountAddress) + " Profile on Alchemy by DAOstack"} />
+          <meta name="twitter:description" content={(accountProfile.name || accountProfile.ethereumAccountAddress) + " Profile on Alchemy by DAOstack"} />
+        </Helmet>
+
+        {this.state.showThreeBoxModal ?
+          <ThreeboxModal action={this.doUpdateProfile} closeHandler={this.closeThreeboxModal} />
+          : ""}
 
         <div className={profileContainerClass} data-test-id="profile-container">
           { editing && (!accountProfile || !accountProfile.name) ? <div className={css.setupProfile}>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
@@ -271,7 +322,7 @@ const SubscribedAccountProfilePage = withSubscription({
   createObservable: (props: IProps) => {
     const arc = getArc();
 
-    const queryValues = queryString.parse(props.location.search);
+    const queryValues = parse(props.location.search);
     const daoAvatarAddress = queryValues.daoAvatarAddress as string;
     const accountAddress = props.match.params.accountAddress;
     let dao: DAO;

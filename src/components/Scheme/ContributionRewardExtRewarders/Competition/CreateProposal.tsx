@@ -1,10 +1,9 @@
-import { IDAOState, ISchemeState , IProposalCreateOptionsCompetition, 
-} from "@daostack/client";
+import { IDAOState, ISchemeState, IProposalCreateOptionsCompetition } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
+import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, getLocalTimezone } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
@@ -14,13 +13,10 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 
-import { checkTotalPercent, addSeconds } from "lib/util";
+import { checkTotalPercent } from "lib/util";
+import * as Datetime from "react-datetime";
 
-import {
-  DateTimePicker,
-  MuiPickersUtilsProvider,
-} from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
+import moment = require("moment");
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -58,33 +54,18 @@ interface IFormValues {
   reputationReward: number;
   title: string;
   url: string;
-  compStartTime: Date;
-  compEndTime: Date;
-  suggestionEndTime: Date;
-  votingStartTime: Date;
+  compStartTimeInput: moment.Moment;
+  compEndTimeInput: moment.Moment;
+  suggestionEndTimeInput: moment.Moment;
+  votingStartTimeInput: moment.Moment;
+  proposerIsAdmin: boolean;
 
   [key: string]: any;
 }
 
 const customStyles = {
-  control: () => ({
-    // none of react-select's styles are passed to <Control />
-    width: 117,
-    height: 35,
-  }),
-  indicatorsContainer: () => ({
-    display: "none",
-  }),
   indicatorSeparator: () => ({
     display: "none",
-  }),
-  input: () => ({
-    height: 31,
-    marginTop: 0,
-    marginBottom: 0,
-  }),
-  valueContainer: () => ({
-    height: 35,
   }),
   menu: (provided: any) => ({
     ... provided,
@@ -95,17 +76,21 @@ const customStyles = {
   }),
 };
 
-const CustomDateInput: React.SFC<any> = ({
-  field,
-  form,
-}) => (
-  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-    <DateTimePicker
-      value={field.value}
-      onChange={(date: Date) => form.setFieldValue(field.name, date)}
-    />
-  </MuiPickersUtilsProvider>
-);
+const CustomDateInput: React.SFC<any> = ({ field, form }) => {
+  const onChange = (date: moment.Moment) => {
+    form.setFieldValue(field.name, date);
+    return true;
+  };
+  return <Datetime
+    value={field.value}
+    onChange={onChange}
+    dateFormat="MMMM D, YYYY"
+    timeFormat="HH:mm"
+    viewDate={moment()}
+    // used by tests
+    inputProps={{ name: field.name }}
+  />;
+};
 
 export const SelectField: React.SFC<any> = ({options, field, form, _value }) => {
   // value={options ? options.find((option: any) => option.value === field.value) : ""}
@@ -116,6 +101,8 @@ export const SelectField: React.SFC<any> = ({options, field, form, _value }) => 
     maxMenuHeight={100}
     onChange={(option: any) => form.setFieldValue(field.name, option.value)}
     onBlur={field.onBlur}
+    className="react-select-container"
+    classNamePrefix="react-select"
     styles={customStyles}
   />;
 };
@@ -124,14 +111,14 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
-    this.state = { 
+    this.state = {
       tags: new Array<string>(),
     };
   }
 
   public handleSubmit = async (values: IFormValues, { _setSubmitting }: any ): Promise<void> => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { 
-      return; 
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) {
+      return;
     }
 
     const externalTokenDetails = tokenDetails(values.externalTokenAddress);
@@ -155,30 +142,25 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       rewardSplit = values.rewardSplit.split(",").map((s: string) => Number(s));
     }
 
-    // TODO: client should accept null compStartTime
-    if (!values.compStartTime) {
-      // If no start time then set to now + 15sec
-      values.compStartTime = addSeconds(new Date(), 15000);
-    }
-
     // Parameters to be passed to client
     const proposalOptions: IProposalCreateOptionsCompetition  = {
       dao: this.props.daoAvatarAddress,
       description: values.description,
-      endTime: values.compEndTime,
+      endTime: values.compEndTimeInput.toDate(),
       ethReward: toWei(Number(values.ethReward)),
       externalTokenReward,
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
       numberOfVotesPerVoter:  Number(values.numberOfVotesPerVoter),
       proposalType: "competition", // this makes `createPRoposal` create a competition rather then a 'normal' contributionRewardExt
+      proposerIsAdmin: values.proposerIsAdmin,
       reputationReward: toWei(Number(values.reputationReward)),
       rewardSplit,
       scheme: this.props.scheme.address,
-      startTime: values.compStartTime,
-      suggestionsEndTime: values.suggestionEndTime,
+      startTime: values.compStartTimeInput.toDate(),
+      suggestionsEndTime: values.suggestionEndTimeInput.toDate(),
       tags: this.state.tags,
       title: values.title,
-      votingStartTime: values.votingStartTime,
+      votingStartTime: values.votingStartTimeInput.toDate(),
     };
 
     await this.props.createProposal(proposalOptions);
@@ -199,6 +181,8 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     }
     const dao = data;
     const arc = getArc();
+    const localTimezone = getLocalTimezone();
+    const now = moment();
 
     return (
       <div className={css.contributionReward}>
@@ -213,11 +197,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             nativeTokenReward: 0,
             numWinners: 0,
             numberOfVotesPerVoter: 0,
+            proposerIsAdmin: false,
             reputationReward: 0,
-            compStartTime: null,
-            suggestionEndTime: new Date(),
-            votingStartTime: new Date(),
-            compEndTime: new Date(),
+            compStartTimeInput: now, // testing ? undefined : now,
+            suggestionEndTimeInput: now, // testing ? undefined : now,
+            votingStartTimeInput: now, // testing ? undefined : now,
+            compEndTimeInput: now, // testing ? undefined : now,
             title: "",
             url: "",
           } as IFormValues}
@@ -268,34 +253,27 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               errors.numWinners = "Number of winners should be max 100";
             }
 
-            const now = new Date();
+            const now = moment();
             // Check valid time
-            if (values.compStartTime && values.compStartTime < now) {
-              errors.compStartTime = "Competion start time can't be in past";
+            const compStartTimeInput = values.compStartTimeInput;
+            const compEndTimeInput = values.compEndTimeInput;
+            const votingStartTimeInput = values.votingStartTimeInput;
+            const suggestionEndTimeInput = values.suggestionEndTimeInput;
+
+            if (compStartTimeInput && compStartTimeInput.isSameOrBefore(now)) {
+              errors.compStartTimeInput = "Competition must start in the future";
             }
 
-            if (values.compEndTime < now) {
-              errors.compEndTime = "Competion end time should not be in past";
+            if (suggestionEndTimeInput && (suggestionEndTimeInput.isSameOrBefore(compStartTimeInput))) {
+              errors.suggestionEndTimeInput = "Submission period must end after competition starts";
             }
 
-            if (values.votingStartTime < now) {
-              errors.votingStartTime = "Voting start time should not be in past";
+            if (votingStartTimeInput && suggestionEndTimeInput && (votingStartTimeInput.isBefore(suggestionEndTimeInput))) {
+              errors.votingStartTimeInput = "Voting must start on or after submission period ends";
             }
 
-            if (values.compStartTime && (values.votingStartTime < values.compStartTime)) {
-              errors.votingStartTime = "Voting start time should not be before competition start";
-            }
-
-            if (values.compStartTime && (values.suggestionEndTime <= values.compStartTime)) {
-              errors.suggestionEndTime = "Suggestion start time should not be before competition start";
-            }
-
-            if (values.suggestionEndTime && values.suggestionEndTime < now) {
-              errors.suggestionEndTime = "Suggestion end time should not be in past";
-            }
-
-            if ( values.compEndTime <= values.votingStartTime || values.compEndTime < values.suggestionEndTime) {
-              errors.compEndTime = "Competion should not end before voting starts or Suggestion ends";
+            if (compEndTimeInput && compEndTimeInput.isSameOrBefore(votingStartTimeInput)) {
+              errors.compEndTimeInput = "Competion must end after voting starts";
             }
 
             if (!isValidUrl(values.url)) {
@@ -315,9 +293,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             require("title");
             require("numWinners");
             require("numberOfVotesPerVoter");
-            require("compEndTime");
-            require("votingStartTime");
-            require("suggestionEndTime");
+            require("compStartTimeInput");
+            require("compEndTimeInput");
+            require("votingStartTimeInput");
+            require("suggestionEndTimeInput");
 
             if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
               errors.rewards = "Please select at least some reward";
@@ -344,9 +323,9 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
               <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
                 <label htmlFor="titleInput">
-                Title
-                  <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   <div className={css.requiredMarker}>*</div>
+                  Title
+                  <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>
               <Field
@@ -361,8 +340,8 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
               <TrainingTooltip overlay={this.fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
-                Description
                   <div className={css.requiredMarker}>*</div>
+                  Description
                   <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
@@ -403,12 +382,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               <div>
                 <TrainingTooltip overlay="The anticipated number of winning Submissions for this competition" placement="right">
                   <label htmlFor="numWinnersInput">
-                  Number of winners
-                    <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
+                    Number of winners
+                    <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                 </TrainingTooltip>
-            
+
                 <Field
                   id="numWinnersInput"
                   maxLength={120}
@@ -426,7 +405,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                     <ErrorMessage name="rewardSplit">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                 </TrainingTooltip>
-            
+
                 <Field
                   id="rewardSplitInput"
                   maxLength={120}
@@ -440,12 +419,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               <div>
                 <TrainingTooltip overlay="Number of Submissions for which each member can vote" placement="right">
                   <label htmlFor="numVotesInput">
-                  Number of votes
-                    <ErrorMessage name="numberOfVotesPerVoter">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
+                    Number of votes per reputation holder
+                    <ErrorMessage name="numberOfVotesPerVoter">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                 </TrainingTooltip>
-            
+
                 <Field
                   id="numVotesInput"
                   maxLength={120}
@@ -456,10 +435,26 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 />
               </div>
 
-              <div className={css.clearfix}>
+              <div className={css.proposerIsAdminCheckbox}>
+                <TrainingTooltip overlay="You are the only account that will be able to create submissions" placement="right">
+                  <label htmlFor="proposerIsAdmin">
+                    <div className={css.requiredMarker}>*</div>
+                    Submissions can only be created by you
+                    <ErrorMessage name="proposerIsAdmin">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  </label>
+                </TrainingTooltip>
+                <Field
+                  id="proposerIsAdmin"
+                  name="proposerIsAdmin"
+                  type="checkbox"
+                  className={touched.proposerIsAdmin && errors.proposerIsAdmin ? css.error : null}
+                />
+              </div>
+
+              <div className={css.rewards}>
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
-                    ETH Reward
+                    ETH Reward to split
                     <ErrorMessage name="ethReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
@@ -475,7 +470,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
                 <div className={css.reward}>
                   <label htmlFor="reputationRewardInput">
-                    Reputation Reward
+                    Reputation Reward to split
                     <ErrorMessage name="reputationReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
@@ -489,37 +484,39 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 </div>
 
                 <div className={css.reward}>
-                  <img src="/assets/images/Icon/down.svg" className={css.downV}/>
                   <label htmlFor="externalRewardInput">
-                    External Token Reward
+                        External Token Reward to split
                     <ErrorMessage name="externalTokenReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
-                  <Field
-                    id="externalTokenRewardInput"
-                    placeholder={"How many tokens to reward"}
-                    name="externalTokenReward"
-                    type="number"
-                    className={touched.externalTokenReward && errors.externalTokenReward ? css.error : null}
-                    min={0}
-                    step={0.1}
-                  />
-                  <div className={css.externalTokenSelect}>
-                    <Field
-                      id="externalTokenInput"
-                      name="externalTokenAddress"
-                      component={SelectField}
-                      className={css.externalTokenSelect}
-                      options={Object.keys(supportedTokens()).map((tokenAddress) => {
-                        const token = supportedTokens()[tokenAddress];
-                        return { value: tokenAddress, label: token["symbol"] };
-                      })}
-                    />
+                  <div className={css.externalTokenInput}>
+                    <div className={css.amount}>
+                      <Field
+                        id="externalRewardInput"
+                        placeholder={"How many tokens to reward"}
+                        name="externalTokenReward"
+                        type="number"
+                        className={touched.externalTokenReward && errors.externalTokenReward ? css.error : null}
+                        min={0}
+                        step={0.1}
+                      />
+                    </div>
+                    <div className={css.select}>
+                      <Field
+                        id="externalTokenAddress"
+                        name="externalTokenAddress"
+                        component={SelectField}
+                        options={Object.keys(supportedTokens()).map((tokenAddress) => {
+                          const token = supportedTokens()[tokenAddress];
+                          return { value: tokenAddress, label: token["symbol"] };
+                        })}
+                      />
+                    </div>
                   </div>
                 </div>
 
                 <div className={css.reward}>
                   <label htmlFor="nativeTokenRewardInput">
-                    DAO token ({dao.tokenSymbol}) Reward
+                    DAO token ({dao.tokenSymbol}) Reward to split
                     <ErrorMessage name="nativeTokenReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
@@ -531,67 +528,66 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                     className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
                   />
                 </div>
+              </div>
 
+              <div className={css.dates}>
                 <div className={css.date}>
                   <label htmlFor="compStartTimeInput">
-                    Competition start time
-                    <ErrorMessage name="compStartTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    <div className={css.requiredMarker}>*</div>
+                    Competition start time {localTimezone}
+                    <ErrorMessage name="compStartTimeInput">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="compStartTimeInput"
-                    name="compStartTime"
+                    name="compStartTimeInput"
                     component={CustomDateInput}
-                    className={touched.compStartTime && errors.compStartTime ? css.error : null}
+                    className={touched.compStartTimeInput && errors.compStartTimeInput ? css.error : null}
                   />
                 </div>
 
                 <div className={css.date}>
                   <label htmlFor="suggestionEndTimeInput">
-                    Submission end time
-                    <ErrorMessage name="suggestionEndTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
+                    Submission end time {localTimezone}
+                    <ErrorMessage name="suggestionEndTimeInput">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="suggestionEndTimeInput"
-                    name="suggestionEndTime"
+                    name="suggestionEndTimeInput"
                     component={CustomDateInput}
-                    className={touched.suggestionEndTime && errors.suggestionEndTime ? css.error : null}
+                    className={touched.suggestionEndTimeInput && errors.suggestionEndTimeInput ? css.error : null}
                   />
                 </div>
 
                 <div className={css.date}>
                   <label htmlFor="votingStartTimeInput">
-                    Voting start time
-                    <ErrorMessage name="votingStartTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
+                    Voting start time {localTimezone}
+                    <ErrorMessage name="votingStartTimeInput">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="votingStartTimeInput"
-                    name="votingStartTime"
+                    name="votingStartTimeInput"
                     component={CustomDateInput}
-                    className={touched.votingStartTime && errors.votingStartTime ? css.error : null}
+                    className={touched.votingStartTimeInput && errors.votingStartTimeInput ? css.error : null}
                   />
                 </div>
 
                 <div className={css.date}>
                   <label htmlFor="compEndTimeInput">
-                    Competition end time
                     <div className={css.requiredMarker}>*</div>
-                    <ErrorMessage name="compEndTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    Competition end time {localTimezone}
+                    <ErrorMessage name="compEndTimeInput">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    id="compEndTimeInput"
-                    name="compEndTime"
+                    name="compEndTimeInput"
                     component={CustomDateInput}
-                    className={touched.compEndTime && errors.compEndTime ? css.error : null}
+                    className={touched.compEndTimeInput && errors.compEndTimeInput ? css.error : null}
                   />
                 </div>
+              </div>
 
-                {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
+              {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
                     && touched.reputationReward && errors.rewards &&
                 <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
-                }
-              </div>
+              }
               <div className={css.createProposalActions}>
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel

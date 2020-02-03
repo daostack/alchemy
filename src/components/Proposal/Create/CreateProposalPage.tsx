@@ -6,7 +6,9 @@ import CreateUnknownGenericSchemeProposal from "components/Proposal/Create/Schem
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
-import * as H from "history";
+import Analytics from "lib/analytics";
+import { History } from "history";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
@@ -14,13 +16,14 @@ import { IRootState } from "reducers";
 import { RouteComponentProps } from "react-router-dom";
 import { CrxRewarderComponentType, getCrxRewarderComponent, rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
+import { schemeName } from "lib/util";
 import * as css from "./CreateProposal.scss";
 
 type IExternalProps = RouteComponentProps<any>;
 
 interface IExternalStateProps {
   daoAvatarAddress: string;
-  history: H.History;
+  history: History;
   schemeId: string;
 }
 
@@ -47,14 +50,24 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     };
   }
 
+
   public handleClose(): void {
     const { daoAvatarAddress, history, schemeId } = this.props;
     history.push("/dao/" + daoAvatarAddress + "/scheme/" + schemeId);
   }
 
   public async componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": Page.CreateProposal,
+      "DAO Address": this.props.daoAvatarAddress,
+      "Scheme Address": this.props.schemeId,
+    });
     const newState = {};
 
+    /**
+     * Get the "CreateProposal" modal dialog component supplied by the rewarder contract associated
+     * with this CrExt scheme (if it is a CrExt scheme -- very cheap if not a CrExt).
+     */
     if (!this.state.createCrxProposalComponent) {
       Object.assign(newState, { createCrxProposalComponent: await getCrxRewarderComponent(this.props.data, CrxRewarderComponentType.CreateProposal) });
     }
@@ -66,27 +79,21 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     const { daoAvatarAddress } = this.props;
     const scheme = this.props.data;
 
-    const arc = getArc();
-    let schemeName = this.state.createCrxProposalComponent ? rewarderContractName(scheme) : arc.getContractInfo(scheme.address).name;
-    if (!schemeName) {
-      throw Error(`Unknown Scheme: ${scheme}`);
-    }
-
     let createSchemeComponent = <div />;
     const props = {
       daoAvatarAddress,
       handleClose: this.handleClose.bind(this),
       scheme,
     };
+    const schemeTitle = this.state.createCrxProposalComponent ? rewarderContractName(scheme) : schemeName(scheme);
 
     if (this.state.createCrxProposalComponent) {
       createSchemeComponent = <this.state.createCrxProposalComponent {...props} />;
-    } else if (schemeName === "ContributionReward") {
+    } else if (scheme.name === "ContributionReward") {
       createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
-    }
-    else if (schemeName === "SchemeRegistrar") {
+    } else if (scheme.name === "SchemeRegistrar") {
       createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
-    } else if (schemeName === "GenericScheme") {
+    } else if (scheme.name === "GenericScheme") {
       const genericSchemeRegistry = new GenericSchemeRegistry();
       let contractToCall: string;
       if (scheme.genericSchemeParams) {
@@ -100,16 +107,14 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
       if (genericSchemeInfo) {
         createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
-        schemeName = genericSchemeInfo.specs.name;
       } else {
         createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
       }
-    } else if (schemeName === "UGenericScheme") {
+    } else if (scheme.name === "UGenericScheme") {
       const genericSchemeRegistry = new GenericSchemeRegistry();
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(props.scheme.uGenericSchemeParams.contractToCall);
       if (genericSchemeInfo) {
         createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
-        schemeName = genericSchemeInfo.specs.name;
       } else {
         createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
       }
@@ -117,9 +122,9 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
 
     return (
       <div className={css.createProposalWrapper}>
-        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/create`}>Create {schemeName.replace(/([A-Z])/g, " $1")} Proposal</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/create`}>Create {schemeTitle} Proposal</BreadcrumbsItem>
         <h2 className={css.header}>
-          <span>+ New Proposal <b>| {schemeName}</b></span>
+          <span>+ New proposal <b>| {schemeTitle}</b></span>
         </h2>
         { createSchemeComponent }
       </div>

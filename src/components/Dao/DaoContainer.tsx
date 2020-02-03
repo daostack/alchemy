@@ -1,5 +1,5 @@
 import { IDAOState, Member } from "@daostack/client";
-import * as profilesActions from "actions/profilesActions";
+import { getProfilesForAddresses } from "actions/profilesActions";
 import { getArc } from "arc";
 import CreateProposalPage from "components/Proposal/Create/CreateProposalPage";
 import ProposalDetailsPage from "components/Proposal/ProposalDetailsPage";
@@ -8,6 +8,7 @@ import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
 //@ts-ignore
@@ -32,7 +33,7 @@ interface IStateProps  {
 }
 
 interface IDispatchProps {
-  getProfilesForAddresses: typeof profilesActions.getProfilesForAddresses;
+  getProfilesForAddresses: typeof getProfilesForAddresses;
   showNotification: typeof showNotification;
 }
 
@@ -48,7 +49,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 };
 
 const mapDispatchToProps = {
-  getProfilesForAddresses: profilesActions.getProfilesForAddresses,
+  getProfilesForAddresses,
   showNotification,
 };
 
@@ -88,6 +89,11 @@ class DaoContainer extends React.Component<IProps, null> {
       <div className={css.outer}>
         <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
         <BreadcrumbsItem to={"/dao/" + daoState.address}>{daoState.name}</BreadcrumbsItem>
+        <Helmet>
+          <meta name="description" content={daoState.name + " | Managed on Alchemy by DAOstack"} />
+          <meta name="og:description" content={daoState.name + " | Managed on Alchemy by DAOstack"} />
+          <meta name="twitter:description" content={daoState.name + " | Managed on Alchemy by DAOstack"} />
+        </Helmet>
 
         <div className={css.wrapper}>
           <div className={css.noticeWrapper}>

@@ -1,8 +1,8 @@
-// import { IDAOState, IProposalState } from "@daostack/client";
 import { IDAOState } from "@daostack/client";
 import { getArc } from "arc";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
+import FollowButton from "components/Shared/FollowButton";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { humanProposalTitle } from "lib/util";
@@ -11,7 +11,6 @@ import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
 import * as React from "react";
 import { Link } from "react-router-dom";
-// import { combineLatest } from "rxjs";
 
 import * as css from "./Feed.scss";
 
@@ -40,7 +39,6 @@ type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData
 
 const ProposalFeedItem = (props: IProps) => {
   const { data, event, proposerProfile } = props;
-  // const [ dao, proposal ] = data;
   const dao = data;
 
   return (
@@ -55,12 +53,14 @@ const ProposalFeedItem = (props: IProps) => {
       </div>
 
       <Link to={`/dao/${dao.address}/proposal/${event.proposal.id}`}>
-        <h3>Proposal {humanProposalTitle(event.proposal)}</h3>
+        <h3>{humanProposalTitle(event.proposal)}</h3>
       </Link>
+
+      <div className={css.followButton}><FollowButton id={event.proposal.id} type="proposals" /></div>
 
       <div className={css.proposalDescription}>
         { event.proposal.description ?
-          <ReactMarkdown source={event.proposal.description.slice(0, 600)}
+          <ReactMarkdown source={event.proposal.description}
             renderers={{link: (props: { href: string; children: React.ReactNode }) => {
               return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
             }}}
@@ -68,9 +68,7 @@ const ProposalFeedItem = (props: IProps) => {
           : "" }
       </div>
 
-      {event.proposal.description && event.proposal.description.length > 600 ?
-        <Link to={`/dao/${dao.address}/proposal/${event.proposal.id}`}>Show full details &gt;</Link>
-        : ""}
+      <Link to={`/dao/${dao.address}/proposal/${event.proposal.id}`}>Show full proposal details &gt;</Link>
 
     </div>
   );
@@ -87,13 +85,8 @@ const SubscribedProposalFeedItem = withSubscription({
     const arc = getArc();
     const { event } = props;
     const dao = arc.dao(event.dao.id);
-    // const proposal = arc.proposal(event.proposal);
 
     return dao.state();
-    // return combineLatest(
-    //   dao.state(),
-    //   proposal.state(),
-    // );
   },
 });
 

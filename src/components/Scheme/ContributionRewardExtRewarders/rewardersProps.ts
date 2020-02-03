@@ -41,6 +41,10 @@ export enum CrxRewarderComponentType {
   Details,
   CreateProposal
 }
+/**
+ * Return the component of the given type that is supplied by the rewarder contract associated
+ * with the given CrExt scheme.
+ */
 export const getCrxRewarderComponent = (schemeState: ISchemeState, type: CrxRewarderComponentType): Promise<any> => {
   const contractName = rewarderContractName(schemeState);
   if (contractName) {

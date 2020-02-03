@@ -2,7 +2,7 @@ import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionSta
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import { toWei } from "lib/util";
-import { IRedemptionState } from "reducers/arcReducer";
+import { IRedemptionState } from "lib/proposalHelpers";
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as Redux from "redux";
@@ -63,6 +63,11 @@ export function executeProposal(avatarAddress: string, proposalId: string, _acco
 
     // Call claimRewards to both execute the proposal and redeem the ContributionReward rewards,
     //   pass in null to not redeem any GenesisProtocol rewards
+    const originalErrorHandler = observer[1];
+    observer[1] = async (_error: any): Promise<any> => {
+      observer[1] = originalErrorHandler;
+      return await proposalObj.execute().subscribe(...observer);
+    };
     await proposalObj.claimRewards(null).subscribe(...observer);
   };
 }

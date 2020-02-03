@@ -1,10 +1,12 @@
-import * as H from "history";
+import { History } from "history";
 import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Vote, Reward, Scheme, Stake } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
+import Analytics from "lib/analytics";
 import { schemeName} from "lib/util";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
@@ -38,7 +40,7 @@ const Fade = ({ children, ...props }: any): any => (
 
 interface IExternalProps {
   currentAccountAddress: Address;
-  history: H.History;
+  history: History;
   isActive: boolean;
   scheme: ISchemeState;
   daoState: IDAOState;
@@ -56,6 +58,16 @@ const mapDispatchToProps = {
 };
 
 class SchemeProposalsPage extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": Page.SchemeProposals,
+      "DAO Address": this.props.daoState.address,
+      "DAO Name": this.props.daoState.name,
+      "Scheme Address": this.props.scheme.address,
+      "Scheme Name": this.props.scheme.name,
+    });
+  }
 
   private async handleNewProposal(daoAvatarAddress: Address, schemeId: any): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
@@ -131,7 +143,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
                 [css.blueButton]: true,
                 [css.disabled]: !isActive,
               })}
-              href="javascript:void(0)"
+              href="#!"
               onClick={isActive ? this._handleNewProposal : null}
               data-test-id="createProposal"
               >+ New Proposal</a>
@@ -159,8 +171,8 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
-                <TrainingTooltip placement="bottom" overlay={"Pending proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
-                  <span>Pending Proposals ({scheme.numberOfPreBoostedProposals})</span>
+                <TrainingTooltip placement="bottom" overlay={"Pending boosting proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
+                  <span>Pending Boosting Proposals ({scheme.numberOfPreBoostedProposals})</span>
                 </TrainingTooltip>
                 {proposalsPreBoosted.length === 0
                   ?
@@ -189,6 +201,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
               </div>
               <div className={css.proposalsContainer}>
                 <InfiniteScroll
+                  style={{overflow: "visible"}}
                   dataLength={proposalsQueued.length} //This is important field to render the next data
                   next={fetchMore}
                   hasMore={proposalsQueued.length < scheme.numberOfQueuedProposals}

@@ -2,6 +2,8 @@ import { IDAOState, Member } from "@daostack/client";
 import { getProfile } from "actions/profilesActions";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import Analytics from "lib/analytics";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
@@ -49,6 +51,12 @@ class DaoMembersPage extends React.Component<IProps, null> {
         this.props.getProfile(member.staticState.address);
       }
     });
+
+    Analytics.track("Page View", {
+      "Page Name": Page.DAOMembers,
+      "DAO Address": this.props.daoState.address,
+      "DAO Name": this.props.daoState.name,
+    });
   }
 
   public render(): RenderOutput {
@@ -63,9 +71,9 @@ class DaoMembersPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.membersContainer}>
-        <BreadcrumbsItem to={"/dao/" + daoState.address + "/members"}>Reputation Holders</BreadcrumbsItem>
+        <BreadcrumbsItem to={"/dao/" + daoState.address + "/members"}>DAO Members</BreadcrumbsItem>
         <Sticky enabled top={50} innerZ={10000}>
-          <h2>Reputation Holders</h2>
+          <h2>DAO Members</h2>
         </Sticky>
         <table className={css.memberHeaderTable}>
           <tbody className={css.memberTable + " " + css.memberTableHeading}>

@@ -1,13 +1,14 @@
-import * as H from "history";
+import { History } from "history";
 import { first, filter, toArray, mergeMap } from "rxjs/operators";
 import { Address, IProposalStage, IDAOState, ISchemeState, IProposalState, IProposalOutcome } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { schemeName, getSchemeIsActive} from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { Helmet } from "react-helmet";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { showNotification } from "reducers/notifications";
@@ -27,22 +28,22 @@ interface IDispatchProps {
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
-  history: H.History;
+  history: History;
   daoState: IDAOState;
 }
 
-interface IExternalStateProps {
+interface IExternalState {
   schemeId: Address;
 }
 
-interface IStateProps {
+interface IState {
   crxListComponent: any;
   crxRewarderProps: ICrxRewarderProps;
 }
 
-type IProps = IExternalProps & IDispatchProps & IExternalStateProps & ISubscriptionProps<[ISchemeState, Array<IProposalState>]>;
+type IProps = IExternalProps & IDispatchProps & IExternalState & ISubscriptionProps<[ISchemeState, Array<IProposalState>]>;
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalState => {
   const match = ownProps.match;
 
   return {
@@ -55,7 +56,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-class SchemeContainer extends React.Component<IProps, IStateProps> {
+class SchemeContainer extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -128,8 +129,13 @@ class SchemeContainer extends React.Component<IProps, IStateProps> {
     
     return (
       <div className={css.schemeContainer}>
-      
+     
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeFriendlyName}</BreadcrumbsItem>
+        <Helmet>
+          <meta name="description" content={daoState.name + " | " + schemeState.name + " proposals | Managed on Alchemy by DAOstack"} />
+          <meta name="og:description" content={daoState.name + " | " + schemeState.name + " proposals | Managed on Alchemy by DAOstack"} />
+          <meta name="twitter:description" content={daoState.name + " | " + schemeState.name + " proposals | Managed on Alchemy by DAOstack"} />
+        </Helmet>
 
         <Sticky enabled top={50} innerZ={10000}>
           <h2 className={css.schemeName}>
@@ -153,10 +159,11 @@ class SchemeContainer extends React.Component<IProps, IStateProps> {
             <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
               <a className={
                 classNames({
+                  [css.createProposal]: true,
                   [css.disabled]: !isActive,
                 })}
               data-test-id="createProposal"
-              href="javascript:void(0)"
+              href="#!"
               onClick={isActive ? this.handleNewProposal : null}
               >
             + New { `${this.state.crxRewarderProps ? this.state.crxRewarderProps.contractName : schemeFriendlyName } `}Proposal</a>

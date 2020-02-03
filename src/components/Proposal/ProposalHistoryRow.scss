@@ -7,11 +7,13 @@
   position: relative;
   font-size: 13px;
   font-family: $body-font;
+  cursor: pointer;
 }
 
 .proposalCreator {
   width: auto;
   padding-left: 7px;
+  cursor: default;
 }
 
 .endDate {

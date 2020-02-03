@@ -1,4 +1,4 @@
-import { ICompetitionProposal, Competition, CompetitionSuggestion, ICompetitionSuggestion, CompetitionVote, Address } from "@daostack/client";
+import { ICompetitionProposalState, Competition, CompetitionSuggestion, ICompetitionSuggestionState, CompetitionVote, Address } from "@daostack/client";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 
@@ -6,71 +6,102 @@ import moment = require("moment");
 import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
-import { Observable, of, from } from "rxjs";
+import { Observable, of } from "rxjs";
 import { map, mergeMap, toArray, first } from "rxjs/operators";
 
-export interface ICompetitionStatus {
-  complete: boolean;
-  endTime: moment.Moment;
-  now: moment.Moment;
-  open: boolean;
-  paused: boolean;
-  startTime: moment.Moment;
-  submissionsEndTime: moment.Moment;
-  text: string;
-  voting: boolean;
-  votingStartTime: moment.Moment;
+/**
+ * Defined in the order that Competition cards should be sorted in the List component.
+ * The string values are how the stati should appear in the GUI.
+ */
+export enum CompetitionStatusEnum {
+  Voting = "Voting started!",
+  Paused = "Paused",
+  OpenForSubmissions = "Open for submissions",
+  NotOpenYet = "Not open yet",
+  EndingNoSubmissions = "Ending, no submissions",
+  Ended = "Ended with winners",
+  EndedNoWinners = "Ended, no winners",
+  EndedNoSubmissions = "Ended, no submissions",
+}
+
+export class CompetitionStatus {
+  constructor(
+    public status: CompetitionStatusEnum,
+    public now: moment.Moment,
+    public competition: ICompetitionProposalState,
+    public hasWinners: boolean) {
+  }
+  public get notStarted() { return this.status === CompetitionStatusEnum.NotOpenYet; }
+  /**
+   * open for submissions
+   */
+  public get open() { return this.status === CompetitionStatusEnum.OpenForSubmissions; }
+  /**
+   * In between submissions and voting period, and there exist submissions.
+   */
+  public get paused() { return this.status === CompetitionStatusEnum.Paused; }
+  /**
+   * in voting period, but not implying there are any submissions
+   */
+  public get inVotingPeriod() { 
+    return this.now.isSameOrAfter(this.competition.votingStartTime) && (this.status !== CompetitionStatusEnum.Ended); 
+  }
+  /**
+   * in voting period and there are submissions
+   */
+  public get voting() { return this.status === CompetitionStatusEnum.Voting; }
+  /**
+   * Voting can no longer occur. Implies neither thatn any voting has occurred,
+   * nor the actual current stage (entire competition may or may not be over).
+   */
+  public get votingIsOver() { 
+    return ((this.status === CompetitionStatusEnum.Ended) || 
+            (this.status === CompetitionStatusEnum.EndedNoWinners) ||
+            (this.status === CompetitionStatusEnum.EndedNoSubmissions)); 
+  }
+  /**
+   * competition is over, with or without submissions or winners
+   */
+  public get over() { return this.now.isSameOrAfter(this.competition.endTime); }
+  /**
+   * Competition is over with winners
+   */
+  public get overWithWinners() { return this.status === CompetitionStatusEnum.Ended; }
+  public get text(): string { return this.status; }
 }
 
 export const competitionStatus = (
-  competition: ICompetitionProposal,
-  submissions: Array<ICompetitionSuggestion>): ICompetitionStatus => {
+  competition: ICompetitionProposalState,
+  submissions: Array<ICompetitionSuggestionState>): CompetitionStatus => {
 
   const now = moment();
   const startTime = moment(competition.startTime);
   const submissionsEndTime = moment(competition.suggestionsEndTime);
   const votingStartTime = moment(competition.votingStartTime);
   const endTime = moment(competition.endTime);
+  const hasWinners = !!submissions.filter((submission) => submission.isWinner).length;
 
-  let complete = false;
-  let voting = false;
-  let open = false;
-  let paused = false;
-  let text = "";
+  let status: CompetitionStatusEnum;
 
   if (now.isBefore(startTime)){
-    text = "Not open yet";
+    status = CompetitionStatusEnum.NotOpenYet;
   } else if (now.isBefore(votingStartTime)) {
     if (now.isSameOrAfter(submissionsEndTime)) {
-      paused = true;
-      text = "Paused";
+      status = submissions.length ? CompetitionStatusEnum.Paused : CompetitionStatusEnum.EndingNoSubmissions;
     } else {
-      open = true;
-      text = "Open for submissions";
+      status = CompetitionStatusEnum.OpenForSubmissions;
     }
   } else if (now.isBefore(endTime)) {
-    voting = true;
-    text = submissions.length ? "Voting started!" : "Ended, no submissions";
+    status = submissions.length ? CompetitionStatusEnum.Voting : CompetitionStatusEnum.EndingNoSubmissions;
   } else {
-    complete = true;
-    text = submissions.length ? "Ended" : "Ended, no submissions";
+    status = submissions.length ? (hasWinners ? CompetitionStatusEnum.Ended : CompetitionStatusEnum.EndedNoWinners) : CompetitionStatusEnum.EndedNoSubmissions;
   }
 
-  return {
-    complete,
-    endTime,
-    now,
-    open,
-    paused,
-    submissionsEndTime,
-    startTime,
-    text,
-    voting,
-    votingStartTime,
-  };
+  return new CompetitionStatus(status, now, competition, hasWinners);
 };
 
 export interface ICreateSubmissionOptions {
+  beneficiary?: Address;
   description: string;
   title: string;
   url: string;
@@ -135,59 +166,35 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkActi
  */
 export interface IGetSubmissionsOptions {
   id?: string; // id of the competition
-  suggestionId?: string; // the "suggestionId" is a counter that is unique to the scheme
+  suggestionId?: number; // the "suggestionId" is a counter that is unique to the scheme
   // - and is not to be confused with suggestion.id
 }
 
-
-// FAKE - until we have ICompetitionSuggestion.isWinner
-export interface ICompetitionSubmissionFake extends ICompetitionSuggestion {
-  isWinner: boolean;
-}
 
 const getSubmissions = (
   proposalId: string,
   options?: IGetSubmissionsOptions,
   subscribe = false
-): Observable<Array<ICompetitionSubmissionFake>> => {
-  // FAKE -- until we have IProposalState.competition.suggestions()
+): Observable<Array<ICompetitionSuggestionState>> => {
   const competition = new Competition(proposalId, getArc());
-  const arc = getArc();
   // fetchAllData so .state() comes from cache
   return competition.suggestions({ where: options }, { subscribe, fetchAllData: true })
     .pipe(
-      // FAKE - until https://github.com/daostack/client/issues/351 is complete and we know whether `isWinner()` is still good
       mergeMap(submissions => of(submissions).pipe(
         mergeMap(submissions => submissions),
-        // FAKE - competition.suggestions is supposed to return CompetitionSubmission[], but doesn't (https://github.com/daostack/client/issues/372)
-        map(submission => new CompetitionSuggestion(submission.id, arc)),
-        mergeMap((submission: CompetitionSuggestion) => {
-          return from((submission).isWinner().then((isWinner: boolean) => {
-            return { submission, isWinner };
-          }));
-        }),
-        // get the state so we can return ICompetitionSuggestion
-        mergeMap((fakeData: {submission: CompetitionSuggestion; isWinner: boolean }) => {
-          return fakeData.submission.state().pipe(first()).pipe(
-            map((submissionState: ICompetitionSuggestion) =>  {
-              const submissionX = submissionState as unknown as ICompetitionSubmissionFake;
-              submissionX.isWinner = fakeData.isWinner;
-              return submissionX;
-            })
-          );
-        }),
+        mergeMap((submission: CompetitionSuggestion) => submission.state().pipe(first())),
         toArray()
       ))
     );
 };
 
-export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestion>> => {
+export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestionState>> => {
   return getSubmissions(proposalId, undefined, subscribe);
 };
 
-export const getProposalSubmission = (proposalId: string, id: string, subscribe = false): Observable<ICompetitionSuggestion> => {
+export const getProposalSubmission = (proposalId: string, id: string, subscribe = false): Observable<ICompetitionSuggestionState> => {
   return getSubmissions(proposalId, { id }, subscribe).pipe(
-    map((suggestions: Array<ICompetitionSuggestion>) => suggestions.length ? suggestions[0]: null ));
+    map((suggestions: Array<ICompetitionSuggestionState>) => suggestions.length ? suggestions[0]: null ));
 };
 
 export const getCompetitionVotes = (competitionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
@@ -202,6 +209,9 @@ export const getSubmissionVotes = (submissionId: string, voterAddress?: Address,
 };
 
 export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: string, subscribe = false): Observable<boolean> => {
+  if (!voterAddress) {
+    return of(false);
+  }
   // submissionId is the actual id, not the count
   return getSubmissionVotes(submissionId, voterAddress, subscribe)
     .pipe(map((votes: Array<CompetitionVote>) => !!votes.length));
