@@ -112,7 +112,7 @@ class SchemeContainer extends React.Component<IProps, null> {
                   [css.disabled]: !isActive,
                 })}
               data-test-id="createProposal"
-              href="javascript:void(0)"
+              href="#!"
               onClick={isActive ? this.handleNewProposal : null}
               >+ New proposal</a>
             </TrainingTooltip>
