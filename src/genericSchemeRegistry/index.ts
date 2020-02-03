@@ -9,6 +9,7 @@ const gpInfo = require("./schemes/GenesisProtocol.json");
 const ensRegistryInfo = require("./schemes/ENSRegistry.json");
 const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
 const registryLookupInfo = require("./schemes/RegistryLookup.json");
+const signals = require("./schemes/Signals.json")
 
 const KNOWNSCHEMES = [
   dutchXInfo,
@@ -16,6 +17,7 @@ const KNOWNSCHEMES = [
   ensPublicResolverInfo,
   gpInfo,
   registryLookupInfo,
+  signals,
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
