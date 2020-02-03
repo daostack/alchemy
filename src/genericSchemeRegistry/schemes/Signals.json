@@ -1,0 +1,130 @@
+{
+  "name": "Signals Scheme",
+  "addresses": {
+    "main": [
+      "0xe06d896da40b73cb02650220e480e20f38e7be18"
+    ],
+    "rinkeby": [
+      "0xe06d896da40b73cb02650220e480e20f38e7be18"
+    ],
+    "private": [
+      "0xe06d896da40b73cb02650220e480e20f38e7be18"
+    ]
+  },
+  "actions": [
+    {
+      "id": "createSignalType",
+      "label": "Create Signal Attribute",
+      "description": "Create a signal attribute",
+      "notes": "docs/link",
+      "fields": [
+        {
+          "name": "approved",
+          "defaultValue": 1,
+          "label": "Update data of the selected signal type",
+          "labelTrue": "Name",
+          "labelFalse": "Description"
+        },
+        {
+          "label": "Signal Data",
+          "name": "signalData",
+          "placeholder": "Data (Name, Description)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "approved",
+            "type": "bool"
+          },
+          {
+            "name": "signalType",
+            "type": "string"
+          }
+        ],
+        "name": "updateSignalData",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "updateSignalType",
+      "label": "Update Signal Attribute",
+      "description": "Update a signal attribute",
+      "notes": "docs/link",
+      "fields": [
+        {
+          "name": "approved",
+          "defaultValue": 1,
+          "label": "Update data of the selected signal type",
+          "labelTrue": "Name",
+          "labelFalse": "Description"
+        },
+        {
+          "label": "Signal Data",
+          "name": "signalData",
+          "placeholder": "Data (Name, Description)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "approved",
+            "type": "bool"
+          },
+          {
+            "name": "signalType",
+            "type": "string"
+          }
+        ],
+        "name": "updateSignalData",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "deleteSignalType",
+      "label": "Delete Signal Attribute",
+      "description": "Delete a signal attribute",
+      "notes": "docs/link",
+      "fields": [
+        {
+          "name": "approved",
+          "defaultValue": 1,
+          "label": "Update data of the selected signal type",
+          "labelTrue": "Name",
+          "labelFalse": "Description"
+        },
+        {
+          "label": "Signal Data",
+          "name": "signalData",
+          "placeholder": "Data (Name, Description)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "approved",
+            "type": "bool"
+          },
+          {
+            "name": "signalType",
+            "type": "string"
+          }
+        ],
+        "name": "updateSignalData",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }
+  ]
+}
