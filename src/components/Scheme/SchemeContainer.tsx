@@ -32,7 +32,7 @@ interface IExternalProps extends RouteComponentProps<any> {
   daoState: IDAOState;
 }
 
-interface IExternalState {
+interface IStateProps {
   schemeId: Address;
 }
 
@@ -41,9 +41,9 @@ interface IState {
   crxRewarderProps: ICrxRewarderProps;
 }
 
-type IProps = IExternalProps & IDispatchProps & IExternalState & ISubscriptionProps<[ISchemeState, Array<IProposalState>]>;
+type IProps = IExternalProps & IDispatchProps & IStateProps & ISubscriptionProps<[ISchemeState, Array<IProposalState>]>;
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalState => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const match = ownProps.match;
 
   return {
