@@ -14,6 +14,7 @@ import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as arcActions from "actions/arcActions";
 
+import Analytics from "lib/analytics";
 import { isValidUrl } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
@@ -78,7 +79,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       tags: this.initialFormValues.tags,
     };
   }
-  
+
   private handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
@@ -117,6 +118,14 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       showNotification(NotificationStatus.Failure, err.message);
       throw err;
     }
+
+    Analytics.track("Submit Proposal", {
+      "DAO Address": this.props.daoAvatarAddress,
+      "Proposal Title": values.title,
+      "Scheme Address": this.props.scheme.address,
+      "Scheme Name": this.props.scheme.name,
+    });
+
     this.props.handleClose();
   }
 
@@ -201,7 +210,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
   private onTagsChange = (tags: any[]): void => {
     this.setState({tags});
   }
-  
+
   private setInititialFormValues(){
     this.initialFormValues = {
       description: "",
@@ -242,21 +251,21 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
   }
   public exportFormValues(values: IFormValues) {
     values = {
-      ...values, 
+      ...values,
       currentActionId: this.state.currentAction.id,
       ...this.state,
     };
     exportUrl(values);
     this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
   }
-  
+
   public render(): RenderOutput {
     const { handleClose } = this.props;
     const arc = getArc();
 
     const actions = this.state.actions;
     const currentAction = this.state.currentAction;
-    
+
     return (
       <div className={css.createWrapperWithSidebar}>
         <div className={css.sidebar}>

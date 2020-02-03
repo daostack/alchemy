@@ -2,24 +2,49 @@ import { promisify } from "util";
 import {
   Address,
   IContractInfo,
-  IContributionReward,
+  IProposalStage,
   IProposalState,
   IRewardState,
-  ISchemeState } from "@daostack/client";
+  ISchemeState} from "@daostack/client";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
 import BN = require("bn.js");
+/**
+ * gotta load moment in order to use moment-timezone directly
+ */
+import "moment";
+import * as moment from "moment-timezone";
+import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import { getArc } from "../arc";
 
-import moment = require("moment");
+
 const Web3 = require("web3");
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
 
 export function getExchangesList() {
   return exchangesList;
+}
+
+export function checkTotalPercent(split: any) {
+  let sum = 0;
+  for (const p of split) {
+    try {
+      sum += Number(p);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.warn(`Invalid percentage value passed: "${p}": ${err.message}`);
+    }
+  }
+  return (sum === 100.0);
+
+}
+
+export function addSeconds(date: Date, seconds: number) {
+  date.setTime(date.getTime() + seconds);
+  return date;
 }
 
 export function copyToClipboard(value: any) {
@@ -31,9 +56,19 @@ export function copyToClipboard(value: any) {
   document.body.removeChild(el);
 }
 
-export function humanProposalTitle(proposal: IProposalState) {
-  return proposal.title ||
+export const truncateWithEllipses = (str: string, length: number): string => {
+  const ellipse = "...";
+  if (str.length > length) {
+    return str.substring(0, length - ellipse.length) + ellipse;
+  } else {
+    return str;
+  }
+};
+
+export function humanProposalTitle(proposal: IProposalState, truncateToLength=0) {
+  const title = proposal.title ||
     "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
+  return truncateToLength ? truncateWithEllipses(title, truncateToLength): title;
 }
 
 // Convert a value to its base unit based on the number of decimals passed in (i.e. WEI if 18 decimals)
@@ -192,6 +227,8 @@ export const KNOWN_SCHEME_NAMES = [
   "ReputationFromToken",
   "SchemeRegistrar",
   "UGenericScheme",
+  "Competition",
+  "ContributionRewardExt",
 ];
 
 export const PROPOSAL_SCHEME_NAMES = [
@@ -199,6 +236,8 @@ export const PROPOSAL_SCHEME_NAMES = [
   "GenericScheme",
   "SchemeRegistrar",
   "UGenericScheme",
+  "Competition",
+  "ContributionRewardExt",
 ];
 
 /**
@@ -254,8 +293,12 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
   } else if (scheme.name === "SchemeRegistrar") {
     name ="Plugin Manager";
   } else if (scheme.name) {
-    // add spaces before capital letters to approximate a human-readable title
-    name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;
+    if (scheme.name === "ContributionRewardExt") {
+      name = rewarderContractName(scheme as ISchemeState);
+    } else {
+      // add spaces before capital letters to approximate a human-readable title
+      name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;
+    }
   } else {
     name = fallback;
   }
@@ -409,8 +452,14 @@ export function hasGpRewards(reward: IRewardState) {
  * @param  reward unredeemed CR rewards
  * @param daoBalances
  */
-export function getCRRewards(reward: IContributionReward, daoBalances: { [key: string]: BN|null } = {}): AccountClaimableRewardsType {
+export function getCRRewards(proposalState: IProposalState, daoBalances: { [key: string]: BN|null } = {}): AccountClaimableRewardsType {
   const result: AccountClaimableRewardsType = {};
+
+  if (proposalState.stage === IProposalStage.ExpiredInQueue) {
+    return {};
+  }
+
+  const reward = proposalState.contributionReward;
   if (
     reward.ethReward &&
     !reward.ethReward.isZero()
@@ -447,6 +496,16 @@ export function getCRRewards(reward: IContributionReward, daoBalances: { [key: s
     result["externalToken"] = reward.externalTokenReward;
   }
   return result;
+}
+
+export function hasCrRewards(reward: IProposalState) {
+  const claimableRewards = getCRRewards(reward);
+  for (const key of Object.keys(claimableRewards)) {
+    if (claimableRewards[key].gt(new BN(0))) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export function splitByCamelCase(str: string) {
@@ -559,4 +618,43 @@ export function arrayRemove(arr: any[], value: any) {
   return arr.filter(function(ele){
     return ele !== value;
   });
+}
+
+const localTimezone = moment.tz.guess();
+
+export function getDateWithTimezone(date: Date|moment.Moment): moment.Moment {
+  return moment.tz(date.toISOString(), localTimezone); 
+}
+
+const tzFormat = "z (Z)";
+const dateFormat = `MMM DD, YYYY HH:mm ${tzFormat}`;
+/**
+ * looks like: "17:30 EST (-05:00) Dec 31, 2019"
+ * @param date 
+ */
+export function formatFriendlyDateForLocalTimezone(date: Date|moment.Moment): string {
+  return getDateWithTimezone(date).format(dateFormat);
+}
+/**
+ * looks like: "EST (-05:00)"
+ */
+export function getLocalTimezone(): string {
+  return getDateWithTimezone(new Date()).format(tzFormat);
+}
+
+export function ensureHttps(url: string) {
+
+  if (url) {
+    const pattern = /^((http|https):\/\/)/;
+
+    if(!pattern.test(url)) {
+      url = "https://" + url;
+    }
+  }
+
+  return url;
+}
+
+export function inTesting(): boolean {
+  return (process.env.NODE_ENV === "development" && navigator.webdriver);
 }

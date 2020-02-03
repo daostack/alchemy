@@ -23,8 +23,9 @@ const config = merge(baseConfig, {
 
   output: {
     filename: "[name].bundle-[hash:8].js",
+    chunkFilename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/'
+    publicPath: '/',
   },
 
   optimization: {
@@ -37,6 +38,7 @@ const config = merge(baseConfig, {
       })
     ],
     splitChunks: {
+      chunks: 'all',
       cacheGroups: {
         // "ipfs-http-client": {
         //   chunks: "initial",
@@ -89,8 +91,9 @@ plugins: [
       chunkFilename: "[id].[hash].css",
       modules: true
     }),
+
     new webpack.EnvironmentPlugin({
-      NODE_ENV: "production", 
+      NODE_ENV: "production",
       BASE_URL: "https://alchemy.daostack.io",
       DISQUS_SITE: 'daostack-alchemy',
       ARC_GRAPHQLHTTPPROVIDER: "",
@@ -102,7 +105,9 @@ plugins: [
       ARC_IPFSPROVIDER_PORT : "",
       ARC_IPFSPROVIDER_PROTOCOL : "",
       ARC_IPFSPROVIDER_API_PATH : "",
+      MIXPANEL_TOKEN: "",
     }),
+
     new CopyWebpackPlugin([
       { from: 'src/assets', to: 'assets' }
     ]),

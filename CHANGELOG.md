@@ -3,8 +3,25 @@
   - Bugs Fixed
 
 ## Next release
+
   - Features Added
   - Bugs Fixed
+
+# 2020-02-03
+  - Features Added
+    - Support for Competitions
+    - MixPanel Support
+
+  - Bugs Fixed
+    - representation of durations in schmeme info page
+    - fix plugin manager form
+    - do not show the redeem button for expired proposals
+    - optimize the bundle size 
+    - support new ABI for ReputationFromToken 
+    - add mixpanel support
+    - upgrade client to version 0.2.56 (which includes various fixes, and competition support)
+    - upgrade subgraph to v37_2 (which included various fixes, and competition supprt)
+    - add new ENS registry address
 
 ## 2020-01-22
 

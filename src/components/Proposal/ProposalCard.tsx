@@ -1,10 +1,11 @@
 import { Address, IDAOState, IProposalStage, Vote, Proposal } from "@daostack/client";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
-import Countdown from "components/Shared/Countdown";
+import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
 import { humanProposalTitle } from "lib/util";
+import { Page } from "pages";
 import * as React from "react";
 import TrackVisibility from "react-on-screen";
 import { Link } from "react-router-dom";
@@ -113,7 +114,9 @@ export default class ProposalCard extends React.Component<IProps, null> {
               currentVote={currentAccountVote}
               dao={daoState}
               expired={expired}
-              proposal={proposal} />
+              proposal={proposal}
+              parentPage={Page.SchemeProposals}
+            />
           </div>
         </div>;
 
@@ -133,18 +136,19 @@ export default class ProposalCard extends React.Component<IProps, null> {
               expired={expired}
               proposal={proposal}
               stakes={stakes}
+              parentPage={Page.SchemeProposals}
             />
           </div>
         </div>;
 
         return <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
-          <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id}>
-            <div className={css.proposalInfo}>
-              <div className={css.cardTop + " clearfix"}>
+          <div className={css.proposalInfo}>
+            <div className={css.cardTop + " clearfix"}>
+              <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id}>
                 <div className={css.timer}>
                   <span className={css.content}>
                     {!expired
-                      ? <Countdown proposal={proposal} detailView={false} />
+                      ? <ProposalCountdown proposal={proposal} detailView={false} />
                       : <span className={css.closedTime}>
                         {proposal.stage === IProposalStage.Queued ? "Expired" :
                           proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
@@ -154,57 +158,64 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     }
                   </span>
                 </div>
+              </Link>
 
-                <div className={css.actionButton}>
-                  <ActionButton
-                    currentAccountAddress={currentAccountAddress}
-                    daoState={daoState}
-                    daoEthBalance={daoEthBalance}
-                    proposalState={proposal}
-                    rewards={rewards}
-                    expired={expired}
-                  />
+              <div className={css.actionButton}>
+                <ActionButton
+                  currentAccountAddress={currentAccountAddress}
+                  daoState={daoState}
+                  daoEthBalance={daoEthBalance}
+                  proposalState={proposal}
+                  rewards={rewards}
+                  expired={expired}
+                  parentPage={Page.SchemeProposals}
+                />
 
-                  <div onClick={this.stopClick} className={css.contextMenu} data-test-id="proposalContextMenu">
-                    <div className={css.menuIcon}>
-                      <img src="/assets/images/Icon/Context-menu.svg"/>
-                    </div>
-                    <TrackVisibility partialVisibility={false} offset={-116}>{({ isVisible }) =>
-                      <div className={classNames({[css.menu]: true, [css.leftMenu]: !isVisible })}>
-                        <div className={css.followButton}>
-                          <FollowButton id={proposal.id} type="proposals" />
-                        </div>
-
-                        <VoteButtons
-                          currentAccountAddress={currentAccountAddress}
-                          currentAccountState={member}
-                          currentVote={currentAccountVote}
-                          dao={daoState}
-                          expired={expired}
-                          proposal={proposal}
-                          contextMenu/>
-
-                        <StakeButtons
-                          beneficiaryProfile={beneficiaryProfile}
-                          contextMenu
-                          currentAccountAddress={currentAccountAddress}
-                          currentAccountGens={currentAccountGenBalance}
-                          currentAccountGenStakingAllowance={currentAccountGenAllowance}
-                          dao={daoState}
-                          expired={expired}
-                          proposal={proposal}
-                          stakes={stakes}
-                        />
-                      </div>
-                    }
-                    </TrackVisibility>
+                <div onClick={this.stopClick} className={css.contextMenu} data-test-id="proposalContextMenu">
+                  <div className={css.menuIcon}>
+                    <img src="/assets/images/Icon/Context-menu.svg"/>
                   </div>
+                  <TrackVisibility partialVisibility={false} offset={-116}>{({ isVisible }) =>
+                    <div className={classNames({[css.menu]: true, [css.leftMenu]: !isVisible })}>
+                      <div className={css.followButton}>
+                        <FollowButton id={proposal.id} type="proposals" />
+                      </div>
+
+                      <VoteButtons
+                        currentAccountAddress={currentAccountAddress}
+                        currentAccountState={member}
+                        currentVote={currentAccountVote}
+                        dao={daoState}
+                        expired={expired}
+                        proposal={proposal}
+                        contextMenu
+                        parentPage={Page.SchemeProposals}
+                      />
+
+                      <StakeButtons
+                        beneficiaryProfile={beneficiaryProfile}
+                        contextMenu
+                        currentAccountAddress={currentAccountAddress}
+                        currentAccountGens={currentAccountGenBalance}
+                        currentAccountGenStakingAllowance={currentAccountGenAllowance}
+                        dao={daoState}
+                        expired={expired}
+                        proposal={proposal}
+                        stakes={stakes}
+                        parentPage={Page.SchemeProposals}
+                      />
+                    </div>
+                  }
+                  </TrackVisibility>
                 </div>
               </div>
-              <div className={css.createdBy}>
-                <AccountPopup accountAddress={proposal.proposer} daoState={daoState} width={12} />
-                <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
-              </div>
+            </div>
+            <div className={css.createdBy}>
+              <AccountPopup accountAddress={proposal.proposer} daoState={daoState} width={12} />
+              <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
+            </div>
+
+            <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id}>
               <div className={css.description}>
                 {proposal.description}
               </div>
@@ -216,27 +227,29 @@ export default class ProposalCard extends React.Component<IProps, null> {
               { tags && tags.length ? <div className={css.tagsContainer}>
                 <TagsSelector readOnly tags={tags}></TagsSelector>
               </div> : "" }
+            </Link>
 
-              <div className={css.summary}>
-                <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView={false} />
-              </div>
+            <div className={css.summary}>
+              <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView={false} />
+            </div>
 
+          </div>
+
+          <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id}>
+            <div className={css.proposalActions + " clearfix"}>
+              { this.props.suppressTrainingTooltips ? votingHtml :
+                (<TrainingTooltip placement="topLeft" overlay={"Percentage of voting power currently voting for and against"}>
+                  {votingHtml}
+                </TrainingTooltip>)
+              }
+
+              { this.props.suppressTrainingTooltips ? stakingHtml :
+                (<TrainingTooltip placement="right" overlay={"GEN tokens staked to predict the proposal will pass or fail"}>
+                  {stakingHtml}
+                </TrainingTooltip>)
+              }
             </div>
           </Link>
-
-          <div className={css.proposalActions + " clearfix"}>
-            { this.props.suppressTrainingTooltips ? votingHtml :
-              (<TrainingTooltip placement="topLeft" overlay={"Percentage of voting power currently voting for and against"}>
-                {votingHtml}
-              </TrainingTooltip>)
-            }
-
-            { this.props.suppressTrainingTooltips ? stakingHtml :
-              (<TrainingTooltip placement="right" overlay={"GEN tokens staked to predict the proposal will pass or fail"}>
-                {stakingHtml}
-              </TrainingTooltip>)
-            }
-          </div>
         </div>;
       }
       }

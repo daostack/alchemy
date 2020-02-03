@@ -1,5 +1,5 @@
 import { IDAOState, IProposalState } from "@daostack/client";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
 import { linkToEtherScan } from "lib/util";
 import * as React from "react";

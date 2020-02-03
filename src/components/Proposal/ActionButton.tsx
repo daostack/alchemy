@@ -1,9 +1,11 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Token, IProposalOutcome } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Token } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import { getCRRewards, getGpRewards, ethErrorHandler, fromWei } from "lib/util";
+import Analytics from "lib/analytics";
+import { AccountClaimableRewardsType, getCRRewards, getGpRewards, ethErrorHandler, fromWei } from "lib/util";
+import { Page } from "pages";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -23,6 +25,7 @@ interface IExternalProps {
   daoEthBalance: BN;
   detailView?: boolean;
   expanded?: boolean;
+  parentPage: Page;
   proposalState: IProposalState;
   /**
    * unredeemed GP rewards owed to the current account
@@ -70,12 +73,25 @@ class ActionButton extends React.Component<IProps, IState> {
     this.handleRedeemProposal = this.handleRedeemProposal.bind(this);
   }
 
-  private handleClickExecute = async (e: any): Promise<void> => {
+  private handleClickExecute = (type: string) => async (e: any): Promise<void> => {
     e.preventDefault();
 
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    await this.props.executeProposal(this.props.daoState.address, this.props.proposalState.id, this.props.currentAccountAddress);
+    const { currentAccountAddress, daoState, parentPage, proposalState } = this.props;
+
+    await this.props.executeProposal(daoState.address, proposalState.id, currentAccountAddress);
+
+    Analytics.track("Transition Proposal", {
+      "DAO Address": daoState.address,
+      "DAO Name": daoState.name,
+      "Origin": parentPage,
+      "Proposal Hash": proposalState.id,
+      "Proposal Title": proposalState.title,
+      "Scheme Address": proposalState.scheme.address,
+      "Scheme Name": proposalState.scheme.name,
+      "Type": type,
+    });
   }
 
   private handleClickRedeem = async (e: any): Promise<void> => {
@@ -97,9 +113,9 @@ class ActionButton extends React.Component<IProps, IState> {
       data,
       daoState,
       daoEthBalance,
-      detailView,
       expired,
       expanded,
+      parentPage,
       proposalState,
       /**
        * unredeemed GP rewards owed to the current account
@@ -137,12 +153,12 @@ class ActionButton extends React.Component<IProps, IState> {
       /**
        * unredeemed by the beneficiary
        */
-      contributionRewards = getCRRewards(proposalState.contributionReward);
+      contributionRewards = getCRRewards(proposalState);
       beneficiaryNumUnredeemedCrRewards = Object.keys(contributionRewards).length;
       /**
        * unredeemed and available to the beneficiary
        */
-      const availableCrRewards = getCRRewards(proposalState.contributionReward, daoBalances);
+      const availableCrRewards = getCRRewards(proposalState, daoBalances);
       // only true if there are rewards and the DAO can't pay them. false if there are no rewards or they can be paid.
       daoLacksRequiredCrRewards = Object.keys(availableCrRewards).length < beneficiaryNumUnredeemedCrRewards;
       daoLacksAllRequiredCrRewards = (Object.keys(availableCrRewards).length === 0) && (beneficiaryNumUnredeemedCrRewards > 0);
@@ -194,7 +210,7 @@ class ActionButton extends React.Component<IProps, IState> {
 
     const wrapperClass = classNames({
       [css.wrapper]: true,
-      [css.detailView]: detailView,
+      [css.detailView]: parentPage === Page.ProposalDetails,
       [css.expanded]: expanded,
     });
 
@@ -203,10 +219,11 @@ class ActionButton extends React.Component<IProps, IState> {
         {this.state.preRedeemModalOpen ?
           <PreTransactionModal
             actionType={ActionTypes.Redeem}
-            action={this.handleRedeemProposal}
+            action={this.handleRedeemProposal(contributionRewards, gpRewards)}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreRedeemModal}
             dao={daoState}
+            parentPage={parentPage}
             effectText={redemptionsTip}
             proposal={proposalState}
             multiLineMsg
@@ -214,23 +231,23 @@ class ActionButton extends React.Component<IProps, IState> {
         }
 
         { proposalState.stage === IProposalStage.Queued && proposalState.upstakeNeededToPreBoost.lt(new BN(0)) ?
-          <button className={css.preboostButton} onClick={this.handleClickExecute} data-test-id="buttonBoost">
+          <button className={css.preboostButton} onClick={this.handleClickExecute("Pre-Boost")} data-test-id="buttonBoost">
             <img src="/assets/images/Icon/boost.svg"/>
             { /* space after <span> is there on purpose */ }
             <span> Pre-Boost</span>
           </button> :
           proposalState.stage === IProposalStage.PreBoosted && expired && proposalState.downStakeNeededToQueue.lte(new BN(0)) ?
-            <button className={css.unboostButton} onClick={this.handleClickExecute} data-test-id="buttonBoost">
+            <button className={css.unboostButton} onClick={this.handleClickExecute("Un-boost")} data-test-id="buttonBoost">
               <img src="/assets/images/Icon/boost.svg"/>
               <span> Un-Boost</span>
             </button> :
             proposalState.stage === IProposalStage.PreBoosted && expired ?
-              <button className={css.boostButton} onClick={this.handleClickExecute} data-test-id="buttonBoost">
+              <button className={css.boostButton} onClick={this.handleClickExecute("Boost")} data-test-id="buttonBoost">
                 <img src="/assets/images/Icon/boost.svg"/>
                 <span> Boost</span>
               </button> :
               (proposalState.stage === IProposalStage.Boosted || proposalState.stage === IProposalStage.QuietEndingPeriod) && expired ?
-                <button className={css.executeButton} onClick={this.handleClickExecute}>
+                <button className={css.executeButton} onClick={this.handleClickExecute("Execute")}>
                   <img src="/assets/images/Icon/execute.svg"/>
                   { /* space after <span> is there on purpose */ }
                   <span> Execute</span>
@@ -261,8 +278,7 @@ class ActionButton extends React.Component<IProps, IState> {
     );
   }
 
-  private async handleRedeemProposal(): Promise<void> {
-
+  private handleRedeemProposal = (contributionRewards: AccountClaimableRewardsType, gpRewards: AccountClaimableRewardsType) => async (): Promise<void> => {
     // may not be required, but just in case
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
@@ -274,6 +290,21 @@ class ActionButton extends React.Component<IProps, IState> {
     } = this.props;
 
     await redeemProposal(daoState.address, proposalState.id, currentAccountAddress);
+
+    Analytics.track("Redeem", {
+      "DAO Address": daoState.address,
+      "DAO Name": daoState.name,
+      "Proposal Hash": proposalState.id,
+      "Proposal Title": proposalState.title,
+      "Scheme Address": proposalState.scheme.address,
+      "Scheme Name": proposalState.scheme.name,
+      "Reputation Requested": fromWei(contributionRewards.reputationReward),
+      "ETH Requested": fromWei(contributionRewards.ethReward),
+      "External Token Requested": fromWei(contributionRewards.externalTokenReward),
+      "DAO Token Requested": fromWei(contributionRewards.nativeTokenReward),
+      "GEN for staking": fromWei((gpRewards.daoBountyForStaker as BN).add(gpRewards.tokensForStaker)),
+      "GP Reputation Flow": fromWei((gpRewards.reputationForVoter as BN).add(gpRewards.reputationForProposer)),
+    });
   }
 }
 

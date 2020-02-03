@@ -73,7 +73,7 @@ class UserSearchField extends React.Component<IProps, IState> {
       const memberState = await member.state().pipe(first()).toPromise();
       const profile = this.props.profiles[memberState.address];
 
-      if (profile && (profile.name.includes(inputValue) || profile.ethereumAccountAddress.includes(inputValue))) {
+      if (profile && ((profile.name && profile.name.includes(inputValue)) || profile.ethereumAccountAddress.includes(inputValue))) {
         suggestedProfiles.push(profile);
       }
     }));
@@ -100,7 +100,7 @@ class UserSearchField extends React.Component<IProps, IState> {
         <span className={css.suggestionAvatar}>
           <AccountImage accountAddress={suggestion.ethereumAccountAddress} profile={suggestion} width={24} />
         </span>
-        <span className={css.suggestionText}>{suggestion.name + " " + suggestion.ethereumAccountAddress}</span>
+        <span className={css.suggestionText}>{(suggestion.name || "[No name]") + " " + suggestion.ethereumAccountAddress}</span>
       </span>
     );
   }
@@ -120,7 +120,7 @@ class UserSearchField extends React.Component<IProps, IState> {
       "name": this.props.name,
       "onBlur": this.handleBlur,
       "onChange": this.handleChange,
-      "placeholder": "name / public key",
+      "placeholder": "Name or public key",
       value,
     };
 

@@ -3,6 +3,8 @@ import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
+import Analytics from "lib/analytics";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
@@ -23,6 +25,14 @@ type SubscriptionData = Proposal[];
 type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 class DaoHistoryPage extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": Page.DAOHistory,
+      "DAO Address": this.props.daoState.address,
+      "DAO Name": this.props.daoState.name,
+    });
+  }
 
   public render(): RenderOutput {
     const { data, hasMoreToLoad, fetchMore, daoState, currentAccountAddress } = this.props;
