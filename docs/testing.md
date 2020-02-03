@@ -4,7 +4,7 @@
 
 ```sh
 npm run test:integration
-npm run test:integration -- --spec test/integration/profile.ts # run a specific test
+npm run test:integration -- --spec profile.ts # run a specific test
 
 ```
 

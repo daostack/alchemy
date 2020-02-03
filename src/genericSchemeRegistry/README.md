@@ -5,7 +5,7 @@ One of the most flexible DAOstack schemes is the `GenericScheme`.
 
 This is a scheme in which proposals can be made to execute any transaction on-chain.
 
-Alchemy contains a system with which is is relatively easy to build an interface for interacting with any GenericScheme, and to generate forms such as the (dutchX controller form)[https://alchemy.daostack.io/dao/0x519b70055af55a007110b4ff99b0ea33071c720a/scheme/0xeca5415360191a29f12e1da442b9b050adf22c81b08230f1dafba908767e604f/proposals/create/]
+Alchemy contains a system with which is is relatively easy to build an interface for interacting with any GenericScheme, and to generate forms such as the [dutchX controller form](https://alchemy.daostack.io/dao/0x519b70055af55a007110b4ff99b0ea33071c720a/scheme/0xeca5415360191a29f12e1da442b9b050adf22c81b08230f1dafba908767e604f/proposals/create/)
 
 
 # Registering the scheme in a DAOstack
@@ -18,7 +18,7 @@ A GenericScheme instance is always registered for a single contract - i.e. it ca
 
 Alchemy contains a system for generating forms for creating proposals in a Generic Scheme.
 You can add your own scheme by adding your Generic Scheme to the registry.
-(At the moment, the registry is a directory in Alchemy: https://github.com/daostack/alchemy/tree/dev/src/genericSchemeRegistry/schemes but in the future this may be moved to another location).
+(At the moment, the registry is a [directory in Alchemy](https://github.com/daostack/alchemy/tree/dev/src/genericSchemeRegistry/schemes), but in the future this may be moved to another location).
 
 The steps to take are as follows:
 

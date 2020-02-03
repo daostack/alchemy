@@ -5,7 +5,6 @@ import { toWei } from "lib/util";
 import { IRedemptionState } from "lib/proposalHelpers";
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
-import { Dispatch } from "redux";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 
@@ -15,7 +14,7 @@ export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarA
  * // @ts-ignore
  * transaction.send().observer(...operationNotifierObserver(dispatch, "Whatever"))
  */
-const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescription = ""): [(update: ITransactionUpdate<any>) => void, (err: Error) => void] => {
+export const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescription = ""): [(update: ITransactionUpdate<any>) => void, (err: Error) => void] => {
   return [
     (update: ITransactionUpdate<any>) => {
       let msg: string;
@@ -57,7 +56,7 @@ export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAc
 }
 
 export function executeProposal(avatarAddress: string, proposalId: string, _accountAddress: string) {
-  return async (dispatch: Dispatch<any, any>) => {
+  return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
     const proposalObj = await arc.dao(avatarAddress).proposal(proposalId);
@@ -154,11 +153,12 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
 
     if (privateKey) {
       const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
+      const agreementHash = await reputationFromTokenScheme.getAgreementHash();
       const state = await reputationFromTokenScheme.scheme.fetchStaticState();
       const contract =  arc.getContract(state.address);
       const block = await arc.web3.eth.getBlock("latest");
       const gas = block.gasLimit - 100000;
-      const redeemMethod = contract.methods.redeem(addressToRedeem);
+      const redeemMethod = contract.methods.redeem(addressToRedeem, agreementHash);
       let gasPrice = await arc.web3.eth.getGasPrice();
       gasPrice = gasPrice * 1.2;
       const txToSign = {
@@ -190,7 +190,8 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
 
       // send the transaction and get notifications
       if (reputationFromTokenScheme) {
-        reputationFromTokenScheme.redeem(addressToRedeem).subscribe(...observer);
+        const agreementHash = await reputationFromTokenScheme.getAgreementHash();
+        reputationFromTokenScheme.redeem(addressToRedeem, agreementHash).subscribe(...observer);
       }
     }
   };

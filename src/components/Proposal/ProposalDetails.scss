@@ -55,6 +55,23 @@ button.disabled {
   padding-right: 25px;
   position: relative;
 
+  .actionButtonContainer {
+    display: inline-block;
+    margin-right: 16px;
+  }
+
+  .gotoCompetition {
+    display: inline-block;
+
+    &.hidden {
+      display: none;
+    }
+    a {
+      white-space: nowrap;
+      color: #0071ff;
+    }
+  }
+
   a {
     color: $black;
   }

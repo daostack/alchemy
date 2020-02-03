@@ -1,6 +1,15 @@
 import * as Mixpanel from "mixpanel-browser";
 
-const doTracking = process.env.NODE_ENV === "staging" || process.env.NODE_ENV === "production";
+// const doTracking = process.env.NODE_ENV === "staging" || process.env.NODE_ENV === "production";
+const doTracking = (
+  (process.env.NODE_ENV === "staging" || process.env.NODE_ENV === "production") &&
+  (window.location.origin in [
+    "https://alchemy.daostack.io",
+    "https://alchemy-staging-rinkeby.herokuapp.com/",
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+  ])
+);
 
 const actions = {
   identify: (id: string) => {

@@ -2,7 +2,7 @@ import { Address, IDAOState, IProposalStage, Vote, Proposal } from "@daostack/cl
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
-import Countdown from "components/Shared/Countdown";
+import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
 import { humanProposalTitle } from "lib/util";
 import { Page } from "pages";
@@ -148,7 +148,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                 <div className={css.timer}>
                   <span className={css.content}>
                     {!expired
-                      ? <Countdown proposal={proposal} detailView={false} />
+                      ? <ProposalCountdown proposal={proposal} detailView={false} />
                       : <span className={css.closedTime}>
                         {proposal.stage === IProposalStage.Queued ? "Expired" :
                           proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
