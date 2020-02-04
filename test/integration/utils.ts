@@ -7,8 +7,8 @@ const settings = {
   web3Provider: "ws://127.0.0.1:8545",
   web3ProviderRead: "ws://127.0.0.1:8545",
   ipfsProvider: "http://127.0.0.1:5001/api/v0",
-  txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx"
-}
+  txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
+};
 
 const chai = require("chai");
 

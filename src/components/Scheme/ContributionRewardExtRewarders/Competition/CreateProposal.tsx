@@ -81,6 +81,7 @@ const CustomDateInput: React.SFC<any> = ({ field, form }) => {
     form.setFieldValue(field.name, date);
     return true;
   };
+
   return <Datetime
     value={field.value}
     onChange={onChange}
@@ -260,22 +261,38 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             const votingStartTimeInput = values.votingStartTimeInput;
             const suggestionEndTimeInput = values.suggestionEndTimeInput;
 
-            if (compStartTimeInput && compStartTimeInput.isSameOrBefore(now)) {
-              errors.compStartTimeInput = "Competition must start in the future";
+            if (!(compStartTimeInput instanceof moment)) {
+              errors.compStartTimeInput = "Invalid datetime format";
+            } else {
+              if (compStartTimeInput && compStartTimeInput.isSameOrBefore(now)) {
+                errors.compStartTimeInput = "Competition must start in the future";
+              }
+            }
+            
+            if (!(suggestionEndTimeInput instanceof moment)) {
+              errors.suggestionEndTimeInput = "Invalid datetime format";
+            } else {
+              if (suggestionEndTimeInput && (suggestionEndTimeInput.isSameOrBefore(compStartTimeInput))) {
+                errors.suggestionEndTimeInput = "Submission period must end after competition starts";
+              }
             }
 
-            if (suggestionEndTimeInput && (suggestionEndTimeInput.isSameOrBefore(compStartTimeInput))) {
-              errors.suggestionEndTimeInput = "Submission period must end after competition starts";
+            if (!(votingStartTimeInput instanceof moment)) {
+              errors.votingStartTimeInput = "Invalid datetime format";
+            } else {
+              if (votingStartTimeInput && suggestionEndTimeInput && (votingStartTimeInput.isBefore(suggestionEndTimeInput))) {
+                errors.votingStartTimeInput = "Voting must start on or after submission period ends";
+              }
             }
-
-            if (votingStartTimeInput && suggestionEndTimeInput && (votingStartTimeInput.isBefore(suggestionEndTimeInput))) {
-              errors.votingStartTimeInput = "Voting must start on or after submission period ends";
+            
+            if (!(compEndTimeInput instanceof moment)) {
+              errors.compEndTimeInput = "Invalid datetime format";
+            } else {
+              if (compEndTimeInput && compEndTimeInput.isSameOrBefore(votingStartTimeInput)) {
+                errors.compEndTimeInput = "Competion must end after voting starts";
+              }
             }
-
-            if (compEndTimeInput && compEndTimeInput.isSameOrBefore(votingStartTimeInput)) {
-              errors.compEndTimeInput = "Competion must end after voting starts";
-            }
-
+            
             if (!isValidUrl(values.url)) {
               errors.url = "Invalid URL";
             }

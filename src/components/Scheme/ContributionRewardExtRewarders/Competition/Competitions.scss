@@ -526,16 +526,36 @@ a.blueButton {
   }
 
   .noWinners {
-    text-align: center;
-    font-size: 21px;
+    margin-bottom: 24px;
 
     .caption {
+      font-size: 23px;
+      width: 100%;
+      border-bottom: 1px solid #bfcbd5;
+      padding-bottom: 5px;
+      color: #689bd6;
       margin-bottom: 20px;
     }
 
     .body {
+      color: $black;
       display: block;
     }
+  }
+
+  .discussionContainer {
+    .title {
+      font-size: 23px;
+      color: #689bd6;
+      width: 100%;
+      border-bottom: 1px solid #bfcbd5;
+      padding-bottom: 5px;
+      margin-bottom: 16px;
+    }
+  }
+
+  .disqus {
+    padding: 15px;
   }
 }
 

@@ -1,3 +1,5 @@
+import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
+
 const WalletConnectProvider = require("@walletconnect/web3-provider");
 const Portis = require("@portis/web3");
 const Fortmatic = require("fortmatic");
@@ -40,6 +42,10 @@ export const settings = {
           infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
         },
       },
+      burnerconnect: {
+        package: BurnerConnectProvider,
+        options: { defaultNetwork: "4" },
+      },
       portis: {
         package: Portis,
         options: {
@@ -70,6 +76,10 @@ export const settings = {
     web3ConnectProviderOptions: {
       network: "mainnet",
     },
+    burnerconnect: {
+      package: BurnerConnectProvider,
+      options: { defaultNetwork: "100" },
+    },
   },
   mainnet: {
     graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/daostack/v37_3",
@@ -87,6 +97,10 @@ export const settings = {
         options: {
           infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
         },
+      },
+      burnerconnect: {
+        package: BurnerConnectProvider,
+        options: { defaultNetwork: "1" },
       },
       portis: {
         package: Portis,

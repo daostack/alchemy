@@ -6,6 +6,7 @@ import { IDAOState, IProposalState, ICompetitionSuggestionState, Address, Compet
 import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone } from "lib/util";
 import { connect } from "react-redux";
 
+import { DiscussionEmbed } from "disqus-react";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
 import { Link, RouteComponentProps } from "react-router-dom";
@@ -82,6 +83,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       status: this.getCompetitionState(),
     };
   }
+
+  private disqusConfig = { url: "", identifier: "", title: "" };
 
   private getCompetitionState = (): CompetitionStatus => {
     const competition = this.props.proposalState.competition;
@@ -251,6 +254,10 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const overWithWinners = status.overWithWinners;
     const canSubmit =  inSubmissions && proposalState.executedAt;
 
+    this.disqusConfig.title = proposalState.title;
+    this.disqusConfig.url = window.location.toString();
+    this.disqusConfig.identifier = `competition_${proposalState.id}`;
+
     return <React.Fragment>
       <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}/crx`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
       <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/crx/proposal/${proposalState.id}`}>{humanProposalTitle(proposalState, 40)}</BreadcrumbsItem>
@@ -340,6 +347,14 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         }
 
         { ((inVoting && !voting) || (isOver && !overWithWinners)) ? this.noWinnersHtml() : "" }
+
+        <div className={css.discussionContainer}>
+          <div className={css.title}>Discussion</div>
+          <div className={css.disqus}>
+            <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
+          </div>
+        </div>
+
       </div>
     
       {this.state.showingCreateSubmission ?

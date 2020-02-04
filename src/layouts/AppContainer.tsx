@@ -22,7 +22,7 @@ import { matchPath,Link, Route, RouteComponentProps, Switch } from "react-router
 import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification, INotification } from "reducers/notifications";
-import { getCachedAccount, cacheWeb3Info, uncacheWeb3Info, gotoReadonly, pollForAccountChanges } from "arc";
+import { getCachedAccount, cacheWeb3Info, logout, pollForAccountChanges } from "arc";
 import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
@@ -136,8 +136,7 @@ class AppContainer extends React.Component<IProps, IState> {
         if (newAddress) {
           cacheWeb3Info(newAddress);
         } else {
-          uncacheWeb3Info();
-          gotoReadonly(this.props.showNotification);
+          logout(this.props.showNotification);
 
           // TODO: save the threebox for each profile separately so we dont have to logout here
           this.props.threeBoxLogout();
