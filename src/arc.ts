@@ -6,10 +6,7 @@ import { Observable } from "rxjs";
 import Web3Connect from "web3connect";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
 import { settings } from "./settings";
-import { getNetworkId, getNetworkName, waitUntilTrue, isMobileBrowser } from "./lib/util";
-
-const Portis = require("@portis/web3");
-const Fortmatic = require("fortmatic");
+import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
 const Web3 = require("web3");
 
 /**
@@ -19,92 +16,40 @@ const Web3 = require("web3");
 let selectedProvider: any;
 let initializedAccount: Address;
 
-const web3ConnectProviderOptions =
-    Object.assign({
-    },
-    (process.env.NODE_ENV === "production") ?
-      {
-        network: "mainnet",
-        walletconnect: {
-          package: isMobileBrowser() ? null : WalletConnectProvider,
-          options: {
-            infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
-          },
-        },
-        portis: {
-          package: Portis,
-          options: {
-            id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
-          },
-        },
-        fortmatic: {
-          package: Fortmatic,
-          options: {
-            key: "pk_live_38A2BD2B1D4E9912",
-          },
-        },
-        squarelink: {
-          options: {
-            id: null,
-          },
-        },
-      }
-      : (process.env.NODE_ENV === "staging") ?
-        {
-          network: "rinkeby",
-          walletconnect: {
-            package: isMobileBrowser() ? null : WalletConnectProvider,
-            options: {
-              infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
-            },
-          },
-          portis: {
-            package: Portis,
-            options: {
-              id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
-            },
-          },
-          fortmatic: {
-            package: Fortmatic,
-            options: {
-              key: "pk_test_659B5B486EF199E4",
-            },
-          },
-          squarelink: {
-            options: {
-              id: null,
-            },
-          },
-        } : {});
+type networks = 'mainnet'|'rinkeby'|'ganache'|'xdai'
+
+// get the network name that the current build expects ot connect to
+export function targetedNetwork(): networks {
+  switch (process.env.NODE_ENV || "development") {
+    case "test": 
+    case "ganache": 
+    case "development": {
+      return 'ganache'
+    }
+    case "staging" :
+    case "rinkeby" : {
+      return "rinkeby"
+    }
+    case "mainnet":
+    case "production" : {
+      return "mainnet"
+    }
+    case "xdai": 
+      return "xdai"
+    default: {
+      throw Error(`Unknown NODE_ENV environment: "${process.env.NODE_ENV}"`);
+    }
+  }
+}
 
 
 /**
  * return the default Arc configuration given the execution environment
  */
 export function getArcSettings(): any {
-  let arcSettings: any;
-  switch (process.env.NODE_ENV || "development") {
-    case "test": {
-      arcSettings = settings.dev;
-      break;
-    }
-    case "development": {
-      arcSettings = settings.dev;
-      break;
-    }
-    case "staging" : {
-      arcSettings = settings.staging;
-      break;
-    }
-    case "production" : {
-      arcSettings = settings.production;
-      break;
-    }
-    default: {
-      throw Error(`Unknown NODE_ENV environment: "${process.env.NODE_ENV}"`);
-    }
-  }
-
+  const network = targetedNetwork()
+  let arcSettings: any
+  arcSettings = settings[network]
   // do not subscribe to any of the queries - we do all subscriptions manually
   arcSettings.graphqlSubscribeToQueries = false;
   return arcSettings;
@@ -165,28 +110,7 @@ async function getProviderNetworkName(provider?: any): Promise<string> {
  * @return the expected network nameif not correct
  */
 async function checkWeb3ProviderIsForNetwork(provider: any): Promise<string> {
-  let expectedNetworkName;
-  switch (process.env.NODE_ENV) {
-    case "development": {
-      expectedNetworkName = "ganache";
-      break;
-    }
-    case "staging": {
-      expectedNetworkName = "rinkeby";
-      break;
-    }
-    case  "production": {
-      expectedNetworkName = "main";
-      break;
-    }
-    default: {
-      const msg = `Unknown NODE_ENV: ${process.env.NODE_ENV}`;
-      // eslint-disable-next-line no-console
-      console.error(msg);
-      throw new Error(msg);
-    }
-  }
-
+  const expectedNetworkName = targetedNetwork()
   const networkName = await getProviderNetworkName(provider);
   return (networkName === expectedNetworkName) ?  null : expectedNetworkName;
 }
@@ -286,7 +210,7 @@ function inTesting(): boolean {
     // in test mode, we have an unlocked ganache and we are not using any wallet
     // eslint-disable-next-line no-console
     console.log("not using any wallet, because we are in automated test");
-    selectedProvider = new Web3(settings.dev.web3Provider);
+    selectedProvider = new Web3(settings.ganache.web3Provider);
     return true;
   }
   return false;
@@ -309,7 +233,6 @@ async function enableWeb3Provider(provider?: any): Promise<void> {
   if (selectedProvider && (!provider || (selectedProvider === provider))) {
     return;
   } else if (!provider) {
-
     const web3Connect = new Web3Connect.Core({
       modal: false,
       providerOptions: Object.assign(
@@ -320,7 +243,7 @@ async function enableWeb3Provider(provider?: any): Promise<void> {
          * that don't support the normal specification. Opera is an example of it."
          */
         { disableInjectedProvider: !((window as any).web3 || (window as any).ethereum) },
-        web3ConnectProviderOptions) as any,
+        getArcSettings().web3ConnectProviderOptions) as any,
     });
 
     let resolveOnClosePromise: () => void;
@@ -454,6 +377,8 @@ export async function gotoReadonly(showNotification?: any): Promise<boolean> {
  */
 async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Promise<void> {
   let provider: any;
+  const web3ConnectProviderOptions = getArcSettings().web3ConnectProviderOptions
+  
 
   try {
     switch (web3ProviderInfo.type) {
