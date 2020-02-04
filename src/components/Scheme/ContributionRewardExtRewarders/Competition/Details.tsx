@@ -255,8 +255,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const canSubmit =  inSubmissions && proposalState.executedAt;
 
     this.disqusConfig.title = proposalState.title;
-    this.disqusConfig.url = window.location.toString();
-    this.disqusConfig.identifier = `competition_${proposalState.id}`;
+    this.disqusConfig.url = process.env.BASE_URL + this.props.history.location.pathname;
+    this.disqusConfig.identifier = `competition-${proposalState.id}`;
 
     return <React.Fragment>
       <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}/crx`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
@@ -371,6 +371,10 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         <Modal onBackdropClick={this.closeSubmissionDetailsModal}
           backdropClassName={css.submissionsModalBackdrop}>
           <SubmissionDetails
+            match= {this.props.match}
+            history= {this.props.history}
+            location = {this.props.location}
+            staticContext = {this.props.staticContext}
             currentAccountAddress={this.props.currentAccountAddress}
             status= {this.state.status}
             suggestionId={this.state.showingSubmissionDetails.id}

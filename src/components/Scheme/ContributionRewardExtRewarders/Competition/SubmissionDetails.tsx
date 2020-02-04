@@ -15,6 +15,7 @@ import Tooltip from "rc-tooltip";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import Reputation from "components/Account/Reputation";
 import { DiscussionEmbed } from "disqus-react";
+import { RouteComponentProps } from "react-router-dom";
 import { getProposalSubmission, getSubmissionVoterHasVoted, getCompetitionVotes, CompetitionStatus } from "./utils";
 import * as css from "./Competitions.scss";
 
@@ -26,7 +27,7 @@ interface IExternalStateProps {
   profiles: IProfilesState;
 }
 
-interface IExternalProps {
+interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   daoState: IDAOState;
   proposalState: IProposalState;
@@ -77,7 +78,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const tags = submission.tags;
 
     this.disqusConfig.title = submission.title;
-    this.disqusConfig.url = window.location.toString();
+    this.disqusConfig.url = process.env.BASE_URL + this.props.history.location.pathname;
     this.disqusConfig.identifier = submission.id;
 
     return (
