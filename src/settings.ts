@@ -42,7 +42,7 @@ export const settings = {
       },
       squarelink: {
         options: {
-          id: null,
+          id: null as any,
         },
       },
     }
@@ -86,7 +86,7 @@ export const settings = {
       },
       squarelink: {
         options: {
-          id: null,
+          id: null as any,
         },
       },
     }
