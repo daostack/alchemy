@@ -44,7 +44,7 @@ interface IABISpec {
   type: string;
 }
 
-export interface IActionFieldOptions {
+interface IActionFieldOptions {
   decimals?: number;
   defaultValue?: any;
   name: string;
@@ -114,7 +114,7 @@ export class ActionField {
   }
 }
 
-export interface IActionSpec {
+interface IActionSpec {
   description: string;
   id: string;
   label: string;
@@ -122,7 +122,7 @@ export interface IActionSpec {
   notes: string;
   fields: any[];
 }
-export interface IGenericSchemeJSON {
+interface IGenericSchemeJSON {
   name: string;
   addresses: any[];
   actions: IActionSpec[];

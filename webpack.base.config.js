@@ -22,6 +22,7 @@ module.exports = {
       constants: path.resolve(basePath, 'src/constants'),
       data: path.resolve(basePath, 'data'),
       genericSchemeRegistry: path.resolve(basePath, 'src/genericSchemeRegistry'),
+      crxRegistry: path.resolve(basePath, 'src/crxRegistry'),
       layouts: path.resolve(basePath, 'src/layouts'),
       lib: path.resolve(basePath, 'src/lib'),
       pages: path.resolve(basePath, 'src/pages'),

@@ -16,6 +16,7 @@ import { ModalRoute } from "react-router-modal";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
+import DetailsPageRouter from "components/Scheme/ContributionRewardExtRewarders/DetailsPageRouter";
 import { combineLatest, Subscription } from "rxjs";
 import DaoDiscussionPage from "./DaoDiscussionPage";
 import DaoSchemesPage from "./DaoSchemesPage";
@@ -67,8 +68,14 @@ class DaoContainer extends React.Component<IProps, null> {
   private daoDiscussionRoute = (routeProps: any) => <DaoDiscussionPage {...routeProps} dao={this.props.data[0]} />;
   private daoProposalRoute = (routeProps: any) =>
     <ProposalDetailsPage {...routeProps}
-      daoState={this.props.data[0]}
       currentAccountAddress={this.props.currentAccountAddress}
+      daoState={this.props.data[0]}
+      proposalId={routeProps.match.params.proposalId}
+    />;
+  private daoCrxProposalRoute = (routeProps: any) =>
+    <DetailsPageRouter {...routeProps}
+      currentAccountAddress = {this.props.currentAccountAddress}
+      daoState={this.props.data[0]}
       proposalId={routeProps.match.params.proposalId}
     />;
 
@@ -115,10 +122,14 @@ class DaoContainer extends React.Component<IProps, null> {
               render={this.daoProposalRoute}
             />
 
+            <Route path="/dao/:daoAvatarAddress/crx/proposal/:proposalId"
+              render={this.daoCrxProposalRoute} />
+
             <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
               render={this.schemeRoute} />
 
             <Route path="/dao/:daoAvatarAddress" render={this.daoSchemesRoute} />
+
           </Switch>
 
           <ModalRoute
@@ -139,13 +150,14 @@ const SubscribedDaoContainer = withSubscription({
   errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
+    const arc = getArc();
     const daoAddress = props.match.params.daoAvatarAddress;
     const dao = arc.dao(daoAddress);
-    return combineLatest(
+    const observable = combineLatest(
       dao.state({ subscribe: true, fetchAllData: true }), // DAO state
       dao.members()
     );
+    return observable;
   },
 });
 
