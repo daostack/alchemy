@@ -442,16 +442,6 @@ a.blueButton {
           border-bottom: 1px solid #0076ff;
         }
 
-        &.title {
-          border-top-left-radius: 5px;
-          border-bottom-left-radius: 5px;
-          border-left: 1px solid transparent;
-
-          &.selected {
-            border-left: 1px solid #0076ff;
-          }
-        }
-
         &.winnerIcon {
           padding-top: 0;
           padding-bottom: 0;
@@ -459,6 +449,16 @@ a.blueButton {
             height: 28px;
             position: relative;
             top: 4px;
+          }
+        }
+
+        &.title {
+          border-top-left-radius: 5px;
+          border-bottom-left-radius: 5px;
+          border-left: 1px solid transparent;
+
+          &.selected {
+            border-left: 1px solid #0076ff;
           }
         }
 
@@ -499,7 +499,7 @@ a.blueButton {
       }
 
       &.overWithWinners {
-        grid-template-columns: 1fr 10fr 2fr 1fr;
+        grid-template-columns: 1fr 25fr 2fr 1fr;
 
         .cell {
           &.winnerIcon {
@@ -1031,7 +1031,6 @@ a.blueButton {
         }
 
         &.overWithWinners {
-          // grid-template-columns: 1fr 10fr 2fr 1fr;
           .cell {
             &.winnerIcon {
               border-bottom-left-radius: unset;
