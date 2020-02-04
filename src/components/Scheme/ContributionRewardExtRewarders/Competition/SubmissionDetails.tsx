@@ -149,12 +149,16 @@ class SubmissionDetails extends React.Component<IProps, null> {
 
         <div className={css.createdOn}>Created: <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.createdAt)}</div></div>
 
-        <div className={css.discussionContainer}>
-          <div className={css.title}>Discussion</div>
-          <div className={css.disqus}>
-            <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
+        { 
+        // eslint-disable-next-line no-constant-condition
+          (false) ? <div className={css.discussionContainer}>
+            <div className={css.title}>Discussion</div>
+            <div className={css.disqus}>
+              <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
+            </div>
           </div>
-        </div>
+            : ""
+        }
 
       </div>
     );

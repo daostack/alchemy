@@ -759,7 +759,7 @@ a.blueButton {
   box-shadow: $shadow-3;
   max-width: 445px;
   min-width: 250px;
-  // the follinwg enable scrolling to work in the description div
+  // the following enables scrolling to work in the description div
   max-height: calc(100vh - 136px);
   flex-direction: column;
   display: flex;
@@ -842,7 +842,7 @@ a.blueButton {
 
   .createdOn {
     margin-top: 16px;
-    margin-bottom: 16px;
+    // margin-bottom: 16px;
     font-size: 13px;
 
     .datetime {
@@ -889,20 +889,20 @@ a.blueButton {
     margin-top: 16px;
   }
 
-  .discussionContainer {
-    .title {
-      font-size: 18px;
-      color: #689bd6;
-      width: 100%;
-      border-bottom: 1px solid #bfcbd5;
-      padding-bottom: 5px;
-      margin-bottom: 16px;
-    }
+  // .discussionContainer {
+  //   .title {
+  //     font-size: 18px;
+  //     color: #689bd6;
+  //     width: 100%;
+  //     border-bottom: 1px solid #bfcbd5;
+  //     padding-bottom: 5px;
+  //     margin-bottom: 16px;
+  //   }
 
-    .disqus {
-      padding: 15px;
-    }
-  }
+  // .disqus {
+  //   padding: 15px;
+  // }
+  // }
 }
 
 @media only screen and (max-width: 425px) {
