@@ -66,6 +66,7 @@
     "start-docker": "node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js  --config webpack.docker.config.js",
     "start-prod": "cross-env NODE_ENV=production node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js  --config webpack.dev.config.js",
     "start-staging": "cross-env NODE_ENV=staging node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.config.js",
+    "start-xdai": "cross-env NODE_ENV=xdai node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.config.js",
     "storybook": "start-storybook",
     "test": "wdio ./test/integration/wdio.conf.js",
     "test:integration": "wdio ./test/integration/wdio.conf.js --inspect",
