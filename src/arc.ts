@@ -192,11 +192,11 @@ async function ensureCorrectNetwork(provider: any): Promise<void> {
   const networkName = await getProviderNetworkName(provider);
 
   if (networkName !== expectedNetworkName)  {
-    if (expectedNetworkName === 'xdai') {
+    if (expectedNetworkName === "xdai") {
       // TODO: xdai is reporting network 'unknown (100)` , it seems
-      if (networkName === 'unknown (100)') {
+      if (networkName === "unknown (100)") {
         // we are fine, mayby
-        return
+        return;
       }
     }
     console.error(`connected to the wrong network, should be ${expectedNetworkName} (instead of "${networkName}")`);

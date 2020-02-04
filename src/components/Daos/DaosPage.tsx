@@ -26,7 +26,7 @@ class DaosPage extends React.Component<IProps, null> {
     const { data } = this.props;
 
     let daos: DAO[];
-    if (process.env.NODE_ENV === "staging" || process.env.NODE_ENV === 'xdai') {
+    if (process.env.NODE_ENV === "staging" || process.env.NODE_ENV === "xdai") {
       // on staging we show all daos (registered or not)
       daos = data.filter((d: DAO) => d.staticState.name === "Genesis Alpha")
         .concat(data.filter((d: DAO) => d.staticState.name !== "Genesis Alpha"));
