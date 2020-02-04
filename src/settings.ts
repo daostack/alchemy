@@ -58,7 +58,9 @@ export const settings = {
     web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://poa.api.nodesmith.io/v1/core/jsonrpc/ws?apiKey=128059b9320a462699aef283a7ae2546",
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     txSenderServiceUrl: "",
-    web3ConnectProviderOptions: {},
+    web3ConnectProviderOptions: {
+      network: "mainnet",
+    },
   },
   mainnet: {
     graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/daostack/v37_2",

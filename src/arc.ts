@@ -98,18 +98,6 @@ async function getProviderNetworkName(provider?: any): Promise<string> {
   return getNetworkName(networkId);
 }
 
-/**
- * Checks if the web3 provider is set to the required network.
- * Does not ensure we have access to the user's account.
- * throws an Error if no provider or wrong provider
- * @param provider web3Provider
- * @return the expected network nameif not correct
- */
-async function checkWeb3ProviderIsForNetwork(provider: any): Promise<string> {
-  const expectedNetworkName = targetedNetwork();
-  const networkName = await getProviderNetworkName(provider);
-  return (networkName === expectedNetworkName) ?  null : expectedNetworkName;
-}
 
 /**
  * Returns a IWeb3ProviderInfo when a provider has been selected and is fully available.
@@ -187,17 +175,32 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   return success;
 }
 
+
+/**
+ * Checks if the web3 provider is set to the required network.
+ * Does not ensure we have access to the user's account.
+ * throws an Error if no provider or wrong provider
+ * @param provider web3Provider
+ * @return the expected network nameif not correct
+*/
 async function ensureCorrectNetwork(provider: any): Promise<void> {
 
   /**
    * It is required that the provider be the correct one for the current platform
    */
-  const correctNetworkErrorMsg = await checkWeb3ProviderIsForNetwork(provider);
+  const expectedNetworkName = targetedNetwork();
+  const networkName = await getProviderNetworkName(provider);
 
-  if (correctNetworkErrorMsg) {
-    // eslint-disable-next-line no-console
-    console.error(`connected to the wrong network, should be ${correctNetworkErrorMsg}`);
-    throw new Error(`Please connect your wallet provider to ${correctNetworkErrorMsg}`);
+  if (networkName !== expectedNetworkName)  {
+    if (expectedNetworkName === 'xdai') {
+      // TODO: xdai is reporting network 'unknown (100)` , it seems
+      if (networkName === 'unknown (100)') {
+        // we are fine, mayby
+        return
+      }
+    }
+    console.error(`connected to the wrong network, should be ${expectedNetworkName} (instead of "${networkName}")`);
+    throw new Error(`Please connect your wallet provider to ${expectedNetworkName}`);
   }
 }
 
