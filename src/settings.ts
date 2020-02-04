@@ -1,12 +1,11 @@
-import WalletConnectProvider from "@walletconnect/web3-provider";
-
+const WalletConnectProvider = require("@walletconnect/web3-provider");
 const Portis = require("@portis/web3");
 const Fortmatic = require("fortmatic");
 
 function isMobileBrowser(): boolean {
-  if (!window) {
-    return false
-  }
+  // if (!window) {
+  //   return false
+  // }
   let check = false;
   // from here: http://detectmobilebrowsers.com/
   // eslint-disable-next-line no-useless-escape
