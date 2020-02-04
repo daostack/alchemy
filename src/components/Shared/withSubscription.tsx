@@ -95,6 +95,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
     public async setupSubscription(observable?: Observable<any>) {
 
       this.teardownSubscription();
+      console.log(`setup subscription with id ${options.wrappedComponent.name}`);
 
       const { createObservable, wrappedComponent } = options;
 

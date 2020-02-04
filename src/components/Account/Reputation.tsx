@@ -3,7 +3,7 @@ import { fromWei } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 
-interface IProps {
+interface IExternalProps {
   daoName?: string;
   hideSymbol?: boolean;
   hideTooltip?: boolean;
@@ -11,7 +11,7 @@ interface IProps {
   totalReputation: BN;
 }
 
-export default class Reputation extends React.Component<IProps, null> {
+export default class Reputation extends React.Component<IExternalProps, null> {
   public render(): RenderOutput {
     /**
      * totalReputation is a BN in WEI
