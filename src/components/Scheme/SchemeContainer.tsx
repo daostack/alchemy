@@ -77,7 +77,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
 
   private isWikiScheme = schemeName(this.props.data[0], this.props.data[0].address) === 'WikiUpdate'
   private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} daoState={this.props.daoState} scheme={this.props.data[0]} />;
-  private schemeProposalsPageHtml = (isActive: boolean) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} />;
+  private schemeProposalsPageHtml = (isActive: boolean) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} isWikiScheme={this.isWikiScheme} />;
   private contributionsRewardExtTabHtml = () => (props: any) => 
   {
     if (!this.state.crxListComponent) {
