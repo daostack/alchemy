@@ -193,6 +193,8 @@ async function ensureCorrectNetwork(provider: any): Promise<void> {
    * It is required that the provider be the correct one for the current platform
    */
   const expectedNetworkName = targetedNetwork();
+
+  // TODO: we should not use the network NAME but the network ID to identify the network...
   const networkName = await getProviderNetworkName(provider);
 
   if (networkName !== expectedNetworkName)  {
@@ -418,71 +420,6 @@ export async function logout(showNotification?: any): Promise<boolean> {
 
   return success;
 }
-
-// /**
-//  * Given IWeb3ProviderInfo, get a web3Provider and InitializeArc with it.
-//  * Throws exception on any failure.
-//  *
-//  * This is meant to be used to bypass allowing the user to select a provider in the
-//  * case where we are initializing the app from a previously-cached (selected) provider.
-//  * @param web3ProviderInfo required IWeb3ProviderInfo
-//  */
-// async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Promise<void> {
-//   let provider: any;
-//   const web3ConnectProviderOptions = getArcSettings().web3ConnectProviderOptions;
-  
-
-//   try {
-//     switch (web3ProviderInfo.type) {
-//       case "injected":
-//       /**
-//          * Safe doesn't always inject itself in a timely manner
-//          */
-//         if (!(window as any).ethereum) {
-//           await waitUntilTrue((): boolean => !!(window as any).ethereum, 2000);
-//         }
-
-//         provider = await Web3Connect.ConnectToInjected();
-//         break;
-//       case "qrcode":
-//         provider = await Web3Connect.ConnectToWalletConnect(
-//           web3ConnectProviderOptions.walletconnect.package,
-//           Object.assign(web3ConnectProviderOptions.walletconnect.options, { network: web3ConnectProviderOptions.network }));
-//         break;
-//       case "web":
-//         switch (web3ProviderInfo.name) {
-//           case "Portis":
-//             provider = await Web3Connect.ConnectToPortis(
-//               web3ConnectProviderOptions.portis.package,
-//               Object.assign(web3ConnectProviderOptions.portis.options, { network: web3ConnectProviderOptions.network }));
-//             break;
-//           case "Fortmatic":
-//             provider = await Web3Connect.ConnectToFortmatic(
-//               web3ConnectProviderOptions.fortmatic.package,
-//               Object.assign(web3ConnectProviderOptions.fortmatic.options, { network: web3ConnectProviderOptions.network }));
-//             break;
-//         }
-//         break;
-//     }
-
-//     if (!provider) {
-//       throw new Error("Uncaught error or user cancelled out");
-//     }
-
-//   } catch (ex) {
-//     // eslint-disable-next-line no-console
-//     console.error(`Unable to instantiate provider: ${ex.message}`);
-//     throw new Error("Unable to instantiate provider");
-//   }
-//   /**
-//    * make sure the provider is the one we're looking for
-//    */
-//   if (!provider[web3ProviderInfo.check]) {
-//     throw new Error(`instantiated provider is not the one requested: ${provider.name} != ${web3ProviderInfo.name}`);
-//   }
-
-//   await enableWeb3Provider(provider);
-// }
 
 /**
  * @returns whether we have a current account
