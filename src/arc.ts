@@ -1,12 +1,11 @@
 import { Address, Arc } from "@daostack/client";
-// @ts-ignore
-import WalletConnectProvider from "@walletconnect/web3-provider";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 import Web3Connect from "web3connect";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
 import { settings } from "./settings";
 import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
+
 const Web3 = require("web3");
 
 /**
@@ -16,7 +15,7 @@ const Web3 = require("web3");
 let selectedProvider: any;
 let initializedAccount: Address;
 
-type networks = 'mainnet'|'rinkeby'|'ganache'|'xdai'
+type networks = "mainnet"|"rinkeby"|"ganache"|"xdai"
 
 // get the network name that the current build expects ot connect to
 export function targetedNetwork(): networks {
@@ -24,18 +23,18 @@ export function targetedNetwork(): networks {
     case "test": 
     case "ganache": 
     case "development": {
-      return 'ganache'
+      return "ganache";
     }
     case "staging" :
     case "rinkeby" : {
-      return "rinkeby"
+      return "rinkeby";
     }
     case "mainnet":
     case "production" : {
-      return "mainnet"
+      return "mainnet";
     }
     case "xdai": 
-      return "xdai"
+      return "xdai";
     default: {
       throw Error(`Unknown NODE_ENV environment: "${process.env.NODE_ENV}"`);
     }
@@ -47,11 +46,8 @@ export function targetedNetwork(): networks {
  * return the default Arc configuration given the execution environment
  */
 export function getArcSettings(): any {
-  const network = targetedNetwork()
-  let arcSettings: any
-  arcSettings = settings[network]
-  // do not subscribe to any of the queries - we do all subscriptions manually
-  arcSettings.graphqlSubscribeToQueries = false;
+  const network = targetedNetwork();
+  const arcSettings = settings[network];
   return arcSettings;
 }
 
@@ -110,7 +106,7 @@ async function getProviderNetworkName(provider?: any): Promise<string> {
  * @return the expected network nameif not correct
  */
 async function checkWeb3ProviderIsForNetwork(provider: any): Promise<string> {
-  const expectedNetworkName = targetedNetwork()
+  const expectedNetworkName = targetedNetwork();
   const networkName = await getProviderNetworkName(provider);
   return (networkName === expectedNetworkName) ?  null : expectedNetworkName;
 }
@@ -377,7 +373,7 @@ export async function gotoReadonly(showNotification?: any): Promise<boolean> {
  */
 async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Promise<void> {
   let provider: any;
-  const web3ConnectProviderOptions = getArcSettings().web3ConnectProviderOptions
+  const web3ConnectProviderOptions = getArcSettings().web3ConnectProviderOptions;
   
 
   try {
