@@ -81,7 +81,7 @@ export const settings = {
       },
     },
   },
-  mainnet: {
+  main: {
     graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/daostack/v37_3",
     graphqlWsProvider: process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs/name/daostack/v37_3",
     graphqlSubscribeToQueries: false,

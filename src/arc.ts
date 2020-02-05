@@ -18,10 +18,10 @@ let selectedProvider: any;
 let web3ConnectCore: Web3Connect.Core;
 let initializedAccount: Address;
 
-type networks = "mainnet"|"rinkeby"|"ganache"|"xdai"
+type networks = "main"|"rinkeby"|"ganache"|"xdai"
 
 
-// get the network name that the current build expects ot connect to
+// get the network id that the current build expects ot connect to
 export function targetedNetwork(): networks {
   switch (process.env.NODE_ENV || "development") {
     case "test": 
@@ -35,7 +35,7 @@ export function targetedNetwork(): networks {
     }
     case "mainnet":
     case "production" : {
-      return "mainnet";
+      return "main";
     }
     case "xdai": 
       return "xdai";
