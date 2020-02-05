@@ -66,8 +66,8 @@ export const settings = {
     },
   },
   xdai: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/daostack/v37_2_xdai",
-    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs/name/daostack/v37_2_xdai",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/daostack/v37_3_xdai",
+    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs/name/daostack/v37_3_xdai",
     graphqlSubscribeToQueries: false,
     web3Provider:  process.env.ARC_WEB3PROVIDER || "https://poa.api.nodesmith.io/v1/dai/jsonrpc?apiKey=128059b9320a462699aef283a7ae2546",
     web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://poa.api.nodesmith.io/v1/dai/jsonrpc/ws?apiKey=128059b9320a462699aef283a7ae2546",
