@@ -198,16 +198,9 @@ export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: s
     .pipe(map((votes: Array<CompetitionVote>) => !!votes.length));
 };
 
-const getAllSubmissions = (subscribe = false): Observable<Array<CompetitionSuggestion>> => {
-  return CompetitionSuggestion.search(getArc(), {}, { subscribe, fetchAllData: true });
-};
-
-const getAllVotes = (subscribe = false): Observable<Array<CompetitionVote>> => {
-  return CompetitionVote.search(getArc(), {}, { subscribe, fetchAllData: true });
-};
-
 export const primeCacheForSubmissionsAndVotes = (): Observable<any> => {
   return combineLatest(
-    getAllSubmissions(true),
-    getAllVotes(true));
+    CompetitionSuggestion.search(getArc(), {}, { subscribe: true, fetchAllData: true }),
+    CompetitionVote.search(getArc(), {}, { subscribe: true, fetchAllData: true })
+  );
 };
