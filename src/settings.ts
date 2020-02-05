@@ -74,11 +74,11 @@ export const settings = {
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     txSenderServiceUrl: "",
     web3ConnectProviderOptions: {
-      network: "mainnet",
-    },
-    burnerconnect: {
-      package: BurnerConnectProvider,
-      options: { defaultNetwork: "100" },
+      network: "xdao",
+      burnerconnect: {
+        package: BurnerConnectProvider,
+        options: { defaultNetwork: "100" },
+      },
     },
   },
   mainnet: {
