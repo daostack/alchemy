@@ -160,36 +160,16 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkActi
   };
 };
 
-
-/**
- * must be an exact subset of ICompetitionSuggestionQueryOptions
- */
-export interface IGetSubmissionsOptions {
-  id?: string; // id of the competition
-  suggestionId?: number; // the "suggestionId" is a counter that is unique to the scheme
-  // - and is not to be confused with suggestion.id
-}
-
-
-const getSubmissions = (
-  proposalId?: string,
-  options?: IGetSubmissionsOptions,
-  subscribe = false
-): Observable<Array<ICompetitionSuggestionState>> => {
-  const competition = new Competition(proposalId, getArc());
+export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestionState>> => {
   // fetchAllData so .state() comes from cache
-  return competition.suggestions({ where: options || {} }, { subscribe, fetchAllData: true })
+  const competition = new Competition(proposalId, getArc());
+  return competition.suggestions(undefined, { subscribe, fetchAllData: true })
     .pipe(
       mergeMap(submissions => of(submissions).pipe(
         mergeMap(submissions => submissions),
         mergeMap((submission: CompetitionSuggestion) => submission.state().pipe(first())),
         toArray()
-      ))
-    );
-};
-
-export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestionState>> => {
-  return getSubmissions(proposalId, undefined, subscribe);
+      )));
 };
 
 export const getSubmission = (id: string, subscribe = false): Observable<ICompetitionSuggestionState> => {
@@ -197,7 +177,7 @@ export const getSubmission = (id: string, subscribe = false): Observable<ICompet
   return submission.state({ subscribe });
 };
 
-export const getCompetitionVotes = (competitionId?: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
+export const getCompetitionVotes = (competitionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
   const competition = new Competition(competitionId, getArc());
   return competition.votes({ where: voterAddress ? { voter: voterAddress } : {}},
     { subscribe: subscribe, fetchAllData: true });
@@ -218,9 +198,16 @@ export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: s
     .pipe(map((votes: Array<CompetitionVote>) => !!votes.length));
 };
 
-export const primeCacheForSubmissionsAndVotes = (): Promise<any> => {
+const getAllSubmissions = (subscribe = false): Observable<Array<CompetitionSuggestion>> => {
+  return CompetitionSuggestion.search(getArc(), {}, { subscribe, fetchAllData: true });
+};
+
+const getAllVotes = (subscribe = false): Observable<Array<CompetitionVote>> => {
+  return CompetitionVote.search(getArc(), {}, { subscribe, fetchAllData: true });
+};
+
+export const primeCacheForSubmissionsAndVotes = (): Observable<any> => {
   return combineLatest(
-    getSubmissions(undefined, undefined, true),
-    getCompetitionVotes(undefined, undefined, true)
-  ).pipe(first()).toPromise();
+    getAllSubmissions(true),
+    getAllVotes(true));
 };

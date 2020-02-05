@@ -3,7 +3,6 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { ISchemeState, IDAOState, IProposalState } from "@daostack/client";
 import { SortService } from "lib/sortService";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { of } from "rxjs";
 import { CompetitionStatusEnum, CompetitionStatus, primeCacheForSubmissionsAndVotes } from "./utils";
 import Card from "./Card";
 import * as css from "./Competitions.scss";
@@ -18,7 +17,7 @@ interface IStateProps {
   statusMap: Map<string, CompetitionStatus>;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<void>;
+type IProps = IExternalProps & ISubscriptionProps<any>;
 
 class CompetitionsList extends React.Component<IProps, IStateProps> {
 
@@ -106,8 +105,7 @@ export default withSubscription({
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: [],
   createObservable: async (_props: IExternalProps) => {
-    await primeCacheForSubmissionsAndVotes();
-    return of();
+    return primeCacheForSubmissionsAndVotes();
   },
 });
 
