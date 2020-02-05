@@ -198,8 +198,9 @@ export const getSubmission = (id: string, subscribe = false): Observable<ICompet
 };
 
 export const getCompetitionVotes = (competitionId?: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
-  const options = Object.assign(competitionId ? { proposal: competitionId } : {}, voterAddress ? { voter: voterAddress } : {} );
-  return CompetitionVote.search(getArc(), { where: options}, { subscribe: subscribe, fetchAllData: true });
+  const competition = new Competition(competitionId, getArc());
+  return competition.votes({ where: voterAddress ? { voter: voterAddress } : {}},
+    { subscribe: subscribe, fetchAllData: true });
 };
 
 export const getSubmissionVotes = (submissionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
