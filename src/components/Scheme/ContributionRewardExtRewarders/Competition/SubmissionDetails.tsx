@@ -16,7 +16,7 @@ import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import Reputation from "components/Account/Reputation";
 import { DiscussionEmbed } from "disqus-react";
 import { RouteComponentProps } from "react-router-dom";
-import { getProposalSubmission, getSubmissionVoterHasVoted, getCompetitionVotes, CompetitionStatus } from "./utils";
+import { getSubmission, getSubmissionVoterHasVoted, getCompetitionVotes, CompetitionStatus } from "./utils";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -175,7 +175,7 @@ const SubmissionDetailsSubscription = withSubscription({
      * data comes from the cache created in Details
      */
     return combineLatest(
-      getProposalSubmission(props.proposalState.id, props.suggestionId, true),
+      getSubmission(props.suggestionId, true),
       getSubmissionVoterHasVoted(props.suggestionId, props.currentAccountAddress, true),
       props.currentAccountAddress ? getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true) : of([])
     );

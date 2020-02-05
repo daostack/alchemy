@@ -192,9 +192,9 @@ export const getProposalSubmissions = (proposalId: string, subscribe = false): O
   return getSubmissions(proposalId, undefined, subscribe);
 };
 
-export const getProposalSubmission = (proposalId: string, id: string, subscribe = false): Observable<ICompetitionSuggestionState> => {
-  return getSubmissions(proposalId, { id }, subscribe).pipe(
-    map((suggestions: Array<ICompetitionSuggestionState>) => suggestions.length ? suggestions[0]: null ));
+export const getSubmission = (id: string, subscribe = false): Observable<ICompetitionSuggestionState> => {
+  const submission = new CompetitionSuggestion(id, getArc());
+  return submission.state({ subscribe });
 };
 
 export const getCompetitionVotes = (competitionId?: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
@@ -219,7 +219,7 @@ export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: s
 
 export const primeCacheForSubmissionsAndVotes = (): Promise<any> => {
   return combineLatest(
-    getSubmissions(null, null, true),
-    getCompetitionVotes(null, null, true)
+    getSubmissions(undefined, undefined, true),
+    getCompetitionVotes(undefined, undefined, true)
   ).pipe(first()).toPromise();
 };
