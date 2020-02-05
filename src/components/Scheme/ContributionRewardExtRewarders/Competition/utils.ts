@@ -6,7 +6,7 @@ import moment = require("moment");
 import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
-import { Observable, of } from "rxjs";
+import { Observable, of, combineLatest } from "rxjs";
 import { map, mergeMap, toArray, first } from "rxjs/operators";
 
 /**
@@ -172,13 +172,13 @@ export interface IGetSubmissionsOptions {
 
 
 const getSubmissions = (
-  proposalId: string,
+  proposalId?: string,
   options?: IGetSubmissionsOptions,
   subscribe = false
 ): Observable<Array<ICompetitionSuggestionState>> => {
   const competition = new Competition(proposalId, getArc());
   // fetchAllData so .state() comes from cache
-  return competition.suggestions({ where: options }, { subscribe, fetchAllData: true })
+  return competition.suggestions({ where: options || {} }, { subscribe, fetchAllData: true })
     .pipe(
       mergeMap(submissions => of(submissions).pipe(
         mergeMap(submissions => submissions),
@@ -197,9 +197,9 @@ export const getProposalSubmission = (proposalId: string, id: string, subscribe 
     map((suggestions: Array<ICompetitionSuggestionState>) => suggestions.length ? suggestions[0]: null ));
 };
 
-export const getCompetitionVotes = (competitionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
-  const options = Object.assign({ proposal: competitionId }, voterAddress ? { voter: voterAddress } : {} );
-  return CompetitionVote.search(getArc(), { where: options}, { subscribe: subscribe, fetchAllData: false });
+export const getCompetitionVotes = (competitionId?: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
+  const options = Object.assign(competitionId ? { proposal: competitionId } : {}, voterAddress ? { voter: voterAddress } : {} );
+  return CompetitionVote.search(getArc(), { where: options}, { subscribe: subscribe, fetchAllData: true });
 };
 
 export const getSubmissionVotes = (submissionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
@@ -215,4 +215,11 @@ export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: s
   // submissionId is the actual id, not the count
   return getSubmissionVotes(submissionId, voterAddress, subscribe)
     .pipe(map((votes: Array<CompetitionVote>) => !!votes.length));
+};
+
+export const primeCacheForSubmissionsAndVotes = (): Promise<any> => {
+  return combineLatest(
+    getSubmissions(null, null, true),
+    getCompetitionVotes(null, null, true)
+  ).pipe(first()).toPromise();
 };

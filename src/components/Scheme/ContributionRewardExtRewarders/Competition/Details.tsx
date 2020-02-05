@@ -23,7 +23,7 @@ import Tooltip from "rc-tooltip";
 import Reputation from "components/Account/Reputation";
 import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
 import { map } from "rxjs/operators";
-import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, CompetitionStatus, getCompetitionVotes } from "./utils";
+import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, CompetitionStatus, getCompetitionVotes, primeCacheForSubmissionsAndVotes } from "./utils";
 import CreateSubmission from "./CreateSubmission";
 import SubmissionDetails from "./SubmissionDetails";
 import StatusBlob from "./StatusBlob";
@@ -397,7 +397,8 @@ export default withSubscription({
   loadingComponent: null,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["currentAccountAddress"],
-  createObservable: (props: IExternalProps & IExternalStateProps ) => {
+  createObservable: async (props: IExternalProps & IExternalStateProps ) => {
+    await primeCacheForSubmissionsAndVotes();
     /**
      * We subscribe here because we can't rely on arriving at
      * this component via CompetitionCard, and thus must create our own subscription.

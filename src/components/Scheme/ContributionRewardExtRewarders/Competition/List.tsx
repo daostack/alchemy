@@ -2,7 +2,9 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { ISchemeState, IDAOState, IProposalState } from "@daostack/client";
 import { SortService } from "lib/sortService";
-import { CompetitionStatusEnum, CompetitionStatus } from "./utils";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import { of } from "rxjs";
+import { CompetitionStatusEnum, CompetitionStatus, primeCacheForSubmissionsAndVotes } from "./utils";
 import Card from "./Card";
 import * as css from "./Competitions.scss";
 
@@ -16,9 +18,9 @@ interface IStateProps {
   statusMap: Map<string, CompetitionStatus>;
 }
 
-type IProps = IExternalProps;
+type IProps = IExternalProps & ISubscriptionProps<void>;
 
-export default class CompetitionsList extends React.Component<IProps, IStateProps> {
+class CompetitionsList extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
@@ -97,3 +99,15 @@ export default class CompetitionsList extends React.Component<IProps, IStateProp
     </React.Fragment>;
   }
 }
+
+export default withSubscription({
+  wrappedComponent: CompetitionsList,
+  loadingComponent: null,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
+  checkForUpdate: [],
+  createObservable: async (_props: IExternalProps) => {
+    await primeCacheForSubmissionsAndVotes();
+    return of();
+  },
+});
+

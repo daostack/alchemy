@@ -170,7 +170,10 @@ const SubmissionDetailsSubscription = withSubscription({
   loadingComponent: null,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["currentAccountAddress"],
-  createObservable: async (props: IExternalProps) => {
+  createObservable: (props: IExternalProps) => {
+    /**
+     * data comes from the cache created in Details
+     */
     return combineLatest(
       getProposalSubmission(props.proposalState.id, props.suggestionId, true),
       getSubmissionVoterHasVoted(props.suggestionId, props.currentAccountAddress, true),
