@@ -1,3 +1,4 @@
+import { targetedNetwork } from "arc";
 import { promisify } from "util";
 import {
   Address,
@@ -133,12 +134,20 @@ export function toWei(amount: number): BN {
   return new BN(getArc().web3.utils.toWei(amount.toFixed(18).toString(), "ether"));
 }
 
+export function baseTokenName() {
+  return tokens[targetedNetwork()]["baseTokenName"];
+}
+
+export function genName() {
+  return tokens[targetedNetwork()]["genName"];
+}
+
 export function supportedTokens() {
   return { [getArc().GENToken().address]:  {
     decimals: 18,
     name: "DAOstack GEN",
-    symbol: "GEN",
-  }, ...tokens};
+    symbol: genName(),
+  }, ...tokens[targetedNetwork()]["tokens"]};
 }
 
 export function formatTokens(amountWei: BN|null, symbol?: string, decimals = 18): string {
@@ -380,6 +389,9 @@ export async function getNetworkName(id?: string): Promise<string> {
     case "rinkeby":
     case "4":
       return "rinkeby";
+    case "xdai":
+    case "100":
+      return "xdai";
     case "kovan":
     case "42":
       return "kovan";
@@ -616,14 +628,14 @@ export function arrayRemove(arr: any[], value: any) {
 const localTimezone = moment.tz.guess();
 
 export function getDateWithTimezone(date: Date|moment.Moment): moment.Moment {
-  return moment.tz(date.toISOString(), localTimezone); 
+  return moment.tz(date.toISOString(), localTimezone);
 }
 
 const tzFormat = "z (Z)";
 const dateFormat = `MMM DD, YYYY HH:mm ${tzFormat}`;
 /**
  * looks like: "17:30 EST (-05:00) Dec 31, 2019"
- * @param date 
+ * @param date
  */
 export function formatFriendlyDateForLocalTimezone(date: Date|moment.Moment): string {
   return getDateWithTimezone(date).format(dateFormat);

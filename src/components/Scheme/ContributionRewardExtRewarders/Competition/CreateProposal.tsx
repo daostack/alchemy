@@ -3,7 +3,7 @@ import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, getLocalTimezone } from "lib/util";
+import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, getLocalTimezone } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
@@ -268,7 +268,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 errors.compStartTimeInput = "Competition must start in the future";
               }
             }
-            
+
             if (!(suggestionEndTimeInput instanceof moment)) {
               errors.suggestionEndTimeInput = "Invalid datetime format";
             } else {
@@ -284,7 +284,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 errors.votingStartTimeInput = "Voting must start on or after submission period ends";
               }
             }
-            
+
             if (!(compEndTimeInput instanceof moment)) {
               errors.compEndTimeInput = "Invalid datetime format";
             } else {
@@ -292,7 +292,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 errors.compEndTimeInput = "Competion must end after voting starts";
               }
             }
-            
+
             if (!isValidUrl(values.url)) {
               errors.url = "Invalid URL";
             }
@@ -471,12 +471,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               <div className={css.rewards}>
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
-                    ETH Reward to split
+                    {baseTokenName()} Reward to split
                     <ErrorMessage name="ethReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
                     id="ethRewardInput"
-                    placeholder="How much ETH to reward"
+                    placeholder={`How much ${baseTokenName()} to reward`}
                     name="ethReward"
                     type="number"
                     className={touched.ethReward && errors.ethReward ? css.error : null}
