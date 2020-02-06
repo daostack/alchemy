@@ -17,12 +17,12 @@ function isMobileBrowser(): boolean {
 
 export const settings = {
   ganache: {
-    graphqlHttpProvider: "https://127.0.0.1:8000/subgraphs/name/daostack",
+    graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
     graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
     graphqlSubscribeToQueries: false,
     web3Provider: "ws://127.0.0.1:8545",
     web3ProviderRead: "ws://127.0.0.1:8545",
-    ipfsProvider: "https://127.0.0.1:5001/api/v0",
+    ipfsProvider: "http://127.0.0.1:5001/api/v0",
     txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
     web3ConnectProviderOptions: {},
   },
