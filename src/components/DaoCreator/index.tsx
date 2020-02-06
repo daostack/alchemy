@@ -1,8 +1,8 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import DAOcreator from "@dorgtech/daocreator-ui-v1";
 import { enableWalletProvider, getWeb3Provider } from "arc";
 import { showNotification } from "reducers/notifications";
+const DAOcreator = React.lazy(() => import("@dorgtech/daocreator-ui-v1"));
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -22,27 +22,29 @@ class DaoCreator extends React.Component<IProps> {
 
   render() {
     return (
-      <DAOcreator
-        setWeb3Provider={async (): Promise<any> => {
-          if (!await enableWalletProvider({ showNotification: this.props.showNotification })) {
-            return undefined;
-          }
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <DAOcreator
+          setWeb3Provider={async (): Promise<any> => {
+            if (!await enableWalletProvider({ showNotification: this.props.showNotification })) {
+              return undefined;
+            }
 
-          return await getWeb3Provider();
-        }}
-        theme={{
-          palette: {
-            primary: {
-              main: "#122e5b",
-              contrastText: "#fafafa",
+            return await getWeb3Provider();
+          }}
+          theme={{
+            palette: {
+              primary: {
+                main: "#122e5b",
+                contrastText: "#fafafa",
+              },
+              secondary: {
+                main: "#0076ff",
+                contrastText: "#fafafa",
+              },
             },
-            secondary: {
-              main: "#0076ff",
-              contrastText: "#fafafa",
-            },
-          },
-        }}
-      />
+          }}
+        />
+      </React.Suspense>
     );
   }
 }
