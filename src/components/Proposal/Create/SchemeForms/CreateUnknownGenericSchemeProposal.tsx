@@ -1,11 +1,13 @@
 import { ISchemeState } from "@daostack/client";
-import * as arcActions from "actions/arcActions";
+import { createProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
+import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
-import { showNotification } from "reducers/notifications";
+import { showNotification, NotificationStatus } from "reducers/notifications";
 import { isValidUrl } from "lib/util";
+import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
@@ -18,7 +20,7 @@ interface IExternalProps {
 }
 
 interface IDispatchProps {
-  createProposal: typeof arcActions.createProposal;
+  createProposal: typeof createProposal;
   showNotification: typeof showNotification;
 }
 
@@ -29,7 +31,7 @@ interface IStateProps {
 type IProps = IExternalProps & IDispatchProps;
 
 const mapDispatchToProps = {
-  createProposal: arcActions.createProposal,
+  createProposal,
   showNotification,
 };
 
@@ -39,16 +41,27 @@ interface IFormValues {
   title: string;
   url: string;
   value: number;
+  [key: string]: any;
 }
 
 class CreateGenericScheme extends React.Component<IProps, IStateProps> {
+
+  initialFormValues: IFormValues;
 
   constructor(props: IProps) {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.state = { 
-      tags: new Array<string>(),
+    this.initialFormValues = importUrlValues<IFormValues>({
+      description: "",
+      callData: "",
+      title: "",
+      url: "",
+      value: 0,
+      tags: [],
+    });
+    this.state = {
+      tags: this.initialFormValues.tags,
     };
   }
 
@@ -63,7 +76,21 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
 
     setSubmitting(false);
     await this.props.createProposal(proposalValues);
+
+    Analytics.track("Submit Proposal", {
+      "DAO Address": this.props.daoAvatarAddress,
+      "Proposal Title": values.title,
+      "Scheme Address": this.props.scheme.address,
+      "Scheme Name": this.props.scheme.name,
+    });
+
     this.props.handleClose();
+  }
+
+  // Exports data from form to a shareable url.
+  public exportFormValues(values: IFormValues) {
+    exportUrl({ ...values, ...this.state });
+    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
   }
 
   private onTagsChange = (tags: any[]): void => {
@@ -79,12 +106,7 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
       <div className={css.contributionReward}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={{
-            callData: "",
-            title: "",
-            url: "",
-            value: 0,
-          } as IFormValues}
+          initialValues={this.initialFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
@@ -137,6 +159,7 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             setFieldTouched,
             setFieldValue,
+            values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
@@ -233,6 +256,11 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
               </div>
 
               <div className={css.createProposalActions}>
+                <TrainingTooltip overlay="Export proposal" placement="top">
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                    <img src="/assets/images/Icon/share-blue.svg" />
+                  </button>
+                </TrainingTooltip>
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
                 </button>

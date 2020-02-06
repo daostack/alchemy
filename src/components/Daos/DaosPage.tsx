@@ -2,6 +2,8 @@ import { DAO } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import Analytics from "lib/analytics";
+import { Page } from "pages";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as React from "react";
 import * as Sticky from "react-stickynode";
@@ -14,6 +16,12 @@ type SubscriptionData = DAO[];
 type IProps = ISubscriptionProps<SubscriptionData>;
 
 class DaosPage extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": Page.AllDAOs,
+    });
+  }
 
   public render(): RenderOutput {
     const { data } = this.props;

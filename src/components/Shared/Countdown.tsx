@@ -1,15 +1,11 @@
-import * as classNames from "classnames";
 import * as moment from "moment";
 import * as React from "react";
 
 import * as css from "./Countdown.scss";
 
 interface IProps {
-  detailView?: boolean;
   toDate: Date | moment.Moment;
   fromDate?: Date | moment.Moment;
-  overTime?: boolean;
-  schemeView?: boolean;
   onEnd?(): any;
 }
 
@@ -21,7 +17,7 @@ interface IState {
   seconds: number;
 }
 
-class Countdown extends React.Component<IProps, IState> {
+export default class Countdown extends React.Component<IProps, IState> {
   public interval: any;
 
   constructor(props: IProps) {
@@ -37,32 +33,39 @@ class Countdown extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
-    // update every five seconds
-    this.interval = setInterval(() => {
-      const date = this.calculateCountdown(this.props.toDate);
-      if (date) {
-        this.setState(date);
-      } else {
-        this.stop();
-        if (this.props.onEnd) {
-          this.props.onEnd();
+    this.setInterval();
+  }
+  
+  public setInterval() {
+    if (!this.interval) {
+
+      // update every five seconds
+      this.interval = setInterval(() => {
+        const date = this.calculateCountdown(this.props.toDate);
+        if (date) {
+          this.setState(date);
+        } else {
+          this.stop();
+          if (this.props.onEnd) {
+            this.props.onEnd();
+          }
         }
-      }
-    }, 1000);
+      }, 1000);
+    }
   }
 
   public componentWillUnmount() {
     this.stop();
   }
 
-  public calculateCountdown(endDate: Date | moment.Moment) {
+  public calculateCountdown(endDate: Date | moment.Moment): IState {
     const endDateMoment = moment(endDate); const now = new Date();
 
     const diff = endDateMoment.diff(now);
 
     // clear countdown when date is reached
     if (diff <= 0) {
-      return false;
+      return null;
     }
 
     const duration = moment.duration(diff);
@@ -79,6 +82,7 @@ class Countdown extends React.Component<IProps, IState> {
 
   public stop() {
     clearInterval(this.interval);
+    this.interval = 0;
   }
 
   public addLeadingZeros(value: string | number) {
@@ -90,6 +94,10 @@ class Countdown extends React.Component<IProps, IState> {
   }
 
   public render(): RenderOutput {
+
+    // handle case where fromDate has being reset and need to restart the countdown
+    this.setInterval();
+
     const countDown = this.state;
 
     let percentageComplete = 0;
@@ -107,21 +115,11 @@ class Countdown extends React.Component<IProps, IState> {
       }
     }
 
-    const containerClass = classNames({
-      [css.detailView]: this.props.detailView,
-      [css.container]: true,
-      [css.schemeView]: this.props.schemeView,
-    });
-
     return (
-      <div className={containerClass}>
+      <div className={css.container}>
         <div className={css.percentageContainer}>
           <div style={{ backgroundColor: "blue", height: "2px", width: percentageComplete + "%" }}></div>
         </div>
-        {this.props.detailView ?
-          <span className={css.label}>Proposal ends:</span>
-          : " "
-        }
         {
           countDown.days ? <span className={css.timeSection}><strong>{this.addLeadingZeros(countDown.days)}d</strong><span className={css.colon}>:</span></span> : ""
         }
@@ -130,15 +128,7 @@ class Countdown extends React.Component<IProps, IState> {
         {
           countDown.days ? "" : <span className={css.timeSection}><span className={css.colon}>:</span><strong>{this.addLeadingZeros(countDown.seconds)}s</strong></span>
         }
-        {this.props.overTime ?
-          <strong className={css.overTime}>
-            <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME
-          </strong>
-          : " "
-        }
       </div>
     );
   }
 }
-
-export default Countdown;

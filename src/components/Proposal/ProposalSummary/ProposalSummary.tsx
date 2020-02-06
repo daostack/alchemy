@@ -1,5 +1,5 @@
 import { IDAOState, IProposalState, IProposalType } from "@daostack/client";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";

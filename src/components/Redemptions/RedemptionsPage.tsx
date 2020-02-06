@@ -1,12 +1,14 @@
 import { Address, IDAOState, Proposal } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
-import * as arcActions from "actions/arcActions";
+import { redeemProposal } from "actions/arcActions";
 
 import BN = require("bn.js");
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
-import { formatTokens, tokenSymbol } from "lib/util";
+import Analytics from "lib/analytics";
+import { formatTokens, tokenDecimals, tokenSymbol } from "lib/util";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
@@ -29,18 +31,26 @@ const mapStateToProps = (state: IRootState) => {
 };
 
 interface IDispatchProps {
-  redeemProposal: typeof arcActions.redeemProposal;
+  redeemProposal: typeof redeemProposal;
   showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
-  redeemProposal: arcActions.redeemProposal,
+  redeemProposal,
   showNotification,
 };
 
 type IProps = IStateProps & IDispatchProps & ISubscriptionProps<[IDAOState[], any[]]>
 
 class RedemptionsPage extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": Page.Redemptions,
+      "Account Address": this.props.currentAccountAddress,
+    });
+  }
+
   public render(): RenderOutput {
     const { data } = this.props;
 
@@ -192,7 +202,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
       totalRewards.push(formatTokens(genReward, "GEN"));
     }
     Object.keys(externalTokenRewards).forEach((tokenAddress) => {
-      totalRewards.push(formatTokens(externalTokenRewards[tokenAddress], tokenSymbol(tokenAddress)));
+      totalRewards.push(formatTokens(externalTokenRewards[tokenAddress], tokenSymbol(tokenAddress), tokenDecimals(tokenAddress)));
     });
     if (reputationRewardDaos.size > 0) {
       totalRewards.push(<span>reputation in {reputationRewardDaos.size}&nbsp;DAOs</span>);

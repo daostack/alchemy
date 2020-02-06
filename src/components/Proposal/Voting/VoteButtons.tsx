@@ -1,12 +1,14 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
-import * as arcActions from "actions/arcActions";
+import { voteOnProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
-import * as classNames from "classnames";
+import classNames from "classnames";
 import Reputation from "components/Account/Reputation";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import Tooltip from "rc-tooltip";
+import Analytics from "lib/analytics";
+import { fromWei } from "lib/util";
+import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
@@ -19,13 +21,13 @@ interface IExternalProps {
   currentAccountState: IMemberState;
   currentVote: IProposalOutcome|undefined;
   dao: IDAOState;
-  detailView?: boolean;
   expired?: boolean;
+  parentPage: Page;
   proposal: IProposalState;
 }
 
 interface IDispatchProps {
-  voteOnProposal: typeof arcActions.voteOnProposal;
+  voteOnProposal: typeof voteOnProposal;
   showNotification: typeof showNotification;
 }
 
@@ -35,12 +37,11 @@ interface IState {
   contextMenu?: boolean;
   currentVote: IProposalOutcome|undefined;
   showPreVoteModal: boolean;
-  detailView?: boolean;
 }
 
 const mapDispatchToProps = {
   showNotification,
-  voteOnProposal: arcActions.voteOnProposal,
+  voteOnProposal,
 };
 
 class VoteButtons extends React.Component<IProps, IState> {
@@ -64,7 +65,23 @@ class VoteButtons extends React.Component<IProps, IState> {
   }
 
   private closePreVoteModal = (_event: any): void => { this.setState({ showPreVoteModal: false }); }
-  private handleVoteOnProposal = (): void => { this.props.voteOnProposal(this.props.dao.address, this.props.proposal.id, this.state.currentVote);  };
+
+  private handleVoteOnProposal = (): void => {
+    const { currentAccountState, dao, proposal } = this.props;
+
+    this.props.voteOnProposal(dao.address, proposal.id, this.state.currentVote);
+
+    Analytics.track("Vote", {
+      "DAO Address": dao.address,
+      "DAo Name": dao.name,
+      "Proposal Hash": proposal.id,
+      "Proposal Title": proposal.title,
+      "Reputation Voted": fromWei(currentAccountState.reputation),
+      "Scheme Address": proposal.scheme.address,
+      "Scheme Name": proposal.scheme.name,
+      "Vote Type": this.state.currentVote === IProposalOutcome.Fail ? "Fail" : this.state.currentVote === IProposalOutcome.Pass ? "Pass" : "None",
+    });
+  };
 
   public render(): RenderOutput {
     const {
@@ -72,7 +89,7 @@ class VoteButtons extends React.Component<IProps, IState> {
       contextMenu,
       currentVote,
       currentAccountState,
-      detailView,
+      parentPage,
       proposal,
       dao,
       expired,
@@ -91,18 +108,18 @@ class VoteButtons extends React.Component<IProps, IState> {
     /**
      * only used when votingDisabled
      */
-    const tipContent = 
+    const disabledMessage =
       ((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)) ?
         "Can't change your vote" :
         (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
-          "Voting requires reputation in " + dao.name :
+          "Requires reputation in this DAO" :
           proposal.stage === IProposalStage.ExpiredInQueue ||
               (proposal.stage === IProposalStage.Boosted && expired) ||
               (proposal.stage === IProposalStage.QuietEndingPeriod && expired)  ||
               (proposal.stage === IProposalStage.Queued && expired) ?
             "Can't vote on expired proposals" :
             proposal.stage === IProposalStage.Executed ?
-              "Can't vote on executed proposals" : "";
+              `Can't vote on ${proposal.winningOutcome === IProposalOutcome.Pass ? "passed" : "failed"} proposals` : "";
 
     const voteUpButtonClass = classNames({
       [css.votedFor]: currentVote === IProposalOutcome.Pass,
@@ -120,7 +137,7 @@ class VoteButtons extends React.Component<IProps, IState> {
       [css.votedFor]: currentVote === IProposalOutcome.Pass,
       [css.votedAgainst]: currentVote === IProposalOutcome.Fail,
       [css.hasNotVoted]: ((currentVote === undefined) || (currentVote === IProposalOutcome.None)),
-      [css.detailView]: detailView,
+      [css.detailView]: parentPage === Page.ProposalDetails,
     });
 
     return (
@@ -133,6 +150,7 @@ class VoteButtons extends React.Component<IProps, IState> {
             currentAccount={currentAccountState}
             dao={dao}
             effectText={<span>Your influence: <strong><Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
+            parentPage={parentPage}
             proposal={proposal}
           /> : ""
         }
@@ -179,9 +197,7 @@ class VoteButtons extends React.Component<IProps, IState> {
                   </div>
                   :
                   <div className={css.votingDisabled}>
-                    <Tooltip overlay={tipContent}>
-                      <span><img src="/assets/images/Icon/Alert-yellow-b.svg"/> Voting disabled</span>
-                    </Tooltip>
+                    <span><img src="/assets/images/Icon/Alert-yellow-b.svg"/> {disabledMessage}</span>
                   </div>
                 }
               </div>
@@ -205,9 +221,7 @@ class VoteButtons extends React.Component<IProps, IState> {
                 </div>
                 :
                 <div className={css.votingDisabled}>
-                  <Tooltip placement="bottom" overlay={tipContent}>
-                    <span>Voting disabled</span>
-                  </Tooltip>
+                  <span>{disabledMessage}</span>
                 </div>
               }
             </div>

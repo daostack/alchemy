@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalState, IProposalOutcome } from "@daostack/client";
 import Reputation from "components/Account/Reputation";
-import { formatTokens, fromWei, tokenSymbol, AccountClaimableRewardsType } from "lib/util";
+import { formatTokens, fromWei, tokenDecimals, tokenSymbol, AccountClaimableRewardsType } from "lib/util";
 import * as React from "react";
 import * as css from "components/Shared/PreTransactionModal.scss";
 
@@ -24,7 +24,7 @@ export default (props: IProps) => {
     {canRewardNone ? <div className={css.text}>At this time, none of these rewards can be redeemed -- {dao.name} does not hold all the necessary assets.</div> : ""}
     {canRewardOnlySome ? <div className={css.text}>At this time, only some of these rewards can be redeemed -- {dao.name} does not hold all the necessary assets.</div> : ""}
   </div> : <span></span>;
-  
+
   const rewardComponents = [];
   let c = null;
   if (gpRewards.reputationForProposer) {
@@ -65,7 +65,6 @@ export default (props: IProps) => {
     rewardComponents.push(c);
   }
 
-
   let ContributionRewardDiv = <div />;
   if (contributionRewards) {
     const contributionReward = proposal.contributionReward;
@@ -85,7 +84,7 @@ export default (props: IProps) => {
             }
             {contributionRewards["externalToken"] ?
               <li>
-                {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken))}
+                {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken), tokenDecimals(contributionReward.externalToken))}
               </li> : ""
             }
             {contributionRewards["rep"] ? <li><Reputation reputation={contributionRewards["rep"]} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}

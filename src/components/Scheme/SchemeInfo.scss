@@ -12,7 +12,6 @@
   font-size: 11px;
   font-family: "Open Sans";
   font-weight: normal;
-  margin: 30px auto;
   border-radius: 0 14px 14px 14px;
   min-width: 340px;
 
@@ -71,10 +70,14 @@
   }
 }
 
+.copyButton {
+  cursor: pointer;
+}
+
 @media only screen and (max-width: 425px) {
 
-.ellipsis {
-  position: relative;
-  width: 35%;
-}
+  .ellipsis {
+    position: relative;
+    width: 35%;
+  }
 }
