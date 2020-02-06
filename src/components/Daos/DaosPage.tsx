@@ -51,10 +51,12 @@ class DaosPage extends React.Component<IProps, null> {
         <Sticky enabled top={50} innerZ={10000}>
           <div className={css.daoListHeader + " clearfix"}>
             <h2 data-test-id="header-all-daos">All DAOs</h2>
-            <Link to={"/daos/create"}>
-              <div>Create A DAO</div>
-            </Link>
           </div>
+          <Link to={"/daos/create"}>
+            <div className={css.createDaoWrapper}>
+              Create A DAO
+            </div>
+          </Link>
         </Sticky>
         <div className={css.daoList}>
           {daoNodes ? daoNodes : "None"}
