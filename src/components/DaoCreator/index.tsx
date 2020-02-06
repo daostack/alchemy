@@ -1,24 +1,14 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
 import DAOcreator from "@dorgtech/daocreator-ui-v1";
 import { enableWalletProvider, getWeb3Provider } from "arc";
-import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
-
-type IExternalProps = RouteComponentProps<any>;
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
 type IProps = IDispatchProps;
-
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps => {
-  return {
-    ...ownProps,
-  };
-};
 
 const mapDispatchToProps = {
   showNotification,
@@ -57,4 +47,4 @@ class DaoCreator extends React.Component<IProps> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DaoCreator);
+export default connect(null, mapDispatchToProps)(DaoCreator);

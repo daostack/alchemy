@@ -192,7 +192,7 @@ class AppContainer extends React.Component<IProps, IState> {
 
             <div className={css.contentWrapper}>
               <Switch>
-                <Route path="/dao-creator" component={DaoCreator} />
+                <Route path="/daos/create" component={DaoCreator} />
                 <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
                 <Route path="/profile/:accountAddress" component={AccountProfilePage} />
                 <Route path="/redemptions" component={RedemptionsPage} />

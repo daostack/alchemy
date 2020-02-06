@@ -43,7 +43,7 @@ class DaosPage extends React.Component<IProps, null> {
         <Sticky enabled top={50} innerZ={10000}>
           <div className={css.daoListHeader + " clearfix"}>
             <h2 data-test-id="header-all-daos">All DAOs</h2>
-            <Link to={"/dao-creator"}>
+            <Link to={"/daos/create"}>
               <div>Create A DAO</div>
             </Link>
           </div>

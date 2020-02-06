@@ -73,7 +73,7 @@
   },
   "dependencies": {
     "@daostack/client": "0.2.42",
-    "@dorgtech/daocreator-ui-v1": "^0.2.0-rc.17",
+    "@dorgtech/daocreator-ui-v1": "^0.2.0-rc.19",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
     "@fortawesome/react-fontawesome": "^0.1.3",
