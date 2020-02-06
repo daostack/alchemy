@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { Prompt } from "react-router";
 import { enableWalletProvider, getWeb3Provider } from "arc";
 import { showNotification } from "reducers/notifications";
 const DAOcreator = React.lazy(() => import("@dorgtech/daocreator-ui-v1"));
@@ -20,9 +21,23 @@ class DaoCreator extends React.Component<IProps> {
     super(props);
   }
 
+  componentDidMount() {
+    // Block page refesh & closing
+    window.onbeforeunload = () => true;
+  }
+
+  componentWillUnmount() {
+    // Unblock page refresh & closing
+    window.onbeforeunload = undefined;
+  }
+
   render() {
     return (
       <React.Suspense fallback={<div>Loading...</div>}>
+        <Prompt
+          when={true}
+          message={"Are you sure you want to leave?"}
+        />
         <DAOcreator
           setWeb3Provider={async (): Promise<any> => {
             if (!await enableWalletProvider({ showNotification: this.props.showNotification })) {
