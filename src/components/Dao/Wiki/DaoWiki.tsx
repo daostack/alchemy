@@ -80,7 +80,7 @@ function DaoWiki(props: IProps) {
     setHasWikiScheme(wikiSchemeExists);
     if (wikiSchemeExists) {
       const { dao, address, schemeParams } = states.find(hasWikiScheme);
-      const { contractToCall } = schemeParams as IGenericSchemeParams
+      const { contractToCall } = schemeParams as IGenericSchemeParams;
       const daoInformation: IDaoInformation = {
         dao,
         scheme: address,
@@ -157,7 +157,13 @@ function DaoWiki(props: IProps) {
       <Sticky enabled top={50} innerZ={10000}>
         <div className={daoStyle.daoHistoryHeader}>Wiki</div>
       </Sticky>
-      {hasWikiScheme ? <ReactiveWiki {...props} /> : NoWikiScheme}
+      {hasWikiScheme ? (
+        <div style={{ height: "70vh" }}>
+          <ReactiveWiki {...props} />
+        </div>
+      ) : (
+        NoWikiScheme
+      )}
     </div>
   );
 }

@@ -10,7 +10,7 @@
   },
   "actions": [
     {
-      "id": "authorizeRequest",
+      "id": "setRequestAuthorized",
       "label": "Authorize Wiki Merge",
       "description": "Authorize Wiki Merge",
       "fields": [ ],
