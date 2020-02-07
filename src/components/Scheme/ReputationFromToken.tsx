@@ -84,7 +84,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
 
 
     this.state = {
-      redemptionAmount: null,
+      redemptionAmount: new BN(0),
       alreadyRedeemed: false,
       privateKey: pk,
       redeemerAddress,
@@ -337,7 +337,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                 </div>
                 <div className={schemeCss.redemptionButton}>
                   <button type="submit"
-                    disabled={false}
+                    disabled={this.state.alreadyRedeemed || this.state.redemptionAmount.isZero()}
                     onClick={this.onSubmitClick(setFieldValue)}
                   >
                     <img src="/assets/images/Icon/redeem.svg"/> Redeem
@@ -347,7 +347,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                   <div className={schemeCss.redemptionButton}>
                     <div>Or try our new experimental feature:</div>
                     <button type="submit"
-                      disabled={false}
+                      disabled={this.state.alreadyRedeemed || this.state.redemptionAmount.isZero()}
                       onClick={this.onSubmitClick(setFieldValue)}
                     >
                       <img src="/assets/images/Icon/redeem.svg"/> Redeem w/o paying gas
