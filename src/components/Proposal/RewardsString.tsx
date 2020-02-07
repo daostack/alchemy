@@ -2,7 +2,7 @@ import BN = require("bn.js");
 import * as React from "react";
 
 import { IDAOState, IProposalState } from "@daostack/client";
-import { formatTokens, tokenDetails } from "lib/util";
+import { baseTokenName, formatTokens, tokenDetails } from "lib/util";
 
 import Reputation from "components/Account/Reputation";
 
@@ -19,7 +19,7 @@ export default class RewardsString extends React.Component<IProps, null> {
     const contributionReward = proposal.contributionReward;
     const rewards = [];
     if (contributionReward.ethReward && contributionReward.ethReward.gt(new BN(0))) {
-      rewards.push(formatTokens(contributionReward.ethReward, "ETH"));
+      rewards.push(formatTokens(contributionReward.ethReward, baseTokenName()));
     }
     if (contributionReward.externalToken && contributionReward.externalTokenReward && contributionReward.externalTokenReward.gt(new BN(0))) {
       const tokenData = tokenDetails(contributionReward.externalToken);
