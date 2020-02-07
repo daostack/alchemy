@@ -1,5 +1,5 @@
-import { targetedNetwork } from "arc";
 import { promisify } from "util";
+import { targetedNetwork } from "arc";
 import {
   Address,
   IContractInfo,
