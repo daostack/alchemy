@@ -142,7 +142,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
     const { accountAddress, accountProfile, currentAccountAddress } = this.props;
 
     if (!accountProfile) {
-      return "Loading...";
+      return <div className={css.loading}>Loading...</div>;
     }
 
     // TODO: dont show profile until loaded from 3box
@@ -312,7 +312,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
 
 const SubscribedAccountProfilePage = withSubscription({
   wrappedComponent: AccountProfilePage,
-  loadingComponent: <div>Loading...</div>,
+  loadingComponent: <div className={css.loading}>Loading...</div>,
   errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps, newProps) => {
