@@ -7,7 +7,7 @@ import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
 import Analytics from "lib/analytics";
-import { baseTokenName, formatTokens, genName, tokenDecimals, tokenSymbol } from "lib/util";
+import { formatTokens, tokenDecimals, tokenSymbol } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -67,23 +67,19 @@ class RedemptionsPage extends React.Component<IProps, null> {
         <BreadcrumbsItem to="/redemptions">Redemptions</BreadcrumbsItem>
         <Sticky enabled top={50} innerZ={10000}>
           <div className={css.header}>
-            <div className={css.title}>
-              <div className={css.caption}>Redemptions</div>
-              {proposals.length > 0 ?
-                <div className={css.totalRewards}>Pending Protocol Rewards: {this.renderTotalRewards()}</div>
-                : ""
-              }
-            </div>
+            <h2>Redemptions</h2>
             {proposals.length > 0 ?
-              <div>
-                <button
-                  className={css.redeemAllButton}
-                  onClick={this.redeemAll}
-                >
-                  <img src="/assets/images/Icon/redeem.svg" />
+              <span className={css.totalRewards}>Pending Protocol Rewards:&nbsp;{this.renderTotalRewards()}</span>
+              : ""
+            }
+            {proposals.length > 0 ?
+              <button
+                className={css.redeemAllButton}
+                onClick={this.redeemAll}
+              >
+                <img src="/assets/images/Icon/redeem.svg" />
                 Redeem all
-                </button>
-              </div>
+              </button>
               : ""
             }
           </div>
@@ -200,10 +196,10 @@ class RedemptionsPage extends React.Component<IProps, null> {
 
     const totalRewards: any[] = [];
     if (!ethReward.isZero()) {
-      totalRewards.push(formatTokens(ethReward, baseTokenName()));
+      totalRewards.push(formatTokens(ethReward, "ETH"));
     }
     if (!genReward.isZero()) {
-      totalRewards.push(formatTokens(genReward, genName()));
+      totalRewards.push(formatTokens(genReward, "GEN"));
     }
     Object.keys(externalTokenRewards).forEach((tokenAddress) => {
       totalRewards.push(formatTokens(externalTokenRewards[tokenAddress], tokenSymbol(tokenAddress), tokenDecimals(tokenAddress)));

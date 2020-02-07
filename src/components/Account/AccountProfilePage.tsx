@@ -12,7 +12,7 @@ import ThreeboxModal from "components/Shared/ThreeboxModal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { Field, Formik, FormikProps } from "formik";
 import Analytics from "lib/analytics";
-import { baseTokenName, copyToClipboard, ethErrorHandler, genName, formatTokens } from "lib/util";
+import { copyToClipboard, ethErrorHandler, formatTokens } from "lib/util";
 import { Page } from "pages";
 import { parse } from "query-string";
 import * as React from "react";
@@ -142,7 +142,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
     const { accountAddress, accountProfile, currentAccountAddress } = this.props;
 
     if (!accountProfile) {
-      return <div className={css.loading}>Loading...</div>;
+      return "Loading...";
     }
 
     // TODO: dont show profile until loaded from 3box
@@ -290,8 +290,8 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                         {accountInfo
                           ? <div><strong>Rep. Score</strong><br /><Reputation reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /> </div>
                           : ""}
-                        <div><strong>{genName()}:</strong><br /><span>{formatTokens(genBalance)}</span></div>
-                        - <div><strong>{baseTokenName()}:</strong><br /><span>{formatTokens(ethBalance)}</span></div>
+                        <div><strong>GEN:</strong><br /><span>{formatTokens(genBalance)}</span></div>
+                        -                        <div><strong>ETH:</strong><br /><span>{formatTokens(ethBalance)}</span></div>
                       </div>
                       <div>
                         <strong>ETH Address:</strong><br />
@@ -312,7 +312,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
 
 const SubscribedAccountProfilePage = withSubscription({
   wrappedComponent: AccountProfilePage,
-  loadingComponent: <div className={css.loading}>Loading...</div>,
+  loadingComponent: <div>Loading...</div>,
   errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps, newProps) => {

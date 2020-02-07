@@ -6,7 +6,7 @@ import moment = require("moment");
 import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
-import { Observable, of, combineLatest } from "rxjs";
+import { Observable, of } from "rxjs";
 import { map, mergeMap, toArray, first } from "rxjs/operators";
 
 /**
@@ -160,33 +160,49 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkActi
   };
 };
 
-export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestionState>> => {
-  // fetchAllData so .state() comes from cache
+
+/**
+ * must be an exact subset of ICompetitionSuggestionQueryOptions
+ */
+export interface IGetSubmissionsOptions {
+  id?: string; // id of the competition
+  suggestionId?: number; // the "suggestionId" is a counter that is unique to the scheme
+  // - and is not to be confused with suggestion.id
+}
+
+
+const getSubmissions = (
+  proposalId: string,
+  options?: IGetSubmissionsOptions,
+  subscribe = false
+): Observable<Array<ICompetitionSuggestionState>> => {
   const competition = new Competition(proposalId, getArc());
-  return competition.suggestions(undefined, { subscribe, fetchAllData: true })
+  // fetchAllData so .state() comes from cache
+  return competition.suggestions({ where: options }, { subscribe, fetchAllData: true })
     .pipe(
       mergeMap(submissions => of(submissions).pipe(
         mergeMap(submissions => submissions),
         mergeMap((submission: CompetitionSuggestion) => submission.state().pipe(first())),
         toArray()
-      )));
+      ))
+    );
 };
 
-export const getSubmission = (id: string, subscribe = false): Observable<ICompetitionSuggestionState> => {
-  const submission = new CompetitionSuggestion(id, getArc());
-  return submission.state({ subscribe });
+export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestionState>> => {
+  return getSubmissions(proposalId, undefined, subscribe);
+};
+
+export const getProposalSubmission = (proposalId: string, id: string, subscribe = false): Observable<ICompetitionSuggestionState> => {
+  return getSubmissions(proposalId, { id }, subscribe).pipe(
+    map((suggestions: Array<ICompetitionSuggestionState>) => suggestions.length ? suggestions[0]: null ));
 };
 
 export const getCompetitionVotes = (competitionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
-  const competition = new Competition(competitionId, getArc());
-  /**
-   * none of the current uses require the vote state
-   */
-  return competition.votes({ where: voterAddress ? { voter: voterAddress } : {}},
-    { subscribe: subscribe, fetchAllData: true });
+  const options = Object.assign({ proposal: competitionId }, voterAddress ? { voter: voterAddress } : {} );
+  return CompetitionVote.search(getArc(), { where: options}, { subscribe: subscribe, fetchAllData: false });
 };
 
-const getSubmissionVotes = (submissionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
+export const getSubmissionVotes = (submissionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
   // submissionId is the actual id, not the count
   const submission = new CompetitionSuggestion(submissionId, getArc());
   return submission.votes(voterAddress ? { where: { voter: voterAddress } } : {}, { subscribe, fetchAllData: true });
@@ -199,11 +215,4 @@ export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: s
   // submissionId is the actual id, not the count
   return getSubmissionVotes(submissionId, voterAddress, subscribe)
     .pipe(map((votes: Array<CompetitionVote>) => !!votes.length));
-};
-
-export const primeCacheForSubmissionsAndVotes = (): Observable<any> => {
-  return combineLatest(
-    CompetitionSuggestion.search(getArc(), {}, { subscribe: true, fetchAllData: true }),
-    CompetitionVote.search(getArc(), {}, { subscribe: true, fetchAllData: true })
-  );
 };

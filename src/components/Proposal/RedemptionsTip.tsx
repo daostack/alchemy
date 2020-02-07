@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalState, IProposalOutcome } from "@daostack/client";
 import Reputation from "components/Account/Reputation";
-import { baseTokenName, formatTokens, fromWei, genName, tokenDecimals, tokenSymbol, AccountClaimableRewardsType } from "lib/util";
+import { formatTokens, fromWei, tokenDecimals, tokenSymbol, AccountClaimableRewardsType } from "lib/util";
 import * as React from "react";
 import * as css from "components/Shared/PreTransactionModal.scss";
 
@@ -49,7 +49,7 @@ export default (props: IProps) => {
     c = <div key={id + "_staker_tokens"}>
       <strong>For staking on the proposal you are due to receive:</strong>
       <ul>
-        <li>{fromWei(gpRewards.tokensForStaker)} {genName()}</li>
+        <li>{fromWei(gpRewards.tokensForStaker)} GEN</li>
       </ul>
     </div>;
     rewardComponents.push(c);
@@ -58,7 +58,7 @@ export default (props: IProps) => {
     c = <div key={id + "_staker_bounty"}>
       <strong>For staking on the proposal you are due to receive:</strong>
       <ul>
-        <li>{fromWei(gpRewards.daoBountyForStaker)} {genName()} as bounty from {dao.name}
+        <li>{fromWei(gpRewards.daoBountyForStaker)} GEN as bounty from {dao.name}
         </li>
       </ul>
     </div >;
@@ -79,7 +79,7 @@ export default (props: IProps) => {
           <ul>
             {contributionRewards["eth"]  ?
               <li>
-                {formatTokens(contributionReward.ethReward, baseTokenName())}
+                {formatTokens(contributionReward.ethReward, "ETH")}
               </li> : ""
             }
             {contributionRewards["externalToken"] ?

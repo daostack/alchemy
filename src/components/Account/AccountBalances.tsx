@@ -1,5 +1,5 @@
 import { Address, IDAOState, IMemberState } from "@daostack/client";
-import { baseTokenName, ethErrorHandler, genName } from "lib/util";
+import { ethErrorHandler } from "lib/util";
 
 import BN = require("bn.js");
 import AccountBalance from "components/Account/AccountBalance";
@@ -43,10 +43,10 @@ class AccountBalances extends React.Component<IProps, null>  {
         <div className={css.userBalance}>
           <h2>Holdings</h2>
           <div>
-            <AccountBalance tokenSymbol={baseTokenName()} balance={ethBalance} accountAddress={currentAccountState.address} />
+            <AccountBalance tokenSymbol="ETH" balance={ethBalance} accountAddress={currentAccountState.address} />
           </div>
           <div>
-            <AccountBalance tokenSymbol={genName()} balance={genBalance} accountAddress={currentAccountState.address} />
+            <AccountBalance tokenSymbol="GEN" balance={genBalance} accountAddress={currentAccountState.address} />
           </div>
         </div>
       </div>

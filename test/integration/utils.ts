@@ -1,14 +1,5 @@
 import { Arc } from "@daostack/client";
-
-const settings = {
-  graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
-  graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
-  graphqlSubscribeToQueries: false,
-  web3Provider: "ws://127.0.0.1:8545",
-  web3ProviderRead: "ws://127.0.0.1:8545",
-  ipfsProvider: "http://127.0.0.1:5001/api/v0",
-  txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
-};
+import { settings } from "../../src/settings";
 
 const chai = require("chai");
 
@@ -57,7 +48,7 @@ export const userAddresses = [
 ];
 
 export function getArc() {
-  const arc = new Arc(settings);
+  const arc = new Arc(settings.dev);
   return arc;
 }
 

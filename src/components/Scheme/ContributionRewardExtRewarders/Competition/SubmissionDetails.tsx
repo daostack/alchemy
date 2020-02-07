@@ -15,8 +15,7 @@ import Tooltip from "rc-tooltip";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import Reputation from "components/Account/Reputation";
 import { DiscussionEmbed } from "disqus-react";
-import { RouteComponentProps } from "react-router-dom";
-import { getSubmission, getSubmissionVoterHasVoted, getCompetitionVotes, CompetitionStatus } from "./utils";
+import { getProposalSubmission, getSubmissionVoterHasVoted, getCompetitionVotes, CompetitionStatus } from "./utils";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -27,7 +26,7 @@ interface IExternalStateProps {
   profiles: IProfilesState;
 }
 
-interface IExternalProps extends RouteComponentProps<any> {
+interface IExternalProps {
   currentAccountAddress: Address;
   daoState: IDAOState;
   proposalState: IProposalState;
@@ -78,7 +77,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const tags = submission.tags;
 
     this.disqusConfig.title = submission.title;
-    this.disqusConfig.url = process.env.BASE_URL + this.props.history.location.pathname;
+    this.disqusConfig.url = window.location.toString();
     this.disqusConfig.identifier = submission.id;
 
     return (
@@ -149,16 +148,12 @@ class SubmissionDetails extends React.Component<IProps, null> {
 
         <div className={css.createdOn}>Created: <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.createdAt)}</div></div>
 
-        { 
-        // eslint-disable-next-line no-constant-condition
-          (false) ? <div className={css.discussionContainer}>
-            <div className={css.title}>Discussion</div>
-            <div className={css.disqus}>
-              <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
-            </div>
+        <div className={css.discussionContainer}>
+          <div className={css.title}>Discussion</div>
+          <div className={css.disqus}>
+            <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
           </div>
-            : ""
-        }
+        </div>
 
       </div>
     );
@@ -170,12 +165,9 @@ const SubmissionDetailsSubscription = withSubscription({
   loadingComponent: null,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["currentAccountAddress"],
-  createObservable: (props: IExternalProps) => {
-    /**
-     * data comes from the cache created in Details
-     */
+  createObservable: async (props: IExternalProps) => {
     return combineLatest(
-      getSubmission(props.suggestionId, true),
+      getProposalSubmission(props.proposalState.id, props.suggestionId, true),
       getSubmissionVoterHasVoted(props.suggestionId, props.currentAccountAddress, true),
       props.currentAccountAddress ? getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true) : of([])
     );

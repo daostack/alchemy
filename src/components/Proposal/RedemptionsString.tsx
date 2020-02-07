@@ -2,7 +2,7 @@ import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/clie
 
 import BN = require("bn.js");
 import Reputation from "components/Account/Reputation";
-import { baseTokenName, genName, getCRRewards, getGpRewards, formatTokens, tokenDecimals, tokenSymbol } from "lib/util";
+import { getCRRewards, getGpRewards, formatTokens, tokenDecimals, tokenSymbol } from "lib/util";
 import * as React from "react";
 
 interface IProps {
@@ -42,7 +42,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
     if (contributionReward && currentAccountAddress === contributionReward.beneficiary) {
       const rewards = getCRRewards(proposal);
       if (rewards.ethReward) {
-        rewardComponents.push(formatTokens(rewards.ethReward, baseTokenName()));
+        rewardComponents.push(formatTokens(rewards.ethReward, "ETH"));
       }
       if (rewards.externalTokenReward) {
         rewardComponents.push(formatTokens(rewards.externalTokenReward, tokenSymbol(contributionReward.externalToken), tokenDecimals(contributionReward.externalToken)));
@@ -56,7 +56,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
     }
 
     if (gen.gt(zero)) {
-      rewardComponents.push(formatTokens(gen, genName()));
+      rewardComponents.push(formatTokens(gen, "GEN"));
     }
 
     if (reputation.gt(zero)) {

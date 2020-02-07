@@ -9,7 +9,7 @@ import UserSearchField from "components/Shared/UserSearchField";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Analytics from "lib/analytics";
-import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
+import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
@@ -311,12 +311,12 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               <div className={css.rewards}>
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
-                    {baseTokenName()} Reward
+                    ETH Reward
                     <ErrorMessage name="ethReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
                     id="ethRewardInput"
-                    placeholder={`How much ${baseTokenName()} to reward`}
+                    placeholder="How much ETH to reward"
                     name="ethReward"
                     type="number"
                     className={touched.ethReward && errors.ethReward ? css.error : null}

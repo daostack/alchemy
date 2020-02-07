@@ -20,30 +20,29 @@
   font-weight: bold;
   background-color: rgba(229, 235, 242, 1);
   border-bottom: 1px solid rgba(195, 212, 231, 1);
-  display: flex;
-  width: 100%;
+  position: relative;
 
-  .title {
-    flex-grow: 2;
-    .caption {
-      display: inline-block;
-      font-size: 28px;
-      padding: 0;
-      margin-bottom: 0;
-    }
+  h2 {
+    display: inline-block;
+    font-size: 28px;
+    padding: 0;
+    margin-bottom: 0;
+  }
 
-    .totalRewards {
-      font-size: 13px;
-      border-left: 1px solid rgba(191, 203, 213, 1);
-      display: inline-block;
-      padding-left: 15px;
-      margin: 5px 5px 0px 15px;
-    }
+  .totalRewards {
+    font-size: 13px;
+    border-left: 1px solid rgba( 191, 203, 213, 1);
+    display: inline-block;
+    padding-left: 15px;
+    margin: 5px 5px 0px 15px;
   }
 
   .redeemAllButton {
-    justify-content: right;
+    position: absolute;
+    right: 5px;
+    top: 60px;
     height: 30px;
+
     line-height: 30px;
     border-radius: 15px;
     font-family: inherit;
@@ -53,7 +52,6 @@
     padding: 0 15px;
     border: none;
     cursor: pointer;
-    white-space: nowrap;
 
     &:hover {
       background-color: $accent-1;
@@ -77,7 +75,7 @@
   h2 {
     line-height: 55px;
     font-size: 45px;
-    color: rgba(104, 155, 214, 1);
+    color: rgba(104, 155, 214, 1.000);
   }
 
   p {
@@ -117,19 +115,16 @@
   }
 
   .header {
-    flex-direction: column;
+    padding: 10px 0 10px 15px;
+    text-align: left;
 
-    .title {
+    h2 {
       font-size: 18px;
-      margin-bottom: 10px;
-
-      .totalRewards {
-        border-left: none;
-      }
+      margin-top: 0;
     }
 
     .redeemAllButton {
-      margin-bottom: 10px;
+      top: 5px;
     }
   }
 }

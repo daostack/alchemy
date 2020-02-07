@@ -1,7 +1,7 @@
 import { Address, IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
 import { threeBoxLogout } from "actions/profilesActions";
-import { enableWalletProvider, getAccountIsEnabled, getArc, logout, getWeb3ProviderInfo } from "arc";
+import { enableWalletProvider, getAccountIsEnabled, getArc, gotoReadonly, getWeb3ProviderInfo } from "arc";
 import classNames from "classnames";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
@@ -118,7 +118,7 @@ class Header extends React.Component<IProps, null> {
   }
 
   public handleClickLogout = async (_event: any): Promise<void> => {
-    await logout(this.props.showNotification);
+    await gotoReadonly(this.props.showNotification);
     await this.props.threeBoxLogout();
   }
 
