@@ -67,19 +67,23 @@ class RedemptionsPage extends React.Component<IProps, null> {
         <BreadcrumbsItem to="/redemptions">Redemptions</BreadcrumbsItem>
         <Sticky enabled top={50} innerZ={10000}>
           <div className={css.header}>
-            <h2>Redemptions</h2>
+            <div className={css.title}>
+              <div className={css.caption}>Redemptions</div>
+              {proposals.length > 0 ?
+                <div className={css.totalRewards}>Pending Protocol Rewards: {this.renderTotalRewards()}</div>
+                : ""
+              }
+            </div>
             {proposals.length > 0 ?
-              <span className={css.totalRewards}>Pending Protocol Rewards:&nbsp;{this.renderTotalRewards()}</span>
-              : ""
-            }
-            {proposals.length > 0 ?
-              <button
-                className={css.redeemAllButton}
-                onClick={this.redeemAll}
-              >
-                <img src="/assets/images/Icon/redeem.svg" />
+              <div>
+                <button
+                  className={css.redeemAllButton}
+                  onClick={this.redeemAll}
+                >
+                  <img src="/assets/images/Icon/redeem.svg" />
                 Redeem all
-              </button>
+                </button>
+              </div>
               : ""
             }
           </div>
