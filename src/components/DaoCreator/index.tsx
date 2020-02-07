@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Prompt } from "react-router";
 import { enableWalletProvider, getWeb3Provider } from "arc";
 import { showNotification } from "reducers/notifications";
+
 const DAOcreator = React.lazy(() => import("@dorgtech/daocreator-ui-v1"));
 
 interface IDispatchProps {
@@ -35,7 +36,7 @@ class DaoCreator extends React.Component<IProps> {
     return (
       <React.Suspense fallback={<div>Loading...</div>}>
         <Prompt
-          when={true}
+          when
           message={"Are you sure you want to leave?"}
         />
         <DAOcreator
