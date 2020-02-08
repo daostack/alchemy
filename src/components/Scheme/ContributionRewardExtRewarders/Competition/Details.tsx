@@ -252,7 +252,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const voting = status.voting;
     const isOver = status.over;
     const overWithWinners = status.overWithWinners;
-    const submissionsAreSuppressed = notStarted || 
+    const submissionsAreDisabled = notStarted || 
           // note that winningOutcome1 is the *current* state, not necessarily the *final* outcome
           (!proposalState.executedAt || (proposalState.winningOutcome !== IProposalOutcome.Pass))
           // FAKE: restore after .admin is made available
@@ -284,9 +284,9 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
                         "Create a submission"
                   }
                   >
-                    <a className={classNames({[css.blueButton]: true, [css.disabled]: submissionsAreSuppressed})}
+                    <a className={classNames({[css.blueButton]: true, [css.disabled]: submissionsAreDisabled})}
                       href="#!"
-                      onClick={this.openNewSubmissionModal}
+                      onClick={submissionsAreDisabled ? undefined : this.openNewSubmissionModal}
                       data-test-id="createSuggestion"
                     >+ New Submission</a>
                   </Tooltip>
