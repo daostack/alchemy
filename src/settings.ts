@@ -1,4 +1,5 @@
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
+import Torus from "@toruslabs/torus-embed";
 
 const WalletConnectProvider = require("@walletconnect/web3-provider");
 const Portis = require("@portis/web3");
@@ -36,6 +37,10 @@ export const settings = {
     txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
     web3ConnectProviderOptions: {
       network: "rinkeby",
+      torus: {
+        package: Torus,
+        network: "rinkeby",
+      },
       walletconnect: {
         package: isMobileBrowser() ? null : WalletConnectProvider,
         options: {
@@ -103,6 +108,10 @@ export const settings = {
     txSenderServiceUrl: "",
     web3ConnectProviderOptions: {
       network: "mainnet",
+      torus: {
+        package: Torus,
+        network: "mainnet",
+      },
       walletconnect: {
         package: isMobileBrowser() ? null : WalletConnectProvider,
         options: {
@@ -138,5 +147,4 @@ export const settings = {
     },
   },
 };
-
 
