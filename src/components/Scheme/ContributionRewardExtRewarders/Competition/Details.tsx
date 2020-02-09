@@ -20,7 +20,6 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import { combineLatest } from "rxjs";
 
 import Tooltip from "rc-tooltip";
-import Reputation from "components/Account/Reputation";
 import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
 import { map } from "rxjs/operators";
 import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, CompetitionStatus, getCompetitionVotes, primeCacheForSubmissionsAndVotes } from "./utils";

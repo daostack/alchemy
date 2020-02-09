@@ -13,7 +13,6 @@ import { IProfilesState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import Tooltip from "rc-tooltip";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
-import Reputation from "components/Account/Reputation";
 import { DiscussionEmbed } from "disqus-react";
 import { RouteComponentProps } from "react-router-dom";
 import { getSubmission, getSubmissionVoterHasVoted, getCompetitionVotes, CompetitionStatus } from "./utils";
@@ -62,7 +61,6 @@ class SubmissionDetails extends React.Component<IProps, null> {
   public render(): RenderOutput {
 
     const competition = this.props.proposalState.competition;
-    const daoState = this.props.daoState;
     const submission = this.props.data[0];
     const currentAccountVotedForIt = this.props.data[1];
     const currentAccountVotes = this.props.data[2];
