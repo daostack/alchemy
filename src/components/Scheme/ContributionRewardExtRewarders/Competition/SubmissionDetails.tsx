@@ -3,7 +3,7 @@ import * as React from "react";
 
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
-import { ensureHttps, formatFriendlyDateForLocalTimezone} from "lib/util";
+import { ensureHttps, formatFriendlyDateForLocalTimezone, formatTokens} from "lib/util";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import classNames from "classnames";
@@ -87,7 +87,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
           <div className={css.closeButton}><img onClick={this.props.handleClose} src="/assets/images/Icon/x-grey.svg"/></div>
           <div className={css.reputationVoted}>
             <img src="/assets/images/Icon/vote/for-gray.svg"/>
-            { <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol />}
+            { formatTokens(submission.totalVotes) } Rep { /* <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol /> */}
           </div>
           { (canRedeem || !competitionIsOver) ?
             <div className={css.actions}>

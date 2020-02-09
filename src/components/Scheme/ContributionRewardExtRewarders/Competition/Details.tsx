@@ -3,7 +3,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
 import { IDAOState, IProposalState, ICompetitionSuggestionState, Address, CompetitionVote, IProposalOutcome } from "@daostack/client";
-import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone } from "lib/util";
+import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
 import { connect } from "react-redux";
 
 import { DiscussionEmbed } from "disqus-react";
@@ -224,7 +224,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votingSection]: true})}>
             <div className={css.votes}
               onClick={this.openSubmissionDetailsModal(submission)}>
-              { <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol/> }
+              { formatTokens(submission.totalVotes) } Rep{/*<Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol/>*/ }
             </div>
             <div className={css.votedUp}
               onClick={this.openSubmissionDetailsModal(submission)}>
