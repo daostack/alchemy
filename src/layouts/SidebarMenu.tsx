@@ -245,6 +245,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               </li>
               <li><a className="externalLink" href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">Help Center</a></li>
               <li><a className="externalLink" href="https://hub.gendao.org/" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
+              <li><Link to="/daos/create" onClick={this.handleCloseMenu}>Create A DAO</Link></li>
               <li><Link to="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link></li>
               <li className={css.daoStack}>
                 <a className="externalLink" href="http://daostack.io" target="_blank" rel="noopener noreferrer">
