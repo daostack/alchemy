@@ -3,7 +3,7 @@ import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, getLocalTimezone } from "lib/util";
+import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, getLocalTimezone } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
@@ -81,6 +81,7 @@ const CustomDateInput: React.SFC<any> = ({ field, form }) => {
     form.setFieldValue(field.name, date);
     return true;
   };
+
   return <Datetime
     value={field.value}
     onChange={onChange}
@@ -260,20 +261,36 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             const votingStartTimeInput = values.votingStartTimeInput;
             const suggestionEndTimeInput = values.suggestionEndTimeInput;
 
-            if (compStartTimeInput && compStartTimeInput.isSameOrBefore(now)) {
-              errors.compStartTimeInput = "Competition must start in the future";
+            if (!(compStartTimeInput instanceof moment)) {
+              errors.compStartTimeInput = "Invalid datetime format";
+            } else {
+              if (compStartTimeInput && compStartTimeInput.isSameOrBefore(now)) {
+                errors.compStartTimeInput = "Competition must start in the future";
+              }
             }
 
-            if (suggestionEndTimeInput && (suggestionEndTimeInput.isSameOrBefore(compStartTimeInput))) {
-              errors.suggestionEndTimeInput = "Submission period must end after competition starts";
+            if (!(suggestionEndTimeInput instanceof moment)) {
+              errors.suggestionEndTimeInput = "Invalid datetime format";
+            } else {
+              if (suggestionEndTimeInput && (suggestionEndTimeInput.isSameOrBefore(compStartTimeInput))) {
+                errors.suggestionEndTimeInput = "Submission period must end after competition starts";
+              }
             }
 
-            if (votingStartTimeInput && suggestionEndTimeInput && (votingStartTimeInput.isBefore(suggestionEndTimeInput))) {
-              errors.votingStartTimeInput = "Voting must start on or after submission period ends";
+            if (!(votingStartTimeInput instanceof moment)) {
+              errors.votingStartTimeInput = "Invalid datetime format";
+            } else {
+              if (votingStartTimeInput && suggestionEndTimeInput && (votingStartTimeInput.isBefore(suggestionEndTimeInput))) {
+                errors.votingStartTimeInput = "Voting must start on or after submission period ends";
+              }
             }
 
-            if (compEndTimeInput && compEndTimeInput.isSameOrBefore(votingStartTimeInput)) {
-              errors.compEndTimeInput = "Competion must end after voting starts";
+            if (!(compEndTimeInput instanceof moment)) {
+              errors.compEndTimeInput = "Invalid datetime format";
+            } else {
+              if (compEndTimeInput && compEndTimeInput.isSameOrBefore(votingStartTimeInput)) {
+                errors.compEndTimeInput = "Competion must end after voting starts";
+              }
             }
 
             if (!isValidUrl(values.url)) {
@@ -454,12 +471,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               <div className={css.rewards}>
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
-                    ETH Reward to split
+                    {baseTokenName()} Reward to split
                     <ErrorMessage name="ethReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
                     id="ethRewardInput"
-                    placeholder="How much ETH to reward"
+                    placeholder={`How much ${baseTokenName()} to reward`}
                     name="ethReward"
                     type="number"
                     className={touched.ethReward && errors.ethReward ? css.error : null}

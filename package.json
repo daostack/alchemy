@@ -66,6 +66,7 @@
     "start-docker": "node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js  --config webpack.docker.config.js",
     "start-prod": "cross-env NODE_ENV=production node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js  --config webpack.dev.config.js",
     "start-staging": "cross-env NODE_ENV=staging node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.config.js",
+    "start-xdai": "cross-env NODE_ENV=xdai node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.config.js",
     "storybook": "start-storybook",
     "test": "wdio ./test/integration/wdio.conf.js",
     "test:integration": "wdio ./test/integration/wdio.conf.js --inspect",
@@ -74,6 +75,7 @@
   },
   "dependencies": {
     "3box": "^1.16.1",
+    "@burner-wallet/burner-connect-provider": "^0.1.1",
     "@daostack/client": "0.2.59",
     "@dorgtech/daocreator-ui-v1": "^0.2.0-rc.20",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
@@ -136,7 +138,7 @@
     "ts-node": "^5.0.1",
     "utility-types": "^3.7.0",
     "web3": "1.2.4",
-    "web3connect": "1.0.0-beta.23",
+    "web3connect": "^1.0.0-beta.29",
     "webpack": "^4.36.1",
     "ws": "^7.1.0"
   },
