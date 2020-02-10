@@ -2,27 +2,27 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
-import { IDAOState, IProposalState, ICompetitionSuggestionState, Address, CompetitionVote, IProposalOutcome } from "@daostack/client";
+import gql from "graphql-tag";
+import { IDAOState, IProposalState, ICompetitionSuggestionState, Address, CompetitionVote, IProposalOutcome,
+  CompetitionSuggestion, Proposal, Scheme  } from "@daostack/client";
 import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
 import { connect } from "react-redux";
-
 import { DiscussionEmbed } from "disqus-react";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
 import { Link, RouteComponentProps } from "react-router-dom";
 import classNames from "classnames";
 import { showNotification } from "reducers/notifications";
-import { enableWalletProvider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import { Modal } from "react-router-modal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import { combineLatest } from "rxjs";
-
 import Tooltip from "rc-tooltip";
 import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
 import { map } from "rxjs/operators";
-import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, CompetitionStatus, getCompetitionVotes, primeCacheForSubmissionsAndVotes } from "./utils";
+import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, CompetitionStatus, getCompetitionVotes } from "./utils";
 import CreateSubmission from "./CreateSubmission";
 import SubmissionDetails from "./SubmissionDetails";
 import StatusBlob from "./StatusBlob";
@@ -413,13 +413,31 @@ export default withSubscription({
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["currentAccountAddress"],
   createObservable: async (props: IExternalProps & IExternalStateProps ) => {
-    await primeCacheForSubmissionsAndVotes();
+    // prime the cache before creating the observable...
+    const cacheQuery = gql`query {
+      proposals (where: { id: "${props.proposalState.id}"}) {
+        # ...ProposalFields
+        competition {
+          id
+          suggestions {
+            ...CompetitionSuggestionFields
+            }
+        }
+      }
+    }
+    ${Proposal.fragments.ProposalFields}
+    ${Scheme.fragments.SchemeFields}
+    ${CompetitionSuggestion.fragments.CompetitionSuggestionFields}
+    `
+
+    const arc = await getArc()
+    await arc.sendQuery(cacheQuery)
     /**
      * We subscribe here because we can't rely on arriving at
      * this component via CompetitionCard, and thus must create our own subscription.
      */
     return combineLatest(
-      getProposalSubmissions(props.proposalState.id, true),
+      getProposalSubmissions(props.proposalState.id),
       getCompetitionVotes(props.proposalState.competition.id, props.currentAccountAddress, true)
         .pipe(
           map((votes: Array<CompetitionVote>) => {
