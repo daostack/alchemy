@@ -7,6 +7,7 @@ import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
+import DaoCreator from "components/DaoCreator";
 import DaoContainer from "components/Dao/DaoContainer";
 import FeedPage from "components/Feed/FeedPage";
 import RedemptionsPage from "components/Redemptions/RedemptionsPage";
@@ -210,6 +211,7 @@ class AppContainer extends React.Component<IProps, IState> {
 
             <div className={css.contentWrapper}>
               <Switch>
+                <Route path="/daos/create" component={DaoCreator} />
                 <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
                 <Route path="/profile/:accountAddress" component={AccountProfilePage} />
                 <Route path="/redemptions" component={RedemptionsPage} />
