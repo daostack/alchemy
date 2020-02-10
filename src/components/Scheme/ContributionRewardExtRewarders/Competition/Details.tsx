@@ -414,8 +414,9 @@ export default withSubscription({
   checkForUpdate: ["currentAccountAddress"],
   createObservable: async (props: IExternalProps & IExternalStateProps ) => {
     // prime the cache before creating the observable...
-    const cacheQuery = gql`query {
-      proposals (where: { id: "${props.proposalState.id}"}) {
+    const cacheQuery = gql`query cacheSuggestions {
+      proposal (id: "${props.proposalState.id}") {
+        id
         # ...ProposalFields
         competition {
           id
@@ -428,10 +429,10 @@ export default withSubscription({
     ${Proposal.fragments.ProposalFields}
     ${Scheme.fragments.SchemeFields}
     ${CompetitionSuggestion.fragments.CompetitionSuggestionFields}
-    `
+    `;
 
-    const arc = await getArc()
-    await arc.sendQuery(cacheQuery)
+    const arc = await getArc();
+    await arc.sendQuery(cacheQuery);
     /**
      * We subscribe here because we can't rely on arriving at
      * this component via CompetitionCard, and thus must create our own subscription.
