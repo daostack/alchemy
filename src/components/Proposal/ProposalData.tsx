@@ -64,6 +64,7 @@ interface IState {
 }
 
 class ProposalData extends React.Component<IProps, IState> {
+  private expireTimeout: any;
 
   constructor(props: IProps) {
     super(props);
@@ -79,8 +80,12 @@ class ProposalData extends React.Component<IProps, IState> {
     // Don't schedule timeout if its too long to wait, because browser will fail and trigger the timeout immediately
     const millisecondsUntilExpires = closingTime(this.props.data[0]).diff(moment());
     if (!this.state.expired && millisecondsUntilExpires < 2147483647) {
-      setTimeout(() => { this.setState({ expired: true });}, millisecondsUntilExpires);
+      this.expireTimeout = setTimeout(() => { this.setState({ expired: true });}, millisecondsUntilExpires);
     }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.expireTimeout);
   }
 
   render(): RenderOutput {
