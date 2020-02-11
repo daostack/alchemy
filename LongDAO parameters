@@ -1,0 +1,118 @@
+{
+  "orgName": "LongDAO",
+  "tokenName": "LongDAO Token",
+  "tokenSymbol": "LDT",
+  "ContributionReward": [
+  {
+      "voteParams": 0
+    }
+],
+  "SchemeRegistrar": [{  
+    "voteRegisterParams": 1,
+    "voteRemoveParams": 1
+  }],
+  "useDaoCreator": true,
+  "schemes": {
+    "ContributionReward": true,
+    "SchemeRegistrar": true
+  },
+   "StandAloneContracts": [
+    {
+      "name": "ContributionRewardExt",
+      "fromArc": true,
+      "arcVersion": "0.0.1-rc.40"
+    },
+    {
+      "name": "Competition",
+      "fromArc": true,
+      "params": [{ "StandAloneContract": 0 }],
+      "arcVersion": "0.0.1-rc.40"
+    },
+],
+  "VotingMachinesParams": [
+    {
+      "queuedVoteRequiredPercentage": 50,
+      "queuedVotePeriodLimit": 2592000,
+      "thresholdConst": 1200,
+      "proposingRepReward": 50,
+      "minimumDaoBounty": 150,
+      "boostedVotePeriodLimit": 432000,
+      "daoBountyConst": 10,
+      "activationTime": 0,
+      "preBoostedVotePeriodLimit": 86400,
+      "quietEndingPeriod": 216000,
+      "voteOnBehalf": "0x0000000000000000000000000000000000000000",
+      "votersReputationLossRatio": 4
+    },
+    {
+      "queuedVoteRequiredPercentage": 50,
+      "queuedVotePeriodLimit": 5184000,
+      "thresholdConst": 1500,
+      "proposingRepReward": 200,
+      "minimumDaoBounty": 250,
+      "boostedVotePeriodLimit": 691200,
+      "daoBountyConst": 10,
+      "activationTime": 0,
+      "preBoostedVotePeriodLimit": 172800,
+      "quietEndingPeriod": 345600,
+      "voteOnBehalf": "0x0000000000000000000000000000000000000000",
+      "votersReputationLossRatio": 4
+    }
+],
+  "schemes": {
+    "ContributionReward": true,
+    "SchemeRegistrar": true
+  },
+  "CustomSchemes": [
+    {
+      "name": "ReputationFromToken",
+      "isUniversal": false,
+      "params": [
+        { "StandAloneContract": 2 },
+        "0x0000000000000000000000000000000000000000",
+        "0x0000000000000000000000000000000000000000"
+      ],
+      "alias": "ReputationFromToken",
+      "fromArc": true,
+      "permissions": "0x00000000"
+    },
+    {
+      "name": "ContributionRewardExt",
+      "schemeName": "ContributionRewardExt",
+      "address": { "StandAloneContract": 0 },
+      "isUniversal": false,
+      "params": [
+        "GenesisProtocolAddress",
+        { "voteParams": 0 },
+        { "StandAloneContract": 1 }
+      ],
+      "permissions": "0x00000000",
+      "alias": "ContributionRewardExt",
+      "fromArc": true,
+      "arcVersion": "0.0.1-rc.40"
+    },
+  ],
+  "founders": [
+    {
+      "address": "0xB64850FE701fB64667B6CC762AA2c12f2E02193c",
+      "tokens": 1,
+      "reputation": 1
+    },
+    {
+      "address": "0xBFa43bf6E9FB6d5CC253Ff23c31F2b86a739bB98",
+      "tokens": 1,
+      "reputation": 1
+    },
+    {
+      "address": "0x76F46D5297033c807DF2D457d7878a7bD459Db21",
+      "tokens": 1,
+      "reputation": 1
+    },
+    {
+      "address": "0x521aacb43d89e1b8ffd64d9ef76b0a1074dedaf8",
+      "tokens": 1,
+      "reputation": 1
+    }
+  ],
+ }
+}
