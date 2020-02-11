@@ -41,7 +41,7 @@ const mapDispatchToProps = {
 
 type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]> & IDispatchProps;
 
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 100; 
 
 class DaoMembersPage extends React.Component<IProps, null> {
 

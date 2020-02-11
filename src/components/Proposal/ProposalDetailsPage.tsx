@@ -186,7 +186,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                     </span>
                   }
                 </span>
-                : " "};
+                : " "}
             </div>
 
             <div className={css.createdBy}>

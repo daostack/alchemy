@@ -124,7 +124,7 @@ exports.config = {
       chrome: {
         // check for more recent versions of chrome driver here:
         // https://chromedriver.storage.googleapis.com/index.html
-        version: "78.0.3904.70",
+        version: "80.0.3987.16",
         arch: process.arch,
         baseURL: "https://chromedriver.storage.googleapis.com",
       },
@@ -139,7 +139,7 @@ exports.config = {
       chrome: {
         // check for more recent versions of chrome driver here:
         // https://chromedriver.storage.googleapis.com/index.html
-        version: "78.0.3904.70",
+        version: "80.0.3987.16",
         arch: process.arch,
         baseURL: "https://chromedriver.storage.googleapis.com",
       },

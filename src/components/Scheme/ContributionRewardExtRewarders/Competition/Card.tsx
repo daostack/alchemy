@@ -129,7 +129,7 @@ export default withSubscription({
   checkForUpdate: [],
   createObservable: (props: IExternalProps) => {
     /**
-     * Would be better to prime for all cards
+     * Data will come from the cache created in List
      */
     return combineLatest(
       getProposalSubmissions(props.proposalState.id, true),

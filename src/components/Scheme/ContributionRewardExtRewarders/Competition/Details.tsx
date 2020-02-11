@@ -2,24 +2,24 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
-import { IDAOState, IProposalState, ICompetitionSuggestionState, Address, CompetitionVote } from "@daostack/client";
-import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone } from "lib/util";
+import gql from "graphql-tag";
+import { IDAOState, IProposalState, ICompetitionSuggestionState, Address, CompetitionVote, IProposalOutcome,
+  CompetitionSuggestion, Proposal, Scheme  } from "@daostack/client";
+import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
 import { connect } from "react-redux";
-
+import { DiscussionEmbed } from "disqus-react";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
 import { Link, RouteComponentProps } from "react-router-dom";
 import classNames from "classnames";
 import { showNotification } from "reducers/notifications";
-import { enableWalletProvider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import { Modal } from "react-router-modal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
-import { combineLatest } from "rxjs";
-
+import { combineLatest, of } from "rxjs";
 import Tooltip from "rc-tooltip";
-import Reputation from "components/Account/Reputation";
 import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
 import { map } from "rxjs/operators";
 import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, CompetitionStatus, getCompetitionVotes } from "./utils";
@@ -82,6 +82,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       status: this.getCompetitionState(),
     };
   }
+
+  private disqusConfig = { url: "", identifier: "", title: "" };
 
   private getCompetitionState = (): CompetitionStatus => {
     const competition = this.props.proposalState.competition;
@@ -221,7 +223,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votingSection]: true})}>
             <div className={css.votes}
               onClick={this.openSubmissionDetailsModal(submission)}>
-              { <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol/> }
+              { formatTokens(submission.totalVotes) } Rep{/*<Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol/>*/ }
             </div>
             <div className={css.votedUp}
               onClick={this.openSubmissionDetailsModal(submission)}>
@@ -249,7 +251,16 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const voting = status.voting;
     const isOver = status.over;
     const overWithWinners = status.overWithWinners;
-    const canSubmit =  inSubmissions && proposalState.executedAt;
+    const submissionsAreDisabled = notStarted || 
+          // note that winningOutcome1 is the *current* state, not necessarily the *final* outcome
+          (!proposalState.executedAt || (proposalState.winningOutcome !== IProposalOutcome.Pass))
+          // FAKE: restore after .admin is made available
+          // || (proposalState.admin && (this.props.currentAccountAddress !== proposalState.admin))
+          ;
+
+    this.disqusConfig.title = proposalState.title;
+    this.disqusConfig.url = process.env.BASE_URL + this.props.history.location.pathname;
+    this.disqusConfig.identifier = `competition-${proposalState.id}`;
 
     return <React.Fragment>
       <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}/crx`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
@@ -261,16 +272,27 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           <div className={css.header}>
             <StatusBlob competition={competition} submissions={submissions}></StatusBlob>
             <div className={css.gotoProposal}><Link to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>Go to Proposal&nbsp;&gt;</Link></div>
-            <div className={css.newSubmission}>
-              { canSubmit ? 
-                <a className={css.blueButton}
-                  href="#!"
-                  onClick={this.openNewSubmissionModal}
-                  data-test-id="createSuggestion"
-                >+ New Submission</a>
-                : ""
-              }
-            </div>
+            { status.now.isBefore(status.competition.suggestionsEndTime) ?
+              <div className={css.newSubmission}>
+                { 
+                  <Tooltip overlay={
+                    (!proposalState.executedAt || (proposalState.winningOutcome !== IProposalOutcome.Pass)) ? "The competition proposal has not been approved" :
+                      notStarted  ? "The submission period has not yet begun" :
+                      // FAKE, restore when .admin is available
+                      // (proposalState.admin && (this.props.currentAccountAddress !== proposalState.admin)) ? "Only the \"admin\" user is allowed to create submissions" :
+                        "Create a submission"
+                  }
+                  >
+                    <a className={classNames({[css.blueButton]: true, [css.disabled]: submissionsAreDisabled})}
+                      href="#!"
+                      onClick={submissionsAreDisabled ? undefined : this.openNewSubmissionModal}
+                      data-test-id="createSuggestion"
+                    >+ New Submission</a>
+                  </Tooltip>
+                }
+              </div>
+              : ""
+            }
           </div>
 
           <div className={css.name}>{humanProposalTitle(proposalState)}</div>
@@ -340,6 +362,14 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         }
 
         { ((inVoting && !voting) || (isOver && !overWithWinners)) ? this.noWinnersHtml() : "" }
+
+        <div className={css.discussionContainer}>
+          <div className={css.title}>Discussion</div>
+          <div className={css.disqus}>
+            <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
+          </div>
+        </div>
+
       </div>
     
       {this.state.showingCreateSubmission ?
@@ -356,6 +386,10 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         <Modal onBackdropClick={this.closeSubmissionDetailsModal}
           backdropClassName={css.submissionsModalBackdrop}>
           <SubmissionDetails
+            match= {this.props.match}
+            history= {this.props.history}
+            location = {this.props.location}
+            staticContext = {this.props.staticContext}
             currentAccountAddress={this.props.currentAccountAddress}
             status= {this.state.status}
             suggestionId={this.state.showingSubmissionDetails.id}
@@ -378,14 +412,34 @@ export default withSubscription({
   loadingComponent: null,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["currentAccountAddress"],
-  createObservable: (props: IExternalProps & IExternalStateProps ) => {
+  createObservable: async (props: IExternalProps & IExternalStateProps ) => {
+    // prime the cache before creating the observable...
+    const cacheQuery = gql`query cacheSuggestions {
+      proposal (id: "${props.proposalState.id}") {
+        id
+        # ...ProposalFields
+        competition {
+          id
+          suggestions {
+            ...CompetitionSuggestionFields
+            }
+        }
+      }
+    }
+    ${Proposal.fragments.ProposalFields}
+    ${Scheme.fragments.SchemeFields}
+    ${CompetitionSuggestion.fragments.CompetitionSuggestionFields}
+    `;
+
+    const arc = await getArc();
+    await arc.sendQuery(cacheQuery);
     /**
      * We subscribe here because we can't rely on arriving at
      * this component via CompetitionCard, and thus must create our own subscription.
      */
     return combineLatest(
-      getProposalSubmissions(props.proposalState.id, true),
-      getCompetitionVotes(props.proposalState.competition.id, props.currentAccountAddress, true)
+      getProposalSubmissions(props.proposalState.id),
+      props.currentAccountAddress ? getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true)
         .pipe(
           map((votes: Array<CompetitionVote>) => {
             const set = new Set<string>();
@@ -394,6 +448,7 @@ export default withSubscription({
             });
             return set;
           })
-        ));
+        ) : of(new Set<string>())
+    );
   },
 });

@@ -7,6 +7,7 @@ import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
+import DaoCreator from "components/DaoCreator";
 import DaoContainer from "components/Dao/DaoContainer";
 import FeedPage from "components/Feed/FeedPage";
 import RedemptionsPage from "components/Redemptions/RedemptionsPage";
@@ -22,7 +23,7 @@ import { matchPath,Link, Route, RouteComponentProps, Switch } from "react-router
 import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification, INotification } from "reducers/notifications";
-import { getCachedAccount, cacheWeb3Info, uncacheWeb3Info, gotoReadonly, pollForAccountChanges } from "arc";
+import { getCachedAccount, cacheWeb3Info, logout, pollForAccountChanges } from "arc";
 import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
@@ -136,8 +137,7 @@ class AppContainer extends React.Component<IProps, IState> {
         if (newAddress) {
           cacheWeb3Info(newAddress);
         } else {
-          uncacheWeb3Info();
-          gotoReadonly(this.props.showNotification);
+          logout(this.props.showNotification);
 
           // TODO: save the threebox for each profile separately so we dont have to logout here
           this.props.threeBoxLogout();
@@ -211,6 +211,7 @@ class AppContainer extends React.Component<IProps, IState> {
 
             <div className={css.contentWrapper}>
               <Switch>
+                <Route path="/daos/create" component={DaoCreator} />
                 <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
                 <Route path="/profile/:accountAddress" component={AccountProfilePage} />
                 <Route path="/redemptions" component={RedemptionsPage} />

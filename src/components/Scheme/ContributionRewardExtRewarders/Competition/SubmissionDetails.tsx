@@ -3,7 +3,7 @@ import * as React from "react";
 
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
-import { ensureHttps, formatFriendlyDateForLocalTimezone} from "lib/util";
+import { ensureHttps, formatFriendlyDateForLocalTimezone, formatTokens} from "lib/util";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import classNames from "classnames";
@@ -13,9 +13,9 @@ import { IProfilesState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import Tooltip from "rc-tooltip";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
-import Reputation from "components/Account/Reputation";
 import { DiscussionEmbed } from "disqus-react";
-import { getProposalSubmission, getSubmissionVoterHasVoted, getCompetitionVotes, CompetitionStatus } from "./utils";
+import { RouteComponentProps } from "react-router-dom";
+import { getSubmission, getSubmissionVoterHasVoted, getCompetitionVotes, CompetitionStatus } from "./utils";
 import * as css from "./Competitions.scss";
 
 const ReactMarkdown = require("react-markdown");
@@ -26,7 +26,7 @@ interface IExternalStateProps {
   profiles: IProfilesState;
 }
 
-interface IExternalProps {
+interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   daoState: IDAOState;
   proposalState: IProposalState;
@@ -61,7 +61,6 @@ class SubmissionDetails extends React.Component<IProps, null> {
   public render(): RenderOutput {
 
     const competition = this.props.proposalState.competition;
-    const daoState = this.props.daoState;
     const submission = this.props.data[0];
     const currentAccountVotedForIt = this.props.data[1];
     const currentAccountVotes = this.props.data[2];
@@ -77,7 +76,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
     const tags = submission.tags;
 
     this.disqusConfig.title = submission.title;
-    this.disqusConfig.url = window.location.toString();
+    this.disqusConfig.url = process.env.BASE_URL + this.props.history.location.pathname;
     this.disqusConfig.identifier = submission.id;
 
     return (
@@ -86,7 +85,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
           <div className={css.closeButton}><img onClick={this.props.handleClose} src="/assets/images/Icon/x-grey.svg"/></div>
           <div className={css.reputationVoted}>
             <img src="/assets/images/Icon/vote/for-gray.svg"/>
-            { <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol />}
+            { formatTokens(submission.totalVotes) } Rep { /* <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol /> */}
           </div>
           { (canRedeem || !competitionIsOver) ?
             <div className={css.actions}>
@@ -148,12 +147,16 @@ class SubmissionDetails extends React.Component<IProps, null> {
 
         <div className={css.createdOn}>Created: <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.createdAt)}</div></div>
 
-        <div className={css.discussionContainer}>
-          <div className={css.title}>Discussion</div>
-          <div className={css.disqus}>
-            <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
+        { 
+        // eslint-disable-next-line no-constant-condition
+          (false) ? <div className={css.discussionContainer}>
+            <div className={css.title}>Discussion</div>
+            <div className={css.disqus}>
+              <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
+            </div>
           </div>
-        </div>
+            : ""
+        }
 
       </div>
     );
@@ -165,9 +168,12 @@ const SubmissionDetailsSubscription = withSubscription({
   loadingComponent: null,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["currentAccountAddress"],
-  createObservable: async (props: IExternalProps) => {
+  createObservable: (props: IExternalProps) => {
+    /**
+     * data comes from the cache created in Details
+     */
     return combineLatest(
-      getProposalSubmission(props.proposalState.id, props.suggestionId, true),
+      getSubmission(props.suggestionId, true),
       getSubmissionVoterHasVoted(props.suggestionId, props.currentAccountAddress, true),
       props.currentAccountAddress ? getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true) : of([])
     );

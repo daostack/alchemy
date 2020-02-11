@@ -50,8 +50,12 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     };
   }
 
+  public handleClose = (e: any) => {
+    e.preventDefault();
+    this.doClose();
+  }
 
-  public handleClose(): void {
+  public doClose = () => {
     const { daoAvatarAddress, history, schemeId } = this.props;
     history.push("/dao/" + daoAvatarAddress + "/scheme/" + schemeId);
   }
@@ -82,7 +86,7 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     let createSchemeComponent = <div />;
     const props = {
       daoAvatarAddress,
-      handleClose: this.handleClose.bind(this),
+      handleClose: this.doClose,
       scheme,
     };
     const schemeTitle = this.state.createCrxProposalComponent ? rewarderContractName(scheme) : schemeName(scheme);
@@ -125,6 +129,7 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/create`}>Create {schemeTitle} Proposal</BreadcrumbsItem>
         <h2 className={css.header}>
           <span>+ New proposal <b>| {schemeTitle}</b></span>
+          <button className={css.closeButton} aria-label="Close Create Proposal Modal" onClick={this.handleClose}>&times;</button>
         </h2>
         { createSchemeComponent }
       </div>

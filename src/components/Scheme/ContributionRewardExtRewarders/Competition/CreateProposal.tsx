@@ -3,7 +3,7 @@ import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, getLocalTimezone } from "lib/util";
+import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, getLocalTimezone } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
@@ -12,11 +12,11 @@ import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
-
 import { checkTotalPercent } from "lib/util";
 import * as Datetime from "react-datetime";
 
 import moment = require("moment");
+import BN = require("bn.js")
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -81,6 +81,7 @@ const CustomDateInput: React.SFC<any> = ({ field, form }) => {
     form.setFieldValue(field.name, date);
     return true;
   };
+
   return <Datetime
     value={field.value}
     onChange={onChange}
@@ -141,7 +142,13 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     } else {
       rewardSplit = values.rewardSplit.split(",").map((s: string) => Number(s));
     }
+    let reputationReward = toWei(Number(values.reputationReward));
 
+    // This is a workaround around https://github.com/daostack/arc/issues/712
+    // which was for contract versions rc.40. It is resolved in rc.41
+    if (reputationReward.isZero()) {
+      reputationReward = new BN(1);
+    }
     // Parameters to be passed to client
     const proposalOptions: IProposalCreateOptionsCompetition  = {
       dao: this.props.daoAvatarAddress,
@@ -153,7 +160,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       numberOfVotesPerVoter:  Number(values.numberOfVotesPerVoter),
       proposalType: "competition", // this makes `createPRoposal` create a competition rather then a 'normal' contributionRewardExt
       proposerIsAdmin: values.proposerIsAdmin,
-      reputationReward: toWei(Number(values.reputationReward)),
+      reputationReward,
       rewardSplit,
       scheme: this.props.scheme.address,
       startTime: values.compStartTimeInput.toDate(),
@@ -260,20 +267,36 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             const votingStartTimeInput = values.votingStartTimeInput;
             const suggestionEndTimeInput = values.suggestionEndTimeInput;
 
-            if (compStartTimeInput && compStartTimeInput.isSameOrBefore(now)) {
-              errors.compStartTimeInput = "Competition must start in the future";
+            if (!(compStartTimeInput instanceof moment)) {
+              errors.compStartTimeInput = "Invalid datetime format";
+            } else {
+              if (compStartTimeInput && compStartTimeInput.isSameOrBefore(now)) {
+                errors.compStartTimeInput = "Competition must start in the future";
+              }
             }
 
-            if (suggestionEndTimeInput && (suggestionEndTimeInput.isSameOrBefore(compStartTimeInput))) {
-              errors.suggestionEndTimeInput = "Submission period must end after competition starts";
+            if (!(suggestionEndTimeInput instanceof moment)) {
+              errors.suggestionEndTimeInput = "Invalid datetime format";
+            } else {
+              if (suggestionEndTimeInput && (suggestionEndTimeInput.isSameOrBefore(compStartTimeInput))) {
+                errors.suggestionEndTimeInput = "Submission period must end after competition starts";
+              }
             }
 
-            if (votingStartTimeInput && suggestionEndTimeInput && (votingStartTimeInput.isBefore(suggestionEndTimeInput))) {
-              errors.votingStartTimeInput = "Voting must start on or after submission period ends";
+            if (!(votingStartTimeInput instanceof moment)) {
+              errors.votingStartTimeInput = "Invalid datetime format";
+            } else {
+              if (votingStartTimeInput && suggestionEndTimeInput && (votingStartTimeInput.isBefore(suggestionEndTimeInput))) {
+                errors.votingStartTimeInput = "Voting must start on or after submission period ends";
+              }
             }
 
-            if (compEndTimeInput && compEndTimeInput.isSameOrBefore(votingStartTimeInput)) {
-              errors.compEndTimeInput = "Competion must end after voting starts";
+            if (!(compEndTimeInput instanceof moment)) {
+              errors.compEndTimeInput = "Invalid datetime format";
+            } else {
+              if (compEndTimeInput && compEndTimeInput.isSameOrBefore(votingStartTimeInput)) {
+                errors.compEndTimeInput = "Competion must end after voting starts";
+              }
             }
 
             if (!isValidUrl(values.url)) {
@@ -454,12 +477,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               <div className={css.rewards}>
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
-                    ETH Reward to split
+                    {baseTokenName()} Reward to split
                     <ErrorMessage name="ethReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
                     id="ethRewardInput"
-                    placeholder="How much ETH to reward"
+                    placeholder={`How much ${baseTokenName()} to reward`}
                     name="ethReward"
                     type="number"
                     className={touched.ethReward && errors.ethReward ? css.error : null}

@@ -116,15 +116,17 @@ const ProposalDetail = (props: IProposalDetailProps) => {
   const proposalState = data;
   return (
     <Link className={css.proposalTitle} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
-      <span>
-        <em className={css.miniGraph}>
+      <div className={css.container}>
+        <div className={css.miniGraph}>
           <VoteGraph size={20} proposal={proposalState} />
-        </em>
-        {humanProposalTitle(proposalState)}
-      </span>
-      <b>
-        <ProposalCountdown proposal={proposalState} schemeView />
-      </b>
+        </div>
+        <div className={css.title}>
+          {humanProposalTitle(proposalState)}
+        </div>
+        <div className={css.countdown}>
+          <ProposalCountdown proposal={proposalState} schemeView />
+        </div>
+      </div>
     </Link>
   );
 };

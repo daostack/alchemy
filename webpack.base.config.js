@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const ENV = process.env.NODE_ENV || 'development';
-const isProd = ENV === 'production';
+const isProd = ENV === 'production' | ENV === 'xdai';
 const isDev = ENV === 'development';
 
 const basePath = process.cwd();
@@ -54,12 +54,15 @@ module.exports = {
           /node_modules\/apollo-link/,
           /node_modules\/apollo-link-http/,
           /node_modules\/apollo-link-ws/,
-          /node_modules\/xhr2-cookies/,
+          /node_modules\/ethereumjs-common/,
+          /node_modules\/ethereumjs-tx/,
+          /node_modules\/ethereumjs-util/,
+          /node_modules\/graphql-request/,
+          /node_modules\/https-did-resolver/,
           /node_modules\/rlp/,
           /node_modules\/subscriptions-transport-ws/,
+          /node_modules\/xhr2-cookies/,
           /node_modules\/zen-observable-ts/,
-          /node_modules\/graphql-request/,
-          /node_modules\/https-did-resolver/
         ]
       },
 
