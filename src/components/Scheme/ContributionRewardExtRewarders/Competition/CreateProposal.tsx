@@ -14,8 +14,9 @@ import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 import { checkTotalPercent } from "lib/util";
 import * as Datetime from "react-datetime";
+
 import moment = require("moment");
-import BN = require('bn.js')
+import BN = require("bn.js")
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -141,12 +142,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     } else {
       rewardSplit = values.rewardSplit.split(",").map((s: string) => Number(s));
     }
-    let reputationReward = toWei(Number(values.reputationReward))
+    let reputationReward = toWei(Number(values.reputationReward));
 
     // This is a workaround around https://github.com/daostack/arc/issues/712
     // which was for contract versions rc.40. It is resolved in rc.41
     if (reputationReward.isZero()) {
-      reputationReward = new BN(1)
+      reputationReward = new BN(1);
     }
     // Parameters to be passed to client
     const proposalOptions: IProposalCreateOptionsCompetition  = {
