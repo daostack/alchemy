@@ -18,7 +18,7 @@ import { Modal } from "react-router-modal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
-import { combineLatest } from "rxjs";
+import { combineLatest, of } from "rxjs";
 import Tooltip from "rc-tooltip";
 import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
 import { map } from "rxjs/operators";
@@ -439,7 +439,7 @@ export default withSubscription({
      */
     return combineLatest(
       getProposalSubmissions(props.proposalState.id),
-      getCompetitionVotes(props.proposalState.competition.id, props.currentAccountAddress, true)
+      props.currentAccountAddress ? getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true)
         .pipe(
           map((votes: Array<CompetitionVote>) => {
             const set = new Set<string>();
@@ -448,6 +448,7 @@ export default withSubscription({
             });
             return set;
           })
-        ));
+        ) : of(new Set<string>())
+    );
   },
 });
