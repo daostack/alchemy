@@ -27,6 +27,7 @@ interface IExternalProps extends RouteComponentProps<any> {
 }
 
 interface IStateProps {
+  showRedemptionsButton: Boolean
   currentAccountProfile: IProfileState;
   currentAccountAddress: string | null;
   daoAvatarAddress: Address;
@@ -41,8 +42,13 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
   });
   const queryValues = parse(ownProps.location.search);
 
+  // TODO: this is a temporary hack to send less requests during the ethDenver conference: 
+  // we hide the demptionsbutton when the URL contains "crx". Should probably be disabled at later date..
+  const showRedemptionsButton = (ownProps.location.pathname.indexOf('crx') === -1);
+
   return {
     ...ownProps,
+    showRedemptionsButton,
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
@@ -196,9 +202,11 @@ class Header extends React.Component<IProps, null> {
                 icons={{ checked: <img src='/assets/images/Icon/checked.svg'/>, unchecked: <img src='/assets/images/Icon/unchecked.svg'/> }}/>
             </div>
           </TrainingTooltip>
-          <div className={css.redemptionsButton}>
+          {
+          this.props.showRedemptionsButton ? <div className={css.redemptionsButton}>
             <RedemptionsButton currentAccountAddress={currentAccountAddress} />
-          </div>
+          </div> : <div></div>
+          }
           <div className={css.accountInfo}>
             { currentAccountAddress ?
               <span>

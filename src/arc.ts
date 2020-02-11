@@ -1,4 +1,5 @@
 import { Address, Arc } from "@daostack/client";
+import { RetryLink } from 'apollo-link-retry'
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 import Web3Connect from "web3connect";
@@ -121,59 +122,79 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   let success = false;
   let arc: any;
 
-  try {
-    const arcSettings = getArcSettings();
+  const arcSettings = getArcSettings();
 
-    if (provider) {
-      arcSettings.web3Provider = provider;
-    } else {
-      provider = arcSettings.web3Provider;
-    }
-
-    const readonly = typeof provider === "string";
-
-    // if there is no existing arc, we create a new one
-    if ((window as any).arc) {
-      arc = (window as any).arc;
-      arc.web3 = new Web3(provider);
-    } else {
-      arc = new Arc(arcSettings);
-    }
-
-    // get contract information from the subgraph
-    const contractInfos = await arc.fetchContractInfos();
-    success = !!contractInfos;
-
-    if (success) {
-      initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
-
-      if (!initializedAccount) {
-        // then something went wrong
-        // eslint-disable-next-line no-console
-        console.error("Unable to obtain an account from the provider");
-        // success = false;
-      }
-    } else {
-      initializedAccount = null;
-    }
-
-    if (success) {
-      provider = arc.web3.currentProvider; // won't be a string, but the actual provider
-      // save for future reference
-      // eslint-disable-next-line require-atomic-updates
-      provider.__networkId = await getNetworkId(provider);
-      if ((window as any).ethereum) {
-      // if this is metamask this should prevent a browser refresh when the network changes
-        (window as any).ethereum.autoRefreshOnNetworkChange = false;
-      }
-      // eslint-disable-next-line no-console
-      console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
-    }
-  } catch (reason) {
-    // eslint-disable-next-line no-console
-    console.error(reason ? reason.message : "unknown error");
+  if (provider) {
+    arcSettings.web3Provider = provider;
+  } else {
+    provider = arcSettings.web3Provider;
   }
 
+  const readonly = typeof provider === "string";
+
+  const retryLink = new RetryLink({
+    attempts: {
+      max: 1,
+      // @ts-ignore
+      retryIf: (error, operation) =>  {
+        console.log(`error occurred fetching data: ${error}, retrying...`)
+        return !!error
+      }
+    },
+    delay: {
+      initial: 300,
+      jitter: true,
+      max: Infinity
+    }
+  })
+
+  arcSettings.retryLink = retryLink
+
+  // if there is no existing arc, we create a new one
+  if ((window as any).arc) {
+    arc = (window as any).arc;
+    arc.web3 = new Web3(provider);
+  } else {
+    arc = new Arc(arcSettings);
+  }
+
+  // get contract information from the subgraph
+  let contractInfos
+  console.log('xxxxx')
+  try {
+    contractInfos = await arc.fetchContractInfos();
+  } catch(err) {
+    console.error(`Error fetching contractinfos`)
+    throw err
+  }
+  console.log('dafuhsdfkj')
+  success = !!contractInfos;
+
+  if (success) {
+    initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
+
+    if (!initializedAccount) {
+      // then something went wrong
+      // eslint-disable-next-line no-console
+      console.error("Unable to obtain an account from the provider");
+      // success = false;
+    }
+  } else {
+    initializedAccount = null;
+  }
+
+  if (success) {
+    provider = arc.web3.currentProvider; // won't be a string, but the actual provider
+    // save for future reference
+    // eslint-disable-next-line require-atomic-updates
+    provider.__networkId = await getNetworkId(provider);
+    if ((window as any).ethereum) {
+    // if this is metamask this should prevent a browser refresh when the network changes
+      (window as any).ethereum.autoRefreshOnNetworkChange = false;
+    }
+    // eslint-disable-next-line no-console
+    console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
+  }
   (window as any).arc = success ? arc : null;
 
   return success;

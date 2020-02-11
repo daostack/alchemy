@@ -42,18 +42,24 @@ export class App extends React.Component<{}, {
     // Do this here because we need to have initialized Arc first.  This will
     // not create a provider for the app, rather will just initialize Arc with a
     // readonly provider with no account, internal only to it.
+    const totalNumberOfAttempts = 3 /// we will try 3 times to init arc before actually throwing an error
+    let numberOfAttempts = 0
     initializeArc()
       .then(async (success: boolean) => {
         while (!success) {
           this.setState({ retryingArc: true });
-          await sleep(5000);
+          await sleep(2000);
           success = await initializeArc();
         }
         this.setState({ arcIsInitialized: true });
       })
       .catch ((err): void => {
         // eslint-disable-next-line no-console
-        console.log(err);
+        console.log(`${err}: retrying...`);
+        numberOfAttempts += 1
+        if (numberOfAttempts >= totalNumberOfAttempts) {
+          throw err
+        }
       });
 
     let GOOGLE_ANALYTICS_ID: string;

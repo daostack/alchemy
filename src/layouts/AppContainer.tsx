@@ -152,7 +152,7 @@ class AppContainer extends React.Component<IProps, IState> {
   private dismissNotif = (id: string) => () => this.props.dismissNotification(id);
   private minimizeNotif = () => this.setState({notificationsMinimized: true});
   private unminimizeNotif = () => this.setState({notificationsMinimized: false});
-  private headerHtml = ( props: any ): any => <Header {...props} />;
+  private headerHtml = ( props: any ): any => <Header {...props } showRedemptionsButton={false} />;
   private sidebarHtml = ( props: any ): any => <SidebarMenu {...props} />;
 
   private notificationHtml = (notif: INotification): any => {
