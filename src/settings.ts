@@ -86,6 +86,7 @@ export const settings = {
           defaultNetwork: "100",
           defaultWallets: [
             { origin: "https://buffidao.com/", name: "BuffiDAO" },
+            { origin: "https://denver-demo.burnerfactory.com/", name: "Denver Demo Wallet" },
             { origin: "test.buffidao.com/", name: "Denver Demo Wallet" },
           ],
         },
