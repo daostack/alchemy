@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const ENV = process.env.NODE_ENV || 'development';
-const isProd = ENV === 'production';
+const isProd = ENV === 'production' | ENV === 'xdai';
 const isDev = ENV === 'development';
 
 const basePath = process.cwd();
