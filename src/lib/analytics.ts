@@ -2,6 +2,7 @@ import * as Mixpanel from "mixpanel-browser";
 
 // const doTracking = process.env.NODE_ENV === "staging" || process.env.NODE_ENV === "production";
 const doTracking = (
+  process.env.MIXPANEL_TOKEN &&
   (process.env.NODE_ENV === "staging" || process.env.NODE_ENV === "production") &&
   [
     "https://alchemy.daostack.io",
