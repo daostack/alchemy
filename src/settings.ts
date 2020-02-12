@@ -1,5 +1,8 @@
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 
+// hide some data to send less queries
+export const ETHDENVER_OPTIMIZATION = true;
+
 const WalletConnectProvider = require("@walletconnect/web3-provider");
 const Portis = require("@portis/web3");
 const Fortmatic = require("fortmatic");
@@ -71,7 +74,7 @@ export const settings = {
     },
   },
   xdai: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/daostack/v38_0_xdaiWRONG",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/daostack/v38_0_xdai",
     graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs/name/daostack/v38_0_xdai",
     graphqlSubscribeToQueries: false,
     web3Provider:  process.env.ARC_WEB3PROVIDER || "https://poa.api.nodesmith.io/v1/dai/jsonrpc?apiKey=128059b9320a462699aef283a7ae2546",

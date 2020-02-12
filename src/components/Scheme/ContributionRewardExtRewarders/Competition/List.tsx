@@ -114,6 +114,15 @@ export default withSubscription({
         id
         competition {
           id
+      endTime
+      contract
+      suggestionsEndTime
+      createdAt
+      numberOfVotesPerVoters
+      numberOfWinners
+      rewardSplit
+      snapshotBlock
+      startTime
           suggestions {
             ...CompetitionSuggestionFields
             }

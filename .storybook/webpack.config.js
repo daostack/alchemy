@@ -25,6 +25,7 @@ module.exports = ({ config }) => {
     lib: path.resolve(basePath, 'src/lib'),
     reducers: path.resolve(basePath, 'src/reducers'),
     selectors: path.resolve(basePath, 'src/selectors'),
+    settings: path.resolve(basePath, 'src/settings'),
     src: path.resolve(basePath, 'src'),
     'ipfs-api': 'ipfs-api/dist',
   };

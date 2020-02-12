@@ -22,6 +22,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Toggle from "react-toggle";
 import { RefObject } from "react";
 import * as css from "./App.scss";
+import { ETHDENVER_OPTIMIZATION } from "../settings";
 
 interface IExternalProps extends RouteComponentProps<any> {
 }
@@ -44,7 +45,12 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
 
   // TODO: this is a temporary hack to send less requests during the ethDenver conference: 
   // we hide the demptionsbutton when the URL contains "crx". Should probably be disabled at later date..
-  const showRedemptionsButton = (ownProps.location.pathname.indexOf('crx') === -1);
+  let showRedemptionsButton;
+  if (ETHDENVER_OPTIMIZATION) {
+    showRedemptionsButton = (ownProps.location.pathname.indexOf('crx') === -1);
+  } else {
+    showRedemptionsButton = true;
+  }
 
   return {
     ...ownProps,

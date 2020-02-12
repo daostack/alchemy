@@ -9,7 +9,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { combineLatest } from "rxjs";
+import { combineLatest, of } from "rxjs";
 import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
 import StatusBlob from "./StatusBlob";
 import * as css from "./Competitions.scss";
@@ -131,9 +131,14 @@ export default withSubscription({
     /**
      * Data will come from the cache created in List
      */
-    return combineLatest(
-      getProposalSubmissions(props.proposalState.id, true),
-      getCompetitionVotes(props.proposalState.id, null, true),
-    );
+    // if (ETHDENVER_OPTIMIZATION) {
+      // return combineLatest(of([]), of([]))
+    // } else {
+      return combineLatest(
+        getProposalSubmissions(props.proposalState.id, true),
+        getCompetitionVotes(props.proposalState.id, null, true),
+      );
+      // we will hide or adapt any subcomponents that need to know about the submissions/votes
+    // }
   },
 });
