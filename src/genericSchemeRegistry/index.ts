@@ -11,10 +11,9 @@ const ensRegistryInfo = require("./schemes/ENSRegistry.json");
 const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
 const registryLookupInfo = require("./schemes/RegistryLookup.json");
 
-WikiUpdate.addresses = {...dutchXInfo.addresses};
-
 const KNOWNSCHEMES = [
   WikiUpdate,
+  dutchXInfo,
   ensRegistryInfo,
   ensPublicResolverInfo,
   gpInfo,

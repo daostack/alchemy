@@ -2,13 +2,13 @@
   "name": "WikiUpdate",
   "addresses": {
     "main": [ "" ],
-    "rinkeby": [ "" ],
+    "rinkeby": [ "0xCcd415a714085487fbe4509c4Ae40bBf79A598bC" ],
     "private": [
       "0xA10f1c26d7D4BCB1a93F84652177D2E2b320378B",
       "0xdbD6fB1F0E9CB1282d13DF95C2cA5Eb6377e984B"
     ]
   },
-  "actions": [
+  "actions": [ 
     {
       "id": "setRequestAuthorized",
       "label": "Authorize Wiki Merge",
