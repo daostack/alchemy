@@ -177,12 +177,12 @@ export const getSubmission = (id: string, subscribe = false): Observable<ICompet
   return submission.state({ subscribe });
 };
 
-export const getCompetitionVotes = (competitionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
+export const getCompetitionVotes = (competitionId: string, voterAddress: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
   const competition = new Competition(competitionId, getArc());
   /**
    * none of the current uses require the vote state
    */
-  return competition.votes({ where: voterAddress ? { voter: voterAddress } : {}},
+  return competition.votes({ where: { voter: voterAddress } },
     { subscribe: subscribe, fetchAllData: true });
 };
 

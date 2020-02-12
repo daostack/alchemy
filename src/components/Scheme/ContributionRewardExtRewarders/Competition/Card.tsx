@@ -1,21 +1,20 @@
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import { humanProposalTitle } from "lib/util";
-import * as React from "react";
-import { Link } from "react-router-dom";
 import RewardsString from "components/Proposal/RewardsString";
-import { IDAOState, IProposalState, CompetitionVote, ICompetitionSuggestionState } from "@daostack/client";
 import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
-import { connect } from "react-redux";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { combineLatest } from "rxjs";
 import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
-import StatusBlob from "./StatusBlob";
+import { competitionStatus, getProposalSubmissions, CompetitionStatus } from "./utils";
 import * as css from "./Competitions.scss";
-import { competitionStatus, getProposalSubmissions, getCompetitionVotes, CompetitionStatus } from "./utils";
+import StatusBlob from "./StatusBlob";
+import { connect } from "react-redux";
+import { IDAOState, IProposalState, ICompetitionSuggestionState } from "@daostack/client";
+import { Link } from "react-router-dom";
+import * as React from "react";
 
-type ISubscriptionState = [Array<ICompetitionSuggestionState>, Array<CompetitionVote>];
+type ISubscriptionState = Array<ICompetitionSuggestionState>;
 
 interface IExternalStateProps {
   creatorProfile: IProfileState;
@@ -53,7 +52,7 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
 
   private getCompetitionState = (): CompetitionStatus => {
     const competition = this.props.proposalState.competition;
-    const submissions = this.props.data[0];
+    const submissions = this.props.data;
     return competitionStatus(competition, submissions);
   }
 
@@ -80,8 +79,7 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
     } = this.props;
 
     const competition = proposalState.competition;
-    const submissions = this.props.data[0];
-    const votes = this.props.data[1];
+    const submissions = this.props.data;
     const numWinningSubmissions = submissions.filter((submission) => submission.isWinner).length;
     const overWithWinners = status.overWithWinners;
 
@@ -113,7 +111,7 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
         }
       </div>
       <div className={css.activityContainer}>
-        <div className={css.suggestions}>{submissions.length} Submissions | {votes.length} Votes</div>
+        <div className={css.suggestions}>{submissions.length} Submissions | {competition.totalVotes} Votes</div>
         <div className={css.comments}></div>
       </div>
     </div>;
@@ -131,9 +129,6 @@ export default withSubscription({
     /**
      * Data will come from the cache created in List
      */
-    return combineLatest(
-      getProposalSubmissions(props.proposalState.id, true),
-      getCompetitionVotes(props.proposalState.id, null, true),
-    );
+    return  getProposalSubmissions(props.proposalState.id, true);
   },
 });
