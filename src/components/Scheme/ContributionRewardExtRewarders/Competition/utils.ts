@@ -1,11 +1,12 @@
 import { ICompetitionProposalState, Competition, CompetitionSuggestion, ICompetitionSuggestionState, CompetitionVote, Address } from "@daostack/client";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
+
 import moment = require("moment");
 import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
-import { Observable, of } from "rxjs";
+import { Observable, of, combineLatest } from "rxjs";
 import { map, mergeMap, toArray, first } from "rxjs/operators";
 
 /**
@@ -200,9 +201,9 @@ export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: s
     .pipe(map((votes: Array<CompetitionVote>) => !!votes.length));
 };
 
-// export const primeCacheForSubmissionsAndVotes = (): Observable<any> => {
-//   return combineLatest(
-//     CompetitionSuggestion.search(getArc(), {}, { subscribe: true, fetchAllData: true }),
-//     CompetitionVote.search(getArc(), {}, { subscribe: true, fetchAllData: true })
-//   );
-// };
+export const primeCacheForSubmissionsAndVotes = (): Observable<any> => {
+  return combineLatest(
+    CompetitionSuggestion.search(getArc(), {}, { subscribe: true, fetchAllData: true }),
+    CompetitionVote.search(getArc(), {}, { subscribe: true, fetchAllData: true })
+  );
+};

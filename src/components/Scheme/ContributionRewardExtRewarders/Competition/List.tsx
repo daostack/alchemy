@@ -1,12 +1,9 @@
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { ISchemeState, IDAOState, IProposalState, CompetitionSuggestion, CompetitionVote } from "@daostack/client";
+import { ISchemeState, IDAOState, IProposalState } from "@daostack/client";
 import { SortService } from "lib/sortService";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { CompetitionStatusEnum, CompetitionStatus } from "./utils";
-import { combineLatest, of } from "rxjs";
-import gql from "graphql-tag";
-import { getArc } from "arc";
+import { CompetitionStatusEnum, CompetitionStatus, primeCacheForSubmissionsAndVotes } from "./utils";
 import Card from "./Card";
 import * as css from "./Competitions.scss";
 
@@ -107,45 +104,8 @@ export default withSubscription({
   loadingComponent: null,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: [],
-  createObservable: async (props: IExternalProps) => {
-    // prime the cache before creating the observable...
-    const cacheQuery = gql`query cacheSuggestions {
-      proposals (where: {scheme: "${props.scheme.id}"}) {
-        id
-        competition {
-          id
-      endTime
-      contract
-      suggestionsEndTime
-      createdAt
-      numberOfVotesPerVoters
-      numberOfWinners
-      rewardSplit
-      snapshotBlock
-      startTime
-          suggestions {
-            ...CompetitionSuggestionFields
-            }
-          votes { 
-            ...CompetitionVoteFields
-          }
-        }
-      }
-    }
-    ${CompetitionSuggestion.fragments.CompetitionSuggestionFields}
-    ${CompetitionVote.fragments.CompetitionVoteFields}
-    `;
-
-    const arc = await getArc();
-    await arc.sendQuery(cacheQuery, {subscribe: true});
-    // end cache priming
-
-    return combineLatest(
-      of([]),
-      of([])
-      // CompetitionSuggestion.search(getArc(), {}, { fetchAllData: true }),
-      // CompetitionVote.search(getArc(), {}, { fetchAllData: true })
-    );
-  }
+  createObservable: async (_props: IExternalProps) => {
+    return primeCacheForSubmissionsAndVotes();
+  },
 });
 
