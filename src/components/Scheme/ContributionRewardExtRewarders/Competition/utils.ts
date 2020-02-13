@@ -70,31 +70,28 @@ export class CompetitionStatus {
   public get text(): string { return this.status; }
 }
 
-export const competitionStatus = (
-  competition: ICompetitionProposalState,
-  submissions: Array<ICompetitionSuggestionState>): CompetitionStatus => {
-
+export const competitionStatus = (competition: ICompetitionProposalState): CompetitionStatus => {
   const now = moment();
   const startTime = moment(competition.startTime);
   const submissionsEndTime = moment(competition.suggestionsEndTime);
   const votingStartTime = moment(competition.votingStartTime);
   const endTime = moment(competition.endTime);
-  const hasWinners = !!submissions.filter((submission) => submission.isWinner).length;
-
+  const hasSubmissions = !!competition.totalSuggestions;
+  const hasWinners = !!competition.numberOfWinningSuggestions;
   let status: CompetitionStatusEnum;
 
   if (now.isBefore(startTime)){
     status = CompetitionStatusEnum.NotOpenYet;
   } else if (now.isBefore(votingStartTime)) {
     if (now.isSameOrAfter(submissionsEndTime)) {
-      status = submissions.length ? CompetitionStatusEnum.Paused : CompetitionStatusEnum.EndingNoSubmissions;
+      status = hasSubmissions ? CompetitionStatusEnum.Paused : CompetitionStatusEnum.EndingNoSubmissions;
     } else {
       status = CompetitionStatusEnum.OpenForSubmissions;
     }
   } else if (now.isBefore(endTime)) {
-    status = submissions.length ? CompetitionStatusEnum.Voting : CompetitionStatusEnum.EndingNoSubmissions;
+    status = hasSubmissions ? CompetitionStatusEnum.Voting : CompetitionStatusEnum.EndingNoSubmissions;
   } else {
-    status = submissions.length ? (hasWinners ? CompetitionStatusEnum.Ended : CompetitionStatusEnum.EndedNoWinners) : CompetitionStatusEnum.EndedNoSubmissions;
+    status = hasSubmissions ? (hasWinners ? CompetitionStatusEnum.Ended : CompetitionStatusEnum.EndedNoWinners) : CompetitionStatusEnum.EndedNoSubmissions;
   }
 
   return new CompetitionStatus(status, now, competition, hasWinners);
