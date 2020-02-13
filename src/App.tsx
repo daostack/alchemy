@@ -11,16 +11,19 @@ import { sleep } from "lib/util";
 import Error404 from "components/Errors/Error404";
 import { history, default as store } from "./configureStore";
 import * as css from "./layouts/App.scss";
+import ErrorUncaught from "components/Errors/ErrorUncaught";
 
 export class App extends React.Component<{}, {
   arcIsInitialized: boolean;
   retryingArc: boolean;
+  error?: string;
 }> {
   constructor(props: {}) {
     super(props);
     this.state = {
       arcIsInitialized: false,
       retryingArc: false,
+      error: undefined
     };
   }
 
@@ -62,7 +65,10 @@ export class App extends React.Component<{}, {
         // retry
         if (numberOfAttempts >= totalNumberOfAttempts) {
           // THIS ERROR SHOULD BE SHOWN TO THE USER - where it is intercepted?
-          throw Error(`Could not connect to the network: ${err.message}`)
+
+          const msg = `Could not connect to the network; please retry later...`
+          this.setState({ error: msg})
+          throw Error(msg)
         }
         console.log(`Could not connect..`)
         console.log(err)
@@ -91,6 +97,10 @@ export class App extends React.Component<{}, {
   }
 
   public render(): RenderOutput {
+    if (this.state.error) {
+      return <ErrorUncaught errorMessage={this.state.error} />
+
+    }
     if (!this.state.arcIsInitialized) {
       return (
         <div className={css.waitingToInitContainer}>
