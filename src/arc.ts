@@ -35,7 +35,8 @@ export function targetedNetwork(): Networks {
       return "rinkeby";
     }
     case "mainnet":
-    case "production" : {
+    case "production":
+    case undefined : {
       return "main";
     }
     case "xdai": 
