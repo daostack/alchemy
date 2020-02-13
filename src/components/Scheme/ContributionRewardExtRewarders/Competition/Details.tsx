@@ -413,11 +413,11 @@ export default withSubscription({
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["currentAccountAddress"],
   createObservable: async (props: IExternalProps & IExternalStateProps ) => {
-
     // prime the cache before creating the observable...
     const cacheQuery = gql`query cacheSuggestions {
       proposal (id: "${props.proposalState.id}") {
         id
+        # ...ProposalFields
         competition {
           id
           suggestions {
@@ -433,9 +433,6 @@ export default withSubscription({
 
     const arc = await getArc();
     await arc.sendQuery(cacheQuery);
-    // end cache priming
-
-
     /**
      * We subscribe here because we can't rely on arriving at
      * this component via CompetitionCard, and thus must create our own subscription.
