@@ -20,10 +20,12 @@ Alchemy contains a system for generating forms for creating proposals in a Gener
 You can add your own scheme by adding your Generic Scheme to the registry.
 (At the moment, the registry is a [directory in Alchemy](https://github.com/daostack/alchemy/tree/dev/src/genericSchemeRegistry/schemes), but in the future this may be moved to another location).
 
-The steps to take are as follows:
+The steps to take are: 
 
 1. Create a `.json` file in which it is specified which actions can be proposed on the scheme
 2. register the `.json` file
+
+[Here's some more details aobut the procedure](https://github.com/daostack/alchemy/tree/dev/src/genericSchemeRegistry)
 
 ## 1. Create the `.json`
 

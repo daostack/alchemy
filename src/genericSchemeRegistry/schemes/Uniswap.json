@@ -1,0 +1,160 @@
+{
+  "name": "Uniswap Eth/sEth",
+  "addresses": {
+    "main": [
+      "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
+    ],
+    "rinkeby": [
+      "0xaaeb2035ff394fdb2c879190f95e7676f1a9444b"
+    ],
+    "private": [
+      "0xb279182d99e65703f0076e4812653aab85fca0f0"
+    ]
+  },
+  "actions": [
+   {
+      "id": "updateThresholdNewTokenPair",
+      "label": "approve sETH",
+      "description": "",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/c9a9bd0d73f96eed65dca5c5a947451adb8e80b6/contracts/DutchExchange.sol#L248",
+      "fields": [
+        {
+          "decimals": 18,
+          "label": "Spender",
+          "name": "",
+          "unit": "USD",
+          "defaultValue": "0xb279182d99e65703f0076e4812653aab85fca0f0"
+        },
+         {
+          "decimals": 18,
+          "label": "Value (how much is the contract allowed to spend)",
+          "name": "_thresholdNewTokenPair",
+          "unit": "ETH or sETH",
+          "placeholder": "New threshold: Amount in USD (1500)"
+        }
+      ],
+      "abi": {
+        "name": "approve",
+        "outputs": [
+            {
+                "type": "bool",
+                "name": "out"
+            }
+        ],
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_spender"
+            },
+            {
+                "type": "uint256",
+                "name": "_value"
+            }
+        ],
+        "constant": false,
+        "payable": false,
+        "type": "function",
+        "gas": 38769
+      }
+    },
+    {
+      "id": "userInputEthValue",
+      "label": "Exchange ETH for sETH",
+      "description": "When this proposal is accepted, rou will send the amount of ether specified.",
+      "notes": "",
+      "fields": [
+        {
+          "label": "Minimal amount of sETH tokens (you get)",
+          "name": "token"
+        },
+        {
+          "name": "deadline",
+          "placeholder": "[insert date here in seconds since epoch -we need a widget]",
+          "label": "Deadline"
+        },
+        { "name": "value",
+          "label": "xx"
+        }
+      ],
+      "abi":     {
+        "name": "ethToTokenSwapInput",
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "out"
+            }
+        ],
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "min_tokens"
+            },
+            {
+                "type": "uint256",
+                "name": "deadline"
+            }
+        ],
+        "constant": false,
+        "payable": true,
+        "type": "function",
+        "gas": 12757
+      }
+    },
+    {
+      "id": "updateThresholdNewAuction",
+      "label": "add ETH/sETH liquidity",
+      "description": "This is the threshold that an auction deposit (i.e. the sellVolume) (of each opposite auction) has to reach before an auction commences (to be entered in a round USD amount). Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/c9a9bd0d73f96eed65dca5c5a947451adb8e80b6/contracts/DutchExchange.sol#L252",
+      "fields": [
+        {
+          "decimals": 18,
+          "label": "New auction threshold",
+          "name": "_thresholdNewAuction",
+          "unit": "USD",
+          "placeholder": "New threshold: Amount in USD (1500)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_thresholdNewAuction",
+            "type": "uint256"
+          }
+        ],
+        "name": "updateThresholdNewAuction",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "changeETHUSDOracle",
+      "label": "remove ETH/sETH liquidity",
+      "description": "This proposal can update the external ETH-USD price feed that the DutchX uses for a) fee calculation and b) threshold calculation. Check addresses <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/smart-contracts_addresses.html#mainnet\">here</a>. There is a 30-day time delay for this change after a proposal is accepted. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/EthOracle.sol",
+      "fields": [
+        {
+          "label": "New ETH:USD oracle adddress",
+          "name": "_ethUSDOracle",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_ethUSDOracle",
+            "type": "address"
+          }
+        ],
+        "name": "initiateEthUsdOracleUpdate",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }
+  ]
+}

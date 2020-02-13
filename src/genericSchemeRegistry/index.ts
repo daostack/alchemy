@@ -3,6 +3,7 @@ import BN = require("bn.js");
 const Web3 = require("web3");
 const namehash = require("eth-ens-namehash");
 const dutchXInfo = require("./schemes/DutchX.json");
+const uniswapInfo = require("./schemes/Uniswap.json");
 const gpInfo = require("./schemes/GenesisProtocol.json");
 const ensRegistryInfo = require("./schemes/ENSRegistry.json");
 const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
@@ -14,6 +15,7 @@ const KNOWNSCHEMES = [
   ensPublicResolverInfo,
   gpInfo,
   registryLookupInfo,
+  uniswapInfo
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
