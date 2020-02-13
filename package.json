@@ -56,6 +56,7 @@
     "build": "node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config webpack.prod.config.js",
     "build-dev": "node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config webpack.dev.config.js",
     "build-travis": "cross-env NODE_ENV=production NETWORK=main node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config webpack.prod.config.js",
+    "fetch-contracts": "cross-env NODE_ENV=production NETWORK=main ./node_modules/.bin/ts-node scripts/fetchContracts.ts",
     "heroku-postbuild": "npm run build",
     "lint": "eslint --ext .js,.ts,.tsx ./src ./test",
     "lint-andFix": "npm run lint -- --fix",
@@ -221,7 +222,8 @@
     "webpack-bundle-analyzer": "^3.0.3",
     "webpack-cli": "^3.2.1",
     "webpack-dev-server": "^3.1.14",
-    "webpack-merge": "^4.1.5"
+    "webpack-merge": "^4.1.5",
+    "webpack-shell-plugin": "^0.5.0"
   },
   "resolutions": {
     "@types/react": "*"

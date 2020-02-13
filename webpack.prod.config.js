@@ -6,6 +6,7 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
+const WebpackShellPlugin = require('webpack-shell-plugin');
 
 const baseConfig = require('./webpack.base.config.js');
 
@@ -112,6 +113,8 @@ plugins: [
     new CopyWebpackPlugin([
       { from: 'src/assets', to: 'assets' }
     ]),
+
+    new WebpackShellPlugin({onBuildStart:['npm run fetch-contracts']}),
   ],
 });
 

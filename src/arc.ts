@@ -24,9 +24,9 @@ type Networks = "main"|"rinkeby"|"ganache"|"xdai"
 // get the network id that the current build expects ot connect to
 export function targetedNetwork(): Networks {
   switch (process.env.NETWORK) {
-    case "test": 
-    case "ganache": 
-    case "private": 
+    case "test":
+    case "ganache":
+    case "private":
     case "development": {
       return "ganache";
     }
@@ -143,7 +143,10 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     }
 
     // get contract information from the subgraph
-    const contractInfos = await arc.fetchContractInfos();
+    let contractInfos = require("data/contractInfos.json");
+    if (!contractInfos) {
+      contractInfos = await arc.fetchContractInfos();
+    }
     success = !!contractInfos;
 
     if (success) {
@@ -518,7 +521,7 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
                 if (account && initializedAccount && (account !== initializedAccount)) {
                   /**
                    * Handle when user changes account in MetaMask while already connected to Alchemy.
-                   * Also handles how the Burner provider switches from a Fortmatic address to the 
+                   * Also handles how the Burner provider switches from a Fortmatic address to the
                    * burner address at the time of connecting.
                    */
                   await initializeArc(selectedProvider);
