@@ -22,10 +22,10 @@ export default class ErrorUncaught extends React.PureComponent<IExternalProps> {
           <div>
             <div className={appCss.menu}>
               { this.props.goHome ?
-              <Link to="/"><img onClick={this.props.goHome} src="/assets/images/alchemy-logo-white.svg"/></Link>
-              :
-              <img src="/assets/images/alchemy-logo-white.svg"/>
-                }
+                <Link to="/"><img onClick={this.props.goHome} src="/assets/images/alchemy-logo-white.svg"/></Link>
+                :
+                <img src="/assets/images/alchemy-logo-white.svg"/>
+              }
             </div>
             <div className={appCss.topInfo}>Alchemy</div>
           </div>

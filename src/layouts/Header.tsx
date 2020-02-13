@@ -1,34 +1,34 @@
-import { Address, IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
 import { threeBoxLogout } from "actions/profilesActions";
 import { enableWalletProvider, getAccountIsEnabled, getArc, logout, getWeb3ProviderInfo } from "arc";
-import classNames from "classnames";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import RedemptionsButton from "components/Redemptions/RedemptionsButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { copyToClipboard } from "lib/util";
+import { IRootState } from "reducers";
+import { NotificationStatus, showNotification } from "reducers/notifications";
+import { IProfileState } from "reducers/profilesReducer";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { parse } from "query-string";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom";
 import { Breadcrumbs } from "react-breadcrumbs-dynamic";
-import { IRootState } from "reducers";
-import { NotificationStatus, showNotification } from "reducers/notifications";
-import { IProfileState } from "reducers/profilesReducer";
 import { of } from "rxjs";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Toggle from "react-toggle";
 import { RefObject } from "react";
-import * as css from "./App.scss";
+import classNames from "classnames";
+import { Address, IDAOState } from "@daostack/client";
 import { ETHDENVER_OPTIMIZATION } from "../settings";
+import * as css from "./App.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
 }
 
 interface IStateProps {
-  showRedemptionsButton: Boolean
+  showRedemptionsButton: boolean;
   currentAccountProfile: IProfileState;
   currentAccountAddress: string | null;
   daoAvatarAddress: Address;
@@ -47,7 +47,7 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
   // we hide the demptionsbutton when the URL contains "crx". Should probably be disabled at later date..
   let showRedemptionsButton;
   if (ETHDENVER_OPTIMIZATION) {
-    showRedemptionsButton = (ownProps.location.pathname.indexOf('crx') === -1);
+    showRedemptionsButton = (ownProps.location.pathname.indexOf("crx") === -1);
   } else {
     showRedemptionsButton = true;
   }
@@ -209,9 +209,9 @@ class Header extends React.Component<IProps, null> {
             </div>
           </TrainingTooltip>
           {
-          this.props.showRedemptionsButton ? <div className={css.redemptionsButton}>
-            <RedemptionsButton currentAccountAddress={currentAccountAddress} />
-          </div> : <div></div>
+            this.props.showRedemptionsButton ? <div className={css.redemptionsButton}>
+              <RedemptionsButton currentAccountAddress={currentAccountAddress} />
+            </div> : <div></div>
           }
           <div className={css.accountInfo}>
             { currentAccountAddress ?

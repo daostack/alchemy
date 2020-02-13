@@ -9,9 +9,9 @@ import { ConnectedRouter } from "react-router-redux";
 import { ThroughProvider } from "react-through";
 import { sleep } from "lib/util";
 import Error404 from "components/Errors/Error404";
+import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { history, default as store } from "./configureStore";
 import * as css from "./layouts/App.scss";
-import ErrorUncaught from "components/Errors/ErrorUncaught";
 
 export class App extends React.Component<{}, {
   arcIsInitialized: boolean;
@@ -23,7 +23,7 @@ export class App extends React.Component<{}, {
     this.state = {
       arcIsInitialized: false,
       retryingArc: false,
-      error: undefined
+      error: undefined,
     };
   }
 
@@ -45,37 +45,37 @@ export class App extends React.Component<{}, {
     // Do this here because we need to have initialized Arc first.  This will
     // not create a provider for the app, rather will just initialize Arc with a
     // readonly provider with no account, internal only to it.
-    const totalNumberOfAttempts = 3 /// we will try 3 times to init arc before actually throwing an error
-    let numberOfAttempts = 0
-    let success = false
+    const totalNumberOfAttempts = 3; /// we will try 3 times to init arc before actually throwing an error
+    let numberOfAttempts = 0;
+    let success = false;
     const initArc = async ()  => {
       success = await initializeArc();
       if (!success) {
-        throw Error('Initalize arc failed for an unknown reason..')
+        throw Error("Initalize arc failed for an unknown reason..");
       }
       this.setState({ arcIsInitialized: true });
-    }
+    };
     while (!success) {
       try {
-        await initArc()
+        await initArc();
       } catch(err) {
         this.setState({ retryingArc: true });
         // eslint-disable-next-line no-console
-        numberOfAttempts += 1
+        numberOfAttempts += 1;
         // retry
         if (numberOfAttempts >= totalNumberOfAttempts) {
           // THIS ERROR SHOULD BE SHOWN TO THE USER - where it is intercepted?
 
-          const msg = `Could not connect to the network; please retry later...`
-          this.setState({ error: msg})
-          throw Error(msg)
+          const msg = "Could not connect to the network; please retry later...";
+          this.setState({ error: msg});
+          throw Error(msg);
         }
-        console.log(`Could not connect..`)
-        console.log(err)
-        console.log(`retrying (attempt ${numberOfAttempts} of ${totalNumberOfAttempts})`)
+        console.log("Could not connect..");
+        console.log(err);
+        console.log(`retrying (attempt ${numberOfAttempts} of ${totalNumberOfAttempts})`);
         await sleep(2000);
       }
-    };
+    }
     
 
     let GOOGLE_ANALYTICS_ID: string;
@@ -98,7 +98,7 @@ export class App extends React.Component<{}, {
 
   public render(): RenderOutput {
     if (this.state.error) {
-      return <ErrorUncaught errorMessage={this.state.error} />
+      return <ErrorUncaught errorMessage={this.state.error} />;
 
     }
     if (!this.state.arcIsInitialized) {

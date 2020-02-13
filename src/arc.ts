@@ -1,11 +1,11 @@
-import { Address, Arc } from "@daostack/client";
-import { RetryLink } from 'apollo-link-retry'
 import { NotificationStatus } from "reducers/notifications";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
-import { getNetworkId, getNetworkName } from "./lib/util";
-import { settings } from "./settings";
+import { RetryLink } from "apollo-link-retry";
+import { Address, Arc } from "@daostack/client";
 import Web3Connect from "web3connect";
 import { Observable } from "rxjs";
+import { getNetworkId, getNetworkName } from "./lib/util";
+import { settings } from "./settings";
 
 const Web3 = require("web3");
 
@@ -36,6 +36,7 @@ export function targetedNetwork(): Networks {
       return "rinkeby";
     }
     case "mainnet":
+    case "main":
     case "production" : {
       return "main";
     }
@@ -138,20 +139,20 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     attempts: {
       max: 5,
       // @ts-ignore
-      retryIf: (error, operation) =>  {
-        console.log(`error occurred fetching data: ${error}, retrying...`)
-        return !!error
-      }
+      retryIf: (error, _operation) =>  {
+        console.log(`error occurred fetching data: ${error}, retrying...`);
+        return !!error;
+      },
     },
     delay: {
       initial: 500, // this is the initial time after the first retry
       // next retries )up to max) will be exponential (i..e after 2*iniitial, etc)
       jitter: true,
-      max: Infinity
-    }
-  })
+      max: Infinity,
+    },
+  });
 
-  arcSettings.retryLink = retryLink
+  arcSettings.retryLink = retryLink;
 
   // if there is no existing arc, we create a new one
   if ((window as any).arc) {
@@ -162,12 +163,12 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   }
 
   // get contract information from the subgraph
-  let contractInfos
+  let contractInfos;
   try {
     contractInfos = await arc.fetchContractInfos();
   } catch(err) {
-    console.error(`Error fetching contractinfos`)
-    throw err
+    console.error("Error fetching contractinfos");
+    throw err;
   }
   success = !!contractInfos;
 
