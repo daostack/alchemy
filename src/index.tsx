@@ -22,7 +22,7 @@ async function renderApp() {
     });
   }
 
-  if (process.env.NODE_ENV === "staging" || process.env.NODE_ENV === "production") {
+  if (process.env.MIXPANEL_TOKEN && (process.env.NODE_ENV === "staging" || process.env.NODE_ENV === "production")) {
     Mixpanel.init(process.env.MIXPANEL_TOKEN);
   }
 
