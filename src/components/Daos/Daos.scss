@@ -155,6 +155,23 @@ table.daoInfoContainer {
   }
 }
 
+.createDaoWrapper {
+  border-radius: 15px;
+  background-color: rgba(3, 118, 255, 1.000);
+  color: $white;
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 30px;
+  line-height: 30px;
+  font-family: $body-font;
+  font-weight: $bold;
+  font-size: 13px;
+  margin-right: 55px;
+  margin-top: 16px;
+  float: right;
+  position: relative;
+}
+
 @media only screen and (max-width: 550px) {
 	.wrapper {
 		width: auto;

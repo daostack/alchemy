@@ -7,6 +7,7 @@ import { Page } from "pages";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as React from "react";
 import * as Sticky from "react-stickynode";
+import { Link } from "react-router-dom";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 
@@ -28,10 +29,12 @@ class DaosPage extends React.Component<IProps, null> {
     let daos: DAO[];
     if (process.env.NODE_ENV === "staging") {
       // on staging we show all daos (registered or not)
-      daos = data.filter((d: DAO) => d.staticState.name === "Genesis Alpha")
+      daos = data
+        .filter((d: DAO) => d.staticState.name === "Genesis Alpha")
         .concat(data.filter((d: DAO) => d.staticState.name !== "Genesis Alpha"));
     } else {
-      daos = data.filter((d: DAO) => d.staticState.name === "Genesis Alpha")
+      daos = data
+        .filter((d: DAO) => d.staticState.name === "Genesis Alpha")
         .concat(data.filter((d: DAO) => d.staticState.name !== "Genesis Alpha" && d.staticState.register === "registered"));
     }
 
@@ -51,6 +54,11 @@ class DaosPage extends React.Component<IProps, null> {
           <div className={css.daoListHeader + " clearfix"}>
             <h2 data-test-id="header-all-daos">All DAOs</h2>
           </div>
+          <Link to={"/daos/create"}>
+            <div className={css.createDaoWrapper}>
+              Create A DAO
+            </div>
+          </Link>
         </Sticky>
         <div className={css.daoList}>
           {daoNodes ? daoNodes : "None"}

@@ -5,8 +5,8 @@ import { setCurrentAccount } from "actions/web3Actions";
 import classNames from "classnames";
 import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
-import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
+import DaoCreator from "components/DaoCreator";
 import DaoContainer from "components/Dao/DaoContainer";
 import FeedPage from "components/Feed/FeedPage";
 import RedemptionsPage from "components/Redemptions/RedemptionsPage";
@@ -22,7 +22,7 @@ import { matchPath,Link, Route, RouteComponentProps, Switch } from "react-router
 import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification, INotification } from "reducers/notifications";
-import { getCachedAccount, cacheWeb3Info, uncacheWeb3Info, gotoReadonly, pollForAccountChanges } from "arc";
+import { getCachedAccount, cacheWeb3Info, logout, pollForAccountChanges } from "arc";
 import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
@@ -73,7 +73,6 @@ type IProps = IExternalProps & IStateProps & IDispatchProps;
 interface IState {
   error: Error;
   sentryEventId: string;
-  notificationsMinimized: boolean;
 }
 
 class AppContainer extends React.Component<IProps, IState> {
@@ -86,7 +85,6 @@ class AppContainer extends React.Component<IProps, IState> {
     this.state = {
       error: null,
       sentryEventId: null,
-      notificationsMinimized: false,
     };
   }
 
@@ -136,8 +134,7 @@ class AppContainer extends React.Component<IProps, IState> {
         if (newAddress) {
           cacheWeb3Info(newAddress);
         } else {
-          uncacheWeb3Info();
-          gotoReadonly(this.props.showNotification);
+          logout(this.props.showNotification);
 
           // TODO: save the threebox for each profile separately so we dont have to logout here
           this.props.threeBoxLogout();
@@ -150,8 +147,6 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   private dismissNotif = (id: string) => () => this.props.dismissNotification(id);
-  private minimizeNotif = () => this.setState({notificationsMinimized: true});
-  private unminimizeNotif = () => this.setState({notificationsMinimized: false});
   private headerHtml = ( props: any ): any => <Header {...props} />;
   private sidebarHtml = ( props: any ): any => <SidebarMenu {...props} />;
 
@@ -172,7 +167,6 @@ class AppContainer extends React.Component<IProps, IState> {
         timestamp={notif.timestamp}
         dismiss={this.dismissNotif(notif.id)}
         showNotification={this.props.showNotification}
-        minimize={this.minimizeNotif}
       />
     </div>;
   }
@@ -211,6 +205,7 @@ class AppContainer extends React.Component<IProps, IState> {
 
             <div className={css.contentWrapper}>
               <Switch>
+                <Route path="/daos/create" component={DaoCreator} />
                 <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
                 <Route path="/profile/:accountAddress" component={AccountProfilePage} />
                 <Route path="/redemptions" component={RedemptionsPage} />
@@ -227,11 +222,7 @@ class AppContainer extends React.Component<IProps, IState> {
           </div>
 
           <div className={css.pendingTransactions}>
-            {this.state.notificationsMinimized ?
-              <MinimizedNotifications notifications={sortedNotifications.length} unminimize={this.unminimizeNotif} />
-              :
-              sortedNotifications.map(this.notificationHtml)
-            }
+            { sortedNotifications.map(this.notificationHtml) }
           </div>
           <div className={css.background}></div>
           { hasAcceptedCookies ? "" :

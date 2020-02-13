@@ -46,19 +46,19 @@ services:
       GRAPH_GRAPHQL_MAX_FIRST: 1000
 
   ipfs:
-    image: daostack/test-env-ipfs:3.0.27
+    image: daostack/test-env-ipfs:3.0.30
     ports:
       - 5001:5001
 
   postgres:
-    image: daostack/test-env-postgres:3.0.27
+    image: daostack/test-env-postgres:3.0.30
     ports:
       - 9432:5432
     environment:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    image: daostack/test-env-ganache:3.0.27
+    image: daostack/test-env-ganache:3.0.30
     ports:
       - 8545:8545
     

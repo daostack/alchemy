@@ -144,7 +144,7 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
   };
 }
 
-export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string, privateKey: string|undefined, redeemerAddress: Address|undefined) {
+export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string, privateKey: string|undefined, redeemerAddress: Address|undefined, redemptionSucceededCallback: () => void) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
 
@@ -181,6 +181,7 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       try {
         await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
         dispatch(showNotification(NotificationStatus.Success, "Transaction was succesful!"));
+        redemptionSucceededCallback();
       } catch(err) {
         dispatch(showNotification(NotificationStatus.Failure, `Transaction failed: ${err.message}`));
       }
@@ -191,7 +192,7 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       // send the transaction and get notifications
       if (reputationFromTokenScheme) {
         const agreementHash = await reputationFromTokenScheme.getAgreementHash();
-        reputationFromTokenScheme.redeem(addressToRedeem, agreementHash).subscribe(...observer);
+        reputationFromTokenScheme.redeem(addressToRedeem, agreementHash).subscribe(observer[0], observer[1], redemptionSucceededCallback);
       }
     }
   };

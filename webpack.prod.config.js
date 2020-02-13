@@ -12,7 +12,7 @@ const baseConfig = require('./webpack.base.config.js');
 const config = merge(baseConfig, {
   mode: 'production',
 
-  //devtool: 'nosources-source-map',
+  devtool: 'source-map',
 
   entry: {
     // the entry point of our app
@@ -93,6 +93,7 @@ plugins: [
     }),
 
     new webpack.EnvironmentPlugin({
+      NETWORK: process.env.NETWORK,
       NODE_ENV: "production",
       BASE_URL: "https://alchemy.daostack.io",
       DISQUS_SITE: 'daostack-alchemy',

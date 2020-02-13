@@ -6,7 +6,7 @@ import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification, NotificationStatus } from "reducers/notifications";
-import { isValidUrl } from "lib/util";
+import { baseTokenName, isValidUrl } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -239,13 +239,13 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
 
                 <div>
                   <label htmlFor="value">
-                    ETH Value
+                    {baseTokenName()} Value
                     <ErrorMessage name="value">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
                   </label>
                   <Field
                     id="valueInput"
-                    placeholder="How much ETH to transfer with the call"
+                    placeholder={`How much ${baseTokenName()} to transfer with the call`}
                     name="value"
                     type="number"
                     className={touched.value && errors.value ? css.error : null}
