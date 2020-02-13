@@ -142,9 +142,12 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       arc = new Arc(arcSettings);
     }
 
-    // get contract information from the subgraph
-    let contractInfos = require("data/contractInfos.json");
-    if (!contractInfos) {
+    let contractInfos;
+    try {
+      // Look for contract info in pre-fetched file
+      contractInfos = require("data/contractInfos.json");
+    } catch (ex) {
+      // Otherwise load from the subgraph
       contractInfos = await arc.fetchContractInfos();
     }
     success = !!contractInfos;
