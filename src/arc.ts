@@ -1,10 +1,10 @@
 import { NotificationStatus } from "reducers/notifications";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
+import { getNetworkId, getNetworkName } from "./lib/util";
+import { settings } from "./settings";
 import Web3Connect from "web3connect";
 import { Observable } from "rxjs";
 import { Address, Arc } from "@daostack/client";
-import { getNetworkId, getNetworkName } from "./lib/util";
-import { settings } from "./settings";
 
 const Web3 = require("web3");
 
@@ -26,6 +26,7 @@ export function targetedNetwork(): Networks {
   switch (process.env.NETWORK) {
     case "test": 
     case "ganache": 
+    case "private": 
     case "development": {
       return "ganache";
     }
