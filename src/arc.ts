@@ -161,14 +161,12 @@ export async function initializeArc(provider?: any): Promise<boolean> {
 
   // get contract information from the subgraph
   let contractInfos
-  console.log('xxxxx')
   try {
     contractInfos = await arc.fetchContractInfos();
   } catch(err) {
     console.error(`Error fetching contractinfos`)
     throw err
   }
-  console.log('dafuhsdfkj')
   success = !!contractInfos;
 
   if (success) {

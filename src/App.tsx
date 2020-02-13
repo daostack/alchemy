@@ -44,23 +44,33 @@ export class App extends React.Component<{}, {
     // readonly provider with no account, internal only to it.
     const totalNumberOfAttempts = 3 /// we will try 3 times to init arc before actually throwing an error
     let numberOfAttempts = 0
-    initializeArc()
-      .then(async (success: boolean) => {
-        while (!success) {
-          this.setState({ retryingArc: true });
-          await sleep(2000);
-          success = await initializeArc();
-        }
-        this.setState({ arcIsInitialized: true });
-      })
-      .catch ((err): void => {
+    let success = false
+    const initArc = async ()  => {
+      success = await initializeArc();
+      if (!success) {
+        throw Error('Initalize arc failed for an unknown reason..')
+      }
+      this.setState({ arcIsInitialized: true });
+    }
+    while (!success) {
+      try {
+        await initArc()
+      } catch(err) {
+        this.setState({ retryingArc: true });
         // eslint-disable-next-line no-console
-        console.log(`${err}: retrying...`);
         numberOfAttempts += 1
+        // retry
         if (numberOfAttempts >= totalNumberOfAttempts) {
-          throw err
+          // THIS ERROR SHOULD BE SHOWN TO THE USER - where it is intercepted?
+          throw Error(`Could not connect to the network: ${err.message}`)
         }
-      });
+        console.log(`Could not connect..`)
+        console.log(err)
+        console.log(`retrying (attempt ${numberOfAttempts} of ${totalNumberOfAttempts})`)
+        await sleep(2000);
+      }
+    };
+    
 
     let GOOGLE_ANALYTICS_ID: string;
     switch (process.env.NODE_ENV) {

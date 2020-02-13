@@ -31,7 +31,7 @@ for (const schemeInfo of KNOWNSCHEMES) {
         SCHEMEADDRESSES[network][address.toLowerCase()] = schemeInfo;
       }
     } else {
-      console.error("no contract addresses in GenericSchemeRegistry!");
+      console.error(`No GenericScheme contract addresses in GenericSchemeRegistry defined for network ${network}!`);
     }
   }
 }
