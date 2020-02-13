@@ -34,11 +34,12 @@ export function targetedNetwork(): Networks {
     case "rinkeby" : {
       return "rinkeby";
     }
+    case "main":
     case "mainnet":
     case "production" : {
       return "main";
     }
-    case "xdai": 
+    case "xdai":
       return "xdai";
     default: {
       throw Error(`Unknown NETWORK: "${process.env.NETWORK}"`);
