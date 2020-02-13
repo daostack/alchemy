@@ -1,6 +1,6 @@
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
-import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens } from "lib/util";
+import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens, isAddress } from "lib/util";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
 import { showNotification } from "reducers/notifications";
@@ -9,12 +9,6 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
-import * as CompetitionActions from "./utils";
-import * as css from "./Competitions.scss";
-import StatusBlob from "./StatusBlob";
-import SubmissionDetails from "./SubmissionDetails";
-import CreateSubmission from "./CreateSubmission";
-import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, CompetitionStatus, getCompetitionVotes } from "./utils";
 import { map } from "rxjs/operators";
 import Tooltip from "rc-tooltip";
 import { combineLatest, of } from "rxjs";
@@ -28,6 +22,12 @@ import { IDAOState, IProposalState, ICompetitionSuggestionState, Address, Compet
 import gql from "graphql-tag";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as React from "react";
+import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, CompetitionStatus, getCompetitionVotes } from "./utils";
+import CreateSubmission from "./CreateSubmission";
+import SubmissionDetails from "./SubmissionDetails";
+import StatusBlob from "./StatusBlob";
+import * as css from "./Competitions.scss";
+import * as CompetitionActions from "./utils";
 
 const ReactMarkdown = require("react-markdown");
 
@@ -255,10 +255,9 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const hasSubmissions = !!numSubmissions;
 
     const submissionsAreDisabled = notStarted || 
-          // note that winningOutcome1 is the *current* state, not necessarily the *final* outcome
+          // note that winningOutcome is the *current* state, not necessarily the *final* outcome
           (!proposalState.executedAt || (proposalState.winningOutcome !== IProposalOutcome.Pass))
-          // FAKE: restore after .admin is made available
-          // || (proposalState.admin && (this.props.currentAccountAddress !== proposalState.admin))
+          || (isAddress(competition.admin) && (this.props.currentAccountAddress !== competition.admin))
           ;
 
     this.disqusConfig.title = proposalState.title;
@@ -281,9 +280,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
                   <Tooltip overlay={
                     (!proposalState.executedAt || (proposalState.winningOutcome !== IProposalOutcome.Pass)) ? "The competition proposal has not been approved" :
                       notStarted  ? "The submission period has not yet begun" :
-                      // FAKE, restore when .admin is available
-                      // (proposalState.admin && (this.props.currentAccountAddress !== proposalState.admin)) ? "Only the \"admin\" user is allowed to create submissions" :
-                        "Create a submission"
+                        (isAddress(competition.admin) && (this.props.currentAccountAddress !== competition.admin)) ? "Only the \"admin\" user is allowed to create submissions" :
+                          "Create a submission"
                   }
                   >
                     <a className={classNames({[css.blueButton]: true, [css.disabled]: submissionsAreDisabled})}
