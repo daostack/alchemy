@@ -1,17 +1,17 @@
 import { initializeArc } from "arc";
 import Loading from "components/Shared/Loading";
 import AppContainer from "layouts/AppContainer";
+import { sleep } from "lib/util";
+import Error404 from "components/Errors/Error404";
+import ErrorUncaught from "components/Errors/ErrorUncaught";
+import { history, default as store } from "./configureStore";
+import * as css from "./layouts/App.scss";
 import * as React from "react";
 import ReactGA from "react-ga";
 import { Provider } from "react-redux";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { ConnectedRouter } from "react-router-redux";
 import { ThroughProvider } from "react-through";
-import { sleep } from "lib/util";
-import Error404 from "components/Errors/Error404";
-import ErrorUncaught from "components/Errors/ErrorUncaught";
-import { history, default as store } from "./configureStore";
-import * as css from "./layouts/App.scss";
 
 export class App extends React.Component<{}, {
   arcIsInitialized: boolean;
@@ -70,8 +70,11 @@ export class App extends React.Component<{}, {
           this.setState({ error: msg});
           throw Error(msg);
         }
-        console.log("Could not connect..");
-        console.log(err);
+        // eslint-disable-next-line no-console
+        console.error("Could not connect..");
+        // eslint-disable-next-line no-console
+        console.error(err);
+        // eslint-disable-next-line no-console
         console.log(`retrying (attempt ${numberOfAttempts} of ${totalNumberOfAttempts})`);
         await sleep(2000);
       }
