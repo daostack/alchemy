@@ -4,8 +4,8 @@ import { RetryLink } from "apollo-link-retry";
 import { Address, Arc } from "@daostack/client";
 import Web3Connect from "web3connect";
 import { Observable } from "rxjs";
-import { getNetworkId, getNetworkName } from "./lib/util";
 import { settings } from "./settings";
+import { getNetworkId, getNetworkName } from "./lib/util";
 
 const Web3 = require("web3");
 
@@ -138,9 +138,11 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   const retryLink = new RetryLink({
     attempts: {
       max: 5,
-      // @ts-ignore
       retryIf: (error, _operation) =>  {
-        console.log(`error occurred fetching data: ${error}, retrying...`);
+        // eslint-disable-next-line no-console
+        console.error("error occurred fetching data, retrying...");
+        // eslint-disable-next-line no-console
+        console.log(error);
         return !!error;
       },
     },
@@ -167,9 +169,10 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   try {
     contractInfos = await arc.fetchContractInfos();
   } catch(err) {
-    console.error("Error fetching contractinfos");
-    throw err;
+    // eslint-disable-next-line no-console
+    console.error(`Error fetching contractinfos: ${err.message}`);
   }
+
   success = !!contractInfos;
 
   if (success) {
@@ -179,7 +182,6 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       // then something went wrong
       // eslint-disable-next-line no-console
       console.error("Unable to obtain an account from the provider");
-      // success = false;
     }
   } else {
     initializedAccount = null;
@@ -197,6 +199,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     // eslint-disable-next-line no-console
     console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
   }
+
   (window as any).arc = success ? arc : null;
 
   return success;

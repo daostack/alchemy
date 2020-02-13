@@ -4,14 +4,14 @@ import AppContainer from "layouts/AppContainer";
 import { sleep } from "lib/util";
 import Error404 from "components/Errors/Error404";
 import ErrorUncaught from "components/Errors/ErrorUncaught";
-import { history, default as store } from "./configureStore";
-import * as css from "./layouts/App.scss";
 import * as React from "react";
 import ReactGA from "react-ga";
 import { Provider } from "react-redux";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { ConnectedRouter } from "react-router-redux";
 import { ThroughProvider } from "react-through";
+import * as css from "./layouts/App.scss";
+import { history, default as store } from "./configureStore";
 
 export class App extends React.Component<{}, {
   arcIsInitialized: boolean;
@@ -51,7 +51,7 @@ export class App extends React.Component<{}, {
     const initArc = async ()  => {
       success = await initializeArc();
       if (!success) {
-        throw Error("Initalize arc failed for an unknown reason..");
+        throw Error("Initialize arc failed for an unknown reason (see the console)...");
       }
       this.setState({ arcIsInitialized: true });
     };
@@ -64,8 +64,6 @@ export class App extends React.Component<{}, {
         numberOfAttempts += 1;
         // retry
         if (numberOfAttempts >= totalNumberOfAttempts) {
-          // THIS ERROR SHOULD BE SHOWN TO THE USER - where it is intercepted?
-
           const msg = "Could not connect to the network; please retry later...";
           this.setState({ error: msg});
           throw Error(msg);
