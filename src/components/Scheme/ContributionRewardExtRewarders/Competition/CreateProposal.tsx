@@ -14,8 +14,9 @@ import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 import { checkTotalPercent } from "lib/util";
 import * as Datetime from "react-datetime";
+
 import moment = require("moment");
-import BN = require("bn.js");
+import BN = require("bn.js")
 
 interface IExternalProps {
   scheme: ISchemeState;
