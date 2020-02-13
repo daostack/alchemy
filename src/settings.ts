@@ -91,6 +91,8 @@ export const settings = {
             { origin: "https://buffidao.com/", name: "BuffiDAO" },
             { origin: "https://denver-demo.burnerfactory.com/", name: "Denver Demo Wallet" },
             { origin: "test.buffidao.com/", name: "Denver Demo Wallet" },
+            { origin: "https://judge.buffidao.com/", name: "Judges BuffiDAO Wallet" },
+            { origin: "https://stage.buffidao.com/", name: "Staging BuffiDAO Wallet" },
           ],
         },
       },

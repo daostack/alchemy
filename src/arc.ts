@@ -1,11 +1,11 @@
 import { Address, Arc } from "@daostack/client";
 import { RetryLink } from 'apollo-link-retry'
 import { NotificationStatus } from "reducers/notifications";
-import { Observable } from "rxjs";
-import Web3Connect from "web3connect";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
-import { settings } from "./settings";
 import { getNetworkId, getNetworkName } from "./lib/util";
+import { settings } from "./settings";
+import Web3Connect from "web3connect";
+import { Observable } from "rxjs";
 
 const Web3 = require("web3");
 
@@ -19,14 +19,15 @@ let selectedProvider: any;
 let web3ConnectCore: Web3Connect.Core;
 let initializedAccount: Address;
 
-type networks = "main"|"rinkeby"|"ganache"|"xdai"
+type Networks = "main"|"rinkeby"|"ganache"|"xdai"
 
 
 // get the network id that the current build expects ot connect to
-export function targetedNetwork(): networks {
-  switch (process.env.NODE_ENV || "development") {
+export function targetedNetwork(): Networks {
+  switch (process.env.NETWORK) {
     case "test": 
     case "ganache": 
+    case "private": 
     case "development": {
       return "ganache";
     }
@@ -41,7 +42,7 @@ export function targetedNetwork(): networks {
     case "xdai": 
       return "xdai";
     default: {
-      throw Error(`Unknown NODE_ENV environment: "${process.env.NODE_ENV}"`);
+      throw Error(`Unknown NETWORK: "${process.env.NETWORK}"`);
     }
   }
 }

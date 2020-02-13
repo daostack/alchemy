@@ -9,7 +9,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { combineLatest, of } from "rxjs";
+import { combineLatest } from "rxjs";
 import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
 import StatusBlob from "./StatusBlob";
 import * as css from "./Competitions.scss";
