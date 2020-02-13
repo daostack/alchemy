@@ -3,10 +3,10 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { ISchemeState, IDAOState, IProposalState, CompetitionSuggestion, CompetitionVote } from "@daostack/client";
 import { SortService } from "lib/sortService";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { CompetitionStatusEnum, CompetitionStatus } from "./utils";
 import { combineLatest, of } from "rxjs";
 import gql from "graphql-tag";
 import { getArc } from "arc";
+import { CompetitionStatusEnum, CompetitionStatus } from "./utils";
 import Card from "./Card";
 import * as css from "./Competitions.scss";
 
@@ -146,6 +146,6 @@ export default withSubscription({
       // CompetitionSuggestion.search(getArc(), {}, { fetchAllData: true }),
       // CompetitionVote.search(getArc(), {}, { fetchAllData: true })
     );
-  }
+  },
 });
 

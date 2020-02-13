@@ -1,6 +1,7 @@
 import { ICompetitionProposalState, Competition, CompetitionSuggestion, ICompetitionSuggestionState, CompetitionVote, Address } from "@daostack/client";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
+
 import moment = require("moment");
 import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
