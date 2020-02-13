@@ -133,9 +133,10 @@ export async function initializeArc(provider?: any): Promise<boolean> {
 
   const readonly = typeof provider === "string";
 
+  // https://www.apollographql.com/docs/link/links/retry/
   const retryLink = new RetryLink({
     attempts: {
-      max: 1,
+      max: 5,
       // @ts-ignore
       retryIf: (error, operation) =>  {
         console.log(`error occurred fetching data: ${error}, retrying...`)
@@ -143,7 +144,8 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       }
     },
     delay: {
-      initial: 300,
+      initial: 500, // this is the initial time after the first retry
+      // next retries )up to max) will be exponential (i..e after 2*iniitial, etc)
       jitter: true,
       max: Infinity
     }
