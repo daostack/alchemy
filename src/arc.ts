@@ -4,8 +4,8 @@ import { RetryLink } from "apollo-link-retry";
 import { Address, Arc } from "@daostack/client";
 import Web3Connect from "web3connect";
 import { Observable } from "rxjs";
-import { settings } from "./settings";
 import { getNetworkId, getNetworkName } from "./lib/util";
+import { settings } from "./settings";
 
 const Web3 = require("web3");
 
@@ -124,80 +124,86 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   let success = false;
   let arc: any;
 
-  const arcSettings = getArcSettings();
-
-  if (provider) {
-    arcSettings.web3Provider = provider;
-  } else {
-    provider = arcSettings.web3Provider;
-  }
-
-  const readonly = typeof provider === "string";
-
-  // https://www.apollographql.com/docs/link/links/retry/
-  const retryLink = new RetryLink({
-    attempts: {
-      max: 5,
-      retryIf: (error, _operation) =>  {
-        // eslint-disable-next-line no-console
-        console.error("error occurred fetching data, retrying...");
-        // eslint-disable-next-line no-console
-        console.log(error);
-        return !!error;
-      },
-    },
-    delay: {
-      initial: 500, // this is the initial time after the first retry
-      // next retries )up to max) will be exponential (i..e after 2*iniitial, etc)
-      jitter: true,
-      max: Infinity,
-    },
-  });
-
-  arcSettings.retryLink = retryLink;
-
-  // if there is no existing arc, we create a new one
-  if ((window as any).arc) {
-    arc = (window as any).arc;
-    arc.web3 = new Web3(provider);
-  } else {
-    arc = new Arc(arcSettings);
-  }
-
-  // get contract information from the subgraph
-  let contractInfos;
   try {
-    contractInfos = await arc.fetchContractInfos();
-  } catch(err) {
+
+    const arcSettings = getArcSettings();
+
+    if (provider) {
+      arcSettings.web3Provider = provider;
+    } else {
+      provider = arcSettings.web3Provider;
+    }
+
+    const readonly = typeof provider === "string";
+
+    // https://www.apollographql.com/docs/link/links/retry/
+    const retryLink = new RetryLink({
+      attempts: {
+        max: 5,
+        retryIf: (error, _operation) =>  {
+        // eslint-disable-next-line no-console
+          console.error("error occurred fetching data, retrying...");
+          // eslint-disable-next-line no-console
+          console.log(error);
+          return !!error;
+        },
+      },
+      delay: {
+        initial: 500, // this is the initial time after the first retry
+        // next retries )up to max) will be exponential (i..e after 2*iniitial, etc)
+        jitter: true,
+        max: Infinity,
+      },
+    });
+
+    arcSettings.retryLink = retryLink;
+
+    // if there is no existing arc, we create a new one
+    if ((window as any).arc) {
+      arc = (window as any).arc;
+      arc.web3 = new Web3(provider);
+    } else {
+      arc = new Arc(arcSettings);
+    }
+
+    // get contract information from the subgraph
+    let contractInfos;
+    try {
+      contractInfos = await arc.fetchContractInfos();
+    } catch(err) {
     // eslint-disable-next-line no-console
-    console.error(`Error fetching contractinfos: ${err.message}`);
-  }
+      console.error(`Error fetching contractinfos: ${err.message}`);
+    }
 
-  success = !!contractInfos;
+    success = !!contractInfos;
 
-  if (success) {
-    initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
+    if (success) {
+      initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
 
-    if (!initializedAccount) {
+      if (!initializedAccount) {
       // then something went wrong
       // eslint-disable-next-line no-console
-      console.error("Unable to obtain an account from the provider");
+        console.error("Unable to obtain an account from the provider");
+      }
+    } else {
+      initializedAccount = null;
     }
-  } else {
-    initializedAccount = null;
-  }
 
-  if (success) {
-    provider = arc.web3.currentProvider; // won't be a string, but the actual provider
-    // save for future reference
-    // eslint-disable-next-line require-atomic-updates
-    provider.__networkId = await getNetworkId(provider);
-    if ((window as any).ethereum) {
-    // if this is metamask this should prevent a browser refresh when the network changes
-      (window as any).ethereum.autoRefreshOnNetworkChange = false;
+    if (success) {
+      provider = arc.web3.currentProvider; // won't be a string, but the actual provider
+      // save for future reference
+      // eslint-disable-next-line require-atomic-updates
+      provider.__networkId = await getNetworkId(provider);
+      if ((window as any).ethereum) {
+        // if this is metamask this should prevent a browser refresh when the network changes
+        (window as any).ethereum.autoRefreshOnNetworkChange = false;
+      }
+      // eslint-disable-next-line no-console
+      console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
     }
+  } catch (reason) {
     // eslint-disable-next-line no-console
-    console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
+    console.error(reason ? reason.message : "unknown error");
   }
 
   (window as any).arc = success ? arc : null;
