@@ -211,7 +211,7 @@ class Header extends React.Component<IProps, null> {
           {
             this.props.showRedemptionsButton ? <div className={css.redemptionsButton}>
               <RedemptionsButton currentAccountAddress={currentAccountAddress} />
-            </div> : <div></div>
+            </div> : ""
           }
           <div className={css.accountInfo}>
             { currentAccountAddress ?
