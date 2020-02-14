@@ -1,3 +1,4 @@
+export const ETHDENVER_OPTIMIZATION = true
 function isMobileBrowser(): boolean {
   // if (!window) {
   //   return false
