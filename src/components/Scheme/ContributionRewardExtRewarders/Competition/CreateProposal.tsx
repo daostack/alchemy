@@ -16,7 +16,7 @@ import { checkTotalPercent } from "lib/util";
 import * as Datetime from "react-datetime";
 
 import moment = require("moment");
-import BN = require("bn.js")
+import BN = require("bn.js");
 
 interface IExternalProps {
   scheme: ISchemeState;

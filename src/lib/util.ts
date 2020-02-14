@@ -1,5 +1,7 @@
 import { promisify } from "util";
 import { targetedNetwork } from "arc";
+import { GenericSchemeRegistry } from "genericSchemeRegistry";
+import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import {
   Address,
   IContractInfo,
@@ -7,7 +9,6 @@ import {
   IProposalState,
   IRewardState,
   ISchemeState} from "@daostack/client";
-import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
@@ -17,13 +18,12 @@ import BN = require("bn.js");
  */
 import "moment";
 import * as moment from "moment-timezone";
-import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import { getArc } from "../arc";
 
 
-const Web3 = require("web3");
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
+const Web3 = require("web3");
 
 export function getExchangesList() {
   return exchangesList;
@@ -662,4 +662,8 @@ export function ensureHttps(url: string) {
 
 export function inTesting(): boolean {
   return (process.env.NODE_ENV === "development" && navigator.webdriver);
+}
+
+export function isAddress(address: Address, allowNulls = false): boolean {
+  return getArc().web3.utils.isAddress(address) && (allowNulls || (Number(address) > 0));
 }

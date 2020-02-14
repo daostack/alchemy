@@ -6,7 +6,7 @@ import moment = require("moment");
 import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
-import { Observable, of, combineLatest } from "rxjs";
+import { Observable, of } from "rxjs";
 import { map, mergeMap, toArray, first } from "rxjs/operators";
 
 /**
@@ -70,31 +70,28 @@ export class CompetitionStatus {
   public get text(): string { return this.status; }
 }
 
-export const competitionStatus = (
-  competition: ICompetitionProposalState,
-  submissions: Array<ICompetitionSuggestionState>): CompetitionStatus => {
-
+export const competitionStatus = (competition: ICompetitionProposalState): CompetitionStatus => {
   const now = moment();
   const startTime = moment(competition.startTime);
   const submissionsEndTime = moment(competition.suggestionsEndTime);
   const votingStartTime = moment(competition.votingStartTime);
   const endTime = moment(competition.endTime);
-  const hasWinners = !!submissions.filter((submission) => submission.isWinner).length;
-
+  const hasSubmissions = !!competition.totalSuggestions;
+  const hasWinners = !!competition.numberOfWinningSuggestions;
   let status: CompetitionStatusEnum;
 
   if (now.isBefore(startTime)){
     status = CompetitionStatusEnum.NotOpenYet;
   } else if (now.isBefore(votingStartTime)) {
     if (now.isSameOrAfter(submissionsEndTime)) {
-      status = submissions.length ? CompetitionStatusEnum.Paused : CompetitionStatusEnum.EndingNoSubmissions;
+      status = hasSubmissions ? CompetitionStatusEnum.Paused : CompetitionStatusEnum.EndingNoSubmissions;
     } else {
       status = CompetitionStatusEnum.OpenForSubmissions;
     }
   } else if (now.isBefore(endTime)) {
-    status = submissions.length ? CompetitionStatusEnum.Voting : CompetitionStatusEnum.EndingNoSubmissions;
+    status = hasSubmissions ? CompetitionStatusEnum.Voting : CompetitionStatusEnum.EndingNoSubmissions;
   } else {
-    status = submissions.length ? (hasWinners ? CompetitionStatusEnum.Ended : CompetitionStatusEnum.EndedNoWinners) : CompetitionStatusEnum.EndedNoSubmissions;
+    status = hasSubmissions ? (hasWinners ? CompetitionStatusEnum.Ended : CompetitionStatusEnum.EndedNoWinners) : CompetitionStatusEnum.EndedNoSubmissions;
   }
 
   return new CompetitionStatus(status, now, competition, hasWinners);
@@ -163,7 +160,7 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkActi
 export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestionState>> => {
   // fetchAllData so .state() comes from cache
   const competition = new Competition(proposalId, getArc());
-  return competition.suggestions(undefined, { subscribe, fetchAllData: true })
+  return competition.suggestions({}, { subscribe, fetchAllData: true })
     .pipe(
       mergeMap(submissions => of(submissions).pipe(
         mergeMap(submissions => submissions),
@@ -177,12 +174,12 @@ export const getSubmission = (id: string, subscribe = false): Observable<ICompet
   return submission.state({ subscribe });
 };
 
-export const getCompetitionVotes = (competitionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
+export const getCompetitionVotes = (competitionId: string, voterAddress: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
   const competition = new Competition(competitionId, getArc());
   /**
    * none of the current uses require the vote state
    */
-  return competition.votes({ where: voterAddress ? { voter: voterAddress } : {}},
+  return competition.votes({ where: { voter: voterAddress } },
     { subscribe: subscribe, fetchAllData: true });
 };
 
@@ -201,9 +198,9 @@ export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: s
     .pipe(map((votes: Array<CompetitionVote>) => !!votes.length));
 };
 
-export const primeCacheForSubmissionsAndVotes = (): Observable<any> => {
-  return combineLatest(
-    CompetitionSuggestion.search(getArc(), {}, { subscribe: true, fetchAllData: true }),
-    CompetitionVote.search(getArc(), {}, { subscribe: true, fetchAllData: true })
-  );
-};
+// export const primeCacheForSubmissionsAndVotes = (): Observable<any> => {
+//   return combineLatest(
+//     CompetitionSuggestion.search(getArc(), {}, { subscribe: true, fetchAllData: true }),
+//     CompetitionVote.search(getArc(), {}, { subscribe: true, fetchAllData: true })
+//   );
+// };
