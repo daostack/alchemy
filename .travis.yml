@@ -7,8 +7,11 @@ bundler_args: "--jobs=4 --retry=3"
 
 before_install:
   - sudo apt-get install -y libsecret-1-dev curl
+install:
+  - echo "(not running npm ci)"
 addons:
   chrome: stable
+
 
 script:
   - docker -v
