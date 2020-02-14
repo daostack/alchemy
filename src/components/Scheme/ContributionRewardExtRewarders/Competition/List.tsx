@@ -114,18 +114,18 @@ export default withSubscription({
         id
         competition {
           id
-      endTime
-      contract
-      suggestionsEndTime
-      createdAt
-      numberOfVotesPerVoters
-      numberOfWinners
-      rewardSplit
-      snapshotBlock
-      startTime
+          endTime
+          contract
+          suggestionsEndTime
+          createdAt
+          numberOfVotesPerVoters
+          numberOfWinners
+          rewardSplit
+          snapshotBlock
+          startTime
           suggestions {
             ...CompetitionSuggestionFields
-            }
+          }
           votes { 
             ...CompetitionVoteFields
           }
@@ -140,11 +140,10 @@ export default withSubscription({
     await arc.sendQuery(cacheQuery, {subscribe: true});
     // end cache priming
 
+    // TODO: next lines can use some cleanup up
     return combineLatest(
       of([]),
       of([])
-      // CompetitionSuggestion.search(getArc(), {}, { fetchAllData: true }),
-      // CompetitionVote.search(getArc(), {}, { fetchAllData: true })
     );
   },
 });
