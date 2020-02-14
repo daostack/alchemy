@@ -416,13 +416,13 @@ export default withSubscription({
 
     // prime the cache before creating the observable...
     const cacheQuery = gql`query cacheSuggestions {
-      proposal (id: "${props.proposalState.id}") {
-        id
+      proposals (where: {id: "${props.proposalState.id}"}) {
+        ...ProposalFields
         competition {
           id
           suggestions {
             ...CompetitionSuggestionFields
-            }
+          }
         }
       }
     }
@@ -432,16 +432,15 @@ export default withSubscription({
     `;
 
     const arc = await getArc();
-    await arc.sendQuery(cacheQuery);
+    // prime the cache and subscribe to it
+    await arc.sendQuery(cacheQuery)
+    await arc.getObservable(cacheQuery, {subscribe: true}).subscribe(() => {})
     // end cache priming
 
-
-    /**
-     * We subscribe here because we can't rely on arriving at
-     * this component via CompetitionCard, and thus must create our own subscription.
-     */
     return combineLatest(
-      getProposalSubmissions(props.proposalState.id),
+      // we do not need to subscribe here (second argument = false), because we already subscribed in the line above
+      getProposalSubmissions(props.proposalState.id, false), 
+      // the next construction gets the suggestions for which the user has voted
       props.currentAccountAddress ? getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true)
         .pipe(
           map((votes: Array<CompetitionVote>) => {

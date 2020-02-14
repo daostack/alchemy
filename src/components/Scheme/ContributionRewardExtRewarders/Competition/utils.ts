@@ -163,7 +163,7 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkActi
 export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestionState>> => {
   // fetchAllData so .state() comes from cache
   const competition = new Competition(proposalId, getArc());
-  return competition.suggestions(undefined, { subscribe, fetchAllData: true })
+  return competition.suggestions({}, { subscribe, fetchAllData: true })
     .pipe(
       mergeMap(submissions => of(submissions).pipe(
         mergeMap(submissions => submissions),
