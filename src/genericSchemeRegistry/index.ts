@@ -30,9 +30,7 @@ for (const schemeInfo of KNOWNSCHEMES) {
       for (const address of schemeInfo.addresses[network]) {
         SCHEMEADDRESSES[network][address.toLowerCase()] = schemeInfo;
       }
-    } else {
-      console.error("no contract addresses in GenericSchemeRegistry!");
-    }
+    } 
   }
 }
 interface IABISpec {
