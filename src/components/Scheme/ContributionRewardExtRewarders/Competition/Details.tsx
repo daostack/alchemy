@@ -432,7 +432,7 @@ export default withSubscription({
     ${CompetitionSuggestion.fragments.CompetitionSuggestionFields}
     `;
 
-    console.log(getArc, cacheQuery)
+    console.log(getArc, cacheQuery);
     // const arc = await getArc();
     // // sending the query before subscribing seems to resolve a weird cache error - this would ideally be handled in the client
     // await arc.sendQuery(cacheQuery); 
