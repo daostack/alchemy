@@ -17,7 +17,7 @@ const KNOWNSCHEMES = [
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
-  main: {},
+  mainnet: {},
   rinkeby: {},
   xdai: {},
   private: {},
