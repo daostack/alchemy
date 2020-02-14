@@ -16,4 +16,3 @@ schema.graphql
 subgraph.yaml
 build/
 *.scss.d.ts
-data/contractInfos.json

@@ -113,8 +113,6 @@ plugins: [
     new CopyWebpackPlugin([
       { from: 'src/assets', to: 'assets' }
     ]),
-
-    new WebpackShellPlugin({onBuildStart:['npm run fetch-contracts']}),
   ],
 });
 

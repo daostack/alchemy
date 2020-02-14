@@ -3,10 +3,18 @@ const fs = require("fs");
 import { settings } from "../src/settings";
 const Web3 = require("web3");
 
-async function fetchContracts() {
-  console.log("Fetching contract data from subgraph");
+const network = process.argv[2] || process.env.NETWORK;
+if (!network) {
+  console.error("Please set the NETWORK env var or pass in the network name as an arg to use this script");
+  process.exit(1);
+}
 
-  const arcSettings = settings[process.env.NETWORK];
+process.env.NETWORK = network;
+
+async function fetchContracts() {
+  console.log("Fetching contract data from subgraph for network", network);
+
+  const arcSettings = settings[network];
   const provider = arcSettings.web3Provider;
 
   const arc = new Arc(arcSettings);
@@ -15,8 +23,8 @@ async function fetchContracts() {
   const contractInfos = await arc.fetchContractInfos();
   const success = !!contractInfos;
 
-  await fs.writeFile("data/contractInfos.json", JSON.stringify(contractInfos), (r) => {
-    console.log("Successfully wrote contracts to data/contractInfos.json");
+  await fs.writeFile(`data/contractInfos-${network}.json`, JSON.stringify(contractInfos), (r) => {
+    console.log(`Successfully wrote contracts to data/contractInfos-${network}.json`);
     // we exit with success anyway so we do not stop travis builds
     process.exit(0);
   });

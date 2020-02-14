@@ -146,7 +146,8 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     let contractInfos;
     try {
       // Look for contract info in pre-fetched file
-      contractInfos = require("data/contractInfos.json");
+      contractInfos = require(`data/contractInfos-${targetedNetwork()}.json`);
+      arc.setContractInfos(contractInfos);
     } catch (ex) {
       // Otherwise load from the subgraph
       contractInfos = await arc.fetchContractInfos();
