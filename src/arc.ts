@@ -35,6 +35,7 @@ export function targetedNetwork(): Networks {
     case "rinkeby" : {
       return "rinkeby";
     }
+    case "main":
     case "mainnet":
     case "main":
     case "production":
@@ -167,15 +168,21 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       arc = new Arc(arcSettings);
     }
 
-    // get contract information from the subgraph
     let contractInfos;
     try {
-      contractInfos = await arc.fetchContractInfos();
-    } catch(err) {
-    // eslint-disable-next-line no-console
-      console.error(`Error fetching contractinfos: ${err.message}`);
+      // Look for contract info in pre-fetched file
+      contractInfos = require(`data/contractInfos-${targetedNetwork()}.json`);
+      arc.setContractInfos(contractInfos);
+    } catch (ex) {
+      // Otherwise load from the subgraph
+      try {
+        contractInfos = await arc.fetchContractInfos();
+      } catch(err) {
+      // eslint-disable-next-line no-console
+        console.error(`Error fetching contractinfos: ${err.message}`);
+      }
+  
     }
-
     success = !!contractInfos;
 
     if (success) {
