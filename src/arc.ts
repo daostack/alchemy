@@ -1,10 +1,11 @@
 import { NotificationStatus } from "reducers/notifications";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
+import { RetryLink } from "apollo-link-retry";
+import { Address, Arc } from "@daostack/client";
 import Web3Connect from "web3connect";
 import { Observable } from "rxjs";
-import { Address, Arc } from "@daostack/client";
-import { settings } from "./settings";
 import { getNetworkId, getNetworkName } from "./lib/util";
+import { settings } from "./settings";
 
 const Web3 = require("web3");
 
@@ -35,6 +36,7 @@ export function targetedNetwork(): Networks {
       return "rinkeby";
     }
     case "mainnet":
+    case "main":
     case "production":
     case undefined : {
       return "main";
@@ -124,6 +126,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   let arc: any;
 
   try {
+
     const arcSettings = getArcSettings();
 
     if (provider) {
@@ -134,6 +137,28 @@ export async function initializeArc(provider?: any): Promise<boolean> {
 
     const readonly = typeof provider === "string";
 
+    // https://www.apollographql.com/docs/link/links/retry/
+    const retryLink = new RetryLink({
+      attempts: {
+        max: 5,
+        retryIf: (error, _operation) =>  {
+        // eslint-disable-next-line no-console
+          console.error("error occurred fetching data, retrying...");
+          // eslint-disable-next-line no-console
+          console.log(error);
+          return !!error;
+        },
+      },
+      delay: {
+        initial: 500, // this is the initial time after the first retry
+        // next retries )up to max) will be exponential (i..e after 2*iniitial, etc)
+        jitter: true,
+        max: Infinity,
+      },
+    });
+
+    arcSettings.retryLink = retryLink;
+
     // if there is no existing arc, we create a new one
     if ((window as any).arc) {
       arc = (window as any).arc;
@@ -143,17 +168,23 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     }
 
     // get contract information from the subgraph
-    const contractInfos = await arc.fetchContractInfos();
+    let contractInfos;
+    try {
+      contractInfos = await arc.fetchContractInfos();
+    } catch(err) {
+    // eslint-disable-next-line no-console
+      console.error(`Error fetching contractinfos: ${err.message}`);
+    }
+
     success = !!contractInfos;
 
     if (success) {
       initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
 
       if (!initializedAccount) {
-        // then something went wrong
-        // eslint-disable-next-line no-console
+      // then something went wrong
+      // eslint-disable-next-line no-console
         console.error("Unable to obtain an account from the provider");
-        // success = false;
       }
     } else {
       initializedAccount = null;
@@ -165,7 +196,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       // eslint-disable-next-line require-atomic-updates
       provider.__networkId = await getNetworkId(provider);
       if ((window as any).ethereum) {
-      // if this is metamask this should prevent a browser refresh when the network changes
+        // if this is metamask this should prevent a browser refresh when the network changes
         (window as any).ethereum.autoRefreshOnNetworkChange = false;
       }
       // eslint-disable-next-line no-console
