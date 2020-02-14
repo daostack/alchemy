@@ -14,10 +14,10 @@ function getWeb3ConnectProviderOptions(network: string) {
     return null;
   }
 
-  const BurnerConnectProvider: any = null; // require("@burner-wallet/burner-connect-provider");
-  const WalletConnectProvider: any = null; //require("@walletconnect/web3-provider");
-  const Portis: any = null; //require("@portis/web3");
-  const Fortmatic: any = null; //require("fortmatic");
+  const BurnerConnectProvider = require("@burner-wallet/burner-connect-provider");
+  const WalletConnectProvider = require("@walletconnect/web3-provider");
+  const Portis = require("@portis/web3");
+  const Fortmatic = require("fortmatic");
 
   switch (network) {
     case "rinkeby":
