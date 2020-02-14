@@ -414,16 +414,16 @@ export default withSubscription({
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["currentAccountAddress"],
   createObservable: async (props: IExternalProps & IExternalStateProps ) => {
-    // prime the cache before creating the observable...
+
+    // prime the cache and subscribe
     const cacheQuery = gql`query cacheSuggestions {
-      proposal (id: "${props.proposalState.id}") {
-        id
-        # ...ProposalFields
+      proposals (where: {id: "${props.proposalState.id}"}) {
+        ...ProposalFields
         competition {
           id
           suggestions {
             ...CompetitionSuggestionFields
-            }
+          }
         }
       }
     }
@@ -433,12 +433,16 @@ export default withSubscription({
     `;
 
     const arc = await getArc();
-    await arc.sendQuery(cacheQuery);
+    // sending the query before subscribing resolves a weird cache error - this would ideally be handled in the client
+    await arc.sendQuery(cacheQuery); 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    await arc.getObservable(cacheQuery, {subscribe: true}).subscribe(() => {});
+    // end cache priming
+
     return combineLatest(
-      /**
-       * Passing `true` to create a subscription because we won't get one otherwise.
-       */
-      getProposalSubmissions(props.proposalState.id, true),
+      // we do not need to subscribe here (second argument = false), because we already subscribed in the line above
+      getProposalSubmissions(props.proposalState.id, false), 
+      // the next construction gets the suggestions for which the user has voted
       props.currentAccountAddress ? getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true)
         .pipe(
           map((votes: Array<CompetitionVote>) => {

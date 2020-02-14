@@ -199,6 +199,7 @@ const SubscribedSchemeContainer = withSubscription({
     await props.daoState.dao.proposals(
       // eslint-disable-next-line @typescript-eslint/camelcase
       {where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted, IProposalStage.Executed ]}},
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       { fetchAllData: true, subscribe: true }).subscribe(()=>{});
     // end cache priming
 

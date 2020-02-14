@@ -6,7 +6,7 @@ import moment = require("moment");
 import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
-import { Observable, of, combineLatest } from "rxjs";
+import { Observable, of } from "rxjs";
 import { map, mergeMap, toArray, first } from "rxjs/operators";
 
 /**
@@ -160,7 +160,7 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkActi
 export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestionState>> => {
   // fetchAllData so .state() comes from cache
   const competition = new Competition(proposalId, getArc());
-  return competition.suggestions(undefined, { subscribe, fetchAllData: true })
+  return competition.suggestions({}, { subscribe, fetchAllData: true })
     .pipe(
       mergeMap(submissions => of(submissions).pipe(
         mergeMap(submissions => submissions),
@@ -198,9 +198,9 @@ export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: s
     .pipe(map((votes: Array<CompetitionVote>) => !!votes.length));
 };
 
-export const primeCacheForSubmissionsAndVotes = (): Observable<any> => {
-  return combineLatest(
-    CompetitionSuggestion.search(getArc(), {}, { subscribe: true, fetchAllData: true }),
-    CompetitionVote.search(getArc(), {}, { subscribe: true, fetchAllData: true })
-  );
-};
+// export const primeCacheForSubmissionsAndVotes = (): Observable<any> => {
+//   return combineLatest(
+//     CompetitionSuggestion.search(getArc(), {}, { subscribe: true, fetchAllData: true }),
+//     CompetitionVote.search(getArc(), {}, { subscribe: true, fetchAllData: true })
+//   );
+// };

@@ -5,13 +5,13 @@ import RewardsString from "components/Proposal/RewardsString";
 import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
 import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
-import StatusBlob from "./StatusBlob";
-import * as css from "./Competitions.scss";
-import { competitionStatus, CompetitionStatus } from "./utils";
 import { connect } from "react-redux";
 import { IDAOState, IProposalState } from "@daostack/client";
 import { Link } from "react-router-dom";
 import * as React from "react";
+import { competitionStatus, CompetitionStatus } from "./utils";
+import * as css from "./Competitions.scss";
+import StatusBlob from "./StatusBlob";
 
 interface IExternalStateProps {
   creatorProfile: IProfileState;
