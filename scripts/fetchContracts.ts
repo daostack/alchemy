@@ -15,7 +15,7 @@ async function fetchContracts() {
   const contractInfos = await arc.fetchContractInfos();
   const success = !!contractInfos;
 
-  const hey = await fs.writeFile("data/contractInfos.json", JSON.stringify(contractInfos), (r) => {
+  await fs.writeFile("data/contractInfos.json", JSON.stringify(contractInfos), (r) => {
     console.log("Successfully wrote contracts to data/contractInfos.json");
     // we exit with success anyway so we do not stop travis builds
     process.exit(0);
