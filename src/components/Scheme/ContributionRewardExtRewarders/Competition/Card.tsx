@@ -1,21 +1,17 @@
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import { humanProposalTitle } from "lib/util";
-import * as React from "react";
-import { Link } from "react-router-dom";
 import RewardsString from "components/Proposal/RewardsString";
-import { IDAOState, IProposalState, CompetitionVote, ICompetitionSuggestionState } from "@daostack/client";
 import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
-import { connect } from "react-redux";
-import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { combineLatest } from "rxjs";
 import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
 import StatusBlob from "./StatusBlob";
 import * as css from "./Competitions.scss";
-import { competitionStatus, getProposalSubmissions, getCompetitionVotes, CompetitionStatus } from "./utils";
-
-type ISubscriptionState = [Array<ICompetitionSuggestionState>, Array<CompetitionVote>];
+import { competitionStatus, CompetitionStatus } from "./utils";
+import { connect } from "react-redux";
+import { IDAOState, IProposalState } from "@daostack/client";
+import { Link } from "react-router-dom";
+import * as React from "react";
 
 interface IExternalStateProps {
   creatorProfile: IProfileState;
@@ -31,7 +27,7 @@ interface IExternalProps {
   handleStatusChange: (proposal: IProposalState, newStatus: CompetitionStatus) => void;
 }
 
-type IProps = IExternalProps & IExternalStateProps & ISubscriptionProps<ISubscriptionState>;
+type IProps = IExternalProps & IExternalStateProps;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
 
@@ -53,8 +49,7 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
 
   private getCompetitionState = (): CompetitionStatus => {
     const competition = this.props.proposalState.competition;
-    const submissions = this.props.data[0];
-    return competitionStatus(competition, submissions);
+    return competitionStatus(competition);
   }
 
   private fireHandleChange(status: CompetitionStatus) {
@@ -80,20 +75,20 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
     } = this.props;
 
     const competition = proposalState.competition;
-    const submissions = this.props.data[0];
-    const votes = this.props.data[1];
-    const numWinningSubmissions = submissions.filter((submission) => submission.isWinner).length;
+    const numSubmissions = competition.totalSuggestions;
+    const numVotes = competition.totalVotes;
+    const numWinningSubmissions = competition.numberOfWinningSuggestions;
     const overWithWinners = status.overWithWinners;
 
     return <div className={css.competitionCardContainer} data-test-id={"competition-card-" + proposalState.id}>
-      <StatusBlob competition={competition} submissions={submissions}></StatusBlob>
+      <StatusBlob competition={competition}></StatusBlob>
       <div className={css.createByContainer}>
         <div className={css.createdBy}>
           <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
           <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
         </div>
         <div className={css.countdown}>
-          <CountdownText status={status} competition={competition} submissions={submissions} onEndCountdown={this.onEndCountdown}></CountdownText>
+          <CountdownText status={status} competition={competition} onEndCountdown={this.onEndCountdown}></CountdownText>
         </div>
       </div>
       <div className={css.description}>
@@ -113,27 +108,11 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
         }
       </div>
       <div className={css.activityContainer}>
-        <div className={css.suggestions}>{submissions.length} Submissions | {votes.length} Votes</div>
+        <div className={css.suggestions}>{numSubmissions} Submissions | {numVotes} Votes</div>
         <div className={css.comments}></div>
       </div>
     </div>;
   }
 }
 
-const CompetitionCardConnected = connect(mapStateToProps)(CompetitionCard);
-
-export default withSubscription({
-  wrappedComponent: CompetitionCardConnected,
-  loadingComponent: null,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
-  checkForUpdate: [],
-  createObservable: (props: IExternalProps) => {
-    /**
-     * Data will come from the cache created in List
-     */
-    return combineLatest(
-      getProposalSubmissions(props.proposalState.id, true),
-      getCompetitionVotes(props.proposalState.id, null, true),
-    );
-  },
-});
+export default connect(mapStateToProps)(CompetitionCard);

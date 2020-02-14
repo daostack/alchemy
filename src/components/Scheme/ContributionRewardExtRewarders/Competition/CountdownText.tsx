@@ -1,14 +1,13 @@
-import * as React from "react";
-import { ICompetitionProposalState, ICompetitionSuggestionState } from "@daostack/client";
 import Countdown from "components/Shared/Countdown";
 import { formatFriendlyDateForLocalTimezone } from "lib/util";
+import { ICompetitionProposalState } from "@daostack/client";
+import * as React from "react";
 import { CompetitionStatus, CompetitionStatusEnum } from "./utils";
 import * as css from "./Competitions.scss";
 
 export interface IExternalProps {
   status: CompetitionStatus;
   competition: ICompetitionProposalState;
-  submissions: Array<ICompetitionSuggestionState>;
   onEndCountdown: () => void;
 }
 
@@ -20,10 +19,11 @@ export default class CountdownText extends React.Component<IExternalProps, null>
 
   public render(): RenderOutput {
 
-    const {status, competition, submissions} = this.props;
+    const {status, competition } = this.props;
     const inSubmissions =  status.now.isSameOrAfter(competition.startTime) && status.now.isBefore(competition.suggestionsEndTime);
     const pausedWithSubmissions = status.paused;
-    const inVotingWithSubmissions = submissions.length && (status.now.isSameOrAfter(competition.votingStartTime) && status.now.isBefore(competition.endTime));
+    const hasSubmissions = !!competition.totalSuggestions;
+    const inVotingWithSubmissions = hasSubmissions && (status.now.isSameOrAfter(competition.votingStartTime) && status.now.isBefore(competition.endTime));
     const hasNotStarted = status.now.isBefore(competition.startTime);
     const endingNoSubmissions = status.status === CompetitionStatusEnum.EndingNoSubmissions;
     const ended = status.now.isSameOrAfter(competition.endTime);
