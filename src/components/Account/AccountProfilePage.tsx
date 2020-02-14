@@ -100,8 +100,8 @@ class AccountProfilePage extends React.Component<IProps, IState> {
 
     Analytics.track("Page View", {
       "Page Name": Page.AccountProfile,
-      "DAO Address": dao.address,
-      "DAO Name": dao.name,
+      "DAO Address": dao ? dao.address : "",
+      "DAO Name": dao ? dao.name : "",
       "Profile Address": this.props.accountAddress,
     });
   }

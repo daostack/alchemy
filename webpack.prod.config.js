@@ -93,7 +93,7 @@ plugins: [
     }),
 
     new webpack.EnvironmentPlugin({
-      NETWORK: process.env.NETWORK,
+      NETWORK: "main",
       NODE_ENV: "production",
       BASE_URL: "https://alchemy.daostack.io",
       DISQUS_SITE: 'daostack-alchemy',
