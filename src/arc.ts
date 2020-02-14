@@ -37,7 +37,8 @@ export function targetedNetwork(): Networks {
     }
     case "mainnet":
     case "main":
-    case "production" : {
+    case "production":
+    case undefined : {
       return "main";
     }
     case "xdai": 
