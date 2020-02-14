@@ -434,8 +434,9 @@ export default withSubscription({
 
     const arc = await getArc();
     // sending the query before subscribing resolves a weird cache error - this would ideally be handled in the client
-    await arc.sendQuery(cacheQuery) 
-    await arc.getObservable(cacheQuery, {subscribe: true}).subscribe(() => {})
+    await arc.sendQuery(cacheQuery); 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    await arc.getObservable(cacheQuery, {subscribe: true}).subscribe(() => {});
     // end cache priming
 
     return combineLatest(
