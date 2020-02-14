@@ -24,9 +24,9 @@ type Networks = "main"|"rinkeby"|"ganache"|"xdai"
 // get the network id that the current build expects ot connect to
 export function targetedNetwork(): Networks {
   switch (process.env.NETWORK) {
-    case "test": 
-    case "ganache": 
-    case "private": 
+    case "test":
+    case "ganache":
+    case "private":
     case "development": {
       return "ganache";
     }
@@ -39,7 +39,7 @@ export function targetedNetwork(): Networks {
     case undefined : {
       return "main";
     }
-    case "xdai": 
+    case "xdai":
       return "xdai";
     default: {
       throw Error(`Unknown NETWORK: "${process.env.NETWORK}"`);
@@ -447,6 +447,12 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
       return true;
     }
 
+    // If not MetaMask or other injected web3 and on ganache then try to connect to local ganache directly
+    if (targetedNetwork() === "ganache" && !(window as any).web3 && !(window as any).ethereum) {
+      selectedProvider = new Web3(settings.ganache.web3Provider);
+      return true;
+    }
+
     if (!selectedProvider) {
       await enableWeb3Provider();
       if (!selectedProvider) {
@@ -518,7 +524,7 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
                 if (account && initializedAccount && (account !== initializedAccount)) {
                   /**
                    * Handle when user changes account in MetaMask while already connected to Alchemy.
-                   * Also handles how the Burner provider switches from a Fortmatic address to the 
+                   * Also handles how the Burner provider switches from a Fortmatic address to the
                    * burner address at the time of connecting.
                    */
                   await initializeArc(selectedProvider);
