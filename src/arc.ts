@@ -19,7 +19,7 @@ let selectedProvider: any;
 let web3ConnectCore: Web3Connect.Core;
 let initializedAccount: Address;
 
-type Networks = "main"|"rinkeby"|"ganache"|"xdai"
+export type Networks = "main"|"rinkeby"|"ganache"|"xdai"
 
 
 // get the network id that the current build expects ot connect to

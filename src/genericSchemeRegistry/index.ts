@@ -1,5 +1,7 @@
 // tslint:disable:max-classes-per-file
 import BN = require("bn.js");
+import { targetedNetwork, Networks } from "arc";
+
 const Web3 = require("web3");
 const namehash = require("eth-ens-namehash");
 const dutchXInfo = require("./schemes/DutchX.json");
@@ -17,10 +19,10 @@ const KNOWNSCHEMES = [
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
-  mainnet: {},
+  main: {},
   rinkeby: {},
   xdai: {},
-  private: {},
+  ganache: {},
 };
 
 for (const schemeInfo of KNOWNSCHEMES) {
@@ -227,7 +229,6 @@ export class GenericSchemeInfo {
   }
 }
 
-type Networks = "main"|"rinkeby"|"private"|"xdai"|undefined;
 
 export class GenericSchemeRegistry {
   /**
@@ -238,7 +239,7 @@ export class GenericSchemeRegistry {
    */
   public getSchemeInfo(address: string, network?: Networks): GenericSchemeInfo {
     if (!network) {
-      network = process.env.NETWORK as Networks || "main";
+      network = targetedNetwork();
     }
     const spec = SCHEMEADDRESSES[network][address.toLowerCase()];
     if (spec) {
