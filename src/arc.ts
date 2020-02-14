@@ -454,6 +454,12 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
       return true;
     }
 
+    // If not MetaMask or other injected web3 and on ganache then try to connect to local ganache directly
+    if (targetedNetwork() === "ganache" && !(window as any).web3 && !(window as any).ethereum) {
+      selectedProvider = new Web3(settings.ganache.web3Provider);
+      return true;
+    }
+
     if (!selectedProvider) {
       await enableWeb3Provider();
       if (!selectedProvider) {
