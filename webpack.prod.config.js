@@ -24,7 +24,7 @@ const config = merge(baseConfig, {
 
   output: {
     filename: "[name].bundle-[hash:8].js",
-    chunkFilename: '[name].bundle.js',
+    chunkFilename: '[name].bundle-[hash:8].js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
   },
