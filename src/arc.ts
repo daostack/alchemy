@@ -5,7 +5,8 @@ import { Address, Arc } from "@daostack/client";
 import Web3Connect from "web3connect";
 import { Observable } from "rxjs";
 import { getNetworkId, getNetworkName } from "./lib/util";
-import { settings } from "./settings";
+import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
+
 
 const Web3 = require("web3");
 
@@ -168,19 +169,16 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     }
 
     let contractInfos;
-    try {
-      // Look for contract info in pre-fetched file
+    if (USE_CONTRACTINFOS_CACHE) {
       contractInfos = require(`data/contractInfos-${targetedNetwork()}.json`);
       arc.setContractInfos(contractInfos);
-    } catch (ex) {
-      // Otherwise load from the subgraph
+    } else {
       try {
         contractInfos = await arc.fetchContractInfos();
       } catch(err) {
-      // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
         console.error(`Error fetching contractinfos: ${err.message}`);
       }
-  
     }
     success = !!contractInfos;
 
