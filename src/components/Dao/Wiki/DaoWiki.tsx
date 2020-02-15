@@ -124,7 +124,7 @@ function DaoWiki(props: IProps) {
         parametersHash: "0x00000000000000000000000000000000000000000",
         scheme: schemeRegistrar.staticState.address,
         // this is going to be changed with the generic scheme deployed to call uprtcl's contract
-        schemeToRegister: "0xCcd415a714085487fbe4509c4Ae40bBf79A598bC"
+        schemeToRegister: "0x3C392FcA71E1299Eeedf20d93C7c6c1B202bEf4D"
       };
       await createProposal(proposalValues);
     }
