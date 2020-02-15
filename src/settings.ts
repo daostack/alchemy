@@ -1,4 +1,10 @@
 export const ETHDENVER_OPTIMIZATION = true;
+import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
+const WalletConnectProvider = require("@walletconnect/web3-provider");
+const Portis = require("@portis/web3");
+const Fortmatic = require("fortmatic");
+
+
 function isMobileBrowser(): boolean {
   // if (!window) {
   //   return false
@@ -14,11 +20,6 @@ function getWeb3ConnectProviderOptions(network: string) {
   if (typeof(window) === "undefined") {
     return null;
   }
-
-  const BurnerConnectProvider = require("@burner-wallet/burner-connect-provider");
-  const WalletConnectProvider = require("@walletconnect/web3-provider");
-  const Portis = require("@portis/web3");
-  const Fortmatic = require("fortmatic");
 
   switch (network) {
     case "rinkeby":
