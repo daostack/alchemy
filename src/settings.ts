@@ -1,5 +1,6 @@
 export const ETHDENVER_OPTIMIZATION = true;
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
+
 const WalletConnectProvider = require("@walletconnect/web3-provider");
 const Portis = require("@portis/web3");
 const Fortmatic = require("fortmatic");
