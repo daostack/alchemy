@@ -1,4 +1,7 @@
+// disables some UI elements for a less resource-intensive page load
 export const ETHDENVER_OPTIMIZATION = true;
+// if this is true, we do get the contractInfos from a locally stored file in ./data instead of from the subgraph
+export const USE_CONTRACTINFOS_CACHE = false; 
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 
 const WalletConnectProvider = require("@walletconnect/web3-provider");
