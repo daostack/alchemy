@@ -27,9 +27,10 @@ const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
 
 for (const schemeInfo of KNOWNSCHEMES) {
   for (const network of Object.keys(SCHEMEADDRESSES)) {
-    const addresses = schemeInfo.addresses[network];
+    const networkId = (network === 'ganache' && 'private' || network);
+    const addresses = schemeInfo.addresses[networkId];
     if (addresses) {
-      for (const address of schemeInfo.addresses[network]) {
+      for (const address of addresses) {
         SCHEMEADDRESSES[network][address.toLowerCase()] = schemeInfo;
       }
     } 
