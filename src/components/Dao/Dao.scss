@@ -194,13 +194,13 @@ button:hover {
       position: relative;
       top: -2px;
 
-      -webkit-animation: rainbow 20s infinite;
+      -webkit-animation: rainbow 5s infinite;
 
       /* Internet Explorer */
-      -ms-animation: rainbow 20s infinite;
+      -ms-animation: rainbow 5s infinite;
 
       /* Standar Syntax */
-      animation: rainbow 20s infinite;
+      animation: rainbow 5s infinite;
     }
   }
 
