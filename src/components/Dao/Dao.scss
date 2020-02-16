@@ -139,10 +139,39 @@ button:hover {
   height: 100%;
 }
 
+@-webkit-keyframes rainbow{
+  0%{color: blue; }
+  20%{color: purple;}
+  40%{color: red;}
+  60%{color: DodgerBlue;}
+  80%{color: green;}
+  100%{color: blue;}
+}
+
+/* Internet Explorer */
+@-ms-keyframes rainbow{
+   0%{color: blue; }
+  20%{color: purple;}
+  40%{color: red;}
+  60%{color: DodgerBlue;}
+  80%{color: green;}
+  100%{color: blue;}
+}
+
+/* Standar Syntax */
+@keyframes rainbow{
+  0%{color: blue; }
+  20%{color: purple;}
+  40%{color: red;}
+  60%{color: DodgerBlue;}
+  80%{color: green;}
+  100%{color: blue;}
+}
+
 .notice {
   flex-grow: 2;
   background-color: white;
-  padding: 11px 8px;
+  padding: 6px 8px;
   color: rgba(78, 97, 118, 1);
   font-size: 11px;
   text-align: left;
@@ -150,14 +179,28 @@ button:hover {
   width: 100%;
 
   div {
-    padding-left: 15px;
+    padding-left: 43px;
 
     img {
-      margin-right: 8px;
+      margin-right: 13px;
+      height: 28px;
+      vertical-align: middle;
+        animation: rainbow 20s infinite;
     }
 
     b {
-      color: $accent-3;
+      vertical-align: middle;
+      font-size: 22px;
+      position: relative;
+      top: -2px;
+
+      -webkit-animation: rainbow 20s infinite;
+
+      /* Internet Explorer */
+      -ms-animation: rainbow 20s infinite;
+
+      /* Standar Syntax */
+      animation: rainbow 20s infinite;
     }
   }
 
@@ -319,7 +362,6 @@ a {
   }
 
   .noticeWrapper {
-    height: 52px;
 
     .noticeBuffer {
       display: none;
@@ -327,7 +369,8 @@ a {
 
     .notice {
       font-size: 10px;
-      padding-right: 70px;
+      padding-left: 40px;
+      padding-right: 60px;
       box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.4);
 
       div {
