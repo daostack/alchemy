@@ -117,14 +117,13 @@ function DaoWiki(props: IProps) {
         dao,
         type: IProposalType.SchemeRegistrarAdd,
         permissions: "0x" + (17).toString(16).padStart(8, "0"),
-        value: 0, // amount of eth to send with the call
+        value: 0,
         tags: ["Wiki"],
         title: "Creation of WikiUpdate scheme",
         description: "This will allow DAO to have Wiki functionality",
         parametersHash: "0x00000000000000000000000000000000000000000",
         scheme: schemeRegistrar.staticState.address,
-        // this is going to be changed with the generic scheme deployed to call uprtcl's contract
-        schemeToRegister: "0x3C392FcA71E1299Eeedf20d93C7c6c1B202bEf4D"
+        schemeToRegister: "0x1F421c9D844C1A355482899b51CE3F6A52b09Ec7" // rinkeby
       };
       await createProposal(proposalValues);
     }
