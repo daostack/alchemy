@@ -12,4 +12,4 @@ WORKDIR /alchemy
 RUN npm ci
 COPY . /alchemy
 
-ENTRYPOINT [ "/entry.sh"]
+CMD [ "/entry.sh"]

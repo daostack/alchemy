@@ -12,7 +12,7 @@ describe("Proposals", () => {
     // TODO: create a test_env with a nameed DAO so we can find it consistently
     arc = getArc();
     await arc.fetchContractInfos();
-    const ARC_VERSION = "0.0.1-rc.39";
+    const ARC_VERSION = "0.0.1-rc.40";
     const contributionRewardExtContract  = arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);
 
     // find the corresponding scheme object
@@ -62,6 +62,10 @@ describe("Proposals", () => {
     const ethRewardInput = await $("*[id=\"ethRewardInput\"]");
     await ethRewardInput.scrollIntoView();
     await ethRewardInput.setValue(22);
+
+    const repRewardInput = await $("*[id=\"reputationRewardInput\"]");
+    await repRewardInput.scrollIntoView();
+    await repRewardInput.setValue(22);
 
     const compStartDateInput = await $("input[name='compStartTimeInput']");
     await compStartDateInput.scrollIntoView();

@@ -11,7 +11,7 @@ import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { generate } from "geopattern";
 import Analytics from "lib/analytics";
-import { ethErrorHandler, formatTokens, getExchangesList, supportedTokens } from "lib/util";
+import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens } from "lib/util";
 import { parse } from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
@@ -264,6 +264,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               </li>
               <li><a className="externalLink" href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">Help Center</a></li>
               <li><a className="externalLink" href="https://hub.gendao.org/" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
+              <li><Link to="/daos/create" onClick={this.handleCloseMenu}>Create A DAO</Link></li>
               <li><Link to="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link></li>
               <li className={css.daoStack}>
                 <a className="externalLink" href="http://daostack.io" target="_blank" rel="noopener noreferrer">
@@ -285,12 +286,12 @@ interface IEthProps extends ISubscriptionProps<BN|null> {
 
 const ETHBalance = (props: IEthProps) => {
   const { data } = props;
-  return <li key="ETH"><strong>{formatTokens(data)}</strong> ETH</li>;
+  return <li key="ETH"><strong>{formatTokens(data)}</strong> {baseTokenName()}</li>;
 };
 
 const SubscribedEthBalance = withSubscription({
   wrappedComponent: ETHBalance,
-  loadingComponent: <li key="ETH">... ETH</li>,
+  loadingComponent: <li key="ETH">... {baseTokenName()}</li>,
   errorComponent: null,
   checkForUpdate: (oldProps: IEthProps, newProps: IEthProps) => {
     return oldProps.dao.address !== newProps.dao.address;
@@ -310,7 +311,7 @@ const TokenBalance = (props: ITokenProps) => {
   const { data, error, isLoading, tokenAddress } = props;
 
   const tokenData = supportedTokens()[tokenAddress];
-  if (isLoading || error || ((data === null || isNaN(data) || data.isZero()) && tokenData.symbol !== "GEN")) {
+  if (isLoading || error || ((data === null || isNaN(data) || data.isZero()) && tokenData.symbol !== genName())) {
     return null;
   }
 

@@ -20,7 +20,6 @@ interface IProps {
   timestamp: number;
   url?: string;
   dismiss: () => any;
-  minimize: () => any;
   showNotification: typeof showNotification;
 }
 

@@ -1,32 +1,34 @@
-import { Address, IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
 import { threeBoxLogout } from "actions/profilesActions";
-import { enableWalletProvider, getAccountIsEnabled, getArc, gotoReadonly, getWeb3ProviderInfo } from "arc";
-import classNames from "classnames";
+import { enableWalletProvider, getAccountIsEnabled, getArc, logout, getWeb3ProviderInfo } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import RedemptionsButton from "components/Redemptions/RedemptionsButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { copyToClipboard } from "lib/util";
+import { IRootState } from "reducers";
+import { NotificationStatus, showNotification } from "reducers/notifications";
+import { IProfileState } from "reducers/profilesReducer";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { parse } from "query-string";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom";
 import { Breadcrumbs } from "react-breadcrumbs-dynamic";
-import { IRootState } from "reducers";
-import { NotificationStatus, showNotification } from "reducers/notifications";
-import { IProfileState } from "reducers/profilesReducer";
 import { of } from "rxjs";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Toggle from "react-toggle";
 import { RefObject } from "react";
+import classNames from "classnames";
+import { Address, IDAOState } from "@daostack/client";
+import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
 }
 
 interface IStateProps {
+  showRedemptionsButton: boolean;
   currentAccountProfile: IProfileState;
   currentAccountAddress: string | null;
   daoAvatarAddress: Address;
@@ -41,8 +43,18 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
   });
   const queryValues = parse(ownProps.location.search);
 
+  // TODO: this is a temporary hack to send less requests during the ethDenver conference: 
+  // we hide the demptionsbutton when the URL contains "crx". Should probably be disabled at later date..
+  let showRedemptionsButton;
+  if (ETHDENVER_OPTIMIZATION) {
+    showRedemptionsButton = (ownProps.location.pathname.indexOf("crx") === -1);
+  } else {
+    showRedemptionsButton = true;
+  }
+
   return {
     ...ownProps,
+    showRedemptionsButton,
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
@@ -118,7 +130,7 @@ class Header extends React.Component<IProps, null> {
   }
 
   public handleClickLogout = async (_event: any): Promise<void> => {
-    await gotoReadonly(this.props.showNotification);
+    await logout(this.props.showNotification);
     await this.props.threeBoxLogout();
   }
 
@@ -196,9 +208,11 @@ class Header extends React.Component<IProps, null> {
                 icons={{ checked: <img src='/assets/images/Icon/checked.svg'/>, unchecked: <img src='/assets/images/Icon/unchecked.svg'/> }}/>
             </div>
           </TrainingTooltip>
-          <div className={css.redemptionsButton}>
-            <RedemptionsButton currentAccountAddress={currentAccountAddress} />
-          </div>
+          {
+            this.props.showRedemptionsButton ? <div className={css.redemptionsButton}>
+              <RedemptionsButton currentAccountAddress={currentAccountAddress} />
+            </div> : ""
+          }
           <div className={css.accountInfo}>
             { currentAccountAddress ?
               <span>
