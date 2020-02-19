@@ -1,5 +1,7 @@
 // tslint:disable:max-classes-per-file
 import BN = require("bn.js");
+import { targetedNetwork, Networks } from "arc";
+
 const Web3 = require("web3");
 const namehash = require("eth-ens-namehash");
 const dutchXInfo = require("./schemes/DutchX.json");
@@ -20,19 +22,18 @@ const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
   main: {},
   rinkeby: {},
   xdai: {},
-  private: {},
+  ganache: {},
 };
 
 for (const schemeInfo of KNOWNSCHEMES) {
   for (const network of Object.keys(SCHEMEADDRESSES)) {
-    const addresses = schemeInfo.addresses[network];
+    const networkId = (network === "ganache" && "private" || network);
+    const addresses = schemeInfo.addresses[networkId];
     if (addresses) {
-      for (const address of schemeInfo.addresses[network]) {
+      for (const address of addresses) {
         SCHEMEADDRESSES[network][address.toLowerCase()] = schemeInfo;
       }
-    } else {
-      console.error("no contract addresses in GenericSchemeRegistry!");
-    }
+    } 
   }
 }
 interface IABISpec {
@@ -229,7 +230,6 @@ export class GenericSchemeInfo {
   }
 }
 
-type Networks = "main"|"rinkeby"|"private"|"xdai"|undefined;
 
 export class GenericSchemeRegistry {
   /**
@@ -240,7 +240,7 @@ export class GenericSchemeRegistry {
    */
   public getSchemeInfo(address: string, network?: Networks): GenericSchemeInfo {
     if (!network) {
-      network = process.env.NETWORK as Networks || "main";
+      network = targetedNetwork();
     }
     const spec = SCHEMEADDRESSES[network][address.toLowerCase()];
     if (spec) {

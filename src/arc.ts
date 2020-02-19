@@ -1,10 +1,12 @@
 import { NotificationStatus } from "reducers/notifications";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
-import { getNetworkId, getNetworkName } from "./lib/util";
-import { settings } from "./settings";
+import { RetryLink } from "apollo-link-retry";
+import { Address, Arc } from "@daostack/client";
 import Web3Connect from "web3connect";
 import { Observable } from "rxjs";
-import { Address, Arc } from "@daostack/client";
+import { getNetworkId, getNetworkName } from "./lib/util";
+import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
+
 
 const Web3 = require("web3");
 
@@ -18,15 +20,15 @@ let selectedProvider: any;
 let web3ConnectCore: Web3Connect.Core;
 let initializedAccount: Address;
 
-type Networks = "main"|"rinkeby"|"ganache"|"xdai"
+export type Networks = "main"|"rinkeby"|"ganache"|"xdai"
 
 
 // get the network id that the current build expects ot connect to
 export function targetedNetwork(): Networks {
   switch (process.env.NETWORK) {
-    case "test": 
-    case "ganache": 
-    case "private": 
+    case "test":
+    case "ganache":
+    case "private":
     case "development": {
       return "ganache";
     }
@@ -34,11 +36,13 @@ export function targetedNetwork(): Networks {
     case "rinkeby" : {
       return "rinkeby";
     }
+    case "main":
     case "mainnet":
-    case "production" : {
+    case "production":
+    case undefined : {
       return "main";
     }
-    case "xdai": 
+    case "xdai":
       return "xdai";
     default: {
       throw Error(`Unknown NETWORK: "${process.env.NETWORK}"`);
@@ -123,6 +127,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   let arc: any;
 
   try {
+
     const arcSettings = getArcSettings();
 
     if (provider) {
@@ -133,6 +138,28 @@ export async function initializeArc(provider?: any): Promise<boolean> {
 
     const readonly = typeof provider === "string";
 
+    // https://www.apollographql.com/docs/link/links/retry/
+    const retryLink = new RetryLink({
+      attempts: {
+        max: 5,
+        retryIf: (error, _operation) =>  {
+        // eslint-disable-next-line no-console
+          console.error("error occurred fetching data, retrying...");
+          // eslint-disable-next-line no-console
+          console.log(error);
+          return !!error;
+        },
+      },
+      delay: {
+        initial: 500, // this is the initial time after the first retry
+        // next retries )up to max) will be exponential (i..e after 2*iniitial, etc)
+        jitter: true,
+        max: Infinity,
+      },
+    });
+
+    arcSettings.retryLink = retryLink;
+
     // if there is no existing arc, we create a new one
     if ((window as any).arc) {
       arc = (window as any).arc;
@@ -141,18 +168,27 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       arc = new Arc(arcSettings);
     }
 
-    // get contract information from the subgraph
-    const contractInfos = await arc.fetchContractInfos();
+    let contractInfos;
+    if (USE_CONTRACTINFOS_CACHE) {
+      contractInfos = require(`data/contractInfos-${targetedNetwork()}.json`);
+      arc.setContractInfos(contractInfos);
+    } else {
+      try {
+        contractInfos = await arc.fetchContractInfos();
+      } catch(err) {
+        // eslint-disable-next-line no-console
+        console.error(`Error fetching contractinfos: ${err.message}`);
+      }
+    }
     success = !!contractInfos;
 
     if (success) {
       initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
 
       if (!initializedAccount) {
-        // then something went wrong
-        // eslint-disable-next-line no-console
+      // then something went wrong
+      // eslint-disable-next-line no-console
         console.error("Unable to obtain an account from the provider");
-        // success = false;
       }
     } else {
       initializedAccount = null;
@@ -164,7 +200,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       // eslint-disable-next-line require-atomic-updates
       provider.__networkId = await getNetworkId(provider);
       if ((window as any).ethereum) {
-      // if this is metamask this should prevent a browser refresh when the network changes
+        // if this is metamask this should prevent a browser refresh when the network changes
         (window as any).ethereum.autoRefreshOnNetworkChange = false;
       }
       // eslint-disable-next-line no-console
@@ -446,6 +482,12 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
       return true;
     }
 
+    // If not MetaMask or other injected web3 and on ganache then try to connect to local ganache directly
+    if (targetedNetwork() === "ganache" && !(window as any).web3 && !(window as any).ethereum) {
+      selectedProvider = new Web3(settings.ganache.web3Provider);
+      return true;
+    }
+
     if (!selectedProvider) {
       await enableWeb3Provider();
       if (!selectedProvider) {
@@ -517,7 +559,7 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
                 if (account && initializedAccount && (account !== initializedAccount)) {
                   /**
                    * Handle when user changes account in MetaMask while already connected to Alchemy.
-                   * Also handles how the Burner provider switches from a Fortmatic address to the 
+                   * Also handles how the Burner provider switches from a Fortmatic address to the
                    * burner address at the time of connecting.
                    */
                   await initializeArc(selectedProvider);
