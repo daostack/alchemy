@@ -3,11 +3,10 @@ export const ETHDENVER_OPTIMIZATION = true;
 // if this is true, we do get the contractInfos from a locally stored file in ./data instead of from the subgraph
 export const USE_CONTRACTINFOS_CACHE = false; 
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
-const WalletConnectProvider = require("@walletconnect/web3-provider");
 const Portis = require("@portis/web3");
 const Fortmatic = require("fortmatic");
-
 
 function isMobileBrowser(): boolean {
   // if (!window) {
