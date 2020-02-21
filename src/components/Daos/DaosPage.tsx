@@ -6,16 +6,41 @@ import Analytics from "lib/analytics";
 import { Page } from "pages";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as React from "react";
+import { connect } from "react-redux";
 import * as Sticky from "react-stickynode";
 import { Link } from "react-router-dom";
+import { IRootState } from "reducers";
+import { IProfileState } from "reducers/profilesReducer";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 
 type SubscriptionData = DAO[];
 
-type IProps = ISubscriptionProps<SubscriptionData>;
+interface IStateProps {
+  currentAccountProfile: IProfileState;
+}
 
-class DaosPage extends React.Component<IProps, null> {
+const mapStateToProps = (state: IRootState): IStateProps => {
+  return {
+    currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
+  };
+};
+
+type IProps = IStateProps & ISubscriptionProps<SubscriptionData>;
+
+interface IState {
+  search: string;
+}
+
+class DaosPage extends React.Component<IProps, IState> {
+
+  constructor(props: IProps) {
+    super(props);
+
+    this.state = {
+      search: "",
+    };
+  }
 
   public componentDidMount() {
     Analytics.track("Page View", {
@@ -23,19 +48,27 @@ class DaosPage extends React.Component<IProps, null> {
     });
   }
 
-  public render(): RenderOutput {
-    const { data } = this.props;
+  onSearchChange = (e: any) => {
+    this.setState({ search: e.target.value });
+  }
 
-    let daos: DAO[];
+  public render(): RenderOutput {
+    const { currentAccountProfile, data } = this.props;
+    const search = this.state.search.toLowerCase();
+
+    let daos: DAO[] = data.filter((d: DAO) => d.staticState.name === "Genesis Alpha");
+
     if (process.env.NODE_ENV === "staging") {
       // on staging we show all daos (registered or not)
-      daos = data
-        .filter((d: DAO) => d.staticState.name === "Genesis Alpha")
-        .concat(data.filter((d: DAO) => d.staticState.name !== "Genesis Alpha"));
+      daos = daos.concat(data.filter((d: DAO) => d.staticState.name !== "Genesis Alpha" && d.staticState.name.toLowerCase().includes(search)));
     } else {
-      daos = data
-        .filter((d: DAO) => d.staticState.name === "Genesis Alpha")
-        .concat(data.filter((d: DAO) => d.staticState.name !== "Genesis Alpha" && d.staticState.register === "registered"));
+      // Otherwise show registered DAOs or DAOs that the person follows or is a member of
+      daos = daos.concat(data.filter((d: DAO) => {
+        return d.staticState.name !== "Genesis Alpha" &&
+               d.staticState.name.toLowerCase().includes(search) &&
+               (d.staticState.register === "registered" ||
+                  (currentAccountProfile && currentAccountProfile.follows.daos.includes(d.staticState.address)));
+      }));
     }
 
     const daoNodes = daos.map((dao: DAO) => {
@@ -54,6 +87,9 @@ class DaosPage extends React.Component<IProps, null> {
           <div className={css.daoListHeader + " clearfix"}>
             <h2 data-test-id="header-all-daos">All DAOs</h2>
           </div>
+          <div className={css.searchBox}>
+            Search: <input type="text" name="search" placeholder="DAO Name" onChange={this.onSearchChange} value={this.state.search} />
+          </div>
           <Link to={"/daos/create"}>
             <div className={css.createDaoWrapper}>
               Create A DAO
@@ -68,7 +104,7 @@ class DaosPage extends React.Component<IProps, null> {
   }
 }
 
-export default withSubscription({
+const SubscribedDaosPage = withSubscription({
   wrappedComponent: DaosPage,
   loadingComponent: <div className={css.wrapper}><div className={css.loading}><Loading/></div></div>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
@@ -83,3 +119,6 @@ export default withSubscription({
       orderBy: "name", orderDirection: "asc"}, { fetchAllData: true, subscribe: true });
   },
 });
+
+export default connect(mapStateToProps)(SubscribedDaosPage);
+
