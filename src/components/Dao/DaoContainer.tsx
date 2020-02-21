@@ -100,8 +100,8 @@ class DaoContainer extends React.Component<IProps, null> {
             <div className={css.noticeBuffer}></div>
             <div className={css.notice}>
               <div>
-                <img src="/assets/images/Icon/notice.svg" />
-                Alchemy and Arc are in Alpha. There will be BUGS! We don&apos;t guarantee complete security. *Play at your own risk*
+                <img src="/assets/images/Icon/dao-logo-gray.svg" />
+                <b>Powered by DAOstack</b>
               </div>
             </div>
           </div>
