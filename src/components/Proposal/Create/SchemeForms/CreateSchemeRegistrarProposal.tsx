@@ -1,9 +1,4 @@
-import * as React from "react";
-import { connect } from "react-redux";
-import { IProposalType, ISchemeState, Scheme } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
-import classNames from "classnames";
-import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -17,6 +12,11 @@ import { schemeNameAndAddress, isValidUrl, GetSchemeIsActiveActions, getSchemeIs
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
+import classNames from "classnames";
+import { IProposalType, ISchemeState, Scheme } from "@daostack/client";
+import { connect } from "react-redux";
+import * as React from "react";
 
 
 interface IExternalProps {
@@ -343,7 +343,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                   <div className={css.addEditSchemeFields}>
                     <div className={css.addSchemeSelectContainer}>
                       <label htmlFor="schemeToAddInput">
-                        Scheme
+                        Plugin
                         <ErrorMessage name="schemeToAdd">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         <div className={css.requiredMarker}>*</div>
                       </label>
