@@ -10,13 +10,13 @@ import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
 import { schemeNameAndAddress, isValidUrl, GetSchemeIsActiveActions, getSchemeIsActive } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
-import * as css from "../CreateProposal.scss";
-import MarkdownField from "./MarkdownField";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
 import { IProposalType, ISchemeState, Scheme } from "@daostack/client";
 import { connect } from "react-redux";
 import * as React from "react";
+import * as css from "../CreateProposal.scss";
+import MarkdownField from "./MarkdownField";
 
 
 interface IExternalProps {
