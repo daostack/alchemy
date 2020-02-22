@@ -56,7 +56,7 @@ class DaosPage extends React.Component<IProps, IState> {
     const { currentAccountProfile, data } = this.props;
     const search = this.state.search.toLowerCase();
 
-    let daos: DAO[] = data.filter((d: DAO) => d.staticState.name === "Genesis Alpha");
+    let daos: DAO[] = data.filter((d: DAO) => d.staticState.name === "Genesis Alpha" && d.staticState.name.toLowerCase().includes(search));
 
     if (process.env.NODE_ENV === "staging") {
       // on staging we show all daos (registered or not)
@@ -84,17 +84,18 @@ class DaosPage extends React.Component<IProps, IState> {
         <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
 
         <Sticky enabled top={50} innerZ={10000}>
-          <div className={css.daoListHeader + " clearfix"}>
-            <h2 data-test-id="header-all-daos">All DAOs</h2>
-          </div>
-          <div className={css.searchBox}>
-            Search: <input type="text" name="search" placeholder="DAO Name" onChange={this.onSearchChange} value={this.state.search} />
-          </div>
-          <Link to={"/daos/create"}>
-            <div className={css.createDaoWrapper}>
-              Create A DAO
+          <div className={css.headerWrapper}>
+            <div className={css.headerTitle + " clearfix"}>
+              <h2 data-test-id="header-all-daos">All DAOs</h2>
             </div>
-          </Link>
+            <div className={css.searchBox}>
+              <span>Search:</span>
+              <input type="text" name="search" placeholder="DAO Name" onChange={this.onSearchChange} value={this.state.search} />
+            </div>
+            <Link to={"/daos/create"} className={css.createDaoButton}>
+              Create A DAO
+            </Link>
+          </div>
         </Sticky>
         <div className={css.daoList}>
           {daoNodes ? daoNodes : "None"}

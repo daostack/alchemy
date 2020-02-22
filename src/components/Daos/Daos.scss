@@ -8,13 +8,11 @@
   margin: 0 auto;
 }
 
-.daoList {
+.headerWrapper {
   position: relative;
-  z-index: 0;
-  padding-top: 30px;
 }
 
-.daoListHeader {
+.headerTitle {
 	width: 100%;
 	padding-top: 30px;
   background-color: rgba(229, 235, 242, 1.000);
@@ -28,29 +26,29 @@
 		padding: 0;
 		margin-bottom: 0;
 	}
-
-	// a {
-	// 	float: right;
-	// 	display: block;
-	// 	width: 110px;
-	// 	text-align: center;
-	// 	border: 1px solid $accent-1;
-	// 	color: $accent-1;
-	// 	font-size: $caption;
-	// 	padding: $button-padding;
-	// 	transition: all .25s ease;
-	// 	background-color: $accent-1-transparent;
-	// 	border-radius: $button-border-radius;
-	// 	vertical-align: middle;
-	// }
 }
 
 .searchBox {
   position: relative;
   float: left;
+  margin-top: 5px;
+
+  span {
+    color: #4f6176;
+  }
+
+  input {
+    margin-left: 5px;
+    font-size: 15px;
+    width: 425px;
+    padding: 2px;
+  }
 }
 
-.createDaoWrapper {
+.createDaoButton {
+  position: absolute;
+  right: 20px;
+  bottom: 5px;
   border-radius: 15px;
   background-color: rgba(3, 118, 255, 1.000);
   color: $white;
@@ -61,12 +59,13 @@
   font-family: $body-font;
   font-weight: $bold;
   font-size: 13px;
-  margin-right: 55px;
-  margin-top: 16px;
-  float: right;
-  position: relative;
 }
 
+.daoList {
+  position: relative;
+  z-index: 0;
+  padding-top: 30px;
+}
 
 // ****** DAO Card **** //
 a.daoLink {
@@ -182,18 +181,21 @@ table.daoInfoContainer {
 	.wrapper {
 		width: auto;
 		padding: 0;
-    text-align: center;
 	}
 
-  .daoListHeader {
-    padding-top: 0;
+  .headerTitle {
     text-align: left;
 
     h2 {
-      margin-top: 0;
-      padding: 10px 0 10px 15px;
-      text-align: center;
-      font-size: 18px;
+      padding: 0 0 0 10px;
+    }
+  }
+
+  .searchBox {
+    padding-left: 10px;
+
+    input {
+      width: 320px
     }
   }
 
