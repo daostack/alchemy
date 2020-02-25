@@ -2,6 +2,7 @@ import { DAO } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import gql from "graphql-tag";
 import Analytics from "lib/analytics";
 import { Page } from "pages";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -11,17 +12,21 @@ import * as Sticky from "react-stickynode";
 import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
+import { combineLatest, of } from "rxjs";
+
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 
-type SubscriptionData = DAO[];
+type SubscriptionData = [DAO[], string[]];
 
 interface IStateProps {
+  currentAccountAddress: string;
   currentAccountProfile: IProfileState;
 }
 
 const mapStateToProps = (state: IRootState): IStateProps => {
   return {
+    currentAccountAddress: state.web3.currentAccountAddress,
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
   };
 };
@@ -56,22 +61,27 @@ class DaosPage extends React.Component<IProps, IState> {
     const { currentAccountProfile, data } = this.props;
     const search = this.state.search.toLowerCase();
 
-    let daos: DAO[] = data.filter((d: DAO) => d.staticState.name === "Genesis Alpha" && d.staticState.name.toLowerCase().includes(search));
+    const allDAOs = data[0];
+
+    // Always show Genesis Alpha first
+    let finalDAOList = allDAOs.filter((d: DAO) => d.staticState.name === "Genesis Alpha" && d.staticState.name.toLowerCase().includes(search));
 
     if (process.env.NODE_ENV === "staging") {
       // on staging we show all daos (registered or not)
-      daos = daos.concat(data.filter((d: DAO) => d.staticState.name !== "Genesis Alpha" && d.staticState.name.toLowerCase().includes(search)));
+      finalDAOList = finalDAOList.concat(allDAOs.filter((d: DAO) => d.staticState.name !== "Genesis Alpha" && d.staticState.name.toLowerCase().includes(search)));
     } else {
       // Otherwise show registered DAOs or DAOs that the person follows or is a member of
-      daos = daos.concat(data.filter((d: DAO) => {
+      const memberOfDAOs = data[1];
+      finalDAOList = finalDAOList.concat(allDAOs.filter((d: DAO) => {
         return d.staticState.name !== "Genesis Alpha" &&
                d.staticState.name.toLowerCase().includes(search) &&
                (d.staticState.register === "registered" ||
-                  (currentAccountProfile && currentAccountProfile.follows.daos.includes(d.staticState.address)));
+                  (currentAccountProfile && currentAccountProfile.follows.daos.includes(d.staticState.address)) ||
+                  memberOfDAOs.includes(d.staticState.address));
       }));
     }
 
-    const daoNodes = daos.map((dao: DAO) => {
+    const daoNodes = finalDAOList.map((dao: DAO) => {
       return (
         <DaoCard
           key={dao.id}
@@ -111,13 +121,31 @@ const SubscribedDaosPage = withSubscription({
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
   // Don't ever update the subscription
-  checkForUpdate: () => { return false; },
+  checkForUpdate: ["currentAccountAddress"],
 
-  createObservable: () => {
+  createObservable: (props: IStateProps) => {
     const arc = getArc();
-    return arc.daos({
-      // where: { register: "registered" },
-      orderBy: "name", orderDirection: "asc"}, { fetchAllData: true, subscribe: true });
+
+    // Get list of DAO addresses the current user is a member of
+    const memberDAOsquery = gql`
+      query ReputationHolderSearch {
+        reputationHolders(where: { address: "${props.currentAccountAddress}" }) {
+          dao {
+            id
+          }
+        }
+      }
+    `;
+    const memberOfDAOs = props.currentAccountAddress ? arc.getObservableList(
+      memberDAOsquery,
+      (r: any) => r.dao.id,
+      { subscribe: true }
+    ) : of([]);
+
+    return combineLatest(
+      arc.daos({ orderBy: "name", orderDirection: "asc"}, { fetchAllData: true, subscribe: true }),
+      memberOfDAOs
+    );
   },
 });
 
