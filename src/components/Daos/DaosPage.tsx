@@ -5,8 +5,9 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import gql from "graphql-tag";
 import Analytics from "lib/analytics";
 import { Page } from "pages";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as React from "react";
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import * as InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
 import * as Sticky from "react-stickynode";
 import { Link } from "react-router-dom";
@@ -37,6 +38,8 @@ interface IState {
   search: string;
 }
 
+const PAGE_SIZE = 50;
+
 class DaosPage extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
@@ -58,7 +61,7 @@ class DaosPage extends React.Component<IProps, IState> {
   }
 
   public render(): RenderOutput {
-    const { currentAccountProfile, data } = this.props;
+    const { currentAccountProfile, data, fetchMore } = this.props;
     const search = this.state.search.toLowerCase();
 
     const allDAOs = data[0];
@@ -89,6 +92,7 @@ class DaosPage extends React.Component<IProps, IState> {
         />
       );
     });
+
     return (
       <div className={css.wrapper}>
         <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
@@ -108,7 +112,20 @@ class DaosPage extends React.Component<IProps, IState> {
           </div>
         </Sticky>
         <div className={css.daoList}>
-          {daoNodes ? daoNodes : "None"}
+          {daoNodes ?
+            <InfiniteScroll
+              dataLength={finalDAOList.length} // This is important field to render the next data
+              next={fetchMore}
+              hasMore
+              loader=""
+              endMessage={
+                <p style={{textAlign: "center"}}>
+                  <b>&mdash;</b>
+                </p>
+              }
+            >
+              {daoNodes}
+            </InfiniteScroll> : "None"}
         </div>
       </div>
     );
@@ -123,29 +140,53 @@ const SubscribedDaosPage = withSubscription({
   // Don't ever update the subscription
   checkForUpdate: ["currentAccountAddress"],
 
+  // used for hacky pagination tracking
+  pageSize: PAGE_SIZE,
+
   createObservable: (props: IStateProps) => {
     const arc = getArc();
 
     // Get list of DAO addresses the current user is a member of
     const memberDAOsquery = gql`
       query ReputationHolderSearch {
-        reputationHolders(where: { address: "${props.currentAccountAddress}" }) {
+        reputationHolders(where: { address: "${props.currentAccountAddress}" }, first: ${PAGE_SIZE}, skip: 0) {
           dao {
             id
           }
         }
       }
     `;
-    const memberOfDAOs = props.currentAccountAddress ? arc.getObservableList(
-      memberDAOsquery,
-      (r: any) => r.dao.id,
-      { subscribe: true }
-    ) : of([]);
+    const memberOfDAOs = props.currentAccountAddress ? arc.getObservableList(memberDAOsquery, (r: any) => r.dao.id, { subscribe: true }) : of([]);
 
     return combineLatest(
-      arc.daos({ orderBy: "name", orderDirection: "asc"}, { fetchAllData: true, subscribe: true }),
+      arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: 0}, { fetchAllData: true, subscribe: true }),
       memberOfDAOs
     );
+  },
+
+  getFetchMoreObservable: (props: IStateProps, data: SubscriptionData) => {
+    const arc = getArc();
+
+    // Get list of DAO addresses the current user is a member of
+    const memberDAOsquery = gql`
+      query ReputationHolderSearch {
+        reputationHolders(where: { address: "${props.currentAccountAddress}" }, first: ${PAGE_SIZE}, skip: ${data[1].length}) {
+          dao {
+            id
+          }
+        }
+      }
+    `;
+    const memberOfDAOs = props.currentAccountAddress ? arc.getObservableList(memberDAOsquery, (r: any) => r.dao.id, { subscribe: true }) : of([]);
+
+    return combineLatest(
+      arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data[0].length}, { fetchAllData: true, subscribe: true }),
+      memberOfDAOs
+    );
+  },
+
+  fetchMoreCombine: (prevData: SubscriptionData, newData: SubscriptionData) => {
+    return [prevData[0].concat(newData[0]), prevData[1].concat(newData[1])] as SubscriptionData;
   },
 });
 
