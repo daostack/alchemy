@@ -70,6 +70,21 @@ type IProps = IExternalProps & IStateProps & ISubscriptionProps<SubscriptionData
 
 class VotersModal extends React.Component<IProps, null> {
 
+  public async componentDidMount() {
+    document.addEventListener("keydown", this.handleKeyPress, false);
+  }
+
+  public componentWillUnmount(){
+    document.removeEventListener("keydown", this.handleKeyPress, false);
+  }
+
+  private handleKeyPress = (e: any) => {
+    // Close modal on ESC key press
+    if (e.keyCode === 27) {
+      this.props.closeAction();
+    }
+  }
+
   public async handleClickDone() {
     this.props.closeAction();
   }

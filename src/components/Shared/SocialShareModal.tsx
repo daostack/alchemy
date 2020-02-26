@@ -29,6 +29,21 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
     };
   }
 
+  public async componentDidMount() {
+    document.addEventListener("keydown", this.handleKeyPress, false);
+  }
+
+  public componentWillUnmount(){
+    document.removeEventListener("keydown", this.handleKeyPress, false);
+  }
+
+  private handleKeyPress = (e: any) => {
+    // Close modal on ESC key press
+    if (e.keyCode === 27) {
+      this.props.closeHandler(e);
+    }
+  }
+
   private showCopiedFeedback(): void {
     this.setState({ showCopiedFeedback: true });
     setTimeout(() => this.hideCopiedFeedback(), 5000);
@@ -43,11 +58,11 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
 
   private selectTwitter(_event: any): void {
     const sharingUrl = `https://twitter.com/intent/tweet/?text=${this.sharingMsgTwitter}&url=${this.props.url}`;
-    window.open(sharingUrl, "_blank");   
+    window.open(sharingUrl, "_blank");
   }
   private selectReddit(_event: any): void {
     const sharingUrl = `https://reddit.com/submit/?url=${this.props.url}&resubmit=true&title=${this.sharingMsg}`;
-    window.open(sharingUrl, "_blank");   
+    window.open(sharingUrl, "_blank");
   }
   private selectFacebook(_event: any): void {
     const sharingUrl = `https://facebook.com/sharer/sharer.php?u=${this.props.url}`;
@@ -55,7 +70,7 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
   }
   private selectTelegram(_event: any): void {
     const sharingUrl = `https://telegram.me/share/url?text=${this.sharingMsg}&url=${this.props.url}`;
-    window.open(sharingUrl, "_blank");   
+    window.open(sharingUrl, "_blank");
   }
   private copyUrl(_event: any) {
     copyToClipboard(this.props.url);
@@ -78,7 +93,7 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
           <div className={css.content}>
             <div className={css.link}>
               <div className={css.title}>Link</div>
-              { this.state.showCopiedFeedback ? 
+              { this.state.showCopiedFeedback ?
                 <div className={css.copied}>copied</div>
                 : ""
               }

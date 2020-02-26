@@ -102,7 +102,6 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     // Do action on Enter key press
     if (e.keyCode === 13) {
       if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
-        console.log(this.state.stakeAmount, fromWei(currentAccountGens), this.state.stakeAmount > 0);
         if (this.state.stakeAmount > 0 && this.state.stakeAmount <= fromWei(currentAccountGens)) {
           this.handleClickAction();
         }

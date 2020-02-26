@@ -32,6 +32,21 @@ class ThreeboxModal extends React.Component<IProps, IState> {
     };
   }
 
+  public async componentDidMount() {
+    document.addEventListener("keydown", this.handleKeyPress, false);
+  }
+
+  public componentWillUnmount(){
+    document.removeEventListener("keydown", this.handleKeyPress, false);
+  }
+
+  private handleKeyPress = (e: any) => {
+    // Close modal on ESC key press
+    if (e.keyCode === 27) {
+      this.props.closeHandler(e);
+    }
+  }
+
   private handleClickGo = async (e: any): Promise<void> => {
     this.props.action();
     this.props.closeHandler(e);
