@@ -84,15 +84,14 @@ class ReputationFromToken extends React.Component<IProps, IState> {
 
 
     this.state = {
-      redemptionAmount: null,
+      redemptionAmount: new BN(0),
       alreadyRedeemed: false,
       privateKey: pk,
       redeemerAddress,
     };
   }
 
-  private async _loadReputationBalance() {
-    const redeemerAddress = this.state.redeemerAddress;
+  private async _loadReputationBalance(redeemerAddress: string) {
     if (redeemerAddress) {
       const schemeState = this.props.schemeState;
       const schemeAddress = schemeState.address;
@@ -111,25 +110,24 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       this.setState({
         redemptionAmount,
         alreadyRedeemed,
+        redeemerAddress,
       });
     } else {
       this.setState({
         redemptionAmount: new BN(0),
         alreadyRedeemed: false,
+        redeemerAddress: null,
       });
     }
   }
 
   public async componentDidMount() {
-    await this._loadReputationBalance();
+    await this._loadReputationBalance(this.state.redeemerAddress);
   }
 
   public async componentDidUpdate(prevProps: IProps) {
     if (!this.state.privateKey && this.props.currentAccountAddress !== prevProps.currentAccountAddress) {
-      this.setState({
-        redeemerAddress: this.props.currentAccountAddress,
-      });
-      await this._loadReputationBalance();
+      await this._loadReputationBalance(this.props.currentAccountAddress);
     }
   }
 
@@ -148,6 +146,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     const alreadyRedeemed = await schemeContract.methods.redeems(this.state.redeemerAddress).call();
     if (alreadyRedeemed) {
       this.props.showNotification(NotificationStatus.Failure, `Reputation for the account ${this.state.redeemerAddress} was already redeemed`);
+      this.redemptionSucceeded();
     } else if (values.useTxSenderService === true) {
       // construct the message to sign
       // const signatureType = 1
@@ -241,6 +240,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             this.props.showNotification(NotificationStatus.Failure, `An error occurred on the transaction service: ${response.data.status}: ${response.data.message}`);
           } else {
             this.props.showNotification(NotificationStatus.Success, `You've successfully redeemed rep to ${values.accountAddress}`);
+            this.redemptionSucceeded();
           }
         } catch(err) {
           this.props.showNotification(NotificationStatus.Failure, `${err.message}}`);
@@ -255,9 +255,13 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       // ,{from:_fromAccount}));
     } else {
       const scheme = arc.scheme(schemeState.id);
-      this.props.redeemReputationFromToken(scheme, values.accountAddress, this.state.privateKey, this.state.redeemerAddress);
+      await this.props.redeemReputationFromToken(scheme, values.accountAddress, this.state.privateKey, this.state.redeemerAddress, this.redemptionSucceeded);
     }
     setSubmitting(false);
+  }
+
+  public redemptionSucceeded = () => {
+    this.setState( { redemptionAmount: new BN(0) });
   }
 
   private onSubmitClick = (setFieldValue: any) => ()=>{ setFieldValue("useTxSenderService",false); }
@@ -333,7 +337,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                 </div>
                 <div className={schemeCss.redemptionButton}>
                   <button type="submit"
-                    disabled={false}
+                    disabled={this.state.alreadyRedeemed || this.state.redemptionAmount.isZero()}
                     onClick={this.onSubmitClick(setFieldValue)}
                   >
                     <img src="/assets/images/Icon/redeem.svg"/> Redeem
@@ -343,7 +347,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                   <div className={schemeCss.redemptionButton}>
                     <div>Or try our new experimental feature:</div>
                     <button type="submit"
-                      disabled={false}
+                      disabled={this.state.alreadyRedeemed || this.state.redemptionAmount.isZero()}
                       onClick={this.onSubmitClick(setFieldValue)}
                     >
                       <img src="/assets/images/Icon/redeem.svg"/> Redeem w/o paying gas

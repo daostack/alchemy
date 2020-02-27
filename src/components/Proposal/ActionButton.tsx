@@ -23,6 +23,7 @@ interface IExternalProps {
   currentAccountAddress?: Address;
   daoState: IDAOState;
   daoEthBalance: BN;
+  detailView?: boolean;
   expanded?: boolean;
   parentPage: Page;
   proposalState: IProposalState;

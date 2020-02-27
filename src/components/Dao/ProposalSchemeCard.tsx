@@ -1,7 +1,7 @@
 import { IDAOState, IProposalStage, IProposalState, ISchemeState, Proposal, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
-import Countdown from "components/Shared/Countdown";
+import ProposalCountdown from "components/Shared/ProposalCountdown";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { humanProposalTitle, schemeName } from "lib/util";
@@ -34,6 +34,7 @@ const ProposalSchemeCard = (props: IProps) => {
 
   switch(schemeState.name) {
     case "ContributionReward":
+    case "ContributionRewardExt":
       trainingTooltipMessage = "Use this scheme to reward users (rep and/or funds) for their contributions to the DAO";
       break;
     case "SchemeRegistrar":
@@ -103,6 +104,7 @@ export default withSubscription({
 });
 
 
+// TODO: move this to a separate file
 /***** ProposalDetail Component *****/
 interface IProposalDetailProps extends ISubscriptionProps<IProposalState> {
   dao: IDAOState;
@@ -114,15 +116,17 @@ const ProposalDetail = (props: IProposalDetailProps) => {
   const proposalState = data;
   return (
     <Link className={css.proposalTitle} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
-      <span>
-        <em className={css.miniGraph}>
+      <div className={css.container}>
+        <div className={css.miniGraph}>
           <VoteGraph size={20} proposal={proposalState} />
-        </em>
-        {humanProposalTitle(proposalState)}
-      </span>
-      <b>
-        <Countdown proposal={proposalState} schemeView />
-      </b>
+        </div>
+        <div className={css.title}>
+          {humanProposalTitle(proposalState)}
+        </div>
+        <div className={css.countdown}>
+          <ProposalCountdown proposal={proposalState} schemeView />
+        </div>
+      </div>
     </Link>
   );
 };

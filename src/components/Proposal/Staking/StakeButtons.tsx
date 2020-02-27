@@ -98,7 +98,7 @@ class StakeButtons extends React.Component<IProps, IState> {
 
   private getStakeProposalAction = (proposal: IProposalState, dao: IDAOState, pendingPrediction: number) =>
     (amount: number) => {
-      stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount);
+      this.props.stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount);
 
       Analytics.track("Stake", {
         "DAO Address": proposal.dao.id,
@@ -278,7 +278,7 @@ class StakeButtons extends React.Component<IProps, IState> {
                   passButton
               }
               {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.Queued && !expired ?
-                <div className={css.toBoostMessage}>{formatTokens(proposal.upstakeNeededToPreBoost, "GEN to boost")}</div>
+                <div className={css.toBoostMessage}>&gt;{formatTokens(proposal.upstakeNeededToPreBoost, "GEN to boost")}</div>
                 : ""}
               {
                 (currentAccountAddress && tip(IProposalOutcome.Pass) !== "") ?

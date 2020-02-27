@@ -22,6 +22,7 @@ module.exports = {
       constants: path.resolve(basePath, 'src/constants'),
       data: path.resolve(basePath, 'data'),
       genericSchemeRegistry: path.resolve(basePath, 'src/genericSchemeRegistry'),
+      crxRegistry: path.resolve(basePath, 'src/crxRegistry'),
       layouts: path.resolve(basePath, 'src/layouts'),
       lib: path.resolve(basePath, 'src/lib'),
       pages: path.resolve(basePath, 'src/pages'),
@@ -53,12 +54,15 @@ module.exports = {
           /node_modules\/apollo-link/,
           /node_modules\/apollo-link-http/,
           /node_modules\/apollo-link-ws/,
-          /node_modules\/xhr2-cookies/,
+          /node_modules\/ethereumjs-common/,
+          /node_modules\/ethereumjs-tx/,
+          /node_modules\/ethereumjs-util/,
+          /node_modules\/graphql-request/,
+          /node_modules\/https-did-resolver/,
           /node_modules\/rlp/,
           /node_modules\/subscriptions-transport-ws/,
+          /node_modules\/xhr2-cookies/,
           /node_modules\/zen-observable-ts/,
-          /node_modules\/graphql-request/,
-          /node_modules\/https-did-resolver/
         ]
       },
 

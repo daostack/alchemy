@@ -1,4 +1,7 @@
 @import "./react-mde.css";
+:global {
+  @import "../../../../node_modules/react-datetime/css/react-datetime";
+}
 
 .hidden {
   display: none !important;
@@ -10,8 +13,9 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   box-shadow: $shadow-3;
+  height: calc(100% - 100px);
 
   .header {
     background-color: $navy;
@@ -33,10 +37,20 @@
 
       b {
         font-weight: normal;
-        opacity: .5;
+        opacity: 0.5;
         font-size: 14px;
       }
     }
+
+    .closeButton {
+      background: none;
+      border: none;
+      position: absolute;
+      right: 10px;
+      color: white;
+      font-size: 28px;
+    }
+
     .editIcon {
       display: inline-block;
       margin: 10px;
@@ -47,91 +61,131 @@
     padding: 20px 30px 30px 30px;
 
     input {
+      width: 100%;
       margin-top: 3px;
       margin-bottom: 5px;
-      width: 445px;
-      display: block;
+      padding: 0 15px;
+      box-sizing: border-box;
       border: none;
       background-color: transparent;
       border: $gray-border-2;
       font-size: 13px;
-      padding: 12px 12px;
       font-family: $body-font;
+      height: 35px;
+      line-height: 35px;
 
       &.error {
-        border: 1px solid rgba(246, 80, 80, 1.000);
+        border: 1px solid rgba(246, 80, 80, 1);
       }
       &:focus {
         outline: none;
-        border: 1px solid rgba(46, 168, 122, 1.000);
+        border: 1px solid rgba(46, 168, 122, 1);
       }
     }
 
-    input {
-      padding: 0 15px;
-      height: 35px;
-      line-height: 35px;
-    }
-
-    input::placeholder, textarea::placeholder {
-        color: rgba(154, 169, 181, 1.000);
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(154, 169, 181, 1);
     }
 
     .contributionReward {
       width: 110px;
       display: inline-block;
+      height: calc(100% - 40px);
     }
 
-    .reward {
-      float: left;
-      width: 235px;
-      position: relative;
+    .dates {
+      display: grid;
+      grid-column-gap: 12px;
+      grid-row-gap: 8px;
+      grid-template-columns: 1fr 1fr;
+
+      .date {
+        min-width: 221px; // ensure equal widths
+        input {
+          min-width: 206px; // calendar input
+        }
+      }
+    }
+
+    .proposerIsAdminCheckbox {
+      label {
+        display: inline-block;
+        position: relative;
+        bottom: 14px;
+        margin-right: 4px;
+      }
 
       input {
-        width: 200px;
-      }
-
-      .externalTokenSelect {
-        display: block;
-        font-size: 13PX;
-        color: $gray-1;
-        margin: 0;
-        border: 1px solid #aaa;
-        border-radius: 0;
-        -moz-appearance: none;
-        -webkit-appearance: none;
-        appearance: none;
-        background-color: #fff;
-        position: absolute;
-        bottom: 5px;
-        height: 35px;
-        padding: 0 0 0 0;
-        right: 0px;
-        border: 1px solid #bfcbd5;
-
-        div div div div:first-child {
-          left: 15px;
-        }
-
-        input {
-          margin-top: 0;
-          margin-left: 10px;
-          margin-bottom: 0;
-        }
+        width: auto;
       }
     }
 
-    .reward:nth-child(even) {
-      margin-right: 10px;
-    }
+    .rewards {
+      display: grid;
+      grid-column-gap: 12px;
+      grid-row-gap: 0;
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
 
+      .reward {
+        .externalTokenInput {
+          display: flex;
+          border: 1px solid #bfcbd5;
+          border-bottom-left-radius: 2px;
+          border-top-left-radius: 2px;
+          border-top-right-radius: 2px;
+          border-bottom-right-radius: 2px;
+          margin-top: 3px;
+          margin-bottom: 5px;
+          max-height: 37px;
+          box-sizing: border-box;
 
-    .permissionCheckbox {
-      font-size: 9px;
+          .amount {
+            input {
+              border-width: 0;
+              height: 35px;
+              margin-top: 0;
+              margin-bottom: 0px;
+            }
+          }
+
+          .select {
+            flex-shrink: 2;
+            font-size: 13px;
+            font-family: "Open Sans";
+            font-weight: 400;
+            min-width: 82px;
+            height: 35px;
+
+            input {
+              margin: 0;
+              line-height: unset;
+              height: unset;
+            }
+
+            :global .react-select-container {
+              .react-select__control {
+                min-height: 34px;
+                border-radius: 0;
+                border-width: 0;
+                border-left: 1px solid #bfcbd5;
+                height: 34px;
+                margin-top: 0;
+                margin-bottom: 1px;
+                border-bottom-left-radius: 0;
+                border-top-left-radius: 0;
+                top: 0.5px;
+                box-shadow: none;
+              }
+            }
+          }
+        }
+      }
     }
 
     label {
-      color: rgba(80, 97, 118, 1.000);
+      color: rgba(80, 97, 118, 1);
       display: block;
       width: fit-content;
       font-size: 13px;
@@ -140,13 +194,11 @@
       position: relative;
 
       .requiredMarker {
-        position: absolute;
-        top: 26px;
-        color: rgba(104, 154, 214, 1.000);
+        display: inline-block;
+        color: rgba(104, 154, 214, 1);
         font-weight: bold;
-        left: 5px;
+        margin-right: 4px;
       }
-
 
       .infoTooltip {
         position: absolute;
@@ -157,9 +209,10 @@
     }
 
     .errorMessage {
+      display: block;
       font-weight: normal;
       padding-left: 10px;
-      color: rgba(246, 80, 80, 1.000);
+      color: rgba(246, 80, 80, 1);
       font-size: 11px;
       font-weight: 300;
     }
@@ -173,12 +226,11 @@
       z-index: -10;
       font-weight: 300;
     }
-
   }
 
   .recommendedTemplate {
-    border: 1px solid rgba(56, 175, 244, .2);
-    color: rgba(34, 167, 243, 1.000);
+    border: 1px solid rgba(56, 175, 244, 0.2);
+    color: rgba(34, 167, 243, 1);
     font-size: $small;
     border-radius: 3px;
     position: relative;
@@ -247,9 +299,9 @@
     cursor: pointer;
     height: 30px;
     float: left;
-    transition: all .25s ease;
+    transition: all 0.25s ease;
     border: none;
-    background-color: rgba(0, 0, 0, 0.000);
+    background-color: rgba(0, 0, 0, 0);
   }
 
   .exitProposalCreation {
@@ -261,11 +313,11 @@
     font-size: 13px;
     padding: 0 25px 2px 25px;
     font-family: $body-font;
-    transition: all .25s ease;
+    transition: all 0.25s ease;
     border: none;
-    background-color: rgba(225, 235, 247, 1.000);
+    background-color: rgba(225, 235, 247, 1);
     border-radius: 15px;
-    color: rgba(0, 113, 255, 1.000);
+    color: rgba(0, 113, 255, 1);
   }
 
   .submitProposal {
@@ -278,8 +330,8 @@
     padding: 0 25px 2px 25px;
     font-family: $body-font;
     font-weight: bold;
-    transition: all .25s ease;
-    background-color: rgba(0, 113, 255, 1.000);
+    transition: all 0.25s ease;
+    background-color: rgba(0, 113, 255, 1);
     border-radius: 15px;
     color: $white;
 
@@ -304,9 +356,9 @@
   }
 
   .submitProposal:disabled {
-    background-color: rgba(200,200,200,.5);
-    border: 1px solid rgba(200,200,200,1);
-    color: rgba(75,75,75,1);
+    background-color: rgba(200, 200, 200, 0.5);
+    border: 1px solid rgba(200, 200, 200, 1);
+    color: rgba(75, 75, 75, 1);
   }
 
   .submitProposal:disabled .sendIcon {
@@ -319,28 +371,17 @@
   }
 }
 
-.downV {
-  position: absolute;
-  right: 20px;
-  bottom: 21px;
-  z-index: 1000;
-}
-
 .contributionReward {
-  width: 540px;
-}
-
-.clearfix:after {
-  content: "";
-  clear: both;
-  display: table;
+  width: 562px;
+  overflow-y: auto;
+  height: calc(100% - 40px);
 }
 
 .createWrapperWithSidebar {
   width: 735px;
   content: "";
   clear: both;
-  display: table;
+  height: calc(100% - 40px);
 
   .sidebar {
     width: 199px;
@@ -358,7 +399,7 @@
       outline: none;
       font-size: 13px;
       font-weight: bold;
-      color: rgba(80, 97, 118, 1.000);
+      color: rgba(80, 97, 118, 1);
       margin: 0;
       padding: 15px 30px;
       width: 100%;
@@ -369,8 +410,9 @@
       }
     }
 
-    button:hover, button.selected {
-      background-color: rgba(233, 238, 244, 1.000);
+    button:hover,
+    button.selected {
+      background-color: rgba(233, 238, 244, 1);
 
       span {
         width: 25px;
@@ -389,6 +431,8 @@
     width: 535px;
     float: left;
     border-left: 1px solid #e9eef4;
+    height: 100%;
+    overflow: auto;
 
     .tab {
       display: none;
@@ -423,21 +467,24 @@
 
       button {
         border: none;
-        background-color: rgba(245, 247, 250, 1.000);
+        background-color: rgba(245, 247, 250, 1);
         height: 30px;
         line-height: 30px;
         padding: 0 15px;
         margin-right: 8px;
         border-radius: 3px;
         outline: none;
-        color: rgba(104, 155, 214, 1.000);
+        color: rgba(104, 155, 214, 1);
         font-weight: bold;
         text-align: center;
       }
     }
   }
 
-  .addEditSchemeFields, .removeSchemeFields, .addSchemeSelectContainer, .editSchemeSelectContainer {
+  .addEditSchemeFields,
+  .removeSchemeFields,
+  .addSchemeSelectContainer,
+  .editSchemeSelectContainer {
     display: none;
     position: relative;
   }
@@ -446,7 +493,9 @@
     height: 63px;
   }
 
-  .addScheme .addEditSchemeFields, .removeScheme .removeSchemeFields, .editScheme .addEditSchemeFields {
+  .addScheme .addEditSchemeFields,
+  .removeScheme .removeSchemeFields,
+  .editScheme .addEditSchemeFields {
     display: block;
   }
 
@@ -502,25 +551,23 @@
     .permissionsLabel {
       font-size: 13px;
       font-weight: bold;
-      color: rgba(80, 97, 118, 1.000);
+      color: rgba(80, 97, 118, 1);
+      margin-bottom: 6px;
     }
 
-    .permissionCheckbox  {
-      width: 50%;
-      display: inline-block;
-      padding: 4px 0 0 0;
-
-      input {
-        display: inline;
-        width: 20px;
-        height: 13px;
-      }
-
+    .permissionCheckbox {
       label {
+        display: inline-block;
+        position: relative;
+        bottom: 4px;
         font-size: 11px;
         font-weight: normal;
-        display: inline;
-        z-index: 1000;
+      }
+
+      input {
+        width: auto;
+        margin-right: 6px;
+        height: 16px;
       }
     }
   }
@@ -545,7 +592,6 @@ form .radioButtons {
     .requiredMarker {
       display: none;
     }
-
   }
 }
 
@@ -557,7 +603,8 @@ div.description {
   font-size: 11px;
   margin-bottom: 12px;
 
-  a, a:hover {
+  a,
+  a:hover {
     color: #0071ff;
   }
 }
@@ -570,10 +617,10 @@ div.description {
   margin-top: 4px;
 }
 
-@media only screen and (max-width: 425px) {
-
+@media only screen and (max-width: 475px) {
   .createWrapperWithSidebar {
     width: 100%;
+    overflow: auto;
 
     .sidebar {
       width: 100%;
@@ -584,6 +631,7 @@ div.description {
     .formWrapper {
       width: 100%;
       float: none;
+      overflow: visible;
     }
 
     .schemeSelect {
@@ -591,14 +639,11 @@ div.description {
     }
   }
 
-  .downV {
-    right: -3px;
-  }
-
   .createProposalWrapper {
     top: 0;
     left: 0;
-    transform: translate(0,0);
+    transform: translate(0, 0);
+    height: 100%;
 
     .header {
       border-radius: 0 0 0 0;
@@ -606,10 +651,6 @@ div.description {
 
     form {
       padding: 15px 15px 155px 15px;
-
-      input, textarea, label {
-        width: 90%;
-      }
 
       textarea {
         border: none;
@@ -619,29 +660,14 @@ div.description {
       .encodedData textarea {
         border: $gray-border-2;
         padding: 9px 15px 12px 15px;
-        width: 90%;
       }
 
-      .reward {
-        width: 42%;
+      .dates {
+        grid-template-columns: 1fr;
 
-        input {
-          width: 88%;
+        :global(.rdtPicker) {
+          position: unset; // show date picker inline
         }
-
-        .externalTokenSelect {
-          right: -17px;
-          width: 50px;
-          padding: 0 18px 0 0px;
-
-          div div div div:first-child {
-            left: 8px;
-          }
-        }
-      }
-
-      .reward:nth-child(even) {
-        margin-right: 30px;
       }
     }
   }
@@ -652,10 +678,6 @@ div.description {
 
   .schemeRegistrar {
     width: auto;
-
-    .permissions .permissionCheckbox {
-      width: auto;
-    }
 
     .schemeRegistrarForm {
       width: auto;

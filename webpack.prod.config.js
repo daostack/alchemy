@@ -6,13 +6,14 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
+const WebpackShellPlugin = require('webpack-shell-plugin');
 
 const baseConfig = require('./webpack.base.config.js');
 
 const config = merge(baseConfig, {
   mode: 'production',
 
-  //devtool: 'nosources-source-map',
+  devtool: 'source-map',
 
   entry: {
     // the entry point of our app
@@ -23,7 +24,7 @@ const config = merge(baseConfig, {
 
   output: {
     filename: "[name].bundle-[hash:8].js",
-    chunkFilename: '[name].bundle.js',
+    chunkFilename: '[name].bundle-[hash:8].js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
   },
@@ -93,6 +94,7 @@ plugins: [
     }),
 
     new webpack.EnvironmentPlugin({
+      NETWORK: "main",
       NODE_ENV: "production",
       BASE_URL: "https://alchemy.daostack.io",
       DISQUS_SITE: 'daostack-alchemy',

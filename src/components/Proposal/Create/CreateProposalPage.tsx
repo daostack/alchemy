@@ -1,6 +1,5 @@
 import { ISchemeState } from "@daostack/client";
 import { getArc } from "arc";
-import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
 import CreateKnownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateKnownGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "components/Proposal/Create/SchemeForms/CreateSchemeRegistrarProposal";
 import CreateUnknownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateUnknownGenericSchemeProposal";
@@ -15,20 +14,26 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { RouteComponentProps } from "react-router-dom";
+import { CrxRewarderComponentType, getCrxRewarderComponent, rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
+import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
 import { schemeName } from "lib/util";
 import * as css from "./CreateProposal.scss";
 
 type IExternalProps = RouteComponentProps<any>;
 
-interface IStateProps {
+interface IExternalStateProps {
   daoAvatarAddress: string;
   history: History;
   schemeId: string;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<ISchemeState>;
+interface IStateProps {
+  createCrxProposalComponent: any;
+}
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+type IProps = IExternalProps & IExternalStateProps & ISubscriptionProps<ISchemeState>;
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
   return {
     ...ownProps,
     daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
@@ -36,40 +41,59 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
   };
 };
 
-class CreateProposalPage extends React.Component<IProps, null> {
+class CreateProposalPage extends React.Component<IProps, IStateProps> {
 
-  public componentDidMount() {
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      createCrxProposalComponent: null,
+    };
+  }
+
+  public handleClose = (e: any) => {
+    e.preventDefault();
+    this.doClose();
+  }
+
+  public doClose = () => {
+    const { daoAvatarAddress, history, schemeId } = this.props;
+    history.push("/dao/" + daoAvatarAddress + "/scheme/" + schemeId);
+  }
+
+  public async componentDidMount() {
     Analytics.track("Page View", {
       "Page Name": Page.CreateProposal,
       "DAO Address": this.props.daoAvatarAddress,
       "Scheme Address": this.props.schemeId,
     });
-  }
+    const newState = {};
 
-  public handleClose(): void {
-    const { daoAvatarAddress, history, schemeId } = this.props;
-    history.push("/dao/" + daoAvatarAddress + "/scheme/" + schemeId);
+    /**
+     * Get the "CreateProposal" modal dialog component supplied by the rewarder contract associated
+     * with this CrExt scheme (if it is a CrExt scheme -- very cheap if not a CrExt).
+     */
+    if (!this.state.createCrxProposalComponent) {
+      Object.assign(newState, { createCrxProposalComponent: await getCrxRewarderComponent(this.props.data, CrxRewarderComponentType.CreateProposal) });
+    }
+
+    this.setState(newState);
   }
 
   public render(): RenderOutput {
     const { daoAvatarAddress } = this.props;
     const scheme = this.props.data;
 
-    // const arc = getArc();
-    // let schemeName = arc.getContractInfo(scheme.address).name;
-    // if (!schemeName) {
-    //   throw Error(`Unknown Scheme: ${scheme}`);
-    // }
-
     let createSchemeComponent = <div />;
     const props = {
       daoAvatarAddress,
-      handleClose: this.handleClose.bind(this),
+      handleClose: this.doClose,
       scheme,
     };
-    const schemeTitle = schemeName(scheme);
+    const schemeTitle = this.state.createCrxProposalComponent ? rewarderContractName(scheme) : schemeName(scheme);
 
-    if (scheme.name === "ContributionReward") {
+    if (this.state.createCrxProposalComponent) {
+      createSchemeComponent = <this.state.createCrxProposalComponent {...props} />;
+    } else if (scheme.name === "ContributionReward") {
       createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
     } else if (scheme.name === "SchemeRegistrar") {
       createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
@@ -105,6 +129,7 @@ class CreateProposalPage extends React.Component<IProps, null> {
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/create`}>Create {schemeTitle} Proposal</BreadcrumbsItem>
         <h2 className={css.header}>
           <span>+ New proposal <b>| {schemeTitle}</b></span>
+          <button className={css.closeButton} aria-label="Close Create Proposal Modal" onClick={this.handleClose}>&times;</button>
         </h2>
         { createSchemeComponent }
       </div>
@@ -117,8 +142,8 @@ const SubscribedCreateProposalPage = withSubscription({
   loadingComponent: <div className={css.loading}><Loading/></div>,
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
-  createObservable: (props: IStateProps) => {
-    const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
+  createObservable: (props: IExternalStateProps) => {
+    const arc = getArc();
     const scheme = arc.scheme(props.schemeId);
     return scheme.state();
   },

@@ -2,11 +2,11 @@ import { Address, IDAOState, IProposalStage, Vote } from "@daostack/client";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
-import Countdown from "components/Shared/Countdown";
+import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
 import { DiscussionEmbed } from "disqus-react";
+import { humanProposalTitle, schemeName, ensureHttps } from "lib/util";
 import Analytics from "lib/analytics";
-import { humanProposalTitle, schemeName } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -14,6 +14,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { closingTime, proposalEnded } from "lib/proposalHelpers";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import SocialShareModal from "../Shared/SocialShareModal";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
@@ -129,7 +130,8 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       currentAccountVote = currentVote.staticState.outcome;
     }
 
-    const url = proposal.url ? (/https?:\/\//.test(proposal.url) ? proposal.url : "//" + proposal.url) : null;
+    const url = ensureHttps(proposal.url);
+    const crxContractName = rewarderContractName(proposal.scheme);
 
     const voteWrapperClass = classNames({
       [css.voteBox]: true,
@@ -139,22 +141,33 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     return (
       <div className={css.wrapper}>
         <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme.id}`}>{schemeName(proposal.scheme, proposal.scheme.address)}</BreadcrumbsItem>
-        <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
+        <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal, 40)}</BreadcrumbsItem>
         <div className={this.proposalClass} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
             <div>
               <div className={css.statusContainer}>
                 <ProposalStatus proposalState={proposal} />
               </div>
-              <ActionButton
-                currentAccountAddress={currentAccountAddress}
-                daoState={daoState}
-                daoEthBalance={daoEthBalance}
-                parentPage={Page.ProposalDetails}
-                proposalState={proposal}
-                rewards={rewards}
-                expired={expired}
-              />
+              
+              <div className={css.actionButtonContainer}>
+                <ActionButton
+                  currentAccountAddress={currentAccountAddress}
+                  daoState={daoState}
+                  daoEthBalance={daoEthBalance}
+                  detailView
+                  parentPage={Page.ProposalDetails}
+                  proposalState={proposal}
+                  rewards={rewards}
+                  expired={expired}
+                />
+              </div>
+              {
+                (crxContractName) ? <div className={css.gotoCompetition}>
+                  {
+                    <Link to={`/dao/${daoState.address}/crx/proposal/${proposal.id}`}>Go to {crxContractName}&nbsp;&gt;</Link>
+                  }
+                </div> : ""
+              }
             </div>
             <h3 className={css.proposalTitleTop}>
               <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
@@ -164,7 +177,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               {!proposalEnded(proposal) ?
                 <span className={css.content}>
                   {!expired ?
-                    <Countdown proposal={proposal} detailView /> :
+                    <ProposalCountdown proposal={proposal} detailView /> :
                     <span className={css.closedTime}>
                       {proposal.stage === IProposalStage.Queued ? "Expired" :
                         proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
@@ -173,8 +186,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                     </span>
                   }
                 </span>
-                : " "
-              }
+                : " "}
             </div>
 
             <div className={css.createdBy}>
@@ -193,7 +205,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
             {url ?
               <a href={url} className={css.attachmentLink} target="_blank" rel="noopener noreferrer">
                 <img src="/assets/images/Icon/Attachment.svg" />
-                Attachment &gt;
+            Attachment &gt;
               </a>
               : " "
             }
