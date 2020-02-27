@@ -4,8 +4,9 @@ import {
   IDispatcherMethods,
   IDaoInformation,
   IProposalWikiOptions,
-  IVoteOptions
+  IVoteOptions,
 } from "./types";
+
 export class CustomDispatcher {
   private methods: IDispatcherMethods;
   private daoInformation: IDaoInformation;
@@ -36,7 +37,7 @@ export class CustomDispatcher {
       value: 0, // amount of eth to send with the call
       title: actionCalled.label,
       description: actionCalled.description,
-      callData: dataEncoded
+      callData: dataEncoded,
     };
     await this.methods.createProposal(proposalOptions);
   };

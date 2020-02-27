@@ -14,11 +14,11 @@ import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import Loading from "components/Shared/Loading";
+import { IGenericSchemeParams } from "@daostack/client/dist/types/schemes/base";
 import * as proposalStyle from "../../Scheme/SchemeProposals.scss";
 import * as daoStyle from "../Dao.scss";
 import { CustomDispatcher } from "./CustomDispatcher";
 import { IDaoInformation } from "./types";
-import { IGenericSchemeParams } from "@daostack/client/dist/types/schemes/base";
 
 type IExternalProps = {
   daoState: IDAOState;
@@ -28,7 +28,7 @@ type IExternalProps = {
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
   voteOnProposal: arcActions.voteOnProposal,
-  showNotification
+  showNotification,
 };
 
 interface IDispatchProps {
@@ -48,7 +48,7 @@ function DaoWiki(props: IProps) {
 
   const wikiMethods = {
     createProposal,
-    voteOnProposal
+    voteOnProposal,
   };
 
   const renderWikiComponent = (dispatcher: CustomDispatcher) => {
@@ -84,7 +84,7 @@ function DaoWiki(props: IProps) {
       const daoInformation: IDaoInformation = {
         dao,
         scheme: address,
-        contractToCall
+        contractToCall,
       };
       const dispatcher = new CustomDispatcher(wikiMethods, daoInformation);
       renderWikiComponent(dispatcher);
@@ -123,7 +123,7 @@ function DaoWiki(props: IProps) {
         description: "This will allow DAO to have Wiki functionality",
         parametersHash: "0x00000000000000000000000000000000000000000",
         scheme: schemeRegistrar.staticState.address,
-        schemeToRegister: "0x1F421c9D844C1A355482899b51CE3F6A52b09Ec7" // rinkeby
+        schemeToRegister: "0x1F421c9D844C1A355482899b51CE3F6A52b09Ec7", // rinkeby
       };
       await createProposal(proposalValues);
     }
@@ -140,7 +140,7 @@ function DaoWiki(props: IProps) {
         </Link>
         <a
           className={classNames({
-            [proposalStyle.blueButton]: true
+            [proposalStyle.blueButton]: true,
           })}
           onClick={registerWikiScheme}
           data-test-id="createProposal"
@@ -183,7 +183,7 @@ const SubscribedDaoWiki = withSubscription({
       dao.schemes({}, { fetchAllData: true }),
       dao.proposals({ where: { stage: IProposalStage.Queued } }, { subscribe: true, fetchAllData: true })
     );
-  }
+  },
 });
 
 export default connect(

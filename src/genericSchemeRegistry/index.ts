@@ -3,8 +3,8 @@ import BN = require("bn.js");
 import { targetedNetwork, Networks } from "arc";
 
 const Web3 = require("web3");
-const WikiUpdate = require("./schemes/WikiUpdate.json");
 const namehash = require("eth-ens-namehash");
+const WikiUpdate = require("./schemes/WikiUpdate.json");
 const dutchXInfo = require("./schemes/DutchX.json");
 const gpInfo = require("./schemes/GenesisProtocol.json");
 const ensRegistryInfo = require("./schemes/ENSRegistry.json");

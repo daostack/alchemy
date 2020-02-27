@@ -135,35 +135,35 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             <div className={css.proposalsHeader}>
               No upcoming proposals
             </div>
-              { isWikiScheme ? 
-                <>
-                  <p>You can be the first one to create a Wiki merge proposal today! (:</p>
-                  <div className={css.cta}>
-                    <Link to={"/dao/" + daoState.address}>
-                      <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
-                    </Link>
-                    <Link to={"/dao/" + daoState.address + "/wiki"}>
+            { isWikiScheme ? 
+              <>
+                <p>You can be the first one to create a Wiki merge proposal today! (:</p>
+                <div className={css.cta}>
+                  <Link to={"/dao/" + daoState.address}>
+                    <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
+                  </Link>
+                  <Link to={"/dao/" + daoState.address + "/wiki"}>
                       Go to wiki
-                    </Link>
-                  </div>
-                </>
+                  </Link>
+                </div>
+              </>
               :
-                <>
-                  <p>You can be the first one to create a {schemeFriendlyName} proposal today! :)</p>
-                  <div className={css.cta}>
-                    <Link to={"/dao/" + daoState.address}>
-                      <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
-                    </Link>
-                    <a className={classNames({
-                      [css.blueButton]: true,
-                      [css.disabled]: !isActive,
-                    })}
-                    href="javascript:void(0)"
-                    onClick={isActive ? this._handleNewProposal : null}
-                    data-test-id="createProposal"
-                    >+ New Proposal</a>
-                  </div>
-                </>
+              <>
+                <p>You can be the first one to create a {schemeFriendlyName} proposal today! :)</p>
+                <div className={css.cta}>
+                  <Link to={"/dao/" + daoState.address}>
+                    <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
+                  </Link>
+                  <a className={classNames({
+                    [css.blueButton]: true,
+                    [css.disabled]: !isActive,
+                  })}
+                  href="javascript:void(0)"
+                  onClick={isActive ? this._handleNewProposal : null}
+                  data-test-id="createProposal"
+                  >+ New Proposal</a>
+                </div>
+              </>
             }
           </div>
           :

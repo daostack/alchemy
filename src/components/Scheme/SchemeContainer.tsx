@@ -75,7 +75,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
     this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
   };
 
-  private isWikiScheme = schemeName(this.props.data[0], this.props.data[0].address) === 'WikiUpdate'
+  private isWikiScheme = schemeName(this.props.data[0], this.props.data[0].address) === "WikiUpdate"
   private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} daoState={this.props.daoState} scheme={this.props.data[0]} />;
   private schemeProposalsPageHtml = (isActive: boolean) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} isWikiScheme={this.isWikiScheme} />;
   private contributionsRewardExtTabHtml = () => (props: any) => 
@@ -157,7 +157,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
             }
           </div>
           <div className={css.createProposal}>
-          { this.isWikiScheme ? <></> :<TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+            { this.isWikiScheme ? <></> :<TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
               <a className={
                 classNames({
                   [css.createProposal]: true,
