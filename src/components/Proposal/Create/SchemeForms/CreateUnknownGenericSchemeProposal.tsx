@@ -137,7 +137,7 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
               errors.url = "Invalid URL";
             }
 
-            const bytesPattern = new RegExp("0x[0-9a-e]+", "i");
+            const bytesPattern = new RegExp("0x[0-9a-f]+", "i");
             if (values.callData && !bytesPattern.test(values.callData)) {
               errors.callData = "Invalid encoded function call data";
             }
