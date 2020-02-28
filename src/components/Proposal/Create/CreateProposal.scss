@@ -184,10 +184,6 @@
       }
     }
 
-    .permissionCheckbox {
-      font-size: 9px;
-    }
-
     label {
       color: rgba(80, 97, 118, 1);
       display: block;
@@ -556,22 +552,22 @@
       font-size: 13px;
       font-weight: bold;
       color: rgba(80, 97, 118, 1);
+      margin-bottom: 6px;
     }
 
     .permissionCheckbox {
-      width: 50%;
-      display: inline-block;
-      padding: 4px 0 0 0;
-
-      input {
-        display: inline;
-      }
-
       label {
+        display: inline-block;
+        position: relative;
+        bottom: 4px;
         font-size: 11px;
         font-weight: normal;
-        display: inline;
-        z-index: 1000;
+      }
+
+      input {
+        width: auto;
+        margin-right: 6px;
+        height: 16px;
       }
     }
   }
@@ -682,10 +678,6 @@ div.description {
 
   .schemeRegistrar {
     width: auto;
-
-    .permissions .permissionCheckbox {
-      width: auto;
-    }
 
     .schemeRegistrarForm {
       width: auto;
