@@ -50,9 +50,9 @@ script:
   - ./scripts/checkDaos.sh
 
   # see if the app builds correctly
-  - echo 'npm run build-travis' && echo -en 'travis_fold:start:script.4\\r'
-  - npm run build-travis
-  - echo -en 'travis_fold:end:script.4\\r'
+  # - echo 'npm run build-travis' && echo -en 'travis_fold:start:script.4\\r'
+  # - npm run build-travis
+  # - echo -en 'travis_fold:end:script.4\\r'
 
 deploy:
   provider: pages
