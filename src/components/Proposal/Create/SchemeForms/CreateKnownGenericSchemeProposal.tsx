@@ -368,9 +368,9 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                     <Interweave content={currentAction.description} />
                   </div>
                   <label htmlFor="titleInput">
+                    <div className={css.requiredMarker}>*</div>
                       Title
                     <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                    <div className={css.requiredMarker}>*</div>
                   </label>
                   <Field
                     autoFocus
@@ -383,8 +383,8 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   />
 
                   <label htmlFor="descriptionInput">
-                      Description
                     <div className={css.requiredMarker}>*</div>
+                      Description
                     <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                     <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
@@ -430,9 +430,9 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                         return (
                           <div key={field.name}>
                             <label htmlFor={field.name}>
+                              {field.type !== "bool" && !field.optional ? <div className={css.requiredMarker}>*</div> : ""}
                               { field.label }
                               <ErrorMessage name={field.name}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                              {field.type !== "bool" && !field.optional ? <div className={css.requiredMarker}>*</div> : ""}
                             </label>
                             {this.renderField(field, values, touched, errors)}
                           </div>
