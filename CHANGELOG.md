@@ -7,6 +7,19 @@
   - Features Added
   - Bugs Fixed
 
+## 2020-03-02
+
+  - Features Added
+    - add curaDAI
+    - 
+  - Bugs Fixed
+    - Improve form validation layout
+    - fix Wallet Connect
+    - rename "scheme" to "plugin"
+    - restore original footer
+    - fix hex byte pattern in generic scheme proposal form
+
+
 ## 2020-02-11
 
   - Features added
