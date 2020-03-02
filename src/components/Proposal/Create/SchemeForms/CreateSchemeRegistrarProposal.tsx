@@ -283,9 +283,9 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                   }
                   <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
                     <label htmlFor="titleInput">
+                      <div className={css.requiredMarker}>*</div>
                     Title
                       <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      <div className={css.requiredMarker}>*</div>
                     </label>
                   </TrainingTooltip>
                   <Field
@@ -300,8 +300,8 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
                   <TrainingTooltip overlay={fnDescription} placement="right">
                     <label htmlFor="descriptionInput">
-                    Description
                       <div className={css.requiredMarker}>*</div>
+                    Description
                       <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                       <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     </label>
@@ -343,9 +343,9 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                   <div className={css.addEditSchemeFields}>
                     <div className={css.addSchemeSelectContainer}>
                       <label htmlFor="schemeToAddInput">
+                        <div className={css.requiredMarker}>*</div>
                         Plugin
                         <ErrorMessage name="schemeToAdd">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        <div className={css.requiredMarker}>*</div>
                       </label>
                       <Field
                         id="schemeToAddInput"
@@ -356,9 +356,9 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
                     <div className={css.editSchemeSelectContainer}>
                       <label htmlFor="schemeToEditInput">
+                        <div className={css.requiredMarker}>*</div>
                         Plugin
                         <ErrorMessage name="schemeToEdit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        <div className={css.requiredMarker}>*</div>
                       </label>
                       <Field
                         id="schemeToEditInput"
@@ -376,9 +376,9 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
                     <div className={css.parametersHash}>
                       <label htmlFor="parametersHashInput">
+                        <div className={css.requiredMarker}>*</div>
                         Parameters Hash
                         <ErrorMessage name="parametersHash">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        <div className={css.requiredMarker}>*</div>
                       </label>
                       <Field
                         id="parametersHashInput"
@@ -431,9 +431,9 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                   <div className={css.removeSchemeFields}>
                     <div className={css.removeSchemeSelectContainer}>
                       <label htmlFor="schemeToRemoveInput">
+                        <div className={css.requiredMarker}>*</div>
                         Plugin
                         <ErrorMessage name="schemeToRemove">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        <div className={css.requiredMarker}>*</div>
                       </label>
                       <Field
                         id="schemeToRemoveInput"
