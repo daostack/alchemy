@@ -643,11 +643,10 @@ a.blueButton {
       position: relative;
 
       .requiredMarker {
-        position: absolute;
-        top: 26px;
+        display: inline-block;
         color: rgba(104, 154, 214, 1);
         font-weight: bold;
-        left: 5px;
+        margin-right: 4px;
       }
 
       .infoTooltip {
@@ -659,6 +658,7 @@ a.blueButton {
     }
 
     .errorMessage {
+      display: block;
       padding-left: 10px;
       color: rgba(246, 80, 80, 1);
       font-size: 11px;
