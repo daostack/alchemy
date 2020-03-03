@@ -20,7 +20,7 @@
     },
     "transform": {
       ".(ts|tsx)$": "ts-jest",
-      "(/node_modules/(lit-element|lit-html|lodash-es|@material).+\\.js$|/setup-jest.js)": "babel-jest"
+      "(/node_modules/(lit-element|lit-html|lodash-es|@material|@authentic).+\\.js$|/setup-jest.js)": "babel-jest"
     },
     "transformIgnorePatterns": [
       "/node_modules/(?!lit-element|lit-html)/"
@@ -80,7 +80,7 @@
     "test": "wdio ./test/integration/wdio.conf.js",
     "test:integration": "wdio ./test/integration/wdio.conf.js --inspect",
     "test:integration:headless": "wdio ./test/integration/wdio-headless.conf.js",
-    "test:unit": "jest"
+    "test:unit": "jest --env=jest-environment-jsdom-sixteen"
   },
   "dependencies": {
     "3box": "^1.16.1",
@@ -215,7 +215,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^24.9.0",
     "jest-canvas-mock": "^2.1.0",
-    "jsdom": "^16.2.0",
+    "jest-environment-jsdom-sixteen": "^1.0.2",
     "mini-css-extract-plugin": "^0.7.0",
     "mutationobserver-shim": "^0.3.3",
     "node-fetch": "^2.3.0",
