@@ -13,7 +13,7 @@
     - On the All DAOs page:
       - Added a Search box to filter visible DAOs
       - Add infinite scrolling
-      - Always show DAOs in which the current user is a member
+      - Always show DAOs in which the current user is a member or is following
 
   - Bugs Fixed
     - Improve form validation layout
