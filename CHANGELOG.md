@@ -7,6 +7,22 @@
   - Features Added
   - Bugs Fixed
 
+## 2020-03-03
+
+    - Add curaDAI
+    - On the All DAOs page:
+      - Added a Search box to filter visible DAOs
+      - Add infinite scrolling
+      - Always show DAOs in which the current user is a member or is following
+
+  - Bugs Fixed
+    - Improve form validation layout
+    - fix Wallet Connect
+    - rename "scheme" to "plugin"
+    - restore original footer
+    - fix hex byte pattern in generic scheme proposal form
+
+
 ## 2020-02-11
 
   - Features added

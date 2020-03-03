@@ -112,9 +112,9 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
             <Form noValidate>
               <TrainingTooltip overlay="The title is the header of the submission and will be the first visible information about your suggestion" placement="right">
                 <label htmlFor="titleInput">
+                  <div className={css.requiredMarker}>*</div>
                 Title
                   <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  <div className={css.requiredMarker}>*</div>
                 </label>
               </TrainingTooltip>
               <Field
@@ -129,8 +129,8 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
 
               <TrainingTooltip overlay={this.fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
-                Description
                   <div className={css.requiredMarker}>*</div>
+                Description
                   <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
