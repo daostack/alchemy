@@ -7,11 +7,14 @@
   - Features Added
   - Bugs Fixed
 
-## 2020-03-02
+## 2020-03-03
 
-  - Features Added
-    - add curaDAI
-    - 
+    - Add curaDAI
+    - On the All DAOs page:
+      - Added a Search box to filter visible DAOs
+      - Add infinite scrolling
+      - Always show DAOs in which the current user is a member
+
   - Bugs Fixed
     - Improve form validation layout
     - fix Wallet Connect
