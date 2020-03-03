@@ -72,7 +72,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     const { daoState, history, proposal } = this.props;
     const url = `/dao/${daoState.address}/proposal/${proposal.id}`;
     if (e.ctrlKey) {
-      window.open(url, "_bkank");
+      window.open(url, "_blank");
     } else {
       history.push(url);
     }
