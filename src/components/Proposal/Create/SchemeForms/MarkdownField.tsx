@@ -55,10 +55,10 @@ export default class MarkdownField extends React.Component<Props, IState> {
           value={field.value}
           childProps={{
             writeButton: {
-              tabIndex: -1
+              tabIndex: -1,
             },
             previewButton: {
-              tabIndex: -1
+              tabIndex: -1,
             },
           }}
         />
