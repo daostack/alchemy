@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import ModalPopup from "components/shared/ModalPopup";
+import ModalPopup from "components/Shared/ModalPopup";
 import { showNotification } from "reducers/notifications";
 import * as css from "./ThreeboxModal.scss";
 

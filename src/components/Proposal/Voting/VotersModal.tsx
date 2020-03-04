@@ -4,7 +4,7 @@ import classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
-import ModalPopup from "components/shared/ModalPopup";
+import ModalPopup from "components/Shared/ModalPopup";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import { IProfileState, IProfilesState } from "reducers/profilesReducer";
