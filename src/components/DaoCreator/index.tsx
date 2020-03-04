@@ -4,7 +4,7 @@ import { Prompt } from "react-router";
 import { enableWalletProvider, getWeb3Provider } from "arc";
 import { showNotification } from "reducers/notifications";
 
-const DAOcreator = React.lazy(() => import("@dorgtech/daocreator-ui-v1"));
+const DAOcreator = React.lazy(() => import("@dorgtech/daocreator-ui"));
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -46,18 +46,6 @@ class DaoCreator extends React.Component<IProps> {
             }
 
             return await getWeb3Provider();
-          }}
-          theme={{
-            palette: {
-              primary: {
-                main: "#122e5b",
-                contrastText: "#fafafa",
-              },
-              secondary: {
-                main: "#0076ff",
-                contrastText: "#fafafa",
-              },
-            },
           }}
         />
       </React.Suspense>
