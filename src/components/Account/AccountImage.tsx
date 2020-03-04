@@ -8,12 +8,13 @@ interface IProps {
   accountAddress: string;
   profile?: IProfileState;
   width: number;
+  style?: any;
 }
 
 export default class AccountImage extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
-    const { accountAddress, profile, width } = this.props;
+    const { accountAddress, profile, width, style } = this.props;
 
     let url;
     if (profile && profile.image && profile.image[0] && profile.image[0].contentUrl) {
@@ -25,6 +26,6 @@ export default class AccountImage extends React.Component<IProps, null> {
       });
     }
 
-    return (<img src={url} className={css.accountImage} width={width} />);
+    return (<img src={url} className={css.accountImage} width={width} style={ style ? style : {}}/>);
   }
 }

@@ -41,6 +41,16 @@
   padding-top: 30px;
 }
 
+.daoHeaderBackground {
+  // @TODO Image is repeating, check this later when using real image
+  // background-image: url(/assets/images/bg-test.jpeg);
+  width: 115%;
+  position: absolute;
+  display: flex;
+  height: 30%;
+  top:0;
+  right: 0;
+}
 
 @media only screen and (max-width: 425px) {
   .wrapper h1 {
