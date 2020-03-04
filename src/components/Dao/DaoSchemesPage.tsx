@@ -13,6 +13,7 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import * as css from "./DaoSchemesPage.scss";
 import ProposalSchemeCard from "./ProposalSchemeCard";
 import SimpleSchemeCard from "./SimpleSchemeCard";
+import DAOHeader from "./DaoHeader";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -78,8 +79,9 @@ class DaoSchemesPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.wrapper}>
+        <div className={css.daoHeaderBackground} style={{ backgroundImage: "url(/assets/images/bg-test.jpeg)" }}></div>
         <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
-
+        <DAOHeader {...this.props} />
         <Sticky enabled top={50} innerZ={10000}>
           <h1>All Plugins</h1>
         </Sticky>
