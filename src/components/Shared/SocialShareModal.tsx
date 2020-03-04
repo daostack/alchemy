@@ -1,4 +1,4 @@
-import ModalPopup from "components/shared/ModalPopup";
+import ModalPopup from "components/Shared/ModalPopup";
 import { copyToClipboard } from "lib/util";
 import * as React from "react";
 import Tooltip from "rc-tooltip";
