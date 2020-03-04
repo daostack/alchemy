@@ -53,6 +53,14 @@ export default class MarkdownField extends React.Component<Props, IState> {
           onTabChange={this.onTabChange}
           selectedTab={this.state.selectedTab}
           value={field.value}
+          childProps={{
+            writeButton: {
+              tabIndex: -1
+            },
+            previewButton: {
+              tabIndex: -1
+            },
+          }}
         />
       </div>
     );
