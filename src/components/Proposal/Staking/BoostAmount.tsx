@@ -30,7 +30,7 @@ export default class BoostAmount extends React.Component<IProps, null> {
     return (
       <div className={wrapperClass}>
         {
-          proposal.stage === IProposalStage.Queued && !expired && proposal.upstakeNeededToPreBoost.gte(new BN(0)) ?
+          proposal.stage === IProposalStage.Queued && !expired && proposal.upstakeNeededToPreBoost.gt(new BN(0)) ?
             <span className={css.boostedAmount}>
               <b>
                 {detailView ? <img src="/assets/images/Icon/Boost-slate.svg" /> : ""}
@@ -41,7 +41,7 @@ export default class BoostAmount extends React.Component<IProps, null> {
               <span className={css.boostedAmount}>
                 <b>
                   {detailView ? <img src="/assets/images/Icon/Boost-slate.svg" /> : ""}
-                &gt; {formatTokens(proposal.downStakeNeededToQueue.abs(), "GEN")} Pass to stay boosted
+                &gt; {formatTokens(proposal.downStakeNeededToQueue.abs(), "GEN")} on Pass to stay boosted
                 </b>
               </span>
               : proposal.stage === IProposalStage.PreBoosted && proposal.downStakeNeededToQueue.gt(new BN(0)) ?
