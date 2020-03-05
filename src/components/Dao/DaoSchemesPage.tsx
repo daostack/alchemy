@@ -14,6 +14,9 @@ import * as css from "./DaoSchemesPage.scss";
 import ProposalSchemeCard from "./ProposalSchemeCard";
 import SimpleSchemeCard from "./SimpleSchemeCard";
 import DAOHeader from "./DaoHeader";
+import gql from "graphql-tag";
+import { getArc } from "arc";
+import { combineLatest } from "rxjs";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -30,11 +33,23 @@ const Fade = ({ children, ...props }: any) => (
   </CSSTransition>
 );
 
+const DAOHeaderBackground = (props: any) => (
+  <div
+    className={css.daoHeaderBackground}
+    style={{ backgroundImage: `url(${props.backgroundImage})` }}
+  ></div>
+);
+
 type IExternalProps = {
   daoState: IDAOState;
 } & RouteComponentProps<any>;
 
-type IProps = IExternalProps & ISubscriptionProps<Scheme[]>;
+interface Signal {
+  id: string;
+  data: any | string;
+};
+
+type IProps = IExternalProps & ISubscriptionProps<[Scheme[], Signal[] | any]>;
 
 class DaoSchemesPage extends React.Component<IProps, null> {
 
@@ -49,7 +64,11 @@ class DaoSchemesPage extends React.Component<IProps, null> {
   public render() {
     const { data } = this.props;
     const dao = this.props.daoState;
-    const allSchemes = data;
+    const [allSchemes, signalsData] = data;
+    const { signals } = signalsData.data;
+    const signal = signals.length > 0 ? signals[0] : null;
+    const daoHeaderBackground = signal ? JSON.parse(signal.data).Header : null;
+    const backgroundImage = daoHeaderBackground ? daoHeaderBackground : null;
 
     const contributionReward = allSchemes.filter((scheme: Scheme) => scheme.staticState.name === "ContributionReward");
     const knownSchemes = allSchemes.filter((scheme: Scheme) => scheme.staticState.name !== "ContributionReward" && KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) >= 0);
@@ -79,9 +98,9 @@ class DaoSchemesPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.wrapper}>
-        <div className={css.daoHeaderBackground} style={{ backgroundImage: "url(/assets/images/bg-test.jpeg)" }}></div>
-        <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
-        <DAOHeader {...this.props} />
+      { backgroundImage &&  <DAOHeaderBackground backgroundImage={backgroundImage} /> }
+      <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
+      { signal && <DAOHeader {...this.props} signal={signal} /> }
         <Sticky enabled top={50} innerZ={10000}>
           <h1>All Plugins</h1>
         </Sticky>
@@ -106,7 +125,21 @@ export default withSubscription({
   errorComponent: (props) => <span>{props.error.message}</span>,
   checkForUpdate: [],
   createObservable: (props: IExternalProps) => {
+    const arc = getArc();
     const dao = props.daoState.dao;
-    return dao.schemes({}, { fetchAllData: true, subscribe: true });
+    const schemes = dao.schemes({}, { fetchAllData: true, subscribe: true });
+    // const DAOAddress = props.daoState.address;
+    // Currently only one dao has signal data 
+    const DAOAddress = "0x771d0279e094b547f0b42d72dd6bfcce278d9a20";
+    const signalQuery = gql`
+    {
+      signals(where: { id: "${DAOAddress}" } ) {
+        id
+        data
+      }
+    }
+    `;
+    const signalSchemeData = arc.getObservable(signalQuery);
+    return combineLatest(schemes, signalSchemeData);
   },
 });
