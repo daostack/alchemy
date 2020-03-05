@@ -5,27 +5,34 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import AccountImage from "components/Account/AccountImage";
 import * as css from "./DaoHeader.scss";
 
-
+interface Signal {
+  id: string;
+  data: any | string;
+}
 
 interface IExternalProps {
   daoState: IDAOState;
+  signal?: Signal | any;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<Scheme[]>;
+type IProps = IExternalProps & ISubscriptionProps<[Scheme[], Signal | any]>;
 
-class DaoHeaderComponent extends React.Component<IProps, null> {
-
+class DaoHeaderComponent extends React.Component<IProps, any> {
   render() {
-    const dummyData = {
+    const { daoState, signal } = this.props;
+    const { name, memberCount, address } = daoState;
+    const parsedSignal = JSON.parse(signal.data);
+    console.log('parsedSignal', parsedSignal);
+    const data = {
       daoImg: "/assets/images/generic-user-avatar.png",
-      reputationHolders: 134,
+      reputationHolders: memberCount,
       holdings: [
         { name: "GEN", amount: 0.24653 },
         { name: "ETH", amount: 16.01 },
         { name: "DAI", amount: 148.19 },
       ],
       description: `
-      ${this.props.daoState.name} is an independent, global community of people working together to build and promote Decentralized Autonomous Organizations (DAOs). 
+      ${name} is an independent, global community of people working together to build and promote Decentralized Autonomous Organizations (DAOs). 
       It’s the perfect place to get involved with DAOstack and get your feet wet in a real-life DAO.
       `,
     };
@@ -33,25 +40,26 @@ class DaoHeaderComponent extends React.Component<IProps, null> {
     return (
       <div className={css.headerWrap}>
         <div className={css.daoImg}>
+          {/* Logo will go here instead of AccountImage this is just a placeholder */}
           <AccountImage
-            accountAddress={this.props.daoState.address}
+            accountAddress={address}
             width={106}
             style={styles.circularSquare}
           />
         </div>
         <div className={css.daoInfo}>
           <b className={css.daoName}>
-            { this.props.daoState.name }
+            { signal.name ? signal.name : name }
           </b>
           <b className={css.reputationHolders}>
-            { dummyData.reputationHolders } Reputation Holders
+            { data.reputationHolders } Reputation Holders
           </b>
         </div>
 
         <div className={css.holdings}>
           Holdings
           {
-            dummyData.holdings.map((holding, index) => {
+            data.holdings.map((holding, index) => {
               return (
                 <div key={index} className={css.holdingsAmmount}>
                   { holding.amount }
@@ -65,9 +73,9 @@ class DaoHeaderComponent extends React.Component<IProps, null> {
         </div>
 
         <h2 className={css.daoHeader}>
-          This is the { this.props.daoState.name } Header
+          This is the { name } Header
           <div className={css.daoDescription}>
-            { dummyData.description }
+            { data.description }
           </div>
         </h2>
       </div>
@@ -90,6 +98,6 @@ const styles = {
     borderColor: "white",
     borderStyle: "solid",  
   }
-}
+};
 
 export default DaoHeader;
