@@ -16,7 +16,7 @@ import { IRootState } from "reducers";
 import { RouteComponentProps } from "react-router-dom";
 import { CrxRewarderComponentType, getCrxRewarderComponent, rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
-import { schemeName } from "lib/util";
+import { schemeName } from "lib/schemeUtils";
 import * as css from "./CreateProposal.scss";
 
 type IExternalProps = RouteComponentProps<any>;
