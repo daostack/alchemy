@@ -7,6 +7,10 @@
       "required": true,
       "value": "staging"
     },
+    "NETWORK": {
+      "required": true,
+      "value": "rinkeby"
+    },
     "DISQUS_SITE": {
       "required": true,
       "value": "daostack-alchemy-staging"
