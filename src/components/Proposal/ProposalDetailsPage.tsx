@@ -5,7 +5,8 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
 import { DiscussionEmbed } from "disqus-react";
-import { humanProposalTitle, schemeName, ensureHttps } from "lib/util";
+import { humanProposalTitle, ensureHttps } from "lib/util";
+import { schemeName } from "lib/schemeUtils";
 import Analytics from "lib/analytics";
 import { Page } from "pages";
 import * as React from "react";
@@ -148,7 +149,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               <div className={css.statusContainer}>
                 <ProposalStatus proposalState={proposal} />
               </div>
-              
+
               <div className={css.actionButtonContainer}>
                 <ActionButton
                   currentAccountAddress={currentAccountAddress}
