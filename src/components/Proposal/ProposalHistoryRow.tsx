@@ -68,9 +68,14 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     }
   }
 
-  private gotoProposal = () => {
+  private gotoProposal = (e: any) => {
     const { daoState, history, proposal } = this.props;
-    history.push("/dao/" + daoState.address + "/proposal/" + proposal.id);
+    const url = `/dao/${daoState.address}/proposal/${proposal.id}`;
+    if (e.ctrlKey || ((navigator.platform === "MacIntel") && e.metaKey)) {
+      window.open(url, "_blank");
+    } else {
+      history.push(url);
+    }
   }
 
   public render(): RenderOutput {
