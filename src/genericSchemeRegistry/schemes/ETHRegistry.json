@@ -1,13 +1,11 @@
 {
-  "name": "EnsRegistry",
+  "name": "EthRegistry",
   "addresses": {
     "main": [
-      "0x314159265dd8dbb310642f98f50c066173c1259b",
-      "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
+      "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85"
     ],
     "rinkeby": [
-      "0xe7410170f87102df0055eb195163a03b7f2bff4a",
-      "0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e"
+      "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85"
     ],
     "private": [
       "0xe7410170f87102df0055eb195163a03b7f2bff4a"
@@ -15,154 +13,539 @@
   },
   "actions": [
     {
-      "id": "setOwner",
-      "label": "Set Owner",
-      "description": "Reassigns ownership of the name identified by node to owner. Only callable by the current owner of the name.",
-      "notes": "https://docs.ens.domains/contract-api-reference/ens#set-owner",
+      "id": "addController",
+      "label": "Add Controller",
+      "description": "Authorises a controller, who can register and renew domains.",
+      "notes": "https://github.com/ensdomains/ethregistrar/blob/3cdbc7053f1924e0c99f600260a006d7e6ddaf5f/contracts/BaseRegistrarImplementation.sol#L52",
       "fields": [
         {
-          "name": "node",
-          "label": "ENS Identifier Name",
-          "placeholder": "e.g. alice.eth",
-          "transformation": "namehash"
-        },
-        {
-          "name": "owner",
-          "label": "Owner Address"
+          "name": "controller",
+          "label": "Controller Address",
+          "placeholder": "Address (0x0000…)"
         }
       ],
       "abi": {
-        "constant": false,
+        "constant":false,
         "inputs": [
           {
-            "name": "node",
-            "type": "bytes32"
+            "internalType":"address",
+            "name":"controller",
+            "type":"address"
+          }
+          ],
+          "name":"addController",
+          "outputs":[],
+          "payable":false,
+          "stateMutability":"nonpayable",
+          "type":"function"
+        }
+    },
+    {
+      "id": "approve",
+      "label": "Approve",
+      "description": "Approves another address to transfer the given token ID",
+      "notes": "https://docs.ens.domains/contract-api-reference/.eth-permanent-registrar/registrar#approve-operator",
+      "fields": [
+        {
+          "name": "to",
+          "label": "to Address",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "name": "tokenId",
+          "label": "token to be approved",
+          "placeholder": "tokenId(uint256)"
+        }
+      ],
+      "abi": {
+        "constant":false,
+        "inputs": [
+          {
+            "internalType":"address",
+            "name":"to",
+            "type":"address"
           },
           {
-            "name": "owner",
-            "type": "address"
+            "internalType":"uint256",
+            "name":"tokenId",
+            "type":"uint256"
           }
-        ],
-        "name": "setOwner",
-        "outputs": [],
-        "payable": false,
-        "type": "function"
+          ],
+          "name":"approve",
+          "outputs":[],
+          "payable":false,
+          "stateMutability":"nonpayable",
+          "type":"function"
+      }
+    },
+    {
+      "id": "reclaim",
+      "label": "Reclaim ENS Record",
+      "description": "Sets the owner record of the name in the ENS registry to match the owner of the registration in this registry. May only be called by the owner of the registration.",
+      "notes": "https://docs.ens.domains/contract-api-reference/.eth-permanent-registrar/registrar#reclaim-ens-record",
+      "fields": [
+        {
+          "name": "id",
+          "label": "The token ID",
+          "placeholder": "id(uint256)"
+        },
+        {
+          "name": "owner",
+          "label": "Owner Address",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant":false,
+        "inputs": [
+          {
+            "internalType":"uint256",
+            "name":"id",
+            "type":"uint256"
+          },
+          {
+            "internalType":"address",
+            "name":"owner",
+            "type":"address"
+          }],
+          "name":"reclaim",
+          "outputs":[],
+          "payable":false,
+          "stateMutability":"nonpayable",
+          "type":"function"
+      }
+
+    },
+    {
+      "id": "register",
+      "label": "Register Name",
+      "description": "Register a name with the The token ID (keccak256 of the label), the owner address and the duration in seconds",
+      "notes": "https://github.com/ensdomains/ethregistrar/blob/3cdbc7053f1924e0c99f600260a006d7e6ddaf5f/contracts/BaseRegistrarImplementation.sol#L85",
+      "fields": [
+        {
+          "name": "id",
+          "label": "The token ID",
+          "placeholder": "id(uint256)"
+        },
+        {
+          "name": "owner",
+          "label": "Owner Address",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "name": "duration",
+          "label": "Duration in seconds for the registration",
+          "placeholder": "duration(uint)"
+        }
+      ],
+      "abi": {
+        "constant":false,
+        "inputs": [
+          {
+            "internalType":"uint256",
+            "name":"id","type":"uint256"
+          },
+          {
+            "internalType":"address",
+            "name":"owner",
+            "type":"address"
+          },
+          {
+            "internalType":"uint256",
+            "name":"duration","type":"uint256"
+            }
+          ],
+          "name":"register",
+          "outputs":[
+            {
+              "internalType":"uint256",
+              "name":"",
+              "type":"uint256"
+              }
+          ],
+          "payable":false,
+          "stateMutability":"nonpayable",
+          "type":"function"
+      }
+
+    },
+    {
+      "id": "registerOnly",
+      "label": "Register a name, without modifying the registry",
+      "description": "Register a name, without modifying the registry. Inputs are the The token ID (keccak256 of the label), the owner address and the duration in seconds",
+      "notes": "https://github.com/ensdomains/ethregistrar/blob/3cdbc7053f1924e0c99f600260a006d7e6ddaf5f/contracts/BaseRegistrarImplementation.sol#L95",
+      "fields": [
+        {
+          "name": "id",
+          "label": "The token ID",
+          "placeholder": "id(uint256)"
+        },
+        {
+          "name": "owner",
+          "label": "Owner Address",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "name": "duration",
+          "label": "Duration in seconds for the registration",
+          "placeholder": "duration(uint)"
+        }
+      ],
+      "abi": {
+        "constant":false,
+        "inputs": [
+          {
+            "internalType":"uint256",
+            "name":"id","type":"uint256"
+          },
+          {
+            "internalType":"address",
+            "name":"owner","type":"address"
+          },
+          {
+            "internalType":"uint256",
+            "name":"duration",
+            "type":"uint256"
+          }],
+            "name":"registerOnly",
+            "outputs":[
+              {
+                "internalType":"uint256",
+                "name":"",
+                "type":"uint256"
+                }],
+            "payable":false,
+            "stateMutability":"nonpayable",
+            "type":"function"
+      }
+
+    },
+    {
+      "id": "removeController",
+      "label": "Remove Controller",
+      "description": "Revoke controller permission for an address.",
+      "notes": "https://github.com/ensdomains/ethregistrar/blob/3cdbc7053f1924e0c99f600260a006d7e6ddaf5f/contracts/BaseRegistrarImplementation.sol#L58",
+      "fields": [
+        {
+          "name": "controller",
+          "label": "Controller Address",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant":false,
+        "inputs": [
+          {
+            "internalType":"address",
+            "name":"controller",
+            "type":"address"
+          }],
+          "name":"removeController",
+          "outputs":[],
+          "payable":false,
+          "stateMutability":"nonpayable",
+          "type":"function"
+        }
+    },
+    {
+      "id": "renew",
+      "label": "Renew a name",
+      "description": "This function can be called by anyone, as long as sufficient funds are provided. Because the rent price may vary over time, callers are recommended to send slightly more than the value returned by rentPrice - a premium of 5-10% will likely be sufficient. Any excess funds are returned to the caller.",
+      "notes": "https://docs.ens.domains/contract-api-reference/.eth-permanent-registrar/controller#extend-name-registration",
+      "fields": [
+        {
+          "name": "id",
+          "label": "The token ID",
+          "placeholder": "id(uint256)"
+        },
+        {
+          "name": "duration",
+          "label": "Duration in seconds for the registration",
+          "placeholder": "duration(uint)"
+        }
+      ],
+      "abi": {
+        "constant":false,
+        "inputs": [
+          {
+            "internalType":"uint256",
+            "name":"id","type":"uint256"
+          },
+          {
+            "internalType":"uint256",
+            "name":"duration",
+            "type":"uint256"
+          }],
+          "name":"renew",
+          "outputs": [
+            {
+              "internalType":"uint256",
+              "name":"",
+              "type":"uint256"
+            }],
+          "payable":false,
+          "stateMutability":"nonpayable",
+          "type":"function"
+        }
+    },
+    {
+      "id": "renounceOwnership",
+      "label": "Renounce ownership",
+      "description": "Allows the current owner to relinquish control of the contract. Renouncing to ownership will leave the contract without an owner. It will not be possible to call the functions with the `onlyOwner` modifier anymore",
+      "notes": "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/ownership/Ownable.sol#L56",
+      "fields": [],
+      "abi": {
+        "constant":false,
+        "inputs":[],
+        "name":"renounceOwnership",
+        "outputs":[],
+        "payable":false,
+        "stateMutability":"nonpayable",
+        "type":"function"
+        }
+    },
+    {
+      "id": "safeTransferFrom",
+      "label": "Safely transfers the ownership",
+      "description": "Safely transfers the ownership of a given token ID to another address",
+      "notes": "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol#L160",
+      "fields": [
+        {
+          "name": "from",
+          "label": "from Address",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "name": "to",
+          "label": "to Address",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "name": "tokenId",
+          "label": "token to be approved",
+          "placeholder": "tokenId(uint256)"
+        }
+      ],
+      "abi": {
+        "constant":false,
+        "inputs": [
+          {
+            "internalType":"address",
+            "name":"from",
+            "type":"address"
+          },
+          {
+            "internalType":"address",
+            "name":"to",
+            "type":"address"
+          },
+          {
+            "internalType":"uint256",
+            "name":"tokenId",
+            "type":"uint256"
+            }],
+          "name":"safeTransferFrom",
+          "outputs":[],
+          "payable":false,
+          "stateMutability":"nonpayable",
+          "type":"function"
+        }
+    },
+    {
+      "id": "safeTransferFrom",
+      "label": "Safely transfers the ownership with param _data",
+      "description": "Safely transfers the ownership of a given token ID to another address.If the target address is a contract, it must implement `onERC721Received`, which is called upon a safe transfer, and return the magic value`bytes4(keccak256(onERC721Received(address,address,uint256,bytes)))`; otherwise the transfer is reverted. Requires the msg.sender to be the owner, approved, or operator",
+      "notes": "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol#L193",
+      "fields": [
+        {
+          "name": "from",
+          "label": "from Address",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "name": "to",
+          "label": "to Address",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "name": "tokenId",
+          "label": "token to be approved",
+          "placeholder": "tokenId(uint256)"
+        },
+        {
+          "name": "_data",
+          "label": "bytes data to send along with a safe transfer check",
+          "placeholder": "_data(bytes)"
+        }
+      ],
+      "abi": {
+        "constant":false,
+        "inputs": [
+          {
+            "internalType":"address",
+            "name":"from",
+            "type":"address"
+          },
+          {
+            "internalType":"address",
+            "name":"to",
+            "type":"address"
+          },
+          {
+            "internalType":"uint256",
+            "name":"tokenId","type":"uint256"
+          },
+          {
+            "internalType":"bytes",
+            "name":"_data",
+            "type":"bytes"
+          }],
+          "name":"safeTransferFrom",
+          "outputs":[],
+          "payable":false,
+          "stateMutability":"nonpayable",
+          "type":"function"
+        }
+    },
+    {
+      "id": "setApprovalForAll",
+      "label": "Sets or unsets the approval of a given operator",
+      "description": "An operator is allowed to transfer all tokens of the sender on their behalf.",
+      "notes": "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol#L117",
+      "fields": [
+        {
+          "name": "operator",
+          "label": "Operator",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "name": "approved",
+          "defaultValue": 1,
+          "label": "allow to transfer all tokens of the sender on their behalf",
+          "labelTrue": "Allow",
+          "labelFalse": "Reject"
+        }
+      ],
+      "abi": {
+        "constant":false,
+        "inputs": [
+          {
+            "internalType":"address",
+            "name":"to",
+            "type":"address"
+          },
+          {
+            "internalType":"bool",
+            "name":"approved",
+            "type":"bool"
+          }],
+          "name":"setApprovalForAll",
+          "outputs":[],
+          "payable":false,
+          "stateMutability":"nonpayable",
+          "type":"function"
       }
     },
     {
       "id": "setResolver",
       "label": "Set Resolver",
-      "description": "Updates the resolver associated with the name identified by node to resolver. Only callable by the current owner of the name. resolver must specify the address of a contract that implements the Resolver interface.",
-      "notes": "https://docs.ens.domains/contract-api-reference/ens#set-resolver",
+      "description": "Set the resolver for the TLD this registrar manages.",
+      "notes": "https://github.com/ensdomains/ethregistrar/blob/3cdbc7053f1924e0c99f600260a006d7e6ddaf5f/contracts/BaseRegistrarImplementation.sol#L64",
       "fields": [
-        {
-          "label": "ENS Identifier Name",
-          "name": "node",
-          "placeholder": "e.g. alice.eth",
-          "transformation": "namehash"
-        },
         {
           "name": "resolver",
-          "label": "Resolver address"
+          "label": "Resolver Address",
+          "placeholder": "Address (0x0000…)"
         }
       ],
       "abi": {
-        "constant": false,
+        "constant":false,
         "inputs": [
           {
-            "name": "node",
-            "type": "bytes32"
-          },
-          {
-            "name": "resolver",
-            "type": "address"
-          }
-        ],
-        "name": "setResolver",
-        "outputs": [],
-        "payable": false,
-        "type": "function"
-      }
+            "internalType":"address",
+            "name":"resolver",
+            "type":"address"
+          }],
+          "name":"setResolver",
+          "outputs":[],
+          "payable":false,
+          "stateMutability":"nonpayable",
+          "type":"function"
+        }
     },
     {
-      "id": "setTTL",
-      "label": "Set TTL",
-      "description": "Updates the caching time-to-live of the name identified by node. Only callable by the current owner of the name.",
-      "notes": "https://docs.ens.domains/contract-api-reference/ens#set-ttl",
+      "id": "transferFrom",
+      "label": "Transfers the ownership of a given token ID to another address.",
+      "description": "Usage of this method is discouraged, use {safeTransferFrom} whenever possible. Requires the msg.sender to be the owner, approved, or operator.",
+      "notes": "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol#L142",
       "fields": [
         {
-          "name": "node",
-          "label": "ENS Identifier Name",
-          "placeholder": "e.g. alice.eth",
-          "transformation": "namehash"
+          "name": "from",
+          "label": "from Address",
+          "placeholder": "Address (0x0000…)"
         },
         {
-          "name": "ttl",
-          "label": "Time to live"
+          "name": "to",
+          "label": "to Address",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "name": "tokenId",
+          "label": "token to be approved",
+          "placeholder": "tokenId(uint256)"
         }
       ],
       "abi": {
-        "constant": false,
+        "constant":false,
         "inputs": [
           {
-            "name": "node",
-            "type": "bytes32"
+            "internalType":"address",
+            "name":"from",
+            "type":"address"
           },
           {
-            "name": "ttl",
-            "type": "uint64"
-          }
-        ],
-        "name": "setTTL",
-        "outputs": [],
-        "payable": false,
-        "type": "function"
-      }
+            "internalType":"address",
+            "name":"to",
+            "type":"address"
+          },
+          {
+            "internalType":"uint256",
+            "name":"tokenId",
+            "type":"uint256"
+          }],
+          "name":"transferFrom",
+          "outputs":[],
+          "payable":false,
+          "stateMutability":"nonpayable",
+          "type":"function"
+        }
     },
     {
-      "id": "setSubnodeOwner",
-      "label": "Create Subdomain",
-      "description": "Creates a new subdomain of node, assigning ownership of it to the specified owner. If the domain already exists, ownership is reassigned but the resolver and TTL are left unmodified. label is the keccak256 hash of the subdomain label to create. For example, if you own alice.eth and want to create the subdomain iam.alice.eth, supply namehash('alice.eth') as the node, and keccak256('iam') as the label.",
-      "notes": "https://docs.ens.domains/contract-api-reference/ens#set-ttl",
+      "id": "transferOwnership",
+      "label": "Transfer Ownership",
+      "description": "Allows the current owner to transfer control of the contract to a newOwner.",
+      "notes": "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/ownership/Ownable.sol#L65",
       "fields": [
         {
-          "name": "node",
-          "label": "ENS Identifier Name",
-          "placeholder": "e.g. alice.eth",
-          "transformation": "namehash"
-        },
-        {
-          "name": "label",
-          "label": "Label",
-          "placeholder": "e.g. iam",
-          "transformation": "keccak256"
-        },
-        {
-          "name": "owner",
-          "label": "Owner Address"
+          "name": "newOwner",
+          "label": "New Owner Address",
+          "placeholder": "Address (0x0000…)"
         }
       ],
       "abi": {
-        "constant": false,
+        "constant":false,
         "inputs": [
           {
-            "name": "node",
-            "type": "bytes32"
-          },
-          {
-            "name": "label",
-            "type": "bytes32"
-          },
-          {
-            "name": "owner",
-            "type": "address"
-          }
-        ],
-        "name": "setSubnodeOwner",
-        "outputs": [],
-        "payable": false,
-        "type": "function"
-      }
+            "internalType":"address",
+            "name":"newOwner",
+            "type":"address"
+          }],
+          "name":"transferOwnership",
+          "outputs":[],
+          "payable":false,
+          "stateMutability":"nonpayable",
+          "type":"function"
+        }
     }
   ]
 }
