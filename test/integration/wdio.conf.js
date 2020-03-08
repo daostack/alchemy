@@ -45,6 +45,9 @@ exports.config = {
     maxInstances: 1,
     //
     browserName: "chrome",
+    "goog:chromeOptions": {
+      args: ["window-size=1920,1080"],
+    },
   }],
   //
   // ===================
@@ -121,7 +124,7 @@ exports.config = {
       chrome: {
         // check for more recent versions of chrome driver here:
         // https://chromedriver.storage.googleapis.com/index.html
-        version: "75.0.3770.140",
+        version: "80.0.3987.16",
         arch: process.arch,
         baseURL: "https://chromedriver.storage.googleapis.com",
       },
@@ -136,7 +139,7 @@ exports.config = {
       chrome: {
         // check for more recent versions of chrome driver here:
         // https://chromedriver.storage.googleapis.com/index.html
-        version: "75.0.3770.140",
+        version: "80.0.3987.16",
         arch: process.arch,
         baseURL: "https://chromedriver.storage.googleapis.com",
       },

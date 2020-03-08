@@ -1,0 +1,132 @@
+.menu {
+  position: relative;
+  width: 300px;
+  height: 450px;
+  max-height: calc(100vh - 55px);
+  background-color: #f1f4f9;
+  border-radius: 0px 0px 8px 8px;
+
+  .proposals {
+    line-height: 1.38;
+    height: 409px;
+    max-height: calc(100vh - 95px);
+    overflow-y: auto;
+
+    .proposal {
+      background-color: #fcfdff;
+      padding: 20px;
+      margin: 2px 0px;
+      overflow: hidden;
+
+      &:first-child {
+        margin-top: 0px;
+      }
+      &:last-child {
+        margin-bottom: 0px;
+      }
+
+      .title {
+        font-size: 13px;
+        margin-bottom: 4px;
+
+        a {
+          color: $black;
+        }
+
+        span {
+          text-overflow: ellipsis;
+          overflow: hidden;
+          display: inline-block;
+          white-space: nowrap;
+        }
+
+        img {
+          height: 11px;
+          margin-left: 8px;
+          margin-bottom: 3px;
+          opacity: 0.5;
+        }
+      }
+
+      .rewards {
+        display: inline-block;
+        line-height: 26px;
+        max-width: 174px;
+      }
+
+      .redeemButton {
+        float: right;
+        margin: 5px 0px 0px 5px;
+      }
+    }
+  }
+
+  .empty {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h2 {
+      font-size: 21px;
+      color: rgba(104, 155, 214, 1);
+    }
+
+    img {
+      width: 140px;
+      margin-right: -22px;
+    }
+  }
+
+  .actions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    background-color: #fcfdff;
+    padding: 10px;
+    border-radius: 0px 0px 8px 8px;
+    border-top: 1px solid rgba(229, 235, 242, 1);
+    font-size: 11px;
+
+    a {
+      margin: 10px;
+
+      &.disabled {
+        pointer-events: none;
+        opacity: 0.4;
+      }
+    }
+
+    .redeemAllButton {
+      float: right;
+      height: 20px;
+
+      line-height: 20px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 11px;
+      color: $white;
+      background-color: rgba(0, 118, 255, 1);
+      padding: 0 10px;
+      border: none;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $accent-1;
+      }
+
+      img {
+        margin-left: -1px;
+        margin-right: 3px;
+      }
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+    }
+  }
+}

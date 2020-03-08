@@ -1,5 +1,5 @@
 import { IDAOState, IProposalState } from "@daostack/client";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import { linkToEtherScan } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
@@ -23,7 +23,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     super(props);
   }
 
-  public render() {
+  public render(): RenderOutput {
     const { proposal, detailView, transactionModal } = this.props;
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,

@@ -1,5 +1,5 @@
 import { IProposalState } from "@daostack/client";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import { formatTokens, fromWei } from "lib/util";
 import * as React from "react";
 
@@ -13,7 +13,7 @@ interface IProps {
 
 export default class StakeGraph extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const {
       detailView,
       historyView,

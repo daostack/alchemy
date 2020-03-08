@@ -1,22 +1,19 @@
-import { Address, IDAOState, IProposalStage, IProposalState, Stake } from "@daostack/client";
-import * as arcActions from "actions/arcActions";
-import * as web3Actions from "actions/web3Actions";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, Stake } from "@daostack/client";
+import { approveStakingGens, stakeProposal } from "actions/arcActions";
+import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
-import * as classNames from "classnames";
-import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import classNames from "classnames";
+import Analytics from "lib/analytics";
 import { formatTokens } from "lib/util";
+import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import { Page } from "pages";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
-//@ts-ignore
 import { Modal } from "react-router-modal";
-import { VoteOptions } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, of } from "rxjs";
 
 import * as css from "./StakeButtons.scss";
 
@@ -31,26 +28,27 @@ interface IExternalProps {
   beneficiaryProfile?: IProfileState;
   contextMenu?: boolean;
   currentAccountAddress?: Address;
+  currentAccountGens: BN|null;
+  currentAccountGenStakingAllowance: BN;
   dao: IDAOState;
-  detailView?: boolean;
   expired?: boolean;
-  historyView?: boolean;
+  parentPage: Page;
+  stakes: Stake[];
 }
 
 interface IDispatchProps {
-  stakeProposal: typeof arcActions.stakeProposal;
+  stakeProposal: typeof stakeProposal;
   showNotification: typeof showNotification;
-  approveStakingGens: typeof web3Actions.approveStakingGens;
+  approveStakingGens: typeof approveStakingGens;
 }
 
 const mapDispatchToProps = {
-  approveStakingGens: web3Actions.approveStakingGens,
-  stakeProposal: arcActions.stakeProposal,
+  approveStakingGens,
+  stakeProposal,
   showNotification,
 };
 
-type SubscriptionData = [BN, BN, Stake[]];
-type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
+type IProps = IExternalProps & IDispatchProps;
 
 class StakeButtons extends React.Component<IProps, IState> {
 
@@ -65,9 +63,9 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public showApprovalModal = async (_event: any): Promise<void> => {
-    if ((await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
-      this.setState({ showApproveModal: true });
-    }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    this.setState({ showApproveModal: true });
   }
 
   public closeApprovalModal = (_event: any): void => {
@@ -78,34 +76,54 @@ class StakeButtons extends React.Component<IProps, IState> {
     this.setState({ showPreStakeModal: false });
   }
 
-  public showPreStakeModal = (prediction: number): (_event: any) => void => (_event: any): void => {
-    if (!this.props.currentAccountAddress) {
-      enableWeb3ProviderAndWarn(this.props.showNotification.bind(this));
-    } else {
-      this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
-    }
+  public showPreStakeModal = (prediction: number): (_event: any) => void => async (_event: any): Promise<void> => {
+    if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
+    this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
   }
 
-  public handleClickPreApprove = async (_event: any): Promise<void> => {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
-    const { approveStakingGens } = this.props;
-    approveStakingGens(this.props.proposal.votingMachine);
+  public handleCancelPreApprove = async (_event: any): Promise<void> => {
     this.setState({ showApproveModal: false });
   }
 
-  public render(): any {
-    const [currentAccountGens, currentAccountGenStakingAllowance, stakesOfCurrentUser] = this.props.data;
+  public handleClickPreApprove = async (_event: any): Promise<void> => {
+    if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
 
+    const { approveStakingGens } = this.props;
+    approveStakingGens(this.props.proposal.votingMachine);
+
+    Analytics.track("Enable predictions");
+
+    this.setState({ showApproveModal: false });
+  }
+
+  private getStakeProposalAction = (proposal: IProposalState, dao: IDAOState, pendingPrediction: number) =>
+    (amount: number) => {
+      this.props.stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount);
+
+      Analytics.track("Stake", {
+        "DAO Address": proposal.dao.id,
+        "DAO Name": dao.name,
+        "GEN Staked": amount,
+        "Proposal Hash": proposal.id,
+        "Proposal TItle": proposal.title,
+        "Scheme Address": proposal.scheme.address,
+        "Scheme Name": proposal.scheme.name,
+        "Stake Type": pendingPrediction === IProposalOutcome.Fail ? "Fail" : pendingPrediction === IProposalOutcome.Pass ? "Pass" : "None",
+      });
+    };
+
+  public render(): RenderOutput {
     const {
       beneficiaryProfile,
       contextMenu,
       currentAccountAddress,
+      currentAccountGens,
+      currentAccountGenStakingAllowance,
       dao,
-      detailView,
       expired,
-      historyView,
+      parentPage,
       proposal,
-      stakeProposal,
+      stakes,
     } = this.props;
 
     const {
@@ -116,8 +134,8 @@ class StakeButtons extends React.Component<IProps, IState> {
 
     let currentStake: Stake;
     let currentAccountPrediction = 0;
-    if (stakesOfCurrentUser.length > 0) {
-      currentStake = stakesOfCurrentUser[0];
+    if (stakes.length > 0) {
+      currentStake = stakes[0];
     }
     if (currentStake) {
       currentAccountPrediction = currentStake.staticState.outcome;
@@ -137,7 +155,8 @@ class StakeButtons extends React.Component<IProps, IState> {
                 will be authorized to receive up to 100000 GENs. This transaction will not
                 cost you GEN or commit you in any way to spending your GENs in the future.
               </p>
-              <div>
+              <div className={css.preapproveButtonsWrapper}>
+                <button onClick={this.handleCancelPreApprove} data-test-id="button-cancel">Cancel</button>
                 <button onClick={this.handleClickPreApprove} data-test-id="button-preapprove">Preapprove</button>
               </div>
             </div>
@@ -148,38 +167,41 @@ class StakeButtons extends React.Component<IProps, IState> {
 
     const wrapperClass = classNames({
       [css.predictions]: true,
+      [css.detailView]: parentPage === Page.ProposalDetails,
       [css.contextMenu]: contextMenu,
-      [css.detailView]: detailView,
-      [css.historyView]: historyView,
+      [css.historyView]: parentPage === Page.DAOHistory,
       [css.unconfirmedPrediction]: isPredicting,
     });
 
     const stakingEnabled = (proposal.stage === IProposalStage.Queued && !expired) ||
       (proposal.stage === IProposalStage.PreBoosted);
 
-    const hasGens = currentAccountGens.gt(new BN(0));
+    const disabledMessage =
+      (proposal.stage === IProposalStage.Queued && expired) || proposal.stage === IProposalStage.ExpiredInQueue ? "Can't predict on expired proposals" :
+        (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) ? "Can't predict on boosted proposals" :
+          (proposal.stage === IProposalStage.Executed) ? `Can't predict on ${proposal.winningOutcome === IProposalOutcome.Pass ? "passed" : "failed"} proposals` : "";
+
+    const hasGens = currentAccountGens && currentAccountGens.gt(new BN(0));
+
     // show staking buttons when !this.props.currentAccountAddress, even if no GENs
-    const disableStakePass = (currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.No;
-    const disableStakeFail = (currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.Yes;
+    const disableStakePass = (currentAccountAddress && !hasGens) || currentAccountPrediction === IProposalOutcome.Fail;
+    const disableStakeFail = (currentAccountAddress && !hasGens) || currentAccountPrediction === IProposalOutcome.Pass;
 
     const passButtonClass = classNames({
-      [css.pendingPrediction]: pendingPrediction === VoteOptions.Yes,
+      [css.pendingPrediction]: pendingPrediction === IProposalOutcome.Pass,
       [css.passButton]: true,
     });
 
     const failButtonClass = classNames({
-      [css.pendingPrediction]: pendingPrediction === VoteOptions.No,
+      [css.pendingPrediction]: pendingPrediction === IProposalOutcome.Fail,
       [css.failButton]: true,
     });
 
-    const tip = (prediction: VoteOptions) =>
+    const tip = (prediction: IProposalOutcome) =>
       !hasGens ?
         "Insufficient GENs" :
         currentAccountPrediction === prediction ?
-          "Can't change prediction" :
-          isPredicting ?
-            "Warning: Staking on this proposal is already in progress" :
-            ""
+          "Can't change your prediction" : ""
       ;
 
     const passButton = (
@@ -199,8 +221,20 @@ class StakeButtons extends React.Component<IProps, IState> {
     if (stakingEnabled && (currentAccountAddress && currentAccountGenStakingAllowance && currentAccountGenStakingAllowance.eq(new BN(0)))) {
       return (
         <div className={wrapperClass}>
+
+          {contextMenu ?
+            <div className={css.contextTitle}>
+              <div>
+                <span>
+                  Predict
+                </span>
+              </div>
+            </div>
+            : ""
+          }
+
           <div className={css.enablePredictions}>
-            <button onClick={this.showApprovalModal} data-test-id="button-enable-predicting">Enable Predicting</button>
+            <button onClick={this.showApprovalModal} data-test-id="button-enable-predicting">Enable Predictions</button>
           </div>
         </div>
       );
@@ -210,14 +244,15 @@ class StakeButtons extends React.Component<IProps, IState> {
       <div className={wrapperClass}>
         {showPreStakeModal ?
           <PreTransactionModal
-            actionType={pendingPrediction === VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={(amount: number) => { stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount); }}
+            actionType={pendingPrediction === IProposalOutcome.Pass ? ActionTypes.StakePass : ActionTypes.StakeFail}
+            action={this.getStakeProposalAction(proposal, dao, pendingPrediction)}
             beneficiaryProfile={beneficiaryProfile}
-            closeAction={this.closePreStakeModal.bind(this)}
+            closeAction={this.closePreStakeModal}
             currentAccountGens={currentAccountGens}
             dao={dao}
+            parentPage={parentPage}
             proposal={proposal}
-            secondaryHeader={"> " + formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " for boost!"}
+
           /> : ""
         }
 
@@ -236,22 +271,28 @@ class StakeButtons extends React.Component<IProps, IState> {
           {stakingEnabled ?
             <div>
               {
-                (!currentAccountAddress ? "" : tip(VoteOptions.No) !== "") ?
-                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
+                (currentAccountAddress && tip(IProposalOutcome.Fail) !== "") ?
+                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(IProposalOutcome.Fail)}>
                     {passButton}
                   </Tooltip> :
                   passButton
               }
+              {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.Queued && !expired ?
+                <div className={css.toBoostMessage}>&gt;{formatTokens(proposal.upstakeNeededToPreBoost, "GEN to boost")}</div>
+                : ""}
               {
-                (!currentAccountAddress ? "" : tip(VoteOptions.Yes) !== "") ?
-                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
+                (currentAccountAddress && tip(IProposalOutcome.Pass) !== "") ?
+                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(IProposalOutcome.Pass)}>
                     {failButton}
                   </Tooltip> :
                   failButton
               }
+              {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.PreBoosted && !expired ?
+                <div className={css.toBoostMessage}>{formatTokens(proposal.downStakeNeededToQueue, " GEN to un-boost")}</div>
+                : ""}
             </div>
             : <span className={css.disabledPredictions}>
-              Predictions are disabled
+              {disabledMessage}
             </span>
           }
         </div>
@@ -260,34 +301,4 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 }
 
-const SubscribedStakeButtons = withSubscription({
-  wrappedComponent: StakeButtons,
-  loadingComponent: <div>Loading PredictionBox</div>,
-  errorComponent: (props) => <div>{props.error.message}</div>,
-
-  checkForUpdate: (oldProps, newProps) => {
-    return oldProps.currentAccountAddress !== newProps.currentAccountAddress || oldProps.proposal.id !== newProps.proposal.id;
-  },
-
-  createObservable: (props: IExternalProps) => {
-    const arc = getArc();
-    const spender = props.proposal.votingMachine;
-    const currentAccountAddress = props.currentAccountAddress;
-
-    if (currentAccountAddress) {
-      return combineLatest(
-        arc.GENToken().balanceOf(currentAccountAddress),
-        arc.allowance(currentAccountAddress, spender),
-        props.proposal.proposal.stakes({where: { staker: currentAccountAddress }})
-      );
-    } else {
-      return combineLatest(
-        of(new BN("0")),
-        of(undefined),
-        of([]),
-      );
-    }
-  },
-});
-
-export default connect(null, mapDispatchToProps)(SubscribedStakeButtons);
+export default connect(null, mapDispatchToProps)(StakeButtons);

@@ -1,32 +1,27 @@
 import * as uuid from "uuid";
-import { getContractAddresses } from "./utils";
+import { first } from "rxjs/operators";
+import { getArc } from "./utils";
 
 describe("Proposals", () => {
   let daoAddress: string;
-  let addresses;
 
-  before(() => {
-    addresses = getContractAddresses();
-    // cf. ./utils.ts to see where this address is from
-    // if this test is failing, query the subgraph with the contractToCall
-    // and set that in DutchX.json
-    // { dao (id: "0x68728fe67fb1fbae9076110f98e9ba3f5a00f936")
-    //   {id schemes {
-    //     id
-    //     name
-    //     genericSchemeParams {
-    //       contractToCall
-    // }}}}
+  beforeEach(async () => {
+    const arc = getArc();
+    const daos = await arc.daos({ where: { name: "DutchX DAO"}}).pipe(first()).toPromise();
+    const dao = daos[0];
+    daoAddress = dao.id;
+    if (!daoAddress) {
+      throw Error("Could not find a DAO with this name");
+    }
 
-    daoAddress = addresses.dutchx.Avatar.toLowerCase();
   });
 
-  it.skip("Create a Generic Scheme proposal, vote for it, stake on it", async () => {
+  it("Create a DutchX Generic Scheme proposal, vote for it, stake on it", async () => {
     const url = `/dao/${daoAddress}/`;
     await browser.url(url);
 
-    const schemeCard = await $("[data-test-id=\"schemeCard-GenericScheme\"]");
-    await schemeCard.click();
+    const schemeTitle = await $("h2=DutchX");
+    await schemeTitle.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();
@@ -57,6 +52,41 @@ describe("Proposals", () => {
     // test for the title
     const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
     await titleElement.waitForExist();
+
+  });
+  
+  it("Export a DutchX Generic Scheme proposal", async () => {
+    const url = `/dao/${daoAddress}/`;
+    await browser.url(url);
+
+    const schemeTitle = await $("h2=DutchX");
+    await schemeTitle.click();
+
+    const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
+    await createProposalButton.waitForExist();
+
+    await createProposalButton.click();
+
+    const masterCopyTab = await $("*[data-test-id=\"action-tab-updateMasterCopy\"]");
+    await masterCopyTab.click();
+
+    const titleInput = await $("*[id=\"titleInput\"]");
+    await titleInput.waitForExist();
+
+    const title = uuid();
+    await titleInput.setValue(title);
+
+    // using uuid value so that the test will pass also if there is already a proposal with this description
+    // (which must be unique).
+    const descriptionInput = await $(".mde-text");
+    await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
+
+    const masterCopyInput = await $("*[data-test-id=\"_masterCopy\"]");
+    await masterCopyInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
+
+    const exportProposalSubmitButton = await $("*[id=\"export-proposal\"]");
+    await exportProposalSubmitButton.click();
+
 
   });
 

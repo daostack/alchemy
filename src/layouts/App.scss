@@ -23,7 +23,7 @@ body {
 .outer {
   width: 100%;
   height: 100%;
-  padding-top: 50px;
+    padding-top: 50px;
 }
 
 .container {
@@ -31,6 +31,21 @@ body {
   z-index: 100;
   position: relative;
   height: 100%;
+}
+
+.sidebarWrapper {
+  position: relative;
+  width: 125px;
+}
+
+.withDAO .sidebarWrapper {
+  width: 250px;
+}
+
+.contentWrapper {
+  position: relative;
+  max-width: $max-width;
+  margin: 0 auto;
 }
 
 .background {
@@ -52,6 +67,7 @@ body {
 
 .web3ProviderLogin {
   display: inline-block;
+  vertical-align: middle;
 }
 
 .web3ProviderLogin button {
@@ -66,7 +82,7 @@ body {
   border-radius: 15px;
   color: $white;
   position: relative;
-  top: 9px;
+  vertical-align: middle;
   right: 10px;
 
   img {
@@ -96,6 +112,20 @@ body {
   z-index: 100000;
   top: 0;
   color: rgba(255,255,255,1);
+  display: flex;
+
+  /** the following is only meant to apply to the toggle button in the header **/
+  :global {
+    .react-toggle.react-toggle--checked .react-toggle-track {
+      background-color: #0076ff !important;
+    }
+
+    .react-toggle-thumb {
+      background-image: url(/assets/images/Icon/info-i.svg);
+      background-color: transparent !important;
+      background-size: 20px 20px;
+    }
+  }
 
   .logoContainer {
     margin: 0 auto;
@@ -151,18 +181,19 @@ body {
     padding: 2px 0;
   }
 
-  .headerRight {
-    position: absolute;
-    height: 50px;
-    top:0;
-    right: 0;
-    text-align: right;
+  .redemptionsButton {
+    margin: 13px 0 14px 20px;
+  }
+
+  .toggleButton {
+    margin: 13px 0 14px auto;
   }
 
   .accountInfoContainer {
     display: inline-block;
     padding: 0 15px;
     height: 50px;
+    vertical-align: middle;
   }
 
   .accountInfo {
@@ -173,6 +204,12 @@ body {
     padding: 0 20px;
     transition: all .25s ease;
     height: 50px;
+
+    > span {
+      height: 50px;
+      display: inline-block;
+      vertical-align: middle;
+    }
 
     .accountImage {
       border: none;
@@ -205,25 +242,21 @@ body {
 
     .wallet {
       position: absolute;
-      top: 43px;
-      width: 0px;
-      opacity: 0;
-      transition: all .25s ease;
+      width: 270px;
+      top: 50px;
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 0.25s ease;
       right: 12px;
       font-size: 12px;
       z-index: 100;
       color: rgba(78, 97, 118, 1.000);
       background-color: rgba(252, 253, 255, 1.000);
       border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.27);
 
       .walletImage {
         float: left;
-
-        img {
-          width: 50px;
-          height: 50px;
-          border-radius: 8px;
-        }
       }
 
       .pointer {
@@ -395,7 +428,7 @@ body {
               color: #001d35;
               margin-bottom: 2px;
             }
-            
+
             .name {
               font-size: 11px;
               color: #4e6176;
@@ -421,9 +454,12 @@ body {
           white-space: nowrap;
           cursor: pointer;
           display: inline-block;
+          margin-right: 4px;
         }
 
         img {
+          top: 2px;
+          position: relative;
           height: 12px;
           margin-right: 5px;
         }
@@ -434,11 +470,13 @@ body {
   .accountInfoContainer:hover{
     background-color: rgba(10, 28, 61, 1.000);
 
-    .wallet {
-      width: 270px;
-      opacity: 1;
-      box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.27);
+    + .wallet {
+    transform: scaleY(1);
     }
+  }
+
+  .wallet:hover {
+    transform: scaleY(1);
   }
 
   .etherBalance {
@@ -473,7 +511,6 @@ body {
       color: white;
       font-size: 13px;
       position: relative;
-      top: -6px;
       right: 12px;
     }
 
@@ -486,15 +523,8 @@ body {
 
 .header:after { clear: both;  content: ""; display: table; }
 
-.notificationsWrapper {
-  bottom: 0;
-  left: 0;
-  position: absolute;
-  z-index: 999;
-}
-
 .loading {
-  padding-top: 100px;
+  padding-top: 4rem;
   text-align: center;
 }
 
@@ -503,7 +533,7 @@ body {
   position: fixed;
   bottom: 50px;
   background-color: rgba(255,255,255,1);
-  left: 260px;
+  left: 20px;
   width: 290px;
   height: auto;
   text-align: left;
@@ -533,18 +563,6 @@ body {
   overflow: hidden;
 }
 
-.breadcrumbsContainer {
-  position: absolute;
-  width: 100%;
-  background: #444;
-  padding: 0 0 3px 15px;
-  color: white;
-}
-
-.breadcrumb {
-  color: white;
-}
-
 .topInfo {
   position: absolute;
   left: 70px;
@@ -558,9 +576,13 @@ body {
     margin: 0 15px;
   }
 
-  a:visited {
+  a, a:visited {
     color: $white;
   }
+}
+
+.menuToggle {
+  display: none;
 }
 
 @media only screen and (max-device-width: 1024px) {
@@ -579,90 +601,6 @@ body {
   }
 }
 /* EO Header */
-
-@media only screen and (max-width: 425px) {
-
-  .pendingTransactions {
-    bottom: 70px;
-    left: 15px;
-  }
-
-
-  .modal {
-    top: 0;
-    left: 0;
-    transform: translate(0, 0);
-    width: 100%;
-  }
-
-  .modalContainer {
-    position: fixed;
-    top: 50px;
-  }
-
-  .headerContainer {
-    z-index: 0;
-  }
-
-  .outer {
-    z-index: 1000000;
-  }
-
-  .headerContainer:hover {
-    z-index: 1000;
-  }
-
-  .topInfo {
-    display: none;
-    position: absolute;
-    color: rgba(0, 28, 52, 1);
-    top: 50px;
-    left: 0px;
-    width: 100%;
-    text-align: center;
-    padding: 8px 0;
-    font-family: "Open Sans";
-    font-weight: normal;
-    font-size: 11px;
-    background-color: rgba(229, 235, 242, 1.000);
-
-    span {
-      opacity: .6;
-    }
-
-    b {
-      font-weight: normal;
-    }
-
-    a:visited {
-      color: rgba(0, 28, 52, 1);
-    }
-  }
-
-  .header .menu {
-    position: relative;
-    margin: 0 auto;
-  }
-
-  .topInfo a, .topInfo a:visited {
-    color: #001c34;
-  }
-
-  .header .profileLink a {
-    display: none;
-  }
-
-
-.web3ProviderLogin button {
-    span.connectButtonText {
-      display: none;
-    }
-
-    img {
-      padding-left: 0;
-    }
-  }
-}
 
 .cookieDisclaimerContainer {
   padding-left: 12%;
@@ -698,6 +636,10 @@ body {
       width: 80%;
       flex-grow: 2;
       flex-basis: content;
+
+      a {
+        color: $accent-2;
+      }
     }
 
     .accept {
@@ -730,3 +672,159 @@ body {
   }
 }
 
+.waitingToInitContainer {
+  padding-top: 4rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.waitingToInitMessage {
+  text-align: center;
+}
+
+/* This allow us to center content until screen is too small to
+   center content with width 1080 with DAO sidebar of width 250px */
+@media only screen and (max-width: 1580px) {
+  .withDAO {
+    .contentWrapper {
+      margin: 0 0 0 250px;
+    }
+  }
+}
+
+/* This allow us to center content until screen is too small to center
+   content with width 1080 with non DAO sidebar of width 125px */
+@media only screen and (max-width: 1330px) {
+  .contentWrapper {
+    margin: 0 0 0 125px;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .contentWrapper {
+    margin: 0 !important;
+  }
+
+  .pendingTransactions {
+    bottom: 70px;
+    left: 15px;
+  }
+
+  .modal {
+    top: 0;
+    left: 0;
+    transform: translate(0, 0);
+    width: 100%;
+  }
+
+  .modalContainer {
+    position: fixed;
+    top: 50px;
+  }
+
+  .headerContainer {
+    z-index: 0;
+  }
+
+  .outer {
+    z-index: 1000000;
+  }
+
+  .headerContainer:hover {
+    z-index: 1000;
+  }
+
+  .topInfo {
+    display: block;
+    position: absolute;
+    color: rgba(0, 28, 52, 1);
+    top: 50px;
+    left: 0px;
+    width: 100%;
+    text-align: center;
+    padding: 8px 0;
+    font-family: "Open Sans";
+    font-weight: normal;
+    font-size: 11px;
+    background-color: rgba(229, 235, 242, 1.000);
+
+    span {
+      opacity: .6;
+    }
+
+    b {
+      font-weight: normal;
+    }
+
+    a:visited {
+      color: rgba(0, 28, 52, 1);
+    }
+  }
+
+  .header {
+    .menu {
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+    }
+
+    .redemptionsButton {
+      margin-left: 12px;
+    }
+
+    .toggleButton {
+      margin-left: 52px;
+    }
+
+    .accountInfo {
+      margin-left: auto;
+    }
+  }
+
+  .topInfo a, .topInfo a:visited {
+    color: #001c34;
+  }
+
+  .header .profileLink a {
+    display: none;
+  }
+
+
+.web3ProviderLogin button {
+    span.connectButtonText {
+      display: none;
+    }
+
+    img {
+      padding-left: 0;
+    }
+  }
+
+  .menuToggle {
+    display: block;
+    position: absolute;
+    top: 16px;
+    left: 12px;
+  }
+
+  .cookieDisclaimerContainer {
+
+    .cookieDisclaimer {
+      display: inline-block;
+      padding-left: 20px;
+      padding-right: 20px;
+
+      .body {
+        display: block;
+        flex-grow: unset;
+        flex-basis: unset;
+        width: 100%;
+      }
+
+      .accept {
+        flex-grow: unset;
+      }
+    }
+  }
+}

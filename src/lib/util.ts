@@ -1,21 +1,51 @@
 import { promisify } from "util";
+import { targetedNetwork } from "arc";
+import { GenericSchemeRegistry } from "genericSchemeRegistry";
+import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import {
   Address,
   IContractInfo,
-  IContributionReward,
+  IProposalStage,
   IProposalState,
   IRewardState,
-  ISchemeState } from "@daostack/client";
-import { GenericSchemeRegistry } from "genericSchemeRegistry";
-import { getArc } from "../arc";
+  ISchemeState} from "@daostack/client";
+import { of } from "rxjs";
+import { catchError } from "rxjs/operators";
 
 import BN = require("bn.js");
-const Web3 = require("web3");
+/**
+ * gotta load moment in order to use moment-timezone directly
+ */
+import "moment";
+import * as moment from "moment-timezone";
+import { getArc } from "../arc";
+
+
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
+const Web3 = require("web3");
 
 export function getExchangesList() {
   return exchangesList;
+}
+
+export function checkTotalPercent(split: any) {
+  let sum = 0;
+  for (const p of split) {
+    try {
+      sum += Number(p);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.warn(`Invalid percentage value passed: "${p}": ${err.message}`);
+    }
+  }
+  return (sum === 100.0);
+
+}
+
+export function addSeconds(date: Date, seconds: number) {
+  date.setTime(date.getTime() + seconds);
+  return date;
 }
 
 export function copyToClipboard(value: any) {
@@ -27,9 +57,19 @@ export function copyToClipboard(value: any) {
   document.body.removeChild(el);
 }
 
-export function humanProposalTitle(proposal: IProposalState) {
-  return proposal.title ||
+export const truncateWithEllipses = (str: string, length: number): string => {
+  const ellipse = "...";
+  if (str.length > length) {
+    return str.substring(0, length - ellipse.length) + ellipse;
+  } else {
+    return str;
+  }
+};
+
+export function humanProposalTitle(proposal: IProposalState, truncateToLength=0) {
+  const title = proposal.title ||
     "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
+  return truncateToLength ? truncateWithEllipses(title, truncateToLength): title;
 }
 
 // Convert a value to its base unit based on the number of decimals passed in (i.e. WEI if 18 decimals)
@@ -80,35 +120,48 @@ export function fromWei(amount: BN): number {
   try {
     return Number(Web3.utils.fromWei(amount.toString(), "ether"));
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.warn(`Invalid number value passed to fromWei: "${amount}": ${err.message}`);
     return 0;
   }
 }
 
 export function toWei(amount: number): BN {
-  /** 
+  /**
    * toFixed to avoid the sci notation that javascript creates for large and small numbers.
    * toWei barfs on it.
    */
   return new BN(getArc().web3.utils.toWei(amount.toFixed(18).toString(), "ether"));
 }
 
+export function baseTokenName() {
+  return tokens[targetedNetwork()]["baseTokenName"];
+}
+
+export function genName() {
+  return tokens[targetedNetwork()]["genName"];
+}
+
 export function supportedTokens() {
   return { [getArc().GENToken().address]:  {
     decimals: 18,
     name: "DAOstack GEN",
-    symbol: "GEN",
-  }, ...tokens};
+    symbol: genName(),
+  }, ...tokens[targetedNetwork()]["tokens"]};
 }
 
-export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): string {
+export function formatTokens(amountWei: BN|null, symbol?: string, decimals = 18): string {
+
+  if (amountWei === null) {
+    return `N/A ${symbol ? symbol: ""}`;
+  }
 
   const negative = amountWei.lt(new BN(0));
   const toSignedString = (amount: string) => { return  (negative ? "-" : "") + amount + (symbol ? " " + symbol : ""); };
-  
+
   if (amountWei.isZero()) {
     return toSignedString("0");
-  } 
+  }
 
   const PRECISION = 2; // number of digits "behind the dot"
   const PRECISIONPOWER = 10 ** PRECISION;
@@ -133,9 +186,9 @@ export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): str
     significantDigits = 1000000000;
     units = "B";
   }
-  else if (tokenAmount.ltn(1000)) {
+  else if (tokenAmount.ltn(100000)) {
     significantDigits = 1;
-  } else if (tokenAmount.ltn(1000000)) {
+  } else if (tokenAmount.lt(new BN(100000000))) {
     significantDigits = 1000;
     units = "k";
   } else {
@@ -158,7 +211,12 @@ export function tokenSymbol(tokenAddress: string) {
   return token ? token["symbol"] : "?";
 }
 
-export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut: number = 1000) {
+export function tokenDecimals(tokenAddress: string) {
+  const token = supportedTokens()[tokenAddress.toLowerCase()];
+  return token ? token["decimals"] : 18;
+}
+
+export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut = 1000) {
   return new Promise((resolve, reject) => {
     const timerId = setInterval(async () => {
       if (await test()) { return resolve(); }
@@ -167,18 +225,28 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean, time
   });
 }
 
+export function sleep(milliseconds: number): Promise<void> {
+  return new Promise((resolve: () => void): any => setTimeout(resolve, milliseconds));
+}
 
+/** schemes that we know how to interpret  */
 export const KNOWN_SCHEME_NAMES = [
   "ContributionReward",
   "GenericScheme",
   "ReputationFromToken",
   "SchemeRegistrar",
+  "UGenericScheme",
+  "Competition",
+  "ContributionRewardExt",
 ];
 
 export const PROPOSAL_SCHEME_NAMES = [
   "ContributionReward",
   "GenericScheme",
   "SchemeRegistrar",
+  "UGenericScheme",
+  "Competition",
+  "ContributionRewardExt",
 ];
 
 /**
@@ -207,23 +275,39 @@ export function isKnownScheme(address: Address) {
 
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   let name: string;
-  if (scheme.name === "GenericScheme") {
-    // @ts-ignore
-    if (scheme.genericSchemeParams) {
+  if (scheme.name === "GenericScheme" || scheme.name === "UGenericScheme") {
+    if ((scheme as any).genericSchemeParams || ((scheme as any).uGenericSchemeParams)) {
       const genericSchemeRegistry = new GenericSchemeRegistry();
-      // @ts-ignore
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(scheme.genericSchemeParams.contractToCall);
+      let contractToCall;
+      const schemeState = scheme as ISchemeState;
+      if (schemeState.genericSchemeParams) {
+        contractToCall = schemeState.genericSchemeParams.contractToCall;
+      } else {
+        contractToCall = schemeState.uGenericSchemeParams.contractToCall;
+      }
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
       if (genericSchemeInfo) {
         name = genericSchemeInfo.specs.name;
       } else {
-        name = "Generic Scheme";
+        // Adding the address is a bit long for a title
+        // name = `Blockchain Interaction (${contractToCall})`;
+        name = "Blockchain Interaction";
       }
     } else {
-      name = "Generic Scheme";
+      // this should never happen...
+      name = "Blockchain Interaction";
     }
+  } else if (scheme.name === "ContributionReward") {
+    name ="Funding and Voting Power";
+  } else if (scheme.name === "SchemeRegistrar") {
+    name ="Plugin Manager";
   } else if (scheme.name) {
-    // add spaces before capital letters to approximate a human-readable title
-    name = scheme.name.replace(/([A-Z])/g, " $1");
+    if (scheme.name === "ContributionRewardExt") {
+      name = rewarderContractName(scheme as ISchemeState);
+    } else {
+      // add spaces before capital letters to approximate a human-readable title
+      name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;
+    }
   } else {
     name = fallback;
   }
@@ -305,6 +389,9 @@ export async function getNetworkName(id?: string): Promise<string> {
     case "rinkeby":
     case "4":
       return "rinkeby";
+    case "xdai":
+    case "100":
+      return "xdai";
     case "kovan":
     case "42":
       return "kovan";
@@ -325,31 +412,44 @@ export function linkToEtherScan(address: Address) {
   return `https://${prefix}etherscan.io/address/${address}`;
 }
 
-export function getClaimableRewards(reward: IRewardState) {
+export type AccountClaimableRewardsType = { [key: string]: BN };
+/**
+ * Returns an object describing GenesisProtocol non-zero, unredeemed reward amounts for the current user, optionally
+ * filtered by whether the DAO has the funds to pay the rewards.
+ * @param reward unredeemed GP rewards for the current user
+ * @param daoBalances
+ */
+export function getGpRewards(reward: IRewardState, daoBalances: { [key: string]: BN } = {}): AccountClaimableRewardsType {
   if (!reward) {
     return {};
   }
 
-  const result: { [key: string]: BN } = {};
+  const result: AccountClaimableRewardsType = {};
   if (reward.reputationForProposer.gt(new BN(0)) && reward.reputationForProposerRedeemedAt === 0) {
     result.reputationForProposer = reward.reputationForProposer;
   }
   if (reward.reputationForVoter.gt(new BN(0)) && reward.reputationForVoterRedeemedAt === 0) {
     result.reputationForVoter = reward.reputationForVoter;
   }
-
-  if (reward.tokensForStaker.gt(new BN(0)) && reward.tokensForStakerRedeemedAt === 0) {
+  /**
+   * note the following assume that the GenesisProtocol is using GEN for staking
+   */
+  if (reward.tokensForStaker.gt(new BN(0))
+    && (daoBalances["GEN"] === undefined || daoBalances["GEN"].gte(reward.tokensForStaker))
+    && (reward.tokensForStakerRedeemedAt === 0)) {
     result.tokensForStaker = reward.tokensForStaker;
   }
-  if (reward.daoBountyForStaker.gt(new BN(0)) && reward.daoBountyForStakerRedeemedAt === 0) {
+  if (reward.daoBountyForStaker.gt(new BN(0))
+    && (daoBalances["GEN"] === undefined || daoBalances["GEN"].gte(reward.daoBountyForStaker))
+    && (reward.daoBountyForStakerRedeemedAt === 0)) {
     result.daoBountyForStaker = reward.daoBountyForStaker;
   }
   return result;
 }
 
 // TOOD: move this function to the client library!
-export function hasClaimableRewards(reward: IRewardState) {
-  const claimableRewards = getClaimableRewards(reward);
+export function hasGpRewards(reward: IRewardState) {
+  const claimableRewards = getGpRewards(reward);
   for (const key of Object.keys(claimableRewards)) {
     if (claimableRewards[key].gt(new BN(0))) {
       return true;
@@ -359,17 +459,23 @@ export function hasClaimableRewards(reward: IRewardState) {
 }
 
 /**
- * given an IContributionReward, return an array with the amounts that are stil to be claimbed
- * by the beneficiary of the proposal
- * @param  reward an object that immplements IContributionReward
- * @return  an array mapping strings to BN
+ * Returns an object describing ContributionReward non-zero, unredeemed reward amounts for the CR beneficiary, optionally
+ * filtered by whether the DAO has the funds to pay the rewards.
+ * @param  reward unredeemed CR rewards
+ * @param daoBalances
  */
-export function claimableContributionRewards(reward: IContributionReward, daoBalances: { [key: string]: BN } = {}) {
-  const result: { [key: string]: BN } = {};
+export function getCRRewards(proposalState: IProposalState, daoBalances: { [key: string]: BN|null } = {}): AccountClaimableRewardsType {
+  const result: AccountClaimableRewardsType = {};
+
+  if (proposalState.stage === IProposalStage.ExpiredInQueue) {
+    return {};
+  }
+
+  const reward = proposalState.contributionReward;
   if (
     reward.ethReward &&
     !reward.ethReward.isZero()
-    && (daoBalances["eth"] === undefined || daoBalances["eth"].gte(reward.ethReward))
+    && (daoBalances["eth"] === undefined || daoBalances["eth"]=== null|| daoBalances["eth"].gte(reward.ethReward))
     && reward.alreadyRedeemedEthPeriods < reward.periods
   ) {
     result["eth"] = reward.ethReward;
@@ -404,6 +510,16 @@ export function claimableContributionRewards(reward: IContributionReward, daoBal
   return result;
 }
 
+export function hasCrRewards(reward: IProposalState) {
+  const claimableRewards = getCRRewards(reward);
+  for (const key of Object.keys(claimableRewards)) {
+    if (claimableRewards[key].gt(new BN(0))) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function splitByCamelCase(str: string) {
   return str.replace(/([A-Z])/g, " $1");
 }
@@ -414,6 +530,140 @@ export function splitByCamelCase(str: string) {
 // eslint-disable-next-line no-useless-escape
 const pattern = new RegExp(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/);
 
-export function isValidUrl(str: string, emptyOk: boolean = true): boolean {
+export function isValidUrl(str: string, emptyOk = true): boolean {
   return (emptyOk && (!str || !str.trim())) || (str && pattern.test(str));
+}
+
+
+
+export enum GetSchemeIsActiveActions {
+  Register=1,
+  Remove
+}
+
+const schemeActionPropNames = new Map<string, Map<GetSchemeIsActiveActions, string>>([
+  [
+    "SchemeRegistrar" , new Map<GetSchemeIsActiveActions, string>([
+      [GetSchemeIsActiveActions.Register, "voteRegisterParams"],
+      [GetSchemeIsActiveActions.Remove, "voteRemoveParams"],
+    ]),
+  ],
+]);
+
+export function getSchemeIsActive(scheme: ISchemeState, action?: GetSchemeIsActiveActions): boolean {
+  let votingMachineParamsPropertyName: string;
+  let schemeName = `${scheme.name[0].toLowerCase()}${scheme.name.slice(1)}`;
+  if (schemeName === "genericScheme") {
+    if (scheme.uGenericSchemeParams) {
+      schemeName = "uGenericScheme";
+    }
+  }
+
+  if (action) { // then the name of the voting machine properties property depends on the action
+    const schemeActionsMap = schemeActionPropNames.get(scheme.name);
+
+    if (!schemeActionsMap) {
+      throw new Error(`getSchemeIsActive: unknown scheme: ${scheme.name}`);
+    }
+    const propName = schemeActionsMap.get(action);
+    if (!propName) {
+      throw new Error(`getSchemeIsActive: unknown action: ${scheme.name}:${action}`);
+    }
+    votingMachineParamsPropertyName = propName;
+  } else {
+    /**
+     * if scheme is SchemeRegistrar, then it is active if any of its actions are active
+     */
+    if (scheme.name === "SchemeRegistrar") {
+      return getSchemeIsActive(scheme, GetSchemeIsActiveActions.Register) || getSchemeIsActive(scheme, GetSchemeIsActiveActions.Remove);
+    } else {
+      votingMachineParamsPropertyName = "voteParams";
+    }
+  }
+
+  const schemeParams = (scheme as any)[`${schemeName}Params`][votingMachineParamsPropertyName];
+  if (!schemeParams) {
+    // eslint-disable-next-line no-console
+    console.warn(` getSchemeIsActive: scheme parameters not found at "voteParams": ${scheme.name}`);
+    return true;
+  }
+  if ((typeof(schemeParams.activationTime) === undefined) || (schemeParams.activationTime === null)) {
+    // eslint-disable-next-line no-console
+    console.warn(` getSchemeIsActive: voting machine appears not to be GenesisProtocol: ${scheme.name}`);
+    return true;
+  } else {
+    return moment(schemeParams.activationTime*1000).isSameOrBefore(moment());
+  }
+}
+
+/**
+ * @param num The number to round
+ * @param precision The number of decimal places to preserve
+ */
+export function roundUp(num: number, precision: number) {
+  precision = Math.pow(10, precision);
+  return Math.ceil(num * precision) / precision;
+}
+
+// error handler for ethereum subscriptions
+export function ethErrorHandler() {
+  const returnValueOnError: any = null; // return this when there is an error
+  return catchError((err: any) => {
+    // eslint-disable-next-line no-console
+    console.error(err.message);
+    return of(returnValueOnError);
+  });
+}
+
+/**
+ * @param arr The array to search
+ * @param value The value to remove
+ */
+export function arrayRemove(arr: any[], value: any) {
+  return arr.filter(function(ele){
+    return ele !== value;
+  });
+}
+
+const localTimezone = moment.tz.guess();
+
+export function getDateWithTimezone(date: Date|moment.Moment): moment.Moment {
+  return moment.tz(date.toISOString(), localTimezone);
+}
+
+const tzFormat = "z (Z)";
+const dateFormat = `MMM DD, YYYY HH:mm ${tzFormat}`;
+/**
+ * looks like: "17:30 EST (-05:00) Dec 31, 2019"
+ * @param date
+ */
+export function formatFriendlyDateForLocalTimezone(date: Date|moment.Moment): string {
+  return getDateWithTimezone(date).format(dateFormat);
+}
+/**
+ * looks like: "EST (-05:00)"
+ */
+export function getLocalTimezone(): string {
+  return getDateWithTimezone(new Date()).format(tzFormat);
+}
+
+export function ensureHttps(url: string) {
+
+  if (url) {
+    const pattern = /^((http|https):\/\/)/;
+
+    if(!pattern.test(url)) {
+      url = "https://" + url;
+    }
+  }
+
+  return url;
+}
+
+export function inTesting(): boolean {
+  return (process.env.NODE_ENV === "development" && navigator.webdriver);
+}
+
+export function isAddress(address: Address, allowNulls = false): boolean {
+  return getArc().web3.utils.isAddress(address) && (allowNulls || (Number(address) > 0));
 }

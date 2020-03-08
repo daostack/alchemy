@@ -1,17 +1,17 @@
 import { IDAOState, IMemberState, IProposalState  } from "@daostack/client";
-import { enableWeb3ProviderAndWarn } from "arc";
+import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
-import * as classNames from "classnames";
+import classNames from "classnames";
 import Reputation from "components/Account/Reputation";
 import ProposalSummary from "components/Proposal/ProposalSummary";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
-import { formatTokens, fromWei } from "lib/util";
-import { getExchangesList, humanProposalTitle } from "lib/util";
+import Analytics from "lib/analytics";
+import { Page } from "pages";
+import { formatTokens, fromWei, getExchangesList, humanProposalTitle } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
-//@ts-ignore
 import { Modal } from "react-router-modal";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
@@ -35,9 +35,11 @@ interface IProps {
   currentAccountGens?: BN;
   dao: IDAOState;
   effectText?: string | JSX.Element;
+  parentPage: Page;
   proposal: IProposalState;
   secondaryHeader?: string;
   showNotification: typeof showNotification;
+  multiLineMsg?: boolean;
 }
 
 interface IState {
@@ -62,9 +64,24 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     };
   }
 
-  public async handleClickAction() {
-    const { actionType } = this.props;
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+  public componentDidMount() {
+    document.addEventListener("keydown", this.handleKeyPress, false);
+
+    Analytics.trackLinks(".buyGenLink", "Clicked Buy Gen Link", (link: any) => {
+      return {
+        Origin: "Stake Popup",
+        URL: link.getAttribute("href"),
+      };
+    });
+  }
+
+  public componentWillUnmount(){
+    document.removeEventListener("keydown", this.handleKeyPress, false);
+  }
+
+  private handleClickAction = async (): Promise<void> => {
+    const { actionType, showNotification } = this.props;
+    if (!await enableWalletProvider({ showNotification })) { return; }
 
     if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
       this.props.action(this.state.stakeAmount);
@@ -74,12 +91,46 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     this.props.closeAction();
   }
 
-  public toggleInstructions() {
+  private handleKeyPress = (e: any) => {
+    const { actionType, closeAction, currentAccountGens } = this.props;
+
+    // Close modal on ESC key press
+    if (e.keyCode === 27) {
+      closeAction();
+    }
+
+    // Do action on Enter key press
+    if (e.keyCode === 13) {
+      if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
+        console.log(this.state.stakeAmount, fromWei(currentAccountGens), this.state.stakeAmount > 0);
+        if (this.state.stakeAmount > 0 && this.state.stakeAmount <= fromWei(currentAccountGens)) {
+          this.handleClickAction();
+        }
+      } else {
+        this.handleClickAction();
+      }
+    }
+  }
+
+  public toggleInstructions = () => {
     this.setState({ instructionsOpen: !this.state.instructionsOpen });
   }
 
-  public render() {
-    const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, dao, effectText, proposal, secondaryHeader } = this.props;
+  private stakeOnChange = (e: any) => this.setState({stakeAmount: Number(e.target.value)});
+  private ref = (input: any) => { this.stakeInput = input; };
+  private exchangeHtml = (item: any) => {
+    return(
+      <li key={item.name}>
+        <a href={item.url} target="_blank" rel="noopener noreferrer" className="buyGenLink">
+          <b><img src={item.logo}/></b>
+          <span>{item.name}</span>
+        </a>
+      </li>
+    );
+  };
+
+  public render(): RenderOutput {
+    const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, dao, effectText, multiLineMsg, parentPage, proposal, secondaryHeader } = this.props;
     const { stakeAmount } = this.state;
 
     let icon; let transactionType; let rulesHeader; let rules; let actionTypeClass;
@@ -93,6 +144,16 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     if (actionType === ActionTypes.VoteDown || actionType === ActionTypes.VoteUp) {
       reputationFor = proposal.votesFor.add(actionType === ActionTypes.VoteUp ? currentAccount.reputation : new BN(0));
       reputationAgainst = proposal.votesAgainst.add(actionType === ActionTypes.VoteDown ? currentAccount.reputation : new BN(0));
+
+      Analytics.track("Open Vote Popup", {
+        "Origin": parentPage,
+        "DAO Address": dao.address,
+        "DAO Name": dao.name,
+        "Proposal Hash": proposal.id,
+        "Proposal Title": proposal.title,
+        "Scheme Address": proposal.scheme.address,
+        "Scheme Name": proposal.scheme.name,
+      });
     }
 
     if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
@@ -101,6 +162,16 @@ class PreTransactionModal extends React.Component<IProps, IState> {
       buyGensClass = classNames({
         [css.genError]: true,
         [css.hidden]: this.state.stakeAmount <= accountGens,
+      });
+
+      Analytics.track("Open Stake Popup", {
+        "Origin": parentPage,
+        "DAO Address": dao.address,
+        "DAO Name": dao.name,
+        "Proposal Hash": proposal.id,
+        "Proposal Title": proposal.title,
+        "Scheme Address": proposal.scheme.address,
+        "Scheme Name": proposal.scheme.name,
       });
     }
 
@@ -207,6 +278,16 @@ class PreTransactionModal extends React.Component<IProps, IState> {
       case ActionTypes.Redeem:
         icon = <img src="/assets/images/Tx/Redemption.svg"/>;
         transactionType = <span>Redeem proposal</span>;
+
+        Analytics.track("Open Redeem Popup", {
+          "Origin": parentPage,
+          "DAO Address": dao.address,
+          "DAO Name": dao.name,
+          "Proposal Hash": proposal.id,
+          "Proposal Title": proposal.title,
+          "Scheme Address": proposal.scheme.address,
+          "Scheme Name": proposal.scheme.name,
+        });
         break;
       case ActionTypes.Execute:
         icon = <img src="/assets/images/Tx/Redemption.svg"/>;
@@ -222,7 +303,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               <div className={css.transactionIcon}>{icon}</div>
               <div className={css.transactionInfo}>
                 <span className={css.transactionType}>{transactionType}</span>
-                &nbsp; | &nbsp;
+                { !multiLineMsg ? <span className={css.titleSeparator}>|</span>: "" }
                 <span className={css.secondaryHeader}>{secondaryHeader}</span>
                 <div className={css.transactionEffect}>
                   {effectText}
@@ -230,7 +311,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               </div>
               {actionType !== ActionTypes.Redeem && actionType !== ActionTypes.Execute ?
                 <div className={classNames({[css.helpButton]: true, [css.open]: this.state.instructionsOpen})}>
-                  <button className={css.hover}  onClick={this.toggleInstructions.bind(this)}>
+                  <button className={css.hover}  onClick={this.toggleInstructions}>
                     <b> &lt; Got it</b>
                     <span>x</span>
                     <span>?</span>
@@ -273,9 +354,9 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                           autoFocus
                           type="number"
                           min="1"
-                          ref={(input) => { this.stakeInput = input; }}
+                          ref={this.ref}
                           className={css.predictionAmount}
-                          onChange={(e) => this.setState({stakeAmount: Number(e.target.value)})}
+                          onChange={this.stakeOnChange}
                           placeholder="0"
                         />
                         <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
@@ -286,19 +367,11 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                             <ul>
                               <div className={css.diamond}></div>
                               {
-                                getExchangesList().map((item: any) => {
-                                  return(
-                                    <li key={item.name}>
-                                      <a href={item.url} target="_blank" rel="noopener noreferrer">
-                                        <b><img src={item.logo}/></b>
-                                        <span>{item.name}</span>
-                                      </a>
-                                    </li>
-                                  );
-                                })
+                                getExchangesList().map(this.exchangeHtml)
                               }
                             </ul>
                           </div>
+                          <div className={css.xToBoost}>&gt; {formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " needed to boost this proposal"}</div>
                         </div>
                       </div>
                     </div>
@@ -354,14 +427,14 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                       <button
                         className={classNames({[css.launchMetaMask]: true, [css.disabled]: true})}
                         disabled
-                        onClick={this.handleClickAction.bind(this)}
+                        onClick={this.handleClickAction}
                         data-test-id="launch-metamask"
                       >
                         {transactionType}
                       </button>
                     </Tooltip>
                     :
-                    <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
+                    <button className={css.launchMetaMask} onClick={this.handleClickAction} data-test-id="launch-metamask">
                       {transactionType}
                     </button>
                   }

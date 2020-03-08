@@ -1,18 +1,28 @@
-// const BN = require("bn.js");
-import { IProposalType, ISchemeState } from "@daostack/client";
-import * as arcActions from "actions/arcActions";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
-import * as classNames from "classnames";
-import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
-import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";
-import Interweave from "interweave";
 import * as React from "react";
 import { connect } from "react-redux";
+// const BN = require("bn.js");
+import { IProposalType, ISchemeState } from "@daostack/client";
+import { enableWalletProvider, getArc } from "arc";
+
+import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
+import * as classNames from "classnames";
+import Interweave from "interweave";
+
+import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";
+
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
+import * as arcActions from "actions/arcActions";
+
+import Analytics from "lib/analytics";
 import { isValidUrl } from "lib/util";
+import { exportUrl, importUrlValues } from "lib/proposalUtils";
+
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+
 
 interface IStateProps {
   daoAvatarAddress: string;
@@ -47,28 +57,31 @@ interface IFormValues {
 interface IState {
   actions: Action[];
   currentAction: Action;
+  tags: Array<string>;
 }
 
 class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
+  initialFormValues: IFormValues;
+
   constructor(props: IProps) {
     super(props);
-
-    this.handleSubmit = this.handleSubmit.bind(this);
 
     if (!props.genericSchemeInfo) {
       throw Error("GenericSchemeInfo should be provided");
     }
-
+    this.setInititialFormValues();
     const actions = props.genericSchemeInfo.actions();
+    const initialActionId = this.initialFormValues.currentActionId;
     this.state = {
-      actions,
-      currentAction:  actions[0],
+      actions: props.genericSchemeInfo.actions(),
+      currentAction: initialActionId ? actions.find(action => action.id === initialActionId) : actions[0],
+      tags: this.initialFormValues.tags,
     };
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+  private handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const currentAction = this.state.currentAction;
 
@@ -83,8 +96,6 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     try {
       callData = this.props.genericSchemeInfo.encodeABI(currentAction, callValues);
     } catch (err) {
-      // alert(err.message);
-      console.log(err.message);
       showNotification(NotificationStatus.Failure, err.message);
       setSubmitting(false);
       return;
@@ -96,6 +107,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       callData,
       dao: this.props.daoAvatarAddress,
       scheme: this.props.scheme.address,
+      tags: this.state.tags,
       type: IProposalType.GenericScheme,
       value: 0, // amount of eth to send with the call
     };
@@ -106,6 +118,14 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       showNotification(NotificationStatus.Failure, err.message);
       throw err;
     }
+
+    Analytics.track("Submit Proposal", {
+      "DAO Address": this.props.daoAvatarAddress,
+      "Proposal Title": values.title,
+      "Scheme Address": this.props.scheme.address,
+      "Scheme Name": this.props.scheme.name,
+    });
+
     this.props.handleClose();
   }
 
@@ -145,6 +165,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
         </div>;
       default:
         if (field.type.includes("[]")) {
+          // eslint-disable-next-line react/jsx-no-bind
           return <FieldArray name={field.name} render={(arrayHelpers) => (
             <div className={css.arrayFieldContainer}>
               {values[field.name] && values[field.name].length > 0 ? (
@@ -166,7 +187,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   </div>
                 ))
               ) : ""}
-              <button className={css.addItemButton} type="button" onClick={() => arrayHelpers.push("")}>
+              <button className={css.addItemButton} data-test-id={field.name + ".add"} type="button" onClick={() => arrayHelpers.push("")}>
                 Add {field.label}
               </button>
             </div>
@@ -186,40 +207,64 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     />;
   }
 
-  public render() {
+  private onTagsChange = (tags: any[]): void => {
+    this.setState({tags});
+  }
+
+  private setInititialFormValues(){
+    this.initialFormValues = {
+      description: "",
+      title: "",
+      url: "",
+      currentActionId:"",
+      tags: [],
+    };
+    const actions = this.props.genericSchemeInfo.actions();
+    const daoAvatarAddress = this.props.daoAvatarAddress;
+    actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
+      if (typeof(field.defaultValue) !== "undefined") {
+        if (field.defaultValue === "_avatar") {
+          this.initialFormValues[field.name] = daoAvatarAddress;
+        } else {
+          this.initialFormValues[field.name] = field.defaultValue;
+        }
+      } else {
+        switch (field.type) {
+          case "uint64":
+          case "uint256":
+          case "bytes32":
+          case "bytes":
+          case "address":
+          case "string":
+            this.initialFormValues[field.name] = "";
+            break;
+          case "bool":
+            this.initialFormValues[field.name] = 0;
+            break;
+          case "address[]":
+            this.initialFormValues[field.name] = [""];
+            break;
+        }
+      }
+    }));
+    this.initialFormValues = importUrlValues<IFormValues>(this.initialFormValues);
+  }
+  public exportFormValues(values: IFormValues) {
+    values = {
+      ...values,
+      currentActionId: this.state.currentAction.id,
+      ...this.state,
+    };
+    exportUrl(values);
+    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
+  }
+
+  public render(): RenderOutput {
     const { handleClose } = this.props;
     const arc = getArc();
 
     const actions = this.state.actions;
     const currentAction = this.state.currentAction;
-
-    const initialFormValues: IFormValues = {
-      description: "",
-      title: "",
-      url: "",
-    };
-
-    actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
-      if (typeof(field.defaultValue) !== "undefined") {
-        initialFormValues[field.name] = field.defaultValue;
-      } else {
-        switch (field.type) {
-          case "uint256":
-            initialFormValues[field.name] = "";
-            break;
-          case "address":
-          case "string":
-            initialFormValues[field.name] = "";
-            break;
-          case "bool":
-            initialFormValues[field.name] = 0;
-            break;
-          case "address[]":
-            initialFormValues[field.name] = [""];
-            break;
-        }
-      }
-    }));
 
     return (
       <div className={css.createWrapperWithSidebar}>
@@ -241,8 +286,9 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
         <div className={css.formWrapper}>
           <Formik
-            initialValues={initialFormValues}
-            validate={(values: IFormValues) => {
+            initialValues={this.initialFormValues}
+            // eslint-disable-next-line react/jsx-no-bind
+            validate={(values: IFormValues): void => {
               const errors: any = {};
 
               const valueIsRequired = (name: string) => {
@@ -267,33 +313,38 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
               }
 
               for (const field of this.state.currentAction.getFields()) {
-                if (field.type !== "bool") {
+                if (field.type !== "bool" && !field.optional) {
                   valueIsRequired(field.name);
                 }
 
-                if (field.type === "uint256") {
-                  const value = values[field.name];
-                  try {
-                    field.callValue(value);
-                  } catch (error) {
-                    if (error.message === "Assertion failed") {
-                      // thank you BN.js for your helpful error messages
-                      errors[field.name] = "Invalid number value";
-                    } else {
-                      errors[field.name] = error.message;
-                    }
+                // Check if value can be interpreted correctly for this particular field
+                let value = values[field.name];
+                try {
+                  value = field.callValue(value);
+                } catch (error) {
+                  if (error.message === "Assertion failed") {
+                    // thank you BN.js for your helpful error messages
+                    errors[field.name] = "Invalid number value";
+                  } else {
+                    errors[field.name] = error.message;
                   }
                 }
+
                 if (field.type === "address") {
-                  const value = values[field.name];
                   if (!arc.web3.utils.isAddress(value)) {
                     errors[field.name] = "Invalid address";
                   }
                 }
 
+                if (field.type.includes("bytes")) {
+                  if (!arc.web3.utils.isHexStrict(value)) {
+                    errors[field.name] = "Must be a hex value";
+                  }
+                }
+
                 if (field.type === "address[]") {
-                  for (const value of values[field.name]) {
-                    if (!arc.web3.utils.isAddress(value)) {
+                  for (const i of value) {
+                    if (!arc.web3.utils.isAddress(i)) {
                       errors[field.name] = "Invalid address";
                     }
                   }
@@ -301,7 +352,8 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
               }
               return errors;
             }}
-            onSubmit={this.handleSubmit.bind(this)}
+            onSubmit={this.handleSubmit}
+            // eslint-disable-next-line react/jsx-no-bind
             render={({
               errors,
               touched,
@@ -316,9 +368,9 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                     <Interweave content={currentAction.description} />
                   </div>
                   <label htmlFor="titleInput">
-                    Title
-                    <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
+                      Title
+                    <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
                     autoFocus
@@ -331,8 +383,8 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   />
 
                   <label htmlFor="descriptionInput">
-                    Description
                     <div className={css.requiredMarker}>*</div>
+                      Description
                     <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                     <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
@@ -344,6 +396,14 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                     name="description"
                     className={touched.description && errors.description ? css.error : null}
                   />
+
+                  <label className={css.tagSelectorLabel}>
+                    Tags
+                  </label>
+
+                  <div className={css.tagSelectorContainer}>
+                    <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
+                  </div>
 
                   <label htmlFor="urlInput">
                     URL
@@ -370,9 +430,9 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                         return (
                           <div key={field.name}>
                             <label htmlFor={field.name}>
+                              {field.type !== "bool" && !field.optional ? <div className={css.requiredMarker}>*</div> : ""}
                               { field.label }
                               <ErrorMessage name={field.name}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                              {field.type !== "bool" ? <div className={css.requiredMarker}>*</div> : ""}
                             </label>
                             {this.renderField(field, values, touched, errors)}
                           </div>
@@ -382,12 +442,19 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   </div>
 
                   <div className={css.createProposalActions}>
+                    <TrainingTooltip overlay="Export proposal" placement="top">
+                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                        <img src="/assets/images/Icon/share-blue.svg" />
+                      </button>
+                    </TrainingTooltip>
                     <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                       Cancel
                     </button>
-                    <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                      Submit proposal
-                    </button>
+                    <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
+                      <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
+                        Submit proposal
+                      </button>
+                    </TrainingTooltip>
                   </div>
                 </Form>
               );

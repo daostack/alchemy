@@ -29,8 +29,8 @@
 }
 
 .content {
-  height: 100%;
   background-color: white;
+  text-align: center;
 }
 
 .voteBreakdown {
@@ -54,10 +54,10 @@
  }
 
 .summary {
-  text-align: left;
-  width: 375px;
-  margin: 0 auto;
-  padding: 20px 0;
+  padding-top: 20px;
+  padding-bottom: 5px;
+  width: fit-content;
+  display: inline-block;
 }
 
 .summary::after {
@@ -151,43 +151,61 @@
   border-top: 1px solid rgba(244, 246, 249, 1.000);
   border-bottom: 1px solid rgba(244, 246, 249, 1.000);
   font-family: "Open Sans", sans-serif;
-  height: 250px;
+  text-align: center;
+  display: table;
+  width: 97%;
+  margin-left: 8px;
+  margin-right: 8px;
 
-  > div:first-of-type {
+  .yesVotes {
     border-right: 1px solid rgba(244, 246, 249, 1.000);
   }
 
-  > div {
-    height: 100%;
-    display: inline-block;
-    width: 49%;
-    overflow-y: scroll;
+  .container {
+    &.notAnyVotes {
+      text-align: center;
 
-    > div {
-      padding: 24px 24px 0 24px;
+      .notAnyVotes {
+        display: inline-block;
+        font-size: 13px;
+        margin-top: 12px;
+      }
     }
   }
 
-  .voteRow {
-    position: relative;
+  .yesVotes, .noVotes {
+    display: table-cell;
+    text-align: left;
     vertical-align: top;
-  }
 
-  .voteRowContainer {
-    padding: 10px 10px 7px 10px;
-    font-size: 13px;
-    color: rgba(80, 97, 118, 1.000);
-    font-weight: normal;
+    .container {
+      display: inline-block;
+      max-height: 250px;
+      width: 100%;
+      overflow-y: auto;
 
-    a {
-      color: rgba(80, 97, 118, 1.000);
-      text-decoration: none;
-    }
+      .voteRow {
+        position: relative;
+        vertical-align: top;
 
-    img {
-      width: 18px;
-      height: 18px;
-      border-radius: 2px;
+        .voteRowContainer {
+          padding: 10px 10px 7px 10px;
+          font-size: 13px;
+          color: rgba(80, 97, 118, 1.000);
+          font-weight: normal;
+
+          a {
+            color: rgba(80, 97, 118, 1.000);
+            text-decoration: none;
+          }
+
+          img {
+            width: 18px;
+            height: 18px;
+            border-radius: 2px;
+          }
+        }
+      }
     }
   }
 }

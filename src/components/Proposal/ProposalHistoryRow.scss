@@ -4,36 +4,27 @@
   margin: 0 auto 3px auto;
   border-radius: 3px;
   height: 65px;
-  display: flex;
   position: relative;
   font-size: 13px;
   font-family: $body-font;
+  cursor: pointer;
 }
 
 .proposalCreator {
-  width: 180px;
+  width: auto;
+  padding-left: 7px;
+  cursor: default;
 }
 
 .endDate {
-  width: 60px;
   color: $gray-1;
-  padding-top: 15px;
-  padding-right: 10px;
-  text-align: left;
 }
 
 .scheme {
-  width: 80px;
   color: $gray-1;
-  padding-top: 15px;
-  text-align: left;
 }
 
 .title {
-  flex-grow: 1;
-  width: 250px;
-  padding: 15px;
-  position: relative;
   color: rgba(80, 97, 118, 1.000);
 
   a {
@@ -43,26 +34,13 @@
   a:visited {
     color: rgba(80, 97, 118, 1.000);
   }
-
-  div {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
 }
 
 .closeReason {
-  width: 160px;
   position: relative;
 
   .decisionPassed, .decisionFailed {
     display: none;
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    margin-top: -3px;
 
     img {
       width: 15px;
@@ -74,7 +52,6 @@
 
   .decisionReason {
     color: $gray-1;
-    padding-top: 4px;
   }
 }
 
@@ -83,21 +60,14 @@
 }
 
 .predictions, .votes, .myActions {
-  width: 100px;
-
   .myVote, .myStake, .passVote, .failVote, .forStake, .againstStake {
     display: none;
   }
 }
 
-.predictions {
-    width: 110px;
-}
-
 .myActions.iVoted .myVote, .myActions.iStaked .myStake {
   display: block;
   padding-bottom: 5px;
-  text-align: left;
 }
 
 .myActions.forStake .forStake, .myActions.againstStake .againstStake, .myActions.passVote .passVote, .myActions.failVote .failVote {
@@ -111,12 +81,10 @@
   color: rgba(80, 97, 118, 1.000);
   padding-top: 10px;
   text-align: center;
-  width: 110px;
 }
 
 .voteControls {
   position: relative;
-  top: 4px;
 
   button span {
     font-weight: normal;
@@ -131,56 +99,47 @@
 
 @media only screen and (max-width: 425px) {
   .wrapper {
-    height: 130px;
+    height: 110px;
     padding: 10px;
     display: block;
     width: auto;
 
-    div {
+    td {
       display: inline-block;
     }
-    
-    div.scheme {
+
+    .scheme {
       display: none;
     }
 
-    div.myActions {
+    .myActions {
       display: none;
     }
   }
 
   .endDate {
-    width: 70px;
-    padding-top: 8px;
     text-align: right;
     font-size: 11px;
     float: right;
   }
 
   .title {
-    padding: 15px 0;
+    width: 100%;
+    padding: 0 0 15px 8px;
     font-weight: bold;
     font-size: 13px;
   }
 
   .closeReason {
-    width: 110px;
-    position: absolute;
-    top: 101px;
-    left: 10px;
-    width: 130px;
+
   }
 
   .votes {
-    position: absolute;
-    top: 70px;
-    left: 150px;
+
   }
 
   .predictions {
-    position: absolute;
-    left: 230px;
-    top: 63px;
+
   }
 
   .closeReason .decisionReason {

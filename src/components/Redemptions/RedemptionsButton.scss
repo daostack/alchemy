@@ -1,0 +1,41 @@
+.button {
+  position: relative;
+
+  img {
+    width: 23px;
+  }
+
+  .notification {
+    display: inline-block;
+    position: absolute;
+    top: 2px;
+    right: -3px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: #f65050;
+  }
+}
+
+.menuTooltip {
+  // Overrides rc-tooltip's styles
+  opacity: 1 !important;
+  position: fixed !important;
+  padding: 0 !important;
+  border-radius: 0px 0px 8px 8px;
+  box-shadow: 0 2px 10px 0 rgba(133, 168, 208, 0.61);
+
+  // Position the arrow of the tooltip ourselves while waiting for
+  // https://github.com/react-component/tooltip/pull/166 to be merged.
+  // If we don't, the arrow won't point at the button but will be centered in
+  // the middle of the tooltip.
+  :global(.rc-tooltip-arrow) {
+    left: inherit !important;
+    right: 115px !important;
+  }
+
+  :global(.rc-tooltip-inner) {
+    padding: 0 !important;
+    background-color: inherit !important;
+  }
+}

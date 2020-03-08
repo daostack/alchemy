@@ -4,17 +4,30 @@ import { AsyncActionSequence } from "actions/async";
 
 export enum ActionTypes {
   GET_PROFILE_DATA = "GET_PROFILE_DATA",
-  UPDATE_PROFILE = "UPDATE_PROFILE"
+  UPDATE_PROFILE = "UPDATE_PROFILE",
+  FOLLOW_ITEM = "FOLLOW_ITEM",
+  SAVE_THREEBOX = "SAVE_THREEBOX",
 }
 
-export interface IProfileState {
+export type FollowType = "daos" | "proposals" | "users";
+
+export type IProfileState = {
   description: string;
-  ethereumAccountAddress?: string;
+  ethereumAccountAddress: string;
+  follows: {
+    daos: string[];
+    proposals: string[];
+    schemes: string[];
+    users: string[];
+  };
+  image?: any;
   name: string;
-  socialURLs: { [provider: string]: string };
-}
+  socialURLs: any;
+};
 
 export interface IProfilesState {
+  threeBox: any; // To store the opened 3box box so we dont have to wait to open it every time we want to update data in it
+  threeBoxSpace: any; // To store the opened 3box DAOstack space so we dont have to wait to open it every time we want to update data in it
   [accountAddress: string]: IProfileState;
 }
 
@@ -22,41 +35,62 @@ export function newProfile(ethereumAccountAddress: string): IProfileState {
   return {
     description: "",
     ethereumAccountAddress,
+    follows: {
+      daos: [],
+      proposals: [],
+      schemes: [],
+      users: [],
+    },
     name: "",
     socialURLs: {},
   };
 }
 
-export function profileDbToRedux(dbProfile: any) {
-  const reduxProfile = dbProfile;
-  if (!dbProfile.socialURLs) {
-    reduxProfile.socialURLs = {};
-  }
-  if (dbProfile.facebookURL) {
-    reduxProfile.socialURLs.facebook = dbProfile.facebookURL;
-  }
-  if (dbProfile.githubURL) {
-    reduxProfile.socialURLs.github = dbProfile.githubURL;
-  }
-  if (dbProfile.twitterURL) {
-    reduxProfile.socialURLs.twitter = dbProfile.twitterURL;
-  }
-  return reduxProfile;
-}
-
-const initialState: IProfilesState = {};
+const initialState: IProfilesState = { threeBox: null, threeBoxSpace: null };
 
 const profilesReducer = (state = initialState, action: any) => {
-  const { payload } = action;
+  const { payload, meta } = action;
+
+  if (payload && Object.prototype.hasOwnProperty.call(payload, "threeBox")) {
+    state = update(state, { threeBox: { $set: payload.threeBox } });
+    delete payload.threeBox;
+  }
+
+  if (payload && Object.prototype.hasOwnProperty.call(payload, "threeBoxSpace")) {
+    state = update(state, { threeBoxSpace: { $set: payload.threeBoxSpace } });
+    delete payload.threeBoxSpace;
+  }
 
   switch (action.type) {
 
     case ActionTypes.UPDATE_PROFILE: {
       switch (action.sequence) {
         case AsyncActionSequence.Success:
-          return update(state, { [action.meta.accountAddress]: (profile: any) => {
-            return update(profile || newProfile(action.meta.accountAddress), { $merge: payload });
+          return update(state, { [meta.accountAddress]: (profile: any) => {
+            return update(profile || newProfile(meta.accountAddress), { $merge: payload });
           }});
+        default: {
+          return state;
+        }
+      }
+    }
+
+    case ActionTypes.FOLLOW_ITEM: {
+      switch (action.sequence) {
+        case AsyncActionSequence.Success: {
+          const { type, id, isFollowing } = payload;
+
+          if (!state[meta.accountAddress]) {
+            state = update(state, { [meta.accountAddress]: { $set: newProfile(meta.accountAddress) }});
+          }
+
+          if (isFollowing && !state[meta.accountAddress].follows[type as FollowType].includes(id)) {
+            return update(state, { [meta.accountAddress]: { follows: { [type]: { $push: [id] } }}});
+          } else if (!isFollowing && state[meta.accountAddress].follows[type as FollowType].includes(id)) {
+            return update(state, { [meta.accountAddress]: { follows: { [type]: (arr: string[]) => arr.filter((item) => item !== id) }}});
+          }
+          return state;
+        }
         default: {
           return state;
         }
@@ -68,13 +102,14 @@ const profilesReducer = (state = initialState, action: any) => {
         case AsyncActionSequence.Success: {
           const { profiles } = payload;
 
-          for (const profile of profiles) {
-            state = update(state, { [profile.ethereumAccountAddress]: { $set: profileDbToRedux(profile) } });
+          for (const address of Object.keys(profiles)) {
+            state = update(state, { [address]: { $set: profiles[address] } });
           }
           return state;
         }
         case AsyncActionSequence.Failure: {
-          console.log(`ERROR: ${payload}`);
+          // eslint-disable-next-line no-console
+          console.error(`ERROR: ${payload}`);
           return state;
         }
       }

@@ -24,7 +24,10 @@ export default class MarkdownField extends React.Component<Props, IState> {
     };
   }
 
-  public render() {
+  private generateMarkdownPreview = (markdown: any) => Promise.resolve(<ReactMarkdown source={markdown} />);
+  private onTabChange = (tab: any) => { this.setState({ selectedTab: tab}); };
+
+  public render(): RenderOutput {
     const { field, onChange } = this.props;
 
     // Hacky way to turn off tab selection of buttons in the toolbar
@@ -42,16 +45,22 @@ export default class MarkdownField extends React.Component<Props, IState> {
       <div>
         <ReactMde
           commands={usedCommands}
-          generateMarkdownPreview={(markdown) =>
-            Promise.resolve(<ReactMarkdown source={markdown} />)
-          }
+          generateMarkdownPreview={this.generateMarkdownPreview}
           maxEditorHeight={84}
           minEditorHeight={84}
           minPreviewHeight={74}
           onChange={onChange}
-          onTabChange={(tab) => { this.setState({ selectedTab: tab}); }}
+          onTabChange={this.onTabChange}
           selectedTab={this.state.selectedTab}
           value={field.value}
+          childProps={{
+            writeButton: {
+              tabIndex: -1,
+            },
+            previewButton: {
+              tabIndex: -1,
+            },
+          }}
         />
       </div>
     );

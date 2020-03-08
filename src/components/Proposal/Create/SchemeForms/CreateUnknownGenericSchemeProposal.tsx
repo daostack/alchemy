@@ -1,11 +1,15 @@
 import { ISchemeState } from "@daostack/client";
-import * as arcActions from "actions/arcActions";
-import { enableWeb3ProviderAndWarn } from "arc";
+import { createProposal } from "actions/arcActions";
+import { enableWalletProvider } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
+import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
-import { showNotification } from "reducers/notifications";
-import { isValidUrl } from "lib/util";
+import { showNotification, NotificationStatus } from "reducers/notifications";
+import { baseTokenName, isValidUrl } from "lib/util";
+import { exportUrl, importUrlValues } from "lib/proposalUtils";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
@@ -16,14 +20,18 @@ interface IExternalProps {
 }
 
 interface IDispatchProps {
-  createProposal: typeof arcActions.createProposal;
+  createProposal: typeof createProposal;
   showNotification: typeof showNotification;
+}
+
+interface IStateProps {
+  tags: Array<string>;
 }
 
 type IProps = IExternalProps & IDispatchProps;
 
 const mapDispatchToProps = {
-  createProposal: arcActions.createProposal,
+  createProposal,
   showNotification,
 };
 
@@ -33,41 +41,73 @@ interface IFormValues {
   title: string;
   url: string;
   value: number;
+  [key: string]: any;
 }
 
-class CreateGenericScheme extends React.Component<IProps, null> {
+class CreateGenericScheme extends React.Component<IProps, IStateProps> {
+
+  initialFormValues: IFormValues;
 
   constructor(props: IProps) {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.initialFormValues = importUrlValues<IFormValues>({
+      description: "",
+      callData: "",
+      title: "",
+      url: "",
+      value: 0,
+      tags: [],
+    });
+    this.state = {
+      tags: this.initialFormValues.tags,
+    };
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
     const proposalValues = {...values,
-      scheme: this.props.scheme.address,
       dao: this.props.daoAvatarAddress,
+      scheme: this.props.scheme.address,
+      tags: this.state.tags,
     };
 
     setSubmitting(false);
     await this.props.createProposal(proposalValues);
+
+    Analytics.track("Submit Proposal", {
+      "DAO Address": this.props.daoAvatarAddress,
+      "Proposal Title": values.title,
+      "Scheme Address": this.props.scheme.address,
+      "Scheme Name": this.props.scheme.name,
+    });
+
     this.props.handleClose();
   }
 
-  public render(): any {
+  // Exports data from form to a shareable url.
+  public exportFormValues(values: IFormValues) {
+    exportUrl({ ...values, ...this.state });
+    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
+  }
+
+  private onTagsChange = (tags: any[]): void => {
+    this.setState({tags});
+  }
+
+  public render(): RenderOutput {
     const { handleClose } = this.props;
+
+    const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
     return (
       <div className={css.contributionReward}>
         <Formik
-          // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
-          initialValues={{
-            callData: "",
-            title: "",
-            url: "",
-            value: 0,
-          } as IFormValues}
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          initialValues={this.initialFormValues}
+          // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
 
@@ -97,7 +137,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
               errors.url = "Invalid URL";
             }
 
-            const bytesPattern = new RegExp("0x[0-9a-e]+", "i");
+            const bytesPattern = new RegExp("0x[0-9a-f]+", "i");
             if (values.callData && !bytesPattern.test(values.callData)) {
               errors.callData = "Invalid encoded function call data";
             }
@@ -109,6 +149,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
             return errors;
           }}
           onSubmit={this.handleSubmit}
+          // eslint-disable-next-line react/jsx-no-bind
           render={({
             errors,
             touched,
@@ -118,13 +159,16 @@ class CreateGenericScheme extends React.Component<IProps, null> {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             setFieldTouched,
             setFieldValue,
+            values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
-              <label htmlFor="titleInput">
+              <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
+                <label htmlFor="titleInput">
+                  <div className={css.requiredMarker}>*</div>
                 Title
-                <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                <div className={css.requiredMarker}>*</div>
-              </label>
+                  <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                </label>
+              </TrainingTooltip>
               <Field
                 autoFocus
                 id="titleInput"
@@ -135,12 +179,14 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                 className={touched.title && errors.title ? css.error : null}
               />
 
-              <label htmlFor="descriptionInput">
+              <TrainingTooltip overlay={fnDescription} placement="right">
+                <label htmlFor="descriptionInput">
+                  <div className={css.requiredMarker}>*</div>
                 Description
-                <div className={css.requiredMarker}>*</div>
-                <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-                <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-              </label>
+                  <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                  <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                </label>
+              </TrainingTooltip>
               <Field
                 component={MarkdownField}
                 onChange={(value: any) => { setFieldValue("description", value); }}
@@ -150,10 +196,22 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                 className={touched.description && errors.description ? css.error : null}
               />
 
-              <label htmlFor="urlInput">
+              <TrainingTooltip overlay="Add some tags to give context about your proposal e.g. idea, signal, bounty, research, etc" placement="right">
+                <label className={css.tagSelectorLabel}>
+                Tags
+                </label>
+              </TrainingTooltip>
+
+              <div className={css.tagSelectorContainer}>
+                <TagsSelector onChange={this.onTagsChange}></TagsSelector>
+              </div>
+
+              <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
+                <label htmlFor="urlInput">
                 URL
-                <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-              </label>
+                  <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                </label>
+              </TrainingTooltip>
               <Field
                 id="urlInput"
                 maxLength={120}
@@ -166,9 +224,9 @@ class CreateGenericScheme extends React.Component<IProps, null> {
               <div className={css.encodedData}>
                 <div>
                   <label htmlFor="callData">
+                    <div className={css.requiredMarker}>*</div>
                     Encoded function call data
                     <ErrorMessage name="callData">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                    <div className={css.requiredMarker}>*</div>
                   </label>
                   <Field
                     id="callDataInput"
@@ -181,13 +239,13 @@ class CreateGenericScheme extends React.Component<IProps, null> {
 
                 <div>
                   <label htmlFor="value">
-                    ETH Value
-                    <ErrorMessage name="value">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
+                    {baseTokenName()} Value
+                    <ErrorMessage name="value">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
                     id="valueInput"
-                    placeholder="How much ETH to transfer with the call"
+                    placeholder={`How much ${baseTokenName()} to transfer with the call`}
                     name="value"
                     type="number"
                     className={touched.value && errors.value ? css.error : null}
@@ -198,12 +256,19 @@ class CreateGenericScheme extends React.Component<IProps, null> {
               </div>
 
               <div className={css.createProposalActions}>
+                <TrainingTooltip overlay="Export proposal" placement="top">
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                    <img src="/assets/images/Icon/share-blue.svg" />
+                  </button>
+                </TrainingTooltip>
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
                 </button>
-                <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
+                <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
+                  <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                   Submit proposal
-                </button>
+                  </button>
+                </TrainingTooltip>
               </div>
             </Form>
           }

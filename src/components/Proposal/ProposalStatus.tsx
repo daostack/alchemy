@@ -1,7 +1,7 @@
 import { IProposalStage, IProposalState } from "@daostack/client";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import * as React from "react";
-import { proposalExpired, proposalFailed, proposalPassed } from "reducers/arcReducer";
+import { proposalExpired, proposalFailed, proposalPassed } from "lib/proposalHelpers";
 import * as css from "./ProposalStatus.scss";
 
 export default class ProposalStatus extends React.Component<IProps, null> {
@@ -10,7 +10,7 @@ export default class ProposalStatus extends React.Component<IProps, null> {
     super(props);
   }
 
-  public render() {
+  public render(): RenderOutput {
     const {
       proposalState,
     } = this.props;
@@ -54,7 +54,7 @@ export default class ProposalStatus extends React.Component<IProps, null> {
                     <div className={classNames({
                       [css.status]: true,
                       [css.pending]: true,
-                    })}><img src="/assets/images/Icon/pending.svg" />Pending</div> :
+                    })}><img src="/assets/images/Icon/pending.svg" />Pending Boosting</div> :
 
                     (proposalState.stage === IProposalStage.Boosted) ?
                       <div className={classNames({
@@ -62,10 +62,16 @@ export default class ProposalStatus extends React.Component<IProps, null> {
                         [css.boosted]: true,
                       })}><img src="/assets/images/Icon/boosted.svg" />Boosted</div> :
 
-                      <div className={classNames({
-                        [css.status]: true,
-                        [css.expired]: true,
-                      })}>[unknown status]</div>
+                      (proposalState.stage === IProposalStage.QuietEndingPeriod) ?
+                        <div className={classNames({
+                          [css.status]: true,
+                          [css.quietEnding]: true,
+                        })}><img src="/assets/images/Icon/boosted.svg" />Boosted (overtime)</div> :
+
+                        <div className={classNames({
+                          [css.status]: true,
+                          [css.expired]: true,
+                        })}>[unknown status]</div>
         )
         }
       </div>

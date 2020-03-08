@@ -7,6 +7,7 @@
     border-radius: 10px;
     height: 20px;
     line-height: 20px;
+    font-size: 11px;
     padding: 0 6px;
     color: $white;
     border: none;
@@ -24,15 +25,18 @@
     }
   }
 
-  button:hover {
+  button:hover,
+  &.expanded button {
     width: auto;
   }
 
-  button.boostButton:hover {
+  button.boostButton:hover,
+  &.expanded button.boostButton {
     width: 67px;
   }
 
-  button.executeButton:hover {
+  button.executeButton:hover,
+  &.expanded button.executeButton {
     width: 86px;
   }
 }
@@ -54,6 +58,12 @@
 }
 
 .redeemButton {
+
+  &:disabled {
+    background-color: rgba(200,200,200,.5);
+    color: rgba(75,75,75,1);
+  }
+
   img {
     margin-left: -1px;
     margin-right: 1px;

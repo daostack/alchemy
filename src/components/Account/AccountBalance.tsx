@@ -15,7 +15,7 @@ export default class Balance extends React.Component<IProps, null>  {
     super(props);
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const { balance, tokenSymbol } = this.props;
 
     return (

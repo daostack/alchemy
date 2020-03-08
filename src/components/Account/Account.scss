@@ -1,3 +1,9 @@
+.loading {
+  font-size: 18px;
+  margin-top: 24px;
+  margin-left: 24px;
+}
+
 .accountBalance {
   text-align: right;
 }
@@ -12,48 +18,19 @@ a.historyView {
   overflow: hidden;
   height: 20px;
   position: relative;
-  top: -3px;
   left: 5px;
 }
 
 a.detailView {
   position: relative;
-  top: -6px;
   font-size: 13px;
-  color: rgba(85, 85, 85, 1.000);
-  left: 17px;
+  color: rgba(85, 85, 85, 1);
+  left: 2px;
 }
 
-:global .membersPage {
-  border-radius: 3px;
-  height: 40px;
-  width: 40px;
-  float: left;
-  margin: 3px 20px 0 15px;
-}
-
-.detailView.targetAccount {
-  width: 35px;
-  height: 35px;
-  margin-right: 0;
-  margin-left: -6px;
-
-  .avatar img {
-    width: 35px;
-    height: 35px;
-  }
-}
-
-.historyView.targetAccount {
-  width: 40px;
-  height: 40px;
-  margin-top: 7px;
-  margin-left: 7px;
-
-  .avatar img {
-    width: 40px;
-    height: 40px;
-  }
+.accountImage {
+  border-radius: 15%;
+  vertical-align: middle;
 }
 
 .socialProof {
@@ -63,46 +40,36 @@ a.detailView {
 .targetAccount {
   position: relative;
   display: inline-block;
-  width: 22px;
-  height: 22px;
   overflow: visible;
-  margin-top: -14px;
-  transition: all .25s ease;
-  top: 6px;
-  margin-right: 13px;
-  left: 7px;
+  transition: all 0.25s ease;
+  margin-right: 6px;
+  vertical-align: middle;
 
   .avatar {
-    width: 12px;
-    height: 12px;
     z-index: 1;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(255,255,255, 0);
-    transition: all .25s ease;
-    border-radius: 2px;
+    background-color: rgba(255, 255, 255, 0);
+    transition: all 0.25s ease;
 
     img {
-      transition: all .25s ease;
+      transition: all 0.25s ease;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 12px;
-      border-radius: 0;
-      border-radius: 2px;
-      height: 12px;
     }
   }
+
   .accountInfo {
     position: absolute;
     z-index: 0;
     opacity: 0;
     left: 50%;
     top: -150px;
-    padding: 60px 0 0 0;
+    padding: 40px 0 0 0;
     width: 190px;
     font-size: $caption;
     color: $black;
@@ -110,7 +77,7 @@ a.detailView {
     transform: translateX(-50%) scale(0);
     background-color: $white;
     border-radius: 3px;
-    transition: all .25s ease;
+    transition: all 0.25s ease;
     box-shadow: $shadow-3;
     text-align: center;
 
@@ -125,7 +92,7 @@ a.detailView {
       position: relative;
       text-align: left;
       border-radius: 3px;
-      border: 1px solid rgba(255,255,255,.5);
+      border: 1px solid rgba(255, 255, 255, 0.5);
 
       span {
         display: inline-block;
@@ -161,9 +128,9 @@ a.detailView {
       padding: 20px 0;
       margin-top: 10px;
       text-align: center;
-      background-color: rgba(242, 242, 242, 1.000);
+      background-color: rgba(242, 242, 242, 1);
 
-      &>span {
+      & > span {
         font-size: $small;
         color: $black-halftone;
       }
@@ -180,8 +147,13 @@ a.detailView {
   }
 }
 
+a.accountName {
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
 .targetAccount:hover {
-    z-index: 10000000;
+  z-index: 10000000;
 
   .avatar {
     width: 80px;
@@ -192,21 +164,12 @@ a.detailView {
       height: 50px;
     }
   }
+
   .accountInfo {
     opacity: 1;
     top: 0px;
     transform: translateX(-50%) scale(1);
   }
-}
-
-.saveProfile {
-  display: block;
-  text-align: right;
-}
-
-
-.profileData {
-  flex-grow: 2;
 }
 
 /***** Account Profile ******/
@@ -215,27 +178,16 @@ a.detailView {
   height: 100%;
 }
 
-.socialProof {
-  width: 50%;
-  left: 30%;
-  position: absolute;
-  font-size: 14px;
-  left: 200px;
-  top: 30px;
-
-  p {
-    font-size: 12px;
-    padding: 0;
-  }
+.profileData {
+  flex-grow: 2;
 }
 
 .profileContainer {
-  max-width: 800px;
+  max-width: 700px;
   width: 100%;
   border-radius: 15px;
   margin: 0 auto;
   margin-top: 40px;
-  padding: 0 20px 50px 250px;
   display: flex;
   flex-direction: column;
 
@@ -248,14 +200,19 @@ a.detailView {
   .profileContent {
     display: block;
     position: relative;
+
+    .followButton {
+      margin-top: 10px;
+    }
   }
 
   .userAvatarContainer {
     width: 100px;
-    img {
-      width: 70px;
-      border-radius: 10px;
-    }
+  }
+
+  .saveProfile {
+    display: block;
+    text-align: right;
   }
 
   .profileDataContainer {
@@ -265,7 +222,7 @@ a.detailView {
     label {
       font-weight: normal;
       font-size: 12px;
-      opacity: .7;
+      opacity: 0.7;
       margin-bottom: 5px;
       display: block;
     }
@@ -307,7 +264,8 @@ a.detailView {
     }
   }
 
-  input, textarea {
+  input,
+  textarea {
     display: block;
     border: 1px solid #d0d9e1;
     padding: 15px;
@@ -334,9 +292,13 @@ a.detailView {
   }
 }
 
+.profileContainer.withDao {
+  padding-left: 0px;
+}
+
 .socialLogins {
   position: relative;
-  height: 180px;
+  padding-bottom: 20px;
   width: 100%;
 }
 
@@ -354,7 +316,7 @@ input {
 
 .errorMessage {
   position: relative;
-  color: red
+  color: red;
 }
 
 .submitButton {
@@ -363,15 +325,14 @@ input {
   line-height: 30px;
   font-weight: bold;
   color: $white;
-  transition: all .25s ease;
-  background-color: rgba(3, 118, 255, 1.000);
+  transition: all 0.25s ease;
+  background-color: rgba(3, 118, 255, 1);
   border-radius: 30px;
   border: none;
   font-size: 14px;
   padding: 0 15px;
   margin-right: 45px;
   margin-top: 30px;
-
 
   &:hover {
     cursor: pointer;
@@ -387,9 +348,9 @@ input {
 }
 
 .submitButton:disabled {
-  background-color: rgba(200,200,200,.5);
-  border: 1px solid rgba(200,200,200,1);
-  color: rgba(75,75,75,1);
+  background-color: rgba(200, 200, 200, 0.5);
+  border: 1px solid rgba(200, 200, 200, 1);
+  color: rgba(75, 75, 75, 1);
 }
 
 .submitButton:disabled .sendIcon {
@@ -407,14 +368,12 @@ input {
   }
 }
 
-
 @media only screen and (max-width: 1280px) {
   a.historyView {
-    width: 50%;
+    width: 55px;
     font-size: 12px;
   }
 }
-
 
 @media only screen and (max-width: 425px) {
   .profileWrapper {
@@ -430,7 +389,8 @@ input {
       padding: 15px;
     }
 
-    input,textarea {
+    input,
+    textarea {
       width: 88%;
     }
 
@@ -453,35 +413,12 @@ input {
   }
 
   .socialProof {
-    left: 70px;
-    opacity: .6;
+    opacity: 0.6;
     width: 77%;
-  }
-
-  :global .membersPage {
-    border-radius: 3px;
-    height: 40px;
-    width: 40px;
-    float: left;
-    margin: 3px 10px 0 0px;
-  }
-
-  .historyView.targetAccount {
-    width: 12px;
-    height: 12px;
-  }
-
-  .historyView.targetAccount .avatar {
-    top: 3px;
-  }
-
-  .historyView.targetAccount .avatar img {
-    height: 12px;
-    width: 12px;
   }
 
   a.historyView {
     font-size: 11px;
-    top: 10px;
+    width: auto;
   }
 }

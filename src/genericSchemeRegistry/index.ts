@@ -1,27 +1,39 @@
 // tslint:disable:max-classes-per-file
-/*
- */
 import BN = require("bn.js");
+import { targetedNetwork, Networks } from "arc";
+
 const Web3 = require("web3");
+const namehash = require("eth-ens-namehash");
 const dutchXInfo = require("./schemes/DutchX.json");
 const gpInfo = require("./schemes/GenesisProtocol.json");
+const ensRegistryInfo = require("./schemes/ENSRegistry.json");
+const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
+const registryLookupInfo = require("./schemes/RegistryLookup.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
+  ensRegistryInfo,
+  ensPublicResolverInfo,
   gpInfo,
+  registryLookupInfo,
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
   main: {},
   rinkeby: {},
-  private: {},
+  xdai: {},
+  ganache: {},
 };
 
 for (const schemeInfo of KNOWNSCHEMES) {
   for (const network of Object.keys(SCHEMEADDRESSES)) {
-    for (const address of schemeInfo.addresses[network]) {
-      SCHEMEADDRESSES[network][address.toLowerCase()] = schemeInfo;
-    }
+    const networkId = (network === "ganache" && "private" || network);
+    const addresses = schemeInfo.addresses[networkId];
+    if (addresses) {
+      for (const address of addresses) {
+        SCHEMEADDRESSES[network][address.toLowerCase()] = schemeInfo;
+      }
+    } 
   }
 }
 interface IABISpec {
@@ -34,7 +46,7 @@ interface IABISpec {
   type: string;
 }
 
-export interface IActionFieldOptions {
+interface IActionFieldOptions {
   decimals?: number;
   defaultValue?: any;
   name: string;
@@ -42,10 +54,12 @@ export interface IActionFieldOptions {
   labelTrue?: string;
   labelFalse?: string;
   type?: string;
+  optional?: boolean;
   placeholder?: string;
+  transformation?: string;
 }
 
-export  class ActionField {
+export class ActionField {
   public decimals?: number;
   public defaultValue?: any;
   public name: string;
@@ -53,7 +67,9 @@ export  class ActionField {
   public labelTrue?: string;
   public labelFalse?: string;
   public type?: string;
+  public optional?: boolean;
   public placeholder?: string;
+  public transformation?: string;
 
   constructor(options: IActionFieldOptions) {
     this.decimals = options.decimals;
@@ -63,25 +79,44 @@ export  class ActionField {
     this.labelTrue = options.labelTrue;
     this.labelFalse = options.labelFalse;
     this.type = options.type;
+    this.optional = options.optional;
     this.placeholder = options.placeholder;
+    this.transformation = options.transformation;
   }
   /**
    * the value to pass to the contract call (as calculated from the user's input data)
    * @return [description]
    */
-  public callValue(userValue: any) {
+  public callValue(userValue: string|string[]) {
+    if (Array.isArray(userValue)) {
+      userValue = userValue.map((val: string) => Object.prototype.hasOwnProperty.call(val, "trim") ? val.trim() : val);
+    } else if (Object.prototype.hasOwnProperty.call(userValue, "trim")) {
+      userValue = userValue.trim();
+    }
+
     if (this.type === "bool") {
-      return parseInt(userValue, 10) === 1;
+      return parseInt(userValue as string, 10) === 1;
     }
 
     if (this.decimals) {
-      return (new BN(userValue).mul(new BN(10).pow(new BN(this.decimals)))).toString();
+      return (new BN(userValue as string).mul(new BN(10).pow(new BN(this.decimals)))).toString();
     }
+
+    switch (this.transformation) {
+      case "namehash": {
+        return namehash.hash(userValue);
+      }
+      case "keccak256": {
+        const web3 = new Web3();
+        return web3.utils.keccak256(userValue);
+      }
+    }
+
     return userValue;
   }
 }
 
-export interface IActionSpec {
+interface IActionSpec {
   description: string;
   id: string;
   label: string;
@@ -89,7 +124,7 @@ export interface IActionSpec {
   notes: string;
   fields: any[];
 }
-export interface IGenericSchemeJSON {
+interface IGenericSchemeJSON {
   name: string;
   addresses: any[];
   actions: IActionSpec[];
@@ -195,6 +230,7 @@ export class GenericSchemeInfo {
   }
 }
 
+
 export class GenericSchemeRegistry {
   /**
    * Check the address to see if this is a known contract, and if so
@@ -202,23 +238,11 @@ export class GenericSchemeRegistry {
    * @param  address an ethereum address
    * @return an object [specs to be written..]
    */
-  public getSchemeInfo(address: string, network?: "main"|"rinkeby"|"private"|undefined): GenericSchemeInfo {
+  public getSchemeInfo(address: string, network?: Networks): GenericSchemeInfo {
     if (!network) {
-      switch (process.env.NODE_ENV) {
-        case "production":
-          network = "main";
-          break;
-        case "staging":
-          network = "rinkeby";
-          break;
-        case "development":
-          network = "private";
-          break;
-        default:
-          network = "main";
-      }
+      network = targetedNetwork();
     }
-    const spec = SCHEMEADDRESSES[network][address];
+    const spec = SCHEMEADDRESSES[network][address.toLowerCase()];
     if (spec) {
       return new GenericSchemeInfo(spec);
     }

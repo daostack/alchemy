@@ -1,5 +1,5 @@
-import { IDAOState, IProposalState, IProposalType } from "@daostack/client";
-import * as classNames from "classnames";
+import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@daostack/client";
+import classNames from "classnames";
 import { copyToClipboard, getNetworkName, linkToEtherScan, schemeNameAndAddress } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
@@ -28,11 +28,14 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
   }
 
-  public async componentWillMount(): Promise<void> {
+  public async componentDidMount (): Promise<void> {
     this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
 
-  public render(): any {
+  private copySchemeAddressOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void => copyToClipboard(schemeRegistrar.schemeToRegister);
+  private copySchemeParamsHashOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void => copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash);
+
+  public render(): RenderOutput {
     const { proposal, detailView, transactionModal } = this.props;
 
     const proposalSummaryClass = classNames({
@@ -91,14 +94,14 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                         </th>
                         <td>
                           <span>{schemeRegistrar.schemeToRegister}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={() => copyToClipboard(schemeRegistrar.schemeToRegister)} />
+                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copySchemeAddressOnClick(schemeRegistrar)} />
                         </td>
                       </tr>
                       <tr>
                         <th>Param Hash:</th>
                         <td>
                           <span>{schemeRegistrar.schemeToRegisterParamsHash.slice(0, 43)}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={(): void => copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash)} />
+                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copySchemeParamsHashOnClick(schemeRegistrar)} />
                         </td>
                       </tr>
                       <tr>
@@ -119,6 +122,9 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                           {
                             // eslint-disable-next-line no-bitwise
                             permissions & 16 ? <div>Call genericCall on behalf of</div> : ""
+                          }
+                          {
+                            <div>Mint or burn reputation</div>
                           }
                         </td>
                       </tr>

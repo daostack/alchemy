@@ -1,16 +1,23 @@
-import { IProposalType, ISchemeState, Scheme } from "@daostack/client";
-import * as arcActions from "actions/arcActions";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
-import * as classNames from "classnames";
+import { enableWalletProvider, getArc } from "arc";
+
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
+
+import { createProposal } from "actions/arcActions";
+import { showNotification, NotificationStatus } from "reducers/notifications";
+import Analytics from "lib/analytics";
+import { schemeNameAndAddress, isValidUrl, GetSchemeIsActiveActions, getSchemeIsActive } from "lib/util";
+import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { schemeNameAndAddress, isValidUrl } from "lib/util";
-import * as React from "react";
+import classNames from "classnames";
+import { IProposalType, ISchemeState, Scheme } from "@daostack/client";
 import { connect } from "react-redux";
-import { showNotification } from "reducers/notifications";
+import * as React from "react";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -19,12 +26,12 @@ interface IExternalProps {
 }
 
 interface IDispatchProps {
-  createProposal: typeof arcActions.createProposal;
+  createProposal: typeof createProposal;
   showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
-  createProposal: arcActions.createProposal,
+  createProposal,
   showNotification,
 };
 
@@ -51,20 +58,44 @@ interface IFormValues {
 
 interface IState {
   currentTab: string;
+  tags: Array<string>;
 }
 
 class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
+
+  initialFormValues: IFormValues;
 
   constructor(props: IProps) {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-
-    this.state = { currentTab: "addScheme" };
+    this.initialFormValues = importUrlValues<IFormValues>({
+      description: "",
+      otherScheme: "",
+      schemeToAdd: "",
+      schemeToEdit: "",
+      schemeToRemove: "",
+      parametersHash: "",
+      permissions: {
+        registerSchemes: false,
+        changeConstraints: false,
+        upgradeController: false,
+        genericCall: false,
+      },
+      title: "",
+      url: "",
+      currentTab: "addScheme",
+      tags: [],
+    });
+    this.state = {
+      currentTab: this.initialFormValues.currentTab,
+      tags: this.initialFormValues.tags,
+    };
   }
 
+
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ):  Promise<void> {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     let permissions = 1;
     if (values.permissions.registerSchemes) {
@@ -99,10 +130,18 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       schemeToRegister: currentTab === "addScheme" ? values.schemeToAdd :
         currentTab === "editScheme" ? values.schemeToEdit :
           values.schemeToRemove,
+      tags: this.state.tags,
     };
-
     setSubmitting(false);
     await this.props.createProposal(proposalValues);
+
+    Analytics.track("Submit Proposal", {
+      "DAO Address": this.props.daoAvatarAddress,
+      "Proposal Title": values.title,
+      "Scheme Address": this.props.scheme.address,
+      "Scheme Name": this.props.scheme.name,
+    });
+
     this.props.handleClose();
   }
 
@@ -110,7 +149,20 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.setState({ currentTab: tab });
   }
 
-  public render(): any {
+  private onTagsChange = (tags: any[]): void => {
+    this.setState({tags});
+  }
+
+  public exportFormValues(values: IFormValues) {
+    values = {
+      ...values,
+      ...this.state,
+    };
+    exportUrl(values);
+    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
+  }
+
+  public render(): RenderOutput {
     // "schemes" are the schemes registered in this DAO
     const schemes = this.props.data;
     const { handleClose } = this.props;
@@ -137,39 +189,38 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       [css.editScheme]: currentTab === "editScheme",
     });
 
+    const isAddActive = getSchemeIsActive(this.props.scheme, GetSchemeIsActiveActions.Register);
+    const isRemoveActive = getSchemeIsActive(this.props.scheme, GetSchemeIsActiveActions.Remove);
+    const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
+
     return (
       <div className={css.createWrapperWithSidebar}>
         <div className={css.sidebar}>
-          <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")} data-test-id="tab-AddScheme">
-            <span></span>
-            Add Scheme
-          </button>
-          <button className={editSchemeButtonClass} onClick={this.handleTabClick("editScheme")} data-test-id="tab-EditScheme">
-            <span></span>
-            Edit Scheme
-          </button>
-          <button className={removeSchemeButtonClass} onClick={this.handleTabClick("removeScheme")} data-test-id="tab-RemoveScheme">
-            <span></span>
-            Remove Scheme
-          </button>
+          { isAddActive ?
+            <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")} data-test-id="tab-AddScheme">
+              <span></span>
+              Add Plugin
+            </button>
+            : "" }
+          { isAddActive ?
+            <button className={editSchemeButtonClass} onClick={this.handleTabClick("editScheme")} data-test-id="tab-EditScheme">
+              <span></span>
+              Edit Plugin
+            </button>
+            : "" }
+          { isRemoveActive ?
+            <button className={removeSchemeButtonClass} onClick={this.handleTabClick("removeScheme")} data-test-id="tab-RemoveScheme">
+              <span></span>
+            Remove Plugin
+            </button>
+            : "" }
         </div>
 
         <div className={schemeRegistrarFormClass}>
           <Formik
-            // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
-            initialValues={{
-              description: "",
-              otherScheme: "",
-              parametersHash: "",
-              permissions: {
-                registerSchemes: false,
-                changeConstraints: false,
-                upgradeController: false,
-                genericCall: false,
-              },
-              title: "",
-              url: "",
-            } as IFormValues}
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            initialValues={this.initialFormValues}
+            // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues) => {
               const errors: any = {};
 
@@ -212,27 +263,31 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
               return errors;
             }}
             onSubmit={this.handleSubmit}
+            // eslint-disable-next-line react/jsx-no-bind
             render={({
               errors,
               touched,
               isSubmitting,
               setFieldValue,
+              values,
             }: FormikProps<IFormValues>) => {
               return (
                 <Form noValidate>
                   <label className={css.description}>What to Expect</label>
                   { (currentTab === "addScheme") ?
-                    <div className={css.description}>Propose to add a new scheme to the DAO. If this scheme is a universal scheme, you must also supply its param hash configuration.</div> :
+                    <div className={css.description}>Propose to add a new plugin to the DAO. If this plugin is a universal scheme, you must also supply its param hash configuration.</div> :
                     (currentTab === "editScheme") ?
-                      <div className={css.description}>Propose to edit a schemes&apos; param hash configuration.</div> :
+                      <div className={css.description}>Propose to edit param hash configuration of a plugin.</div> :
                       (currentTab === "removeScheme") ?
-                        <div className={css.description}>Propose to remove a scheme from the DAO.</div> : ""
+                        <div className={css.description}>Propose to remove a plugin from the DAO.</div> : ""
                   }
-                  <label htmlFor="titleInput">
+                  <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
+                    <label htmlFor="titleInput">
+                      <div className={css.requiredMarker}>*</div>
                     Title
-                    <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                    <div className={css.requiredMarker}>*</div>
-                  </label>
+                      <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    </label>
+                  </TrainingTooltip>
                   <Field
                     autoFocus
                     id="titleInput"
@@ -243,12 +298,14 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                     className={touched.title && errors.title ? css.error : null}
                   />
 
-                  <label htmlFor="descriptionInput">
+                  <TrainingTooltip overlay={fnDescription} placement="right">
+                    <label htmlFor="descriptionInput">
+                      <div className={css.requiredMarker}>*</div>
                     Description
-                    <div className={css.requiredMarker}>*</div>
-                    <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-                    <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  </label>
+                      <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                      <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    </label>
+                  </TrainingTooltip>
                   <Field
                     component={MarkdownField}
                     onChange={(value: any) => { setFieldValue("description", value); }}
@@ -258,10 +315,22 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                     className={touched.description && errors.description ? css.error : null}
                   />
 
-                  <label htmlFor="urlInput">
+                  <TrainingTooltip overlay="Add some tags to give context about your proposal e.g. idea, signal, bounty, research, etc" placement="right">
+                    <label className={css.tagSelectorLabel}>
+                    Tags
+                    </label>
+                  </TrainingTooltip>
+
+                  <div className={css.tagSelectorContainer}>
+                    <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
+                  </div>
+
+                  <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
+                    <label htmlFor="urlInput">
                     URL
-                    <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  </label>
+                      <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    </label>
+                  </TrainingTooltip>
                   <Field
                     id="urlInput"
                     maxLength={120}
@@ -274,31 +343,31 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                   <div className={css.addEditSchemeFields}>
                     <div className={css.addSchemeSelectContainer}>
                       <label htmlFor="schemeToAddInput">
-                        Scheme
-                        <ErrorMessage name="schemeToAdd">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         <div className={css.requiredMarker}>*</div>
+                        Plugin
+                        <ErrorMessage name="schemeToAdd">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
                       <Field
                         id="schemeToAddInput"
-                        placeholder="Enter scheme address"
+                        placeholder="Enter plugin address"
                         name="schemeToAdd"
                       />
                     </div>
 
                     <div className={css.editSchemeSelectContainer}>
                       <label htmlFor="schemeToEditInput">
-                        Scheme
-                        <ErrorMessage name="schemeToEdit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         <div className={css.requiredMarker}>*</div>
+                        Plugin
+                        <ErrorMessage name="schemeToEdit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
                       <Field
                         id="schemeToEditInput"
                         name="schemeToEdit"
                         component="select"
                         className={css.schemeSelect}
-                        defaultValue=""
+                        defaultValue={this.initialFormValues}
                       >
-                        <option value="">Select a scheme...</option>
+                        <option value="">Select a plugin...</option>
                         {schemes.map((scheme, _i) => {
                           return <option key={`edit_scheme_${scheme.staticState.address}`} value={scheme.staticState.address}>{schemeNameAndAddress(scheme.staticState.address)}</option>;
                         })}
@@ -307,9 +376,9 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
                     <div className={css.parametersHash}>
                       <label htmlFor="parametersHashInput">
+                        <div className={css.requiredMarker}>*</div>
                         Parameters Hash
                         <ErrorMessage name="parametersHash">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        <div className={css.requiredMarker}>*</div>
                       </label>
                       <Field
                         id="parametersHashInput"
@@ -323,30 +392,37 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         Permissions
                       </div>
                       <div className={css.permissionCheckbox}>
-                        <Field id="registerOtherSchemesInput" type="checkbox" name="permissions.registerSchemes" />
+                        <Field id="registerOtherSchemesInput" type="checkbox" name="permissions.registerSchemes" checked={values.permissions.registerSchemes}/>
                         <label htmlFor="registerOtherSchemesInput">
-                          Register other schemes
+                          Register other plugins
                         </label>
                       </div>
 
                       <div className={css.permissionCheckbox}>
-                        <Field id="changeConstraintsInput" type="checkbox" name="permissions.changeConstraints" />
+                        <Field id="changeConstraintsInput" type="checkbox" name="permissions.changeConstraints" checked={values.permissions.changeConstraints}/>
                         <label htmlFor="changeConstraintsInput">
                           Add/remove global constraints
                         </label>
                       </div>
 
                       <div className={css.permissionCheckbox}>
-                        <Field id="upgradeControllerInput" type="checkbox" name="permissions.upgradeController" />
+                        <Field id="upgradeControllerInput" type="checkbox" name="permissions.upgradeController" checked={values.permissions.upgradeController}/>
                         <label htmlFor="upgradeControllerInput">
                           Upgrade the controller
                         </label>
                       </div>
 
                       <div className={css.permissionCheckbox}>
-                        <Field id="genericCallInput" type="checkbox" name="permissions.genericCall" />
+                        <Field id="genericCallInput" type="checkbox" name="permissions.genericCall" checked={values.permissions.genericCall}/>
                         <label htmlFor="genericCallInput">
                           Call genericCall on behalf of
+                        </label>
+                      </div>
+
+                      <div className={css.permissionCheckbox}>
+                        <Field id="mintBurnReputation" type="checkbox" name="mintBurnReputation" disabled="disabled" checked="checked" />
+                        <label htmlFor="mintBurnReputation">
+                          Mint or burn reputation
                         </label>
                       </div>
                     </div>
@@ -355,18 +431,18 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                   <div className={css.removeSchemeFields}>
                     <div className={css.removeSchemeSelectContainer}>
                       <label htmlFor="schemeToRemoveInput">
-                        Scheme
-                        <ErrorMessage name="schemeToRemove">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         <div className={css.requiredMarker}>*</div>
+                        Plugin
+                        <ErrorMessage name="schemeToRemove">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
                       <Field
                         id="schemeToRemoveInput"
                         name="schemeToRemove"
                         component="select"
                         className={css.schemeSelect}
-                        defaultValue=""
+                        defaultValue={this.initialFormValues.schemeToRemove}
                       >
-                        <option value="">Select a scheme...</option>
+                        <option value="">Select a plugin...</option>
                         {schemes.map((scheme, _i) => {
                           return <option key={`remove_scheme_${scheme.staticState.address}`} value={scheme.staticState.address}>{schemeNameAndAddress(scheme.staticState.address)}</option>;
                         })}
@@ -375,12 +451,19 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                   </div>
 
                   <div className={css.createProposalActions}>
+                    <TrainingTooltip overlay="Export proposal" placement="top">
+                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                        <img src="/assets/images/Icon/share-blue.svg" />
+                      </button>
+                    </TrainingTooltip>
                     <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                       Cancel
                     </button>
-                    <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
+                    <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
+                      <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                       Submit proposal
-                    </button>
+                      </button>
+                    </TrainingTooltip>
                   </div>
                 </Form>
               );

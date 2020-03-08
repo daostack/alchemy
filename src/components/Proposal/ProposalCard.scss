@@ -38,8 +38,8 @@
   border-radius: 0 15px 15px 15px;
   background-color: $white;
   margin-right: 20px;
-  margin-top: 20px;
-  margin-bottom: 0px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   display: inline-block;
   position: relative;
   box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
@@ -56,6 +56,7 @@
   font-size: $body;
   position: relative;
   z-index: 1000000;
+  padding-bottom: 20px;
 
   a {
     color: $black;
@@ -67,7 +68,7 @@
 
   h3 {
     font-size: $body;
-    margin: 4px 20px 10px 20px;
+    margin: 4px 20px 6px 20px;
   }
 
   .closedTime {
@@ -80,6 +81,8 @@
 }
 
 .detailLink {
+  color: $black;
+
   span {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -95,6 +98,10 @@
     position: relative;
     top: -3px;
   }
+}
+
+.summary {
+  margin: 0 20px 0px 20px;
 }
 
 .proposal:hover {
@@ -166,14 +173,21 @@
     height: 20px;
     display: inline-block;
     position: relative;
-    top: 3px;
     left: 3px;
     float: right;
+    text-align: center;
 
     .menuIcon {
-      width: 3px;
-      height: 20px;
-      margin: 0 auto;
+      width: 18px;
+      height: 18px;
+      border-radius: 11px;
+      border: solid 1px #0076ff;
+
+      img {
+        height: 11px;
+        position: relative;
+        top: 3px;
+      }
 
       &:hover {
         cursor: pointer;
@@ -184,25 +198,31 @@
       width: 116px;
       border-radius: 0 8px 8px 8px;
       background-color: white;
-      height: 180px;
+      padding: 5px 0;
       box-shadow: 2px 2px 9px 0 rgba(12, 0, 51, 0.1);
       position: absolute;
-      top: -90px;
-      left: -60px;
-      transform: scale(0);
+      top: -7px;
+      left: 24px;
       opacity: 0;
       transition: all .25s ease;
+      z-index: 100;
+      visibility: hidden;
+
+      &.leftMenu {
+        left: -118px;
+      }
     }
 
     &:hover {
       .menu {
-        transform: scale(1);
         opacity: 1;
-        top: -7px;
-        left: 19px;
+        visibility: visible;
       }
     }
 
+    .followButton {
+      text-align: center;
+    }
   }
 }
 
@@ -219,7 +239,6 @@
 .proposalActions {
   position: relative;
   transition: all .25s ease;
-  margin-top: 15px;
   border-top: 1px solid rgba(215, 225, 237, 1.000);
   height: 64px;
   overflow: hidden;
@@ -228,19 +247,15 @@
 .createdBy {
   font-size: $small;
   color: $black-thirdtone;
-  margin: 15px 10px 5px 10px;
-
-  .targetAccount {
-    top: 7px;
-    left: 4px;
-
-    img {
-      width: 16px;
-      height: 16px;
-    }
-  }
+  margin: 15px 10px 5px 13px;
+  position: relative;
+  left: 7px;
 }
 
+.tagsContainer {
+  padding-left: 18px;
+  padding-bottom: 12px;
+}
 
 @media only screen and (max-width: 425px) {
   .proposal {

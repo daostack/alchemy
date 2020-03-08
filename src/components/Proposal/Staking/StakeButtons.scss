@@ -38,6 +38,7 @@
     display: inline-block;
     width: 60px;
     top: 0;
+    outline: none;
 
     strong {
       opacity: 1;
@@ -146,7 +147,6 @@
 
 .failButton {
   border-radius: 0 10px 10px 0;
-  top: 1px !important;
 }
 
 .predictions.unconfirmedPrediction {
@@ -156,26 +156,26 @@
 .enablePredictions {
   display: block;
   width: 100%;
-  position: absolute;
-  top: 84px;
   text-align: center;
+  margin-bottom: 10px;
 
   button {
     width: auto;
     display: block;
-    border-radius: 3px;
-    opacity: .5;
+    border-radius: 12.5px;
     position: relative;
     top: 3px;
     height: auto;
     padding-left: 5px;
     padding-right: 6px;
-    font-size: 11px;
-    line-height: initial;
     padding-top: 5px;
     padding-bottom: 7px;
     margin: 0 auto;
+    border-radius: 12.5px;
+    background-color: #0076ff;
+    color: white;
     font-weight: normal;
+    font-family: LucidaGrande;
   }
 
   span {
@@ -183,6 +183,12 @@
     margin-top: 25px;
     margin-bottom: 8px;
   }
+}
+
+.toBoostMessage {
+  font-size: 11px;
+  letter-spacing: 0.2px;
+  color: #689bd6;
 }
 
 .detailView {
@@ -193,7 +199,6 @@
 
   .passButton {
     position: relative;
-    top: 1px;
   }
 
   h3 {
@@ -209,10 +214,9 @@
     }
   }
 
-  .predictions {
-    background-color: $white;
-    border-radius: 0 15px 15px 15px;
-    margin: 0 0 20px 20px;
+  .disabledPredictions {
+    position: relative;
+    top: 3px;
   }
 
   .enablePredictions {
@@ -303,29 +307,41 @@
   line-height: 24px;
 
   p {
-    padding: 0 15px;
+    padding: 0 15px 6px 15px;
     font-size: 14px;
     opacity: .6;
   }
 
-  button {
-    width: 100px;
-    margin: 0 auto;
-    border: none;
-    cursor: pointer;
-    height: 30px;
-    line-height: 30px;
-    font-size: 13px;
-    color: white;
-    background-color: #0376ff;
-    border-radius: 15px;
-    display: block;
-    padding: 0 15px;
+  .preapproveButtonsWrapper {
+    text-align: center;
+
+    button {
+      width: 100px;
+      margin-left: 3px;
+      margin-right: 3px;
+      border: none;
+      cursor: pointer;
+      height: 30px;
+      line-height: 30px;
+      font-size: 13px;
+      color: white;
+      background-color: #0376ff;
+      border-radius: 15px;
+      display: inline-block;
+      padding: 0 15px;
+      outline: none;
+    }
+
+    button:first-of-type {
+      background-color: rgba(225, 235, 247, 1.000);
+      color: rgba(0, 113, 255, 1.000);
+    }
   }
 }
 
 .contextMenu {
   margin-top: -15px;
+  min-height: 30px;
 
   .contextTitle {
     width: 100%;
@@ -358,7 +374,6 @@
     padding: 5px 0;
     border-radius: 0;
     margin: 0 0 0 0;
-    font-size: 11px;
     color: rgba(78, 97, 118, 1.000);
     font-weight: normal;
 

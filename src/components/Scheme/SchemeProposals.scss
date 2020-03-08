@@ -89,6 +89,12 @@
         background-color: rgba(19, 46, 91, 1.000);
         color: $white;
       }
+
+      &.disabled, &disabled:hover {
+        background-color: rgba(200,200,200,.5);
+        border: 1px solid rgba(200,200,200,1);
+        cursor: not-allowed;
+      }
     }
   }
 }
@@ -118,16 +124,5 @@
 
   img {
     margin-top: 8px;
-  }
-
-  span {
-    position: absolute;
-    right: 0;
-    font-size: $body;
-
-    span {
-      font-weight: $bold;
-      position: relative;
-    }
   }
 }

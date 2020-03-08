@@ -1,0 +1,135 @@
+.wrapper {
+  position: relative;
+  max-width: $max-width;
+  margin: 0 auto;
+  padding: 0 30px;
+
+  h3.pleaseLogin {
+    text-align: center;
+  }
+}
+
+.loading {
+  margin: 0 auto;
+}
+
+.header {
+  padding-top: 30px;
+  padding-bottom: 5px;
+  color: rgba(104, 155, 214, 1);
+  font-weight: bold;
+  background-color: rgba(229, 235, 242, 1);
+  border-bottom: 1px solid rgba(195, 212, 231, 1);
+  display: flex;
+  width: 100%;
+
+  .title {
+    flex-grow: 2;
+    .caption {
+      display: inline-block;
+      font-size: 28px;
+      padding: 0;
+      margin-bottom: 0;
+    }
+
+    .totalRewards {
+      font-size: 13px;
+      border-left: 1px solid rgba(191, 203, 213, 1);
+      display: inline-block;
+      padding-left: 15px;
+      margin: 5px 5px 0px 15px;
+    }
+  }
+
+  .redeemAllButton {
+    justify-content: right;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 15px;
+    font-family: inherit;
+    font-size: 16px;
+    color: $white;
+    background-color: rgba(0, 118, 255, 1);
+    padding: 0 15px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: $accent-1;
+    }
+
+    img {
+      margin-left: -1px;
+      margin-right: 3px;
+    }
+  }
+}
+
+.empty {
+  padding: 100px 0;
+  text-align: center;
+
+  img {
+    margin-right: -35px;
+  }
+
+  h2 {
+    line-height: 55px;
+    font-size: 45px;
+    color: rgba(104, 155, 214, 1);
+  }
+
+  p {
+    color: $gray-1;
+    font-size: 21px;
+    font-family: "AccordBold", sans-serif;
+    max-width: 602px;
+    margin: 0 auto;
+  }
+}
+
+.dao {
+  margin-top: 20px;
+
+  &:first-child {
+    margin: 10px 0 20px 0;
+  }
+
+  .daoHeader {
+    font-size: 16px;
+    font-weight: $bold;
+    color: $gray-1;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  &:not(:first-child) .daoHeader {
+    border-top: $gray-border-2;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .wrapper {
+    width: auto;
+    padding: 0;
+    text-align: center;
+  }
+
+  .header {
+    flex-direction: column;
+
+    .title {
+      font-size: 18px;
+      margin-bottom: 10px;
+
+      .totalRewards {
+        border-left: none;
+      }
+    }
+
+    .redeemAllButton {
+      margin-bottom: 10px;
+    }
+  }
+}
