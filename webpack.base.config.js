@@ -74,7 +74,7 @@ module.exports = {
           /node_modules\/bootstrap-css-only/,
           /node_modules\/@fortawesome/,
           /node_modules\/mdbreact/,
-          /Users\/Cesar\/apps\/dorg\/DAOcreator\/packages\/ui_v2/
+          /node_modules\/@dorgtech\/daocreator-ui/
         ],
         use: [
           'style-loader',
