@@ -30,7 +30,7 @@ export default class BoostAmount extends React.Component<IProps, null> {
     return (
       <div className={wrapperClass}>
         {
-          (proposal.stage === IProposalStage.Queued && !expired && proposal.upstakeNeededToPreBoost.gten(0)) ?
+          proposal.stage === IProposalStage.Queued && !expired && proposal.upstakeNeededToPreBoost.gten(0) ?
             <span className={css.boostedAmount}>
               <b>
                 {detailView ? <img src="/assets/images/Icon/Boost-slate.svg" /> : ""}
