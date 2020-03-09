@@ -23,7 +23,7 @@ body {
 .outer {
   width: 100%;
   height: 100%;
-  padding-top: 50px;
+    padding-top: 50px;
 }
 
 .container {
@@ -31,6 +31,21 @@ body {
   z-index: 100;
   position: relative;
   height: 100%;
+}
+
+.sidebarWrapper {
+  position: relative;
+  width: 125px;
+}
+
+.withDAO .sidebarWrapper {
+  width: 250px;
+}
+
+.contentWrapper {
+  position: relative;
+  max-width: $max-width;
+  margin: 0 auto;
 }
 
 .background {
@@ -52,6 +67,7 @@ body {
 
 .web3ProviderLogin {
   display: inline-block;
+  vertical-align: middle;
 }
 
 .web3ProviderLogin button {
@@ -66,7 +82,7 @@ body {
   border-radius: 15px;
   color: $white;
   position: relative;
-  top: 9px;
+  vertical-align: middle;
   right: 10px;
 
   img {
@@ -177,6 +193,7 @@ body {
     display: inline-block;
     padding: 0 15px;
     height: 50px;
+    vertical-align: middle;
   }
 
   .accountInfo {
@@ -187,6 +204,12 @@ body {
     padding: 0 20px;
     transition: all .25s ease;
     height: 50px;
+
+    > span {
+      height: 50px;
+      display: inline-block;
+      vertical-align: middle;
+    }
 
     .accountImage {
       border: none;
@@ -221,7 +244,7 @@ body {
       position: absolute;
       width: 270px;
       top: 50px;
-      transform: scaleY(0);    
+      transform: scaleY(0);
       transform-origin: top;
       transition: transform 0.25s ease;
       right: 12px;
@@ -234,12 +257,6 @@ body {
 
       .walletImage {
         float: left;
-
-        img {
-          width: 50px;
-          height: 50px;
-          border-radius: 8px;
-        }
       }
 
       .pointer {
@@ -411,7 +428,7 @@ body {
               color: #001d35;
               margin-bottom: 2px;
             }
-            
+
             .name {
               font-size: 11px;
               color: #4e6176;
@@ -494,7 +511,6 @@ body {
       color: white;
       font-size: 13px;
       position: relative;
-      top: -6px;
       right: 12px;
     }
 
@@ -517,7 +533,7 @@ body {
   position: fixed;
   bottom: 50px;
   background-color: rgba(255,255,255,1);
-  left: 260px;
+  left: 20px;
   width: 290px;
   height: auto;
   text-align: left;
@@ -547,18 +563,6 @@ body {
   overflow: hidden;
 }
 
-.breadcrumbsContainer {
-  position: absolute;
-  width: 100%;
-  background: #444;
-  padding: 0 0 3px 15px;
-  color: white;
-}
-
-.breadcrumb {
-  color: white;
-}
-
 .topInfo {
   position: absolute;
   left: 70px;
@@ -572,7 +576,7 @@ body {
     margin: 0 15px;
   }
 
-  a:visited {
+  a, a:visited {
     color: $white;
   }
 }
@@ -632,6 +636,10 @@ body {
       width: 80%;
       flex-grow: 2;
       flex-basis: content;
+
+      a {
+        color: $accent-2;
+      }
     }
 
     .accept {
@@ -671,16 +679,36 @@ body {
 }
 
 .waitingToInitMessage {
-  text-align: center; 
+  text-align: center;
+}
+
+/* This allow us to center content until screen is too small to
+   center content with width 1080 with DAO sidebar of width 250px */
+@media only screen and (max-width: 1580px) {
+  .withDAO {
+    .contentWrapper {
+      margin: 0 0 0 250px;
+    }
+  }
+}
+
+/* This allow us to center content until screen is too small to center
+   content with width 1080 with non DAO sidebar of width 125px */
+@media only screen and (max-width: 1330px) {
+  .contentWrapper {
+    margin: 0 0 0 125px;
+  }
 }
 
 @media only screen and (max-width: 425px) {
+  .contentWrapper {
+    margin: 0 !important;
+  }
 
   .pendingTransactions {
     bottom: 70px;
     left: 15px;
   }
-
 
   .modal {
     top: 0;
@@ -745,15 +773,7 @@ body {
       margin-left: 12px;
     }
 
-    &.hasHamburger .redemptionsButton {
-      margin-left: 10px;
-    }
-
     .toggleButton {
-      margin-left: 12px;
-    }
-
-    &.hasHamburger .toggleButton {
       margin-left: 52px;
     }
 

@@ -1,5 +1,5 @@
 import { IDAOState, IProposalState } from "@daostack/client";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import * as React from "react";
@@ -35,8 +35,8 @@ export default class ProposalSummaryContributionReward extends React.Component<I
       <div className={proposalSummaryClass}>
         <span className={css.transferType}><RewardsString proposal={proposal} dao={dao} /></span>
         <strong className={css.transferAmount}></strong>
-        <img src="/assets/images/Icon/Transfer.svg" />
-        <AccountPopup accountAddress={proposal.contributionReward.beneficiary} daoState={dao} />
+        <img className={css.transferIcon} src="/assets/images/Icon/Transfer.svg" />
+        <AccountPopup accountAddress={proposal.contributionReward.beneficiary} daoState={dao} width={12} />
         <strong>
           <AccountProfileName accountAddress={proposal.contributionReward.beneficiary} accountProfile={beneficiaryProfile} daoAvatarAddress={dao.address}/>
         </strong>

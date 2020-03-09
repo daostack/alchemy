@@ -1,6 +1,7 @@
 import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@daostack/client";
-import * as classNames from "classnames";
-import { copyToClipboard, getNetworkName, linkToEtherScan, schemeNameAndAddress } from "lib/util";
+import classNames from "classnames";
+import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
+import { schemeNameAndAddress } from "lib/schemeUtils";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
@@ -28,7 +29,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
   }
 
-  public async UNSAFE_componentWillMount(): Promise<void> {
+  public async componentDidMount (): Promise<void> {
     this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
 

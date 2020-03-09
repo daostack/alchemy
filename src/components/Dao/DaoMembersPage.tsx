@@ -1,6 +1,9 @@
 import { IDAOState, Member } from "@daostack/client";
+import { getProfile } from "actions/profilesActions";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import Analytics from "lib/analytics";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
@@ -21,8 +24,6 @@ interface IStateProps {
   profiles: IProfilesState;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]>;
-
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
     ...ownProps,
@@ -30,9 +31,33 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
   };
 };
 
-const PAGE_SIZE = 100;
+interface IDispatchProps {
+  getProfile: typeof getProfile;
+}
+
+const mapDispatchToProps = {
+  getProfile,
+};
+
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]> & IDispatchProps;
+
+const PAGE_SIZE = 100; 
 
 class DaoMembersPage extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    this.props.data.forEach((member) => {
+      if (!this.props.profiles[member.staticState.address]) {
+        this.props.getProfile(member.staticState.address);
+      }
+    });
+
+    Analytics.track("Page View", {
+      "Page Name": Page.DAOMembers,
+      "DAO Address": this.props.daoState.address,
+      "DAO Name": this.props.daoState.name,
+    });
+  }
 
   public render(): RenderOutput {
     const { data } = this.props;
@@ -46,11 +71,11 @@ class DaoMembersPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.membersContainer}>
-        <BreadcrumbsItem to={"/dao/" + daoState.address + "/members"}>Reputation Holders</BreadcrumbsItem>
+        <BreadcrumbsItem to={"/dao/" + daoState.address + "/members"}>DAO Members</BreadcrumbsItem>
         <Sticky enabled top={50} innerZ={10000}>
-          <h2>Reputation Holders</h2>
+          <h2>DAO Members</h2>
         </Sticky>
-        <table>
+        <table className={css.memberHeaderTable}>
           <tbody className={css.memberTable + " " + css.memberTableHeading}>
             <tr>
               <td className={css.memberAvatar}></td>
@@ -111,4 +136,4 @@ const SubscribedDaoMembersPage = withSubscription({
   },
 });
 
-export default connect(mapStateToProps)(SubscribedDaoMembersPage);
+export default connect(mapStateToProps, mapDispatchToProps)(SubscribedDaoMembersPage);

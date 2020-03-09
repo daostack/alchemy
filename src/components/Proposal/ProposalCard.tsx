@@ -1,12 +1,15 @@
 import { Address, IDAOState, IProposalStage, Vote, Proposal } from "@daostack/client";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
-import Countdown from "components/Shared/Countdown";
+import ProposalCountdown from "components/Shared/ProposalCountdown";
+import FollowButton from "components/Shared/FollowButton";
 import { humanProposalTitle } from "lib/util";
+import { Page } from "pages";
 import * as React from "react";
+import TrackVisibility from "react-on-screen";
 import { Link } from "react-router-dom";
-import { closingTime } from "reducers/arcReducer";
+import { closingTime } from "lib/proposalHelpers";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ActionButton from "./ActionButton";
@@ -35,6 +38,8 @@ export default class ProposalCard extends React.Component<IProps, null> {
   constructor(props: IProps) {
     super(props);
   }
+
+  private stopClick = (e: any) => { e.preventDefault(); e.stopPropagation(); }
 
   public render(): RenderOutput {
 
@@ -109,7 +114,9 @@ export default class ProposalCard extends React.Component<IProps, null> {
               currentVote={currentAccountVote}
               dao={daoState}
               expired={expired}
-              proposal={proposal} />
+              proposal={proposal}
+              parentPage={Page.SchemeProposals}
+            />
           </div>
         </div>;
 
@@ -129,6 +136,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
               expired={expired}
               proposal={proposal}
               stakes={stakes}
+              parentPage={Page.SchemeProposals}
             />
           </div>
         </div>;
@@ -136,19 +144,21 @@ export default class ProposalCard extends React.Component<IProps, null> {
         return <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
             <div className={css.cardTop + " clearfix"}>
-              <div className={css.timer}>
-                <span className={css.content}>
-                  {!expired
-                    ? <Countdown toDate={closingTime(proposal)} detailView={false} overTime={proposal.stage === IProposalStage.QuietEndingPeriod && !expired} />
-                    : <span className={css.closedTime}>
-                      {proposal.stage === IProposalStage.Queued ? "Expired" :
-                        proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
-                          "Closed"}&nbsp;
-                      {closingTime(proposal).format("MMM D, YYYY")}
-                    </span>
-                  }
-                </span>
-              </div>
+              <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id}>
+                <div className={css.timer}>
+                  <span className={css.content}>
+                    {!expired
+                      ? <ProposalCountdown proposal={proposal} detailView={false} />
+                      : <span className={css.closedTime}>
+                        {proposal.stage === IProposalStage.Queued ? "Expired" :
+                          proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
+                            "Closed"}&nbsp;
+                        {closingTime(proposal).format("MMM D, YYYY")}
+                      </span>
+                    }
+                  </span>
+                </div>
+              </Link>
 
               <div className={css.actionButton}>
                 <ActionButton
@@ -158,55 +168,66 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   proposalState={proposal}
                   rewards={rewards}
                   expired={expired}
+                  parentPage={Page.SchemeProposals}
                 />
 
-                <div className={css.contextMenu} data-test-id="proposalContextMenu">
+                <div onClick={this.stopClick} className={css.contextMenu} data-test-id="proposalContextMenu">
                   <div className={css.menuIcon}>
                     <img src="/assets/images/Icon/Context-menu.svg"/>
                   </div>
-                  <div className={css.menu}>
-                    <VoteButtons
-                      currentAccountAddress={currentAccountAddress}
-                      currentAccountState={member}
-                      currentVote={currentAccountVote}
-                      dao={daoState}
-                      expired={expired}
-                      proposal={proposal}
-                      contextMenu/>
+                  <TrackVisibility partialVisibility={false} offset={-116}>{({ isVisible }) =>
+                    <div className={classNames({[css.menu]: true, [css.leftMenu]: !isVisible })}>
+                      <div className={css.followButton}>
+                        <FollowButton id={proposal.id} type="proposals" />
+                      </div>
 
-                    <StakeButtons
-                      beneficiaryProfile={beneficiaryProfile}
-                      contextMenu
-                      currentAccountAddress={currentAccountAddress}
-                      currentAccountGens={currentAccountGenBalance}
-                      currentAccountGenStakingAllowance={currentAccountGenAllowance}
-                      dao={daoState}
-                      expired={expired}
-                      proposal={proposal}
-                      stakes={stakes}
-                    />
-                  </div>
+                      <VoteButtons
+                        currentAccountAddress={currentAccountAddress}
+                        currentAccountState={member}
+                        currentVote={currentAccountVote}
+                        dao={daoState}
+                        expired={expired}
+                        proposal={proposal}
+                        contextMenu
+                        parentPage={Page.SchemeProposals}
+                      />
+
+                      <StakeButtons
+                        beneficiaryProfile={beneficiaryProfile}
+                        contextMenu
+                        currentAccountAddress={currentAccountAddress}
+                        currentAccountGens={currentAccountGenBalance}
+                        currentAccountGenStakingAllowance={currentAccountGenAllowance}
+                        dao={daoState}
+                        expired={expired}
+                        proposal={proposal}
+                        stakes={stakes}
+                        parentPage={Page.SchemeProposals}
+                      />
+                    </div>
+                  }
+                  </TrackVisibility>
                 </div>
               </div>
             </div>
             <div className={css.createdBy}>
-              <AccountPopup accountAddress={proposal.proposer} daoState={daoState} detailView={false} />
+              <AccountPopup accountAddress={proposal.proposer} daoState={daoState} width={12} />
               <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
             </div>
-            <div className={css.description}>
-              {proposal.description}
-            </div>
 
-            <h3>
-              <Link className={css.detailLink} to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
+            <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id}>
+              <div className={css.description}>
+                {proposal.description}
+              </div>
+
+              <h3 className={css.detailLink} data-test-id="proposal-title">
                 <span>{humanProposalTitle(proposal)}</span>
-                <img src="/assets/images/Icon/Open.svg" />
-              </Link>
-            </h3>
+              </h3>
 
-            { tags && tags.length ? <div className={css.tagsContainer}>
-              <TagsSelector readOnly tags={tags}></TagsSelector>
-            </div> : "" }
+              { tags && tags.length ? <div className={css.tagsContainer}>
+                <TagsSelector readOnly tags={tags}></TagsSelector>
+              </div> : "" }
+            </Link>
 
             <div className={css.summary}>
               <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView={false} />
@@ -214,19 +235,21 @@ export default class ProposalCard extends React.Component<IProps, null> {
 
           </div>
 
-          <div className={css.proposalActions + " clearfix"}>
-            { this.props.suppressTrainingTooltips ? votingHtml :
-              (<TrainingTooltip placement="topLeft" overlay={"Percentage of voting power currently voting for and against"}>
-                {votingHtml}
-              </TrainingTooltip>)
-            }
+          <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id}>
+            <div className={css.proposalActions + " clearfix"}>
+              { this.props.suppressTrainingTooltips ? votingHtml :
+                (<TrainingTooltip placement="topLeft" overlay={"Percentage of voting power currently voting for and against"}>
+                  {votingHtml}
+                </TrainingTooltip>)
+              }
 
-            { this.props.suppressTrainingTooltips ? stakingHtml :
-              (<TrainingTooltip placement="right" overlay={"GEN tokens staked to predict the proposal will pass or fail"}>
-                {stakingHtml}
-              </TrainingTooltip>)
-            }
-          </div>
+              { this.props.suppressTrainingTooltips ? stakingHtml :
+                (<TrainingTooltip placement="right" overlay={"GEN tokens staked to predict the proposal will pass or fail"}>
+                  {stakingHtml}
+                </TrainingTooltip>)
+              }
+            </div>
+          </Link>
         </div>;
       }
       }

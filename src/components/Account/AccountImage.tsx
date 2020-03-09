@@ -1,20 +1,30 @@
-import * as blockies from "ethereum-blockies-png";
+import { createDataURL } from "ethereum-blockies-png";
 import * as React from "react";
+import { IProfileState } from "reducers/profilesReducer";
+
+import * as css from "./Account.scss";
 
 interface IProps {
   accountAddress: string;
-  className?: string;
+  profile?: IProfileState;
+  width: number;
 }
 
 export default class AccountImage extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
-    const { accountAddress, className } = this.props;
+    const { accountAddress, profile, width } = this.props;
 
-    const dataURL = blockies.createDataURL({
-      seed: accountAddress,
-    });
+    let url;
+    if (profile && profile.image && profile.image[0] && profile.image[0].contentUrl) {
+      url = "https://ipfs.infura.io/ipfs/" + profile.image[0].contentUrl["/"];
+    }
+    if (!url) {
+      url = createDataURL({
+        seed: accountAddress,
+      });
+    }
 
-    return (<img src={dataURL} className={className} />);
+    return (<img src={url} className={css.accountImage} width={width} />);
   }
 }

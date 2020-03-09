@@ -2,14 +2,15 @@ import { promisify } from "util";
 import { Address, ISchemeState, Token } from "@daostack/client";
 import axios from "axios";
 import { getWeb3Provider, getArcSettings } from "arc";
-import * as ethABI from "ethereumjs-abi";
-import * as queryString from "query-string";
+import { soliditySHA3 } from "ethereumjs-abi";
+import { parse } from "query-string";
 import { RouteComponentProps } from "react-router-dom";
 import { NotificationStatus } from "reducers/notifications";
 import { redeemReputationFromToken } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { schemeName, fromWei } from "lib/util";
+import { fromWei } from "lib/util";
+import { schemeName } from "lib/schemeUtils";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as Sticky from "react-stickynode";
@@ -66,7 +67,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     let redeemerAddress: Address;
-    const queryValues = queryString.parse(this.props.location.search);
+    const queryValues = parse(this.props.location.search);
     let pk = queryValues["pk"] as string;
     if (pk) {
       const arc = getArc();
@@ -84,15 +85,14 @@ class ReputationFromToken extends React.Component<IProps, IState> {
 
 
     this.state = {
-      redemptionAmount: null,
+      redemptionAmount: new BN(0),
       alreadyRedeemed: false,
       privateKey: pk,
       redeemerAddress,
     };
   }
 
-  private async _loadReputationBalance() {
-    const redeemerAddress = this.state.redeemerAddress;
+  private async _loadReputationBalance(redeemerAddress: string) {
     if (redeemerAddress) {
       const schemeState = this.props.schemeState;
       const schemeAddress = schemeState.address;
@@ -111,25 +111,24 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       this.setState({
         redemptionAmount,
         alreadyRedeemed,
+        redeemerAddress,
       });
     } else {
       this.setState({
         redemptionAmount: new BN(0),
         alreadyRedeemed: false,
+        redeemerAddress: null,
       });
     }
   }
 
   public async componentDidMount() {
-    await this._loadReputationBalance();
+    await this._loadReputationBalance(this.state.redeemerAddress);
   }
 
   public async componentDidUpdate(prevProps: IProps) {
     if (!this.state.privateKey && this.props.currentAccountAddress !== prevProps.currentAccountAddress) {
-      this.setState({
-        redeemerAddress: this.props.currentAccountAddress,
-      });
-      await this._loadReputationBalance();
+      await this._loadReputationBalance(this.props.currentAccountAddress);
     }
   }
 
@@ -148,10 +147,11 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     const alreadyRedeemed = await schemeContract.methods.redeems(this.state.redeemerAddress).call();
     if (alreadyRedeemed) {
       this.props.showNotification(NotificationStatus.Failure, `Reputation for the account ${this.state.redeemerAddress} was already redeemed`);
+      this.redemptionSucceeded();
     } else if (values.useTxSenderService === true) {
       // construct the message to sign
       // const signatureType = 1
-      const messageToSign = "0x"+ ethABI.soliditySHA3(
+      const messageToSign = "0x"+ soliditySHA3(
         ["address","address"],
         [schemeAddress, values.accountAddress]
       ).toString("hex");
@@ -241,6 +241,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             this.props.showNotification(NotificationStatus.Failure, `An error occurred on the transaction service: ${response.data.status}: ${response.data.message}`);
           } else {
             this.props.showNotification(NotificationStatus.Success, `You've successfully redeemed rep to ${values.accountAddress}`);
+            this.redemptionSucceeded();
           }
         } catch(err) {
           this.props.showNotification(NotificationStatus.Failure, `${err.message}}`);
@@ -255,9 +256,13 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       // ,{from:_fromAccount}));
     } else {
       const scheme = arc.scheme(schemeState.id);
-      this.props.redeemReputationFromToken(scheme, values.accountAddress, this.state.privateKey, this.state.redeemerAddress);
+      await this.props.redeemReputationFromToken(scheme, values.accountAddress, this.state.privateKey, this.state.redeemerAddress, this.redemptionSucceeded);
     }
     setSubmitting(false);
+  }
+
+  public redemptionSucceeded = () => {
+    this.setState( { redemptionAmount: new BN(0) });
   }
 
   private onSubmitClick = (setFieldValue: any) => ()=>{ setFieldValue("useTxSenderService",false); }
@@ -333,7 +338,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                 </div>
                 <div className={schemeCss.redemptionButton}>
                   <button type="submit"
-                    disabled={false}
+                    disabled={this.state.alreadyRedeemed || this.state.redemptionAmount.isZero()}
                     onClick={this.onSubmitClick(setFieldValue)}
                   >
                     <img src="/assets/images/Icon/redeem.svg"/> Redeem
@@ -343,7 +348,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                   <div className={schemeCss.redemptionButton}>
                     <div>Or try our new experimental feature:</div>
                     <button type="submit"
-                      disabled={false}
+                      disabled={this.state.alreadyRedeemed || this.state.redemptionAmount.isZero()}
                       onClick={this.onSubmitClick(setFieldValue)}
                     >
                       <img src="/assets/images/Icon/redeem.svg"/> Redeem w/o paying gas

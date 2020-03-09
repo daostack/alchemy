@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalState, IProposalOutcome } from "@daostack/client";
 import Reputation from "components/Account/Reputation";
-import { formatTokens, fromWei, tokenSymbol, AccountClaimableRewardsType } from "lib/util";
+import { baseTokenName, formatTokens, fromWei, genName, tokenDecimals, tokenSymbol, AccountClaimableRewardsType } from "lib/util";
 import * as React from "react";
 import * as css from "components/Shared/PreTransactionModal.scss";
 
@@ -24,7 +24,7 @@ export default (props: IProps) => {
     {canRewardNone ? <div className={css.text}>At this time, none of these rewards can be redeemed -- {dao.name} does not hold all the necessary assets.</div> : ""}
     {canRewardOnlySome ? <div className={css.text}>At this time, only some of these rewards can be redeemed -- {dao.name} does not hold all the necessary assets.</div> : ""}
   </div> : <span></span>;
-  
+
   const rewardComponents = [];
   let c = null;
   if (gpRewards.reputationForProposer) {
@@ -49,7 +49,7 @@ export default (props: IProps) => {
     c = <div key={id + "_staker_tokens"}>
       <strong>For staking on the proposal you are due to receive:</strong>
       <ul>
-        <li>{fromWei(gpRewards.tokensForStaker)} GEN</li>
+        <li>{fromWei(gpRewards.tokensForStaker)} {genName()}</li>
       </ul>
     </div>;
     rewardComponents.push(c);
@@ -58,13 +58,12 @@ export default (props: IProps) => {
     c = <div key={id + "_staker_bounty"}>
       <strong>For staking on the proposal you are due to receive:</strong>
       <ul>
-        <li>{fromWei(gpRewards.daoBountyForStaker)} GEN as bounty from {dao.name}
+        <li>{fromWei(gpRewards.daoBountyForStaker)} {genName()} as bounty from {dao.name}
         </li>
       </ul>
     </div >;
     rewardComponents.push(c);
   }
-
 
   let ContributionRewardDiv = <div />;
   if (contributionRewards) {
@@ -80,12 +79,12 @@ export default (props: IProps) => {
           <ul>
             {contributionRewards["eth"]  ?
               <li>
-                {formatTokens(contributionReward.ethReward, "ETH")}
+                {formatTokens(contributionReward.ethReward, baseTokenName())}
               </li> : ""
             }
             {contributionRewards["externalToken"] ?
               <li>
-                {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken))}
+                {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken), tokenDecimals(contributionReward.externalToken))}
               </li> : ""
             }
             {contributionRewards["rep"] ? <li><Reputation reputation={contributionRewards["rep"]} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}

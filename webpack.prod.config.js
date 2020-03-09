@@ -3,47 +3,50 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
+const WebpackShellPlugin = require('webpack-shell-plugin');
 
 const baseConfig = require('./webpack.base.config.js');
 
 const config = merge(baseConfig, {
   mode: 'production',
 
-  devtool: 'nosources-source-map',
+  devtool: 'source-map',
 
   entry: {
     // the entry point of our app
     app: __dirname + '/src/index.tsx',
-    'ipfs-http-client': ['ipfs-http-client'],
+    // 'ipfs-http-client': ['ipfs-http-client'],
     // '@daostack/migration': ['@daostack/migration/']
   },
 
   output: {
     filename: "[name].bundle-[hash:8].js",
+    chunkFilename: '[name].bundle-[hash:8].js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/'
+    publicPath: '/',
   },
 
   optimization: {
     minimize: true,
     minimizer: [
       new OptimizeCSSAssetsPlugin({}),
-      new UglifyJsPlugin({uglifyOptions: {
-        compress: true
+      new TerserPlugin({
+        terserOptions: {
         }
       })
     ],
     splitChunks: {
+      chunks: 'all',
       cacheGroups: {
-        "ipfs-http-client": {
-          chunks: "initial",
-          test: "ipfs-http-client",
-          name: "ipfs-http-client",
-          enforce: true
-        },
+        // "ipfs-http-client": {
+        //   chunks: "initial",
+        //   test: "ipfs-http-client",
+        //   name: "ipfs-http-client",
+        //   enforce: true
+        // },
         // "@daostack/migration": {
         //   chunks: "initial",
         //   test: "@daostack/migration",
@@ -89,14 +92,24 @@ plugins: [
       chunkFilename: "[id].[hash].css",
       modules: true
     }),
-    new webpack.DefinePlugin({
-      'process.env': {
-        'API_URL': JSON.stringify(process.env.API_URL || "https://daostack-alchemy.herokuapp.com"),
-        'BASE_URL': JSON.stringify(process.env.BASE_URL || "https://alchemy.daostack.io"),
-        'DISQUS_SITE': JSON.stringify(process.env.DISQUS_SITE || 'daostack-alchemy'),
-        'NODE_ENV': JSON.stringify(process.env.NODE_ENV) || JSON.stringify("production")
-      },
+
+    new webpack.EnvironmentPlugin({
+      NETWORK: "main",
+      NODE_ENV: "production",
+      BASE_URL: "https://alchemy.daostack.io",
+      DISQUS_SITE: 'daostack-alchemy',
+      ARC_GRAPHQLHTTPPROVIDER: "",
+      ARC_GRAPHQLWSPROVIDER : "",
+      ARC_WEB3PROVIDER : "",
+      ARC_WEB3PROVIDERREAD : "",
+      ARC_IPFSPROVIDER: "",
+      ARC_IPFSPROVIDER_HOST : "",
+      ARC_IPFSPROVIDER_PORT : "",
+      ARC_IPFSPROVIDER_PROTOCOL : "",
+      ARC_IPFSPROVIDER_API_PATH : "",
+      MIXPANEL_TOKEN: "",
     }),
+
     new CopyWebpackPlugin([
       { from: 'src/assets', to: 'assets' }
     ]),

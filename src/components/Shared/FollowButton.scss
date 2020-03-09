@@ -1,0 +1,110 @@
+.followButton {
+  font-family: LucidaGrande;
+  font-size: 11px;
+  text-align: center;
+  color: #0076ff;
+  border-radius: 11px;
+  border: solid 1px #0076ff;
+  padding: 4px 12px;
+  cursor: pointer;
+  position: relative;
+  background-color: transparent;
+  outline: none;
+
+  .spinner {
+    content: '';
+    display: none;
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    margin-top: -6px;
+    margin-left: -6px;
+    border-radius: 50%;
+    border-top: 2px solid #0076ff;
+    border-right: 2px solid transparent;
+    animation: spinner .6s linear infinite;
+  }
+
+  .unfollowText {
+    display: none;
+  }
+}
+
+.followButton.isFollowing:hover {
+  .followText { display: none; }
+  .unfollowText { display: inline; }
+}
+
+.followButton.isFollowing {
+  background-color: #0076ff;
+  color: white;
+
+  .spinner {
+    border-top: 2px solid white;
+  }
+}
+
+.followButton.white {
+  color: white;
+  border: solid 1px white;
+
+  .spinner {
+    border-top: 2px solid white;
+  }
+}
+
+.followButton.white.isFollowing {
+  background-color: white;
+  color: #001d35;
+
+  .spinner {
+    border-top: 2px solid #001d35;
+  }
+}
+
+.followButton.bigButton {
+  display: inline-block;
+  height: 30px;
+  border-radius: 30px;
+  border-width: 1px;
+  background-color: #0071ff;
+  padding: 0 15px;
+  color: #0376ff;
+  border-color: #0376ff;
+  color: white;
+  font-weight: bold;
+  font-size: 13px;
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    margin-top: -8px;
+    margin-left: -8px;
+    border-top: 2px solid white;
+  }
+}
+
+.followButton.bigButton.isFollowing {
+  color: #0071ff;
+  background-color: white;
+
+  .spinner {
+    border-top: 2px solid #0376ff;
+  }
+}
+
+.followButton.pending {
+  span {
+    padding-left: 16px;
+  }
+
+  .spinner {
+    display: block;
+  }
+}
+
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}

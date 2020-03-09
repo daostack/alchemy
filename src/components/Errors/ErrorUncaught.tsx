@@ -1,18 +1,18 @@
 import * as React from "react";
-import * as Sentry from "@sentry/browser";
+import { showReportDialog } from "@sentry/browser";
 import { Link } from "react-router-dom";
 import * as appCss from "../../layouts/App.scss";
 import * as css from "./Errors.scss";
 
 interface IExternalProps {
   errorMessage: string;
-  sentryEventId: string;
-  goHome: () => void;
+  sentryEventId?: string;
+  goHome?: () => void;
 }
 
 export default class ErrorUncaught extends React.PureComponent<IExternalProps> {
   handleReport = () => {
-    Sentry.showReportDialog({ eventId: this.props.sentryEventId });
+    showReportDialog({ eventId: this.props.sentryEventId });
   }
 
   render() {
@@ -21,7 +21,11 @@ export default class ErrorUncaught extends React.PureComponent<IExternalProps> {
         <nav className={appCss.header}>
           <div>
             <div className={appCss.menu}>
-              <Link to="/"><img onClick={this.props.goHome} src="/assets/images/alchemy-logo-white.svg"/></Link>
+              { this.props.goHome ?
+                <Link to="/"><img onClick={this.props.goHome} src="/assets/images/alchemy-logo-white.svg"/></Link>
+                :
+                <img src="/assets/images/alchemy-logo-white.svg"/>
+              }
             </div>
             <div className={appCss.topInfo}>Alchemy</div>
           </div>
@@ -34,7 +38,7 @@ export default class ErrorUncaught extends React.PureComponent<IExternalProps> {
           <div className={css.description}>{this.props.errorMessage}</div>
           <div>
             { this.props.sentryEventId ? <a className={css.report} onClick={this.handleReport}>Report</a> : "" }
-            <Link to="/"><button onClick={this.props.goHome} className={css.home}>Home</button></Link>
+            { this.props.goHome ? <Link to="/"><button onClick={this.props.goHome} className={css.home}>Home</button></Link> : "" }
           </div>
         </div>
       </div>

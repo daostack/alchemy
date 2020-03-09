@@ -1,0 +1,1113 @@
+/** <globally-scoped> */
+a.blueButton {
+  font-size: 13px;
+  color: white;
+  background-color: rgba(5, 118, 255, 1);
+  transition: all 0.25s ease;
+  border-radius: 15px;
+  display: inline-block;
+  padding: 8px 15px;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: rgba(19, 46, 91, 1);
+    color: $white;
+  }
+
+  &.disabled,
+  &disabled:hover {
+    background-color: rgba(200, 200, 200, 0.5);
+    border: 1px solid rgba(200, 200, 200, 1);
+    cursor: not-allowed;
+  }
+
+  :visited {
+    color: white;
+  }
+}
+
+.statusBlob {
+  height: 34px;
+  text-align: center;
+  border-radius: 4px;
+  color: $white;
+  font-size: 13px;
+  padding-top: 9px;
+  padding-right: 16px;
+  padding-left: 16px;
+  box-sizing: border-box;
+  width: fit-content;
+  white-space: nowrap;
+  background-color: #9aa9b5;
+
+  &.open {
+    // in submission period
+    background-color: #00be90;
+  }
+
+  &.voting {
+    background-color: #e2ae10;
+  }
+
+  &.voting.noSubmissions {
+    background-color: #9aa9b5;
+  }
+}
+
+.submissionsModalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent; // the whole point of this, which is otherwise defined in Alchemy App.scss
+}
+/** </globally-scoped> */
+
+.competitionCards {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.competitionCardContainer {
+  border-radius: 14px;
+  box-shadow: 0 0 15px 0 rgba(133, 168, 208, 0.15);
+  background-color: $white;
+  transition: all 0.25s ease;
+  vertical-align: top;
+  width: 477px;
+  height: auto;
+  overflow: visible; // for the account popup
+  padding: 26px 36px;
+  box-sizing: border-box;
+  margin-bottom: 12px; // for when there are multiple columns
+
+  .statusBlob {
+    display: block;
+    margin: auto;
+    margin-bottom: 30px;
+  }
+
+  .createByContainer {
+    display: flex;
+    font-size: 13px;
+    margin-bottom: 20px;
+
+    .createdBy {
+      flex-grow: 1;
+      display: inline-block;
+      color: $black-thirdtone;
+      height: 18px;
+    }
+
+    .countdown {
+      flex-grow: 0;
+      display: inline-block;
+      color: #689bd6;
+      height: 18px;
+      font-weight: 500;
+      text-align: right;
+
+      .startsIn {
+        margin-right: 7px;
+      }
+
+      .container {
+        font-weight: normal;
+        font-family: "Open Sans";
+      }
+
+      .startsIn,
+      .container {
+        display: inline-block;
+      }
+    }
+  }
+
+  .description {
+    text-overflow: ellipsis;
+    font-size: 21px;
+    margin-bottom: 20px;
+
+    .detailLink {
+      display: block;
+
+      .name {
+        display: inline-block;
+      }
+
+      img {
+        display: inline-block;
+      }
+    }
+  }
+
+  .rewards {
+    border: 1px solid rgba(229, 235, 242, 1);
+    border-radius: 2px;
+    font-size: 11px;
+    padding: 5px;
+    text-align: center;
+    font-family: "Open Sans";
+    color: #4f6176;
+    margin-bottom: 16px;
+
+    img {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .transferType {
+      display: inline-block;
+
+      > strong > span {
+        font-weight: normal;
+      }
+    }
+
+    .winners {
+      display: inline-block;
+    }
+
+    .winnerIcon {
+      margin-bottom: 4px;
+      img {
+        height: 28px;
+      }
+    }
+  }
+
+  .activityContainer {
+    display: flex;
+    font-size: 13px;
+    color: #4f6176;
+    font-family: "Open Sans";
+
+    .suggestions {
+      flex-grow: 1;
+      white-space: nowrap;
+    }
+    .comments {
+      flex-grow: 0;
+    }
+  }
+}
+
+.competitionDetailsContainer {
+  width: 100%;
+  box-sizing: border-box;
+
+  .topSection {
+    margin-bottom: 26px;
+
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 30px;
+
+      .statusBlob {
+        flex-grow: 1;
+        margin-right: 20px;
+      }
+
+      .gotoProposal {
+        font-size: 14px;
+        flex-grow: 3;
+        position: relative;
+        top: 8px;
+        white-space: nowrap;
+        padding-right: 12px;
+
+        a {
+          color: #0071ff;
+        }
+      }
+
+      .newSubmission {
+        text-align: right;
+        flex-grow: 3;
+      }
+    }
+
+    .name {
+      font-size: 28px;
+      border-bottom: $gray-border-2;
+      color: #689bd6;
+      margin-bottom: 6px;
+      padding-bottom: 16px;
+    }
+
+    .countdown {
+      font-size: 13px;
+      color: #9aa9b5;
+
+      .startsIn {
+        margin-right: 7px;
+      }
+
+      .container {
+        font-weight: normal;
+        font-family: "Open Sans";
+      }
+
+      .startsIn,
+      .container {
+        display: inline-block;
+      }
+    }
+  }
+
+  .middleSection {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-bottom: 20px;
+
+    .leftSection {
+      min-width: 140px;
+      flex-grow: 1;
+      display: inline-grid; // to prevent effects of overflow from long urls
+
+      .tagsContainer {
+        display: block;
+      }
+
+      .description {
+        overflow-x: hidden;
+        overflow-y: visible;
+        word-wrap: break-word;
+        font-size: 14px;
+        padding-right: 4px;
+        margin-right: 16px;
+
+        a {
+          max-width: 100%;
+        }
+
+        &.hasSubmissions {
+          overflow-y: auto;
+          max-height: 330px;
+        }
+      }
+    }
+
+    .rightSection {
+      flex-grow: 2;
+      background-color: $white;
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-bottom: 16px;
+      border-radius: 4px;
+      max-width: 300px;
+
+      .header {
+        border-bottom: $gray-border-2;
+        width: 100%;
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+        padding-top: 16px;
+        font-size: 16px;
+        display: grid;
+
+        .isWinner {
+          padding-right: 10px;
+          padding-bottom: 6px;
+          display: inline-block;
+
+          img {
+            height: 28px;
+          }
+        }
+
+        .results {
+          display: inline-block;
+          position: relative;
+          bottom: 4px;
+
+          .winners {
+            white-space: nowrap;
+            display: inline-block;
+          }
+
+          img.transferIcon {
+            display: inline-block;
+            padding: 0 8px;
+          }
+        }
+      }
+
+      .distribution {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 12px;
+        font-size: 13px;
+
+        .winner {
+          margin-right: 12px;
+
+          .position {
+            color: #9aa9b5;
+          }
+
+          .proportion {
+            font-weight: 500;
+          }
+        }
+      }
+
+      .allowedVote {
+        font-weight: 500;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 12px;
+        font-size: 13px;
+      }
+
+      .periods {
+        display: table;
+        width: 100%;
+
+        .period {
+          font-size: 11px;
+          display: table-row;
+          white-space: nowrap;
+
+          .bullet,
+          .label,
+          .datetime {
+            display: table-cell;
+            padding-bottom: 6px;
+          }
+
+          .bullet::after {
+            content: "\E50";
+            padding-right: 4px;
+            position: relative;
+            bottom: 2px;
+          }
+
+          .bullet.inPeriod:after {
+            content: "\25b6";
+            bottom: 0;
+          }
+
+          .label {
+            color: #4f6176;
+            padding-right: 8px;
+          }
+
+          .datetime {
+            color: #9aa9b5;
+          }
+        }
+      }
+    }
+  }
+
+  .submissions {
+    margin-bottom: 20px;
+
+    .heading {
+      font-size: 23px;
+      color: #689bd6;
+      width: 100%;
+      border-bottom: 1px solid #bfcbd5;
+      padding-bottom: 5px;
+      margin-bottom: 18px;
+    }
+
+    .list {
+      display: grid;
+      grid-template-columns: 10fr 2fr 1fr;
+      grid-row-gap: 8px;
+      align-content: center;
+
+      .cell {
+        cursor: pointer;
+        font-size: 16px;
+        background-color: $white;
+        padding-top: 9px;
+        padding-bottom: 7px;
+        padding-left: 8px;
+        padding-right: 8px;
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+
+        &.selected {
+          border-top: 1px solid #0076ff;
+          border-bottom: 1px solid #0076ff;
+        }
+
+        &.winnerIcon {
+          padding-top: 0;
+          padding-bottom: 0;
+          img {
+            height: 28px;
+            position: relative;
+            top: 4px;
+          }
+        }
+
+        &.title {
+          border-top-left-radius: 5px;
+          border-bottom-left-radius: 5px;
+          border-left: 1px solid transparent;
+
+          &.selected {
+            border-left: 1px solid #0076ff;
+          }
+        }
+
+        &.creator {
+          white-space: nowrap;
+          padding-right: 10px;
+
+          a {
+            position: relative;
+            bottom: 1px;
+          }
+        }
+
+        &.votingSection {
+          text-align: right;
+          display: flex;
+          justify-content: flex-end;
+          border-left: solid 1px #e9eef4;
+          border-top-right-radius: 5px;
+          border-bottom-right-radius: 5px;
+          border-right: 1px solid transparent;
+
+          &.selected {
+            border-right: 1px solid #0076ff;
+          }
+
+          .votes {
+            flex-grow: 1;
+            text-align: right;
+            white-space: nowrap;
+            padding-right: 6px;
+          }
+
+          .votedUp {
+            flex-grow: 2;
+          }
+        }
+      }
+
+      &.overWithWinners {
+        grid-template-columns: 1fr 25fr 2fr 1fr;
+
+        .cell {
+          &.winnerIcon {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            border-left: 1px solid transparent;
+
+            &.selected {
+              border-left: 1px solid #0076ff;
+            }
+          }
+
+          &.title {
+            border-top-left-radius: unset;
+            border-bottom-left-radius: unset;
+            border-left: unset;
+
+            &.selected {
+              border-left: unset;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .noWinners {
+    margin-bottom: 24px;
+
+    .caption {
+      font-size: 23px;
+      width: 100%;
+      border-bottom: 1px solid #bfcbd5;
+      padding-bottom: 5px;
+      color: #689bd6;
+      margin-bottom: 20px;
+    }
+
+    .body {
+      color: $black;
+      display: block;
+    }
+  }
+
+  .discussionContainer {
+    .title {
+      font-size: 23px;
+      color: #689bd6;
+      width: 100%;
+      border-bottom: 1px solid #bfcbd5;
+      padding-bottom: 5px;
+      margin-bottom: 16px;
+    }
+  }
+
+  .disqus {
+    padding: 15px;
+  }
+}
+
+.createSubmissionForm {
+  border-radius: 15px 15px 0 0;
+  background-color: $white;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: $shadow-3;
+  max-width: 445px;
+
+  .header {
+    background-color: $navy;
+    border-radius: 15px 15px 0 0;
+    margin: 0;
+    color: $white;
+    height: 40px;
+    opacity: 1;
+    font-family: $body-font;
+    font-weight: $normal;
+    font-size: 16px;
+    padding-left: 10px;
+
+    .content {
+      display: inline-block;
+      position: relative;
+      top: 8px;
+      white-space: nowrap;
+    }
+
+    .proposalTitle {
+      position: relative;
+      top: 3px;
+      display: inline-block;
+      font-weight: normal;
+      opacity: 0.5;
+      font-size: 14px;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      max-width: 318px;
+    }
+  }
+
+  form {
+    padding: 20px 30px 30px 30px;
+
+    input {
+      margin-top: 3px;
+      margin-bottom: 5px;
+      width: 100%;
+      display: block;
+      background-color: transparent;
+      border: $gray-border-2;
+      font-size: 13px;
+      padding: 0 15px;
+      box-sizing: border-box;
+      font-family: $body-font;
+      height: 35px;
+      line-height: 35px;
+
+      &.error {
+        border: 1px solid rgba(246, 80, 80, 1);
+      }
+      &:focus {
+        outline: none;
+        border: 1px solid rgba(46, 168, 122, 1);
+      }
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(154, 169, 181, 1);
+    }
+
+    label {
+      color: rgba(80, 97, 118, 1);
+      display: block;
+      width: fit-content;
+      font-size: 13px;
+      font-weight: bold;
+      padding: 5px 6px 0 0;
+      position: relative;
+
+      .requiredMarker {
+        display: inline-block;
+        color: rgba(104, 154, 214, 1);
+        font-weight: bold;
+        margin-right: 4px;
+      }
+
+      .infoTooltip {
+        position: absolute;
+        right: 0;
+        display: none;
+        right: -17px;
+      }
+    }
+
+    .errorMessage {
+      display: block;
+      padding-left: 10px;
+      color: rgba(246, 80, 80, 1);
+      font-size: 11px;
+      font-weight: 300;
+    }
+
+    .errorMessage.someReward {
+      display: block;
+      text-align: center;
+      text-transform: uppercase;
+      left: 0;
+      font-size: $small;
+      z-index: -10;
+      font-weight: 300;
+    }
+  }
+
+  .exitProposalCreation {
+    cursor: pointer;
+    height: 30px;
+    display: inline-block;
+    margin: 0 5px;
+    font-weight: normal;
+    font-size: 13px;
+    padding: 0 25px 2px 25px;
+    font-family: $body-font;
+    transition: all 0.25s ease;
+    border: none;
+    background-color: rgba(225, 235, 247, 1);
+    border-radius: 15px;
+    color: rgba(0, 113, 255, 1);
+  }
+
+  .submitProposal {
+    height: 30px;
+    border: none;
+    display: inline-block;
+    margin: 0 5px;
+    font-size: 13px;
+    padding: 0 25px 2px 25px;
+    font-family: $body-font;
+    font-weight: bold;
+    transition: all 0.25s ease;
+    background-color: rgba(0, 113, 255, 1);
+    border-radius: 15px;
+    color: $white;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    img {
+      position: relative;
+      top: 4px;
+      margin-right: 8px;
+    }
+
+    .loading {
+      width: 18px;
+      display: none;
+    }
+  }
+
+  .tagSelectorContainer {
+    padding-top: 0;
+  }
+
+  .tagSelectorLabel {
+    margin-top: 4px;
+  }
+
+  .submitProposal:disabled .loading {
+    display: inline-block;
+  }
+
+  .submitProposal:disabled {
+    background-color: rgba(200, 200, 200, 0.5);
+    border: 1px solid rgba(200, 200, 200, 1);
+    color: rgba(75, 75, 75, 1);
+  }
+
+  .submitProposal:disabled .sendIcon {
+    display: none;
+  }
+
+  .createProposalActions {
+    text-align: right;
+    margin-top: 20px;
+  }
+}
+
+.submissionDetails {
+  padding: 26px;
+  padding-top: 20px;
+  background-color: $white;
+  position: fixed;
+  top: 50px;
+  right: 0;
+  box-shadow: $shadow-3;
+  max-width: 445px;
+  min-width: 250px;
+  // the following enables scrolling to work in the description div
+  max-height: calc(100vh - 136px);
+  flex-direction: column;
+  display: flex;
+  // end scrolling stuff
+
+  .header {
+    display: flex;
+    margin-bottom: 20px;
+
+    .closeButton {
+      flex-grow: 2;
+      width: 60%;
+      img {
+        position: relative;
+        top: 4px;
+        width: 13px;
+        height: 13px;
+      }
+    }
+
+    .reputationVoted {
+      flex-grow: 1;
+      color: #9aa9b5;
+      white-space: nowrap;
+      text-align: right;
+
+      img {
+        padding-right: 7px;
+        position: relative;
+        top: 4px;
+      }
+    }
+
+    .actions {
+      flex-grow: 1;
+      padding-left: 12px;
+
+      a.blueButton {
+        padding: 3px 14px;
+        display: flex;
+        align-items: center;
+      }
+
+      a.blueButton.voteButton {
+        img {
+          margin-left: 7px;
+          position: relative;
+          top: 1px;
+        }
+      }
+
+      a.blueButton.redeemButton {
+        padding-top: 5px; // correct for diff in icons
+        padding-bottom: 5px; // correct for diff in icons
+        img {
+          margin-right: 5px;
+        }
+      }
+    }
+
+    .winnerIcon {
+      padding-left: 8px;
+      img {
+        position: relative;
+        top: -1px;
+        height: 28px;
+      }
+    }
+  }
+
+  .title {
+    font-size: 21px;
+    font-weight: bold;
+  }
+
+  .proposer {
+    margin-top: 16px;
+    font-size: 13px;
+  }
+
+  .createdOn {
+    margin-top: 16px;
+    // margin-bottom: 16px;
+    font-size: 13px;
+
+    .datetime {
+      color: #9aa9b5;
+      display: inline-block;
+    }
+  }
+
+  .description {
+    max-height: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    margin-top: 16px;
+
+    h1:first-of-type,
+    h2:first-of-type,
+    h3:first-of-type,
+    h4:first-of-type {
+      margin-top: 0;
+    }
+
+    img {
+      max-width: -webkit-fill-available;
+      max-width: -moz-fill-available;
+      max-width: fill-available;
+    }
+  }
+
+  .attachmentLink,
+  .attachmentLink:visited {
+    margin-top: 16px;
+    font-size: 11px;
+    color: rgba(0, 113, 255, 1);
+    display: inline-block;
+
+    img {
+      position: relative;
+      top: 2px;
+      margin-right: 5px;
+    }
+  }
+
+  .tagsContainer {
+    margin-top: 16px;
+  }
+
+  // .discussionContainer {
+  //   .title {
+  //     font-size: 18px;
+  //     color: #689bd6;
+  //     width: 100%;
+  //     border-bottom: 1px solid #bfcbd5;
+  //     padding-bottom: 5px;
+  //     margin-bottom: 16px;
+  //   }
+
+  // .disqus {
+  //   padding: 15px;
+  // }
+  // }
+}
+
+@media only screen and (max-width: 425px) {
+  .competitionCards {
+    padding: 0 0;
+
+    .competitionCardContainer {
+      padding: 26px 26px;
+    }
+  }
+
+  .competitionDetailsContainer {
+    padding-left: 10px;
+    padding-right: 10px;
+    .topSection {
+      .header {
+        padding-top: 10px;
+        .statusBlob {
+          flex-grow: 1;
+          margin-bottom: 8px;
+          // margin-right: 0;
+        }
+
+        .gotoProposal {
+          flex-grow: 1;
+          text-align: right;
+          // margin-bottom: 8px;
+          // top: 0;
+        }
+
+        .newSubmission {
+          flex-grow: 2;
+          text-align: center;
+          //text-align: left;
+        }
+      }
+    }
+
+    .middleSection {
+      flex-wrap: wrap;
+      .leftSection {
+        margin-bottom: 20px;
+
+        .description {
+          padding-left: 4px;
+          margin-right: 0;
+        }
+      }
+      .rightSection {
+        max-width: unset;
+        text-align: center;
+
+        .periods {
+          display: block;
+
+          .period {
+            display: block;
+
+            .bullet {
+              display: none;
+
+              &.inPeriod {
+                display: inline-block;
+              }
+            }
+
+            .label {
+              display: inline-block;
+            }
+
+            .datetime {
+              display: block;
+              margin-bottom: 8px;
+              padding-left: 10px;
+            }
+          }
+        }
+      }
+    }
+
+    .submissions {
+      text-align: center;
+
+      .list {
+        grid-row-gap: 0;
+        grid-column-gap: 0;
+
+        .cell {
+          &.title {
+            grid-column-start: span 3;
+            border-top-right-radius: 5px;
+            border-bottom-left-radius: 0;
+            text-align: center;
+            &.selected {
+              border-bottom: 1px solid transparent;
+              border-right: 1px solid #0076ff;
+            }
+          }
+
+          &.creator {
+            grid-column-start: 1;
+            grid-column-end: 3;
+            text-align: left;
+            padding-left: 12px;
+            margin-bottom: 8px;
+            border-bottom-left-radius: 5px;
+            &.selected {
+              border-top: 1px solid transparent;
+              border-bottom: 1px solid #0076ff;
+              border-left: 1px solid #0076ff;
+            }
+          }
+
+          &.votingSection {
+            grid-column-end: 4;
+            margin-bottom: 8px;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 5px;
+            border-left: none;
+            &.selected {
+              border-top: 1px solid transparent;
+              border-bottom: 1px solid #0076ff;
+            }
+          }
+        }
+
+        &.overWithWinners {
+          .cell {
+            &.winnerIcon {
+              border-bottom-left-radius: unset;
+              &.selected {
+                border-bottom: 1px solid transparent;
+              }
+            }
+
+            &.title {
+              &.selected {
+                border-bottom: 1px solid transparent;
+              }
+            }
+
+            &.creator {
+              grid-column-start: 1;
+              grid-column-end: 4;
+              &.selected {
+                border-top: 1px solid transparent;
+                border-bottom: 1px solid #0076ff;
+              }
+            }
+
+            &.votingSection {
+              grid-column-end: 5;
+              &.selected {
+                border-top: 1px solid transparent;
+                border-bottom: 1px solid #0076ff;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .createSubmissionForm {
+    top: 0;
+    left: 0;
+    transform: translate(0, 0);
+
+    .header {
+      border-radius: 0 0 0 0;
+    }
+
+    form {
+      padding: 15px 15px 155px 15px;
+
+      textarea {
+        border: none;
+        width: 100%;
+      }
+
+      .encodedData textarea {
+        border: $gray-border-2;
+        padding: 9px 15px 12px 15px;
+      }
+    }
+  }
+
+  .submissionDetails {
+    box-sizing: border-box;
+    padding: 10px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    box-shadow: unset;
+    max-width: 100%;
+    min-width: 100%;
+    // max-height: unset;
+    min-height: calc(100% - 50px);
+
+    .description {
+      max-height: unset;
+      border-bottom: $gray-border-2;
+    }
+  }
+}

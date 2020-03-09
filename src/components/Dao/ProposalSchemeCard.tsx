@@ -1,13 +1,13 @@
 import { IDAOState, IProposalStage, IProposalState, ISchemeState, Proposal, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
-import Countdown from "components/Shared/Countdown";
+import ProposalCountdown from "components/Shared/ProposalCountdown";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { humanProposalTitle, schemeName } from "lib/util";
+import { humanProposalTitle } from "lib/util";
+import { schemeName } from "lib/schemeUtils";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { closingTime } from "reducers/arcReducer";
 import { combineLatest } from "rxjs";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "./SchemeCard.scss";
@@ -21,7 +21,7 @@ type SubscriptionData = [ISchemeState, Proposal[]];
 type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 const ProposalSchemeCard = (props: IProps) => {
-  const { data, dao} = props;
+  const { data, dao } = props;
 
   const [schemeState, boostedProposals] = data;
 
@@ -32,9 +32,10 @@ const ProposalSchemeCard = (props: IProps) => {
   const headerHtml = <h2>{schemeName(schemeState, "[Unknown]")}</h2>;
 
   let trainingTooltipMessage: string;
-  
+
   switch(schemeState.name) {
     case "ContributionReward":
+    case "ContributionRewardExt":
       trainingTooltipMessage = "Use this scheme to reward users (rep and/or funds) for their contributions to the DAO";
       break;
     case "SchemeRegistrar":
@@ -45,13 +46,13 @@ const ProposalSchemeCard = (props: IProps) => {
   return (
     <div className={css.wrapper} data-test-id={`schemeCard-${schemeState.name}`}>
       <Link className={css.headerLink} to={`/dao/${dao.address}/scheme/${schemeState.id}`}>
-        { trainingTooltipMessage ? 
+        { trainingTooltipMessage ?
           <TrainingTooltip placement="topLeft" overlay={trainingTooltipMessage}>
             {headerHtml}
           </TrainingTooltip> : headerHtml
         }
         <div>
-          <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
+          <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending Boosting</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
         </div>
         {proposals.length === 0 ?
           <div className={css.loading}>
@@ -63,6 +64,7 @@ const ProposalSchemeCard = (props: IProps) => {
           : " "
         }
       </Link>
+
       {proposals.length > 0 ?
         <div>
           {proposalsHTML}
@@ -103,6 +105,7 @@ export default withSubscription({
 });
 
 
+// TODO: move this to a separate file
 /***** ProposalDetail Component *****/
 interface IProposalDetailProps extends ISubscriptionProps<IProposalState> {
   dao: IDAOState;
@@ -114,15 +117,17 @@ const ProposalDetail = (props: IProposalDetailProps) => {
   const proposalState = data;
   return (
     <Link className={css.proposalTitle} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
-      <span>
-        <em className={css.miniGraph}>
+      <div className={css.container}>
+        <div className={css.miniGraph}>
           <VoteGraph size={20} proposal={proposalState} />
-        </em>
-        {humanProposalTitle(proposalState)}
-      </span>
-      <b>
-        <Countdown toDate={closingTime(proposalState)} detailView={false} schemeView />
-      </b>
+        </div>
+        <div className={css.title}>
+          {humanProposalTitle(proposalState)}
+        </div>
+        <div className={css.countdown}>
+          <ProposalCountdown proposal={proposalState} schemeView />
+        </div>
+      </div>
     </Link>
   );
 };

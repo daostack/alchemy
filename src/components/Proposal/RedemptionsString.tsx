@@ -2,14 +2,14 @@ import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/clie
 
 import BN = require("bn.js");
 import Reputation from "components/Account/Reputation";
-import { formatTokens, tokenSymbol } from "lib/util";
+import { baseTokenName, genName, getCRRewards, getGpRewards, formatTokens, tokenDecimals, tokenSymbol } from "lib/util";
 import * as React from "react";
 
 interface IProps {
   currentAccountAddress: Address;
   dao: IDAOState;
   proposal: IProposalState;
-  rewards: IRewardState[];
+  rewards: IRewardState;
   separator?: string;
 }
 
@@ -23,37 +23,40 @@ export default class RedemptionsString extends React.Component<IProps, null> {
     let reputation = new BN(0);
     let gen = new BN(0);
 
-    for (const reward of rewards) {
-      if (reward.reputationForProposer.gt(zero)) {
-        reputation = reputation.add(reward.reputationForProposer);
-      } else if (reward.reputationForVoter.gt(zero)) {
-        reputation = reputation.add(reward.reputationForVoter);
-      } else if (reward.tokensForStaker.gt(zero)) {
-        gen = gen.add(reward.tokensForStaker);
-      }  else if (reward.daoBountyForStaker.gt(zero)) {
-        gen = gen.add(reward.daoBountyForStaker);
+    const gpRewards = getGpRewards(rewards);
+
+    if (gpRewards) {
+      if (gpRewards.reputationForProposer) {
+        reputation = reputation.add(gpRewards.reputationForProposer);
+      } else if (gpRewards.reputationForVoter) {
+        reputation = reputation.add(gpRewards.reputationForVoter);
+      } else if (gpRewards.tokensForStaker) {
+        gen = gen.add(gpRewards.tokensForStaker);
+      }  else if (gpRewards.daoBountyForStaker) {
+        gen = gen.add(gpRewards.daoBountyForStaker);
       }
     }
 
     const contributionReward = proposal.contributionReward;
 
     if (contributionReward && currentAccountAddress === contributionReward.beneficiary) {
-      if (contributionReward.ethReward.gt(zero)) {
-        rewardComponents.push(formatTokens(contributionReward.ethReward, "ETH"));
+      const rewards = getCRRewards(proposal);
+      if (rewards.ethReward) {
+        rewardComponents.push(formatTokens(rewards.ethReward, baseTokenName()));
       }
-      if (contributionReward.externalTokenReward.gt(zero)) {
-        rewardComponents.push(formatTokens(contributionReward.externalTokenReward, tokenSymbol(contributionReward.externalToken)));
+      if (rewards.externalTokenReward) {
+        rewardComponents.push(formatTokens(rewards.externalTokenReward, tokenSymbol(contributionReward.externalToken), tokenDecimals(contributionReward.externalToken)));
       }
-      if (contributionReward.nativeTokenReward.gt(zero)) {
-        rewardComponents.push(formatTokens(contributionReward.nativeTokenReward, dao.tokenSymbol));
+      if (rewards.nativeTokenReward) {
+        rewardComponents.push(formatTokens(rewards.nativeTokenReward, dao.tokenSymbol));
       }
-      if (!contributionReward.reputationReward.isZero()) {
-        reputation.add(contributionReward.reputationReward);
+      if (rewards.reputationReward) {
+        reputation.add(rewards.reputationReward);
       }
     }
 
     if (gen.gt(zero)) {
-      rewardComponents.push(formatTokens(gen, "GEN"));
+      rewardComponents.push(formatTokens(gen, genName()));
     }
 
     if (reputation.gt(zero)) {

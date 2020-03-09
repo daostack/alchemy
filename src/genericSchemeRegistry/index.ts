@@ -1,9 +1,9 @@
 // tslint:disable:max-classes-per-file
-/*
- */
 import BN = require("bn.js");
-const namehash = require("eth-ens-namehash");
+import { targetedNetwork, Networks } from "arc";
+
 const Web3 = require("web3");
+const namehash = require("eth-ens-namehash");
 const dutchXInfo = require("./schemes/DutchX.json");
 const bountiesInfo = require("./schemes/StandardBounties.json");
 const gpInfo = require("./schemes/GenesisProtocol.json");
@@ -23,14 +23,19 @@ const KNOWNSCHEMES = [
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
   main: {},
   rinkeby: {},
-  private: {},
+  xdai: {},
+  ganache: {},
 };
 
 for (const schemeInfo of KNOWNSCHEMES) {
   for (const network of Object.keys(SCHEMEADDRESSES)) {
-    for (const address of schemeInfo.addresses[network]) {
-      SCHEMEADDRESSES[network][address.toLowerCase()] = schemeInfo;
-    }
+    const networkId = (network === "ganache" && "private" || network);
+    const addresses = schemeInfo.addresses[networkId];
+    if (addresses) {
+      for (const address of addresses) {
+        SCHEMEADDRESSES[network][address.toLowerCase()] = schemeInfo;
+      }
+    } 
   }
 }
 interface IABISpec {
@@ -43,7 +48,7 @@ interface IABISpec {
   type: string;
 }
 
-export interface IActionFieldOptions {
+interface IActionFieldOptions {
   decimals?: number;
   defaultValue?: any;
   name: string;
@@ -117,7 +122,7 @@ export class ActionField {
   }
 }
 
-export interface IActionSpec {
+interface IActionSpec {
   description: string;
   id: string;
   label: string;
@@ -125,7 +130,7 @@ export interface IActionSpec {
   notes: string;
   fields: any[];
 }
-export interface IGenericSchemeJSON {
+interface IGenericSchemeJSON {
   name: string;
   addresses: any[];
   actions: IActionSpec[];
@@ -231,6 +236,7 @@ export class GenericSchemeInfo {
   }
 }
 
+
 export class GenericSchemeRegistry {
   /**
    * Check the address to see if this is a known contract, and if so
@@ -238,21 +244,9 @@ export class GenericSchemeRegistry {
    * @param  address an ethereum address
    * @return an object [specs to be written..]
    */
-  public getSchemeInfo(address: string, network?: "main"|"rinkeby"|"private"|undefined): GenericSchemeInfo {
+  public getSchemeInfo(address: string, network?: Networks): GenericSchemeInfo {
     if (!network) {
-      switch (process.env.NODE_ENV) {
-        case "production":
-          network = "main";
-          break;
-        case "staging":
-          network = "rinkeby";
-          break;
-        case "development":
-          network = "private";
-          break;
-        default:
-          network = "main";
-      }
+      network = targetedNetwork();
     }
     const spec = SCHEMEADDRESSES[network][address.toLowerCase()];
     if (spec) {

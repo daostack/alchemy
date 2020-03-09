@@ -1,35 +1,39 @@
-import { Address, IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
-import { enableWalletProvider, getAccountIsEnabled, getArc, gotoReadonly, getWeb3ProviderInfo } from "arc";
-import * as classNames from "classnames";
+import { threeBoxLogout } from "actions/profilesActions";
+import { enableWalletProvider, getAccountIsEnabled, getArc, logout, getWeb3ProviderInfo } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import RedemptionsButton from "components/Redemptions/RedemptionsButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { copyToClipboard } from "lib/util";
-import * as queryString from "query-string";
+import { IRootState } from "reducers";
+import { NotificationStatus, showNotification } from "reducers/notifications";
+import { IProfileState } from "reducers/profilesReducer";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
+import { parse } from "query-string";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom";
 import { Breadcrumbs } from "react-breadcrumbs-dynamic";
-import { IRootState } from "reducers";
-import { NotificationStatus, showNotification } from "reducers/notifications";
-import { IProfileState } from "reducers/profilesReducer";
 import { of } from "rxjs";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Toggle from "react-toggle";
 import { RefObject } from "react";
+import classNames from "classnames";
+import { Address, IDAOState } from "@daostack/client";
+import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
 }
 
 interface IStateProps {
+  showRedemptionsButton: boolean;
   currentAccountProfile: IProfileState;
   currentAccountAddress: string | null;
   daoAvatarAddress: Address;
   menuOpen: boolean;
+  threeBox: any;
 }
 
 const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalProps): IExternalProps & IStateProps => {
@@ -37,14 +41,25 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
     path: "/dao/:daoAvatarAddress",
     strict: false,
   });
-  const queryValues = queryString.parse(ownProps.location.search);
+  const queryValues = parse(ownProps.location.search);
+
+  // TODO: this is a temporary hack to send less requests during the ethDenver conference: 
+  // we hide the demptionsbutton when the URL contains "crx". Should probably be disabled at later date..
+  let showRedemptionsButton;
+  if (ETHDENVER_OPTIMIZATION) {
+    showRedemptionsButton = (ownProps.location.pathname.indexOf("crx") === -1);
+  } else {
+    showRedemptionsButton = true;
+  }
 
   return {
     ...ownProps,
+    showRedemptionsButton,
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
     menuOpen: state.ui.menuOpen,
+    threeBox: state.profiles.threeBox,
   };
 };
 
@@ -56,6 +71,7 @@ interface IDispatchProps {
   disableTrainingTooltipsOnHover: typeof uiActions.disableTrainingTooltipsOnHover;
   enableTrainingTooltipsShowAll: typeof  uiActions.enableTrainingTooltipsShowAll;
   disableTrainingTooltipsShowAll: typeof uiActions.disableTrainingTooltipsShowAll;
+  threeBoxLogout: typeof threeBoxLogout;
 }
 
 const mapDispatchToProps = {
@@ -66,11 +82,12 @@ const mapDispatchToProps = {
   disableTrainingTooltipsOnHover: uiActions.disableTrainingTooltipsOnHover,
   enableTrainingTooltipsShowAll: uiActions.enableTrainingTooltipsShowAll,
   disableTrainingTooltipsShowAll: uiActions.disableTrainingTooltipsShowAll,
+  threeBoxLogout,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
 
-class Header extends React.Component<IProps, IStateProps> {
+class Header extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
@@ -113,7 +130,8 @@ class Header extends React.Component<IProps, IStateProps> {
   }
 
   public handleClickLogout = async (_event: any): Promise<void> => {
-    await gotoReadonly(this.props.showNotification);
+    await logout(this.props.showNotification);
+    await this.props.threeBoxLogout();
   }
 
   private handleToggleMenu = (_event: any): void => {
@@ -161,17 +179,13 @@ class Header extends React.Component<IProps, IStateProps> {
 
     return(
       <div className={css.headerContainer}>
-        <nav className={classNames({
-          [css.header]: true,
-          [css.hasHamburger]: !!daoAvatarAddress,
-        })}>
-          { daoAvatarAddress ?
-            <div className={css.menuToggle} onClick={this.handleToggleMenu}>
-              {this.props.menuOpen ?
-                <img src="/assets/images/Icon/Close.svg"/> :
-                <img src="/assets/images/Icon/Menu.svg"/>}
-            </div> : "" }
-          <TrainingTooltip overlay="List of all DAOs accessible by Alchemy" placement="bottomRight">
+        <nav className={css.header}>
+          <div className={css.menuToggle} onClick={this.handleToggleMenu}>
+            {this.props.menuOpen ?
+              <img src="/assets/images/Icon/Close.svg"/> :
+              <img src="/assets/images/Icon/Menu.svg"/>}
+          </div>
+          <TrainingTooltip overlay="View your personal feed" placement="bottomRight">
             <div className={css.menu}>
               <Link to="/">
                 <img src="/assets/images/alchemy-logo-white.svg"/>
@@ -194,9 +208,11 @@ class Header extends React.Component<IProps, IStateProps> {
                 icons={{ checked: <img src='/assets/images/Icon/checked.svg'/>, unchecked: <img src='/assets/images/Icon/unchecked.svg'/> }}/>
             </div>
           </TrainingTooltip>
-          <div className={css.redemptionsButton}>
-            <RedemptionsButton currentAccountAddress={currentAccountAddress} />
-          </div>
+          {
+            this.props.showRedemptionsButton ? <div className={css.redemptionsButton}>
+              <RedemptionsButton currentAccountAddress={currentAccountAddress} />
+            </div> : ""
+          }
           <div className={css.accountInfo}>
             { currentAccountAddress ?
               <span>
@@ -206,7 +222,7 @@ class Header extends React.Component<IProps, IStateProps> {
                       <AccountProfileName accountAddress={currentAccountAddress}
                         accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
                       <span className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
-                        <AccountImage accountAddress={currentAccountAddress} />
+                        <AccountImage accountAddress={currentAccountAddress} profile={currentAccountProfile} width={50} />
                       </span>
                     </div>
                   </div>
@@ -215,7 +231,7 @@ class Header extends React.Component<IProps, IStateProps> {
                   <div className={css.pointer}></div>
                   <div className={css.walletDetails}>
                     <div className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
-                      <AccountImage accountAddress={currentAccountAddress} />
+                      <AccountImage accountAddress={currentAccountAddress} profile={currentAccountProfile} width={50} />
                     </div>
                     <div className={css.profileName}>
                       <AccountProfileName accountAddress={currentAccountAddress}
@@ -244,7 +260,7 @@ class Header extends React.Component<IProps, IStateProps> {
                       <div className={css.web3ProviderLogInOut}  onClick={this.handleConnect}><div className={css.text}>Connect</div> <img src="/assets/images/Icon/login.svg"/></div> }
                   </div>
                 </div>
-              </span> : ""
+              </span> : <span></span>
             }
             {!currentAccountAddress ?
               <div className={css.web3ProviderLogin}>

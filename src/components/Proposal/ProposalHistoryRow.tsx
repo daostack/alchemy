@@ -1,16 +1,14 @@
 import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/client";
-import * as arcActions from "actions/arcActions";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { formatTokens, humanProposalTitle } from "lib/util";
+import { schemeName } from "lib/schemeUtils";
 import * as React from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
-import { proposalFailed, proposalPassed } from "reducers/arcReducer";
-import { closingTime } from "reducers/arcReducer";
+import { closingTime, proposalFailed, proposalPassed } from "lib/proposalHelpers";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import StakeGraph from "./Staking/StakeGraph";
@@ -23,21 +21,17 @@ interface IExternalProps {
   proposal: Proposal;
   daoState: IDAOState;
   currentAccountAddress: Address;
+  history: any;
 }
 
 interface IStateProps {
   creatorProfile?: IProfileState;
 }
 
-interface IDispatchProps {
-  redeemProposal: typeof arcActions.redeemProposal;
-  executeProposal: typeof arcActions.executeProposal;
-}
-
 type SubscriptionData = [IProposalState, Stake[], Vote[], IMemberState];
-type IProps = IStateProps & IDispatchProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
+type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IExternalProps &  ISubscriptionProps<SubscriptionData> & IStateProps => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IExternalProps & ISubscriptionProps<SubscriptionData> & IStateProps => {
   const proposal = ownProps.data[0];
 
   return {
@@ -46,13 +40,8 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscrip
   };
 };
 
-const mapDispatchToProps = {
-  redeemProposal: arcActions.redeemProposal,
-  executeProposal: arcActions.executeProposal,
-};
-
 interface IState {
-  preRedeemModalOpen: boolean;
+  isMobile: boolean;
 }
 
 class ProposalHistoryRow extends React.Component<IProps, IState> {
@@ -61,15 +50,40 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      preRedeemModalOpen: false,
+      isMobile: false,
     };
+  }
+
+  public componentDidMount() {
+    window.addEventListener("resize", this.updateWindowDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateWindowDimensions);
+  }
+
+  private updateWindowDimensions = (_e: any) => {
+    const nowMobile = window.innerWidth <= 425;
+    if (nowMobile !== this.state.isMobile) {
+      this.setState({ isMobile: nowMobile });
+    }
+  }
+
+  private gotoProposal = (e: any) => {
+    const { daoState, history, proposal } = this.props;
+    const url = `/dao/${daoState.address}/proposal/${proposal.id}`;
+    if (e.ctrlKey || ((navigator.platform === "MacIntel") && e.metaKey)) {
+      window.open(url, "_blank");
+    } else {
+      history.push(url);
+    }
   }
 
   public render(): RenderOutput {
     const {
       creatorProfile,
       currentAccountAddress,
-      data, daoState, proposal } = this.props;
+      data, daoState } = this.props;
     const [proposalState, stakesOfCurrentUser, votesOfCurrentUser, currentMemberState] = data;
 
     const proposalClass = classNames({
@@ -132,19 +146,19 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     return (
       <tr className={proposalClass}>
         <td className={css.proposalCreator}>
-          <AccountPopup accountAddress={proposalState.proposer} daoState={daoState} historyView/>
+          <AccountPopup accountAddress={proposalState.proposer} daoState={daoState} width={this.state.isMobile ? 12 : 40} />
           <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} historyView/>
         </td>
-        <td className={css.endDate}>
-          {closingTime(proposalState).format("MMM D, YYYY")}
+        <td onClick={this.gotoProposal} className={css.endDate}>
+          {closingTime(proposalState) ? closingTime(proposalState).format("MMM D, YYYY") : ""}
         </td>
-        <td className={css.scheme}>
-          {proposalState.queue.name.replace(/([A-Z])/g, " $1")}
+        <td onClick={this.gotoProposal} className={css.scheme}>
+          {schemeName(proposalState.scheme)}
         </td>
-        <td className={css.title}>
-          <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposalState)}</Link>
+        <td onClick={this.gotoProposal} className={css.title}>
+          {humanProposalTitle(proposalState)}
         </td>
-        <td className={css.votes}>
+        <td onClick={this.gotoProposal} className={css.votes}>
           <div className={voteControls}>
             <VoteBreakdown
               currentAccountAddress={currentAccountAddress}
@@ -153,13 +167,13 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
               proposal={proposalState} historyView />
           </div>
         </td>
-        <td className={css.predictions}>
+        <td onClick={this.gotoProposal} className={css.predictions}>
           <StakeGraph
             proposal={proposalState}
             historyView
           />
         </td>
-        <td className={closeReasonClass}>
+        <td onClick={this.gotoProposal} className={closeReasonClass}>
           <div className={css.decisionPassed}>
             <img src="/assets/images/Icon/vote/for.svg"/>
             <span>Passed</span>
@@ -175,7 +189,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
             </div>
           </div>
         </td>
-        <td className={myActionsClass}>
+        <td onClick={this.gotoProposal} className={myActionsClass}>
           <div className={css.myVote}>
             <span>{formatTokens(currentAccountVoteAmount, "Rep")}</span>
             <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg"/>
@@ -192,7 +206,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedProposalHistoryRow = connect(mapStateToProps, mapDispatchToProps)(ProposalHistoryRow);
+const ConnectedProposalHistoryRow = connect(mapStateToProps)(ProposalHistoryRow);
 
 // In this case we wrap the Connected component because mapStateToProps requires the subscribed proposal state
 export default withSubscription({
