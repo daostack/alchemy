@@ -1,10 +1,10 @@
+import { formatTokens } from "lib/util";
+import * as css from "./BoostAmount.scss";
 import { IProposalStage, IProposalState } from "@daostack/client";
 
 import classNames from "classnames";
-import { formatTokens } from "lib/util";
 import * as React from "react";
 
-import * as css from "./BoostAmount.scss";
 
 interface IProps {
   detailView?: boolean;
@@ -30,7 +30,7 @@ export default class BoostAmount extends React.Component<IProps, null> {
     return (
       <div className={wrapperClass}>
         {
-          !expired ? ((proposal.stage === IProposalStage.Queued && proposal.upstakeNeededToPreBoost.gten(0)) ?
+          (proposal.stage === IProposalStage.Queued && !expired && proposal.upstakeNeededToPreBoost.gten(0)) ?
             <span className={css.boostedAmount}>
               <b>
                 {detailView ? <img src="/assets/images/Icon/Boost-slate.svg" /> : ""}
@@ -52,7 +52,6 @@ export default class BoostAmount extends React.Component<IProps, null> {
                   </b>
                 </span>
                 : nothing
-          ) : nothing
         }
       </div>
     );
