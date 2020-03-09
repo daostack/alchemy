@@ -5,7 +5,7 @@ import { enableWalletProvider, getArc } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { schemeName, getSchemeIsActive} from "lib/util";
+import { schemeName, getSchemeIsActive} from "lib/schemeUtils";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Helmet } from "react-helmet";
@@ -77,7 +77,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
 
   private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} daoState={this.props.daoState} scheme={this.props.data[0]} />;
   private schemeProposalsPageHtml = (isActive: boolean) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} />;
-  private contributionsRewardExtTabHtml = () => (props: any) => 
+  private contributionsRewardExtTabHtml = () => (props: any) =>
   {
     if (!this.state.crxListComponent) {
       return null;
@@ -126,10 +126,10 @@ class SchemeContainer extends React.Component<IProps, IState> {
       [css.active]: this.props.location.pathname.includes("crx"),
     });
     const schemeFriendlyName = schemeName(schemeState, schemeState.address);
-    
+
     return (
       <div className={css.schemeContainer}>
-     
+
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeFriendlyName}</BreadcrumbsItem>
         <Helmet>
           <meta name="description" content={daoState.name + " | " + schemeState.name + " proposals | Managed on Alchemy by DAOstack"} />
