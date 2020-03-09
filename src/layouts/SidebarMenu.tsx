@@ -117,7 +117,11 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                 A curated registry of identities on the Ethereum blockchain.&nbsp;
                     <a className="externalLink" href="https://docs.google.com/document/d/1_aS41bvA6D83aTPv6QNehR3PfIRHJKkELnU76Sds5Xk" target="_blank" rel="noopener noreferrer">How to register.</a>
                   </p>
-                  : <p>New to DAOstack? Visit the <a href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">help center</a> to get started.</p>
+                  : dao.name === "dOrg" ?
+                    <p>
+                    Visit the <a href="https://dOrg.tech" target="_blank" rel="noopener noreferrer">dOrg handbook</a> to learn more.
+                    </p>
+                    : <p>New to DAOstack? Visit the <a href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">help center</a> to get started.</p>
           }
         </div>
         <div className={css.followButton}><FollowButton id={dao.address} type="daos" style="white" /></div>
