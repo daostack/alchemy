@@ -6,12 +6,14 @@ const Web3 = require("web3");
 const namehash = require("eth-ens-namehash");
 const dutchXInfo = require("./schemes/DutchX.json");
 const gpInfo = require("./schemes/GenesisProtocol.json");
+const ensRegistrarInfo = require("./schemes/EnsRegistrar.json");
 const ensRegistryInfo = require("./schemes/ENSRegistry.json");
 const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
 const registryLookupInfo = require("./schemes/RegistryLookup.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
+  ensRegistrarInfo,
   ensRegistryInfo,
   ensPublicResolverInfo,
   gpInfo,

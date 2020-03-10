@@ -384,6 +384,9 @@
 
   .sidebar {
     width: 199px;
+    height: inherit;
+    overflow-x: hidden;
+    overflow-y: auto;
     float: left;
     padding-top: 30px;
 
