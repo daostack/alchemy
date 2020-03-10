@@ -1,4 +1,3 @@
-const BN = require("bn.js");
 
 import * as React from "react";
 import { connect } from "react-redux";
@@ -23,6 +22,8 @@ import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+
+const BN = require("bn.js");
 
 interface IStateProps {
   daoAvatarAddress: string;
