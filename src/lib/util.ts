@@ -280,14 +280,12 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       const genericSchemeRegistry = new GenericSchemeRegistry();
       let contractToCall;
       const schemeState = scheme as ISchemeState;
-      console.log(schemeState)
       if (schemeState.genericSchemeParams) {
         contractToCall = schemeState.genericSchemeParams.contractToCall;
       } else {
         contractToCall = schemeState.uGenericSchemeParams.contractToCall;
       }
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
-      console.log(genericSchemeInfo)
       if (genericSchemeInfo) {
         name = genericSchemeInfo.specs.name;
       } else {
