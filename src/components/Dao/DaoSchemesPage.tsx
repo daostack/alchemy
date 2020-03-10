@@ -98,9 +98,9 @@ class DaoSchemesPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.wrapper}>
-      { backgroundImage &&  <DAOHeaderBackground backgroundImage={backgroundImage} /> }
-      <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
-      { signal && <DAOHeader {...this.props} signal={signal} /> }
+        { backgroundImage &&  <DAOHeaderBackground backgroundImage={backgroundImage} /> }
+        <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
+        { signal && <DAOHeader {...this.props} signal={signal} /> }
         <Sticky enabled top={50} innerZ={10000}>
           <h1>All Plugins</h1>
         </Sticky>
@@ -130,7 +130,7 @@ export default withSubscription({
     const schemes = dao.schemes({}, { fetchAllData: true, subscribe: true });
     // const DAOAddress = props.daoState.address;
     // Currently only one dao has signal data 
-    const DAOAddress = "0x771d0279e094b547f0b42d72dd6bfcce278d9a20";
+    const DAOAddress = dao.id;
     const signalQuery = gql`
     {
       signals(where: { id: "${DAOAddress}" } ) {
