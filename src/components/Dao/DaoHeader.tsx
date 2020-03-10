@@ -97,7 +97,7 @@ const styles = {
     borderRadius: "50%",
     borderColor: "white",
     borderStyle: "solid",  
-  }
+  },
 };
 
 export default DaoHeader;
