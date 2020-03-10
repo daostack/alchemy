@@ -7,6 +7,7 @@ const namehash = require("eth-ens-namehash");
 const dutchXInfo = require("./schemes/DutchX.json");
 const bountiesInfo = require("./schemes/StandardBounties.json");
 const gpInfo = require("./schemes/GenesisProtocol.json");
+const ensRegistrarInfo = require("./schemes/EnsRegistrar.json");
 const ensRegistryInfo = require("./schemes/ENSRegistry.json");
 const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
 const registryLookupInfo = require("./schemes/RegistryLookup.json");
@@ -14,6 +15,7 @@ const registryLookupInfo = require("./schemes/RegistryLookup.json");
 const KNOWNSCHEMES = [
   dutchXInfo,
   bountiesInfo,
+  ensRegistrarInfo,
   ensRegistryInfo,
   ensPublicResolverInfo,
   gpInfo,
