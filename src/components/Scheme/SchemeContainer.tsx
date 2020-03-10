@@ -5,7 +5,7 @@ import { enableWalletProvider, getArc } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { schemeName, getSchemeIsActive} from "lib/schemeUtils";
+import { schemeName, getSchemeIsActive, PROPOSAL_SCHEME_NAMES } from "lib/schemeUtils";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Helmet } from "react-helmet";
@@ -112,14 +112,15 @@ class SchemeContainer extends React.Component<IProps, IState> {
     }
 
     const isActive = getSchemeIsActive(schemeState);
+    const isProposalScheme = PROPOSAL_SCHEME_NAMES.includes(schemeState.name);
 
     const proposalsTabClass = classNames({
       [css.proposals]: true,
-      [css.active]: !this.props.location.pathname.includes("info") && !this.props.location.pathname.includes("crx"),
+      [css.active]: isProposalScheme && !this.props.location.pathname.includes("info") && !this.props.location.pathname.includes("crx"),
     });
     const infoTabClass = classNames({
       [css.info]: true,
-      [css.active]: this.props.location.pathname.includes("info"),
+      [css.active]: !isProposalScheme || this.props.location.pathname.includes("info"),
     });
     const crxTabClass = classNames({
       [css.crx]: true,
@@ -143,7 +144,9 @@ class SchemeContainer extends React.Component<IProps, IState> {
           </h2>
 
           <div className={css.schemeMenu}>
-            <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
+            {isProposalScheme
+              ? <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
+              : ""}
             <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
               <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Information</Link>
             </TrainingTooltip>
@@ -155,20 +158,22 @@ class SchemeContainer extends React.Component<IProps, IState> {
                 : ""
             }
           </div>
-          <div className={css.createProposal}>
-            <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
-              <a className={
-                classNames({
-                  [css.createProposal]: true,
-                  [css.disabled]: !isActive,
-                })}
-              data-test-id="createProposal"
-              href="#!"
-              onClick={isActive ? this.handleNewProposal : null}
-              >
-            + New { `${this.state.crxRewarderProps ? this.state.crxRewarderProps.contractName : schemeFriendlyName } `}Proposal</a>
-            </TrainingTooltip>
-          </div>
+          {isProposalScheme ?
+            <div className={css.createProposal}>
+              <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+                <a className={
+                  classNames({
+                    [css.createProposal]: true,
+                    [css.disabled]: !isActive,
+                  })}
+                data-test-id="createProposal"
+                href="#!"
+                onClick={isActive ? this.handleNewProposal : null}
+                >
+              + New { `${this.state.crxRewarderProps ? this.state.crxRewarderProps.contractName : schemeFriendlyName } `}Proposal</a>
+              </TrainingTooltip>
+            </div>
+          : ""}
         </Sticky>
 
         <Switch>
@@ -178,7 +183,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
               <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/crx" render={this.contributionsRewardExtTabHtml()} />
               : ""
           }
-          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId" render={this.schemeProposalsPageHtml(isActive)} />
+          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId" render={isProposalScheme ? this.schemeProposalsPageHtml(isActive) : this.schemeInfoPageHtml} />
         </Switch>
       </div>
     );

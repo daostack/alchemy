@@ -20,7 +20,7 @@
     margin: 25px;
     margin-bottom: 0;
   }
-  
+
   table {
     width: 100%;
     border-spacing: 0;
@@ -35,17 +35,12 @@
       color: rgba(80, 97, 118, 1.000);
     }
 
-    td img.attention { 
+    td img.attention {
       padding-right:4px;
       width: 16px;
       height: 16px;
       position: relative;
       bottom: -1px;
-    }
-
-
-    td a.address {
-      display:inline-block;
     }
 
     td.left {
@@ -54,18 +49,19 @@
       min-width: 8px;
     }
 
-    a {
+    .schemeLink {
+      display:inline-block;
       color: rgba(154, 169, 181, 1.000);
       position: relative;
       bottom: 3px;
     }
 
-    a:hover {
+    .schemeLink:hover {
       text-decoration: underline;
     }
 
     @media only screen and (max-width: 975px) {
-      td a.address {
+      .schemeLink {
         width:11rem;
         overflow-x: hidden;
         text-overflow: ellipsis;
@@ -74,13 +70,13 @@
     }
 
     @media only screen and (max-width: 815px) {
-      td a.address {
+      .schemeLink {
         width:7rem;
       }
     }
 
     @media only screen and (max-width: 715px) {
-      td a.address {
+      .schemeLink {
         width:6rem;
       }
     }
