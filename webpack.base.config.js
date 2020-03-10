@@ -67,16 +67,23 @@ module.exports = {
         ]
       },
 
-      // CSS handling
+      // This handle the CSS coming from dao creator
       {
         test: /\.css$/,
         include: [
-          /client/,
-          /node_modules\/@fortawesome\/fontawesome-free\/css/,
-          /node_modules\/bootstrap-css-only\/css/,
-          /node_modules\/mdbreact\/dist\/css/,
-          /node_modules\/@dorgtech\/daocreator-ui\/dist/,
+          /node_modules\/@fortawesome\/fontawesome-free\/css\/all.min.css/,
+          /node_modules\/bootstrap-css-only\/css\/bootstrap.min.css/,
+          /node_modules\/mdbreact\/dist\/css\/mdb.css/,
+          /node_modules\/@dorgtech\/daocreator-ui\/dist/
         ],
+        use: ['style-loader', 'css-loader'],
+      },
+
+      // CSS handling
+      {
+        test: /\.css$/,
+        include: /client/,
+        exclude: /node_modules/,
         use: [
           'style-loader',
           { // translates CSS into CommonJS (css-loader) and automatically generates TypeScript types
