@@ -1,4 +1,5 @@
-import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/client";
+import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState,
+  ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/client";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import { toWei } from "lib/util";
@@ -38,11 +39,28 @@ export const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, tx
   ];
 };
 
+export function saveSignalDescription(signalDescription: any): ThunkAction<any, IRootState, null> {
+  return async (_getState: () => IRootState) => {
+    const arc = getArc();
+    let ipfsDataToSave: object = {};
+    if (signalDescription.key && signalDescription.value !== undefined) {
+      if (!arc.ipfsProvider) {
+        throw Error("No ipfsProvider set on Arc instance - cannot save data on IPFS");
+      }
+      ipfsDataToSave = {
+        key: signalDescription.key,
+        value: signalDescription.value,
+      };
+    }
+    return await arc.ipfs.addAndPinString(Buffer.from(JSON.stringify(ipfsDataToSave)));
+  };
+}
+
 export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const arc = getArc();
-
+      
       const dao = new DAO(proposalOptions.dao, arc);
 
       const observer = operationNotifierObserver(dispatch, "Create proposal");
