@@ -2,8 +2,9 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { Prompt } from "react-router";
 import { showNotification } from "reducers/notifications";
+import { enableWalletProvider, getWeb3Provider } from "arc";
 
-const DAOcreator = require("@dorgtech/daocreator-ui").default;
+const DAOcreator = React.lazy(() => import("@dorgtech/daocreator-ui"));
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -38,7 +39,15 @@ class DaoCreator extends React.Component<IProps> {
           when
           message={"Are you sure you want to leave?"}
         />
-        <DAOcreator />
+        <DAOcreator
+          setWeb3Provider={async (): Promise<any> => {
+            if (!await enableWalletProvider({ showNotification: this.props.showNotification })) {
+              return undefined;
+            }
+
+            return await getWeb3Provider();
+          }}
+        />
       </React.Suspense>
     );
   }

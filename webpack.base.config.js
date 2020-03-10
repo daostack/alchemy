@@ -63,6 +63,7 @@ module.exports = {
           /node_modules\/subscriptions-transport-ws/,
           /node_modules\/xhr2-cookies/,
           /node_modules\/zen-observable-ts/,
+          /node_modules\/@dorgtech/,
         ]
       },
 
@@ -70,11 +71,11 @@ module.exports = {
       {
         test: /\.css$/,
         include: [
-          /client/, 
-          /node_modules\/bootstrap-css-only/,
-          /node_modules\/@fortawesome/,
-          /node_modules\/mdbreact/,
-          /node_modules\/@dorgtech\/daocreator-ui/
+          /client/,
+          /node_modules\/@fortawesome\/fontawesome-free\/css/,
+          /node_modules\/bootstrap-css-only\/css/,
+          /node_modules\/mdbreact\/dist\/css/,
+          /node_modules\/@dorgtech\/daocreator-ui\/dist/,
         ],
         use: [
           'style-loader',
