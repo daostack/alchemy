@@ -13,37 +13,38 @@
   },
   "actions": [
     {
-      "id": "createSignalType",
+      "id": "createSignalData",
       "label": "Create Signal Attribute",
       "description": "Create a signal attribute",
       "notes": "docs/link",
       "fields": [
         {
-          "name": "approved",
-          "defaultValue": 1,
-          "label": "Update data of the selected signal type",
-          "labelTrue": "Name",
-          "labelFalse": "Description"
+          "name": "key",
+          "label": "Attribute to add",
+          "placeholder": "Attribute type to add e.g. Header, Icon"
         },
         {
-          "label": "Signal Data",
-          "name": "signalData",
-          "placeholder": "Data (Name, Description)"
+          "name": "value",
+          "label": "Attribute value",
+          "placeholder": "Attribute value",
+          "defaultValue": ""
         }
       ],
       "abi": {
         "constant": false,
         "inputs": [
           {
-            "name": "approved",
-            "type": "bool"
+            "internalType": "string",
+            "name": "_descriptionHash",
+            "type": "string"
           },
           {
-            "name": "signalType",
+            "internalType": "string",
+            "name": "_descriptionHash",
             "type": "string"
           }
         ],
-        "name": "updateSignalData",
+        "name": "signal",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
@@ -57,31 +58,32 @@
       "notes": "docs/link",
       "fields": [
         {
-          "name": "approved",
-          "defaultValue": 1,
-          "label": "Update data of the selected signal type",
-          "labelTrue": "Name",
-          "labelFalse": "Description"
+          "name": "key",
+          "label": "Attribute to update",
+          "placeholder": "Attribute type to add e.g. Header, Icon"
         },
         {
-          "label": "Signal Data",
-          "name": "signalData",
-          "placeholder": "Data (Name, Description)"
+          "name": "value",
+          "label": "Attribute value",
+          "placeholder": "Attribute value",
+          "defaultValue": ""
         }
       ],
       "abi": {
         "constant": false,
         "inputs": [
           {
-            "name": "approved",
-            "type": "bool"
+            "internalType": "string",
+            "name": "_descriptionHash",
+            "type": "string"
           },
           {
-            "name": "signalType",
+            "internalType": "string",
+            "name": "_descriptionHash",
             "type": "string"
           }
         ],
-        "name": "updateSignalData",
+        "name": "signal",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
@@ -95,31 +97,21 @@
       "notes": "docs/link",
       "fields": [
         {
-          "name": "approved",
-          "defaultValue": 1,
-          "label": "Update data of the selected signal type",
-          "labelTrue": "Name",
-          "labelFalse": "Description"
-        },
-        {
-          "label": "Signal Data",
-          "name": "signalData",
-          "placeholder": "Data (Name, Description)"
+          "name": "key",
+          "label": "Attribute to delete",
+          "placeholder": "Attribute type to add e.g. Header, Icon"
         }
       ],
       "abi": {
         "constant": false,
         "inputs": [
           {
-            "name": "approved",
-            "type": "bool"
-          },
-          {
-            "name": "signalType",
+            "internalType": "string",
+            "name": "_descriptionHash",
             "type": "string"
           }
         ],
-        "name": "updateSignalData",
+        "name": "signal",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
