@@ -87,7 +87,7 @@
     "@burner-wallet/burner-connect-provider": "^0.1.1",
     "@daostack/client": "0.2.64",
     "@dorgtech/daocreator-ui-v1": "^0.2.0-rc.20",
-    "@dorgtech/daosmind": "0.0.3-alpha4",
+    "@dorgtech/daosmind": "0.0.3-alpha6",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
     "@fortawesome/react-fontawesome": "^0.1.3",
