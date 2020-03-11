@@ -3,8 +3,18 @@
   - Bugs Fixed
 
 ## Next release
+  - Features Added
+  - Bugs Fixed
+
+## 2020-03-11
 
   - Features Added
+    - added support for EnsRegistrar
+    - added support for Bounty Network
+    - Ctrl-clicking on proposal in history window now goes to new tab
+    - Show DAO's reputation total in the sidebar
+    - Prevent setting wrong permissions on known plugins in Plugin Manager
+
   - Bugs Fixed
 
 ## 2020-03-03
