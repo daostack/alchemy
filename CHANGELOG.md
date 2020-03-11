@@ -6,7 +6,7 @@
   - Features Added
   - Bugs Fixed
 
-## 2020-03-11
+## 0.10.0
 
   - Features Added
     - added support for EnsRegistrar
