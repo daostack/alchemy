@@ -9,7 +9,7 @@
 ## 0.10.0
 
   - Features Added
-    - added support for EnsRegistrar
+    - added support for EnsRegistrar generic scheme
     - added support for Bounty Network
     - Ctrl-clicking on proposal in history window now goes to new tab
     - Show DAO's reputation total in the sidebar
