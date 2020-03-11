@@ -5,6 +5,8 @@
 ## Next release
 
   - Features Added
+    - improved some display of staking/preboosting amounts feedback
+
   - Bugs Fixed
 
 ## 2020-03-03
