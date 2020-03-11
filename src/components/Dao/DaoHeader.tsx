@@ -5,6 +5,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import AccountImage from "components/Account/AccountImage";
 import * as css from "./DaoHeader.scss";
 
+
 interface Signal {
   id: string;
   data: any | string;
@@ -21,8 +22,6 @@ class DaoHeaderComponent extends React.Component<IProps, any> {
   render() {
     const { daoState, signal } = this.props;
     const { name, memberCount, address } = daoState;
-    const parsedSignal = JSON.parse(signal.data);
-    console.log('parsedSignal', parsedSignal);
     const data = {
       daoImg: "/assets/images/generic-user-avatar.png",
       reputationHolders: memberCount,
@@ -44,7 +43,7 @@ class DaoHeaderComponent extends React.Component<IProps, any> {
           <AccountImage
             accountAddress={address}
             width={106}
-            style={styles.circularSquare}
+            style={css.circularSquare}
           />
         </div>
         <div className={css.daoInfo}>
@@ -61,7 +60,7 @@ class DaoHeaderComponent extends React.Component<IProps, any> {
           {
             data.holdings.map((holding, index) => {
               return (
-                <div key={index} className={css.holdingsAmmount}>
+                <div key={index} className={css.holdingsAmount}>
                   { holding.amount }
                   <div className={css.holdingsName}>
                     { holding.name }
@@ -91,13 +90,5 @@ const DaoHeader = withSubscription({
     return dao.schemes({}, { fetchAllData: true, subscribe: true });
   },
 });
-
-const styles = { 
-  circularSquare: {
-    borderRadius: "50%",
-    borderColor: "white",
-    borderStyle: "solid",  
-  },
-};
 
 export default DaoHeader;

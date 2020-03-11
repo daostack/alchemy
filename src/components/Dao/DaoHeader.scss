@@ -1,4 +1,4 @@
-.header-wrap {
+.headerWrap {
   background: white;
   margin: 8rem 2.5% 40px 0;
   padding: 25px;
@@ -6,7 +6,7 @@
   border-radius: 20px 20px 0 0;
 }
 
-.reputation-holders {
+.reputationHolders {
   display: block;
   position: absolute;
   font-size: 10px;
@@ -15,18 +15,18 @@
   white-space: nowrap;
 }
 
-.dao-name {
+.daoName {
   font-size: 24px;
   color: #689bd6;
 }
 
-.dao-info {
+.daoInfo {
   margin-left: 15%;
   top: 15px;
   position: absolute;
 }
 
-.dao-description {
+.daoDescription {
   font-family: $body-font;
   color: $black;
   font-weight: 500;
@@ -34,13 +34,13 @@
   width: 75%;
 }
 
-.circular--square {
+.circularSquare {
   border-radius: 50%;
   border-color: white;
   border-style: solid
 }
 
-.dao-img {
+.daoImg {
   // margin-left: 15%
   top: -40px;
   position: absolute
@@ -54,18 +54,18 @@
   margin-bottom: 15px
 }
 
-.holdings .holdings-ammount {
+.holdings .holdingsAmount {
   margin-top: 5px;
   color: #565a5d;
   font-size: 12px
 }
 
-.holdings .holdings-ammount .holdings-name {
+.holdings .holdingsAmount .holdingsName {
   float: right;
   margin-right: 25px
 }  
 
-.dao-header {
+.daoHeader {
   position: absolute;
   top: 50px;
 }
