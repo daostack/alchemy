@@ -20,6 +20,7 @@ import { ICrxRewarderProps, getCrxRewarderProps, hasRewarderContract, CrxRewarde
 import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
+import SchemeOpenBountyPage from "./SchemeOpenBountyPage";
 import * as css from "./Scheme.scss";
 
 interface IDispatchProps {
@@ -115,17 +116,23 @@ class SchemeContainer extends React.Component<IProps, IState> {
 
     const proposalsTabClass = classNames({
       [css.proposals]: true,
-      [css.active]: !this.props.location.pathname.includes("info") && !this.props.location.pathname.includes("crx"),
+      [css.active]: !this.props.location.pathname.includes("info") && !this.props.location.pathname.includes("crx") && !this.props.location.pathname.includes("open"),
     });
     const infoTabClass = classNames({
       [css.info]: true,
       [css.active]: this.props.location.pathname.includes("info"),
     });
+    const openBountiesTabClass = classNames({
+      [css.openbounty]: true,
+      [css.active]: this.props.location.pathname.includes("openbounties"),
+    });
+
     const crxTabClass = classNames({
       [css.crx]: true,
       [css.active]: this.props.location.pathname.includes("crx"),
     });
     const schemeFriendlyName = schemeName(schemeState, schemeState.address);
+
 
     return (
       <div className={css.schemeContainer}>
@@ -144,6 +151,11 @@ class SchemeContainer extends React.Component<IProps, IState> {
 
           <div className={css.schemeMenu}>
             <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
+
+            { // if Bounties Scheme, create new tab
+              (schemeName(schemeState, schemeState.address) === "Standard Bounties") &&
+              <Link className={openBountiesTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/openbounties/`}>Open Bounties</Link>
+            }
             <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
               <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Information</Link>
             </TrainingTooltip>
@@ -172,6 +184,9 @@ class SchemeContainer extends React.Component<IProps, IState> {
         </Sticky>
 
         <Switch>
+
+          <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/openbounties"
+            render={(props) => <SchemeOpenBountyPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info" render={this.schemeInfoPageHtml} />
           {
             this.state.crxRewarderProps ?
