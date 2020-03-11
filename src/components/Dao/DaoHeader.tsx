@@ -5,6 +5,13 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import AccountImage from "components/Account/AccountImage";
 import * as css from "./DaoHeader.scss";
 
+const styles = { 
+  circularSquare: {
+    borderRadius: "50%",
+    borderColor: "white",
+    borderStyle: "solid",  
+  },
+};
 
 interface Signal {
   id: string;
@@ -43,7 +50,7 @@ class DaoHeaderComponent extends React.Component<IProps, any> {
           <AccountImage
             accountAddress={address}
             width={106}
-            style={css.circularSquare}
+            style={styles.circularSquare}
           />
         </div>
         <div className={css.daoInfo}>
