@@ -171,7 +171,8 @@ class SchemeContainer extends React.Component<IProps, IState> {
                 : ""
             }
           </div>
-          {isProposalScheme ?
+
+          { isProposalScheme ?
             <div className={css.createProposal}>
               <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
                 <a className={
@@ -186,7 +187,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
               + New { `${this.state.crxRewarderProps ? this.state.crxRewarderProps.contractName : schemeFriendlyName } `}Proposal</a>
               </TrainingTooltip>
             </div>
-          : ""}
+            : ""}
         </Sticky>
 
         <Switch>

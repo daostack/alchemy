@@ -193,7 +193,7 @@ export function getSchemeIsActive(scheme: ISchemeState, action?: GetSchemeIsActi
     }
   }
 
-  const schemeParams = (scheme as any)[`${schemeName}Params`]
+  const schemeParams = (scheme as any)[`${schemeName}Params`];
   if (!schemeParams) {
     // eslint-disable-next-line no-console
     console.warn(` getSchemeIsActive: scheme parameters not found for ${scheme.name}`);
