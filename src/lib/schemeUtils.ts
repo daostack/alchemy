@@ -205,11 +205,11 @@ export function getSchemeIsActive(scheme: ISchemeState, action?: GetSchemeIsActi
     console.warn(` getSchemeIsActive: voting machine parameters parameters not found for ${scheme.name}`);
     return true;
   }
-  if ((typeof(schemeParams.activationTime) === undefined) || (schemeParams.activationTime === null)) {
+  if ((typeof(votingMachineParams.activationTime) === undefined) || (votingMachineParams.activationTime === null)) {
     // eslint-disable-next-line no-console
     console.warn(` getSchemeIsActive: voting machine appears not to be GenesisProtocol: ${scheme.name}`);
     return true;
   } else {
-    return moment(schemeParams.activationTime*1000).isSameOrBefore(moment());
+    return moment(votingMachineParams.activationTime*1000).isSameOrBefore(moment());
   }
 }
