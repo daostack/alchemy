@@ -8,7 +8,7 @@
 
   - Bugs Fixed
     - hide trailing slash in PreTransaction modal header
-    - validate all required in CreateUnknownGenericSchemeProposal
+    - validate all required fields in CreateUnknownGenericSchemeProposal modal
 
 ## 0.10.0
 
