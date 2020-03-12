@@ -302,7 +302,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               <div className={css.transactionIcon}>{icon}</div>
               <div className={css.transactionInfo}>
                 <span className={css.transactionType}>{transactionType}</span>
-                { !multiLineMsg ? <span className={css.titleSeparator}>|</span>: "" }
+                { (!multiLineMsg && secondaryHeader) ? <span className={css.titleSeparator}>|</span>: "" }
                 <span className={css.secondaryHeader}>{secondaryHeader}</span>
                 <div className={css.transactionEffect}>
                   {effectText}
