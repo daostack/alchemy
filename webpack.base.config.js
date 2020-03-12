@@ -73,7 +73,6 @@ module.exports = {
         test: /\.css$/,
         include: [
           /node_modules\/@fortawesome\/fontawesome-free\/css\/all.min.css/,
-          /node_modules\/bootstrap-css-only\/css\/bootstrap.min.css/,
           /node_modules\/mdbreact\/dist\/css\/mdb.css/,
           /node_modules\/@dorgtech\/daocreator-ui\/dist/
         ],
