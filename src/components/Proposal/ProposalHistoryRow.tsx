@@ -3,7 +3,8 @@ import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { formatTokens, humanProposalTitle, schemeName } from "lib/util";
+import { formatTokens, humanProposalTitle } from "lib/util";
+import { schemeName } from "lib/schemeUtils";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -68,9 +69,14 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     }
   }
 
-  private gotoProposal = () => {
+  private gotoProposal = (e: any) => {
     const { daoState, history, proposal } = this.props;
-    history.push("/dao/" + daoState.address + "/proposal/" + proposal.id);
+    const url = `/dao/${daoState.address}/proposal/${proposal.id}`;
+    if (e.ctrlKey || ((navigator.platform === "MacIntel") && e.metaKey)) {
+      window.open(url, "_blank");
+    } else {
+      history.push(url);
+    }
   }
 
   public render(): RenderOutput {

@@ -1,6 +1,7 @@
 import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@daostack/client";
 import classNames from "classnames";
-import { copyToClipboard, getNetworkName, linkToEtherScan, schemeNameAndAddress } from "lib/util";
+import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
+import { schemeNameAndAddress } from "lib/schemeUtils";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
