@@ -105,11 +105,6 @@ module.exports = {
       // Images & fonts
       {
         test: /\.(png|jpg|gif|mp4|ogg|svg|woff|woff2|ttf|eot|ico)$/,
-        exclude: [
-          /node_modules\/@fortawesome\/fontawesome-free\/css\/all.min.css/,
-          /node_modules\/bootstrap-css-only\/css\/bootstrap.min.css/,
-          /node_modules\/mdbreact\/dist\/css\/mdb.css/,
-        ],
         loader: "url-loader",
         options: {
           limit: 10000 // For assets smaller than 10k inline them as data urls, otherwise use regular file loader
