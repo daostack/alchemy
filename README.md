@@ -43,7 +43,7 @@ Here is a quick setup; there are more detailed instructions in [here](./docs/dev
 
 After you have installed docker, run the following command to spin up ganache (with the migrated contracts), the caching server and the alchemy server:
 ```sh
-docker-compose up graph-node
+docker-compose up graph-node alchemy-server
 ```
 
 Now, in a separate terminal run the following command to run alchemy:

@@ -783,18 +783,12 @@ input[type=number] {
     padding-bottom: 6px;
     border-bottom: $gray-border;
     margin-bottom: 6px;
-
     .icon {
       display: inline-block;
       margin-right:6px;
       position: relative;
       top: 2px;
     }
-
-    .text {
-      display: inline-block;
-      width: 300px;
-      vertical-align: top;
-    }
+    .text { display: inline; }
   }
 }

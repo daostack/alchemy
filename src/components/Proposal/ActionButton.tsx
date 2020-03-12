@@ -254,7 +254,7 @@ class ActionButton extends React.Component<IProps, IState> {
                 </button>
                 : displayRedeemButton ?
                   <div>
-                    <Tooltip placement="bottom" trigger={["hover"]} overlay={redemptionsTip}>
+                    <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
                       <button
                         style={{ whiteSpace: "nowrap" }}
                         disabled={canRewardNone}

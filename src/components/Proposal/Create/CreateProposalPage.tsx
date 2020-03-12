@@ -16,7 +16,7 @@ import { IRootState } from "reducers";
 import { RouteComponentProps } from "react-router-dom";
 import { CrxRewarderComponentType, getCrxRewarderComponent, rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
-import { schemeName } from "lib/schemeUtils";
+import { schemeName } from "lib/util";
 import * as css from "./CreateProposal.scss";
 
 type IExternalProps = RouteComponentProps<any>;
@@ -61,8 +61,6 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
   }
 
   public async componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyPress, false);
-
     Analytics.track("Page View", {
       "Page Name": Page.CreateProposal,
       "DAO Address": this.props.daoAvatarAddress,
@@ -79,17 +77,6 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     }
 
     this.setState(newState);
-  }
-
-  public componentWillUnmount(){
-    document.removeEventListener("keydown", this.handleKeyPress, false);
-  }
-
-  private handleKeyPress = (e: any) => {
-    // Close modal on ESC key press
-    if (e.keyCode === 27) {
-      this.doClose();
-    }
   }
 
   public render(): RenderOutput {

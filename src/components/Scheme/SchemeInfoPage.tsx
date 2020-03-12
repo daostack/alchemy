@@ -3,8 +3,7 @@
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState, IGenesisProtocolParams, IDAOState } from "@daostack/client";
-import { copyToClipboard, fromWei, linkToEtherScan, roundUp } from "lib/util";
-import { schemeName } from "lib/schemeUtils";
+import { copyToClipboard, fromWei, linkToEtherScan, schemeName, roundUp } from "lib/util";
 import * as moment from "moment";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { connect } from "react-redux";

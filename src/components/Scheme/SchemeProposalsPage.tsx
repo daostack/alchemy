@@ -5,7 +5,7 @@ import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
 import Analytics from "lib/analytics";
-import { schemeName } from "lib/schemeUtils";
+import { schemeName} from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";

@@ -1,4 +1,3 @@
-/* eslint-disable no-bitwise */
 import { enableWalletProvider, getArc } from "arc";
 
 import Loading from "components/Shared/Loading";
@@ -9,8 +8,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { createProposal } from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
-import { isValidUrl } from "lib/util";
-import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSIONS, schemeNameAndAddress, SchemePermissions } from "lib/schemeUtils";
+import { schemeNameAndAddress, isValidUrl, GetSchemeIsActiveActions, getSchemeIsActive } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
@@ -61,7 +59,6 @@ interface IFormValues {
 interface IState {
   currentTab: string;
   tags: Array<string>;
-  requiredPermissions: number;
 }
 
 class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
@@ -93,19 +90,9 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.state = {
       currentTab: this.initialFormValues.currentTab,
       tags: this.initialFormValues.tags,
-      requiredPermissions: 0,
     };
   }
 
-  public handleChangeScheme = (e: any) => {
-    const arc = getArc();
-    try {
-      // If we know about this contract then require the minimum permissions for it
-      const contractInfo = arc.getContractInfo(e.target.value);
-      this.setState({ requiredPermissions: REQUIRED_SCHEME_PERMISSIONS[contractInfo.name] });
-      /* eslint-disable-next-line no-empty */
-    } catch (e) {}
-  }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ):  Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
@@ -180,7 +167,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     const schemes = this.props.data;
     const { handleClose } = this.props;
 
-    const { currentTab, requiredPermissions } = this.state;
+    const currentTab = this.state.currentTab;
 
     const arc = getArc();
 
@@ -280,7 +267,6 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
             render={({
               errors,
               touched,
-              handleChange,
               isSubmitting,
               setFieldValue,
               values,
@@ -365,11 +351,6 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         id="schemeToAddInput"
                         placeholder="Enter plugin address"
                         name="schemeToAdd"
-                        onChange={(e: any) => {
-                          // call the built-in handleChange
-                          handleChange(e);
-                          this.handleChangeScheme(e);
-                        }}
                       />
                     </div>
 
@@ -384,11 +365,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         name="schemeToEdit"
                         component="select"
                         className={css.schemeSelect}
-                        onChange={(e: any) => {
-                          // call the built-in handleChange
-                          handleChange(e);
-                          this.handleChangeScheme(e);
-                        }}
+                        defaultValue={this.initialFormValues}
                       >
                         <option value="">Select a plugin...</option>
                         {schemes.map((scheme, _i) => {
@@ -415,52 +392,28 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         Permissions
                       </div>
                       <div className={css.permissionCheckbox}>
-                        <Field
-                          id="registerOtherSchemesInput"
-                          type="checkbox"
-                          name="permissions.registerSchemes"
-                          checked={requiredPermissions & SchemePermissions.CanRegisterSchemes || values.permissions.registerSchemes}
-                          disabled={requiredPermissions & SchemePermissions.CanRegisterSchemes}
-                        />
+                        <Field id="registerOtherSchemesInput" type="checkbox" name="permissions.registerSchemes" checked={values.permissions.registerSchemes}/>
                         <label htmlFor="registerOtherSchemesInput">
                           Register other plugins
                         </label>
                       </div>
 
                       <div className={css.permissionCheckbox}>
-                        <Field
-                          id="changeConstraintsInput"
-                          type="checkbox"
-                          name="permissions.changeConstraints"
-                          checked={requiredPermissions & SchemePermissions.CanAddRemoveGlobalConstraints || values.permissions.changeConstraints}
-                          disabled={requiredPermissions & SchemePermissions.CanAddRemoveGlobalConstraints}
-                        />
+                        <Field id="changeConstraintsInput" type="checkbox" name="permissions.changeConstraints" checked={values.permissions.changeConstraints}/>
                         <label htmlFor="changeConstraintsInput">
                           Add/remove global constraints
                         </label>
                       </div>
 
                       <div className={css.permissionCheckbox}>
-                        <Field
-                          id="upgradeControllerInput"
-                          type="checkbox"
-                          name="permissions.upgradeController"
-                          checked={requiredPermissions & SchemePermissions.CanUpgradeController || values.permissions.upgradeController}
-                          disabled={requiredPermissions & SchemePermissions.CanUpgradeController}
-                        />
+                        <Field id="upgradeControllerInput" type="checkbox" name="permissions.upgradeController" checked={values.permissions.upgradeController}/>
                         <label htmlFor="upgradeControllerInput">
                           Upgrade the controller
                         </label>
                       </div>
 
                       <div className={css.permissionCheckbox}>
-                        <Field
-                          id="genericCallInput"
-                          type="checkbox"
-                          name="permissions.genericCall"
-                          checked={requiredPermissions & SchemePermissions.CanCallDelegateCall || values.permissions.genericCall}
-                          disabled={requiredPermissions & SchemePermissions.CanCallDelegateCall}
-                        />
+                        <Field id="genericCallInput" type="checkbox" name="permissions.genericCall" checked={values.permissions.genericCall}/>
                         <label htmlFor="genericCallInput">
                           Call genericCall on behalf of
                         </label>
@@ -487,6 +440,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         name="schemeToRemove"
                         component="select"
                         className={css.schemeSelect}
+                        defaultValue={this.initialFormValues.schemeToRemove}
                       >
                         <option value="">Select a plugin...</option>
                         {schemes.map((scheme, _i) => {
