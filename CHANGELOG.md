@@ -5,6 +5,7 @@
 ## 0.10.1
 
   - Features Added
+    - new, smaller-footprint busy icon
 
   - Bugs Fixed
     - hide trailing slash in PreTransaction modal header
