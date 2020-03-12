@@ -2,10 +2,10 @@
   - Features Added
   - Bugs Fixed
 
-## ## 0.10.1
+## 0.10.1
 
   - Features Added
-  
+
   - Bugs Fixed
     - hide trailing slash in PreTransaction modal header
     - validate all required in CreateUnknownGenericSchemeProposal
