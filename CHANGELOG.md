@@ -5,7 +5,8 @@
 ## 0.10.1
 
   - Features Added
-    - new, smaller-footprint busy icon
+    - improved display of the spinning busy icon
+    - improved some display of staking/preboosting amounts feedback
 
   - Bugs Fixed
     - hide trailing slash in PreTransaction modal header
