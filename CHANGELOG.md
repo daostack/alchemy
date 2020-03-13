@@ -2,10 +2,24 @@
   - Features Added
   - Bugs Fixed
 
-## Next release
+## 0.10.1
 
   - Features Added
+    - improved display of the spinning busy icon
     - improved some display of staking/preboosting amounts feedback
+
+  - Bugs Fixed
+    - hide trailing slash in PreTransaction modal header
+    - validate all required fields in CreateUnknownGenericSchemeProposal modal
+
+## 0.10.0
+
+  - Features Added
+    - added support for EnsRegistrar generic scheme
+    - added support for Bounty Network
+    - Ctrl-clicking on proposal in history window now goes to new tab
+    - Show DAO's reputation total in the sidebar
+    - Prevent setting wrong permissions on known plugins in Plugin Manager
 
   - Bugs Fixed
 

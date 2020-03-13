@@ -1,6 +1,7 @@
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
-import { schemeName, humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens, isAddress } from "lib/util";
+import { humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens, isAddress } from "lib/util";
+import { schemeName } from "lib/schemeUtils";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
 import { showNotification } from "reducers/notifications";
@@ -76,7 +77,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
-    this.state = { 
+    this.state = {
       showingCreateSubmission: false,
       showingSubmissionDetails: null,
       status: this.getCompetitionState(),
@@ -96,11 +97,11 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
      * externally to the Competition code in Alchemy, and thus the params
      * won't show up in `match`.  (Wasn't able to figure out a clean/easy way to
      * configure such a route, and the behavior may be better this way anyway;
-     * not using React's router I believe helps to keep the history and 
+     * not using React's router I believe helps to keep the history and
      * browser back/forward button behavior nice and clean.)
      */
     const parts = window.location.pathname.split("/");
-    
+
     if (parts.length === 9) {
       const urlSubmissionId = parts[8];
       let urlSubmission: ICompetitionSuggestionState = null;
@@ -116,14 +117,14 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       }
     }
   }
-  
+
   private onEndCountdown = () => {
     // give it time to catch up with timer inprecision
     setTimeout(() => this.setState({ status: this.getCompetitionState() }), 1000);
   }
 
   private openNewSubmissionModal = async (): Promise<void> => {
-    
+
     const { showNotification } = this.props;
 
     if (!await enableWalletProvider({ showNotification })) { return; }
@@ -183,7 +184,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     return <div className={css.noWinners}>
       <div className={css.caption}>No Winners</div>
       <div className={css.body}>
-        { 
+        {
           hasSubmissions ?
             "None of the competition submissions received any votes. Competition rewards will be returned to the DAO." :
             "This competition received no submissions. Competition rewards will be returned to the DAO."
@@ -203,7 +204,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       const voted = votesMap.has(submission.id);
       return (
         <React.Fragment key={index}>
-          { status.overWithWinners ? 
+          { status.overWithWinners ?
             <div className={classNames({
               [css.cell]: true,
               [css.selected]: isSelected(),
@@ -238,7 +239,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   }
 
   public render(): RenderOutput {
-    
+
     const status = this.state.status;
     const { daoState, proposalState } = this.props;
     const submissions = this.props.data[0];
@@ -254,7 +255,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const numSubmissions = submissions.length;
     const hasSubmissions = !!numSubmissions;
 
-    const submissionsAreDisabled = notStarted || 
+    const submissionsAreDisabled = notStarted ||
           // note that winningOutcome is the *current* state, not necessarily the *final* outcome
           (!proposalState.executedAt || (proposalState.winningOutcome !== IProposalOutcome.Pass))
           || (isAddress(competition.admin) && (this.props.currentAccountAddress !== competition.admin))
@@ -269,14 +270,14 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/crx/proposal/${proposalState.id}`}>{humanProposalTitle(proposalState, 40)}</BreadcrumbsItem>
 
       <div className={css.competitionDetailsContainer}>
-      
+
         <div className={css.topSection}>
           <div className={css.header}>
             <StatusBlob competition={competition}></StatusBlob>
             <div className={css.gotoProposal}><Link to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>Go to Proposal&nbsp;&gt;</Link></div>
             { status.now.isBefore(status.competition.suggestionsEndTime) ?
               <div className={css.newSubmission}>
-                { 
+                {
                   <Tooltip overlay={
                     (!proposalState.executedAt || (proposalState.winningOutcome !== IProposalOutcome.Pass)) ? "The competition proposal has not been approved" :
                       notStarted  ? "The submission period has not yet begun" :
@@ -352,7 +353,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             </div>
           </div>
         </div>
-        
+
         { hasSubmissions ?
           <div className={css.submissions}>
             <div className={css.heading}>{numSubmissions}&nbsp;Submissions</div>
@@ -372,7 +373,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         </div>
 
       </div>
-    
+
       {this.state.showingCreateSubmission ?
         <Modal onBackdropClick={this.cancelNewSubmissionModal}>
           <CreateSubmission
@@ -435,21 +436,21 @@ export default withSubscription({
     console.log(getArc, cacheQuery);
     // const arc = await getArc();
     // // sending the query before subscribing seems to resolve a weird cache error - this would ideally be handled in the client
-    // await arc.sendQuery(cacheQuery); 
+    // await arc.sendQuery(cacheQuery);
     // // eslint-disable-next-line @typescript-eslint/no-empty-function
     // await arc.getObservable(cacheQuery, {subscribe: true}).subscribe(() => {});
     // end cache priming
 
     return combineLatest(
       // we do not need to subscribe here (second argument = false), because we already subscribed in the line above
-      getProposalSubmissions(props.proposalState.id, true), 
+      getProposalSubmissions(props.proposalState.id, true),
       // the next construction gets the suggestions for which the user has voted
       props.currentAccountAddress ? getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true)
         .pipe(
           map((votes: Array<CompetitionVote>) => {
             const set = new Set<string>();
             votes.forEach(vote => {
-              set.add(vote.staticState.suggestion);               
+              set.add(vote.staticState.suggestion);
             });
             return set;
           })
