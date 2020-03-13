@@ -523,7 +523,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
 const SubscribedCreateSchemeRegistrarProposal = withSubscription({
   wrappedComponent: CreateSchemeRegistrarProposal,
-  loadingComponent: <div className={css.loading}><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {

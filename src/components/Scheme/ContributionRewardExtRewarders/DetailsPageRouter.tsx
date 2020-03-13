@@ -5,7 +5,6 @@ import { getArc } from "arc";
 import { IDAOState, IProposalState, Address } from "@daostack/client";
 import Loading from "components/Shared/Loading";
 import { getCrxRewarderComponent, CrxRewarderComponentType } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
-import * as css from "../Scheme.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
@@ -58,7 +57,7 @@ class DetailsPageRouter extends React.Component<IProps, IStateProps>
 
 export default withSubscription({
   wrappedComponent: DetailsPageRouter,
-  loadingComponent: <div className={css.loading}><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: null,
   checkForUpdate: [],
   createObservable: (props: IProps) => {
