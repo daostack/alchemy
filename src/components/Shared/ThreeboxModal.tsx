@@ -1,8 +1,6 @@
-//import * as classNames from "classnames";
-//import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
-import { Modal } from "react-router-modal";
+import ModalPopup from "components/Shared/ModalPopup";
 import { showNotification } from "reducers/notifications";
 import * as css from "./ThreeboxModal.scss";
 
@@ -45,12 +43,12 @@ class ThreeboxModal extends React.Component<IProps, IState> {
   public render(): RenderOutput {
 
     return (
-      <Modal onBackdropClick={this.props.closeHandler}>
-        <div className={css.modalWindow}>
-          <div className={css.header}>
-            Connect
-          </div>
-          <div className={css.content}>
+      <ModalPopup
+        closeHandler={this.props.closeHandler}
+        width={510}
+        header="Connect"
+        body={(
+          <div className={css.body}>
             <h1>We&apos;re using 3Box to save your personal data</h1>
             <div className={css.images}>
               <img src="/assets/images/alchemy-logo-blue.svg" />
@@ -63,6 +61,8 @@ class ThreeboxModal extends React.Component<IProps, IState> {
               Afterwards you won&apos;t need to sign more messages during this session.
             </div>
           </div>
+        )}
+        footer={(
           <div className={css.footer}>
             <span><input type="checkbox" onChange={this.handleClickDontShow} value="1" checked={this.state.dontShowAgain} />Don&apos;t show this again</span>
             <button className={css.cancelButton} onClick={this.props.closeHandler}>
@@ -72,8 +72,8 @@ class ThreeboxModal extends React.Component<IProps, IState> {
               Got it
             </button>
           </div>
-        </div>
-      </Modal>
+        )}
+      />
     );
   }
 }
