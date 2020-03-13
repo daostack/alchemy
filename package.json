@@ -1,6 +1,6 @@
 {
   "name": "alchemy-client",
-  "version": "0.9.5",
+  "version": "0.10.0",
   "description": "An app for collaborative networks (DAOs), based on the DAO stack.",
   "author": "DAOstack",
   "license": "GPL-3.0",
@@ -119,7 +119,7 @@
     "react-linkify": "^0.2.2",
     "react-lottie": "^1.2.3",
     "react-markdown": "^4.0.8",
-    "react-mde": "^7.4.1",
+    "react-mde": "^8.1.0",
     "react-on-screen": "^2.1.1",
     "react-redux": "^5.1.1",
     "react-router-dom": "^4.2.2",

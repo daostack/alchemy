@@ -143,6 +143,9 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
             }
 
             require("callData");
+            require("title");
+            require("description");
+            require("value");
             nonEmpty("value");
             nonNegative("value");
 

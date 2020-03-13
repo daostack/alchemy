@@ -11,7 +11,7 @@ import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { generate } from "geopattern";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens } from "lib/util";
+import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWei } from "lib/util";
 import { parse } from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
@@ -20,6 +20,7 @@ import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import { combineLatest, of, from } from "rxjs";
 
+import Tooltip from "rc-tooltip";
 import * as css from "./SidebarMenu.scss";
 
 type IExternalProps = RouteComponentProps<any>;
@@ -193,6 +194,14 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
             </a>
           </span>
           <ul>
+            <li key={"0x0"}>
+              <Tooltip overlay={`${
+                fromWei(dao.reputationTotalSupply).toLocaleString(
+                  undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} REP`} placement="right">
+                <strong>{formatTokens(dao.reputationTotalSupply)} REP</strong>
+              </Tooltip>
+            </li>            
+
             <SubscribedEthBalance dao={dao} />
 
             {Object.keys(supportedTokens()).map((tokenAddress) => {

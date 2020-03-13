@@ -6,6 +6,32 @@
   transform: translate(-50%,-50%)
 }
 
+.pageButton {
+  border: 1px solid $accent-4;
+  height: 40px;
+  display: inline-block;
+  line-height: 30px;
+  margin: 0 auto;
+  color: $accent-4;
+  font-weight: normal;
+  font-size: $body;
+  padding: 0 15px;
+  font-family: $body-font;
+  transition: all .25s ease;
+  background-color: rgba(200,200,200,0);
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.pageSelectionContainer {
+  flex: 1;
+  display: "flex"; 
+  flex-direction: "row"; 
+  justify-content: "space-around";
+}
+
 .schemeInfoContainer {
   background-color: rgba(252, 253, 255, 1.000);
   color: rgba(78, 97, 118, 1.000);
