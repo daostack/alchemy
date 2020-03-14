@@ -5,12 +5,13 @@
 ## 0.10.1
 
   - Features Added
-    - improved display of the spinning busy icon
     - improved some display of staking/preboosting amounts feedback
+    - Unknown schemes now link to Scheme page and show permissions
 
   - Bugs Fixed
     - hide trailing slash in PreTransaction modal header
     - validate all required fields in CreateUnknownGenericSchemeProposal modal
+    - workaround crash in Proposal History page
 
 ## 0.10.0
 
