@@ -14,6 +14,7 @@ import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import Loading from "components/Shared/Loading";
+import { getWeb3Provider } from "arc";
 import { IGenericSchemeParams } from "@daostack/client/dist/types/schemes/base";
 import * as proposalStyle from "../../Scheme/SchemeProposals.scss";
 import * as daoStyle from "../Dao.scss";
@@ -42,6 +43,7 @@ type IProps = IDispatchProps & IExternalProps & SubscriptionData;
 
 function DaoWiki(props: IProps) {
   const [hasWikiScheme, setHasWikiScheme] = React.useState<boolean>(false);
+  const [isLogged, setIsLogged] = React.useState<boolean>(false);
   const [schemes, proposals] = props.data;
 
   const { createProposal, voteOnProposal } = props;
@@ -51,12 +53,12 @@ function DaoWiki(props: IProps) {
     voteOnProposal,
   };
 
-  const renderWikiComponent = (dispatcher: CustomDispatcher) => {
+  const renderWikiComponent = (web3Provider: any, dispatcher: CustomDispatcher) => {
     const { daoAvatarAddress, perspectiveId, pageId } = props.match.params;
     actualHash["dao"] = daoAvatarAddress;
     actualHash["wiki"] = perspectiveId;
     actualHash["page"] = pageId;
-    return WikiContainer.getInstance(dispatcher);
+    return WikiContainer.getInstance(web3Provider, dispatcher);
   };
 
   const checkIfWikiSchemeExists = async () => {
@@ -79,6 +81,12 @@ function DaoWiki(props: IProps) {
     const wikiSchemeExists = states.some(hasWikiScheme);
     setHasWikiScheme(wikiSchemeExists);
     if (wikiSchemeExists) {
+      if (!(await enableWalletProvider({ showNotification: props.showNotification }))) {
+        props.showNotification(NotificationStatus.Failure, "You must be logged in to use Wiki!");
+        return;
+      }
+      setIsLogged(true)
+      const web3Provider = await getWeb3Provider();
       const { dao, address, schemeParams } = states.find(hasWikiScheme);
       const { contractToCall } = schemeParams as IGenericSchemeParams;
       const daoInformation: IDaoInformation = {
@@ -87,7 +95,7 @@ function DaoWiki(props: IProps) {
         contractToCall,
       };
       const dispatcher = new CustomDispatcher(wikiMethods, daoInformation);
-      renderWikiComponent(dispatcher);
+      renderWikiComponent(web3Provider, dispatcher);
     }
   };
 
@@ -156,11 +164,16 @@ function DaoWiki(props: IProps) {
       <Sticky enabled top={50} innerZ={10000}>
         <div className={daoStyle.daoHistoryHeader}>Wiki</div>
       </Sticky>
-      {hasWikiScheme ? (
+      {hasWikiScheme && isLogged ? (
         <div style={{ height: "70vh" }}>
           <ReactiveWiki {...props} />
         </div>
-      ) : (
+      ) : !isLogged ? (
+        <h3>
+          You must be logged in to use the wiki!
+        </h3>
+      ) 
+      : (
         NoWikiScheme
       )}
     </div>
