@@ -97,6 +97,10 @@ export class ActionField {
     } else if (Object.prototype.hasOwnProperty.call(userValue, "trim")) {
       userValue = userValue.trim();
     }
+    
+    if (this.type == "uint256") {
+      return toString(userValue);
+    }
 
     if (this.type === "bool") {
       return parseInt(userValue as string, 10) === 1;
