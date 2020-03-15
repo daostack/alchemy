@@ -80,7 +80,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       tags: this.initialFormValues.tags,
     };
   }
-  
+
   private async getBountyEth(values: IFormValues): Promise<any> {
     const currentAction = this.state.currentAction;
     let ethToSend = new BN(0);
@@ -119,11 +119,11 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     setSubmitting(false);
 
     let ethValue = new BN(0);
-    
+
     if (this.props.genericSchemeInfo.specs.name === "Standard Bounties") {
       const calcBountEth = await this.getBountyEth(values);
       ethValue =  ethValue.add(calcBountEth);
-    } 
+    }
 
     const proposalValues = {
       ...values,
@@ -159,9 +159,9 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
   public renderField(field: ActionField, values: IFormValues, touched: FormikTouched<IFormValues>, errors: FormikErrors<IFormValues>) {
     let type = "string";
     switch (field.type) {
-      case "uint256":
-        type = "number";
-        break;
+      // case "uint256":
+      //   type = "text";
+      //   break;
       case "bool":
         return <div className={css.radioButtons}>
           <Field
