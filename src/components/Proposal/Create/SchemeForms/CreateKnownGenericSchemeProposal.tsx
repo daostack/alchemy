@@ -157,7 +157,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
   }
 
   public renderField(field: ActionField, values: IFormValues, touched: FormikTouched<IFormValues>, errors: FormikErrors<IFormValues>) {
-    let type = "string";
+    const type = "string";
     switch (field.type) {
       case "bool":
         return <div className={css.radioButtons}>
