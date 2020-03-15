@@ -193,17 +193,23 @@ export function getSchemeIsActive(scheme: ISchemeState, action?: GetSchemeIsActi
     }
   }
 
-  const schemeParams = (scheme as any)[`${schemeName}Params`][votingMachineParamsPropertyName];
+  const schemeParams = (scheme as any)[`${schemeName}Params`];
   if (!schemeParams) {
     // eslint-disable-next-line no-console
-    console.warn(` getSchemeIsActive: scheme parameters not found at "voteParams": ${scheme.name}`);
+    console.warn(` getSchemeIsActive: scheme parameters not found for ${scheme.name}`);
     return true;
   }
-  if ((typeof(schemeParams.activationTime) === undefined) || (schemeParams.activationTime === null)) {
+  const votingMachineParams = schemeParams[votingMachineParamsPropertyName];
+  if (!votingMachineParams) {
+    // eslint-disable-next-line no-console
+    console.warn(` getSchemeIsActive: voting machine parameters parameters not found for ${scheme.name}`);
+    return true;
+  }
+  if ((typeof(votingMachineParams.activationTime) === undefined) || (votingMachineParams.activationTime === null)) {
     // eslint-disable-next-line no-console
     console.warn(` getSchemeIsActive: voting machine appears not to be GenesisProtocol: ${scheme.name}`);
     return true;
   } else {
-    return moment(schemeParams.activationTime*1000).isSameOrBefore(moment());
+    return moment(votingMachineParams.activationTime*1000).isSameOrBefore(moment());
   }
 }
