@@ -99,7 +99,7 @@ export class ActionField {
     }
 
     if (this.type == "uint256") {
-      return userValue.toString();
+      return ""+userValue;
     }
 
     if (this.type === "bool") {
