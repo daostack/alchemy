@@ -9,7 +9,7 @@ import { combineLatest } from "rxjs";
 import { Link } from "react-router-dom";
 import * as arcActions from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
-import { schemeName } from "lib/util";
+import { schemeName } from "lib/schemeUtils";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -85,7 +85,7 @@ function DaoWiki(props: IProps) {
         props.showNotification(NotificationStatus.Failure, "You must be logged in to use Wiki!");
         return;
       }
-      setIsLogged(true)
+      setIsLogged(true);
       const web3Provider = await getWeb3Provider();
       const { dao, address, schemeParams } = states.find(hasWikiScheme);
       const { contractToCall } = schemeParams as IGenericSchemeParams;
@@ -173,9 +173,9 @@ function DaoWiki(props: IProps) {
           You must be logged in to use the wiki!
         </h3>
       ) 
-      : (
-        NoWikiScheme
-      )}
+        : (
+          NoWikiScheme
+        )}
     </div>
   );
 }

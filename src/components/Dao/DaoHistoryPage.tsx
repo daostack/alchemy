@@ -40,7 +40,9 @@ class DaoHistoryPage extends React.Component<IProps, null> {
     const proposals = data;
 
     const proposalsHTML = proposals.map((proposal: Proposal) => {
-      return (<ProposalHistoryRow key={"proposal_" + proposal.id} history={this.props.history} proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} />);
+      if (proposal.staticState.scheme) {
+        return (<ProposalHistoryRow key={"proposal_" + proposal.id} history={this.props.history} proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} />);
+      }
     });
 
     return(

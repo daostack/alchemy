@@ -378,14 +378,22 @@
 
 .createWrapperWithSidebar {
   width: 735px;
+  display: flex;
+  flex-direction: row;
   content: "";
   clear: both;
+  overflow: auto;
   height: calc(100% - 40px);
 
   .sidebar {
     width: 199px;
+    height: inherit;
+    overflow-x: hidden;
+    overflow-y: auto;
     float: left;
     padding-top: 30px;
+    overflow: auto;
+    z-index: 900;
 
     .addSchemeButton {
       display: block;

@@ -1,7 +1,9 @@
 import { Scheme, ISchemeState } from "@daostack/client";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { linkToEtherScan, splitByCamelCase } from "lib/util";
+import { splitByCamelCase } from "lib/util";
 import * as React from "react";
+import { Link } from "react-router-dom";
+
 import * as css from "./UnknownSchemeCard.scss";
 
 interface IExternalProps {
@@ -34,10 +36,12 @@ const UnknownSchemeRow = (props: IRowProps) => {
     <td className={css.left}>&nbsp;</td>
     <td>
       <img className={css.attention} src="/assets/images/Icon/Alert-red.svg" />
-      {schemeState.name ?
-        <a href={linkToEtherScan(schemeState.address)} target="_blank" rel="noopener noreferrer">{splitByCamelCase(schemeState.name)}</a> :
-        <a className={css.address} target="_blank" rel="noopener noreferrer" href={linkToEtherScan(schemeState.address)}>{schemeState.address}</a>
-      }
+      <Link className={css.schemeLink} to={`/dao/${schemeState.dao}/scheme/${schemeState.id}`}>
+        {schemeState.name ?
+          splitByCamelCase(schemeState.name) :
+          schemeState.address
+        }
+      </Link>
     </td>
   </tr>;
 };

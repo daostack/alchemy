@@ -1,6 +1,6 @@
+
 import * as React from "react";
 import { connect } from "react-redux";
-// const BN = require("bn.js");
 import { IProposalType, ISchemeState } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 
@@ -23,6 +23,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
+const BN = require("bn.js");
 
 interface IStateProps {
   daoAvatarAddress: string;
@@ -79,13 +80,28 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       tags: this.initialFormValues.tags,
     };
   }
+  
+  private async getBountyEth(values: IFormValues): Promise<any> {
+    const currentAction = this.state.currentAction;
+    let ethToSend = new BN(0);
+
+    // Search for payable feilds in Standard Bounties, add to send as ETH
+    for (const field of currentAction.getFields()) {
+      if (["_depositAmount", "_amount"].includes(field.name)) {
+        ethToSend = ethToSend.add(new BN(values[field.name]));
+      }
+    }
+    return ethToSend;
+  }
+
 
   private handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
+
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const currentAction = this.state.currentAction;
-
     const callValues = [];
+
     for (const field of currentAction.getFields()) {
       const callValue = field.callValue(values[field.name]);
       values[field.name] = callValue;
@@ -102,6 +118,13 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     }
     setSubmitting(false);
 
+    let ethValue = new BN(0);
+    
+    if (this.props.genericSchemeInfo.specs.name === "Standard Bounties") {
+      const calcBountEth = await this.getBountyEth(values);
+      ethValue =  ethValue.add(calcBountEth);
+    } 
+
     const proposalValues = {
       ...values,
       callData,
@@ -109,7 +132,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       scheme: this.props.scheme.address,
       tags: this.state.tags,
       type: IProposalType.GenericScheme,
-      value: 0, // amount of eth to send with the call
+      value: ethValue.toString(), // amount of eth to send with the call
     };
 
     try {

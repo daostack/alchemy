@@ -6,7 +6,9 @@ const Web3 = require("web3");
 const namehash = require("eth-ens-namehash");
 const WikiUpdate = require("./schemes/WikiUpdate.json");
 const dutchXInfo = require("./schemes/DutchX.json");
+const bountiesInfo = require("./schemes/StandardBounties.json");
 const gpInfo = require("./schemes/GenesisProtocol.json");
+const ensRegistrarInfo = require("./schemes/EnsRegistrar.json");
 const ensRegistryInfo = require("./schemes/ENSRegistry.json");
 const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
 const registryLookupInfo = require("./schemes/RegistryLookup.json");
@@ -14,6 +16,8 @@ const registryLookupInfo = require("./schemes/RegistryLookup.json");
 const KNOWNSCHEMES = [
   WikiUpdate,
   dutchXInfo,
+  bountiesInfo,
+  ensRegistrarInfo,
   ensRegistryInfo,
   ensPublicResolverInfo,
   gpInfo,
@@ -104,13 +108,17 @@ export class ActionField {
       return (new BN(userValue as string).mul(new BN(10).pow(new BN(this.decimals)))).toString();
     }
 
+    const web3 = new Web3();
+
     switch (this.transformation) {
       case "namehash": {
         return namehash.hash(userValue);
       }
       case "keccak256": {
-        const web3 = new Web3();
         return web3.utils.keccak256(userValue);
+      }
+      case "toWei": {
+        return web3.utils.toWei(userValue.toString(), "ether").toString();
       }
     }
 

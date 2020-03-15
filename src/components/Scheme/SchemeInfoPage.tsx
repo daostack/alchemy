@@ -3,7 +3,8 @@
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState, IGenesisProtocolParams, IDAOState } from "@daostack/client";
-import { copyToClipboard, fromWei, linkToEtherScan, schemeName, roundUp } from "lib/util";
+import { copyToClipboard, fromWei, linkToEtherScan, roundUp } from "lib/util";
+import { schemeName } from "lib/schemeUtils";
 import * as moment from "moment";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { connect } from "react-redux";
@@ -117,7 +118,7 @@ class SchemeInfo extends React.Component<IProps, null> {
       (scheme.schemeRegistrarParams && scheme.schemeRegistrarParams.votingMachine)
     );
     return <div>
-      <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
+      <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>Info</BreadcrumbsItem>
 
       <div className={css.schemeInfoContainer}>
         <h3>{schemeName(scheme, scheme.address)}</h3>
