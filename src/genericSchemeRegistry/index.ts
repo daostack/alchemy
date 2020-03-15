@@ -37,7 +37,7 @@ for (const schemeInfo of KNOWNSCHEMES) {
       for (const address of addresses) {
         SCHEMEADDRESSES[network][address.toLowerCase()] = schemeInfo;
       }
-    } 
+    }
   }
 }
 interface IABISpec {
@@ -97,10 +97,11 @@ export class ActionField {
     } else if (Object.prototype.hasOwnProperty.call(userValue, "trim")) {
       userValue = userValue.trim();
     }
-    
+
     if (this.type == "uint256") {
-      return toString(userValue);
+      return userValue.toString();
     }
+    console.log(userValue.toString(),this.type);
 
     if (this.type === "bool") {
       return parseInt(userValue as string, 10) === 1;
