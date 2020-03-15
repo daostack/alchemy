@@ -2,6 +2,9 @@
   - Features Added
   - Bugs Fixed
 
+## 0.10.2
+  - Add support for Torus wallet.
+
 ## 0.10.1
 
   - Features Added
