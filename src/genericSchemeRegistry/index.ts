@@ -101,7 +101,6 @@ export class ActionField {
     if (this.type == "uint256") {
       return userValue.toString();
     }
-    console.log(userValue.toString(),this.type);
 
     if (this.type === "bool") {
       return parseInt(userValue as string, 10) === 1;
