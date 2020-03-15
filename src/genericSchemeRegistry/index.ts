@@ -98,8 +98,8 @@ export class ActionField {
       userValue = userValue.trim();
     }
 
-    if (this.type == "uint256") {
-      return ""+userValue;
+    if (this.type === "uint256") {
+      return (new BN(userValue as string).toString();
     }
 
     if (this.type === "bool") {
