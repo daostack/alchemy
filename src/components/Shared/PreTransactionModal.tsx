@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, IProposalState  } from "@daostack/client";
+import { IDAOState, IMemberState, IProposalState, IProposalStage  } from "@daostack/client";
 import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
@@ -302,7 +302,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               <div className={css.transactionIcon}>{icon}</div>
               <div className={css.transactionInfo}>
                 <span className={css.transactionType}>{transactionType}</span>
-                { !multiLineMsg ? <span className={css.titleSeparator}>|</span>: "" }
+                { (!multiLineMsg && secondaryHeader) ? <span className={css.titleSeparator}>|</span>: "" }
                 <span className={css.secondaryHeader}>{secondaryHeader}</span>
                 <div className={css.transactionEffect}>
                   {effectText}
@@ -370,7 +370,13 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                               }
                             </ul>
                           </div>
-                          <div className={css.xToBoost}>&gt; {formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " needed to boost this proposal"}</div>
+                          { (proposal.stage === IProposalStage.Queued && actionType === ActionTypes.StakePass && proposal.upstakeNeededToPreBoost.gten(0)) ?
+                            <div className={css.xToBoost}>&gt; {formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " needed to boost this proposal"}</div>
+                            :
+                            (proposal.stage === IProposalStage.PreBoosted && actionType === ActionTypes.StakeFail && proposal.downStakeNeededToQueue.gtn(0)) ?
+                              <div className={css.xToBoost}>&gt;= {formatTokens(proposal.downStakeNeededToQueue, "GEN") + " needed to unboost this proposal"}</div>
+                              : ""
+                          }
                         </div>
                       </div>
                     </div>

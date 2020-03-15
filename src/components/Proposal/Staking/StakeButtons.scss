@@ -1,12 +1,13 @@
 .predictions {
-  .stakesFor span, .stakesAgainst span {
+  .stakesFor span,
+  .stakesAgainst span {
     width: 50px;
   }
 
   span {
     text-align: left;
     display: inline-block;
-    color: rgba(104, 154, 214, 1.000);
+    color: rgba(104, 154, 214, 1);
     min-width: 3%;
     font-size: 13px;
 
@@ -28,8 +29,8 @@
 
   button {
     font-weight: $bold;
-    color: rgba(3, 118, 255, 1.000);
-    background-color: rgba(225, 235, 247, 1.000);
+    color: rgba(3, 118, 255, 1);
+    background-color: rgba(225, 235, 247, 1);
     height: 25px;
     line-height: 14px;
     position: relative;
@@ -58,7 +59,6 @@
   }
 
   button.pendingPrediction {
-
     strong {
       opacity: 0;
     }
@@ -88,7 +88,7 @@
       button {
         border: 1px solid $black-tenthtone;
         color: $black-halftone;
-        transition: all .25s ease;
+        transition: all 0.25s ease;
 
         &:hover {
           color: $accent-1;
@@ -117,7 +117,7 @@
       button {
         color: $black-halftone;
         border: 1px solid $black-tenthtone;
-        transition: all .25s ease;
+        transition: all 0.25s ease;
 
         &:hover {
           color: $accent-2;
@@ -150,7 +150,9 @@
 }
 
 .predictions.unconfirmedPrediction {
-  .loading { display: block; }
+  .loading {
+    display: block;
+  }
 }
 
 .enablePredictions {
@@ -171,7 +173,6 @@
     padding-top: 5px;
     padding-bottom: 7px;
     margin: 0 auto;
-    border-radius: 12.5px;
     background-color: #0076ff;
     color: white;
     font-weight: normal;
@@ -189,6 +190,8 @@
   font-size: 11px;
   letter-spacing: 0.2px;
   color: #689bd6;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 .detailView {
@@ -203,7 +206,7 @@
 
   h3 {
     display: block;
-    color: rgba(104, 155, 214, 1.000);
+    color: rgba(104, 155, 214, 1);
     width: 100%;
     position: absolute;
     top: 0;
@@ -253,7 +256,6 @@
     border: 1px solid $black-tenthtone;
   }
   50% {
-
     border: 1px solid $accent-1;
   }
   100% {
@@ -265,7 +267,6 @@
     border: 1px solid $black-tenthtone;
   }
   50% {
-
     border: 1px solid $accent-2;
   }
   100% {
@@ -275,7 +276,6 @@
 
 /**** Pre-approve *****/
 .preApproval {
-
   h3 {
     background-color: #122e5b;
     border-radius: 15px 15px 0 0;
@@ -300,7 +300,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   padding: 0 0 20px 0;
   border-radius: 15px 15px 0 0;
   font-size: 14px;
@@ -309,7 +309,7 @@
   p {
     padding: 0 15px 6px 15px;
     font-size: 14px;
-    opacity: .6;
+    opacity: 0.6;
   }
 
   .preapproveButtonsWrapper {
@@ -333,8 +333,8 @@
     }
 
     button:first-of-type {
-      background-color: rgba(225, 235, 247, 1.000);
-      color: rgba(0, 113, 255, 1.000);
+      background-color: rgba(225, 235, 247, 1);
+      color: rgba(0, 113, 255, 1);
     }
   }
 }
@@ -345,7 +345,7 @@
 
   .contextTitle {
     width: 100%;
-    border-bottom: 1px solid rgba(233, 238, 244, 1.000);
+    border-bottom: 1px solid rgba(233, 238, 244, 1);
     text-align: left;
     position: relative;
     top: -5px;
@@ -354,7 +354,7 @@
     span {
       font-size: 11px;
       font-family: "Open Sans";
-      color: rgba(154, 169, 181, 1.000);
+      color: rgba(154, 169, 181, 1);
       padding: 3px;
       background-color: white;
       position: relative;
@@ -365,40 +365,40 @@
 }
 
 .contextContent button {
-    display: block;
-    text-align: left;
-    width: 100%;
-    border: none;
-    background-color: rgba(240, 245, 251, 0);
-    transition: all .25s ease;
-    padding: 5px 0;
-    border-radius: 0;
-    margin: 0 0 0 0;
-    color: rgba(78, 97, 118, 1.000);
-    font-weight: normal;
+  display: block;
+  text-align: left;
+  width: 100%;
+  border: none;
+  background-color: rgba(240, 245, 251, 0);
+  transition: all 0.25s ease;
+  padding: 5px 0;
+  border-radius: 0;
+  margin: 0 0 0 0;
+  color: rgba(78, 97, 118, 1);
+  font-weight: normal;
 
-    img {
-      margin-left: 15px;
-      position: relative;
-      top: 3px;
-      margin-right: 10px;
-    }
+  img {
+    margin-left: 15px;
+    position: relative;
+    top: 3px;
+    margin-right: 10px;
+  }
 
-    span {
-      display: inline-block;
-      position: relative;
-      top: -2px;
-      left: 10px;
-    }
+  span {
+    display: inline-block;
+    position: relative;
+    top: -2px;
+    left: 10px;
+  }
 
-    &:hover {
-      background-color: rgba(240, 245, 251, 1.000);
-    }
+  &:hover {
+    background-color: rgba(240, 245, 251, 1);
+  }
 }
 
 .contextContent .disabledPredictions {
-    width: 80%;
-    text-align: center;
-    margin: 5px auto 0 auto;
-    display: block;
+  width: 80%;
+  text-align: center;
+  margin: 5px auto 0 auto;
+  display: block;
 }
