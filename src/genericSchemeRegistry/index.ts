@@ -98,10 +98,6 @@ export class ActionField {
       userValue = userValue.trim();
     }
 
-    // if (this.type === "uint256") {
-    //   return (new BN(userValue.toString())).toString();
-    // }
-
     if (this.type === "bool") {
       return parseInt(userValue as string, 10) === 1;
     }
