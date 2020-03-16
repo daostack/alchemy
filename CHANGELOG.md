@@ -3,7 +3,11 @@
   - Bugs Fixed
 
 ## 0.10.2
-  - Add support for Torus wallet.
+  - Features Added
+    - Add support for Torus wallet.
+    - Fix bug when entering numbers for uint256 data types in the GenericScheme new proposal modal 
+
+  - Bugs Fixed
 
 ## 0.10.1
 
