@@ -57,7 +57,7 @@
     "build-dev": "node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config webpack.dev.config.js",
     "build-travis": "cross-env NODE_ENV=production NETWORK=main node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config webpack.prod.config.js",
     "fetch-contracts": "cross-env NODE_ENV=production ./node_modules/.bin/ts-node scripts/fetchContracts.ts",
-    "heroku-postbuild": "npm run build",
+    "heroku-postbuild": "heroku config:set NODE_OPTIONS=\"--max_old_space_size=2560\" -a alchemy & npm run build",
     "lint": "eslint --ext .js,.ts,.tsx ./src ./test",
     "lint-andFix": "npm run lint -- --fix",
     "postinstall": "rimraf ./src/**/*.scss.d.ts",
