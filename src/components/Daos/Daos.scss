@@ -4,28 +4,24 @@
   margin: 0 auto;
 }
 
-.loading img {
-  margin: 0 auto;
-}
-
 .headerWrapper {
   position: relative;
 }
 
 .headerTitle {
-	width: 100%;
-	padding-top: 30px;
-  background-color: rgba(229, 235, 242, 1.000);
+  width: 100%;
+  padding-top: 30px;
+  background-color: rgba(229, 235, 242, 1);
 
-	h2 {
-		color: rgba(104, 155, 214, 1.000);
-		display: block;
-		font-size: 28px;
-		font-weight: bold;
-		border-bottom: 1px solid rgba(195, 212, 231, 1.000);
-		padding: 0;
-		margin-bottom: 0;
-	}
+  h2 {
+    color: rgba(104, 155, 214, 1);
+    display: block;
+    font-size: 28px;
+    font-weight: bold;
+    border-bottom: 1px solid rgba(195, 212, 231, 1);
+    padding: 0;
+    margin-bottom: 0;
+  }
 }
 
 .searchBox {
@@ -50,7 +46,7 @@
   right: 20px;
   bottom: 5px;
   border-radius: 15px;
-  background-color: rgba(3, 118, 255, 1.000);
+  background-color: rgba(3, 118, 255, 1);
   color: $white;
   padding-left: 10px;
   padding-right: 10px;
@@ -74,10 +70,10 @@ a.daoLink {
   text-align: left;
 
   .daoInactive {
-    opacity: .65;
+    opacity: 0.65;
 
     .daoName {
-      opacity: .8;
+      opacity: 0.8;
     }
     &:hover {
       cursor: not-allowed;
@@ -87,7 +83,7 @@ a.daoLink {
   .daoTitle {
     border-radius: 15px 15px 0 0;
     padding-top: 38px;
-    padding-bottom:38px;
+    padding-bottom: 38px;
     padding-left: 30px;
     padding-right: 12px;
     margin: 0;
@@ -143,7 +139,6 @@ a.daoLink {
     top: 10px;
     right: 10px;
   }
-
 }
 
 .dao {
@@ -157,7 +152,7 @@ a.daoLink {
   position: relative;
   left: -15px;
   top: 10px;
-  box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
+  box-shadow: 0 0 15px 0 rgba(133, 168, 208, 0.15);
 }
 
 table.daoInfoContainer {
@@ -165,23 +160,23 @@ table.daoInfoContainer {
 
   width: 100%;
   tr > td {
-    width:40%;
+    width: 40%;
     border: 0;
-    padding:0;
+    padding: 0;
   }
   tr > td:first-child,
   tr > td:last-child {
-    width:10%;
+    width: 10%;
   }
 }
 
 // ****** EO DAO Card **** //
 
 @media only screen and (max-width: 550px) {
-	.wrapper {
-		width: auto;
-		padding: 0;
-	}
+  .wrapper {
+    width: auto;
+    padding: 0;
+  }
 
   .headerTitle {
     text-align: left;
@@ -195,7 +190,7 @@ table.daoInfoContainer {
     padding-left: 10px;
 
     input {
-      width: 320px
+      width: 320px;
     }
   }
 
@@ -204,49 +199,49 @@ table.daoInfoContainer {
     padding-right: 20px;
   }
 
-	.dao {
-		width: 100%;
-		border-radius: 15px;
-		margin: 0 0 20px 0;
-		left: 0;
-	}
+  .dao {
+    width: 100%;
+    border-radius: 15px;
+    margin: 0 0 20px 0;
+    left: 0;
+  }
 
-	a.daoLink .daoName {
-		border-radius: 0 0 0 0;
-	}
+  a.daoLink .daoName {
+    border-radius: 0 0 0 0;
+  }
 
-	a.daoLink .daoInfo b {
-		font-size: 20px;
-	}
+  a.daoLink .daoInfo b {
+    font-size: 20px;
+  }
 
-	a.daoLink .daoInfo {
-		span {
-			font-size: 13px;
-			font-weight: normal;
-			font-family: "Open Sans";
-		}
-	}
+  a.daoLink .daoInfo {
+    span {
+      font-size: 13px;
+      font-weight: normal;
+      font-family: "Open Sans";
+    }
+  }
 
-	a.daoLink .daoInfo {
+  a.daoLink .daoInfo {
     padding: 18px 0;
   }
 
-	a.daoLink .daoTitle {
+  a.daoLink .daoTitle {
     padding-top: 16px;
-    padding-bottom:16px;
-		padding-left: 18px;
-		margin: 0;
-		margin-bottom: 10px;
+    padding-bottom: 16px;
+    padding-left: 18px;
+    margin: 0;
+    margin-bottom: 10px;
   }
 
   table.daoInfoContainer {
     tr > td {
-      width:45%;
+      width: 45%;
     }
 
     tr > td:first-child,
     tr > td:last-child {
-      width:10%;
+      width: 10%;
     }
   }
 }

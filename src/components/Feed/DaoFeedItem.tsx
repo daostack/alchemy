@@ -37,7 +37,7 @@ const DaoFeedItem = (props: IProps) => {
 
 const SubscribedDaoFeedItem = withSubscription({
   wrappedComponent: DaoFeedItem,
-  loadingComponent: <div className={css.loading}><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
   checkForUpdate: ["event"],

@@ -88,7 +88,7 @@ class DaoMember extends React.Component<IProps, null> {
 
 export default withSubscription({
   wrappedComponent: DaoMember,
-  loadingComponent: <div className={css.loading}>Loading...</div>,
+  loadingComponent: <div>Loading...</div>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: (oldProps, newProps) => { return oldProps.member.id !== newProps.member.id; },
   createObservable: (props: IProps) => props.member.state(),
