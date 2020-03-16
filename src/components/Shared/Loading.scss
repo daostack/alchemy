@@ -1,0 +1,7 @@
+.loading {
+  &.global {
+    position: fixed;
+    top: calc(50vh - 100px);
+    left: calc(50vw - 100px);
+  }
+}

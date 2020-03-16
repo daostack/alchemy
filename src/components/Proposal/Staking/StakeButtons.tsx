@@ -277,8 +277,8 @@ class StakeButtons extends React.Component<IProps, IState> {
                   </Tooltip> :
                   passButton
               }
-              {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.Queued && !expired ?
-                <div className={css.toBoostMessage}>&gt;{formatTokens(proposal.upstakeNeededToPreBoost, "GEN to boost")}</div>
+              {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.Queued && !expired && proposal.upstakeNeededToPreBoost.gten(0) ?
+                <div className={css.toBoostMessage}>&gt; {formatTokens(proposal.upstakeNeededToPreBoost, "GEN to boost")}</div>
                 : ""}
               {
                 (currentAccountAddress && tip(IProposalOutcome.Pass) !== "") ?
@@ -287,8 +287,8 @@ class StakeButtons extends React.Component<IProps, IState> {
                   </Tooltip> :
                   failButton
               }
-              {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.PreBoosted && !expired ?
-                <div className={css.toBoostMessage}>{formatTokens(proposal.downStakeNeededToQueue, " GEN to un-boost")}</div>
+              {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.PreBoosted && !expired && proposal.downStakeNeededToQueue.gtn(0) ?
+                <div className={css.toBoostMessage}>&gt;= {formatTokens(proposal.downStakeNeededToQueue, " GEN to un-boost")}</div>
                 : ""}
             </div>
             : <span className={css.disabledPredictions}>

@@ -140,7 +140,7 @@ class UserSearchField extends React.Component<IProps, IState> {
 
 const SubscribedUserSearchField = withSubscription({
   wrappedComponent: UserSearchField,
-  loadingComponent: <div className={css.loading}><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["daoAvatarAddress"],
 
