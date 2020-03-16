@@ -80,7 +80,7 @@ const ProposalSchemeCard = (props: IProps) => {
 
 export default withSubscription({
   wrappedComponent: ProposalSchemeCard,
-  loadingComponent: <div><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
   checkForUpdate: (oldProps: IExternalProps, newProps: IExternalProps) => {

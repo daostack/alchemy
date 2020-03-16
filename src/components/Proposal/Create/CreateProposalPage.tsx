@@ -152,7 +152,7 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
 
 const SubscribedCreateProposalPage = withSubscription({
   wrappedComponent: CreateProposalPage,
-  loadingComponent: <div className={css.loading}><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalStateProps) => {

@@ -134,7 +134,7 @@ class DaosPage extends React.Component<IProps, IState> {
 
 const SubscribedDaosPage = withSubscription({
   wrappedComponent: DaosPage,
-  loadingComponent: <div className={css.wrapper}><div className={css.loading}><Loading/></div></div>,
+  loadingComponent: <div className={css.wrapper}><Loading/></div>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
   // Don't ever update the subscription

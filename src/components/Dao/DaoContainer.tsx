@@ -141,7 +141,7 @@ class DaoContainer extends React.Component<IProps, null> {
 
 const SubscribedDaoContainer = withSubscription({
   wrappedComponent: DaoContainer,
-  loadingComponent: <div className={css.loading}><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
