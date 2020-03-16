@@ -37,7 +37,7 @@ for (const schemeInfo of KNOWNSCHEMES) {
       for (const address of addresses) {
         SCHEMEADDRESSES[network][address.toLowerCase()] = schemeInfo;
       }
-    } 
+    }
   }
 }
 interface IABISpec {
