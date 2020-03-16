@@ -369,6 +369,12 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                     }
                   }
                 }
+
+                if (field.type === "uint256") {
+                  if (/^\d+$/.test(value) === false) {
+                    errors[field.name] = "Must contain only digits";
+                  }
+                }
               }
               return errors;
             }}
