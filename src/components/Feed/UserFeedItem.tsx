@@ -57,7 +57,7 @@ const UserFeedItem = (props: IProps) => {
 
 const SubscribedUserFeedItem = withSubscription({
   wrappedComponent: UserFeedItem,
-  loadingComponent: <div className={css.loading}><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
   checkForUpdate: ["event"],

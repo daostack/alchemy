@@ -96,7 +96,7 @@ class DaoHistoryPage extends React.Component<IProps, null> {
 
 export default withSubscription({
   wrappedComponent: DaoHistoryPage,
-  loadingComponent: <div className={css.loading}><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
   checkForUpdate: [],

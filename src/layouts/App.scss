@@ -23,7 +23,7 @@ body {
 .outer {
   width: 100%;
   height: 100%;
-    padding-top: 50px;
+  padding-top: 50px;
 }
 
 .container {
@@ -49,7 +49,7 @@ body {
 }
 
 .background {
-  background-color: rgba(244, 244, 244, 1.000);
+  background-color: rgba(244, 244, 244, 1);
 }
 
 .fadeEnter {
@@ -77,7 +77,7 @@ body {
   line-height: 30px;
   font-weight: bold;
   font-size: 12px;
-  background-color: rgba(5, 118, 255, 1.000);
+  background-color: rgba(5, 118, 255, 1);
   border: none;
   border-radius: 15px;
   color: $white;
@@ -91,7 +91,6 @@ body {
     top: 2px;
     padding-left: 8px;
   }
-
 }
 
 .web3ProviderLogin button:focus {
@@ -111,7 +110,7 @@ body {
   height: 50px;
   z-index: 100000;
   top: 0;
-  color: rgba(255,255,255,1);
+  color: rgba(255, 255, 255, 1);
   display: flex;
 
   /** the following is only meant to apply to the toggle button in the header **/
@@ -136,7 +135,7 @@ body {
     position: absolute;
     width: 50px;
     height: 50px;
-    transition: all .25s ease;
+    transition: all 0.25s ease;
 
     img {
       position: absolute;
@@ -144,7 +143,7 @@ body {
       left: 15px;
       top: 10px;
       height: 30px;
-      transition: all .25s ease;
+      transition: all 0.25s ease;
     }
   }
 
@@ -158,7 +157,7 @@ body {
   }
 
   .version {
-    color: rgba(255, 255, 255, .8);
+    color: rgba(255, 255, 255, 0.8);
     line-height: 50px;
 
     em {
@@ -166,7 +165,7 @@ body {
     }
 
     span {
-      color: rgba(255, 255, 255, .3);
+      color: rgba(255, 255, 255, 0.3);
     }
   }
 
@@ -202,7 +201,7 @@ body {
     text-align: center;
     width: auto;
     padding: 0 20px;
-    transition: all .25s ease;
+    transition: all 0.25s ease;
     height: 50px;
 
     > span {
@@ -235,7 +234,7 @@ body {
       font-size: 13px;
 
       a {
-        color: rgba(0, 29, 53, 1.000);
+        color: rgba(0, 29, 53, 1);
         padding: 0 0 0 15px;
       }
     }
@@ -250,8 +249,8 @@ body {
       right: 12px;
       font-size: 12px;
       z-index: 100;
-      color: rgba(78, 97, 118, 1.000);
-      background-color: rgba(252, 253, 255, 1.000);
+      color: rgba(78, 97, 118, 1);
+      background-color: rgba(252, 253, 255, 1);
       border-radius: 0 0 8px 8px;
       box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.27);
 
@@ -263,7 +262,7 @@ body {
         width: 12px;
         height: 12px;
         transform: rotate(45deg);
-        background-color: rgba(252, 253, 255, 1.000);
+        background-color: rgba(252, 253, 255, 1);
         position: absolute;
         top: -3px;
         right: 12px;
@@ -272,7 +271,7 @@ body {
       .walletDetails {
         position: relative;
         padding-bottom: 5px;
-        border-bottom: 1px solid rgba(229, 235, 242, 1.000);
+        border-bottom: 1px solid rgba(229, 235, 242, 1);
         padding: 25px;
 
         .walletImage {
@@ -286,7 +285,7 @@ body {
 
           a {
             padding: 5px 0 0 15px;
-            color: rgba(1, 112, 255, 1.000);
+            color: rgba(1, 112, 255, 1);
             font-size: 11px;
             font-weight: bold;
             font-family: "Open Sans";
@@ -297,18 +296,18 @@ body {
       .balances {
         text-align: left;
         padding: 25px;
-        border-bottom: 1px solid rgba(229, 235, 242, 1.000);
+        border-bottom: 1px solid rgba(229, 235, 242, 1);
 
         h2 {
           font-size: 13px;
-          color: rgba(0, 29, 53, 1.000);
+          color: rgba(0, 29, 53, 1);
           margin: 0;
           margin-bottom: 3px;
         }
 
         .noReputation {
           font-size: 11px;
-          color: rgba(130, 144, 158, 1.000);
+          color: rgba(130, 144, 158, 1);
         }
 
         .userBalance {
@@ -316,7 +315,7 @@ body {
 
           div {
             font-size: 11px;
-            color: rgba(78, 97, 118, 1.000);
+            color: rgba(78, 97, 118, 1);
             font-weight: normal;
             font-family: "Open Sans";
           }
@@ -325,10 +324,11 @@ body {
         .daoBalance {
           margin-bottom: 3px;
           font-size: 12px;
-          border-bottom: 1px dashed rgba(191, 203, 213, 1.000);
+          border-bottom: 1px dashed rgba(191, 203, 213, 1);
 
-          b, span {
-            background-color: rgba(252, 253, 255, 1.000);
+          b,
+          span {
+            background-color: rgba(252, 253, 255, 1);
             position: relative;
             top: 2px;
             font-weight: normal;
@@ -364,7 +364,7 @@ body {
           overflow: hidden;
           text-overflow: ellipsis;
           padding-right: 20px;
-          color: rgba(78, 97, 118, 1.000);
+          color: rgba(78, 97, 118, 1);
           font-family: "Open Sans";
           font-size: 11px;
           left: -3px;
@@ -400,7 +400,7 @@ body {
         border: 1px solid $white-halftone;
         padding: 5px 8px;
         background: none;
-        color: rgba(0, 29, 53, 1.000);
+        color: rgba(0, 29, 53, 1);
         display: block;
         position: relative;
         z-index: 0;
@@ -415,7 +415,6 @@ body {
         text-align: right;
 
         .web3ProviderLogoutSection {
-
           .provider {
             text-align: left;
             padding-left: 18px;
@@ -467,11 +466,11 @@ body {
     }
   }
 
-  .accountInfoContainer:hover{
-    background-color: rgba(10, 28, 61, 1.000);
+  .accountInfoContainer:hover {
+    background-color: rgba(10, 28, 61, 1);
 
     + .wallet {
-    transform: scaleY(1);
+      transform: scaleY(1);
     }
   }
 
@@ -516,23 +515,22 @@ body {
 
     &.noAccount {
       margin-right: 10px;
-      opacity: .5;
+      opacity: 0.5;
     }
   }
 }
 
-.header:after { clear: both;  content: ""; display: table; }
-
-.loading {
-  padding-top: 4rem;
-  text-align: center;
+.header:after {
+  clear: both;
+  content: "";
+  display: table;
 }
 
 .pendingTransactions {
   z-index: 1000000;
   position: fixed;
   bottom: 50px;
-  background-color: rgba(255,255,255,1);
+  background-color: rgba(255, 255, 255, 1);
   left: 20px;
   width: 290px;
   height: auto;
@@ -556,7 +554,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,.4);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modalBody {
@@ -571,12 +569,13 @@ body {
 
   span span b {
     font-weight: normal;
-    opacity: .7;
+    opacity: 0.7;
     display: inline-block;
     margin: 0 15px;
   }
 
-  a, a:visited {
+  a,
+  a:visited {
     color: $white;
   }
 }
@@ -655,8 +654,8 @@ body {
         line-height: 30px;
         font-size: 13px;
         color: white;
-        background-color: rgba(5, 118, 255, 1.000);
-        transition: all .25s ease;
+        background-color: rgba(5, 118, 255, 1);
+        transition: all 0.25s ease;
         border-radius: 15px;
         display: inline-block;
         padding: 0 30px;
@@ -746,10 +745,10 @@ body {
     font-family: "Open Sans";
     font-weight: normal;
     font-size: 11px;
-    background-color: rgba(229, 235, 242, 1.000);
+    background-color: rgba(229, 235, 242, 1);
 
     span {
-      opacity: .6;
+      opacity: 0.6;
     }
 
     b {
@@ -782,7 +781,8 @@ body {
     }
   }
 
-  .topInfo a, .topInfo a:visited {
+  .topInfo a,
+  .topInfo a:visited {
     color: #001c34;
   }
 
@@ -790,8 +790,7 @@ body {
     display: none;
   }
 
-
-.web3ProviderLogin button {
+  .web3ProviderLogin button {
     span.connectButtonText {
       display: none;
     }
@@ -809,7 +808,6 @@ body {
   }
 
   .cookieDisclaimerContainer {
-
     .cookieDisclaimer {
       display: inline-block;
       padding-left: 20px;

@@ -2,21 +2,13 @@
   width: 100%;
 
   h1 {
-    color: rgba(104, 155, 214, 1.000);
-    border-bottom: 1px solid rgba(195, 212, 231, 1.000);
+    color: rgba(104, 155, 214, 1);
+    border-bottom: 1px solid rgba(195, 212, 231, 1);
     width: 100%;
     padding-top: 30px;
-    background-color: rgba(229, 235, 242, 1.000);
+    background-color: rgba(229, 235, 242, 1);
     margin: 0;
   }
-}
-
-.loading {
-  width: 100%;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%)
 }
 
 .fadeEnter {
@@ -40,7 +32,6 @@
 .allSchemes {
   padding-top: 30px;
 }
-
 
 @media only screen and (max-width: 425px) {
   .wrapper h1 {
