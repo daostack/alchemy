@@ -10,13 +10,13 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
+import gql from "graphql-tag";
+import { getArc } from "arc";
+import { combineLatest } from "rxjs";
 import * as css from "./DaoSchemesPage.scss";
 import ProposalSchemeCard from "./ProposalSchemeCard";
 import SimpleSchemeCard from "./SimpleSchemeCard";
 import DAOHeader from "./DaoHeader";
-import gql from "graphql-tag";
-import { getArc } from "arc";
-import { combineLatest } from "rxjs";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -44,12 +44,12 @@ type IExternalProps = {
   daoState: IDAOState;
 } & RouteComponentProps<any>;
 
-interface Signal {
+interface ISignal {
   id: string;
   data: any | string;
-};
+}
 
-type IProps = IExternalProps & ISubscriptionProps<[Scheme[], Signal[] | any]>;
+type IProps = IExternalProps & ISubscriptionProps<[Scheme[], ISignal[] | any]>;
 
 class DaoSchemesPage extends React.Component<IProps, null> {
 

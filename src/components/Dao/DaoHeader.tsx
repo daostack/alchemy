@@ -13,17 +13,17 @@ const styles = {
   },
 };
 
-interface Signal {
+interface ISignal {
   id: string;
   data: any | string;
 }
 
 interface IExternalProps {
   daoState: IDAOState;
-  signal?: Signal | any;
+  signal?: ISignal | any;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<[Scheme[], Signal | any]>;
+type IProps = IExternalProps & ISubscriptionProps<[Scheme[], ISignal | any]>;
 
 class DaoHeaderComponent extends React.Component<IProps, any> {
   render() {

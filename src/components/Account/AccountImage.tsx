@@ -26,6 +26,6 @@ export default class AccountImage extends React.Component<IProps, null> {
       });
     }
 
-    return (<img src={url} className={css.accountImage} width={width} style={ style ? style : {}}/>);
+    return (<img src={url} className={css.accountImage} width={width} style={style ? style : {}}/>);
   }
 }

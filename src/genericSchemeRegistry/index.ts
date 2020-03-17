@@ -11,7 +11,7 @@ const ensRegistrarInfo = require("./schemes/EnsRegistrar.json");
 const ensRegistryInfo = require("./schemes/ENSRegistry.json");
 const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
 const registryLookupInfo = require("./schemes/RegistryLookup.json");
-const signals = require("./schemes/Signals.json")
+const signals = require("./schemes/Signals.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
