@@ -63,7 +63,7 @@
     "postinstall": "rimraf ./src/**/*.scss.d.ts",
     "service-status": "node scripts/serviceStatus.js",
     "start": "cross-env NODE_ENV=development NETWORK=private node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.config.js",
-    "start-dev-profiling": "cross-env NODE_ENV=dev-profiling NETWORK=rinkeby API_URL=https://daostack-alchemy.herokuapp.com S3_BUCKET=daostack-alchemy-staging webpack-dev-server --config webpack.dev.config.js",
+    "start-dev-profiling": "cross-env NODE_ENV=dev-profiling NETWORK=rinkeby webpack-dev-server --config webpack.dev.config.js",
     "start-docker": "cross-env NODE_ENV=production NETWORK=private node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js  --config webpack.docker.config.js",
     "start-prod": "cross-env NODE_ENV=production NETWORK=main node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js  --config webpack.dev.config.js",
     "start-staging": "cross-env NODE_ENV=staging NETWORK=rinkeby node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.config.js",
