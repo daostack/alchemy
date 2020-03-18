@@ -3,10 +3,6 @@
   "description": "",
   "scripts": {},
   "env": {
-    "NODE_OPTIONS": {
-      "required": true,
-      "value": "--max_old_space_size=2560"
-    },
     "NODE_ENV": {
       "required": true,
       "value": "staging"
