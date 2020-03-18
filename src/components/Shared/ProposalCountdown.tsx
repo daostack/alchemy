@@ -4,8 +4,6 @@ import * as moment from "moment";
 import * as React from "react";
 import { closingTime } from "lib/proposalHelpers";
 
-import BN = require("bn.js");
-
 import * as css from "./Countdown.scss";
 
 interface IProps {
@@ -129,7 +127,7 @@ export default class ProposalCountdown extends React.Component<IProps, IState> {
         {this.props.detailView ?
           <span className={css.label}>
             { proposal.stage === IProposalStage.Queued ? "Proposal will expire in" :
-              proposal.stage === IProposalStage.PreBoosted && proposal.downStakeNeededToQueue.lte(new BN(0)) ? "Proposal will un-boost in" :
+              proposal.stage === IProposalStage.PreBoosted && proposal.downStakeNeededToQueue.lten(0) ? "Proposal will un-boost in" :
                 proposal.stage === IProposalStage.PreBoosted ? "Proposal will boost in" :
                   (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) && proposal.winningOutcome === IProposalOutcome.Pass ? "Proposal will pass in" :
                     (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) ? "Proposal will fail in" :
