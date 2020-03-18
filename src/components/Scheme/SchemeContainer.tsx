@@ -209,7 +209,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
 
 const SubscribedSchemeContainer = withSubscription({
   wrappedComponent: SchemeContainer,
-  loadingComponent: <div className={css.loading}><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: null,
   checkForUpdate: ["schemeId"],
   createObservable: async (props: IProps) => {

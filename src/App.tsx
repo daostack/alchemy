@@ -108,7 +108,7 @@ export class App extends React.Component<{}, {
           { this.state.retryingArc ?
             <div className={css.waitingToInitMessage}>Waiting to connect to the blockchain.  If this is taking a while, please ensure that you have a good internet connection.</div> : ""
           }
-          <div className={css.loading}><Loading/></div>
+          <Loading/>
         </div>
       );
     } else  {

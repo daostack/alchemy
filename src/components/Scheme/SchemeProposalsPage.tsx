@@ -226,7 +226,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 //   is causing it to misinterpret the type of the SubscriptionData, so have to manually specificy here
 const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>({
   wrappedComponent: SchemeProposalsPage,
-  loadingComponent: <div className={css.loading}><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: null,
 
   checkForUpdate: (oldProps, newProps) => {

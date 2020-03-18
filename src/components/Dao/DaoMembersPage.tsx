@@ -106,7 +106,7 @@ class DaoMembersPage extends React.Component<IProps, null> {
 
 const SubscribedDaoMembersPage = withSubscription({
   wrappedComponent: DaoMembersPage,
-  loadingComponent: <div className={css.loading}><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
   checkForUpdate: [], // (oldProps, newProps) => { return oldProps.daoState.address !== newProps.daoState.address; },

@@ -80,7 +80,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       tags: this.initialFormValues.tags,
     };
   }
-  
+
   private async getBountyEth(values: IFormValues): Promise<any> {
     const currentAction = this.state.currentAction;
     let ethToSend = new BN(0);
@@ -119,11 +119,11 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     setSubmitting(false);
 
     let ethValue = new BN(0);
-    
+
     if (this.props.genericSchemeInfo.specs.name === "Standard Bounties") {
       const calcBountEth = await this.getBountyEth(values);
       ethValue =  ethValue.add(calcBountEth);
-    } 
+    }
 
     const proposalValues = {
       ...values,
@@ -157,11 +157,8 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
   }
 
   public renderField(field: ActionField, values: IFormValues, touched: FormikTouched<IFormValues>, errors: FormikErrors<IFormValues>) {
-    let type = "string";
+    const type = "string";
     switch (field.type) {
-      case "uint256":
-        type = "number";
-        break;
       case "bool":
         return <div className={css.radioButtons}>
           <Field
@@ -370,6 +367,12 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                     if (!arc.web3.utils.isAddress(i)) {
                       errors[field.name] = "Invalid address";
                     }
+                  }
+                }
+
+                if (field.type === "uint256") {
+                  if (/^\d+$/.test(value) === false) {
+                    errors[field.name] = "Must contain only digits";
                   }
                 }
               }

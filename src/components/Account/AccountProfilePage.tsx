@@ -24,6 +24,7 @@ import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
+import Loading from "components/Shared/Loading";
 import * as css from "./Account.scss";
 
 type IExternalProps = RouteComponentProps<any>;
@@ -142,7 +143,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
     const { accountAddress, accountProfile, currentAccountAddress } = this.props;
 
     if (!accountProfile) {
-      return <div className={css.loading}>Loading...</div>;
+      return <Loading/>;
     }
 
     // TODO: dont show profile until loaded from 3box
@@ -312,7 +313,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
 
 const SubscribedAccountProfilePage = withSubscription({
   wrappedComponent: AccountProfilePage,
-  loadingComponent: <div className={css.loading}>Loading...</div>,
+  loadingComponent: <Loading/>,
   errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps, newProps) => {

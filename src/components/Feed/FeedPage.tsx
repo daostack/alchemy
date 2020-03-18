@@ -80,7 +80,7 @@ class FeedPage extends React.Component<IProps, null> {
     }
 
     if (!data) {
-      return <div className={css.loading}><Loading/></div>;
+      return <Loading/>;
     }
 
     // Create the feed
@@ -223,7 +223,7 @@ const getFeedObservable = (props: IStateProps, existingData?: SubscriptionData) 
 
 const SubscribedFeedPage = withSubscription({
   wrappedComponent: FeedPage,
-  loadingComponent: <div className={css.loading}><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
   checkForUpdate: ["currentAccountAddress", "currentAccountProfile"],
