@@ -1,11 +1,3 @@
-.loading {
-  width: 100%;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%)
-}
-
 .sidebarWrapper {
   min-width: 48px;
   max-width: 250px;
@@ -52,9 +44,9 @@
         width: 50px;
         height: 50px;
         position: absolute;
-        opacity: .5;
+        opacity: 0.5;
         z-index: 0;
-        background-color: rgba(255,255,255,.5);
+        background-color: rgba(255, 255, 255, 0.5);
         top: -5px;
         left: -5px;
         border-radius: 50px;
@@ -80,7 +72,7 @@
 
     p {
       font-size: 14px;
-      opacity: .7;
+      opacity: 0.7;
       padding: 0;
     }
   }
@@ -120,7 +112,6 @@
         top: 3px;
         margin-right: 8px;
       }
-
     }
     li a {
       display: block;
@@ -128,7 +119,7 @@
       color: $white;
       padding: 8px 23px 8px 8px;
       background-color: rgba(32, 104, 188, 0);
-      transition: all .25s ease;
+      transition: all 0.25s ease;
     }
 
     li a:visited {
@@ -136,7 +127,7 @@
     }
 
     li a:hover {
-      background-color: rgba(32, 104, 188, 1.000);
+      background-color: rgba(32, 104, 188, 1);
     }
   }
 }
@@ -163,7 +154,7 @@
 .daoNavHeading {
   font-family: "Open Sans";
   font-size: 11px;
-  border-bottom: 1px solid rgba(78, 137, 209, 1.000);
+  border-bottom: 1px solid rgba(78, 137, 209, 1);
   width: 100%;
   display: block;
 
@@ -176,9 +167,8 @@
     top: 17px;
     padding: 0 10px 10px 10px;
     font-weight: normal;
-    color: rgba(255,255,255,.5);
+    color: rgba(255, 255, 255, 0.5);
   }
-
 }
 
 .daoHoldings {
@@ -217,14 +207,14 @@
   height: 270px;
   left: 0;
   width: 100%;
-  border-top: 2px solid rgba(78, 137, 208, 1.000);
-  transition: all .25s ease;
+  border-top: 2px solid rgba(78, 137, 208, 1);
+  transition: all 0.25s ease;
   padding-top: 20px;
 
   ul {
     width: 100%;
     margin: 0;
-    transition: all .25s ease;
+    transition: all 0.25s ease;
     padding: 0;
     position: relative;
 
@@ -236,23 +226,23 @@
       height: 24px;
 
       a {
-        color: rgba(196, 215, 236, 1.000);
+        color: rgba(196, 215, 236, 1);
         text-decoration: none;
         padding: 5px 0 5px 30px;
         width: auto;
         display: block;
         font-family: "Open Sans";
         font-size: 12px;
-        transition: all .25s ease;
+        transition: all 0.25s ease;
       }
 
       &:hover a {
-        background-color: rgba(32, 104, 188, 1.000);
+        background-color: rgba(32, 104, 188, 1);
         cursor: pointer;
       }
 
       &:hover ul li a {
-        background-color: rgba(255,255,255,0);
+        background-color: rgba(255, 255, 255, 0);
       }
 
       ul {
@@ -261,9 +251,9 @@
         width: 120px;
         opacity: 0;
         transform: scale(0);
-        transition: all .25s ease;
+        transition: all 0.25s ease;
         padding: 10px 0 10px 0;
-        background-color: rgba(255,255,255,1);
+        background-color: rgba(255, 255, 255, 1);
         border-radius: 0 10px 10px 0;
 
         .diamond {
@@ -285,7 +275,7 @@
 
           a {
             padding: 8px 10px;
-            color: rgba(78, 97, 118, 1.000);
+            color: rgba(78, 97, 118, 1);
 
             b {
               display: inline-block;
@@ -295,7 +285,7 @@
           }
 
           &:hover a {
-            background-color: rgba(240, 245, 251, 1.000);
+            background-color: rgba(240, 245, 251, 1);
           }
 
           img {
@@ -312,7 +302,7 @@
         opacity: 1;
         top: -160px;
         transform: translateX(100%) scale(1);
-        background-color: rgba(255,255,255,1);
+        background-color: rgba(255, 255, 255, 1);
       }
     }
 
@@ -348,7 +338,10 @@
   }
 }
 
-.homeNotification, .holdersNotification, .historyNotification, .discussionNotification {
+.homeNotification,
+.holdersNotification,
+.historyNotification,
+.discussionNotification {
   opacity: 0;
 }
 
@@ -384,7 +377,7 @@
     flex-grow: unset;
     z-index: 100000;
     background-color: rgba(49, 120, 202, 0);
-    transition: height .25s ease, width 0s .25s;
+    transition: height 0.25s ease, width 0s 0.25s;
 
     &:hover {
       z-index: 100000;
@@ -394,7 +387,7 @@
       height: 0px;
       min-height: auto;
       overflow: hidden;
-      transition: all .25s ease;
+      transition: all 0.25s ease;
 
       .daoName {
         padding: 20px 20px 10px 20px;
@@ -426,12 +419,12 @@
     font-size: 12px;
   }
 
-   .sidebarWrapper.menuOpen {
+  .sidebarWrapper.menuOpen {
     z-index: 1000000;
     width: 100%;
-    background-color: rgba(49, 120, 202, 1.000);
+    background-color: rgba(49, 120, 202, 1);
     padding-bottom: 50px;
-    transition: width 0s 0s, height .25s ease;
+    transition: width 0s 0s, height 0.25s ease;
 
     .menuContent {
       height: 520px;
@@ -458,7 +451,6 @@
         padding: 3px 0 3px 30px;
         color: #c4d7ec !important;
       }
-
     }
 
     ul li:hover a {

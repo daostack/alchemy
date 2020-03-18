@@ -222,7 +222,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
 
 const SubscribedRedemptionsPage = withSubscription({
   wrappedComponent: RedemptionsPage,
-  loadingComponent: <div className={css.loading}><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["currentAccountAddress"],
   createObservable: (props: IStateProps) => {

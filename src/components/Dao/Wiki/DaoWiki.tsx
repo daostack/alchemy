@@ -183,7 +183,7 @@ function DaoWiki(props: IProps) {
 const SubscribedDaoWiki = withSubscription({
   wrappedComponent: DaoWiki,
   loadingComponent: (
-    <div className={daoStyle.loading}>
+    <div className={daoStyle.wrapper}>
       {" "}
       <Loading />
     </div>

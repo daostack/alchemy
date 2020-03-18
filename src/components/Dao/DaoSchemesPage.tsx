@@ -99,7 +99,7 @@ class DaoSchemesPage extends React.Component<IProps, null> {
 
 export default withSubscription({
   wrappedComponent: DaoSchemesPage,
-  loadingComponent: <div className={css.loading}><Loading/></div>,
+  loadingComponent: <Loading/>,
   errorComponent: (props) => <span>{props.error.message}</span>,
   checkForUpdate: [],
   createObservable: (props: IExternalProps) => {

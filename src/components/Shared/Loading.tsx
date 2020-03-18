@@ -1,25 +1,17 @@
 import * as React from "react";
-import Lottie from "react-lottie";
+import classNames from "classnames";
+import * as css from "./Loading.scss";
 
-const animationData = require("../../assets/animations/Loader.json");
-
-export default class Loading extends React.Component {
-
-  public render(): RenderOutput {
-
-    const defaultOptions = {
-      loop: true,
-      autoplay: true,
-      animationData,
-      rendererSettings: {
-        preserveAspectRatio: "xMidYMid slice",
-      },
-    };
-
-    return <div>
-      <Lottie options={defaultOptions}
-        height={200}
-        width={200}/>
-    </div>;
-  }
+interface IExternalProps {
+  inline?: boolean; // default is false
 }
+
+export default (props: IExternalProps) => {
+  /**
+   * when !local then we display centered above the entire page,
+   * else we display inline.
+   */
+  return <img
+    className={classNames({ [css.loading]: true, [css.global]: !props.inline })}
+    src="/assets/images/spinnyBusyIcon.gif"></img>;
+};
