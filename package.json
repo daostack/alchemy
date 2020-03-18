@@ -53,7 +53,7 @@
   },
   "scripts": {
     "analyze": "NODE_ENV=production NETWORK=main ANALYZE=1 node --max_old_space_size=4096 node_modules/.bin/webpack --config webpack.prod.config.js --progress --colors",
-    "build": "node --max_old_space_size=2560 ./node_modules/webpack/bin/webpack.js --config webpack.prod.config.js",
+    "build": "webpack  --config webpack.prod.config.js",
     "build-dev": "node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config webpack.dev.config.js",
     "build-travis": "cross-env NODE_ENV=production NETWORK=main node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config webpack.prod.config.js",
     "fetch-contracts": "cross-env NODE_ENV=production ./node_modules/.bin/ts-node scripts/fetchContracts.ts",
