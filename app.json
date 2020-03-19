@@ -3,7 +3,7 @@
   "description": "",
   "scripts": {},
   "env": {
-      "NODE_OPTIONS": {
+    "NODE_OPTIONS": {
       "required": true,
       "value": "--max_old_space_size=2560"
     },
@@ -34,9 +34,6 @@
     },
     {
       "url": "https://github.com/heroku/heroku-buildpack-apt"
-    },
-    {
-      "url": "https://github.com/heroku/heroku-buildpack-cli"
     }
   ]
 }
