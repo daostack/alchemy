@@ -1,4 +1,4 @@
-import { Address, IDAOState, Proposal } from "@daostack/client";
+import { Address, DAO, IDAOState, Proposal, Reputation, Token } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -15,8 +15,8 @@ import { connect } from "react-redux";
 import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
-import { combineLatest, of } from "rxjs";
-import { map, mergeMap } from "rxjs/operators";
+import { of } from "rxjs";
+import { map } from "rxjs/operators";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./RedemptionsPage.scss";
 
@@ -40,7 +40,43 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type IProps = IStateProps & IDispatchProps & ISubscriptionProps<[IDAOState[], any[]]>
+type IProps = IStateProps & IDispatchProps & ISubscriptionProps<any[]>
+
+// TODO: this should really be in the client library somehow
+const createDaoState = (data: any): IDAOState => {
+  const arc = getArc();
+  data.address = data.id;
+  const dao = new DAO(data, arc);
+  const reputation = new Reputation(data.nativeReputation.id, arc);
+  const token = new Token(data.nativeToken.id, arc);
+  dao.setStaticState({
+    address: data.id,
+    id: data.id,
+    name: data.name,
+    register: data.register,
+    reputation,
+    token,
+    tokenName: data.nativeToken.name,
+    tokenSymbol: data.nativeToken.symbol,
+  });
+  return {
+    address: data.id,
+    dao,
+    id: data.id,
+    memberCount: Number(data.reputationHoldersCount),
+    name: data.name,
+    numberOfBoostedProposals: Number(data.numberOfBoostedProposals),
+    numberOfPreBoostedProposals: Number(data.numberOfPreBoostedProposals),
+    numberOfQueuedProposals: Number(data.numberOfQueuedProposals),
+    register: data.register,
+    reputation,
+    reputationTotalSupply: new BN(data.nativeReputation.totalSupply),
+    token,
+    tokenName: data.nativeToken.name,
+    tokenSymbol: data.nativeToken.symbol,
+    tokenTotalSupply: data.nativeToken.totalSupply,
+  };
+};
 
 class RedemptionsPage extends React.Component<IProps, null> {
 
@@ -60,7 +96,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
       </div>;
     }
 
-    const [, proposals] = data;
+    const proposals = data;
 
     return (
       <div className={css.wrapper}>
@@ -106,7 +142,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
   private redeemAll = async (): Promise<void> => {
     const {
       currentAccountAddress,
-      data: [, proposals],
+      data: proposals,
       redeemProposal,
       showNotification,
     } = this.props;
@@ -119,20 +155,20 @@ class RedemptionsPage extends React.Component<IProps, null> {
   }
 
   private renderProposalsPerDAO(): RenderOutput[] {
-    const { currentAccountAddress, data: [daos, proposals] } = this.props;
+    const { currentAccountAddress, data: proposals } = this.props;
 
     const arc = getArc();
 
     const daosPerId = new Map<Address, IDAOState>();
     const proposalsPerDao = new Map<Address, any[]>();
-    daos.forEach(daoState => {
-      daosPerId.set(daoState.id, daoState);
-    });
     proposals.forEach(proposal => {
       if (proposalsPerDao.get(proposal.dao.id) === undefined) {
         proposalsPerDao.set(proposal.dao.id, []);
       }
       proposalsPerDao.get(proposal.dao.id).push(proposal);
+      if (!daosPerId.get(proposal.dao.id)) {
+        daosPerId.set(proposal.dao.id, createDaoState(proposal.dao));
+      }
     });
 
     return [...proposalsPerDao].map(([daoId, proposals]) => {
@@ -154,7 +190,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
   }
 
   private renderTotalRewards(): RenderOutput {
-    const { currentAccountAddress, data: [, proposals] } = this.props;
+    const { currentAccountAddress, data: proposals } = this.props;
 
     const genReward = new BN(0);
     const ethReward = new BN(0);
@@ -162,7 +198,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
     const reputationRewardDaos = new Set();
 
     // Calculate the total rewards from the genesisprotocol
-    proposals.forEach((proposal) => {
+    proposals.forEach((proposal: any) => {
       proposal.gpRewards.forEach((reward: any) => {
         if (reward.beneficiary === currentAccountAddress) {
           if (reward.tokensForStaker && Number(reward.tokensForStakerRedeemedAt) === 0) {
@@ -244,6 +280,14 @@ const SubscribedRedemptionsPage = withSubscription({
           id
           dao {
             id
+            name
+            nativeReputation { id, totalSupply }
+            nativeToken { id, name, symbol, totalSupply }
+            numberOfQueuedProposals
+            numberOfPreBoostedProposals
+            numberOfBoostedProposals
+            register
+            reputationHoldersCount
           }
           gpRewards {
             beneficiary
@@ -269,14 +313,7 @@ const SubscribedRedemptionsPage = withSubscription({
     `;
     const proposals = arc.getObservable(query, { subscribe: true })
       .pipe(map((result: any) => result.data.proposals));
-    const daos = arc.daos()
-      .pipe(
-        mergeMap(
-          (daos) => combineLatest(Array.from(daos, (dao) => dao.state())
-          )
-        )
-      );
-    return combineLatest(daos, proposals);
+    return proposals;
   },
 });
 
