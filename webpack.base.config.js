@@ -80,7 +80,7 @@ module.exports = {
               minimize: isProd,
               modules: true,
               namedExport: true,
-              sourceMap: true
+              sourceMap: false
             }
           },
         ],
