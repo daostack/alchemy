@@ -61,13 +61,13 @@ module.exports = merge(baseConfig, {
               },
               namedExport: true,
               importLoaders: 2,
-              sourceMap: true
+              sourceMap: false
             }
           },
           { // compiles Sass to CSS
             loader: "sass-loader",
             options: {
-              sourceMap: true
+              sourceMap: false
             }
           },
           { // Load global scss files in every other scss file without an @import needed
