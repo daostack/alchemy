@@ -2,3 +2,4 @@
 /.storybook
 /stories
 /node_modules
+/docker
