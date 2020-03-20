@@ -294,6 +294,10 @@ class PreTransactionModal extends React.Component<IProps, IState> {
         break;
     }
 
+    console.log(actionType) // 3
+    console.log(accountGens) // 2400
+    console.log(stakeAmount) // 0
+
     return (
       <Modal onBackdropClick={this.props.closeAction}>
         <div className={css.metaMaskModal}>
@@ -357,6 +361,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                           className={css.predictionAmount}
                           onChange={this.stakeOnChange}
                           placeholder="0"
+                          data-test-id="stake-input"
                         />
                         <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
                         <div className={css.yourBalance}>

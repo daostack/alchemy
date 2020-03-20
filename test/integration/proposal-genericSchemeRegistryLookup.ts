@@ -8,12 +8,12 @@ describe("Proposals ENS", () => {
 
   beforeEach(async () => {
     await browser.url(url);
-
-    await hideCookieAcceptWindow();
     
     const ensTitle = await $("h2=RegistryLookup");
     await ensTitle.waitForExist();
     await ensTitle.click();
+
+    await hideCookieAcceptWindow();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();
