@@ -15,6 +15,8 @@ describe("Proposals Registry Lookup", () => {
     await ensTitle.waitForExist();
     await ensTitle.click();
 
+    await hideCookieAcceptWindow();
+
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();
     await createProposalButton.click();
