@@ -2,6 +2,13 @@
   - Features Added
   - Bugs Fixed
 
+## 0.10.2
+  - Features Added
+    - Fix bug when entering numbers for uint256 data types in the GenericScheme new proposal modal
+    - New busy waiting animation
+
+  - Bugs Fixed
+
 ## 0.10.1
 
   - Features Added
