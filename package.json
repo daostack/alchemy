@@ -75,7 +75,7 @@
     "test:unit": "jest"
   },
   "dependencies": {
-    "3box": "^1.17.1",
+    "3box": "1.16.1",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
     "@daostack/client": "0.2.64",
     "@dorgtech/daocreator-ui-v1": "^1.0.0-beta.1",
@@ -105,6 +105,7 @@
     "interweave": "^11.1.0",
     "mixpanel-browser": "^2.29.0",
     "moment-timezone": "^0.5.27",
+    "multicodec": "0.5.6",
     "query-string": "^6.2.0",
     "rc-tooltip": "^3.7.3",
     "react": "^16.8.0",
