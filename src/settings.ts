@@ -31,7 +31,13 @@ function getWeb3ConnectProviderOptions(network: string) {
         network: "rinkeby",
         torus: {
           package: Torus,
-          network: "rinkeby",
+          options: {
+            network: {
+              host: "rinkeby",
+              chainId: 4,
+              networkName: "rinkeby",
+            },
+          },
         },
         walletconnect: {
           package: isMobileBrowser() ? null : WalletConnectProvider,
@@ -85,7 +91,13 @@ function getWeb3ConnectProviderOptions(network: string) {
         network: "mainnet",
         torus: {
           package: Torus,
-          network: "mainnet",
+          options: {
+            network: {
+              host: "mainnet",
+              chainId: 1,
+              networkName: "main",
+            },
+          },
         },
         walletconnect: {
           package: isMobileBrowser() ? null : WalletConnectProvider,

@@ -1,12 +1,11 @@
 import { NotificationStatus } from "reducers/notifications";
-import { IProviderInfo } from "web3connect/lib/helpers/types";
-import { RetryLink } from "apollo-link-retry";
-import { Address, Arc } from "@daostack/client";
-import Web3Connect from "web3connect";
-import { Observable } from "rxjs";
+import { IProviderInfo } from "web3modal/lib/helpers/types";
 import { getNetworkId, getNetworkName } from "./lib/util";
 import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
-
+import { RetryLink } from "apollo-link-retry";
+import { Address, Arc } from "@daostack/client";
+import Web3Modal from "web3modal";
+import { Observable } from "rxjs";
 
 const Web3 = require("web3");
 
@@ -17,7 +16,7 @@ const Web3 = require("web3");
 let selectedProvider: any;
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
-let web3ConnectCore: Web3Connect.Core;
+let web3Modal: Web3Modal;
 let initializedAccount: Address;
 
 export type Networks = "main"|"rinkeby"|"ganache"|"xdai"
@@ -113,8 +112,8 @@ async function getProviderNetworkName(provider?: any): Promise<string> {
  * Does not know about the default read-only providers.
  */
 export function getWeb3ProviderInfo(provider?: any): IWeb3ProviderInfo {
-  provider = provider ? provider : selectedProvider;
-  return provider ? Web3Connect.getProviderInfo(provider) : null;
+  provider = provider || selectedProvider;
+  return provider ? provider.wc.getWeb3ProviderInfo() : null;
 }
 
 /**
@@ -261,8 +260,8 @@ export function uncacheWeb3Info(accountToo = true): void {
   if (accountToo) {
     localStorage.removeItem(ACCOUNT_STORAGEKEY);
   }
-  if (web3ConnectCore) {
-    web3ConnectCore.clearCachedProvider();
+  if (web3Modal) {
+    web3Modal.clearCachedProvider();
   }
   /**
      * close is not yet a standard, but soon will be.
@@ -310,10 +309,10 @@ async function enableWeb3Provider(): Promise<void> {
   let provider: any;
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
-  let web3Connect: Web3Connect.Core;
+  let _web3Modal: Web3ConnectModal;
 
-  if (!web3ConnectCore) {
-    web3Connect = new Web3Connect.Core({
+  if (!web3Modal) {
+    _web3Modal = new Web3Modal({
       cacheProvider: true,
       providerOptions: Object.assign(
         /**
@@ -327,9 +326,9 @@ async function enableWeb3Provider(): Promise<void> {
     });
 
     // eslint-disable-next-line require-atomic-updates
-    web3ConnectCore = web3Connect;
+    web3Modal = _web3Modal;
   } else {
-    web3Connect = web3ConnectCore;
+    _web3Modal = web3Modal;
   }
 
   let resolveOnClosePromise: () => void;
@@ -339,29 +338,29 @@ async function enableWeb3Provider(): Promise<void> {
     (resolve: () => void, reject: (reason?: any) => void): any => {
       resolveOnClosePromise = resolve;
       rejectOnClosePromise = reject;
-      web3Connect.on("close", (): any => {
+      _web3Modal.on("close", (): any => {
         return resolve();
       });
     });
 
-  web3Connect.on("error", (error: Error): any => {
+  _web3Modal.on("error", (error: Error): any => {
     // eslint-disable-next-line no-console
     console.error(`web3Connect closed on error:  ${error ? error.message : "cancelled or unknown error"}`);
     return rejectOnClosePromise(error);
   });
 
-  web3Connect.on("connect", (newProvider: any): any => {
+  _web3Modal.on("connect", (newProvider: any): any => {
     provider = newProvider;
     /**
-         * Because we won't receive the "close" event in this case, even though
-         * the window will have closed
-         */
+     * Because we won't receive the "close" event in this case, even though
+     * the window will have closed
+     */
     return resolveOnClosePromise();
   });
 
   try {
     // note this will load from its cache, if present
-    web3Connect.toggleModal();
+    _web3Modal.toggleModal();
     // assuming reject will result in a throw exception caught below
     await onClosePromise;
 
@@ -588,7 +587,7 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
 }
 
 /**
- * extension of the Web3Connect IProviderInfo
+ * extension of the Web3Modal IProviderInfo
  */
 export interface IWeb3ProviderInfo extends IProviderInfo {
 }
