@@ -2,7 +2,7 @@ import * as uuid from "uuid";
 import { first } from "rxjs/operators";
 import { getArc } from "./utils";
 
-describe("Proposals ENS", () => {
+describe("Proposals ENS Registry", () => {
   let daoAddress: string;
 
   before(async () => {

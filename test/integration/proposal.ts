@@ -98,6 +98,8 @@ describe("Proposals", () => {
     const stakeButton = await proposal.$("[data-test-id=\"stakePass\"]");
     await stakeButton.waitForDisplayed();
     await stakeButton.click();
+    const stakeInput = await $("[data-test-id=\"stake-input\"]");
+    await stakeInput.setValue("10");
     launchMetaMaskButton = await $("[data-test-id=\"launch-metamask\"]");
     await launchMetaMaskButton.click();
   });
