@@ -7,6 +7,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
 import ProposalSummaryDutchX from "./ProposalSummaryDutchX";
 import ProposalSummaryStandardBounties from "./ProposalSummaryStandardBounties";
+import ProposalSummaryCO2ken from "./ProposalSummaryCO2ken";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;
@@ -33,6 +34,8 @@ export default class ProposalSummary extends React.Component<IProps> {
       return <ProposalSummaryDutchX {...this.props} />;
     } else if (genericSchemeInfo.specs.name === "Standard Bounties") {
       return <ProposalSummaryStandardBounties {...this.props} />;
+    } else if(genericSchemeInfo.specs.name === "CO2ken") {
+      return <ProposalSummaryCO2ken {...this.props} />;
     }
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,

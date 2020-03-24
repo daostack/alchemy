@@ -11,9 +11,11 @@ const ensRegistrarInfo = require("./schemes/EnsRegistrar.json");
 const ensRegistryInfo = require("./schemes/ENSRegistry.json");
 const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
 const registryLookupInfo = require("./schemes/RegistryLookup.json");
+const co2kenInfo = require("./schemes/CO2ken.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
+  co2kenInfo,
   bountiesInfo,
   ensRegistrarInfo,
   ensRegistryInfo,
