@@ -60,13 +60,20 @@ class DaosPage extends React.Component<IProps, IState> {
   }
 
   onSearchChange = async (e: any) => {
-    this.setState({ search: e.target.value });
+    const searchString = e.target.value;
+
+    this.setState({ search: searchString });
 
     // If search string greater than 2 search on server for any other DAOs not yet loaded that match this search
-    if (e.target.value.length > 2) {
+    if (searchString.length > 2) {
       const arc = getArc();
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      const foundDaos = await arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: e.target.value } }, { fetchAllData: true }).pipe(first()).toPromise();
+      const foundDaos = await combineLatest(
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: searchString } }, { fetchAllData: true }),
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: searchString.charAt(0).toUpperCase() + searchString.slice(1) } }, { fetchAllData: true }),
+        (data1, data2) => data1.concat(data2),
+      ).pipe(first()).toPromise();
       this.setState({ searchDaos: foundDaos });
     } else {
       this.setState({ searchDaos: [] });
