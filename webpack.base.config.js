@@ -71,7 +71,12 @@ module.exports = {
           /node_modules\/ethereumjs-tx/,
           /node_modules\/ethereumjs-common/,
           /node_modules\/ethereumjs-util/,
-          /node_modules\/deprecated-decorator/
+          /node_modules\/deprecated-decorator/,
+          /node_modules\/@dorgtech\/daosmind/,
+          /node_modules\/@uprtcl/,
+          /node_modules\/lit-element/,
+          /node_modules\/lit-html/,
+          /node_modules\/@material-ui/
         ]
       },
 

@@ -2,7 +2,7 @@
   "name": "WikiUpdate",
   "addresses": {
     "main": [ "" ],
-    "rinkeby": [ "0x356cc5ea3f41077c1c8b240e0383c40a079f92ad" ],
+    "rinkeby": [ "0xc8E06C1b6fB9a60f727C538233dac6Ff5c1dDbf8" ],
     "private": [
       "0xA10f1c26d7D4BCB1a93F84652177D2E2b320378B",
       "0xdbD6fB1F0E9CB1282d13DF95C2cA5Eb6377e984B"
@@ -10,7 +10,7 @@
   },
   "actions": [ 
     {
-      "id": "setRequestAuthorized",
+      "id": "authorizeProposal",
       "label": "Authorize Wiki Merge",
       "description": "Authorize Wiki Merge",
       "fields": [ ],
@@ -18,14 +18,22 @@
         "constant": false,
         "inputs": [
           {
-            "name": "requestId",
+            "internalType": "bytes32",
+            "name": "proposalId",
             "type": "bytes32"
-          }, {
+          },
+          {
+            "internalType": "uint8",
             "name": "authorized",
             "type": "uint8"
+          },
+          {
+            "internalType": "bool",
+            "name": "execute",
+            "type": "bool"
           }
         ],
-        "name": "setRequestAuthorized",
+        "name": "authorizeProposal",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
@@ -35,26 +43,14 @@
       "id": "setHomePerspective",
       "label": "Set home perspective",
       "description": "This allow the wiki to set the home perspective",
-      "fields": [ 
-        {
-          "label": "Wiki hash ID",
-          "name": "perspectiveIdHash",
-          "placeholder": "Hash (0x0000…)"
-        }, {
-          "label": "New home perspective",
-          "name": "pidHome",
-          "placeholder": "Hash (0x0000…)"
-        }
-      ],
+      "fields": [ ],
       "abi": {
         "constant": false,
         "inputs": [
           {
-            "name": "perspectiveIdHash",
-            "type": "bytes32"
-          }, {
-            "name": "pidHome",
-            "type": "bytes32"
+            "internalType": "string",
+            "name": "perspectiveId",
+            "type": "string"
           }
         ],
         "name": "setHomePerspective",
@@ -66,30 +62,58 @@
     }, {
       "id": "changeOwner",
       "label": "Change owner of Wiki",
-      "fields": [ 
-        {
-          "label": "Wiki hash ID",
-          "name": "perspectiveIdHash",
-          "placeholder": "Hash (0x0000…)"
-        }, {
-          "label": "New owner of Wiki",
-          "name": "newOwner",
-          "placeholder": "Address (0x0000…)"
-        }
-      ],
+      "fields": [ ],
       "abi": {
         "constant": false,
         "inputs": [
           {
+            "internalType": "bytes32",
             "name": "perspectiveIdHash",
             "type": "bytes32"
           },
           {
+            "internalType": "address",
             "name": "newOwner",
             "type": "address"
           }
         ],
-        "name": "changeOwner",
+        "name": "changePerspectiveOwner",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }, {
+      "id": "setPerspectiveDetails",
+      "label": "Set perspective details",
+      "fields": [],
+      "abi":   {
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "perspectiveIdHash",
+            "type": "bytes32"
+          },
+          {
+            "components": [
+              {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "context",
+                "type": "string"
+              }
+            ],
+            "internalType": "struct SharedPerspectiveDetails.PerspectiveDetails",
+            "name": "newDetails",
+            "type": "tuple"
+          }
+        ],
+        "name": "setPerspectiveDetails",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",

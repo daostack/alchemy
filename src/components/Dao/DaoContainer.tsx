@@ -79,7 +79,7 @@ class DaoContainer extends React.Component<IProps, null> {
       proposalId={routeProps.match.params.proposalId}
     />;
 
-  private daoWikiRoute = (routeProps: any) => <DaoWiki {...routeProps} daoState={this.props.data[0]} />;
+  private daoWikiRoute = (routeProps: any) => <DaoWiki {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress}/>;
 
   private schemeRoute = (routeProps: any) => <SchemeContainer {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
   private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} daoState={this.props.data[0]} />;

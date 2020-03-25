@@ -3,18 +3,16 @@ import * as Sticky from "react-stickynode";
 import { IDAOState, ISchemeState, Scheme, IProposalType, Proposal, IProposalStage, IProposalState } from "@daostack/client";
 import { WikiContainer, actualHash, ReactiveWiki } from "@dorgtech/daosmind";
 import classNames from "classnames";
-import { enableWalletProvider } from "arc";
+import { enableWalletProvider, getWeb3Provider } from "arc";
 import { combineLatest } from "rxjs";
 
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import * as arcActions from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { schemeName } from "lib/schemeUtils";
 import { connect } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import Loading from "components/Shared/Loading";
-import { getWeb3Provider } from "arc";
 import { IGenericSchemeParams } from "@daostack/client/dist/types/schemes/base";
 import * as proposalStyle from "../../Scheme/SchemeProposals.scss";
 import * as daoStyle from "../Dao.scss";
@@ -24,12 +22,13 @@ import { IDaoInformation } from "./types";
 type IExternalProps = {
   daoState: IDAOState;
   match: Record<string, any>;
+  currentAccountAddress: string;
 } & RouteComponentProps<any>;
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
   voteOnProposal: arcActions.voteOnProposal,
-  showNotification,
+  showNotification
 };
 
 interface IDispatchProps {
@@ -43,14 +42,14 @@ type IProps = IDispatchProps & IExternalProps & SubscriptionData;
 
 function DaoWiki(props: IProps) {
   const [hasWikiScheme, setHasWikiScheme] = React.useState<boolean>(false);
-  const [isLogged, setIsLogged] = React.useState<boolean>(false);
+  const [wikiSchemeAddress, setWikiSchemeAddress] = React.useState<string>("");
   const [schemes, proposals] = props.data;
 
-  const { createProposal, voteOnProposal } = props;
+  const { createProposal, voteOnProposal, currentAccountAddress } = props;
 
   const wikiMethods = {
     createProposal,
-    voteOnProposal,
+    voteOnProposal
   };
 
   const renderWikiComponent = (web3Provider: any, dispatcher: CustomDispatcher) => {
@@ -85,14 +84,14 @@ function DaoWiki(props: IProps) {
         props.showNotification(NotificationStatus.Failure, "You must be logged in to use Wiki!");
         return;
       }
-      setIsLogged(true);
       const web3Provider = await getWeb3Provider();
-      const { dao, address, schemeParams } = states.find(hasWikiScheme);
+      const { dao, address, schemeParams, id } = states.find(hasWikiScheme);
+      setWikiSchemeAddress(id);
       const { contractToCall } = schemeParams as IGenericSchemeParams;
       const daoInformation: IDaoInformation = {
         dao,
         scheme: address,
-        contractToCall,
+        contractToCall
       };
       const dispatcher = new CustomDispatcher(wikiMethods, daoInformation);
       renderWikiComponent(web3Provider, dispatcher);
@@ -101,6 +100,7 @@ function DaoWiki(props: IProps) {
 
   React.useEffect(() => {
     checkIfWikiSchemeExists();
+    console.log(currentAccountAddress);
   }, []);
 
   const registerWikiScheme = async () => {
@@ -131,7 +131,7 @@ function DaoWiki(props: IProps) {
         description: "This will allow DAO to have Wiki functionality",
         parametersHash: "0x00000000000000000000000000000000000000000",
         scheme: schemeRegistrar.staticState.address,
-        schemeToRegister: "0x2E4d4751A8fF9B693daD5Bd7F8E38C142B0E02B6", // rinkeby
+        schemeToRegister: "0xc8e06c1b6fb9a60f727c538233dac6ff5c1ddbf8" // rinkeby
       };
       await createProposal(proposalValues);
     }
@@ -148,7 +148,7 @@ function DaoWiki(props: IProps) {
         </Link>
         <a
           className={classNames({
-            [proposalStyle.blueButton]: true,
+            [proposalStyle.blueButton]: true
           })}
           onClick={registerWikiScheme}
           data-test-id="createProposal"
@@ -164,18 +164,17 @@ function DaoWiki(props: IProps) {
       <Sticky enabled top={50} innerZ={10000}>
         <div className={daoStyle.daoHistoryHeader}>Wiki</div>
       </Sticky>
-      {hasWikiScheme && isLogged ? (
+      {hasWikiScheme && currentAccountAddress ? (
         <div style={{ height: "70vh" }}>
-          <ReactiveWiki {...props} />
+          <ReactiveWiki {...props} wikiSchemeAddress={wikiSchemeAddress} />
         </div>
-      ) : !isLogged ? (
-        <h3>
-          You must be logged in to use the wiki!
-        </h3>
-      ) 
-        : (
-          NoWikiScheme
-        )}
+      ) : !currentAccountAddress ? (
+        <div className={proposalStyle.noDecisions}>
+          <div className={proposalStyle.proposalsHeader}>You must be logged in to interact with Wiki</div>
+        </div>
+      ) : (
+        NoWikiScheme
+      )}
     </div>
   );
 }
@@ -196,7 +195,7 @@ const SubscribedDaoWiki = withSubscription({
       dao.schemes({}, { fetchAllData: true }),
       dao.proposals({ where: { stage: IProposalStage.Queued } }, { subscribe: true, fetchAllData: true })
     );
-  },
+  }
 });
 
 export default connect(
