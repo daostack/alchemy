@@ -4,6 +4,7 @@ export const ETHDENVER_OPTIMIZATION = true;
 export const USE_CONTRACTINFOS_CACHE = false; 
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import Torus from "@toruslabs/torus-embed";
 
 const Portis = require("@portis/web3");
 const Fortmatic = require("fortmatic");
@@ -28,6 +29,10 @@ function getWeb3ConnectProviderOptions(network: string) {
     case "rinkeby":
       return {
         network: "rinkeby",
+        torus: {
+          package: Torus,
+          options: { network: "rinkeby" },
+        },
         walletconnect: {
           package: isMobileBrowser() ? null : WalletConnectProvider,
           options: {
@@ -78,6 +83,10 @@ function getWeb3ConnectProviderOptions(network: string) {
     case "mainnet":
       return {
         network: "mainnet",
+        torus: {
+          package: Torus,
+          options: { network: "mainnet" },
+        },
         walletconnect: {
           package: isMobileBrowser() ? null : WalletConnectProvider,
           options: {
@@ -157,5 +166,4 @@ export const settings = {
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("mainnet"),
   },
 };
-
 

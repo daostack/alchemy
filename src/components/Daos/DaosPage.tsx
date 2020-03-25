@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
+import { first } from "rxjs/operators";
 
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
@@ -36,6 +37,7 @@ type IProps = IStateProps & ISubscriptionProps<SubscriptionData>;
 
 interface IState {
   search: string;
+  searchDaos: DAO[];
 }
 
 const PAGE_SIZE = 50;
@@ -47,6 +49,7 @@ class DaosPage extends React.Component<IProps, IState> {
 
     this.state = {
       search: "",
+      searchDaos: [],
     };
   }
 
@@ -56,15 +59,41 @@ class DaosPage extends React.Component<IProps, IState> {
     });
   }
 
-  onSearchChange = (e: any) => {
-    this.setState({ search: e.target.value });
+  onSearchChange = async (e: any) => {
+    const searchString = e.target.value;
+
+    this.setState({ search: searchString });
+
+    // If search string greater than 2 search on server for any other DAOs not yet loaded that match this search
+    if (searchString.length > 2) {
+      const arc = getArc();
+      const foundDaos = await combineLatest(
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: searchString } }, { fetchAllData: true }),
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: searchString.charAt(0).toUpperCase() + searchString.slice(1) } }, { fetchAllData: true }),
+        (data1, data2) => data1.concat(data2),
+      ).pipe(first()).toPromise();
+      this.setState({ searchDaos: foundDaos });
+    } else {
+      this.setState({ searchDaos: [] });
+    }
   }
 
   public render(): RenderOutput {
     const { currentAccountProfile, data, fetchMore } = this.props;
-    const search = this.state.search.toLowerCase();
+    const search = this.state.search.length > 2 ? this.state.search.toLowerCase() : "";
 
-    const allDAOs = data[0];
+    let allDAOs = data[0];
+
+    // Add any DAOs found from searching the server to the list
+    if (this.state.searchDaos.length > 0) {
+      // make sure we don't add duplicate DAOs to the list
+      const extraFoundDaos = this.state.searchDaos.filter((dao) => {
+        return !allDAOs.find((d) => d.id === dao.id);
+      });
+      allDAOs = allDAOs.concat(extraFoundDaos);
+    }
 
     // Always show Genesis Alpha first
     let finalDAOList = allDAOs.filter((d: DAO) => d.staticState.name === "Genesis Alpha" && d.staticState.name.toLowerCase().includes(search));

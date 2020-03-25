@@ -1,5 +1,5 @@
 import * as uuid from "uuid";
-import { getContractAddresses } from "./utils";
+import { getContractAddresses, hideCookieAcceptWindow } from "./utils";
 
 describe("SchemeRegistrar Proposals", () => {
   let daoAddress: string;
@@ -16,6 +16,8 @@ describe("SchemeRegistrar Proposals", () => {
 
     const schemeCard = await $("[data-test-id=\"schemeCard-SchemeRegistrar\"]");
     await schemeCard.click();
+
+    await hideCookieAcceptWindow();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();
@@ -57,6 +59,8 @@ describe("SchemeRegistrar Proposals", () => {
 
     const schemeCard = await $("[data-test-id=\"schemeCard-SchemeRegistrar\"]");
     await schemeCard.click();
+
+    await hideCookieAcceptWindow();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();

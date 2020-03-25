@@ -1,14 +1,20 @@
-### template
-  - Features Added
-  - Bugs Fixed
-
 ## Unreleased
   - Bugs Fixed
     - Fix crash on the redemptions page when there are more than 100 DAOs and not all of them initially load. Only currently an issue in Rinkeby
 
+## 0.10.3
+  - Features Added
+    - Add support for Torus wallet
+    - New embedded UI for creating DAOs
+
+  - Bugs Fixed
+    - On the All DAOS page, make sure the filter finds all DAOs even if they have not yet been loaded on the client
+    - Fix error when navigating to the All Redemptions when there exist more than 100 DAOs.
+
 ## 0.10.2
   - Features Added
     - Fix bug when entering numbers for uint256 data types in the GenericScheme new proposal modal
+    - New busy waiting animation
 
   - Bugs Fixed
 
