@@ -29,7 +29,7 @@ describe("Header redemptions button", () => {
     await browser.setWindowSize(320, 640);
     const actualWindowSize = await browser.getWindowSize();
 
-    // Skip test if the OS doesn't allow window resizes
+    // Skip test if the OS doesn't allow window to be resized
     if (actualWindowSize.width === 320) {
       await browser.url("http://127.0.0.1:3000");
       // For some reason, the connect button shows up after refreshing, even
