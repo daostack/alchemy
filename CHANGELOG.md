@@ -11,6 +11,12 @@
     - On the All DAOS page, make sure the filter finds all DAOs even if they have not yet been loaded on the client
     - Fix error when navigating to the All Redemptions when there exist more than 100 DAOs.
 
+## 0.10.4
+  - Features Added
+    - Recommended node.js version to build Alchemy is set to 11.15.0.
+
+  - Bugs Fixed
+
 ## 0.10.2
   - Features Added
     - Fix bug when entering numbers for uint256 data types in the GenericScheme new proposal modal
