@@ -28,7 +28,7 @@ type IExternalProps = {
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
   voteOnProposal: arcActions.voteOnProposal,
-  showNotification
+  showNotification,
 };
 
 interface IDispatchProps {
@@ -49,7 +49,7 @@ function DaoWiki(props: IProps) {
 
   const wikiMethods = {
     createProposal,
-    voteOnProposal
+    voteOnProposal,
   };
 
   const renderWikiComponent = (web3Provider: any, dispatcher: CustomDispatcher) => {
@@ -91,7 +91,7 @@ function DaoWiki(props: IProps) {
       const daoInformation: IDaoInformation = {
         dao,
         scheme: address,
-        contractToCall
+        contractToCall,
       };
       const dispatcher = new CustomDispatcher(wikiMethods, daoInformation);
       renderWikiComponent(web3Provider, dispatcher);
@@ -130,7 +130,7 @@ function DaoWiki(props: IProps) {
         description: "This will allow DAO to have Wiki functionality",
         parametersHash: "0x00000000000000000000000000000000000000000",
         scheme: schemeRegistrar.staticState.address,
-        schemeToRegister: "0xc8e06c1b6fb9a60f727c538233dac6ff5c1ddbf8" // rinkeby
+        schemeToRegister: "0xc8e06c1b6fb9a60f727c538233dac6ff5c1ddbf8", // rinkeby
       };
       await createProposal(proposalValues);
     }
@@ -147,7 +147,7 @@ function DaoWiki(props: IProps) {
         </Link>
         <a
           className={classNames({
-            [proposalStyle.blueButton]: true
+            [proposalStyle.blueButton]: true,
           })}
           onClick={registerWikiScheme}
           data-test-id="createProposal"
@@ -194,7 +194,7 @@ const SubscribedDaoWiki = withSubscription({
       dao.schemes({}, { fetchAllData: true }),
       dao.proposals({ where: { stage: IProposalStage.Queued } }, { subscribe: true, fetchAllData: true })
     );
-  }
+  },
 });
 
 export default connect(
