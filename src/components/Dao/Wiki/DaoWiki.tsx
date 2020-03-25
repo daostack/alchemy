@@ -100,7 +100,6 @@ function DaoWiki(props: IProps) {
 
   React.useEffect(() => {
     checkIfWikiSchemeExists();
-    console.log(currentAccountAddress);
   }, []);
 
   const registerWikiScheme = async () => {
