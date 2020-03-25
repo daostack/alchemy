@@ -43,38 +43,32 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps & ISubscriptionProps<any[]>
 
 // TODO: this should really be in the client library somehow
-const createDaoState = (data: any): IDAOState => {
+const createDaoState = (queryData: any): IDAOState => {
   const arc = getArc();
-  data.address = data.id;
-  const dao = new DAO(data, arc);
-  const reputation = new Reputation(data.nativeReputation.id, arc);
-  const token = new Token(data.nativeToken.id, arc);
+  const daoSpec = {...queryData, address: queryData.id};
+  const dao = new DAO(daoSpec, arc);
+  const reputation = new Reputation(daoSpec.nativeReputation.id, arc);
+  const token = new Token(daoSpec.nativeToken.id, arc);
   dao.setStaticState({
-    address: data.id,
-    id: data.id,
-    name: data.name,
-    register: data.register,
+    ...daoSpec,
     reputation,
     token,
-    tokenName: data.nativeToken.name,
-    tokenSymbol: data.nativeToken.symbol,
+    tokenName: daoSpec.nativeToken.name,
+    tokenSymbol: daoSpec.nativeToken.symbol,
   });
   return {
-    address: data.id,
+    ...daoSpec,
     dao,
-    id: data.id,
-    memberCount: Number(data.reputationHoldersCount),
-    name: data.name,
-    numberOfBoostedProposals: Number(data.numberOfBoostedProposals),
-    numberOfPreBoostedProposals: Number(data.numberOfPreBoostedProposals),
-    numberOfQueuedProposals: Number(data.numberOfQueuedProposals),
-    register: data.register,
+    memberCount: Number(daoSpec.reputationHoldersCount),
+    numberOfBoostedProposals: Number(daoSpec.numberOfBoostedProposals),
+    numberOfPreBoostedProposals: Number(daoSpec.numberOfPreBoostedProposals),
+    numberOfQueuedProposals: Number(daoSpec.numberOfQueuedProposals),
     reputation,
-    reputationTotalSupply: new BN(data.nativeReputation.totalSupply),
+    reputationTotalSupply: new BN(daoSpec.nativeReputation.totalSupply),
     token,
-    tokenName: data.nativeToken.name,
-    tokenSymbol: data.nativeToken.symbol,
-    tokenTotalSupply: data.nativeToken.totalSupply,
+    tokenName: daoSpec.nativeToken.name,
+    tokenSymbol: daoSpec.nativeToken.symbol,
+    tokenTotalSupply: daoSpec.nativeToken.totalSupply,
   };
 };
 
@@ -159,21 +153,21 @@ class RedemptionsPage extends React.Component<IProps, null> {
 
     const arc = getArc();
 
-    const daosPerId = new Map<Address, IDAOState>();
+    const daoStatePerAddress = new Map<Address, IDAOState>();
     const proposalsPerDao = new Map<Address, any[]>();
     proposals.forEach(proposal => {
       if (proposalsPerDao.get(proposal.dao.id) === undefined) {
         proposalsPerDao.set(proposal.dao.id, []);
       }
       proposalsPerDao.get(proposal.dao.id).push(proposal);
-      if (!daosPerId.get(proposal.dao.id)) {
-        daosPerId.set(proposal.dao.id, createDaoState(proposal.dao));
+      if (!daoStatePerAddress.get(proposal.dao.address)) {
+        daoStatePerAddress.set(proposal.dao.id, createDaoState(proposal.dao));
       }
     });
 
-    return [...proposalsPerDao].map(([daoId, proposals]) => {
-      const daoState = daosPerId.get(daoId);
-      return <div key={"daoProposals_" + daoId} className={css.dao}>
+    return [...proposalsPerDao].map(([daoAddress, proposals]) => {
+      const daoState = daoStatePerAddress.get(daoAddress);
+      return <div key={"daoProposals_" + daoAddress} className={css.dao}>
         <div className={css.daoHeader}>{daoState.name}</div>
         <div>
           {proposals.map(proposal => {
