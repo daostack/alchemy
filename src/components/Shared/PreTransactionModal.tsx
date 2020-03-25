@@ -357,6 +357,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                           className={css.predictionAmount}
                           onChange={this.stakeOnChange}
                           placeholder="0"
+                          data-test-id="stake-input"
                         />
                         <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
                         <div className={css.yourBalance}>
