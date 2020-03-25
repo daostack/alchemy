@@ -10,8 +10,8 @@
     "url": "git+https://github.com/daostack/alchemy.git"
   },
   "engines": {
-    "node": "10.16.0",
-    "npm": "6.11.3"
+    "node": "11.0.0",
+    "npm": "6.4.1"
   },
   "jest": {
     "testURL": "http://127.0.0.1:3000/",
