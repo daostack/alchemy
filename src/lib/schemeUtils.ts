@@ -164,7 +164,7 @@ const schemeActionPropNames = new Map<string, Map<GetSchemeIsActiveActions, stri
 
 export function getSchemeIsActive(scheme: ISchemeState, action?: GetSchemeIsActiveActions): boolean {
   let votingMachineParamsPropertyName: string;
-  let schemeName = `${scheme.name[0].toLowerCase()}${scheme.name.slice(1)}`;
+  let schemeName = scheme.name ? `${scheme.name[0].toLowerCase()}${scheme.name.slice(1)}` : "";
   if (schemeName === "genericScheme") {
     if (scheme.uGenericSchemeParams) {
       schemeName = "uGenericScheme";
