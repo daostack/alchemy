@@ -1,12 +1,11 @@
-### template
-  - Features Added
-  - Bugs Fixed
-
 ## 0.10.3
   - Features Added
-    - Add support for Torus wallet.
+    - Add support for Torus wallet
+    - New embedded UI for creating DAOs
 
   - Bugs Fixed
+    - On the All DAOS page, make sure the filter finds all DAOs even if they have not yet been loaded on the client
+    - Fix error when navigating to the All Redemptions when there exist more than 100 DAOs.
 
 ## 0.10.2
   - Features Added
