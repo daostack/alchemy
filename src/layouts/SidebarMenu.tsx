@@ -190,7 +190,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   <span className={
                     classNames({
                       [css.notification]: true,
-                      [css.homeNotification]: true
+                      [css.homeNotification]: true,
                     })}
                   />
                   <img src="/assets/images/Icon/menu/book.png" />
