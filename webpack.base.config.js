@@ -80,6 +80,7 @@ module.exports = {
           /node_modules\/@dorgtech/,
           /node_modules\/@polymer/,
           /node_modules\/@webcomponents/,
+          /node_modules\/graphql/,
         ]
       },
 
