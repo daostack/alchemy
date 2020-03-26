@@ -20,8 +20,9 @@ describe("Header redemptions button", () => {
     await redemptionsButton.waitForDisplayed();
     await redemptionsButton.click();
 
-    // const viewAllRedemptionsLink = await $("[data-test-id=\"viewAllRedemptionsLink\"]");
-    // await viewAllRedemptionsLink.click();
+    const viewAllRedemptionsLink = await $("[data-test-id=\"viewAllRedemptionsLink\"]");
+    await viewAllRedemptionsLink.waitForDisplayed();
+    await viewAllRedemptionsLink.click();
 
     // (await browser.getUrl()).should.equal("http://127.0.0.1:3000/redemptions");
   });
