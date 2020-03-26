@@ -87,7 +87,7 @@
     "@burner-wallet/burner-connect-provider": "^0.1.1",
     "@daostack/client": "0.2.64",
     "@dorgtech/daocreator-ui": "^1.0.5",
-    "@dorgtech/daosmind": "0.0.3-alpha6",
+    "@dorgtech/daosmind": "^0.0.4-alpha2",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
     "@fortawesome/react-fontawesome": "^0.1.3",
@@ -243,7 +243,6 @@
     "webpack-shell-plugin": "^0.5.0"
   },
   "resolutions": {
-    "@types/react": "*",
-    "graphql": "14.x"
+    "@types/react": "*"
   }
 }
