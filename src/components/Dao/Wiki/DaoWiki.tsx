@@ -8,7 +8,7 @@ import { combineLatest } from "rxjs";
 import { Link, RouteComponentProps } from "react-router-dom";
 import * as arcActions from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
-import { schemeName } from "lib/schemeUtils";
+import { schemeName, getSchemeIsActive } from "lib/schemeUtils";
 import { connect } from "react-redux";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import Loading from "components/Shared/Loading";
@@ -43,6 +43,7 @@ function DaoWiki(props: IProps) {
   const [hasWikiScheme, setHasWikiScheme] = React.useState<boolean>(false);
   const [wikiSchemeAddress, setWikiSchemeAddress] = React.useState<string>("");
   const [schemes, proposals] = props.data;
+  const [isActive, setIsActive] = React.useState<boolean>(false);
 
   const { createProposal, voteOnProposal, currentAccountAddress } = props;
 
@@ -83,8 +84,10 @@ function DaoWiki(props: IProps) {
         props.showNotification(NotificationStatus.Failure, "You must be logged in to use Wiki!");
         return;
       }
+      const wikiUpdateScheme = states.find(hasWikiScheme);
+      setIsActive(getSchemeIsActive(wikiUpdateScheme));
       const web3Provider = await getWeb3Provider();
-      const { dao, address, schemeParams, id } = states.find(hasWikiScheme);
+      const { dao, address, schemeParams, id } = wikiUpdateScheme;
       setWikiSchemeAddress(id);
       const { contractToCall } = schemeParams as IGenericSchemeParams;
       const daoInformation: IDaoInformation = {
@@ -162,7 +165,7 @@ function DaoWiki(props: IProps) {
       <div className={daoStyle.daoHistoryHeader}>Wiki</div>
       {hasWikiScheme && currentAccountAddress ? (
         <div style={{ height: "70vh" }}>
-          <ReactiveWiki {...props} wikiSchemeAddress={wikiSchemeAddress} />
+          <ReactiveWiki {...props} wikiSchemeAddress={wikiSchemeAddress} isActive={isActive} />
         </div>
       ) : !currentAccountAddress ? (
         <div className={proposalStyle.noDecisions}>
