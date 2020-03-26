@@ -12,6 +12,10 @@ describe("Header redemptions button", () => {
   });
 
   it("should show a quick menu on desktop devices", async () => {
+
+    // attempt to avoid the fandom error that happens here only in travis
+    await hideCookieAcceptWindow();
+
     const loginButton = await $("[data-test-id=\"loginButton\"]");
     await loginButton.click();
 
