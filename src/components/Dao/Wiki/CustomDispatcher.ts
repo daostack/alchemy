@@ -4,9 +4,17 @@ import {
   IDispatcherMethods,
   IDaoInformation,
   IProposalWikiOptions,
-  IVoteOptions,
+  IVoteOptions
 } from "./types";
 
+/**
+ * This custom dispatcher is a way to pass alchemy's actions 
+ * to the underscore protocol elements, this way, an user can create a proposal
+ * by interacting with the wiki component.
+ * 
+ * It facilitates the communication between alchemy's dispatcher and 
+ * underscore protocol components.
+ */
 export class CustomDispatcher {
   private methods: IDispatcherMethods;
   private daoInformation: IDaoInformation;
@@ -37,13 +45,17 @@ export class CustomDispatcher {
       value: 0, // amount of eth to send with the call
       title: actionCalled.label,
       description: actionCalled.description,
-      callData: dataEncoded,
+      callData: dataEncoded
     };
     await this.methods.createProposal(proposalOptions);
   };
 
   public voteOnProposal = async (voteParams: IVoteOptions) => {
     const { proposalId, voteOption } = voteParams;
-    await this.methods.voteOnProposal(this.daoInformation.dao, proposalId, voteOption);
+    await this.methods.voteOnProposal(
+      this.daoInformation.dao,
+      proposalId,
+      voteOption
+    );
   };
 }

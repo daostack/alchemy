@@ -186,19 +186,14 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
             <li>
               <TrainingTooltip placement="right" overlay={"DAO official documentation"}>
                 <Link to={"/dao/" + dao.address + "/wiki/"} onClick={this.handleCloseMenu}>
-                  <span
-                    className={classNames({
-                      [css.menuDot]: true,
-                      [css.red]: hasNewPosts,
-                    })}
-                  />
-                  <span
-                    className={classNames({
+                  <span className={css.menuDot} />
+                  <span className={
+                    classNames({
                       [css.notification]: true,
-                      [css.discussionNotification]: true,
+                      [css.homeNotification]: true
                     })}
                   />
-                  <img src="/assets/images/Icon/menu/bookTest.png" />
+                  <img src="/assets/images/Icon/menu/book.png" />
                   Wiki
                 </Link>
               </TrainingTooltip>

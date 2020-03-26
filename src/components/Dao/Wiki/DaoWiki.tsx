@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as Sticky from "react-stickynode";
 import { IDAOState, ISchemeState, Scheme, IProposalType, Proposal, IProposalStage, IProposalState } from "@daostack/client";
 import { WikiContainer, actualHash, ReactiveWiki } from "@dorgtech/daosmind";
 import classNames from "classnames";
@@ -160,9 +159,7 @@ function DaoWiki(props: IProps) {
 
   return (
     <div>
-      <Sticky enabled top={50} innerZ={10000}>
-        <div className={daoStyle.daoHistoryHeader}>Wiki</div>
-      </Sticky>
+      <div className={daoStyle.daoHistoryHeader}>Wiki</div>
       {hasWikiScheme && currentAccountAddress ? (
         <div style={{ height: "70vh" }}>
           <ReactiveWiki {...props} wikiSchemeAddress={wikiSchemeAddress} />
@@ -180,12 +177,7 @@ function DaoWiki(props: IProps) {
 
 const SubscribedDaoWiki = withSubscription({
   wrappedComponent: DaoWiki,
-  loadingComponent: (
-    <div className={daoStyle.wrapper}>
-      {" "}
-      <Loading />
-    </div>
-  ),
+  loadingComponent: <Loading/>,
   errorComponent: props => <span>{props.error.message}</span>,
   checkForUpdate: [],
   createObservable: async (props: IExternalProps) => {
