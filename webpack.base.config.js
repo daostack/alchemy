@@ -79,8 +79,7 @@ module.exports = {
           /node_modules\/@material-ui/,
           /node_modules\/@dorgtech/,
           /node_modules\/@polymer/,
-          /node_modules\/@webcomponents/,
-          /node_modules\/graphql/,
+          /node_modules\/@webcomponents/
         ]
       },
 
