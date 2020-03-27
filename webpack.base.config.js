@@ -9,6 +9,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const basePath = process.cwd();
 
+const resolve = (pat) => path.resolve(basePath, pat)
+
 module.exports = {
   devtool: "eval",
 
@@ -17,19 +19,19 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
 
     alias: {
-      arc: path.resolve(basePath, "src/arc"),
-      actions: path.resolve(basePath, "src/actions"),
-      components: path.resolve(basePath, "src/components"),
-      constants: path.resolve(basePath, "src/constants"),
-      data: path.resolve(basePath, "data"),
-      genericSchemeRegistry: path.resolve(basePath, "src/genericSchemeRegistry"),
-      crxRegistry: path.resolve(basePath, "src/crxRegistry"),
-      layouts: path.resolve(basePath, "src/layouts"),
-      lib: path.resolve(basePath, "src/lib"),
-      pages: path.resolve(basePath, "src/pages"),
-      reducers: path.resolve(basePath, "src/reducers"),
-      selectors: path.resolve(basePath, "src/selectors"),
-      src: path.resolve(basePath, "src"),
+      arc: resolve("src/arc"),
+      actions: resolve("src/actions"),
+      components: resolve("src/components"),
+      constants: resolve("src/constants"),
+      data: resolve("data"),
+      genericSchemeRegistry: resolve("src/genericSchemeRegistry"),
+      crxRegistry: resolve("src/crxRegistry"),
+      layouts: resolve("src/layouts"),
+      lib: resolve("src/lib"),
+      pages: resolve("src/pages"),
+      reducers: resolve("src/reducers"),
+      selectors: resolve("src/selectors"),
+      src: resolve("src"),
       "ipfs-api": "ipfs-api/dist",
       "bn.js": "bn.js/lib/bn.js"
     }
@@ -50,21 +52,21 @@ module.exports = {
         test: /\.js$/,
         loader: "source-map-loader",
         exclude: [
-          /node_modules\/apollo-cache-inmemory/,
-          /node_modules\/apollo-client/,
-          /node_modules\/apollo-link/,
-          /node_modules\/apollo-link-http/,
-          /node_modules\/apollo-link-ws/,
-          /node_modules\/ethereumjs-common/,
-          /node_modules\/ethereumjs-tx/,
-          /node_modules\/ethereumjs-util/,
-          /node_modules\/graphql-request/,
-          /node_modules\/https-did-resolver/,
-          /node_modules\/rlp/,
-          /node_modules\/subscriptions-transport-ws/,
-          /node_modules\/xhr2-cookies/,
-          /node_modules\/zen-observable-ts/,
-          /node_modules\/@dorgtech/
+          resolve("node_modules/apollo-cache-inmemory"),
+          resolve("node_modules/apollo-client"),
+          resolve("node_modules/apollo-link"),
+          resolve("node_modules/apollo-link-http"),
+          resolve("node_modules/apollo-link-ws"),
+          resolve("node_modules/ethereumjs-common"),
+          resolve("node_modules/ethereumjs-tx"),
+          resolve("node_modules/ethereumjs-util"),
+          resolve("node_modules/graphql-request"),
+          resolve("node_modules/https-did-resolver"),
+          resolve("node_modules/rlp"),
+          resolve("node_modules/subscriptions-transport-ws"),
+          resolve("node_modules/xhr2-cookies"),
+          resolve("node_modules/zen-observable-ts"),
+          resolve("node_modules/@dorgtech")
         ]
       },
 
@@ -72,9 +74,9 @@ module.exports = {
       {
         test: /\.css$/,
         include: [
-          /node_modules\/@fortawesome\/fontawesome-free\/css\/all.min.css/,
-          /node_modules\/mdbreact\/dist\/css\/mdb.css/,
-          /node_modules\/@dorgtech\/daocreator-ui\/dist/
+          resolve("node_modules/@fortawesome/fontawesome-free/css/all.min.css"),
+          resolve("node_modules/mdbreact/dist/css/mdb.css"),
+          resolve("node_modules/@dorgtech/daocreator-ui/dist")
         ],
         use: [MiniCssExtractPlugin.loader, "css-loader"]
       },
