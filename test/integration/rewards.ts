@@ -23,8 +23,6 @@ describe("Header redemptions button", () => {
     const viewAllRedemptionsLink = await $("[data-test-id=\"viewAllRedemptionsLink\"]");
     await viewAllRedemptionsLink.waitForDisplayed();
     await viewAllRedemptionsLink.click();
-
-    // (await browser.getUrl()).should.equal("http://127.0.0.1:3000/redemptions");
   });
 
   it("should redirect us to the redemptions page on mobile devices", async () => {
