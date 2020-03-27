@@ -35,7 +35,7 @@ const config = merge(baseConfig, {
       new OptimizeCSSAssetsPlugin({}),
       new TerserPlugin({
         terserOptions: {
-          mangle: false
+          mangle: process.env.NODE_ENV === "production"
         }
       })
     ],
