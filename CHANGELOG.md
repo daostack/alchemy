@@ -1,4 +1,7 @@
 ## Unreleased
+  - Features Added
+    - Show warning if subgraph is not updating
+
   - Bugs Fixed
     - Fix crash on the redemptions page when there are more than 100 DAOs and not all of them initially load. Only currently an issue in Rinkeby
 
