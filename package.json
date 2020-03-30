@@ -77,7 +77,7 @@
   "dependencies": {
     "3box": "1.16.1",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
-    "@daostack/client": "0.2.64",
+    "@daostack/client": "0.2.65",
     "@dorgtech/daocreator-ui": "^1.0.5",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
