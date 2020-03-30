@@ -52,12 +52,12 @@ function DaoWiki(props: IProps) {
     voteOnProposal,
   };
 
-  const renderWikiComponent = (web3Provider: any, dispatcher: CustomDispatcher) => {
+  const renderWikiComponent = (web3Provider: any, dispatcher: CustomDispatcher, hasHomeProposal: boolean) => {
     const { daoAvatarAddress, perspectiveId, pageId } = props.match.params;
     actualHash["dao"] = daoAvatarAddress;
     actualHash["wiki"] = perspectiveId;
     actualHash["page"] = pageId;
-    return WikiContainer.getInstance(web3Provider, dispatcher);
+    return WikiContainer.getInstance(web3Provider, dispatcher, hasHomeProposal);
   };
 
   const checkIfWikiSchemeExists = async () => {
@@ -96,7 +96,13 @@ function DaoWiki(props: IProps) {
         contractToCall,
       };
       const dispatcher = new CustomDispatcher(wikiMethods, daoInformation);
-      renderWikiComponent(web3Provider, dispatcher);
+      const checkProposals = (proposal: Proposal) => {
+        const state = proposal.staticState as IProposalState;
+        return state.title === "Set home perspective";
+      };
+  
+      const homeProposalExists = proposals.some(checkProposals);
+      renderWikiComponent(web3Provider, dispatcher, homeProposalExists);
     }
   };
 
