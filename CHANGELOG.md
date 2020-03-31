@@ -1,6 +1,11 @@
-## Unreleased
+## 0.10.4
   - Features Added
+    - Add Torus configuration button
+    - Recommended node.js version to build Alchemy is set to 11.15.0.
     - Only show registered schemes in DAOs
+
+  - Bugs Fixed
+    - Fix crash on the redemptions page when there are more than 100 DAOs and not all of them initially load. Only currently an issue in Rinkeby
 
 ## 0.10.3
   - Features Added
@@ -10,12 +15,6 @@
   - Bugs Fixed
     - On the All DAOS page, make sure the filter finds all DAOs even if they have not yet been loaded on the client
     - Fix error when navigating to the All Redemptions when there exist more than 100 DAOs.
-
-## 0.10.4
-  - Features Added
-    - Recommended node.js version to build Alchemy is set to 11.15.0.
-
-  - Bugs Fixed
 
 ## 0.10.2
   - Features Added

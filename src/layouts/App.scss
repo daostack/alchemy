@@ -408,18 +408,20 @@ body {
       }
 
       .logoutButtonContainer {
-        padding-left: 5px;
-        padding-right: 5px;
+        padding-left: 2px;
+        padding-right: 17px;
         padding-top: 15px;
-        padding-bottom: 12px;
+        padding-bottom: 18px;
         text-align: right;
 
         .web3ProviderLogoutSection {
+          display: flex;
+          padding-left: 18px;
+          align-items: center;
+
           .provider {
             text-align: left;
-            padding-left: 18px;
-            float: left;
-            margin-bottom: 12px;
+            flex-grow: 1;
 
             .title {
               font-weight: bold;
@@ -433,20 +435,22 @@ body {
               color: #4e6176;
               font-weight: normal;
               font-family: "Open Sans";
-              display: inline-block;
             }
           }
 
+          .providerconfig {
+            flex-grow: 2;
+            text-align: left;
+          }
+
           .web3ProviderLogInOut {
-            position: relative;
-            top: 14px;
+            flex-grow: 1;
           }
         }
       }
 
       .web3ProviderLogInOut {
         display: inline-block;
-        padding-right: 14px;
 
         .text {
           color: $accent-1;
@@ -460,7 +464,6 @@ body {
           top: 2px;
           position: relative;
           height: 12px;
-          margin-right: 5px;
         }
       }
     }
