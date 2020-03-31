@@ -68,6 +68,7 @@ module.exports = {
           resolve("node_modules/xhr2-cookies"),
           resolve("node_modules/zen-observable-ts"),
           resolve("node_modules/@dorgtech"),
+          resolve("node_modules/@uprtcl"),
           resolve("node_modules/@material"),
           resolve("node_modules/graphql-tools"),
           resolve("node_modules/ethereumjs-tx"),
