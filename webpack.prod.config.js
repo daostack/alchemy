@@ -39,7 +39,7 @@ const config = merge(baseConfig, {
            * This is because graphql has an error with the minified bundles when the process doesn't has the env variable NODE_ENV=production
            * More info: https://github.com/graphql/graphql-js/issues/1182
            */
-          // mangle: process.env.NODE_ENV === "production"
+          mangle: process.env.NODE_ENV === "production"
         }
       })
     ],
