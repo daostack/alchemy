@@ -1,4 +1,7 @@
-## Unreleased
+## 0.10.4
+  - Features Added
+    - add Torus configuration button
+
   - Bugs Fixed
     - Fix crash on the redemptions page when there are more than 100 DAOs and not all of them initially load. Only currently an issue in Rinkeby
 
