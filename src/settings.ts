@@ -1,7 +1,7 @@
 // disables some UI elements for a less resource-intensive page load
 export const ETHDENVER_OPTIMIZATION = true;
 // if this is true, we do get the contractInfos from a locally stored file in ./data instead of from the subgraph
-export const USE_CONTRACTINFOS_CACHE = false; 
+export const USE_CONTRACTINFOS_CACHE = false;
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Torus from "@toruslabs/torus-embed";
@@ -135,8 +135,8 @@ export const settings = {
     web3ConnectProviderOptions: {},
   },
   rinkeby: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v38_3_rinkeby",
-    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v38_3_rinkeby",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_0_rinkeby",
+    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_0_rinkeby",
     graphqlSubscribeToQueries: false,
     web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
@@ -145,8 +145,8 @@ export const settings = {
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("rinkeby"),
   },
   xdai: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v38_3_xdai",
-    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v38_3_xdai",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_0_xdai",
+    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_0_xdai",
     graphqlSubscribeToQueries: false,
     web3Provider:  process.env.ARC_WEB3PROVIDER || "https://poa.api.nodesmith.io/v1/dai/jsonrpc?apiKey=128059b9320a462699aef283a7ae2546",
     web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://poa.api.nodesmith.io/v1/dai/jsonrpc/ws?apiKey=128059b9320a462699aef283a7ae2546",
@@ -155,8 +155,8 @@ export const settings = {
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("xdai"),
   },
   main: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v38_3",
-    graphqlWsProvider: process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v38_3",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_0",
+    graphqlWsProvider: process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_0",
     graphqlSubscribeToQueries: false,
     web3Provider: process.env.ARC_WEB3PROVIDER || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     web3ProviderRead: process.env.ARC_WEB3PROVIDERREAD || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",

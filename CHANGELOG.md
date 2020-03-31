@@ -1,6 +1,6 @@
 ## Unreleased
-  - Bugs Fixed
-    - Fix crash on the redemptions page when there are more than 100 DAOs and not all of them initially load. Only currently an issue in Rinkeby
+  - Features Added
+    - Only show registered schemes in DAOs
 
 ## 0.10.3
   - Features Added
