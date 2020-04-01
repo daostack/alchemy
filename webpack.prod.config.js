@@ -7,7 +7,6 @@ const TerserPlugin = require('terser-webpack-plugin');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
 const WebpackShellPlugin = require('webpack-shell-plugin');
-const ReplacePlugin = require('webpack-plugin-replace');
 
 const baseConfig = require('./webpack.base.config.js');
 
@@ -36,6 +35,7 @@ const config = merge(baseConfig, {
       new OptimizeCSSAssetsPlugin({}),
       new TerserPlugin({
         terserOptions: {
+          keep_fnames: process.env.NODE_ENV === "production" ? false : /(GraphQLScalarType|GraphQLObjectType)/
         }
       })
     ],
@@ -113,13 +113,7 @@ plugins: [
 
     new CopyWebpackPlugin([
       { from: 'src/assets', to: 'assets' }
-    ]),
-    new ReplacePlugin({
-      include: /node_modules\/graphql/,
-      values: {
-        'process.env.NODE_ENV': JSON.stringify('production'),
-      }
-    })
+    ])
   ],
 });
 
