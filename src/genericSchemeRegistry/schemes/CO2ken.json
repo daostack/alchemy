@@ -24,9 +24,11 @@
           "placeholder": "Hash (QmafjwN...)"
         },
         {
+          "decimals": 18,
           "label": "Number of CO2kens to be minted",
           "name": "amountTokens",
-          "placeholder": "Input number of CO2kens"
+          "unit": "CO2",
+          "placeholder": "Number of CO2kens to be minted"
         }
       ],
       "abi": {
@@ -115,11 +117,13 @@
       "description": "Indicate how many tonnes of CO2 emissions you want to offset. An equivalent amount of CO2kens will be retired.",
       "notes": "https://github.com/CO2ken/CO2ken/blob/master/Contracts/co2ken.sol",
       "fields": [
-          {
+        {
+          "decimals": 27,
           "label": "Tons of CO2 to be offset",
           "name": "tons",
-          "placeholder": "CO2 emissions in tons (2)"
-          }
+          "unit": "TON",
+          "placeholder": "CO2 emissions in tons"
+        }
       ],
       "abi": {
         "constant": false,
