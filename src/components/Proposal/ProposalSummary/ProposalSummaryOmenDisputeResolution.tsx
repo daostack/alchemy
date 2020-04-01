@@ -47,7 +47,7 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
               <div className={css.summaryDetails}>
                 Executing this proposal will call the function
                 <pre>{action.id}()</pre>
-                with argument 'metadata':
+                with argument metadata:
                 <pre>{decodedCallData.values[0]}</pre>
                 at contract
                 <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
@@ -65,13 +65,13 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
-              Executing this proposal will call the function
-              <pre>{action.id}()</pre>
-              with  argument 'addr':
-              <pre>{decodedCallData.values[0]}</pre>
-              at contract
-              <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
-            </div>
+                Executing this proposal will call the function
+                <pre>{action.id}()</pre>
+                with  argument addr:
+                <pre>{decodedCallData.values[0]}</pre>
+                at contract
+                <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
+              </div>
               : ""
             }
           </div>
@@ -86,13 +86,13 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
-              Executing this proposal will call the function
-              <pre>{action.id}()</pre>
-              with argument 'fee':
-              <pre>{decodedCallData.values[0]}</pre>
-              at contract
-              <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
-            </div>
+                Executing this proposal will call the function
+                <pre>{action.id}()</pre>
+                with argument fee:
+                <pre>{decodedCallData.values[0]}</pre>
+                at contract
+                <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
+              </div>
               : ""
             }
           </div>
@@ -106,13 +106,13 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
               </span>
               { detailView ?
                 <div className={css.summaryDetails}>
-                Executing this proposal will call the function
-                <pre>{action.id}()</pre>
-                with argument 'recipient':
-                <pre>{decodedCallData.values[0]}</pre>
-                at contract
-                <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
-              </div>
+                  Executing this proposal will call the function
+                  <pre>{action.id}()</pre>
+                  with argument recipient:
+                  <pre>{decodedCallData.values[0]}</pre>
+                  at contract
+                  <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
+                </div>
                 : ""
               }
             </div>
@@ -126,17 +126,17 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
-              Executing this proposal will call the function
-              <pre>{action.id}()</pre>
-              with argument 'QuestionId':
-              <pre>{decodedCallData.values[0]}</pre>
-              with argument 'Answer':
-              <pre>{decodedCallData.values[1]}</pre>
-              with argument 'Answerer':
-              <pre>{decodedCallData.values[2]}</pre>
-              at contract
-              <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
-            </div>
+                Executing this proposal will call the function
+                <pre>{action.id}()</pre>
+                with argument QuestionId:
+                <pre>{decodedCallData.values[0]}</pre>
+                with argument Answer:
+                <pre>{decodedCallData.values[1]}</pre>
+                with argument Answerer:
+                <pre>{decodedCallData.values[2]}</pre>
+                at contract
+                <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
+              </div>
               : ""
             }
           </div>
