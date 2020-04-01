@@ -40,7 +40,8 @@ const config = merge(baseConfig, {
            * More info: https://github.com/graphql/graphql-js/issues/1182
            */
           mangle: {
-            keep_fnames: process.env.NODE_ENV === "production" ? false : /^__/
+            keep_fnames: process.env.NODE_ENV === "production" ? false : /__Schema/,
+            keep_classnames: process.env.NODE_ENV === "production" ? false : /__Schema/
           }
         }
       })
