@@ -1,0 +1,163 @@
+{
+  "name": "Omen Dispute Resolution",
+  "addresses": {
+    "main": [
+      "0x5f0D0985daE0ae7979c95b92A9816bC6703f0AE5"
+    ],
+    "rinkeby": [
+      "0x087040632Ef4dEd0A729ac8F458AB1bA5CCeF8DD"
+    ],
+    "private": [
+      "0xbA3Eb4f35C4e17a875B3d48CB20E847ecC16c851"
+    ]
+  },
+  "actions": [
+    {
+      "id": "submitAnswerByArbitrator",
+      "label": "Propose final Answer to Question",
+      "description": "Propose the final Answer to a paused realit.io question that requested <a href=\"https://realitio.github.io/docs/html/arbitrators.html\" target=\"_blank\">Dispute Resolution.</a> The answer will be submitted as Abitrator and instantly close the question.",
+      "notes": "https://github.com/...sol",
+      "fields": [
+        {
+          "label": "QuestionId",
+          "name": "question_id"
+        },
+        {
+          "label": "Answer",
+          "name": "answer"
+        },
+        {
+          "label": "Answerer",
+          "name": "answerer"
+        }
+      ],
+      "abi": {
+        "constant": false,
+	      "inputs": [
+	        {
+	          "name": "question_id",
+	          "type": "bytes32"
+	        },
+	        {
+	          "name": "answer",
+	          "type": "bytes32"
+	        },
+	        {
+	          "name": "answerer",
+	          "type": "address"
+	        }
+	      ],
+	      "name": "submitAnswerByArbitrator",
+	      "outputs": [],
+	      "payable": false,
+	      "stateMutability": "nonpayable",
+	      "type": "function"
+      }
+    },
+    {
+      "id": "setRealitio",
+      "label": "Set Contract Address",
+      "description": "Set or update the address of the realit.io contract this proposals interact with.",
+      "notes": "https://github.com/...sol",
+      "fields": [
+        {
+          "label": "New realit.io contract address",
+          "name": "addr",
+          "placeholder": "realit.io contract Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+	      "inputs": [
+	        {
+	          "name": "addr",
+	          "type": "address"
+	        }
+	      ],
+	      "name": "setRealitio",
+	      "outputs": [],
+	      "payable": false,
+	      "stateMutability": "nonpayable",
+	      "type": "function"
+      }
+    },
+    {
+      "id": "setMetaData",
+      "label": "Set MetaData",
+      "description": "Set or update Abitrator MetaData according the <a href=\"https://realitio.github.io/docs/html/arbitrators.html?highlight=metadata#getting-information-about-the-arbitrator\" target=\"_blank\">documentation.</a>",
+      "notes": "https://github.com/...sol",
+      "fields": [
+        {
+          "label": "New realit.io MetaData Information",
+          "name": "_metadata"
+        }
+      ],
+      "abi": {
+        "constant": false,
+	      "inputs": [
+	        {
+	          "name": "_metadata",
+	          "type": "string"
+	        }
+	      ],
+	      "name": "setMetaData",
+	      "outputs": [],
+	      "payable": false,
+	      "stateMutability": "nonpayable",
+	      "type": "function"
+      }
+    },
+    {
+      "id": "setDisputeFee",
+      "label": "Set Dispute Fee",
+      "description": "Set or update the fee to be charged to provide Dispute Resolution as Abitrator.",
+      "notes": "https://github.com/...sol",
+      "fields": [
+        {
+          "label": "New DisputeFee",
+          "name": "fee"
+        }
+      ],
+      "abi": {
+        "constant": false,
+	      "inputs": [
+	        {
+	          "name": "fee",
+	          "type": "uint256"
+	        }
+	      ],
+	      "name": "setDisputeFee",
+	      "outputs": [],
+	      "payable": false,
+	      "stateMutability": "nonpayable",
+	      "type": "function"
+      }
+    },
+    {
+      "id": "setFeeRecipient",
+      "label": "Set Fee Recipient",
+      "description": "Set or update the address of the recipient who will recieve charged fees.",
+      "notes": "https://github.com/...sol",
+      "fields": [
+        {
+          "label": "New FeeRecipient Address",
+          "name": "recipient"
+        }
+      ],
+      "abi": {
+        "constant": false,
+	      "inputs": [
+	        {
+	          "name": "recipient",
+	          "type": "address"
+	        }
+	      ],
+	      "name": "setFeeRecipient",
+	      "outputs": [],
+	      "payable": false,
+	      "stateMutability": "nonpayable",
+	      "type": "function"
+      }
+    }
+  ]
+}
