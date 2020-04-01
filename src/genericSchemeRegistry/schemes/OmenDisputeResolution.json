@@ -2,13 +2,13 @@
   "name": "Omen Dispute Resolution",
   "addresses": {
     "main": [
-      "0x5f0D0985daE0ae7979c95b92A9816bC6703f0AE5"
+      ""
     ],
     "rinkeby": [
-      "0x087040632Ef4dEd0A729ac8F458AB1bA5CCeF8DD"
+      "0xd433065CDc790262b8E60d4C35F77a4A807b74E5"
     ],
     "private": [
-      "0xbA3Eb4f35C4e17a875B3d48CB20E847ecC16c851"
+      ""
     ]
   },
   "actions": [
@@ -20,38 +20,42 @@
       "fields": [
         {
           "label": "QuestionId",
-          "name": "question_id"
+          "name": "questionId",
+          "placeholder":"QuestionId (0x755...)"
         },
         {
           "label": "Answer",
-          "name": "answer"
+          "name": "answer",
+          "placeholder":"Answer Hash (0x755...)"
+          
         },
         {
           "label": "Answerer",
-          "name": "answerer"
+          "name": "answerer",
+          "placeholder": "Address (0x0000…)"
         }
       ],
       "abi": {
         "constant": false,
-	      "inputs": [
-	        {
-	          "name": "question_id",
-	          "type": "bytes32"
-	        },
-	        {
-	          "name": "answer",
-	          "type": "bytes32"
-	        },
-	        {
-	          "name": "answerer",
-	          "type": "address"
-	        }
-	      ],
-	      "name": "submitAnswerByArbitrator",
-	      "outputs": [],
-	      "payable": false,
-	      "stateMutability": "nonpayable",
-	      "type": "function"
+        "inputs": [
+          {
+            "name": "questionId",
+            "type": "bytes32"
+          },
+          {
+            "name": "answer",
+            "type": "bytes32"
+          },
+          {
+            "name": "answerer",
+            "type": "address"
+          }
+        ],
+        "name": "submitAnswerByArbitrator",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
       }
     },
     {
@@ -61,24 +65,24 @@
       "notes": "https://github.com/...sol",
       "fields": [
         {
-          "label": "New realit.io contract address",
-          "name": "addr",
-          "placeholder": "realit.io contract Address (0x0000…)"
+          "label": "New Contract Address",
+          "name": "_address",
+          "placeholder": "Address (0x0000…)"
         }
       ],
       "abi": {
         "constant": false,
-	      "inputs": [
-	        {
-	          "name": "addr",
-	          "type": "address"
-	        }
-	      ],
-	      "name": "setRealitio",
-	      "outputs": [],
-	      "payable": false,
-	      "stateMutability": "nonpayable",
-	      "type": "function"
+        "inputs": [
+          {
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "name": "setRealitio",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
       }
     },
     {
@@ -88,23 +92,23 @@
       "notes": "https://github.com/...sol",
       "fields": [
         {
-          "label": "New realit.io MetaData Information",
+          "label": "New MetaData",
           "name": "_metadata"
         }
       ],
       "abi": {
         "constant": false,
-	      "inputs": [
-	        {
-	          "name": "_metadata",
-	          "type": "string"
-	        }
-	      ],
-	      "name": "setMetaData",
-	      "outputs": [],
-	      "payable": false,
-	      "stateMutability": "nonpayable",
-	      "type": "function"
+        "inputs": [
+          {
+            "name": "_metadata",
+            "type": "string"
+          }
+        ],
+        "name": "setMetaData",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
       }
     },
     {
@@ -114,23 +118,24 @@
       "notes": "https://github.com/...sol",
       "fields": [
         {
-          "label": "New DisputeFee",
-          "name": "fee"
+          "label": "New DisputeFee (in WEI)",
+          "name": "_fee",
+          "placeholder":"1000000000000000000"
         }
       ],
       "abi": {
         "constant": false,
-	      "inputs": [
-	        {
-	          "name": "fee",
-	          "type": "uint256"
-	        }
-	      ],
-	      "name": "setDisputeFee",
-	      "outputs": [],
-	      "payable": false,
-	      "stateMutability": "nonpayable",
-	      "type": "function"
+        "inputs": [
+          {
+            "name": "_fee",
+            "type": "uint256"
+          }
+        ],
+        "name": "setDisputeFee",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
       }
     },
     {
@@ -141,22 +146,23 @@
       "fields": [
         {
           "label": "New FeeRecipient Address",
-          "name": "recipient"
+          "name": "_recipient",
+          "placeholder": "Address (0x0000…)"
         }
       ],
       "abi": {
         "constant": false,
-	      "inputs": [
-	        {
-	          "name": "recipient",
-	          "type": "address"
-	        }
-	      ],
-	      "name": "setFeeRecipient",
-	      "outputs": [],
-	      "payable": false,
-	      "stateMutability": "nonpayable",
-	      "type": "function"
+        "inputs": [
+          {
+            "name": "_recipient",
+            "type": "address"
+          }
+        ],
+        "name": "setFeeRecipient",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
       }
     }
   ]

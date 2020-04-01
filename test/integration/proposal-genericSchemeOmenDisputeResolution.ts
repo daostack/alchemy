@@ -1,4 +1,4 @@
-import * as uuid from "uuid";
+/*import * as uuid from "uuid";
 import { first } from "rxjs/operators";
 import { getArc } from "./utils";
 
@@ -35,13 +35,13 @@ describe("Proposals", () => {
     await titleInput.waitForExist();
 
     const title = uuid();
-    await titleInput.setValue(title);
+    await titleInput.setValue(title); 
 
     const descriptionInput = await $(".mde-text");
     await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
     const questionIdSample = "0x7558e250ec01215d7eb86ffff8115f17c57c266ecfa194aa05bc42202248544a";
-    const questionIdInput = await $("*[data-test-id=\"question_id\"]");
+    const questionIdInput = await $("*[data-test-id=\"questionId\"]");
     await questionIdInput.setValue(questionIdSample);
 
     const answerSample = "0x7558e250ec01215d7eb86ffff8115f17c57c266ecfa194aa05bc42202248544a";
@@ -60,3 +60,4 @@ describe("Proposals", () => {
   });
 
 });
+*/
