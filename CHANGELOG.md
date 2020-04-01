@@ -3,6 +3,7 @@
     - Add Torus configuration button
     - Recommended node.js version to build Alchemy is set to 11.15.0.
     - Only show registered schemes in DAOs
+    - Added support for the CO2ken generic scheme
 
   - Bugs Fixed
     - Fix crash on the redemptions page when there are more than 100 DAOs and not all of them initially load. Only currently an issue in Rinkeby
