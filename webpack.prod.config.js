@@ -7,6 +7,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
 const WebpackShellPlugin = require('webpack-shell-plugin');
+const ReplacePlugin = require('webpack-plugin-replace');
 
 const baseConfig = require('./webpack.base.config.js');
 
@@ -35,14 +36,6 @@ const config = merge(baseConfig, {
       new OptimizeCSSAssetsPlugin({}),
       new TerserPlugin({
         terserOptions: {
-          /**
-           * This is because graphql has an error with the minified bundles when the process doesn't has the env variable NODE_ENV=production
-           * More info: https://github.com/graphql/graphql-js/issues/1182
-           */
-          mangle: {
-            keep_fnames: process.env.NODE_ENV === "production" ? false : /__Schema/,
-            keep_classnames: process.env.NODE_ENV === "production" ? false : /__Schema/
-          }
         }
       })
     ],
@@ -121,6 +114,12 @@ plugins: [
     new CopyWebpackPlugin([
       { from: 'src/assets', to: 'assets' }
     ]),
+    new ReplacePlugin({
+      include: /node_modules\/graphql/,
+      values: {
+        'process.env.NODE_ENV': JSON.stringify('production'),
+      }
+    })
   ],
 });
 
