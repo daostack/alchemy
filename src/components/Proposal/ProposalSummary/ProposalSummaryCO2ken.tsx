@@ -54,7 +54,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
                     Executing this proposal will mint a total of:
                   </p>
                   <pre>
-                    { tokenField.label }: {formatTokens(new BN(tokenValue), tokenField.unit, tokenField.decimals)} new CO2kens
+                    {formatTokens(new BN(tokenValue), tokenField.unit, tokenField.decimals)}
                   </pre>
                   <p>
                     Before voting on this proposal, verify that the passed IPFS hash is a valid certificate.
@@ -120,7 +120,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
                 <pre>{action.id}()</pre>
                 DAI are sent to the CO2ken contract to retire a respecive number of CO2kens. One CO2ken is equivalent to a ton of carbon emissions. The total amount of DAI which will be sent to the contract is:
                 <pre>
-                  { field.label }: {formatTokens(new BN(value), field.unit, field.decimals)}
+                  {formatTokens(new BN(value), field.unit, field.decimals)}
                 </pre>
               </div>
               : ""
