@@ -118,7 +118,6 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
             </div>
           );
       case "submitAnswerByArbitrator":
-      default:
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
@@ -142,6 +141,8 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
             }
           </div>
         );
+        default:
+        return "";
     }
   }
 }
