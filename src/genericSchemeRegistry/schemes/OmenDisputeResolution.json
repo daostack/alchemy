@@ -5,7 +5,7 @@
       ""
     ],
     "rinkeby": [
-      "0xd433065CDc790262b8E60d4C35F77a4A807b74E5"
+      "0xE505D7b576AfD20f591DD52D19F250Fb57daf78e"
     ],
     "private": [
       ""
@@ -159,6 +159,33 @@
           }
         ],
         "name": "setFeeRecipient",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "transferOwnership",
+      "label": "Transfer Ownership",
+      "description": "Transfer ownership  of the arbitrtor contract",
+      "notes": "https://github.com/...sol",
+      "fields": [
+        {
+          "label": "New owner",
+          "name": "newOwner",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
