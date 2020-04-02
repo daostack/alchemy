@@ -10,8 +10,8 @@
     "url": "git+https://github.com/daostack/alchemy.git"
   },
   "engines": {
-    "node": "11.15.0",
-    "npm": "6.7.0"
+    "node": "12.16.1",
+    "npm": "6.13.4"
   },
   "jest": {
     "testURL": "http://127.0.0.1:3000/",
@@ -147,7 +147,7 @@
   },
   "devDependencies": {
     "@babel/plugin-syntax-dynamic-import": "^7.7.4",
-    "@daostack/migration": "0.0.1-rc.40-v1",
+    "@daostack/migration": "0.0.1-rc.41-v3",
     "@storybook/addon-info": "^5.0.10",
     "@storybook/react": "^5.0.10",
     "@types/chai": "^4.1.7",
