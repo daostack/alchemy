@@ -199,7 +199,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} REP`} placement="right">
                 <strong>{formatTokens(dao.reputationTotalSupply)} REP</strong>
               </Tooltip>
-            </li>            
+            </li>
 
             <SubscribedEthBalance dao={dao} />
 
@@ -223,7 +223,9 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
     return (
       <div className={sidebarClass}>
         <div className={css.menuContent}>
-          { this.props.daoAvatarAddress && this.props.data ? this.daoMenu() : ""}
+          <div className={css.daoContentWrapper}>
+            { this.props.daoAvatarAddress && this.props.data ? this.daoMenu() : ""}
+          </div>
 
           <div className={css.siteLinksWrapper}>
             <ul>
