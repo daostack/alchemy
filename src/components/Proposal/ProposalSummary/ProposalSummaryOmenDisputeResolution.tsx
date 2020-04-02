@@ -117,7 +117,7 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
             }
           </div>
         );
-        case "transferOwnership":
+      case "transferOwnership":
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
@@ -137,31 +137,31 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
             }
           </div>
         );
-        case "submitAnswerByArbitrator":
-          return (
-            <div className={proposalSummaryClass}>
-              <span className={css.summaryTitle}>
-                <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-                {action.label}
-              </span>
-              { detailView ?
-                <div className={css.summaryDetails}>
-                  Executing this proposal will call the function
-                  <pre>{action.id}()</pre>
-                  with argument QuestionId:
-                  <pre>{decodedCallData.values[0]}</pre>
-                  with argument Answer:
-                  <pre>{decodedCallData.values[1]}</pre>
-                  with argument Answerer:
-                  <pre>{decodedCallData.values[2]}</pre>
-                  at contract
-                  <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
-                </div>
-                : ""
-              }
-            </div>
-          );
-        default:
+      case "submitAnswerByArbitrator":
+        return (
+          <div className={proposalSummaryClass}>
+            <span className={css.summaryTitle}>
+              <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
+              {action.label}
+            </span>
+            { detailView ?
+              <div className={css.summaryDetails}>
+                Executing this proposal will call the function
+                <pre>{action.id}()</pre>
+                with argument QuestionId:
+                <pre>{decodedCallData.values[0]}</pre>
+                with argument Answer:
+                <pre>{decodedCallData.values[1]}</pre>
+                with argument Answerer:
+                <pre>{decodedCallData.values[2]}</pre>
+                at contract
+                <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
+              </div>
+              : ""
+            }
+          </div>
+        );
+      default:
         return "";
     }
   }
