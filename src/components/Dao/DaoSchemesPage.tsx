@@ -105,6 +105,6 @@ export default withSubscription({
   checkForUpdate: [],
   createObservable: (props: IExternalProps) => {
     const dao = props.daoState.dao;
-    return dao.schemes({}, { fetchAllData: true, subscribe: true });
+    return dao.schemes({ where: { isRegistered: true } }, { fetchAllData: true, subscribe: true });
   },
 });

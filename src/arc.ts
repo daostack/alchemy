@@ -128,6 +128,11 @@ export function getWeb3ProviderInfo(provider?: any): IWeb3ProviderInfo {
   return provider ? getProviderInfo(provider) : null;
 }
 
+export function providerHasConfigUi(provider?: any): any | undefined {
+  provider = provider || selectedProvider;
+  return provider && provider.isTorus;
+}
+
 /**
  * initialize Arc.  Does not throw exceptions, returns boolean success.
  * @param provider Optional web3Provider

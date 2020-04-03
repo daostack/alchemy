@@ -2,8 +2,12 @@
   - Features Added
     - Show warning if subgraph is not updating
 
-  - Bugs Fixed
-    - Fix crash on the redemptions page when there are more than 100 DAOs and not all of them initially load. Only currently an issue in Rinkeby
+## 0.10.4
+  - Features Added
+    - Add Torus configuration button
+    - Recommended node.js version to build Alchemy is set to 11.15.0.
+    - Only show registered schemes in DAOs
+    - Added support for the CO2ken generic scheme
 
 ## 0.10.3
   - Features Added
