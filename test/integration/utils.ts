@@ -15,7 +15,7 @@ const chai = require("chai");
 global.expect = chai.expect;
 chai.Should();
 
-export const LATEST_ARC_VERSION = "0.0.1-rc.41";
+export const LATEST_ARC_VERSION = "0.0.1-rc.19";
 // because we do not have a "real" dutchX test, we'll just choose one (older) version
 // not thtat the correct address (migration.private.base[VERSION_FOR_DUTCHX_TEST]. GEenericScheme)
 // needs to be set in the generiscEhemeRegiststry/dutchx.json file for the tests to pass
