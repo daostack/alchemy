@@ -1,6 +1,6 @@
 // tslint:disable:max-classes-per-file
 import BN = require("bn.js");
-import { targetedNetwork, Networks } from "arc";
+import { Networks, targetedNetwork } from "lib/util";
 
 const Web3 = require("web3");
 const namehash = require("eth-ens-namehash");
@@ -27,6 +27,7 @@ const KNOWNSCHEMES = [
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
   main: {},
   rinkeby: {},
+  kovan: {},
   xdai: {},
   ganache: {},
 };
