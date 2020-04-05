@@ -43,11 +43,11 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
     switch (action.id) {
       case "disputeRequestNotification":
         return <div className={proposalSummaryClass}>
-        <span className={css.summaryTitle}>
-          <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-          { decodedCallData.action.label }
-        </span>
-      </div>;
+          <span className={css.summaryTitle}>
+            <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
+            { decodedCallData.action.label }
+          </span>
+        </div>;
       default:
         return <div className={proposalSummaryClass}>
           <span className={css.summaryTitle}>
