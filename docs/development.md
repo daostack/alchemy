@@ -6,13 +6,21 @@ Probably the most flexible way is to run the services that alchemy depends on in
 and run the alchemy server in a separate terminal:
 
 ```sh
-  docker-compose build --no-cache # run this if package.json has changed
-  docker-compose up graph-node alchemy-server # start the services needed by alchemy
+  # run this only if package.json has changed
+  docker-compose build --no-cache
+
+  # start the services needed by alchemy
+  docker-compose up graph-node
+
   # in another terminal run:
   npm run start # start the development server
-  # ...  point your browser to 127.0.0.1:3000, OPEN AND UNLOCK METAMASK
+
+  # browse to 127.0.0.1:3000, OPEN AND UNLOCK METAMASK
   # ... develop away
   # ... commit your changes
+
+  # shutdown docker
+  docker-compose down
   docker-compose down
 ```
 
