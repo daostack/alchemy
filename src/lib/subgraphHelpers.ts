@@ -1,6 +1,7 @@
 import axios from "axios";
 import { settings } from "../settings";
-import { getCurrentBlock, targetedNetwork } from "../arc";
+import { getCurrentBlock } from "../arc";
+import { targetedNetwork } from "lib/util";
 import { Observable } from "rxjs";
 
 /**
