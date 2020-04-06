@@ -1,5 +1,4 @@
 import { promisify } from "util";
-import { targetedNetwork } from "arc";
 import {
   Address,
   IProposalStage,
@@ -130,6 +129,38 @@ export function toWei(amount: number): BN {
   return new BN(getArc().web3.utils.toWei(amount.toFixed(18).toString(), "ether"));
 }
 
+export type Networks = "main"|"rinkeby"|"ganache"|"xdai"|"kovan";
+
+/**
+ * Get the network id to which the current build expects connect.
+ * Note this doesn't belong in arc.ts else a circular module dependency is created.
+ */
+export function targetedNetwork(): Networks {
+  switch (process.env.NETWORK) {
+    case "test":
+    case "ganache":
+    case "private": {
+      return "ganache";
+    }
+    case "rinkeby" : {
+      return "rinkeby";
+    }
+    case "kovan" : {
+      return "kovan";
+    }
+    case "main":
+    case "mainnet":
+    case undefined : {
+      return "main";
+    }
+    case "xdai":
+      return "xdai";
+    default: {
+      throw Error(`Unknown NETWORK: "${process.env.NETWORK}"`);
+    }
+  }
+}
+
 export function baseTokenName() {
   return tokens[targetedNetwork()]["baseTokenName"];
 }
@@ -258,7 +289,7 @@ export async function getNetworkId(web3Provider?: any): Promise<string> {
   return (await (web3.eth.net ? web3.eth.net.getId() : promisify(web3.version.getNetwork)())).toString();
 }
 
-export async function getNetworkName(id?: string): Promise<string> {
+export async function getNetworkName(id?: string): Promise<Networks> {
 
   if (!id) {
     id = await getNetworkId();
@@ -268,12 +299,12 @@ export async function getNetworkName(id?: string): Promise<string> {
     case "main":
     case "1":
       return "main";
-    case "morden":
-    case "2":
-      return "morden";
-    case "ropsten":
-    case "3":
-      return "ropsten";
+    // case "morden":
+    // case "2":
+    //   return "morden";
+    // case "ropsten":
+    // case "3":
+    //   return "ropsten";
     case "rinkeby":
     case "4":
       return "rinkeby";
@@ -287,15 +318,20 @@ export async function getNetworkName(id?: string): Promise<string> {
     case "1512051714758":
       return "ganache";
     default:
-      return `unknown (${id})`;
+      throw new Error(`unsupported network: ${id}`);
   }
 }
 
 export function linkToEtherScan(address: Address) {
   let prefix = "";
   const arc = getArc();
-  if (arc.web3.currentProvider.__networkId === "4") {
-    prefix = "rinkeby.";
+  switch(arc.web3.currentProvider.__networkId) {
+    case "4":
+      prefix = "rinkeby.";
+      break;
+    case "42":
+      prefix = "kovan.";
+      break;
   }
   return `https://${prefix}etherscan.io/address/${address}`;
 }

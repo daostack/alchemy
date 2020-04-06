@@ -1,7 +1,7 @@
 // disables some UI elements for a less resource-intensive page load
 export const ETHDENVER_OPTIMIZATION = true;
 // if this is true, we do get the contractInfos from a locally stored file in ./data instead of from the subgraph
-export const USE_CONTRACTINFOS_CACHE = false; 
+export const USE_CONTRACTINFOS_CACHE = false;
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Torus from "@toruslabs/torus-embed";
@@ -43,6 +43,46 @@ function getWeb3ConnectProviderOptions(network: string) {
           package: BurnerConnectProvider,
           options: {
             defaultNetwork: "4",
+            defaultWallets: [
+              { origin: "https://denver-demo.burnerfactory.com/", name: "Denver Demo Wallet" },
+            ],
+          },
+        },
+        portis: {
+          package: Portis,
+          options: {
+            id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
+          },
+        },
+        fortmatic: {
+          package: Fortmatic,
+          options: {
+            key: "pk_test_659B5B486EF199E4",
+          },
+        },
+        squarelink: {
+          options: {
+            id: null as any,
+          },
+        },
+      };
+    case "kovan":
+      return {
+        network: "kovan",
+        torus: {
+          package: Torus,
+          options: { network: "kovan" },
+        },
+        walletconnect: {
+          package: isMobileBrowser() ? null : WalletConnectProvider,
+          options: {
+            infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
+          },
+        },
+        burnerconnect: {
+          package: BurnerConnectProvider,
+          options: {
+            defaultNetwork: "42",
             defaultWallets: [
               { origin: "https://denver-demo.burnerfactory.com/", name: "Denver Demo Wallet" },
             ],
@@ -135,8 +175,8 @@ export const settings = {
     web3ConnectProviderOptions: {},
   },
   rinkeby: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v38_3_rinkeby",
-    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v38_3_rinkeby",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_rinkeby",
+    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_rinkeby",
     graphqlSubscribeToQueries: false,
     web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
@@ -144,9 +184,19 @@ export const settings = {
     txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("rinkeby"),
   },
+  kovan: {
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_kovan",
+    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_kovan",
+    graphqlSubscribeToQueries: false,
+    web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://kovan.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
+    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://kovan.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
+    ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
+    txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
+    web3ConnectProviderOptions: getWeb3ConnectProviderOptions("kovan"),
+  },
   xdai: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v38_3_xdai",
-    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v38_3_xdai",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_xdai",
+    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_xdai",
     graphqlSubscribeToQueries: false,
     web3Provider:  process.env.ARC_WEB3PROVIDER || "https://poa.api.nodesmith.io/v1/dai/jsonrpc?apiKey=128059b9320a462699aef283a7ae2546",
     web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://poa.api.nodesmith.io/v1/dai/jsonrpc/ws?apiKey=128059b9320a462699aef283a7ae2546",
@@ -155,8 +205,8 @@ export const settings = {
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("xdai"),
   },
   main: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v38_3",
-    graphqlWsProvider: process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v38_3",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1",
+    graphqlWsProvider: process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1",
     graphqlSubscribeToQueries: false,
     web3Provider: process.env.ARC_WEB3PROVIDER || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     web3ProviderRead: process.env.ARC_WEB3PROVIDERREAD || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",

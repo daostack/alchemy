@@ -3,6 +3,7 @@
   "addresses": {
     "main": [ "" ],
     "rinkeby": [ "0x840a979c8014d4b4cc6b7b0d26fb14f7782f28ec" ],
+    "kovan": ["0xb1db4a5e4c35727eec8e6285cddf1844cd71027c"],
     "private": [
       "0xA10f1c26d7D4BCB1a93F84652177D2E2b320378B",
       "0xdbD6fB1F0E9CB1282d13DF95C2cA5Eb6377e984B"

@@ -1,6 +1,6 @@
 // tslint:disable:max-classes-per-file
 import BN = require("bn.js");
-import { targetedNetwork, Networks } from "arc";
+import { Networks, targetedNetwork } from "lib/util";
 
 const Web3 = require("web3");
 const namehash = require("eth-ens-namehash");
@@ -12,10 +12,12 @@ const ensRegistrarInfo = require("./schemes/EnsRegistrar.json");
 const ensRegistryInfo = require("./schemes/ENSRegistry.json");
 const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
 const registryLookupInfo = require("./schemes/RegistryLookup.json");
+const co2kenInfo = require("./schemes/CO2ken.json");
 
 const KNOWNSCHEMES = [
   WikiUpdate,
   dutchXInfo,
+  co2kenInfo,
   bountiesInfo,
   ensRegistrarInfo,
   ensRegistryInfo,
@@ -27,6 +29,7 @@ const KNOWNSCHEMES = [
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
   main: {},
   rinkeby: {},
+  kovan: {},
   xdai: {},
   ganache: {},
 };
