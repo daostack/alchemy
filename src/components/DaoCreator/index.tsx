@@ -47,6 +47,7 @@ class DaoCreator extends React.Component<IProps> {
 
             return await getWeb3Provider();
           }}
+          noDAOstackLogo
         />
       </React.Suspense>
     );
