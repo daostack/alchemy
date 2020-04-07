@@ -71,9 +71,6 @@ module.exports = {
           resolve("node_modules/@uprtcl"),
           resolve("node_modules/@material"),
           resolve("node_modules/graphql-tools"),
-          resolve("node_modules/ethereumjs-tx"),
-          resolve("node_modules/ethereumjs-common"),
-          resolve("node_modules/ethereumjs-util"),
           resolve("node_modules/deprecated-decorator"),
           resolve("node_modules/lit-element"),
           resolve("node_modules/lit-html"),
@@ -130,7 +127,7 @@ module.exports = {
 
   plugins: [
     new HtmlWebpackPlugin({
-      chunksSortMode: 'none',
+      // chunksSortMode: 'none',
       template: 'src/index.html'
     }),
     new webpack.DefinePlugin({

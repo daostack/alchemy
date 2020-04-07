@@ -35,6 +35,11 @@ const config = merge(baseConfig, {
       new OptimizeCSSAssetsPlugin({}),
       new TerserPlugin({
         terserOptions: {
+          /**
+           * We are adding this because there's a problem with graphql module when it's being minified + uglified
+           * and the NODE_ENV is set to something different than production
+           * More info: https://github.com/graphql/graphql-js/issues/1182
+           */
           keep_fnames: process.env.NODE_ENV === "production" ? false : /(GraphQLScalarType|GraphQLObjectType)/
         }
       })
