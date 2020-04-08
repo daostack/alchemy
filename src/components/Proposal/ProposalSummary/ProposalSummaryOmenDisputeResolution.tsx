@@ -17,6 +17,7 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
 
   private inputHtml = (x: any) => <span key={x.name}>{x.name} {x.type}, </span>;
   private callDataHtml = (value: any) => <div key={value}>{value}</div>;
+  private callDataValue = (value: any) => {value};
 
   public render(): RenderOutput {
     const { proposal, detailView, genericSchemeInfo, transactionModal } = this.props;
@@ -50,7 +51,7 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
 
           {detailView ?
             <div className={css.summaryDetails}>
-              Requested from realit.io QuestionId: <a href={"https://realitio.github.io/#!/question/"+decodedCallData.values.map(this.callDataHtml)}>{ decodedCallData.values.map(this.callDataHtml)}</a>
+              Requested from realit.io QuestionId: <a href={`https://realitio.github.io/#!/question/${decodedCallData.values.map(this.callDataValue)}` }>{ decodedCallData.values.map(this.callDataHtml)}</a>
             </div>
             : ""
           }
