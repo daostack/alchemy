@@ -47,6 +47,13 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
             <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
             { decodedCallData.action.label }
           </span>
+
+          {detailView ?
+            <div className={css.summaryDetails}>
+              Requested from realit.io QuestionId: { decodedCallData.values.map(this.callDataHtml)}
+            </div>
+            : ""
+          }
         </div>;
       default:
         return <div className={proposalSummaryClass}>
