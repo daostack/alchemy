@@ -50,7 +50,7 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
 
           {detailView ?
             <div className={css.summaryDetails}>
-              Requested from realit.io QuestionId: { decodedCallData.values.map(this.callDataHtml)}
+              Requested from realit.io QuestionId: <a href={"https://realitio.github.io/#!/question/"+decodedCallData.values.map(this.callDataHtml)}>{ decodedCallData.values.map(this.callDataHtml)}</a>
             </div>
             : ""
           }
