@@ -292,7 +292,7 @@
         "inputs": [
           {
             "name": "questionId",
-            "type": "bytes"
+            "type": "bytes32"
           }
         ],
         "name": "disputeRequestNotification",
