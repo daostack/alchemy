@@ -32,6 +32,7 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
     }
     
     const action = decodedCallData.action;
+    const realitioQuestionId = decodedCallData.values[0];
 
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
@@ -42,7 +43,6 @@ export default class ProposalSummaryOmenDisputeResolution extends React.Componen
 
     switch (action.id) {
       case "disputeRequestNotification":
-        const realitioQuestionId = decodedCallData.values[0];
         return <div className={proposalSummaryClass}>
           <span className={css.summaryTitle}>
             <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
