@@ -1,3 +1,7 @@
+## Unreleased
+  - Bugs fixed
+    - Allow following/unfollowing DAOs again
+
 ## 0.10.5
   - Features Added
     - Recommended node.js version to build Alchemy is set to 12.16.1.
