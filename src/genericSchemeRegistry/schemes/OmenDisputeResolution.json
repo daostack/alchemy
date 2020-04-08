@@ -281,10 +281,20 @@
       "label": "Dispute Request Notification",
       "description": "No need for manual use. This action will be called from external contract.",
       "notes": "https://github.com/nicoelzer/Omen-Arbitrator",
-      "fields": [],
+      "fields": [
+        {
+          "label": "QuestionId",
+          "name": "questionId"
+        }
+      ],
       "abi": {
         "constant": false,
-        "inputs": [],
+        "inputs": [
+          {
+            "name": "questionId",
+            "type": "string"
+          }
+        ],
         "name": "disputeRequestNotification",
         "outputs": [],
         "payable": false,
