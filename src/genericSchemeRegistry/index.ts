@@ -12,7 +12,7 @@ const ensRegistryInfo = require("./schemes/ENSRegistry.json");
 const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
 const registryLookupInfo = require("./schemes/RegistryLookup.json");
 const co2kenInfo = require("./schemes/CO2ken.json");
-const OmenDisputeResolutionInfo = require("./schemes/OmenDisputeResolution.json");
+const omenDisputeResolutionInfo = require("./schemes/OmenDisputeResolution.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
@@ -23,7 +23,7 @@ const KNOWNSCHEMES = [
   ensPublicResolverInfo,
   gpInfo,
   registryLookupInfo,
-  OmenDisputeResolutionInfo,
+  omenDisputeResolutionInfo,
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
