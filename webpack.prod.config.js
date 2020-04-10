@@ -40,7 +40,7 @@ const config = merge(baseConfig, {
            * and the NODE_ENV is set to something different than production
            * More info: https://github.com/graphql/graphql-js/issues/1182
            */
-          keep_fnames: process.env.NODE_ENV === "production" ? false : /(GraphQLScalarType|GraphQLObjectType)/
+          keep_fnames: process.env.NODE_ENV === "production" ? false : /^GraphQL/
         }
       })
     ],
