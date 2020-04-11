@@ -1,0 +1,100 @@
+{
+  "name": "Exchange Token Registry",
+  "addresses": {
+    "main": [
+      ""
+    ],
+    "rinkeby": [
+      "0xF86ab09C6a17c48B535D29fB69F95875c4856658"
+    ],
+    "kovan": [
+      "0x0fDb8A38C6AdE28df749Da43dBebb3894e751Cf0"
+    ],
+    "private": [
+      ""
+    ]
+  },
+  "actions": [
+    {
+      "id": "addNewTokens",
+      "label": "Add new tokens",
+      "description": "Add new tokens to the Omen Token Registry",
+      "notes": "",
+      "fields": [
+        {
+          "label": "Tokens",
+          "name": "_tokens",
+          "placeholder":"Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_tokens",
+            "type": "address[]"
+          }
+        ],
+        "name": "addNewTokens",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "removeTokens",
+      "label": "Remove tokens",
+      "description": "Remove tokens from the Omen Token Registry",
+      "notes": "",
+      "fields": [
+        {
+          "label": "Tokens",
+          "name": "_tokens",
+          "placeholder":"Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_tokens",
+            "type": "address[]"
+          }
+        ],
+        "name": "removeTokens",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "transferOwnership",
+      "label": "Transfer Ownership",
+      "description": "Transfer ownership  of the registry contract",
+      "notes": "",
+      "fields": [
+        {
+          "label": "New owner",
+          "name": "newOwner",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }
+  ]
+}
