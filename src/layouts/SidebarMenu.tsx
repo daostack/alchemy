@@ -199,7 +199,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} REP`} placement="right">
                 <strong>{formatTokens(dao.reputationTotalSupply)} REP</strong>
               </Tooltip>
-            </li>            
+            </li>
 
             <SubscribedEthBalance dao={dao} />
 
@@ -229,8 +229,8 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
             <ul>
               <li><Link to="/" onClick={this.handleCloseMenu}>Home</Link></li>
               <li>
-                <TrainingTooltip overlay="List of all DAOs accessible by Alchemy" placement="right">
-                  <Link to="/daos" onClick={this.handleCloseMenu}>All DAOs</Link>
+                <TrainingTooltip overlay="See a feed of recent updates to DAOs you follow" placement="right">
+                  <Link to="/feed" onClick={this.handleCloseMenu}>Feed</Link>
                 </TrainingTooltip>
               </li>
               <li>

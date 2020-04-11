@@ -42,9 +42,10 @@
 }
 
 .createDaoButton {
-  position: absolute;
+  position: fixed;
   right: 20px;
-  bottom: 5px;
+  top: 100px;
+  z-index: 100000000;
   border-radius: 15px;
   background-color: rgba(3, 118, 255, 1);
   color: $white;
