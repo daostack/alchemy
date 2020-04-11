@@ -29,7 +29,7 @@ const KNOWNSCHEMES = [
   omenDisputeResolutionInfo,
   omenTokenRegistry,
   mixTokenRegistry,
-  exchangeTokenRegistry
+  exchangeTokenRegistry,
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
