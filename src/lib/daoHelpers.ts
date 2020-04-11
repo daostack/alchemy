@@ -52,4 +52,4 @@ export function createDaoStateFromQuery(queryData: IDAOData): IDAOState {
     tokenSymbol: daoSpec.nativeToken.symbol,
     tokenTotalSupply: daoSpec.nativeToken.totalSupply,
   };
-};
+}
