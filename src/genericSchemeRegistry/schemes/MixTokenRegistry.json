@@ -17,7 +17,7 @@
   "actions": [
     {
       "id": "addNewTokens",
-      "label": "Add new token",
+      "label": "Add new tokens",
       "description": "Add new tokens to the Omen Token Registry",
       "notes": "",
       "fields": [
@@ -44,7 +44,7 @@
     },
     {
       "id": "removeTokens",
-      "label": "Remove token",
+      "label": "Remove tokens",
       "description": "Remove tokens from the Omen Token Registry",
       "notes": "",
       "fields": [
