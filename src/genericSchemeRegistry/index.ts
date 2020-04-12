@@ -14,8 +14,8 @@ const registryLookupInfo = require("./schemes/RegistryLookup.json");
 const co2kenInfo = require("./schemes/CO2ken.json");
 const omenDisputeResolutionInfo = require("./schemes/OmenDisputeResolution.json");
 const omenTokenRegistry = require("./schemes/OmenTokenRegistry.json");
-const mixTokenRegistry = require("./schemes/mixTokenRegistry.json");
-const exchangeTokenRegistry = require("./schemes/exchangeTokenRegistry.json");
+const mixTokenRegistry = require("./schemes/MixTokenRegistry.json");
+const exchangeTokenRegistry = require("./schemes/ExchangeTokenRegistry.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
