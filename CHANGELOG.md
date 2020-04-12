@@ -1,3 +1,22 @@
+## 0.10.5
+  - Features Added
+    - Recommended node.js version to build Alchemy is set to 12.16.1.
+
+- Bugs fixed
+    - Allow following/unfollowing DAOs again
+
+## 0.10.4
+  - Features Added
+    - Add Torus configuration button
+    - Recommended node.js version to build Alchemy is set to 12.16.1
+    - Only show registered schemes in DAOs
+    - Added support for the CO2ken generic scheme
+    - Enable Alchemy to run against kovan
+
+  - Bugs Fixed
+    - Fix crash on the redemptions page when there are more than 100 DAOs and not all of them initially load. Only currently an issue in Rinkeby
+    - Removed "Powered by DAOstack" from Create DAO page
+
 ## 0.10.3
   - Features Added
     - Add support for Torus wallet
@@ -9,7 +28,7 @@
 
 ## 0.10.2
   - Features Added
-    - Fix bug when entering numbers for uint256 data types in the GenericScheme new proposal modal 
+    - Fix bug when entering numbers for uint256 data types in the GenericScheme new proposal modal
     - New busy waiting animation
 
   - Bugs Fixed
@@ -63,9 +82,9 @@
     - Retry on failed queries
 
   - Bugs fixed
-    - update repfromtokens when switching accounts 
+    - update repfromtokens when switching accounts
     - Various UI fixes
-    - 
+    -
 ## 2020-02-03
   - Features Added
     - Support for Competitions
@@ -75,8 +94,8 @@
     - representation of durations in schmeme info page
     - fix plugin manager form
     - do not show the redeem button for expired proposals
-    - optimize the bundle size 
-    - support new ABI for ReputationFromToken 
+    - optimize the bundle size
+    - support new ABI for ReputationFromToken
     - add mixpanel support
     - upgrade client to version 0.2.56 (which includes various fixes, and competition support)
     - upgrade subgraph to v37_2 (which included various fixes, and competition supprt)
@@ -84,12 +103,12 @@
 
 ## 2020-01-22
 
-  - TLDR 
+  - TLDR
     - Many tweaks to the language throughout the app
     - Create proposal urls can now be exported and shared
     - Improvements in feed and feed representation
     - Various UI improvements
-  
+
   - Features Added
     - Can click on whole proposal card to go to proposal details page
     - Can click on whole proposal history row to go to proposal details page

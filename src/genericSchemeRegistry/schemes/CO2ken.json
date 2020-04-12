@@ -1,0 +1,171 @@
+{
+  "name": "CO2ken",
+  "addresses": {
+    "main": [
+      ""
+    ],
+    "rinkeby": [
+      "0x93Ec2167Da2A83fbBE61567F67F71750C13B9C09"
+    ],
+    "private": [
+      ""
+    ]
+  },
+  "actions": [
+    {
+      "id": "mint",
+      "label": "Mint new CO2kens",
+      "description": "One CO2ken represents 1 negative tonne of carbon. New CO2kens can be created by providing proof that an equivalent amount of carbon offsets have been purchased. An IPFS hash to this proof has to be provided when making this proposal.",
+      "notes": "https://github.com/CO2ken/CO2ken/blob/master/Contracts/co2ken.sol",
+      "fields": [
+        {
+          "label": "IPFS hash",
+          "name": "ipfsHash",
+          "placeholder": "Hash (QmafjwN...)"
+        },
+        {
+          "decimals": 18,
+          "label": "Number of CO2kens to be minted",
+          "name": "amountTokens",
+          "unit": "CO2",
+          "placeholder": "Number of CO2kens to be minted"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "ipfsHash",
+            "type": "string"
+          },
+          {
+            "name": "amountTokens",
+            "type": "uint256"
+          }
+        ],
+        "name": "mint",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "approve",
+      "label": "Approve DAI movement",
+      "description": "Allows the CO2ken contract to move your DAI for you.",
+      "notes": "https://github.com/CO2ken/CO2ken/blob/master/Contracts/co2ken.sol",
+      "fields": [],
+      "abi": {
+        "constant": false,
+        "inputs": [],
+        "name": "approve",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "withdraw",
+      "label": "Withdraw DAI",
+      "description": "Withdraw the DAI funds stored in the CO2ken contract to the CarbonDAO wallet address.",
+      "notes": "https://github.com/CO2ken/CO2ken/blob/master/Contracts/co2ken.sol",
+      "fields": [],
+      "abi": {
+        "constant": false,
+        "inputs": [],
+        "name": "withdraw",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "offsetCarbon",
+      "label": "Offset emissions with DAI",
+      "description": "Send DAI to retire CO2kens and offset your carbon footprint.",
+      "notes": "https://github.com/CO2ken/CO2ken/blob/master/Contracts/co2ken.sol",
+      "fields": [
+        {
+          "decimals": 18,
+          "label": "DAI to spend",
+          "name": "payment",
+          "unit": "DAI",
+          "placeholder": "Amount of DAI (20)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "payment",
+            "type": "uint256"
+          }
+        ],
+        "name": "offsetCarbon",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "offsetCarbonTons",
+      "label": "Offset emissions in tons of CO2",
+      "description": "Indicate how many tonnes of CO2 emissions you want to offset. An equivalent amount of CO2kens will be retired.",
+      "notes": "https://github.com/CO2ken/CO2ken/blob/master/Contracts/co2ken.sol",
+      "fields": [
+        {
+          "decimals": 27,
+          "label": "Tons of CO2 to be offset",
+          "name": "tons",
+          "unit": "TON",
+          "placeholder": "CO2 emissions in tons"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "tons",
+            "type": "uint256"
+          }
+        ],
+        "name": "offsetCarbonTons",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "transferOwnership",
+      "label": "Transfer ownership",
+      "description": "Transfer the owernship of the CO2ken contract to a new address.",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/EthOracle.sol",
+      "fields": [
+        {
+          "label": "New owner's adddress",
+          "name": "newOwner",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }
+  ]
+}

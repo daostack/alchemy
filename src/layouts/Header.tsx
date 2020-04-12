@@ -1,6 +1,6 @@
 import * as uiActions from "actions/uiActions";
 import { threeBoxLogout } from "actions/profilesActions";
-import { enableWalletProvider, getAccountIsEnabled, getArc, logout, getWeb3ProviderInfo } from "arc";
+import { enableWalletProvider, getAccountIsEnabled, getArc, logout, getWeb3ProviderInfo, getWeb3Provider, providerHasConfigUi } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -23,6 +23,7 @@ import classNames from "classnames";
 import { Address, IDAOState } from "@daostack/client";
 import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
+import ProviderConfigButton from "layouts/ProviderConfigButton";
 
 interface IExternalProps extends RouteComponentProps<any> {
 }
@@ -175,6 +176,7 @@ class Header extends React.Component<IProps, null> {
     const daoAvatarAddress = dao ? dao.address : null;
     const accountIsEnabled = getAccountIsEnabled();
     const web3ProviderInfo = getWeb3ProviderInfo();
+    const web3Provider = getWeb3Provider();
     const trainingTooltipsOn = this.getTrainingTooltipsEnabled();
 
     return(
@@ -255,6 +257,10 @@ class Header extends React.Component<IProps, null> {
                           <div className={css.title}>Provider</div>
                           <div className={css.name}>{web3ProviderInfo.name}</div>
                         </div>
+                        { providerHasConfigUi(web3Provider) ?
+                          <div className={css.providerconfig}><ProviderConfigButton provider={web3Provider} providerName={web3ProviderInfo.name}></ProviderConfigButton></div>
+                          : ""
+                        }
                         <div className={css.web3ProviderLogInOut}  onClick={this.handleClickLogout}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div>
                       </div> :
                       <div className={css.web3ProviderLogInOut}  onClick={this.handleConnect}><div className={css.text}>Connect</div> <img src="/assets/images/Icon/login.svg"/></div> }

@@ -41,9 +41,8 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
   private getApi = async (): Promise<void> => {
     // query all open bounties issued by current dao ordered by decending price
     // rinkeby api and mainnet api are different subdomains
-
     const network = (await getNetworkName()).toLowerCase();
-    const testnet = network === "rinkeby" ? "rinkeby." : "";
+    const testnet = network === "main" ? "" : `${network}.`;
     const res = await fetch(`https://${testnet}api.bounties.network/bounty/?ordering=usd_price&issuer=${this.props.daoAvatarAddress}&bountyStage=1&offset=${this.state.page}`);
     const json = await res.json();
 
