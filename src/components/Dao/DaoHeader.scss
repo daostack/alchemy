@@ -41,17 +41,26 @@
 }
 
 .daoImg {
-  // margin-left: 15%
   top: -40px;
   position: absolute
 }
 
+.daoHeadingGroup {
+  margin-top: 10%;
+  .header {
+    margin-bottom: unset;
+  }
+  p {
+    margin-top: unset;
+  }
+}
+
 .holdings {
-  margin-left: 85%;
   padding: 15px;
   border: 1px solid #dbd7d7;
   border-radius: 7px;
-  margin-bottom: 15px
+  // width: 20%;
+  float: right;
 }
 
 .holdings .holdingsAmount {
@@ -62,10 +71,27 @@
 
 .holdings .holdingsAmount .holdingsName {
   float: right;
-  margin-right: 25px
+  margin-right: 25px;
 }  
 
-.daoHeader {
-  position: absolute;
-  top: 50px;
+@media only screen and (max-width: 550px) {
+  .daoInfo {
+    margin-left: 30% !important;
+  }
+  
+  .daoDescription {
+    
+  }
+
+  .holdings {
+    position: absolute;
+    position: relative;
+    width: unset;
+    left: 15px;
+  }
+
+  .daoHeadingGroup {
+    margin-top: 20%;
+  }
+
 }

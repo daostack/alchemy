@@ -28,6 +28,7 @@ type IProps = IExternalProps & ISubscriptionProps<[Scheme[], ISignal | any]>;
 class DaoHeaderComponent extends React.Component<IProps, any> {
   render() {
     const { daoState, signal } = this.props;
+    console.log(this.props)
     const { name, memberCount, address } = daoState;
     const data = {
       daoImg: "/assets/images/generic-user-avatar.png",
@@ -39,7 +40,7 @@ class DaoHeaderComponent extends React.Component<IProps, any> {
       ],
       description: `
       ${name} is an independent, global community of people working together to build and promote Decentralized Autonomous Organizations (DAOs). 
-      It’s the perfect place to get involved with DAOstack and get your feet wet in a real-life DAO.
+      It’s the perfect place to get involved with DAOstack.
       `,
     };
 
@@ -63,27 +64,31 @@ class DaoHeaderComponent extends React.Component<IProps, any> {
         </div>
 
         <div className={css.holdings}>
-          Holdings
+          <span>Holdings</span>
           {
             data.holdings.map((holding, index) => {
               return (
                 <div key={index} className={css.holdingsAmount}>
-                  { holding.amount }
-                  <div className={css.holdingsName}>
+                  <span>
+                    { holding.amount }
+                  </span>
+                  <span className={css.holdingsName}>
                     { holding.name }
-                  </div>
+                  </span>
                 </div>
               );
             })
           }
         </div>
-
-        <h2 className={css.daoHeader}>
-          This is the { name } Header
-          <div className={css.daoDescription}>
-            { data.description }
+        
+        <div className={css.daoHeadingGroup}>
+          <div className="header">
+            This is the { name } Header
           </div>
-        </h2>
+          <p className={css.daoDescription}>
+            { data.description }
+          </p>
+        </div>
       </div>
     );
   }
