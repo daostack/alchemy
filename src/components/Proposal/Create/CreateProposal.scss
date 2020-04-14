@@ -58,7 +58,6 @@
   }
 
   form {
-    padding: 20px 30px 30px 30px;
 
     input {
       width: 100%;
@@ -370,13 +369,14 @@
   }
 }
 
-.contributionReward {
+.containerNoSidebar {
   width: 562px;
   overflow-y: auto;
   height: calc(100% - 40px);
+  padding: 20px 30px 30px 30px;
 }
 
-.createWrapperWithSidebar {
+.containerWithSidebar {
   width: 735px;
   display: flex;
   flex-direction: row;
@@ -392,7 +392,6 @@
     overflow-y: auto;
     float: left;
     padding-top: 30px;
-    overflow: auto;
     z-index: 900;
 
     .addSchemeButton {
@@ -434,12 +433,16 @@
     }
   }
 
-  .formWrapper {
+  .contentWrapper {
+    padding: 20px 30px 30px 30px;
     width: 535px;
     float: left;
     border-left: 1px solid #e9eef4;
-    height: 100%;
     overflow: auto;
+
+    .helpText {
+      font-size: 12px;
+    }
 
     .tab {
       display: none;
@@ -625,26 +628,6 @@ div.description {
 }
 
 @media only screen and (max-width: 475px) {
-  .createWrapperWithSidebar {
-    width: 100%;
-    overflow: auto;
-
-    .sidebar {
-      width: 100%;
-      float: none;
-      padding-top: 0;
-    }
-
-    .formWrapper {
-      width: 100%;
-      float: none;
-      overflow: visible;
-    }
-
-    .schemeSelect {
-      width: 90%;
-    }
-  }
 
   .createProposalWrapper {
     top: 0;
@@ -679,8 +662,29 @@ div.description {
     }
   }
 
-  .contributionReward {
-    width: auto;
+  .containerNoSidebar {
+   width: auto;
+  }
+
+  .containerWithSidebar {
+    width: 100%;
+    overflow: auto;
+
+    .sidebar {
+      width: 100%;
+      float: none;
+      padding-top: 0;
+    }
+
+    .contentWrapper {
+      width: 100%;
+      float: none;
+      overflow: visible;
+    }
+
+    .schemeSelect {
+      width: 90%;
+    }
   }
 
   .schemeRegistrar {

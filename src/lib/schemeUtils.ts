@@ -111,7 +111,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
   } else if (scheme.name === "ContributionReward") {
     name ="Funding and Voting Power";
   } else if (scheme.name === "SchemeRegistrar") {
-    name ="Scheme Manager";
+    name ="Plugin Manager";
   } else if (scheme.name) {
     if (scheme.name === "ContributionRewardExt") {
       name = rewarderContractName(scheme as ISchemeState);

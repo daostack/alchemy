@@ -172,7 +172,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     const arc = getArc();
 
     return (
-      <div className={css.contributionReward}>
+      <div className={css.containerNoSidebar}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           initialValues={this.initialFormValues}

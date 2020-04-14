@@ -137,7 +137,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             <p>You can be the first one to create a {schemeFriendlyName} proposal today! :)</p>
             <div className={css.cta}>
               <Link to={"/dao/" + daoState.address}>
-                <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
+                <img className={css.relax} src="/assets/images/lt.svg"/> Back to plugins
               </Link>
               <a className={classNames({
                 [css.blueButton]: true,

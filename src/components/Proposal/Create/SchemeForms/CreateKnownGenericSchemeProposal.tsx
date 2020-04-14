@@ -287,7 +287,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     const currentAction = this.state.currentAction;
 
     return (
-      <div className={css.createWrapperWithSidebar}>
+      <div className={css.containerWithSidebar}>
         <div className={css.sidebar}>
           { actions.map((action) =>
             <button
@@ -304,7 +304,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
           )}
         </div>
 
-        <div className={css.formWrapper}>
+        <div className={css.contentWrapper}>
           <Formik
             initialValues={this.initialFormValues}
             // eslint-disable-next-line react/jsx-no-bind
