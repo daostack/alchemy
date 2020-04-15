@@ -270,7 +270,7 @@ function biconomyLogin(userAccount:string, options?: IEnableWalletProviderParams
         reject(response);
       }
     } else {
-      resolve();
+      reject("Biconomy is not initialized");
     }
   });
 }
