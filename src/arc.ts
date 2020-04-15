@@ -5,6 +5,7 @@ import { RetryLink } from "apollo-link-retry";
 import { Address, Arc } from "@daostack/client";
 import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
 import { Observable } from "rxjs";
+const Biconomy = require("@biconomy/mexa");
 
 const Web3 = require("web3");
 
@@ -18,6 +19,7 @@ let selectedProvider: any;
 let web3Modal: Web3Modal;
 let initializedAccount: Address;
 
+let biconomy: any;
 /**
  * return the default Arc configuration given the execution environment
  */
@@ -101,11 +103,24 @@ export function providerHasConfigUi(provider?: any): any | undefined {
   return provider && provider.isTorus;
 }
 
+function getBiconomy(provider : any): any {
+  console.log('getting biconomy');
+  if(biconomy) {
+    return biconomy;
+  }
+  biconomy = new Biconomy(provider,{
+    dappId: "5e961edab93bbb3218f4ca4d",
+    apiKey: "FnUirn0bX.7e02bb26-8725-45a4-8180-2f67a52871d3",
+    debug: true
+  });
+  return biconomy;
+}
+
 /**
  * initialize Arc.  Does not throw exceptions, returns boolean success.
  * @param provider Optional web3Provider
  */
-export async function initializeArc(provider?: any): Promise<boolean> {
+export async function initializeArc(options?: IEnableWalletProviderParams, provider?: any): Promise<boolean> {
 
   let success = false;
   let arc: any;
@@ -115,7 +130,12 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     const arcSettings = getArcSettings();
 
     if (provider) {
+      if(!provider.isBiconomy) {
+        biconomy = getBiconomy(provider);
+        arcSettings.web3Provider = biconomy;
+      } else {
       arcSettings.web3Provider = provider;
+      }
     } else {
       provider = arcSettings.web3Provider;
     }
@@ -147,7 +167,8 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     // if there is no existing arc, we create a new one
     if ((window as any).arc) {
       arc = (window as any).arc;
-      arc.web3 = new Web3(provider);
+      biconomy = getBiconomy(provider);
+      arc.web3 = new Web3(biconomy);
     } else {
       arc = new Arc(arcSettings);
     }
@@ -169,6 +190,8 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     if (success) {
       initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
 
+      let userContract = await biconomyLogin(initializedAccount, options);
+      console.log(`user contract wallet ${userContract}`);
       if (!initializedAccount) {
       // then something went wrong
       // eslint-disable-next-line no-console
@@ -200,6 +223,57 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   return success;
 }
 
+function biconomyLogin(userAccount:string, options?: IEnableWalletProviderParams) {
+  return new Promise<string>(async (resolve, reject) => {
+    console.log(`Biconomy login status ${biconomy && biconomy.isLogin}`);
+    if(biconomy && !biconomy.isLogin) {
+      let response = await biconomy.getUserContract(userAccount);
+      if(!response.userContract) {
+        if(options && options.showNotification)
+          options.showNotification(NotificationStatus.Pending, "Please provide your signature in Metamask to use gas less transactions");
+        else
+          alert("Please provide your signature in Metamask to use gas less transactions");
+        let loginResponse = await biconomy.login(userAccount);
+        if(loginResponse && loginResponse.transactionHash) {
+            // First time user. Contract wallet transaction pending.
+            console.log("Your on-chain identity is being created. Please wait.");
+            if(options && options.showNotification)
+              options.showNotification(NotificationStatus.Pending, "Your on-chain identity is being created. Please wait.");
+            biconomy.onEvent(biconomy.LOGIN_CONFIRMATION, async (log:any) => {
+              // User's Contract Wallet creation successful
+              console.log("Your on-chain identity created successfully");
+              if(options && options.showNotification)
+                options.showNotification(NotificationStatus.Success, "Your on-chain identity created successfully");
+              let response = await biconomy.getUserContract(userAccount);
+              if(response.userContract) {
+                resolve(response.userContract);
+              } else {
+                reject(response);
+              }
+            });
+        } else if (loginResponse && loginResponse.userContract) {
+            // Existing user login successful
+            if(options && options.showNotification)
+              options.showNotification(NotificationStatus.Success, "Biconomy login successfull");
+            resolve(loginResponse.userContract);
+        }
+      } else {
+        resolve(response.userContract);
+      }
+
+    } else if(biconomy) {
+      let response = await biconomy.getUserContract(userAccount);
+      console.log(response);
+      if(response.userContract) {
+        resolve(response.userContract);
+      } else {
+        reject(response);
+      }
+    } else {
+      resolve();
+    }
+  });
+}
 
 /**
  * Checks if the web3 provider is set to the required network.
@@ -287,7 +361,7 @@ function inTesting(): boolean {
  * Side-effect is that `selectedProvider` will be set on success.
  * @returns Throws exception on error.
  */
-async function enableWeb3Provider(): Promise<void> {
+async function enableWeb3Provider(options: IEnableWalletProviderParams): Promise<void> {
   if (selectedProvider) {
     return;
   }
@@ -383,14 +457,24 @@ async function enableWeb3Provider(): Promise<void> {
     throw new Error("Unable to enable provider");
   }
 
-  if (!await initializeArc(provider)) {
-  // eslint-disable-next-line no-console
-    console.error("Unable to initialize Arc");
-    throw new Error("Unable to initialize Arc");
-  }
+  biconomy = getBiconomy(provider);
+  biconomy.onEvent(biconomy.READY, async () => {
+    console.log('BIconomy initialized');
+    // Initialize your dapp here like getting user accounts etc
+    if (!await initializeArc(options, provider)) {
+      // eslint-disable-next-line no-console
+      console.error("Unable to initialize Arc");
+      throw new Error("Unable to initialize Arc");
+    }
+  }).onEvent(biconomy.ERROR, (error:any, message:string) => {
+    // Handle error while initializing mexa
+    console.log(error);
+    console.log(message);
+    console.error('Unable to initialize biconmy');
+  });
 
   // eslint-disable-next-line require-atomic-updates
-  selectedProvider = provider;
+  selectedProvider = biconomy;
 }
 
 /**
@@ -418,6 +502,9 @@ export async function logout(showNotification?: any): Promise<boolean> {
   let success = false;
 
   uncacheWeb3Info();
+  if(biconomy) {
+    biconomy.logout();
+  }
 
   if (selectedProvider) {
     // clearing this, initializeArc will be made to use the default readonly web3Provider
@@ -474,7 +561,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
     }
 
     if (!selectedProvider) {
-      await enableWeb3Provider();
+      await enableWeb3Provider(options);
       if (!selectedProvider) {
         // something went wrong somewhere
         throw new Error("Unable to connect to a wallet");
@@ -540,6 +627,9 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
         try {
           getCurrentAccountFromProvider()
             .then(async (account: Address | null): Promise<void> => {
+              if(prevAccount && account && prevAccount != account) {
+                await biconomy.logout();
+              }
               if (prevAccount !== account) {
                 if (account && initializedAccount && (account !== initializedAccount)) {
                   /**
