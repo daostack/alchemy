@@ -78,6 +78,7 @@
   },
   "dependencies": {
     "3box": "1.17.1",
+    "@biconomy/mexa": "^1.5.5",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
     "@daostack/client": "0.2.66",
     "@dorgtech/daocreator-ui": "^1.0.8",
