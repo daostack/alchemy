@@ -209,7 +209,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     });
 
     const formContentClass = classNames({
-      [css.hidden]: !showForm,
+      [css.hidden]: !showForm && currentTab !== "removeScheme",
     });
 
     const isAddActive = getSchemeIsActive(this.props.scheme, GetSchemeIsActiveActions.Register);
@@ -240,19 +240,21 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
         </div>
 
         <div className={contentWrapperClass}>
-          <div className={css.helpText}>
-            <p>You&amp;ll soon be able to add plugins from this interface. Stay tuned!</p>
+          {currentTab !== "removeScheme" ?
+            <div className={css.helpText}>
+              <p>You&quot;ll soon be able to add and edit plugins from this interface. Stay tuned!</p>
 
-            <p>For now, please contact us at <a href="mailto:email@email.com">email@email.com</a> to get one of the following plugins added to your DAO, or to add a new custom plugin of your own creation.</p>
+              <p>For now, please contact us at <a href="mailto:email@email.com">email@email.com</a> to get one of the following plugins added to your DAO, or to add a new custom plugin of your own creation.</p>
 
-            <p><b>Available Plugins:</b></p>
-            <ul>
-              <li>Funding and Voting Power - explanation</li>
-              <li>Plugin Manager - explanation</li>
-            </ul>
+              <p><b>Available Plugins:</b></p>
+              <ul>
+                <li>Funding and Voting Power - explanation</li>
+                <li>Plugin Manager - explanation</li>
+              </ul>
 
-            <button onClick={this.toggleShowForm}>{showForm ? "Hide" : "Show"} proposal form</button>
-          </div>
+              <button onClick={this.toggleShowForm}>{showForm ? "Hide" : "Show"} proposal form</button>
+            </div>
+            : ""}
 
           <div className={formContentClass}>
             <Formik
@@ -312,13 +314,13 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
               }: FormikProps<IFormValues>) => {
                 return (
                   <Form noValidate>
-                    <label className={css.description}>What to Expect</label>
+                    <br/>
                     { (currentTab === "addScheme") ?
-                      <div className={css.description}>Propose to add a new plugin to the DAO. If this plugin is a universal scheme, you must also supply its param hash configuration.</div> :
+                      <div className={css.description}>Create a proposal to add a new plugin to the DAO. If this plugin is a universal scheme, you must also supply its param hash configuration.</div> :
                       (currentTab === "editScheme") ?
-                        <div className={css.description}>Propose to edit param hash configuration of a plugin.</div> :
+                        <div className={css.description}>Create a proposal to edit param hash configuration of a plugin.</div> :
                         (currentTab === "removeScheme") ?
-                          <div className={css.description}>Propose to remove a plugin from the DAO.</div> : ""
+                          <div className={css.description}>Create a proposal to remove a plugin from the DAO.</div> : ""
                     }
                     <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
                       <label htmlFor="titleInput">

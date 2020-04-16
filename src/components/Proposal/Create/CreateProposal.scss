@@ -372,7 +372,7 @@
 .containerNoSidebar {
   width: 562px;
   overflow-y: auto;
-  height: calc(100% - 40px);
+  height: calc(100% - 90px);
   padding: 20px 30px 30px 30px;
 }
 
@@ -610,7 +610,7 @@ label.description {
 }
 
 div.description {
-  font-size: 11px;
+  font-size: 15px;
   margin-bottom: 12px;
 
   a,

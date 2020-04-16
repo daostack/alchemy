@@ -44,6 +44,7 @@ interface IExternalProps {
   isActive: boolean;
   scheme: ISchemeState;
   daoState: IDAOState;
+  crxRewarderProps: any;
 }
 
 interface IDispatchProps {
@@ -126,6 +127,21 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
     return (
       <div>
         <BreadcrumbsItem to={`/dao/${daoState.address}/scheme/${scheme.id}`}>{schemeFriendlyName}</BreadcrumbsItem>
+
+        <div className={css.createProposal}>
+          <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+            <a className={
+              classNames({
+                [css.createProposal]: true,
+                [css.disabled]: !isActive,
+              })}
+            data-test-id="createProposal"
+            href="#!"
+            onClick={isActive ? this._handleNewProposal : null}
+            >
+          + New { `${this.props.crxRewarderProps ? this.props.crxRewarderProps.contractName : schemeFriendlyName } `}Proposal</a>
+          </TrainingTooltip>
+        </div>
 
         { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
           ?

@@ -13,35 +13,6 @@
   padding-top: 10px;
 }
 
-.createProposal {
-  z-index: 100;
-  width: 100%;
-  text-align: right;
-
-  a {
-    padding: 8px 15px;
-    color: $white;
-    background-color: rgba(3, 118, 255, 1);
-    border-radius: 15px;
-    height: 30px;
-    line-height: 30px;
-    font-size: 13px;
-    white-space: nowrap;
-
-    &:hover {
-      background-color: $accent-1;
-      color: $white;
-    }
-
-    &.disabled,
-    &.disabled:hover {
-      background-color: rgba(200, 200, 200, 0.5);
-      border: 1px solid rgba(200, 200, 200, 1);
-      cursor: not-allowed;
-    }
-  }
-}
-
 .schemeMenu {
   width: 100%;
   background-color: rgba(229, 235, 242, 1);
