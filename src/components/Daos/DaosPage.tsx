@@ -98,7 +98,8 @@ class DaosPage extends React.Component<IProps, IState> {
     // Always show Genesis Alpha first
     let finalDAOList = allDAOs.filter((d: DAO) => d.staticState.name === "Genesis Alpha" && d.staticState.name.toLowerCase().includes(search));
 
-    if (process.env.NODE_ENV === "staging") {
+     // eslint-disable-next-line no-extra-boolean-cast
+    if (process.env.SHOW_ALL_DAOS === "true") {
       // on staging we show all daos (registered or not)
       finalDAOList = finalDAOList.concat(allDAOs.filter((d: DAO) => d.staticState.name !== "Genesis Alpha" && d.staticState.name.toLowerCase().includes(search)));
     } else {
