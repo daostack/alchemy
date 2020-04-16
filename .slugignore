@@ -1,5 +1,3 @@
-/test
-/.storybook
-/stories
-./node_modules/3box
-./node_modules/3box-orbitdb-plugins
+test/
+.storybook/
+stories/
