@@ -99,7 +99,7 @@ class DaosPage extends React.Component<IProps, IState> {
     let finalDAOList = allDAOs.filter((d: DAO) => d.staticState.name === "Genesis Alpha" && d.staticState.name.toLowerCase().includes(search));
 
      // eslint-disable-next-line no-extra-boolean-cast
-    if (process.env.SHOW_ALL_DAOS) {
+    if (process.env.SHOW_ALL_DAOS === "true") {
       // on staging we show all daos (registered or not)
       finalDAOList = finalDAOList.concat(allDAOs.filter((d: DAO) => d.staticState.name !== "Genesis Alpha" && d.staticState.name.toLowerCase().includes(search)));
     } else {
@@ -221,4 +221,3 @@ const SubscribedDaosPage = withSubscription({
 });
 
 export default connect(mapStateToProps)(SubscribedDaosPage);
-
