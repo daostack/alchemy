@@ -4,7 +4,7 @@ export const ETHDENVER_OPTIMIZATION = true;
 export const USE_CONTRACTINFOS_CACHE = false;
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import Torus from "@toruslabs/torus-embed";
+const Torus = require("@toruslabs/torus-embed");
 
 const Portis = require("@portis/web3");
 const Fortmatic = require("fortmatic");

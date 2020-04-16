@@ -2,6 +2,9 @@
   - Features Added
     - upgrade to subgraph v39_3
 
+  - Bugs Fixed
+    - fix Torus not connecting on first try
+
 ## 0.10.4
   - Features Added
     - Add Torus configuration button
