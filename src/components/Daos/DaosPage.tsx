@@ -53,7 +53,7 @@ class DaosPage extends React.Component<IProps, IState> {
     };
   }
 
-  public componentDidMount() 
+  public componentDidMount() {
     Analytics.track("Page View", {
       "Page Name": Page.AllDAOs,
     });
