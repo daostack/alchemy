@@ -23,6 +23,7 @@ import DaoSchemesPage from "./DaoSchemesPage";
 import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
+import DaoLandingPage from "components/Daos/DaoLandingPage";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -80,6 +81,7 @@ class DaoContainer extends React.Component<IProps, null> {
 
   private schemeRoute = (routeProps: any) => <SchemeContainer {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
   private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} daoState={this.props.data[0]} />;
+  private daoLandingRoute = (routeProps: any) => <DaoLandingPage {...routeProps} daoState={this.props.data[0]} />;
   private modalRoute = (route: any) => `/dao/${route.params.daoAvatarAddress}/scheme/${route.params.schemeId}/`;
 
   public render(): RenderOutput {
@@ -106,6 +108,8 @@ class DaoContainer extends React.Component<IProps, null> {
             </div>
           </div>
           <Switch>
+            <Route exact path="/dao/:daoAvatarAddress"
+              render={this.daoLandingRoute} />
             <Route exact path="/dao/:daoAvatarAddress/history"
               render={this.daoHistoryRoute} />
             <Route exact path="/dao/:daoAvatarAddress/members"
@@ -123,8 +127,10 @@ class DaoContainer extends React.Component<IProps, null> {
             <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
               render={this.schemeRoute} />
 
-            <Route path="/dao/:daoAvatarAddress" render={this.daoSchemesRoute} />
+            <Route exact path="/dao/:daoAvatarAddress/schemes"
+              render={this.daoSchemesRoute} />
 
+            <Route path="/dao/:daoAvatarAddress" render={this.daoLandingRoute} />
           </Switch>
 
           <ModalRoute

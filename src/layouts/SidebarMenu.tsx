@@ -121,10 +121,10 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
         </div>
         <div className={css.followButton}><FollowButton id={dao.address} type="daos" style="white" /></div>
         <div className={css.daoNavigation}>
-          <span className={css.daoNavHeading}><b>Menu</b></span>
+          <span className={css.daoNavHeading}><b>DAO Menu</b></span>
           <ul>
             <li>
-              <Link to={"/dao/" + dao.address} onClick={this.handleCloseMenu}>
+              <Link to={`/dao/${dao.address}/schemes`} onClick={this.handleCloseMenu}>
                 <span className={css.menuDot} />
                 <span className={
                   classNames({
@@ -133,7 +133,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   })
                 }></span>
                 <img src="/assets/images/Icon/menu/home.svg" />
-                Home
+                Proposals
               </Link>
             </li>
             <li>
@@ -147,7 +147,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                     })
                   }></span>
                   <img src="/assets/images/Icon/menu/holders.svg" />
-                  DAO Members
+                  Members
                 </Link>
               </TrainingTooltip>
             </li>
@@ -179,7 +179,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                     })
                   }></span>
                   <img src="/assets/images/Icon/menu/chat.svg" />
-                DAO Wall
+                Wall
                 </Link>
               </TrainingTooltip>
             </li>
