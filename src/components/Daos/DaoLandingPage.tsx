@@ -43,18 +43,16 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
         <div className={css.wallButton}>Visit the <Link to={`/dao/${daoState.address}/discussion/`}>DAO Wall</Link>
          to participate in general discussion about this DAO.</div>
 
-        {
-        // <div className={css.infoContainer}>
-        //   <div className={css.members}>
-        //     <div>{daoState.memberCount || "0"}</div>
-        //     <div>DAO Members</div>
-        //   </div>
-        //   <div className={css.proposals}>
-        //     <div>{daoState.numberOfQueuedProposals+ daoState.numberOfBoostedProposals + daoState.numberOfPreBoostedProposals}</div>
-        //     <div>Open Proposals</div>
-        //   </div>
-        // </div>
-        }
+        <div className={css.infoContainer}>
+          <div className={css.members}>
+            <div>{daoState.memberCount || "0"}</div>
+            <div>DAO Members</div>
+          </div>
+          <div className={css.proposals}>
+            <div>{daoState.numberOfQueuedProposals+ daoState.numberOfBoostedProposals + daoState.numberOfPreBoostedProposals}</div>
+            <div>Open Proposals</div>
+          </div>
+        </div>
       </div>
     );
   }
