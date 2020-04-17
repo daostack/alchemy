@@ -29,30 +29,29 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
     return (
       <div className={css.landingPage}>
 
-        <div className={css.followButton}>
-          <FollowButton id={daoState.id} type="daos" style="white" />
+        <div className={css.heading}>
+          <div className={css.name}>{daoState.name}</div>
+          <FollowButton id={daoState.id} type="daos" />
         </div>
-
-        <div className={css.daoName}>{daoState.name}</div>
 
         <div className={css.welcome}>Welcome to {daoState.name}, a decentralized organization built on DAOstack.</div>
 
-        <div className={css.proposalsButton}>Visit the <Link to={`/dao/${daoState.id}/schemes/`}>Proposals page</Link>
-         to make a proposal to the DAO or vote on existing proposals.</div>
-
-        <div className={css.wallButton}>Visit the <Link to={`/dao/${daoState.address}/discussion/`}>DAO Wall</Link>
-         to participate in general discussion about this DAO.</div>
-
         <div className={css.infoContainer}>
           <div className={css.members}>
-            <div>{daoState.memberCount || "0"}</div>
-            <div>DAO Members</div>
+            <div className={css.count}>{daoState.memberCount || "0"}</div>
+            <div className={css.body}>Members</div>
           </div>
           <div className={css.proposals}>
-            <div>{daoState.numberOfQueuedProposals+ daoState.numberOfBoostedProposals + daoState.numberOfPreBoostedProposals}</div>
-            <div>Open Proposals</div>
+            <div className={css.count}>{daoState.numberOfQueuedProposals+ daoState.numberOfBoostedProposals + daoState.numberOfPreBoostedProposals}</div>
+            <div className={css.body}>Open Proposals</div>
           </div>
         </div>
+
+        <div className={css.visitProposals}>Visit the <Link to={`/dao/${daoState.id}/schemes/`}>Proposals page</Link> to
+          make a proposal to the DAO or vote on existing proposals.</div>
+
+        <div className={css.visitWall}>Visit the <Link to={`/dao/${daoState.address}/discussion/`}>DAO Wall</Link> to
+          participate in general discussion about this DAO.</div>
       </div>
     );
   }
