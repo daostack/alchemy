@@ -68,15 +68,6 @@ class SchemeContainer extends React.Component<IProps, IState> {
     };
   }
 
-  public handleNewProposal = async (): Promise<void> => {
-    const { schemeId, showNotification, daoState } = this.props;
-    const daoAvatarAddress = daoState.address;
-
-    if (!await enableWalletProvider({ showNotification })) { return; }
-
-    this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
-  };
-
   private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} daoState={this.props.daoState} scheme={this.props.data[0]} schemeManager={this.props.data[1]} />;
   private schemeProposalsPageHtml = (isActive: boolean, crxRewarderProps: ICrxRewarderProps) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} crxRewarderProps={crxRewarderProps} />;
   private contributionsRewardExtTabHtml = () => (props: any) =>
@@ -85,7 +76,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
       return null;
     }
 
-    return <this.state.crxListComponent {...props} daoState={this.props.daoState} scheme={this.props.data[0]} proposals={this.props.data[1]} />;
+    return <this.state.crxListComponent {...props} daoState={this.props.daoState} scheme={this.props.data[0]} proposals={this.props.data[2]} />;
   };
 
   public async componentDidMount() {
@@ -241,6 +232,7 @@ const SubscribedSchemeContainer = withSubscription({
 
     return combineLatest(
       of(schemeState),
+      // Find the SchemeManager scheme if this dao has one
       Scheme.search(arc, {where: { dao: props.daoState.id, name: "SchemeRegistrar" }}).pipe(mergeMap((scheme: Array<Scheme | CompetitionScheme>): Observable<ISchemeState> => scheme[0] ? scheme[0].state() : of(null))),
       approvedProposals
     );

@@ -38,17 +38,12 @@ class SchemeInfo extends React.Component<IProps, null> {
     this.props.showNotification(NotificationStatus.Success, "Copied to clipboard!");
   };
 
-  private handleEditProposal = async (e: any) => {
+  private handleEditPlugin = async (e: any) => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    this.props.history.push(`/dao/${this.props.daoState.id}/scheme/${this.props.schemeManager.id}/proposals/create/`);
+    this.props.history.push(`/dao/${this.props.daoState.id}/scheme/${this.props.schemeManager.id}/proposals/create/?currentTab=editScheme`);
     e.preventDefault();
   }
-
-  // private _handleNewProposal = (e: any): void => {
-  //   this.handleNewProposal(this.props.daoState.address, this.props.scheme.id);
-
-  // };
 
   public render(): RenderOutput {
     const { daoState, scheme } = this.props;
@@ -142,7 +137,7 @@ class SchemeInfo extends React.Component<IProps, null> {
           <a
             data-test-id="createProposal"
             href="#!"
-            onClick={this.handleEditProposal}
+            onClick={this.handleEditPlugin}
           >
             Edit Plugin
           </a>
