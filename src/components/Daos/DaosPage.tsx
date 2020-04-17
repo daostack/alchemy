@@ -99,7 +99,8 @@ class DaosPage extends React.Component<IProps, IState> {
       otherDAOs = otherDAOs.concat(extraFoundDaos);
     }
 
-    if (process.env.NODE_ENV === "staging") {
+    // eslint-disable-next-line no-extra-boolean-cast
+    if (process.env.SHOW_ALL_DAOS === "true") {
       // on staging we show all daos (registered or not)
       otherDAOs = otherDAOs.filter((d: DAO) => !yourDAOAddresses.includes(d.id) && d.staticState.name.toLowerCase().includes(search));
     } else {
@@ -244,4 +245,3 @@ const SubscribedDaosPage = withSubscription({
 });
 
 export default connect(mapStateToProps)(SubscribedDaosPage);
-

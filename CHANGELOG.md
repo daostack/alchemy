@@ -1,16 +1,22 @@
 ## 0.10.5
   - Features Added
-    - Recommended node.js version to build Alchemy is set to 12.16.1.
+    - upgrade to subgraph v39_3
+
+  - Bugs Fixed
+    - fix Torus not connecting on first try
 
 ## 0.10.4
   - Features Added
     - Add Torus configuration button
-    - Recommended node.js version to build Alchemy is set to 11.15.0.
+    - Recommended node.js version to build Alchemy is set to 12.16.1
     - Only show registered schemes in DAOs
     - Added support for the CO2ken generic scheme
+    - Enable Alchemy to run against kovan
 
   - Bugs Fixed
+    - Allow following/unfollowing DAOs again
     - Fix crash on the redemptions page when there are more than 100 DAOs and not all of them initially load. Only currently an issue in Rinkeby
+    - Removed "Powered by DAOstack" from Create DAO page
 
 ## 0.10.3
   - Features Added
