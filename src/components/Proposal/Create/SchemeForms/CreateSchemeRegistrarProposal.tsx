@@ -252,7 +252,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                 <li>Plugin Manager - explanation</li>
               </ul>
 
-              <button onClick={this.toggleShowForm}>{showForm ? "Hide" : "Show"} proposal form</button>
+              <button id="showFormButton" onClick={this.toggleShowForm}>{showForm ? "Hide" : "Show"} proposal form</button>
             </div>
             : ""}
 
