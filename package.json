@@ -145,13 +145,13 @@
     "web3": "1.2.4",
     "web3modal": "^1.3.0",
     "webpack": "^4.36.1",
-    "ws": "^7.1.0"
+    "ws": "^7.1.0",
+    "@storybook/react": "^5.0.10",
+    "@storybook/addon-info": "^5.0.10"
   },
   "devDependencies": {
     "@babel/plugin-syntax-dynamic-import": "^7.7.4",
     "@daostack/migration": "0.0.1-rc.41-v4",
-    "@storybook/addon-info": "^5.0.10",
-    "@storybook/react": "^5.0.10",
     "@types/chai": "^4.1.7",
     "@types/classnames": "^2.2.6",
     "@types/clone-deep": "^4.0.1",
