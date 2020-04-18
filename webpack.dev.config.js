@@ -102,6 +102,7 @@ module.exports = merge(baseConfig, {
       ARC_IPFSPROVIDER_PORT : "",
       ARC_IPFSPROVIDER_PROTOCOL : "",
       ARC_IPFSPROVIDER_API_PATH : "",
+      INFURA_ID : "",
       MIXPANEL_TOKEN: "eac39430f2d26472411099a0407ad610",
     })
   ]
