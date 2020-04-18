@@ -8,6 +8,7 @@ const Torus = require("@toruslabs/torus-embed");
 
 const Portis = require("@portis/web3");
 const Fortmatic = require("fortmatic");
+const SubgraphEndpoints = require("./subgraph_endpoints.json");
 
 function isMobileBrowser(): boolean {
   // if (!window) {
@@ -36,7 +37,7 @@ function getWeb3ConnectProviderOptions(network: string) {
         walletconnect: {
           package: isMobileBrowser() ? null : WalletConnectProvider,
           options: {
-            infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
+            infuraId: process.env.INFURA_ID,
           },
         },
         burnerconnect: {
@@ -76,7 +77,7 @@ function getWeb3ConnectProviderOptions(network: string) {
         walletconnect: {
           package: isMobileBrowser() ? null : WalletConnectProvider,
           options: {
-            infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
+            infuraId: process.env.INFURA_ID,
           },
         },
         burnerconnect: {
@@ -130,7 +131,7 @@ function getWeb3ConnectProviderOptions(network: string) {
         walletconnect: {
           package: isMobileBrowser() ? null : WalletConnectProvider,
           options: {
-            infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
+            infuraId: process.env.INFURA_ID,
           },
         },
         burnerconnect: {
@@ -165,8 +166,8 @@ function getWeb3ConnectProviderOptions(network: string) {
 
 export const settings = {
   ganache: {
-    graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
-    graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
+    graphqlHttpProvider: SubgraphEndpoints.ganache_http,
+    graphqlWsProvider: SubgraphEndpoints.ganache_ws,
     graphqlSubscribeToQueries: false,
     web3Provider: "ws://127.0.0.1:8545",
     web3ProviderRead: "ws://127.0.0.1:8545",
@@ -175,28 +176,28 @@ export const settings = {
     web3ConnectProviderOptions: {},
   },
   rinkeby: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_3_rinkeby",
-    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_3_rinkeby",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.rinkeby_http,
+    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || SubgraphEndpoints.rinkeby_ws,
     graphqlSubscribeToQueries: false,
-    web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
-    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
+    web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://rinkeby.infura.io/ws/v3/"+ process.env.INFURA_ID,
+    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://rinkeby.infura.io/ws/v3/"+ process.env.INFURA_ID,
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("rinkeby"),
   },
   kovan: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_3_kovan",
-    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_3_kovan",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.rinkeby_http,
+    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || SubgraphEndpoints.rinkeby_ws,
     graphqlSubscribeToQueries: false,
-    web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://kovan.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
-    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://kovan.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
+    web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://kovan.infura.io/ws/v3/"+ process.env.INFURA_ID,
+    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://kovan.infura.io/ws/v3/"+ process.env.INFURA_ID,
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("kovan"),
   },
   xdai: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_3_xdai",
-    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_3_xdai",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.xdai_http,
+    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || SubgraphEndpoints.xdai_ws,
     graphqlSubscribeToQueries: false,
     web3Provider:  process.env.ARC_WEB3PROVIDER || "https://poa.api.nodesmith.io/v1/dai/jsonrpc?apiKey=128059b9320a462699aef283a7ae2546",
     web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://poa.api.nodesmith.io/v1/dai/jsonrpc/ws?apiKey=128059b9320a462699aef283a7ae2546",
@@ -205,15 +206,14 @@ export const settings = {
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("xdai"),
   },
   main: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_3",
-    graphqlWsProvider: process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_3",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.mainnet_http,
+    graphqlWsProvider: process.env.ARC_GRAPHQLWSPROVIDER || SubgraphEndpoints.mainnet_wsssss,
     graphqlSubscribeToQueries: false,
-    web3Provider: process.env.ARC_WEB3PROVIDER || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
-    web3ProviderRead: process.env.ARC_WEB3PROVIDERREAD || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
+    web3Provider: process.env.ARC_WEB3PROVIDER || "wss://mainnet.infura.io/ws/v3/"+ process.env.INFURA_ID,
+    web3ProviderRead: process.env.ARC_WEB3PROVIDERREAD || "wss://mainnet.infura.io/ws/v3/"+ process.env.INFURA_ID,
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     // txSenderServiceUrl: "https://tx-sender-service-mainnet.herokuapp.com/send-tx",
     txSenderServiceUrl: "",
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("mainnet"),
   },
 };
-

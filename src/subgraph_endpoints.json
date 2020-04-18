@@ -1,0 +1,12 @@
+{
+  "mainnet_http": "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1",
+  "mainnet_ws": "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1",
+  "rinkeby_http": "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_rinkeby",
+  "rinkeby_ws": "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_rinkeby",
+  "kovan_http": "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_kovan",
+  "kovan_ws": "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_kovan",
+  "xdai_http": "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_xdai",
+  "xdai_ws": "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_xdai",
+  "ganache_http": "http://127.0.0.1:8000/subgraphs/name/daostack",
+  "ganache_ws": "ws://127.0.0.1:8001/subgraphs/name/daostack"
+}
