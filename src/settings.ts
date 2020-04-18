@@ -179,8 +179,8 @@ export const settings = {
     graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.http_rinkeby,
     graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || SubgraphEndpoints.ws_rinkeby,
     graphqlSubscribeToQueries: false,
-    web3Provider:  process.env.ARC_WEB3PROVIDER || `wss://rinkeby.infura.io/ws/v3/${process.env.INFURA_ID}`
-    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || `wss://rinkeby.infura.io/ws/v3/${process.env.INFURA_ID}`
+    web3Provider:  process.env.ARC_WEB3PROVIDER || `wss://rinkeby.infura.io/ws/v3/${process.env.INFURA_ID}`,
+    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || `wss://rinkeby.infura.io/ws/v3/${process.env.INFURA_ID}`,
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("rinkeby"),
@@ -189,8 +189,8 @@ export const settings = {
     graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.http_kovan,
     graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || SubgraphEndpoints.ws_kovan,
     graphqlSubscribeToQueries: false,
-    web3Provider:  process.env.ARC_WEB3PROVIDER || `wss://kovan.infura.io/ws/v3/${process.env.INFURA_ID}`
-    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || `wss://kovan.infura.io/ws/v3/${process.env.INFURA_ID}`
+    web3Provider:  process.env.ARC_WEB3PROVIDER || `wss://kovan.infura.io/ws/v3/${process.env.INFURA_ID}`,
+    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || `wss://kovan.infura.io/ws/v3/${process.env.INFURA_ID}`,
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("kovan"),
@@ -209,8 +209,8 @@ export const settings = {
     graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.http_main,
     graphqlWsProvider: process.env.ARC_GRAPHQLWSPROVIDER || SubgraphEndpoints.ws_main,
     graphqlSubscribeToQueries: false,
-    web3Provider: process.env.ARC_WEB3PROVIDER || `wss://mainnet.infura.io/ws/v3/${process.env.INFURA_ID}`
-    web3ProviderRead: process.env.ARC_WEB3PROVIDERREAD || `wss://mainnet.infura.io/ws/v3/${process.env.INFURA_ID}`
+    web3Provider: process.env.ARC_WEB3PROVIDER || `wss://mainnet.infura.io/ws/v3/${process.env.INFURA_ID}`,
+    web3ProviderRead: process.env.ARC_WEB3PROVIDERREAD || `wss://mainnet.infura.io/ws/v3/${process.env.INFURA_ID}`,
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     // txSenderServiceUrl: "https://tx-sender-service-mainnet.herokuapp.com/send-tx",
     txSenderServiceUrl: "",
