@@ -1,10 +1,7 @@
-## Unreleased
-  - Features Added
-    - Show warning if subgraph is not updating
-
 ## 0.10.5
   - Features Added
     - upgrade to subgraph v39_3
+    - Show warning if subgraph is not updating
 
   - Bugs Fixed
     - fix Torus not connecting on first try
