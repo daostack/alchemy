@@ -223,7 +223,9 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
     return (
       <div className={sidebarClass}>
         <div className={css.menuContent}>
-          { this.props.daoAvatarAddress && this.props.data ? this.daoMenu() : ""}
+          <div className={css.daoContentWrapper}>
+            { this.props.daoAvatarAddress && this.props.data ? this.daoMenu() : ""}
+          </div>
 
           <div className={css.siteLinksWrapper}>
             <ul>
