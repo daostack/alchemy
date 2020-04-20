@@ -1,10 +1,9 @@
 import { NotificationStatus } from "reducers/notifications";
 import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
 import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
-import { IProviderInfo } from "web3modal/lib/helpers/types";
 import { RetryLink } from "apollo-link-retry";
 import { Address, Arc } from "@daostack/client";
-import Web3Modal, { getProviderInfo } from "web3modal";
+import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
 import { Observable } from "rxjs";
 
 const Web3 = require("web3");
