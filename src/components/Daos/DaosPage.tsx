@@ -138,17 +138,15 @@ class DaosPage extends React.Component<IProps, IState> {
           Create A DAO
         </Link>
 
+        <div className={css.searchBox}>
+          <input type="text" name="search" placeholder="Search DAOs" onChange={this.onSearchChange} value={this.state.search} />
+        </div>
+
         <Sticky enabled top={50} innerZ={10000}>
           <div className={css.headerWrapper}>
             <div className={css.headerTitle + " clearfix"}>
               <h2 data-test-id="header-all-daos">Your DAOs</h2>
             </div>
-            {yourDAOs.length ?
-              <div className={css.searchBox}>
-                <span>Search:</span>
-                <input type="text" name="search" placeholder="DAO Name" onChange={this.onSearchChange} value={this.state.search} />
-              </div>
-              : ""}
           </div>
         </Sticky>
         {yourDAOs.length ?
@@ -162,10 +160,6 @@ class DaosPage extends React.Component<IProps, IState> {
           <div className={css.headerWrapper}>
             <div className={css.headerTitle + " clearfix"}>
               <h2 data-test-id="header-all-daos">Other DAOs</h2>
-            </div>
-            <div className={css.searchBox}>
-              <span>Search:</span>
-              <input type="text" name="search" placeholder="DAO Name" onChange={this.onSearchChange} value={this.state.search} />
             </div>
           </div>
         </Sticky>
