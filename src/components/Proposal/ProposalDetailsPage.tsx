@@ -98,25 +98,29 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
   }
 
   private parseYouTubeVideoIdFromUri = (url: string): string => {
-    const videoid = url.match(/(\/|%3D|v=)([0-9A-z-_]{11})([%#?&]|$)/);
-    if (videoid && (videoid.length >= 3)) {
-      return videoid[2];
-    } else { 
-      // eslint-disable-next-line no-console
-      console.error("The outube url is not valid.");
-      return null;
+    const match = url.match(/(\/|%3D|v=)([0-9A-z-_]{11})([%#?&]|$)/);
+    if (match) {
+      if (match.length >= 3) {
+        return match[2];
+      } else { 
+        // eslint-disable-next-line no-console
+        console.error("The outube url is not valid.");
+      }
     }
+    return null;
   }
 
   private getVimeoIdFromUrl = (url: string): string => {
-    const videoid = url.match(/^.*(?:vimeo.com)\/(?:channels\/|channels\/\w+\/|groups\/[^/]*\/videos\/|album\/\d+\/video\/|video\/|)(\d+)(?:$|\/|\?)/);
-    if (videoid && (videoid.length >= 2)) {
-      return videoid[1];
-    } else { 
+    const match = url.match(/^.*(?:vimeo.com)\/(?:channels\/|channels\/\w+\/|groups\/[^/]*\/videos\/|album\/\d+\/video\/|video\/|)(\d+)(?:$|\/|\?)/);
+    if (match) {
+      if (match.length >= 3) {
+        return match[1];
+      } else { 
       // eslint-disable-next-line no-console
-      console.error("The vimeo url is not valid.");
-      return null;
+        console.error("The vimeo url is not valid.");
+      }
     }
+    return null;
   }
 
   public render(): RenderOutput {
