@@ -180,7 +180,7 @@ export function toggleFollow(accountAddress: string, type: FollowType, id: strin
       if (state.profiles.threeBoxSpace) {
         threeBoxSpace = state.profiles.threeBoxSpace;
       } else {
-        threeBoxSpace = await threeBox.openSpace("DAOstack") ;
+        threeBoxSpace = await threeBox.openSpace("DAOstack");
       }
       await threeBoxSpace.syncDone;
     } catch (e) {

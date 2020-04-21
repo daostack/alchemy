@@ -58,7 +58,7 @@ export class App extends React.Component<{}, {
     while (!success) {
       try {
         await initArc();
-      } catch(err) {
+      } catch (err) {
         this.setState({ retryingArc: true });
         // eslint-disable-next-line no-console
         numberOfAttempts += 1;
