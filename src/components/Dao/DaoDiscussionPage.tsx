@@ -26,7 +26,7 @@ export default class DaoDiscussionPage extends React.Component<IProps, null> {
       title: "Discuss " + dao.name,
     };
 
-    return(
+    return (
       <div>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/discussion"}>Discussion</BreadcrumbsItem>
 

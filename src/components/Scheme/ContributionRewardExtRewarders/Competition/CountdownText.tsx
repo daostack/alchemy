@@ -34,12 +34,12 @@ export default class CountdownText extends React.Component<IExternalProps, null>
           <div className={css.startsIn}>Submissions start in:</div>
           <Countdown toDate={competition.startTime} onEnd={this.onEndCountdown}/>
         </div> :
-        inSubmissions ? 
+        inSubmissions ?
           <div className={css.countdown}>
             <div className={css.startsIn}>Submissions end in:</div>
             <Countdown toDate={competition.suggestionsEndTime} onEnd={this.onEndCountdown}/>
           </div> :
-          pausedWithSubmissions ? 
+          pausedWithSubmissions ?
             <div className={css.countdown}>
               <div className={css.startsIn}>Voting starts in:</div>
               <Countdown toDate={competition.votingStartTime} onEnd={this.onEndCountdown}/>

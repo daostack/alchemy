@@ -89,7 +89,7 @@ export default class Notification extends React.Component<IProps, null> {
         </div>
         <Tooltip placement="top" trigger={["hover"]} overlay={"Dismiss"}>
           <div className={css.notificationControls}>
-            { (status === NotificationViewStatus.Pending) ? 
+            { (status === NotificationViewStatus.Pending) ?
               <button className={css.pending} onClick={this.handleClose} data-test-id="button-notification-close"><img src="/assets/images/Icon/x-grey.svg" /></button>
               : (status === NotificationViewStatus.Success) ?
                 <button className={css.success} onClick={this.handleClose}  data-test-id="button-notification-close"><img src="/assets/images/Icon/x-grey.svg" /></button>

@@ -2,6 +2,7 @@
   - Features Added
     - upgrade to subgraph v39_3
     - Show warning if subgraph is not updating
+    - added support for embedded youtube and vimeo videos in proposal descriptions
 
   - Bugs Fixed
     - fix Torus not connecting on first try
