@@ -97,6 +97,28 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     this.setState({ showVotersModal: false });
   }
 
+  private parseYouTubeVideoIdFromUri = (url: string): string => {
+    const videoid = url.match(/(\/|%3D|v=)([0-9A-z-_]{11})([%#?&]|$)/);
+    if(videoid && (videoid.length >= 3)) {
+      return videoid[2];
+    } else { 
+      // eslint-disable-next-line no-console
+      console.error("The youtube url is not valid.");
+      return null;
+    }
+  }
+
+  private getVimeoIdFromUrl = (url: string): string => {
+    const videoid = url.match(/^.*(?:vimeo.com)\/(?:channels\/|channels\/\w+\/|groups\/[^/]*\/videos\/|album\/\d+\/video\/|video\/|)(\d+)(?:$|\/|\?)/);
+    if(videoid && (videoid.length >= 2)) {
+      return videoid[1];
+    } else { 
+      // eslint-disable-next-line no-console
+      console.error("The youtube url is not valid.");
+      return null;
+    }
+  }
+
   public render(): RenderOutput {
     const {
       beneficiaryProfile,
@@ -198,6 +220,25 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
             <div className={css.description}>
               <ReactMarkdown source={proposal.description}
                 renderers={{link: (props: { href: string; children: React.ReactNode }) => {
+                  if (props.href) {
+                    const url = new URL(props.href);
+                    const videoId = this.parseYouTubeVideoIdFromUri(props.href);
+                    if (videoId) {
+                      const start = url.searchParams.get("t") || "0";
+
+                      return <iframe className={css.embeddedVideo} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen
+                        src={`${url.protocol}//www.youtube-nocookie.com/embed/${videoId}?start=${start}`}>
+                      </iframe>;
+                    }
+                    else {
+                      const videoId = this.getVimeoIdFromUrl(props.href);
+                      if (videoId) {
+                        return <iframe className={css.embeddedVideo} frameBorder="0" allow="autoplay; fullscreen" allowFullScreen
+                          src={`${url.protocol}//player.vimeo.com/video/${videoId}`}>
+                        </iframe>;
+                      }
+                    }
+                  }
                   return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
                 }}}
               />
