@@ -35,11 +35,11 @@ const KeyCodes = {
   enter: 13,
   tab: 9,
 };
- 
+
 const delimiters = [KeyCodes.comma, KeyCodes.enter, KeyCodes.tab];
 
 type IProps = IExternalProps & ISubscriptionProps<Array<ITagState>>
-  
+
 class TagsSelector extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
@@ -56,7 +56,7 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
 
   private emitOnChange(tags: Array<Tag>): void {
     if (this.props.onChange) {
-      this.props.onChange(tags.map((tag: Tag) => tag.text));    
+      this.props.onChange(tags.map((tag: Tag) => tag.text));
     }
   }
 
@@ -65,7 +65,7 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
     this.setState({ workingTags: tags });
     this.emitOnChange(tags);
   }
- 
+
   private handleAddition = (tag: Tag): void => {
     const tags = [...this.state.workingTags, tag];
     this.setState({ workingTags:  tags });
@@ -91,14 +91,14 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
 
   /**
    * return Map where key is tag, value is count of tags
-   * @param allTags 
+   * @param allTags
    */
-  private groupTags(allTags: Array<ITagState>): Map<string,number> {
-    const map = new Map<string,number>();
+  private groupTags(allTags: Array<ITagState>): Map<string, number> {
+    const map = new Map<string, number>();
     allTags.forEach(tagState => {
       const tag = tagState.id.toLocaleLowerCase();
       if (!map.has(tag)) {
-        map.set(tag,0);
+        map.set(tag, 0);
       }
       map.set(tag, tagState.numberOfProposals + (map.get(tag) || 0));
     });
@@ -112,7 +112,7 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
     const { readOnly, darkTheme } = this.props;
     const allTags: Array<ITagState> = this.props.data;
     let suggestions: Array<ITagEx>;
-    
+
     if (allTags && allTags.length) {
       suggestions = new Array<ITagEx>();
       /**

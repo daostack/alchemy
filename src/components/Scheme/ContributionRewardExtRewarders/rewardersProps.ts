@@ -28,7 +28,7 @@ export interface ICrxRewarderProps
 
 /**
  * If the scheme is a ContributionRewardExt, return props for its rewarder contract, if any
- * @param scheme 
+ * @param scheme
  */
 export const getCrxRewarderProps = (scheme: ISchemeState): Promise<ICrxRewarderProps> | null  => {
   const contractName = rewarderContractName(scheme);

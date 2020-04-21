@@ -27,7 +27,7 @@ export class App extends React.Component<{}, {
     };
   }
 
-                
+
   private getPdfHtml = (filename: string): any => {
     window.location.href = `${window.location.protocol}//${window.location.host}/assets/${filename}`;
     return null;
@@ -58,7 +58,7 @@ export class App extends React.Component<{}, {
     while (!success) {
       try {
         await initArc();
-      } catch(err) {
+      } catch (err) {
         this.setState({ retryingArc: true });
         // eslint-disable-next-line no-console
         numberOfAttempts += 1;
@@ -77,7 +77,7 @@ export class App extends React.Component<{}, {
         await sleep(2000);
       }
     }
-    
+
 
     let GOOGLE_ANALYTICS_ID: string;
     switch (process.env.NODE_ENV) {

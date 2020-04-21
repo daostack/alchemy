@@ -41,7 +41,7 @@ button.disabled {
   display: flex;
   position: relative;
   overflow: hidden;
-  transition: all .25s ease;
+  transition: all 0.25s ease;
   vertical-align: top;
   height: auto;
   overflow: visible;
@@ -76,9 +76,10 @@ button.disabled {
     color: $black;
   }
 
-  a.attachmentLink, a.attachmentLink:visited {
+  a.attachmentLink,
+  a.attachmentLink:visited {
     font-size: 11px;
-    color: rgba(0, 113, 255, 1.000);
+    color: rgba(0, 113, 255, 1);
     display: inline-block;
     margin-bottom: 15px;
 
@@ -110,8 +111,8 @@ button.disabled {
 }
 
 .description {
-	margin-bottom: 30px;
-	white-space: pre-wrap;
+  margin-bottom: 30px;
+  white-space: pre-wrap;
   word-break: break-word;
 
   img {
@@ -137,23 +138,23 @@ button.disabled {
     padding: 0;
     margin-left: 17px;
     display: inline;
-    color: rgba(104, 155, 214, 1.000);
+    color: rgba(104, 155, 214, 1);
   }
 
   span {
     display: inline-block;
     padding-left: 10px;
-    color: rgba(0, 113, 255, 1.000);
+    color: rgba(0, 113, 255, 1);
     font-size: 11px;
     margin-left: 10px;
-    border-left: 1px solid rgba(233, 238, 244, 1.000);
+    border-left: 1px solid rgba(233, 238, 244, 1);
   }
 }
 
 .voteBox {
   position: relative;
   background-color: $white;
-  border-right: 1px solid rgba(215, 225, 237, 1.000);
+  border-right: 1px solid rgba(215, 225, 237, 1);
   border-radius: 0 15px 15px 15px;
   margin: 0 0 20px 20px;
 }
@@ -209,31 +210,31 @@ button.disabled {
   height: 20px;
   text-align: right;
   font-size: 12px;
-  border-top: 1px solid rgba(200, 210, 219, 1.000);
+  border-top: 1px solid rgba(200, 210, 219, 1);
 
   .content {
     display: inline-block;
     margin: 6px 0 0 12px;
-    opacity: .6;
-    color: rgba(104, 155, 214, 1.000);
+    opacity: 0.6;
+    color: rgba(104, 155, 214, 1);
     font-weight: bold;
   }
 }
 
 .proposalTitleTop {
   display: block;
-  color: rgba(104, 155, 214, 1.000);
+  color: rgba(104, 155, 214, 1);
   font-size: 28px;
   margin: 0 0 15px 0;
 
   a {
-    color: rgba(104, 155, 214, 1.000);
+    color: rgba(104, 155, 214, 1);
   }
 }
 
 .proposalActions {
   position: relative;
-  transition: all .25s ease;
+  transition: all 0.25s ease;
   margin-top: 15px;
   flex-grow: 1;
   min-width: 320px;
@@ -248,7 +249,7 @@ button.disabled {
 
 .discussionTitle {
   font-size: 28px;
-  color: rgba(104, 155, 214, 1.000);
+  color: rgba(104, 155, 214, 1);
   width: 100%;
   border-bottom: $gray-border-2;
   padding-bottom: 5px;
@@ -309,18 +310,23 @@ button.disabled {
   }
 }
 
+iframe.embeddedVideo {
+  margin-top: 10px;
+  width: 100%;
+}
+
 @media only screen and (max-width: 425px) {
   .proposal {
     display: block;
   }
 
   .proposalInfo {
-	  padding: 15px;
-	  padding-right: 15px;
+    padding: 15px;
+    padding-right: 15px;
 
-	  h3 {
-	  	font-size: 16px;
-	  }
+    h3 {
+      font-size: 16px;
+    }
   }
 
   .voteBox {
@@ -339,15 +345,15 @@ button.disabled {
   }
 
   .proposalActions {
-  	min-width: auto;
+    min-width: auto;
     max-width: inherit;
   }
 
   .disqus {
-  	padding: 15px;
+    padding: 15px;
   }
 
   .voteButtonsBottom {
-  	display: none;
+    display: none;
   }
 }

@@ -43,7 +43,7 @@ class DaoHistoryPage extends React.Component<IProps, null> {
       return (<ProposalHistoryRow key={"proposal_" + proposal.id} history={this.props.history} proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} />);
     });
 
-    return(
+    return (
       <div>
         <BreadcrumbsItem to={"/dao/" + daoState.address + "/history"}>History</BreadcrumbsItem>
 

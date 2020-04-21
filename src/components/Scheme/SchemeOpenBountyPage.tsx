@@ -41,14 +41,13 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
   private getApi = async (): Promise<void> => {
     // query all open bounties issued by current dao ordered by decending price
     // rinkeby api and mainnet api are different subdomains
-
     const network = (await getNetworkName()).toLowerCase();
-    const testnet = network === "rinkeby" ? "rinkeby." : "";
+    const testnet = network === "main" ? "" : `${network}.`;
     const res = await fetch(`https://${testnet}api.bounties.network/bounty/?ordering=usd_price&issuer=${this.props.daoAvatarAddress}&bountyStage=1&offset=${this.state.page}`);
     const json = await res.json();
 
     this.setState({
-      totalResults: json.count ? json.count : 0, 
+      totalResults: json.count ? json.count : 0,
       bounties: json.results,
     });
   }
@@ -66,7 +65,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
       page: this.state.page - 25,
     });
   }
-  
+
   public componentDidMount(): void {
     // call for open bounties on page load
     this.getApi();
@@ -115,7 +114,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
           createCard()
         }
         <div className={css.pageSelectionContainer}>
-          {this.state.page - 25 > 0 && ( 
+          {this.state.page - 25 > 0 && (
             <button className={css.pageButton} onClick={this.prevPage}>
               prev
             </button>

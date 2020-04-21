@@ -100,7 +100,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
 
       try {
         this.observable = observable || await createObservable(this.props);
-      } catch(ex) {
+      } catch (ex) {
         // this will go to the error page
         this.setState(() => { throw ex; });
       }

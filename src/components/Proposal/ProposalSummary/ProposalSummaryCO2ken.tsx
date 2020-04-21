@@ -1,7 +1,9 @@
 import { IProposalState } from "@daostack/client";
 
+import BN = require("bn.js");
 import classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
+import { formatTokens } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
 
@@ -19,7 +21,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
     let decodedCallData: any;
     try {
       decodedCallData = genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
-    } catch(err) {
+    } catch (err) {
       if (err.message.match(/no action matching/gi)) {
         return <div>Error: {err.message} </div>;
       } else {
@@ -38,7 +40,8 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
     switch (action.id) {
       case "mint": {
         const ipfsHashValue = decodedCallData.values[0];
-        const amountTokensValue = decodedCallData.values[1];
+        const tokenField = action.fields[1];
+        const tokenValue = decodedCallData.values[1];
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
@@ -49,15 +52,17 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
                 <div>
                   <p>
                     Executing this proposal will mint a total of:
-                    <pre>{amountTokensValue} new CO2kens</pre>
                   </p>
+                  <pre>
+                    {formatTokens(new BN(tokenValue), tokenField.unit, tokenField.decimals)}
+                  </pre>
                   <p>
                     Before voting on this proposal, verify that the passed IPFS hash is a valid certificate.
                     Click on the hash below to see the certificate:
-                    <pre>
-                      <a href={`https://cloudflare-ipfs.com/ipfs/${ipfsHashValue}`} target="_blank" rel="noopener noreferrer">{ipfsHashValue}</a>
-                    </pre>
                   </p>
+                  <pre>
+                    <a href={`https://cloudflare-ipfs.com/ipfs/${ipfsHashValue}`} target="_blank" rel="noopener noreferrer">{ipfsHashValue}</a>
+                  </pre>
                 </div>
               </div>
               : ""
@@ -101,6 +106,9 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
           </div>
         );
       case "offsetCarbon":
+      {
+        const field = action.fields[0];
+        const value = decodedCallData.values[0];
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
@@ -110,16 +118,20 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
               <div className={css.summaryDetails}>
                 Executing this proposal will call the function
                 <pre>{action.id}()</pre>
-                with value
-                <pre>{decodedCallData.values[0]}</pre>
-                The value describes the amount of DAI (with 18 decimals) that are sent to the CO2ken contract to offset a relative amount of the DAO‘s carbon emissions.
+                DAI are sent to the CO2ken contract to retire a respecive number of CO2kens. One CO2ken is equivalent to a ton of carbon emissions. The total amount of DAI which will be sent to the contract is:
+                <pre>
+                  {formatTokens(new BN(value), field.unit, field.decimals)}
+                </pre>
               </div>
               : ""
             }
           </div>
         );
+      }
       case "offsetCarbonTons":
       {
+        const field = action.fields[0];
+        const value = decodedCallData.values[0];
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
@@ -130,8 +142,10 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
                 Executing this proposal will call the function
                 <pre>{action.id}()</pre>
                 with value
-                <pre>{decodedCallData.values[0]}</pre>
-                The value describes the amount of carbon tons (with 18 decimals) the DAO wants to offset.
+                <pre>
+                  { field.label }: {formatTokens(new BN(value), field.unit, field.decimals)}
+                </pre>
+                The value describes the amount of carbon tons the DAO wants to offset.
               </div>
               : ""
             }

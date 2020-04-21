@@ -1,10 +1,9 @@
 import { NotificationStatus } from "reducers/notifications";
-import { getNetworkId, getNetworkName } from "./lib/util";
+import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
 import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
-import { IProviderInfo } from "web3modal/lib/helpers/types";
 import { RetryLink } from "apollo-link-retry";
 import { Address, Arc } from "@daostack/client";
-import Web3Modal, { getProviderInfo } from "web3modal";
+import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
 import { Observable } from "rxjs";
 
 const Web3 = require("web3");
@@ -18,37 +17,6 @@ let selectedProvider: any;
 // @ts-ignore
 let web3Modal: Web3Modal;
 let initializedAccount: Address;
-
-export type Networks = "main"|"rinkeby"|"ganache"|"xdai"
-
-
-// get the network id that the current build expects ot connect to
-export function targetedNetwork(): Networks {
-  switch (process.env.NETWORK) {
-    case "test":
-    case "ganache":
-    case "private":
-    case "development": {
-      return "ganache";
-    }
-    case "staging" :
-    case "rinkeby" : {
-      return "rinkeby";
-    }
-    case "main":
-    case "mainnet":
-    case "production":
-    case undefined : {
-      return "main";
-    }
-    case "xdai":
-      return "xdai";
-    default: {
-      throw Error(`Unknown NETWORK: "${process.env.NETWORK}"`);
-    }
-  }
-}
-
 
 /**
  * return the default Arc configuration given the execution environment
@@ -179,7 +147,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     } else {
       try {
         contractInfos = await arc.fetchContractInfos();
-      } catch(err) {
+      } catch (err) {
         // eslint-disable-next-line no-console
         console.error(`Error fetching contractinfos: ${err.message}`);
       }
@@ -246,6 +214,7 @@ async function ensureCorrectNetwork(provider: any): Promise<void> {
         return;
       }
     }
+    // eslint-disable-next-line no-console
     console.error(`connected to the wrong network, should be ${expectedNetworkName} (instead of "${networkName}")`);
     throw new Error(`Please connect your wallet provider to ${expectedNetworkName}`);
   }
@@ -522,7 +491,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
       }
     }
 
-  } catch(err) {
+  } catch (err) {
     let msg: string;
     msg = err ? err.message : "Unable to connect to the ethereum provider";
     if (msg.match(/response has no error or result for request/g)) {
