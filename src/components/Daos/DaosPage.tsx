@@ -142,19 +142,20 @@ class DaosPage extends React.Component<IProps, IState> {
           <input type="text" name="search" placeholder="Search DAOs" onChange={this.onSearchChange} value={this.state.search} />
         </div>
 
-        <Sticky enabled top={50} innerZ={10000}>
-          <div className={css.headerWrapper}>
-            <div className={css.headerTitle + " clearfix"}>
-              <h2 data-test-id="header-all-daos">Your DAOs</h2>
+        {yourDAOs.length ? <React.Fragment>
+          <Sticky enabled top={50} innerZ={10000}>
+            <div className={css.headerWrapper}>
+              <div className={css.headerTitle + " clearfix"}>
+                <h2 data-test-id="header-all-daos">Your DAOs</h2>
+              </div>
             </div>
-          </div>
-        </Sticky>
-        {yourDAOs.length ?
+          </Sticky>
+
           <div className={css.daoList}>
             {yourDaoNodes}
           </div>
-          : <h2>Look for DAOs to join or follow below</h2>
-        }
+        </React.Fragment>
+        : "" }
 
         <Sticky enabled top={50} innerZ={10000}>
           <div className={css.headerWrapper}>
