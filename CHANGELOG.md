@@ -1,6 +1,7 @@
 ## 0.10.5
   - Features Added
     - upgrade to subgraph v39_3
+    - Change home page to show DAOs again instead of feed. Show sepatate Your DAOs section of DAOs the user follows or is a member of, with the list of other DAOs below.
     - added support for embedded youtube and vimeo videos in proposal descriptions
 
   - Bugs Fixed
