@@ -233,8 +233,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                       return <iframe className={css.embeddedVideo} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen
                         src={`${url.protocol}//www.youtube-nocookie.com/embed/${videoId}?start=${start}`}>
                       </iframe>;
-                    }
-                    else {
+                    } else {
                       const videoId = this.getVimeoIdFromUrl(props.href);
                       if (videoId) {
                         return <iframe className={css.embeddedVideo} frameBorder="0" allow="autoplay; fullscreen" allowFullScreen
