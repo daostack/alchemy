@@ -21,7 +21,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
     let decodedCallData: any;
     try {
       decodedCallData = genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
-    } catch(err) {
+    } catch (err) {
       if (err.message.match(/no action matching/gi)) {
         return <div>Error: {err.message} </div>;
       } else {

@@ -39,6 +39,12 @@
         /**
          * outright errors
         */
+        "keyword-spacing": "error",
+        "arrow-spacing": "error",
+        "key-spacing": ["error", { "mode": "minimum" }],
+        "semi-spacing": "error",
+        "comma-spacing": "error",
+        "no-trailing-spaces": "error",
         "no-useless-escape": "error",
         "react/prop-types": "off",
         "react/no-unescaped-entities": "error",

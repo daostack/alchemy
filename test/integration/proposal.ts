@@ -103,11 +103,11 @@ describe("Proposals", () => {
     launchMetaMaskButton = await $("[data-test-id=\"launch-metamask\"]");
     await launchMetaMaskButton.click();
   });
-  
+
   it("Fill out a proposal form and export it", async () => {
     const url = `/dao/${daoAddress}/`;
     await browser.url(url);
-    
+
     await hideCookieAcceptWindow();
     const schemeCard = await $("[data-test-id=\"schemeCard-ContributionReward\"]");
     await schemeCard.click();
@@ -119,7 +119,7 @@ describe("Proposals", () => {
 
     const titleInput = await $("*[id=\"titleInput\"]");
     await titleInput.waitForExist();
-    
+
     const title = uuid();
     await titleInput.setValue(title);
 
@@ -130,7 +130,7 @@ describe("Proposals", () => {
 
     const beneficiaryInput = await $("*[data-test-id=\"beneficiaryInput\"]");
     await beneficiaryInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
-    
+
     // ask for 100 rep
     const repReward = Math.floor(Math.random() * 1000);
     const reputationRewardInput = await $("*[id=\"reputationRewardInput\"]");

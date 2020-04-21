@@ -63,7 +63,7 @@ class CompetitionsList extends React.Component<IProps, IStateProps> {
       /**
        * There is a tie in status.  Compare the dates of the next stage
        */
-      switch(statusA.status) {
+      switch (statusA.status) {
         case CompetitionStatusEnum.Voting:
         case CompetitionStatusEnum.EndingNoSubmissions:
         case CompetitionStatusEnum.Ended:

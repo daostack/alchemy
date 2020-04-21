@@ -89,8 +89,8 @@ class SubmissionDetails extends React.Component<IProps, null> {
           </div>
           { (canRedeem || !competitionIsOver) ?
             <div className={css.actions}>
-              { 
-                canRedeem ? 
+              {
+                canRedeem ?
                   <Tooltip overlay={!hasRedeemedProposal ? "Proposal has not yet been redeemed" : "Redeem for your winning submission"}>
                     <a className={classNames({[css.blueButton]: true, [css.redeemButton]: true, [css.disabled]: !hasRedeemedProposal})}
                       href="#!"
@@ -110,8 +110,8 @@ class SubmissionDetails extends React.Component<IProps, null> {
                     </Tooltip> : ""
               }
             </div> : ""
-          } 
-          
+          }
+
           {(competitionIsOver && isWinner) ? <div className={css.winnerIcon} ><img src="/assets/images/Icon/winner.svg"></img></div> : ""}
         </div>
 
@@ -147,7 +147,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
 
         <div className={css.createdOn}>Created: <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(competition.createdAt)}</div></div>
 
-        { 
+        {
         // eslint-disable-next-line no-constant-condition
           (false) ? <div className={css.discussionContainer}>
             <div className={css.title}>Discussion</div>

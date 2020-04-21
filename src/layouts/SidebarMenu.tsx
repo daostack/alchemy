@@ -84,7 +84,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
   }
 
   public daoMenu() {
-    const [ dao, { hasNewPosts } ] = this.props.data ;
+    const [ dao, { hasNewPosts } ] = this.props.data;
 
     const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
     const bgPattern = generate(dao.address + dao.name);
@@ -343,17 +343,17 @@ const SubscribedSidebarMenu = withSubscription({
         .then((response: AxiosResponse<any>): IHasNewPosts => {
           if (response.status) {
             const posts = response.data.response;
-            return { hasNewPosts : posts && posts.length };
+            return { hasNewPosts: posts && posts.length };
           } else {
             // eslint-disable-next-line no-console
             console.error(`request for disqus posts failed: ${response.statusText}`);
-            return { hasNewPosts : false };
+            return { hasNewPosts: false };
           }
         })
         .catch((error: Error): IHasNewPosts => {
           // eslint-disable-next-line no-console
           console.error(`request for disqus posts failed: ${error.message}`);
-          return { hasNewPosts : false };
+          return { hasNewPosts: false };
         });
 
       const arc = getArc();

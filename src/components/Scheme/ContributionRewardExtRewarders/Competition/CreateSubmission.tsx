@@ -31,7 +31,7 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
 
   constructor(props: IProps) {
     super(props);
-    this.state = { 
+    this.state = {
       tags: new Array<string>(),
     };
   }

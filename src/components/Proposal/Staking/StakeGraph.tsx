@@ -30,11 +30,11 @@ export default class StakeGraph extends React.Component<IProps, null> {
     const failWidth = stakesAgainst <= 0.0001 ? 0 : Math.max(stakesAgainst / maxWidth * 100, 3);
 
     const wrapperClass = classNames({
-      [css.wrapper] : true,
-      [css.detailView] : detailView,
-      [css.historyView] : historyView,
-      [css.isPassing] : isPassing,
-      [css.isFailing] : isFailing,
+      [css.wrapper]: true,
+      [css.detailView]: detailView,
+      [css.historyView]: historyView,
+      [css.isPassing]: isPassing,
+      [css.isFailing]: isFailing,
     });
 
     return (

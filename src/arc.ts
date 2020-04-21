@@ -148,7 +148,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     } else {
       try {
         contractInfos = await arc.fetchContractInfos();
-      } catch(err) {
+      } catch (err) {
         // eslint-disable-next-line no-console
         console.error(`Error fetching contractinfos: ${err.message}`);
       }
@@ -492,7 +492,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
       }
     }
 
-  } catch(err) {
+  } catch (err) {
     let msg: string;
     msg = err ? err.message : "Unable to connect to the ethereum provider";
     if (msg.match(/response has no error or result for request/g)) {
