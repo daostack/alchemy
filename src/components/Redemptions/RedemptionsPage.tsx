@@ -1,4 +1,4 @@
-import { Address, DAO, IContributionReward, IDAOState, IRewardState, Proposal, Reputation, Token } from "@daostack/client";
+import { Address, DAOFieldsFragment, IContributionReward, IDAOState, IRewardState, Proposal } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -7,6 +7,7 @@ import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
 import Analytics from "lib/analytics";
+import { createDaoStateFromQuery, IDAOData } from "lib/daoHelpers";
 import { baseTokenName, formatTokens, genName, tokenDecimals, tokenSymbol } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
@@ -42,63 +43,12 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps & ISubscriptionProps<IProposalData[]>
 
-interface IDAOData {
-  id: string;
-  name: string;
-  nativeReputation: {
-    id: string;
-    totalSupply: BN;
-  };
-  nativeToken: {
-    id: string;
-    name: string;
-    symbol: string;
-    totalSupply: BN;
-  };
-  numberOfQueuedProposals: number;
-  numberOfPreBoostedProposals: number;
-  numberOfBoostedProposals: number;
-  register: "na"|"proposed"|"registered"|"unRegistered";
-  reputationHoldersCount: number;
-}
-
 interface IProposalData {
   id: string;
   dao: IDAOData;
   gpRewards: IRewardState[];
   contributionReward: IContributionReward;
 }
-
-// TODO: this should really be in the client library somehow
-const createDaoStateFromQuery = (queryData: IDAOData): IDAOState => {
-  const arc = getArc();
-  const reputation = new Reputation(queryData.nativeReputation.id, arc);
-  const token = new Token(queryData.nativeToken.id, arc);
-  const daoSpec = {
-    ...queryData,
-    address: queryData.id,
-    reputation,
-    token,
-    tokenName: queryData.nativeToken.name,
-    tokenSymbol: queryData.nativeToken.symbol,
-  };
-  const dao = new DAO(daoSpec, arc);
-
-  return {
-    ...daoSpec,
-    dao,
-    memberCount: Number(daoSpec.reputationHoldersCount),
-    numberOfBoostedProposals: Number(daoSpec.numberOfBoostedProposals),
-    numberOfPreBoostedProposals: Number(daoSpec.numberOfPreBoostedProposals),
-    numberOfQueuedProposals: Number(daoSpec.numberOfQueuedProposals),
-    reputation,
-    reputationTotalSupply: new BN(daoSpec.nativeReputation.totalSupply),
-    token,
-    tokenName: daoSpec.nativeToken.name,
-    tokenSymbol: daoSpec.nativeToken.symbol,
-    tokenTotalSupply: daoSpec.nativeToken.totalSupply,
-  };
-};
 
 class RedemptionsPage extends React.Component<IProps, null> {
 
@@ -301,15 +251,7 @@ const SubscribedRedemptionsPage = withSubscription({
         ) {
           id
           dao {
-            id
-            name
-            nativeReputation { id, totalSupply }
-            nativeToken { id, name, symbol, totalSupply }
-            numberOfQueuedProposals
-            numberOfPreBoostedProposals
-            numberOfBoostedProposals
-            register
-            reputationHoldersCount
+            ...DAOFields
           }
           gpRewards {
             beneficiary
@@ -332,6 +274,7 @@ const SubscribedRedemptionsPage = withSubscription({
           }
         }
       }
+      ${DAOFieldsFragment}
     `;
     const proposals = arc.getObservable(query, { subscribe: true })
       .pipe(map((result: any) => result.data.proposals));
