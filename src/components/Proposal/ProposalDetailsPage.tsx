@@ -99,22 +99,22 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
   private parseYouTubeVideoIdFromUri = (url: string): string => {
     const videoid = url.match(/(\/|%3D|v=)([0-9A-z-_]{11})([%#?&]|$)/);
-    if(videoid && (videoid.length >= 3)) {
+    if (videoid && (videoid.length >= 3)) {
       return videoid[2];
     } else { 
       // eslint-disable-next-line no-console
-      console.error("The youtube url is not valid.");
+      console.error("The outube url is not valid.");
       return null;
     }
   }
 
   private getVimeoIdFromUrl = (url: string): string => {
     const videoid = url.match(/^.*(?:vimeo.com)\/(?:channels\/|channels\/\w+\/|groups\/[^/]*\/videos\/|album\/\d+\/video\/|video\/|)(\d+)(?:$|\/|\?)/);
-    if(videoid && (videoid.length >= 2)) {
+    if (videoid && (videoid.length >= 2)) {
       return videoid[1];
     } else { 
       // eslint-disable-next-line no-console
-      console.error("The youtube url is not valid.");
+      console.error("The vimeo url is not valid.");
       return null;
     }
   }
