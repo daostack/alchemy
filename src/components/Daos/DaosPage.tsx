@@ -155,7 +155,8 @@ class DaosPage extends React.Component<IProps, IState> {
             {yourDaoNodes}
           </div>
         </React.Fragment>
-        : "" }
+          : ""
+        }
 
         <Sticky enabled top={50} innerZ={10000}>
           <div className={css.headerWrapper}>
