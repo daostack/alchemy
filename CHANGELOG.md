@@ -2,9 +2,12 @@
   - Features Added
     - upgrade to subgraph v39_3
     - added support for embedded youtube and vimeo videos in proposal descriptions
+    - recommended node.js version to build Alchemy is set to 12.16.2
+    - upgrade to use subgraph v39_3
 
   - Bugs Fixed
     - fix Torus not connecting on first try
+    - fix Torus should not describe itself as "Metamask"
 
 ## 0.10.4
   - Features Added
