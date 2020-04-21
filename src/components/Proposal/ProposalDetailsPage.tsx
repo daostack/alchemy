@@ -102,7 +102,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     if (match) {
       if (match.length >= 3) {
         return match[2];
-      } else { 
+      } else {
         // eslint-disable-next-line no-console
         console.error("The outube url is not valid.");
       }
@@ -115,7 +115,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     if (match) {
       if (match.length >= 3) {
         return match[1];
-      } else { 
+      } else {
       // eslint-disable-next-line no-console
         console.error("The vimeo url is not valid.");
       }
