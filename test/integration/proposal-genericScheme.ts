@@ -84,5 +84,5 @@ describe("Proposals", () => {
     await exportProposalSubmitButton.click();
 
   });
-  
+
 });

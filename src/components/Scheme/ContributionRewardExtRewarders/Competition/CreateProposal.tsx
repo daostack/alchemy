@@ -251,7 +251,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 errors.rewardSplit = "Please provide reward split summing upto 100";
             } else {
               const unit = (100.0 / Number(values.numWinners)).toFixed(4);
-              if((Number(unit)) * values.numWinners !== 100.0)
+              if ((Number(unit)) * values.numWinners !== 100.0)
                 errors.rewardSplit = "Please provide reward split summing upto 100 or use num winner that can have equal split";
             }
 
