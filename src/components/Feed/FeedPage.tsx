@@ -4,6 +4,7 @@ import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
 import * as React from "react";
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -53,6 +54,8 @@ class FeedPage extends React.Component<IProps, null> {
 
   public renderEmptyFeed() {
     return <div className={css.emptyFeedBanner}>
+      <BreadcrumbsItem to="/daos/">Feed</BreadcrumbsItem>
+
       <img className={css.birds} src="/assets/images/birds.svg" />
       <h1>Looks like you&apos;re not following anything</h1>
       <h3>Follow DAOs, people and proposals to stay up to date with new proposals and their statuses</h3>
@@ -66,6 +69,8 @@ class FeedPage extends React.Component<IProps, null> {
 
     if (!currentAccountAddress) {
       return <div className={css.emptyFeedBanner} data-test-id="not-logged-in-banner">
+        <BreadcrumbsItem to="/daos/">Feed</BreadcrumbsItem>
+
         <img src="/assets/images/unplugged.svg" />
         <h1>Hi there! Have we met before?</h1>
         <h3>Please Log In to see your personal feed</h3>
@@ -115,6 +120,8 @@ class FeedPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.feedContainer}>
+        <BreadcrumbsItem to="/daos/">Feed</BreadcrumbsItem>
+
         <InfiniteScroll
           dataLength={events.length} // This is important field to render the next data
           next={this.props.fetchMore}

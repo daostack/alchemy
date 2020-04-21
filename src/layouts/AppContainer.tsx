@@ -217,7 +217,8 @@ class AppContainer extends React.Component<IProps, IState> {
                 <Route path="/profile/:accountAddress" component={AccountProfilePage} />
                 <Route path="/redemptions" component={RedemptionsPage} />
                 <Route path="/daos" component={DaosPage} />
-                <Route path="/" component={FeedPage} />
+                <Route path="/feed" component={FeedPage} />
+                <Route path="/" component={DaosPage} />
               </Switch>
             </div>
 
