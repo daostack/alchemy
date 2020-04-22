@@ -1,26 +1,30 @@
 {
-  "name": "Omen Token Registry",
+  "name": "Token Registry",
   "addresses": {
     "main": [
-      "0x1E1f3926d4d80065F52D51F9728000E16541E2Bf"
+      "0x93DB90445B76329e9ed96ECd74e76D8fbf2590d8"
     ],
     "rinkeby": [
-      "0x1E1f3926d4d80065F52D51F9728000E16541E2Bf"
+      "0x03165DF66d9448E45c2f5137486af3E7e752a352"
     ],
     "kovan": [
-      "0x1E1f3926d4d80065F52D51F9728000E16541E2Bf"
+      "0x2C337c91A7FA83273F6D13721a2324c8B324f46e"
     ],
     "private": [
-      ""
+      "0xAB8278343a98b50D7eca37c97CcB53393B82D049"
     ]
   },
   "actions": [
     {
-      "id": "addNewTokens",
-      "label": "Add new tokens",
-      "description": "Add new tokens to the Token Registry",
-      "notes": "",
+      "id": "addTokens",
+      "label": "Add tokens",
+      "description": "Add tokens to the Token Registry",
+      "notes": "A list of available ListIds can be found <a target=\"_blank\" href=\"https://www.notion.so/DxDAO-Token-Registry-Lists-220e1411482342c4a7e47a641a676fcb\">here</a>",
       "fields": [
+        {
+          "label": "ListId",
+          "name": "_listId"
+        },
         {
           "label": "Tokens",
           "name": "_tokens",
@@ -28,16 +32,20 @@
         }
       ],
       "abi": {
-        "constant": false,
         "inputs": [
           {
+            "internalType": "uint256",
+            "name": "_listId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address[]",
             "name": "_tokens",
             "type": "address[]"
           }
         ],
-        "name": "addNewTokens",
+        "name": "addTokens",
         "outputs": [],
-        "payable": false,
         "stateMutability": "nonpayable",
         "type": "function"
       }
@@ -46,8 +54,12 @@
       "id": "removeTokens",
       "label": "Remove tokens",
       "description": "Remove tokens from the Token Registry",
-      "notes": "",
+      "notes": "A list of available ListIds can be found <a target=\"_blank\" href=\"https://www.notion.so/DxDAO-Token-Registry-Lists-220e1411482342c4a7e47a641a676fcb\">here</a>",
       "fields": [
+        {
+          "label": "ListId",
+          "name": "_listId"
+        },
         {
           "label": "Tokens",
           "name": "_tokens",
@@ -55,16 +67,20 @@
         }
       ],
       "abi": {
-        "constant": false,
         "inputs": [
           {
+            "internalType": "uint256",
+            "name": "_listId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address[]",
             "name": "_tokens",
             "type": "address[]"
           }
         ],
         "name": "removeTokens",
         "outputs": [],
-        "payable": false,
         "stateMutability": "nonpayable",
         "type": "function"
       }
