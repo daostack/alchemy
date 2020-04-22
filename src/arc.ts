@@ -93,10 +93,10 @@ export function providerHasConfigUi(provider?: any): any | undefined {
 
 function getBiconomy(provider: any): any {
   console.log("getting biconomy");
-  if(biconomy) {
+  if (biconomy) {
     return biconomy;
   }
-  biconomy = new Biconomy(provider,{
+  biconomy = new Biconomy(provider, {
     dappId: "5e961edab93bbb3218f4ca4d",
     apiKey: "FnUirn0bX.7e02bb26-8725-45a4-8180-2f67a52871d3",
     debug: true,
@@ -115,29 +115,29 @@ function getBiconomy(provider: any): any {
 function biconomyLogin(userAccount: string, options?: IEnableWalletProviderParams) {
   return new Promise<string>((resolve, reject) => {
     console.log(`Biconomy login status ${biconomy && biconomy.isLogin}`);
-    if(biconomy && !biconomy.isLogin) {
+    if (biconomy && !biconomy.isLogin) {
       biconomy.getUserContract(userAccount).then((response: any) => {
-        if(!response.userContract) {
-          if(options && options.showNotification)
+        if (!response.userContract) {
+          if (options && options.showNotification)
             options.showNotification(NotificationStatus.Pending, "Please provide your signature in Metamask to use gas less transactions");
           else
             alert("Please provide your signature in Metamask to use gas less transactions");
           biconomy.login(userAccount, (error: any, loginResponse: any) => {
-            if(error) {
+            if (error) {
               return reject(error);
             }
-            if(loginResponse && loginResponse.transactionHash) {
+            if (loginResponse && loginResponse.transactionHash) {
               // First time user. Contract wallet transaction pending.
               console.log("Your on-chain identity is being created. Please wait.");
-              if(options && options.showNotification)
+              if (options && options.showNotification)
                 options.showNotification(NotificationStatus.Pending, "Your on-chain identity is being created. Please wait.");
               biconomy.onEvent(biconomy.LOGIN_CONFIRMATION, async () => {
                 // User's Contract Wallet creation successful
                 console.log("Your on-chain identity created successfully");
-                if(options && options.showNotification)
+                if (options && options.showNotification)
                   options.showNotification(NotificationStatus.Success, "Your on-chain identity created successfully");
                 const response = await biconomy.getUserContract(userAccount);
-                if(response.userContract) {
+                if (response.userContract) {
                   resolve(response.userContract);
                 } else {
                   reject(response);
@@ -145,7 +145,7 @@ function biconomyLogin(userAccount: string, options?: IEnableWalletProviderParam
               });
             } else if (loginResponse && loginResponse.userContract) {
               // Existing user login successful
-              if(options && options.showNotification)
+              if (options && options.showNotification)
                 options.showNotification(NotificationStatus.Success, "Biconomy login successfull");
               resolve(loginResponse.userContract);
             }
@@ -156,10 +156,10 @@ function biconomyLogin(userAccount: string, options?: IEnableWalletProviderParam
         }
       });
 
-    } else if(biconomy) {
-      biconomy.getUserContract(userAccount).then((response: any)=>{
+    } else if (biconomy) {
+      biconomy.getUserContract(userAccount).then((response: any) => {
         console.log(response);
-        if(response.userContract) {
+        if (response.userContract) {
           resolve(response.userContract);
         } else {
           reject(response);
@@ -185,7 +185,7 @@ export async function initializeArc(options?: IEnableWalletProviderParams, provi
     const arcSettings = getArcSettings();
 
     if (provider) {
-      if(!provider.isBiconomy) {
+      if (!provider.isBiconomy) {
         biconomy = getBiconomy(provider);
         arcSettings.web3Provider = biconomy;
       } else {
@@ -505,7 +505,7 @@ export async function logout(showNotification?: any): Promise<boolean> {
   let success = false;
 
   uncacheWeb3Info();
-  if(biconomy) {
+  if (biconomy) {
     biconomy.logout();
   }
 
@@ -630,7 +630,7 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
         try {
           getCurrentAccountFromProvider()
             .then(async (account: Address | null): Promise<void> => {
-              if(prevAccount && account && prevAccount !== account) {
+              if (prevAccount && account && prevAccount !== account) {
                 await biconomy.logout();
               }
               if (prevAccount !== account) {
