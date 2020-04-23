@@ -100,7 +100,7 @@ function DaoWiki(props: IProps) {
         const state = proposal.staticState as IProposalState;
         return state.title === "Set home perspective";
       };
-  
+
       const homeProposalExists = proposals.some(checkProposals);
       renderWikiComponent(web3Provider, dispatcher, homeProposalExists);
     }

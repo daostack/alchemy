@@ -8,11 +8,11 @@ import {
 } from "./types";
 
 /**
- * This custom dispatcher is a way to pass alchemy's actions 
+ * This custom dispatcher is a way to pass alchemy's actions
  * to the underscore protocol elements, this way, an user can create a proposal
  * by interacting with the wiki component.
- * 
- * It facilitates the communication between alchemy's dispatcher and 
+ *
+ * It facilitates the communication between alchemy's dispatcher and
  * underscore protocol components.
  */
 export class CustomDispatcher {

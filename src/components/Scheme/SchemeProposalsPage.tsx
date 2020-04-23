@@ -135,7 +135,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             <div className={css.proposalsHeader}>
               No upcoming proposals
             </div>
-            { isWikiScheme ? 
+            { isWikiScheme ?
               <>
                 <p>You can be the first one to create a Wiki merge proposal today! (:</p>
                 <div className={css.cta}>
