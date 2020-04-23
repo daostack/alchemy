@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Reward, Stake, Vote } from "@daostack/client-experimental";
+import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Reward, Stake, Vote } from "@daostack/client";
 import { getArc } from "arc";
 import { ethErrorHandler } from "lib/util";
 

@@ -1,4 +1,4 @@
-import { IProposalState } from "@daostack/client-experimental";
+import { IProposalState } from "@daostack/client";
 import classNames from "classnames";
 import { formatTokens, fromWei } from "lib/util";
 import * as React from "react";

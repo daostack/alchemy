@@ -5,7 +5,7 @@ import {
   IProposalState,
   IRewardState,
   utils
-} from "@daostack/client-experimental";
+} from "@daostack/client";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 

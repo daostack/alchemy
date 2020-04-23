@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState } from "@daostack/client-experimental";
+import { Address, IDAOState, IMemberState } from "@daostack/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getProfile } from "actions/profilesActions";
 import AccountImage from "components/Account/AccountImage";

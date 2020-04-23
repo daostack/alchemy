@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, IProposalState, IProposalStage  } from "@daostack/client-experimental";
+import { IDAOState, IMemberState, IProposalState, IProposalStage  } from "@daostack/client";
 import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");

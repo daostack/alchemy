@@ -1,7 +1,7 @@
 import BN = require("bn.js");
 import * as React from "react";
 
-import { IDAOState, IProposalState } from "@daostack/client-experimental";
+import { IDAOState, IProposalState } from "@daostack/client";
 import { baseTokenName, formatTokens, tokenDetails } from "lib/util";
 
 import Reputation from "components/Account/Reputation";

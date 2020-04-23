@@ -1,4 +1,4 @@
-import { DAO } from "@daostack/client-experimental";
+import { DAO } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";

@@ -1,4 +1,4 @@
-import { ISchemeState } from "@daostack/client-experimental";
+import { ISchemeState } from "@daostack/client";
 import { createProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";

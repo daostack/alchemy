@@ -2,7 +2,7 @@
 import {
   Address,
   IContractInfo,
-  ISchemeState} from "@daostack/client-experimental";
+  ISchemeState} from "@daostack/client";
 import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 

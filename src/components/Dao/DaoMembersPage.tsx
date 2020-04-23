@@ -1,4 +1,4 @@
-import { IDAOState, Member } from "@daostack/client-experimental";
+import { IDAOState, Member } from "@daostack/client";
 import { getProfile } from "actions/profilesActions";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";

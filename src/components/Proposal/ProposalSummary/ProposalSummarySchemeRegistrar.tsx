@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@daostack/client-experimental";
+import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@daostack/client";
 import classNames from "classnames";
 import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
 import { schemeNameAndAddress } from "lib/schemeUtils";

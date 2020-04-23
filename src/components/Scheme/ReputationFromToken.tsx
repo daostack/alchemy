@@ -1,5 +1,5 @@
 import { promisify } from "util";
-import { Address, ISchemeState, Token } from "@daostack/client-experimental";
+import { Address, ISchemeState, Token } from "@daostack/client";
 import axios from "axios";
 import { getWeb3Provider, getArcSettings } from "arc";
 import { SigningKey } from "ethers/utils";

@@ -1,4 +1,4 @@
-import { Arc } from '@daostack/client-experimental';
+import { Arc } from '@daostack/client';
 const fs = require("fs");
 import { settings } from "../src/settings";
 

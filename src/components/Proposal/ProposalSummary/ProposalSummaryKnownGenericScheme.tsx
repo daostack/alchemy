@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState } from "@daostack/client-experimental";
+import { IDAOState, IProposalState } from "@daostack/client";
 import classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
 import { linkToEtherScan } from "lib/util";

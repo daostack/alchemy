@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState } from "@daostack/client-experimental";
+import { IDAOState, IMemberState } from "@daostack/client";
 import { getArc } from "arc";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";

@@ -3,7 +3,7 @@ import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
 import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
 import { IProviderInfo } from "web3modal/lib/helpers/types";
 import { RetryLink } from "apollo-link-retry";
-import { Address, Arc } from "@daostack/client-experimental";
+import { Address, Arc } from "@daostack/client";
 import Web3Modal, { getProviderInfo } from "web3modal";
 import { Observable } from "rxjs";
 import { JsonRpcProvider, Web3Provider as EthersWeb3Provider } from "ethers/providers";
@@ -96,7 +96,7 @@ export function providerHasConfigUi(provider?: JsonRpcProvider): boolean | undef
 export async function initializeArc(provider?: JsonRpcProvider): Promise<boolean> {
 
   let success = false;
-  let arc: any;
+  let arc: Arc;
 
   try {
 

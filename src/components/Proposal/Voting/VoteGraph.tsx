@@ -1,4 +1,4 @@
-import { IProposalStage, IProposalState } from "@daostack/client-experimental";
+import { IProposalStage, IProposalState } from "@daostack/client";
 
 import BN = require("bn.js");
 import classNames from "classnames";

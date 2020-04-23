@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, Stake } from "@daostack/client-experimental";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, Stake } from "@daostack/client";
 import { approveStakingGens, stakeProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 

@@ -1,6 +1,6 @@
 import * as moment from "moment";
 
-import { IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client-experimental";
+import { IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
 
 export interface IRedemptionState {
   accountAddress: string;

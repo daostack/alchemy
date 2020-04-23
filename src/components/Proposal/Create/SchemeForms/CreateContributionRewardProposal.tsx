@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { IDAOState, ISchemeState } from "@daostack/client-experimental";
+import { IDAOState, ISchemeState } from "@daostack/client";
 import { createProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
@@ -169,7 +169,6 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       return null;
     }
     const dao = data;
-    const arc = getArc();
 
     return (
       <div className={css.contributionReward}>

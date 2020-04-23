@@ -1,4 +1,4 @@
-import { Scheme, ISchemeState } from "@daostack/client-experimental";
+import { Scheme, ISchemeState } from "@daostack/client";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { splitByCamelCase } from "lib/util";
 import * as React from "react";

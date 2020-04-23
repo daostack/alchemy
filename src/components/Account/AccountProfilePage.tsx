@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, DAO } from "@daostack/client-experimental";
+import { IDAOState, IMemberState, DAO } from "@daostack/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import BN = require("bn.js");

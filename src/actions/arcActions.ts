@@ -1,4 +1,4 @@
-import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/client-experimental";
+import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/client";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import { toWei } from "lib/util";

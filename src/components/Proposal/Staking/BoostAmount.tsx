@@ -1,5 +1,5 @@
 import { formatTokens } from "lib/util";
-import { IProposalStage, IProposalState } from "@daostack/client-experimental";
+import { IProposalStage, IProposalState } from "@daostack/client";
 
 import classNames from "classnames";
 import * as React from "react";
