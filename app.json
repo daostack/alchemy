@@ -9,7 +9,7 @@
     },
     "NODE_ENV": {
       "required": true,
-      "value": "staging"
+      "value": "production"
     },
     "NETWORK": {
       "required": true,
