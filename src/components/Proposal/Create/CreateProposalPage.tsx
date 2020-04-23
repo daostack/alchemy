@@ -1,4 +1,4 @@
-import { ISchemeState } from "@daostack/client";
+import { ISchemeState } from "@daostack/client-experimental";
 import { getArc } from "arc";
 import CreateKnownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateKnownGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "components/Proposal/Create/SchemeForms/CreateSchemeRegistrarProposal";
@@ -115,21 +115,10 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
       let contractToCall: string;
       if (scheme.genericSchemeParams) {
         contractToCall  = scheme.genericSchemeParams.contractToCall;
-      } else if (scheme.uGenericSchemeParams) {
-        // TODO: these lins are a workaround because of a  subgraph bug: https://github.com/daostack/subgraph/issues/342
-        contractToCall  = scheme.uGenericSchemeParams.contractToCall;
       } else {
         throw Error("No contractToCall for this genericScheme was found!");
       }
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
-      if (genericSchemeInfo) {
-        createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
-      } else {
-        createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
-      }
-    } else if (scheme.name === "UGenericScheme") {
-      const genericSchemeRegistry = new GenericSchemeRegistry();
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(props.scheme.uGenericSchemeParams.contractToCall);
       if (genericSchemeInfo) {
         createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
       } else {

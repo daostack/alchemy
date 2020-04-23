@@ -1,4 +1,4 @@
-import { IDAOState, ISchemeState, IProposalCreateOptionsCompetition } from "@daostack/client";
+import { IDAOState, ISchemeState, IProposalCreateOptionsComp } from "@daostack/client-experimental";
 import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -150,7 +150,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       reputationReward = new BN(1);
     }
     // Parameters to be passed to client
-    const proposalOptions: IProposalCreateOptionsCompetition  = {
+    const proposalOptions: IProposalCreateOptionsComp  = {
       dao: this.props.daoAvatarAddress,
       description: values.description,
       endTime: values.compEndTimeInput.toDate(),

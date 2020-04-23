@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Reward, Stake, Vote } from "@daostack/client";
+import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Reward, Stake, Vote } from "@daostack/client-experimental";
 import { getArc } from "arc";
 import { ethErrorHandler } from "lib/util";
 
@@ -124,8 +124,8 @@ export default withSubscription({
     const { currentAccountAddress, daoState, proposalId } = props;
     const arcDao = daoState.dao;
     const proposal = arc.proposal(proposalId);
-    await proposal.fetchStaticState();
-    const spender = proposal.staticState.votingMachine;
+    await proposal.fetchState();
+    const spender = proposal.coreState.votingMachine;
 
     if (currentAccountAddress) {
       return combineLatest(

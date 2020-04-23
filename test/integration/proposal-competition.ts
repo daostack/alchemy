@@ -1,6 +1,6 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
-import { DAO, Arc } from "@daostack/client";
+import { DAO, Arc } from "@daostack/client-experimental";
 import { getArc, setCalendarDate, hideCookieAcceptWindow } from "./utils";
 
 describe("Proposals", () => {

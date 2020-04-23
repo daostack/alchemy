@@ -1,4 +1,4 @@
-import { Address, DAO, IContributionReward, IDAOState, IRewardState, Proposal, Reputation, Token } from "@daostack/client";
+import { Address, DAO, IContributionReward, IDAOState, IRewardState, Proposal, Reputation, Token } from "@daostack/client-experimental";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -72,8 +72,8 @@ interface IProposalData {
 // TODO: this should really be in the client library somehow
 const createDaoStateFromQuery = (queryData: IDAOData): IDAOState => {
   const arc = getArc();
-  const reputation = new Reputation(queryData.nativeReputation.id, arc);
-  const token = new Token(queryData.nativeToken.id, arc);
+  const reputation = new Reputation(arc, queryData.nativeReputation.id);
+  const token = new Token(arc, queryData.nativeToken.id);
   const daoSpec = {
     ...queryData,
     address: queryData.id,
@@ -82,7 +82,7 @@ const createDaoStateFromQuery = (queryData: IDAOData): IDAOState => {
     tokenName: queryData.nativeToken.name,
     tokenSymbol: queryData.nativeToken.symbol,
   };
-  const dao = new DAO(daoSpec, arc);
+  const dao = new DAO(arc, daoSpec);
 
   return {
     ...daoSpec,
@@ -203,7 +203,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
               key={"proposal_" + proposal.id}
               currentAccountAddress={currentAccountAddress}
               daoState={daoState}
-              proposal={new Proposal(proposal.id, arc)}
+              proposal={new Proposal(arc, proposal.id)}
             />;
           })}
         </div>

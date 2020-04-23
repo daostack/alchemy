@@ -1,4 +1,4 @@
-import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/client";
+import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/client-experimental";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -99,15 +99,15 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     let currentVote: Vote;
     if (votesOfCurrentUser.length > 0) {
       currentVote = votesOfCurrentUser[0];
-      currentAccountVote = currentVote.staticState.outcome;
-      currentAccountVoteAmount = new BN(currentVote.staticState.amount);
+      currentAccountVote = currentVote.coreState.outcome;
+      currentAccountVoteAmount = new BN(currentVote.coreState.amount);
     }
 
     if (stakesOfCurrentUser.length > 0) {
       currentAccountStakeAmount = stakesOfCurrentUser
-        .map((stake): BN => stake.staticState.amount)
+        .map((stake): BN => stake.coreState.amount)
         .reduce((prev: BN, current: BN)  => { return prev.add(current); });
-      currentAccountPrediction = stakesOfCurrentUser[0].staticState.outcome;
+      currentAccountPrediction = stakesOfCurrentUser[0].coreState.outcome;
     }
 
     const myActionsClass = classNames({

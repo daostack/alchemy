@@ -3,17 +3,16 @@ import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
 import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
 import { IProviderInfo } from "web3modal/lib/helpers/types";
 import { RetryLink } from "apollo-link-retry";
-import { Address, Arc } from "@daostack/client";
+import { Address, Arc } from "@daostack/client-experimental";
 import Web3Modal, { getProviderInfo } from "web3modal";
 import { Observable } from "rxjs";
-
-const Web3 = require("web3");
+import { JsonRpcProvider, Web3Provider as EthersWeb3Provider } from "ethers/providers";
 
 /**
  * This is only set after the user has selected a provider and enabled an account.
  * It is like window.ethereum, but has not necessarily been injected as such.
  */
-let selectedProvider: any;
+let selectedProvider: JsonRpcProvider | undefined;
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 let web3Modal: Web3Modal;
@@ -31,8 +30,8 @@ export function getArcSettings(): any {
 /**
  * Return the web3 in current use by Arc.
  */
-function getWeb3(): any {
-  const arc = (window as any).arc;
+function getWeb3(): JsonRpcProvider {
+  const arc = (window as any).arc as Arc;
   const web3 = arc ? arc.web3 : null;
   return web3;
 }
@@ -40,7 +39,7 @@ function getWeb3(): any {
 /**
  * Return the default account in current use by Arc.
  */
-async function _getCurrentAccountFromProvider(web3?: any): Promise<string> {
+async function _getCurrentAccountFromProvider(web3?: JsonRpcProvider): Promise<string> {
   web3 = web3 || getWeb3();
   if (!web3) {
     return null;
@@ -54,7 +53,7 @@ async function _getCurrentAccountFromProvider(web3?: any): Promise<string> {
  * Throws an exception when Arc hasn't yet been initialized!
  */
 export function getArc(): Arc {
-  const arc = (window as any).arc;
+  const arc = (window as any).arc as Arc;
   if (!arc) {
     throw Error("window.arc is not defined - please call initializeArc first");
   }
@@ -64,11 +63,11 @@ export function getArc(): Arc {
 /**
  * Return currently-selected and fully-enabled web3Provider (an account can be presumed to exist).
  */
-export function getWeb3Provider(): any | undefined {
+export function getWeb3Provider(): JsonRpcProvider | undefined {
   return selectedProvider;
 }
 
-async function getProviderNetworkName(provider?: any): Promise<string> {
+async function getProviderNetworkName(provider?: JsonRpcProvider): Promise<string> {
   provider = provider || selectedProvider;
   if (!provider) { return null; }
   const networkId = await getNetworkId(provider);
@@ -80,12 +79,12 @@ async function getProviderNetworkName(provider?: any): Promise<string> {
  * Returns a IWeb3ProviderInfo when a provider has been selected and is fully available.
  * Does not know about the default read-only providers.
  */
-export function getWeb3ProviderInfo(provider?: any): IWeb3ProviderInfo {
+export function getWeb3ProviderInfo(provider?: JsonRpcProvider): IWeb3ProviderInfo {
   provider = provider || selectedProvider;
   return provider ? getProviderInfo(provider) : null;
 }
 
-export function providerHasConfigUi(provider?: any): any | undefined {
+export function providerHasConfigUi(provider?: JsonRpcProvider): boolean | undefined {
   provider = provider || selectedProvider;
   return provider && provider.isTorus;
 }
@@ -94,7 +93,7 @@ export function providerHasConfigUi(provider?: any): any | undefined {
  * initialize Arc.  Does not throw exceptions, returns boolean success.
  * @param provider Optional web3Provider
  */
-export async function initializeArc(provider?: any): Promise<boolean> {
+export async function initializeArc(provider?: JsonRpcProvider): Promise<boolean> {
 
   let success = false;
   let arc: any;
@@ -135,8 +134,13 @@ export async function initializeArc(provider?: any): Promise<boolean> {
 
     // if there is no existing arc, we create a new one
     if ((window as any).arc) {
-      arc = (window as any).arc;
-      arc.web3 = new Web3(provider);
+      arc = (window as any).arc as Arc;
+
+      if (typeof provider === "string") {
+        arc.web3 = new JsonRpcProvider(provider);
+      } else {
+        arc.web3 = new EthersWeb3Provider(provider);
+      }
     } else {
       arc = new Arc(arcSettings);
     }
@@ -197,7 +201,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
  * @param provider web3Provider
  * @return the expected network nameif not correct
 */
-async function ensureCorrectNetwork(provider: any): Promise<void> {
+async function ensureCorrectNetwork(provider: JsonRpcProvider): Promise<void> {
 
   /**
    * It is required that the provider be the correct one for the current platform
@@ -263,7 +267,7 @@ function inTesting(): boolean {
     // in test mode, we have an unlocked ganache and we are not using any wallet
     // eslint-disable-next-line no-console
     console.log("not using any wallet, because we are in automated test");
-    selectedProvider = new Web3(settings.ganache.web3Provider);
+    selectedProvider = new JsonRpcProvider(settings.ganache.web3Provider);
     return true;
   }
   return false;
@@ -281,7 +285,7 @@ async function enableWeb3Provider(): Promise<void> {
     return;
   }
 
-  let provider: any;
+  let provider: JsonRpcProvider;
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
   let _web3Modal: Web3ConnectModal;
@@ -324,7 +328,7 @@ async function enableWeb3Provider(): Promise<void> {
     return rejectOnClosePromise(error);
   });
 
-  _web3Modal.on("connect", (newProvider: any): any => {
+  _web3Modal.on("connect", (newProvider: foo): any => {
     provider = newProvider;
     /**
      * Because we won't receive the "close" event in this case, even though
@@ -458,7 +462,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
 
     // If not MetaMask or other injected web3 and on ganache then try to connect to local ganache directly
     if (targetedNetwork() === "ganache" && !(window as any).web3 && !(window as any).ethereum) {
-      selectedProvider = new Web3(settings.ganache.web3Provider);
+      selectedProvider = new JsonRpcProvider(settings.ganache.web3Provider);
       return true;
     }
 

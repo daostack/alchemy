@@ -1,6 +1,6 @@
 import Countdown from "components/Shared/Countdown";
 import { formatFriendlyDateForLocalTimezone } from "lib/util";
-import { ICompetitionProposalState } from "@daostack/client";
+import { ICompetitionProposalState } from "@daostack/client-experimental";
 import * as React from "react";
 import { CompetitionStatus, CompetitionStatusEnum } from "./utils";
 import * as css from "./Competitions.scss";

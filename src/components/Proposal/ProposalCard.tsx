@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Vote, Proposal } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, Vote, Proposal } from "@daostack/client-experimental";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -73,10 +73,10 @@ export default class ProposalCard extends React.Component<IProps, null> {
 
         // TODO: the next line, is a hotfix for a  which filters the votes, should not be necessary
         // https://daostack.tpondemand.com/RestUI/Board.aspx#page=board/5209716961861964288&appConfig=eyJhY2lkIjoiQjgzMTMzNDczNzlCMUI5QUE0RUE1NUVEOUQyQzdFNkIifQ==&boardPopup=bug/1766
-        const currentAccountVotes = votes.filter((v: Vote) => v.staticState.voter === currentAccountAddress);
+        const currentAccountVotes = votes.filter((v: Vote) => v.coreState.voter === currentAccountAddress);
         if (currentAccountVotes.length > 0) {
           currentVote = currentAccountVotes[0];
-          currentAccountVote = currentVote.staticState.outcome;
+          currentAccountVote = currentVote.coreState.outcome;
         }
 
         const proposalClass = classNames({

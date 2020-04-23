@@ -9,17 +9,16 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { createProposal } from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
-import { isValidUrl } from "lib/util";
+import { isValidUrl, isAddress } from "lib/util";
 import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSIONS, schemeNameAndAddress, SchemePermissions } from "lib/schemeUtils";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
-import { IProposalType, ISchemeState, Scheme } from "@daostack/client";
+import { IProposalType, ISchemeState, Scheme } from "@daostack/client-experimental";
 import { connect } from "react-redux";
 import * as React from "react";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
-
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -182,8 +181,6 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
     const { currentTab, requiredPermissions } = this.state;
 
-    const arc = getArc();
-
     const addSchemeButtonClass = classNames({
       [css.addSchemeButton]: true,
       [css.selected]: currentTab === "addScheme",
@@ -260,7 +257,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                 require("schemeToRemove");
               }
 
-              if (currentTab === "addScheme" && values.otherScheme && !arc.web3.utils.isAddress(values.otherScheme)) {
+              if (currentTab === "addScheme" && values.otherScheme && !isAddress(values.otherScheme)) {
                 errors.otherScheme = "Invalid address";
               }
 
@@ -392,7 +389,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                       >
                         <option value="">Select a plugin...</option>
                         {schemes.map((scheme, _i) => {
-                          return <option key={`edit_scheme_${scheme.staticState.address}`} value={scheme.staticState.address}>{schemeNameAndAddress(scheme.staticState.address)}</option>;
+                          return <option key={`edit_scheme_${scheme.coreState.address}`} value={scheme.coreState.address}>{schemeNameAndAddress(scheme.coreState.address)}</option>;
                         })}
                       </Field>
                     </div>
@@ -490,7 +487,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                       >
                         <option value="">Select a plugin...</option>
                         {schemes.map((scheme, _i) => {
-                          return <option key={`remove_scheme_${scheme.staticState.address}`} value={scheme.staticState.address}>{schemeNameAndAddress(scheme.staticState.address)}</option>;
+                          return <option key={`remove_scheme_${scheme.coreState.address}`} value={scheme.coreState.address}>{schemeNameAndAddress(scheme.coreState.address)}</option>;
                         })}
                       </Field>
                     </div>

@@ -1,11 +1,11 @@
 import BN = require("bn.js");
-import { IDAOState, IMemberState, Member } from "@daostack/client";
+import { IDAOState, IMemberState, Member } from "@daostack/client-experimental";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { fromWei } from "lib/util";
+import { fromWeiToString } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { IProfileState } from "reducers/profilesReducer";
@@ -57,7 +57,7 @@ class DaoMember extends React.Component<IProps, null> {
                   {memberState.address}
                 </td>
                 <td className={css.memberReputation}>
-                  <span className={css.reputationAmount}>{fromWei(memberState.reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
+                  <span className={css.reputationAmount}>{fromWeiToString(memberState.reputation)}</span>
                   <div className={css.reputationAmounts}>
                     (<Reputation daoName={dao.name} totalReputation={daoTotalReputation} reputation={memberState.reputation}/>)
                   </div>

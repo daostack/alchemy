@@ -1,4 +1,4 @@
-import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/client";
+import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/client-experimental";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import { toWei } from "lib/util";
@@ -7,6 +7,7 @@ import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
+import { Wallet } from "ethers";
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
@@ -43,7 +44,7 @@ export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAc
     try {
       const arc = getArc();
 
-      const dao = new DAO(proposalOptions.dao, arc);
+      const dao = new DAO(arc, proposalOptions.dao);
 
       const observer = operationNotifierObserver(dispatch, "Create proposal");
       await dao.createProposal(proposalOptions).subscribe(...observer);
@@ -61,14 +62,14 @@ export function executeProposal(avatarAddress: string, proposalId: string, _acco
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
     const proposalObj = await arc.dao(avatarAddress).proposal(proposalId);
 
-    // Call claimRewards to both execute the proposal and redeem the ContributionReward rewards,
+    // Call redeemRewards to both execute the proposal and redeem the ContributionReward rewards,
     //   pass in null to not redeem any GenesisProtocol rewards
     const originalErrorHandler = observer[1];
     observer[1] = async (_error: any): Promise<any> => {
       observer[1] = originalErrorHandler;
       return await proposalObj.execute().subscribe(...observer);
     };
-    await proposalObj.claimRewards(null).subscribe(...observer);
+    await proposalObj.redeemRewards().subscribe(...observer);
   };
 }
 
@@ -140,7 +141,7 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Reward");
-    await proposalObj.claimRewards(accountAddress).subscribe(...observer);
+    await proposalObj.redeemRewards(accountAddress).subscribe(...observer);
   };
 }
 
@@ -149,37 +150,36 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
     const arc = getArc();
 
     // ensure that scheme.ReputationFromToken is set
-    await scheme.fetchStaticState();
+    await scheme.fetchState();
 
     if (privateKey) {
       const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
-      const agreementHash = await reputationFromTokenScheme.getAgreementHash();
-      const state = await reputationFromTokenScheme.scheme.fetchStaticState();
+      const state = await reputationFromTokenScheme.scheme.fetchState();
       const contract =  arc.getContract(state.address);
-      const block = await arc.web3.eth.getBlock("latest");
-      const gas = block.gasLimit - 100000;
-      const redeemMethod = contract.methods.redeem(addressToRedeem, agreementHash);
-      let gasPrice = await arc.web3.eth.getGasPrice();
+      const block = await arc.web3.getBlock("latest");
+      const gas = block.gasLimit.toNumber() - 100000;
+      const redeemMethod = contract.interface.functions["redeem"].encode([addressToRedeem]);
+      let gasPrice = (await arc.web3.getGasPrice()).toNumber();
       gasPrice = gasPrice * 1.2;
       const txToSign = {
         gas,
         gasPrice,
-        data: redeemMethod.encodeABI(),
+        data: redeemMethod,
         to: state.address,
         value: "0",
       };
-      const gasEstimate = await arc.web3.eth.estimateGas(txToSign);
+      const gasEstimate = (await arc.web3.estimateGas(txToSign)).toNumber();
       txToSign.gas = gasEstimate;
       // if the gas cost is higher then the users balance, we lower it to fit
-      const userBalance = await arc.web3.eth.getBalance(redeemerAddress);
+      const userBalance = (await arc.web3.getBalance(redeemerAddress)).toNumber();
       if (userBalance < gasEstimate * gasPrice) {
         txToSign.gasPrice = Math.floor(userBalance/gasEstimate);
       }
-      const signedTransaction = await arc.web3.eth.accounts.signTransaction(txToSign, privateKey);
+      const wallet = new Wallet(privateKey)
+      const signedTransaction = await wallet.sign(txToSign);
       dispatch(showNotification(NotificationStatus.Success, "Sending redeem transaction, please wait for it to be mined"));
-      // const txHash = await arc.web3.utils.sha3(signedTransaction.rawTransaction);
       try {
-        await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        await arc.web3.sendTransaction(signedTransaction);
         dispatch(showNotification(NotificationStatus.Success, "Transaction was succesful!"));
         redemptionSucceededCallback();
       } catch(err) {
@@ -191,8 +191,7 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
 
       // send the transaction and get notifications
       if (reputationFromTokenScheme) {
-        const agreementHash = await reputationFromTokenScheme.getAgreementHash();
-        reputationFromTokenScheme.redeem(addressToRedeem, agreementHash).subscribe(observer[0], observer[1], redemptionSucceededCallback);
+        reputationFromTokenScheme.redeem(addressToRedeem).subscribe(observer[0], observer[1], redemptionSucceededCallback);
       }
     }
   };

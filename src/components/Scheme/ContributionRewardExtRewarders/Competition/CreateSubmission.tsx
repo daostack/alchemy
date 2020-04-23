@@ -1,11 +1,10 @@
-import { IDAOState, IProposalState } from "@daostack/client";
+import { IDAOState, IProposalState } from "@daostack/client-experimental";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { isValidUrl } from "lib/util";
+import { isValidUrl, isAddress } from "lib/util";
 import * as React from "react";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
-import { getArc } from "arc";
 import UserSearchField from "components/Shared/UserSearchField";
 import { ICreateSubmissionOptions } from "./utils";
 import * as css from "./Competitions.scss";
@@ -54,7 +53,6 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
 
   public render(): RenderOutput {
     const { handleCancel, proposalState } = this.props;
-    const arc = getArc();
 
     return (
       <div className={css.createSubmissionForm}>
@@ -84,7 +82,7 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
               errors.title = "Title is too long (max 120 characters)";
             }
 
-            if (values.beneficiary && !arc.web3.utils.isAddress(values.beneficiary)) {
+            if (values.beneficiary && !isAddress(values.beneficiary)) {
               errors.beneficiary = "Invalid address";
             }
 

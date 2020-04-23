@@ -1,4 +1,4 @@
-import { ICompetitionProposalState } from "@daostack/client";
+import { ICompetitionProposalState } from "@daostack/client-experimental";
 import * as React from "react";
 import classNames from "classnames";
 import { competitionStatus } from "./utils";

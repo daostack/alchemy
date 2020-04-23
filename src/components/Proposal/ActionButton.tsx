@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Token } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Token } from "@daostack/client-experimental";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import classNames from "classnames";
@@ -330,7 +330,7 @@ const SubscribedActionButton = withSubscription({
         props.proposalState.contributionReward.externalTokenReward = undefined;
         externalTokenObservable = of(undefined);
       } else {
-        const token = new Token(props.proposalState.contributionReward.externalToken, arc);
+        const token = new Token(arc, props.proposalState.contributionReward.externalToken);
         externalTokenObservable = token.balanceOf(props.daoState.address).pipe(ethErrorHandler());
       }
     } else {

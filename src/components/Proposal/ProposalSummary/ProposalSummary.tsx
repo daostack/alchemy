@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState, IProposalType } from "@daostack/client";
+import { IDAOState, IProposalState, IProposalType } from "@daostack/client-experimental";
 import classNames from "classnames";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import * as React from "react";

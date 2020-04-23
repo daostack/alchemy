@@ -1,8 +1,9 @@
 
 import * as React from "react";
 import { connect } from "react-redux";
-import { IProposalType, ISchemeState } from "@daostack/client";
-import { enableWalletProvider, getArc } from "arc";
+import { IProposalType, ISchemeState } from "@daostack/client-experimental";
+import { enableWalletProvider } from "arc";
+import { isHexString } from "ethers/utils"
 
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import * as classNames from "classnames";
@@ -15,7 +16,7 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as arcActions from "actions/arcActions";
 
 import Analytics from "lib/analytics";
-import { isValidUrl } from "lib/util";
+import { isValidUrl, isAddress } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
@@ -281,7 +282,6 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
     const { handleClose } = this.props;
-    const arc = getArc();
 
     const actions = this.state.actions;
     const currentAction = this.state.currentAction;
@@ -351,20 +351,20 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                 }
 
                 if (field.type === "address") {
-                  if (!arc.web3.utils.isAddress(value)) {
+                  if (!isAddress(value)) {
                     errors[field.name] = "Invalid address";
                   }
                 }
 
                 if (field.type.includes("bytes")) {
-                  if (!arc.web3.utils.isHexStrict(value)) {
+                  if (!isHexString(value)) {
                     errors[field.name] = "Must be a hex value";
                   }
                 }
 
                 if (field.type === "address[]") {
                   for (const i of value) {
-                    if (!arc.web3.utils.isAddress(i)) {
+                    if (!isAddress(i)) {
                       errors[field.name] = "Invalid address";
                     }
                   }

@@ -1,4 +1,4 @@
-import { DAO } from "@daostack/client";
+import { DAO } from "@daostack/client-experimental";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -96,20 +96,20 @@ class DaosPage extends React.Component<IProps, IState> {
     }
 
     // Always show Genesis Alpha first
-    let finalDAOList = allDAOs.filter((d: DAO) => d.staticState.name === "Genesis Alpha" && d.staticState.name.toLowerCase().includes(search));
+    let finalDAOList = allDAOs.filter((d: DAO) => d.coreState.name === "Genesis Alpha" && d.coreState.name.toLowerCase().includes(search));
 
     if (process.env.NODE_ENV === "staging") {
       // on staging we show all daos (registered or not)
-      finalDAOList = finalDAOList.concat(allDAOs.filter((d: DAO) => d.staticState.name !== "Genesis Alpha" && d.staticState.name.toLowerCase().includes(search)));
+      finalDAOList = finalDAOList.concat(allDAOs.filter((d: DAO) => d.coreState.name !== "Genesis Alpha" && d.coreState.name.toLowerCase().includes(search)));
     } else {
       // Otherwise show registered DAOs or DAOs that the person follows or is a member of
       const memberOfDAOs = data[1];
       finalDAOList = finalDAOList.concat(allDAOs.filter((d: DAO) => {
-        return d.staticState.name !== "Genesis Alpha" &&
-               d.staticState.name.toLowerCase().includes(search) &&
-               (d.staticState.register === "registered" ||
-                  (currentAccountProfile && currentAccountProfile.follows.daos.includes(d.staticState.address)) ||
-                  memberOfDAOs.includes(d.staticState.address));
+        return d.coreState.name !== "Genesis Alpha" &&
+               d.coreState.name.toLowerCase().includes(search) &&
+               (d.coreState.register === "registered" ||
+                  (currentAccountProfile && currentAccountProfile.follows.daos.includes(d.coreState.address)) ||
+                  memberOfDAOs.includes(d.coreState.address));
       }));
     }
 

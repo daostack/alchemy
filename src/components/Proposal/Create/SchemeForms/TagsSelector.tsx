@@ -1,12 +1,12 @@
 import * as React from "react";
 import { WithContext as ReactTags, Tag } from "react-tag-input";
 import classNames from "classnames";
-import { Tag as TagEntity } from "@daostack/client";
+import { Tag as TagEntity } from "@daostack/client-experimental";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { getArc } from "arc";
 import { RefObject } from "react";
 import { map } from "rxjs/operators";
-import { ITagState } from "@daostack/client/dist/types/tag";
+import { ITagState } from "@daostack/client-experimental/dist/types/tag";
 import * as css from "./TagsSelector.scss";
 
 interface IExternalProps {
@@ -165,7 +165,7 @@ export default withSubscription({
      */
     return arc.tags({ first: 1000 }, { subscribe: false })
       .pipe(
-        map((tags: Array<TagEntity>) => tags.map(tag => tag.staticState))
+        map((tags: Array<TagEntity>) => tags.map(tag => tag.coreState))
       );
   },
 });

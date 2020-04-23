@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@daostack/client";
+import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@daostack/client-experimental";
 import classNames from "classnames";
 import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
 import { schemeNameAndAddress } from "lib/schemeUtils";
@@ -34,7 +34,6 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
   }
 
   private copySchemeAddressOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void => copyToClipboard(schemeRegistrar.schemeToRegister);
-  private copySchemeParamsHashOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void => copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash);
 
   public render(): RenderOutput {
     const { proposal, detailView, transactionModal } = this.props;
@@ -96,13 +95,6 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                         <td>
                           <span>{schemeRegistrar.schemeToRegister}</span>
                           <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copySchemeAddressOnClick(schemeRegistrar)} />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>Param Hash:</th>
-                        <td>
-                          <span>{schemeRegistrar.schemeToRegisterParamsHash.slice(0, 43)}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copySchemeParamsHashOnClick(schemeRegistrar)} />
                         </td>
                       </tr>
                       <tr>

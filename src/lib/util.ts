@@ -3,7 +3,9 @@ import {
   Address,
   IProposalStage,
   IProposalState,
-  IRewardState} from "@daostack/client";
+  IRewardState,
+  utils
+} from "@daostack/client-experimental";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
@@ -18,7 +20,6 @@ import { getArc } from "../arc";
 
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
-const Web3 = require("web3");
 
 export function getExchangesList() {
   return exchangesList;
@@ -113,7 +114,7 @@ export function toBaseUnit(value: string, decimals: number) {
 
 export function fromWei(amount: BN): number {
   try {
-    return Number(Web3.utils.fromWei(amount.toString(), "ether"));
+    return Number(utils.fromWei(amount));
   } catch (err) {
     // eslint-disable-next-line no-console
     console.warn(`Invalid number value passed to fromWei: "${amount}": ${err.message}`);
@@ -121,12 +122,18 @@ export function fromWei(amount: BN): number {
   }
 }
 
+export function fromWeiToString(amount: BN): string {
+  return fromWei(amount).toLocaleString(
+    undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}
+  )
+}
+
 export function toWei(amount: number): BN {
   /**
    * toFixed to avoid the sci notation that javascript creates for large and small numbers.
    * toWei barfs on it.
    */
-  return new BN(getArc().web3.utils.toWei(amount.toFixed(18).toString(), "ether"));
+  return utils.toWei(amount.toFixed(18).toString());
 }
 
 export type Networks = "main"|"rinkeby"|"ganache"|"xdai"|"kovan";
@@ -260,9 +267,9 @@ export function sleep(milliseconds: number): Promise<void> {
  * return network id, independent of the presence of Arc
  * @param web3Provider
  */
-export async function getNetworkId(web3Provider?: any): Promise<string> {
-  let arc: any;
-  let web3: any;
+export async function getNetworkId(web3Provider?: JsonRpcProvider): Promise<string> {
+  let arc: Arc;
+  let web3: JsonRpcProvider;
 
   try {
     arc = getArc();
@@ -325,7 +332,7 @@ export async function getNetworkName(id?: string): Promise<Networks> {
 export function linkToEtherScan(address: Address) {
   let prefix = "";
   const arc = getArc();
-  switch(arc.web3.currentProvider.__networkId) {
+  switch(arc.web3.network.chainId.toString()) {
     case "4":
       prefix = "rinkeby.";
       break;
@@ -526,6 +533,12 @@ export function inTesting(): boolean {
   return (process.env.NODE_ENV === "development" && navigator.webdriver);
 }
 
-export function isAddress(address: Address, allowNulls = false): boolean {
-  return getArc().web3.utils.isAddress(address) && (allowNulls || (Number(address) > 0));
+export function isAddress(address: Address): boolean {
+  let result = false
+  try {
+    utils.isAddress(address)
+    result = true
+  } catch (e) { }
+
+  return result;
 }

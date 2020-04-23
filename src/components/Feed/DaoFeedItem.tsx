@@ -1,4 +1,4 @@
-import { IDAOState } from "@daostack/client";
+import { IDAOState } from "@daostack/client-experimental";
 import { getArc } from "arc";
 import { generate } from "geopattern";
 import FollowButton from "components/Shared/FollowButton";

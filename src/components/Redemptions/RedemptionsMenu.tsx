@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalState, IRewardState, Proposal, Reward } from "@daostack/client";
+import { Address, IDAOState, IProposalState, IRewardState, Proposal, Reward } from "@daostack/client-experimental";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -111,7 +111,7 @@ const SubscribedRedemptionsMenu = withSubscription({
     const arc = getArc();
     return combineLatest(
       props.redeemableProposals.map(proposalData => (
-        new Proposal(proposalData.id, arc).state()
+        new Proposal(arc, proposalData.id).state()
       ))
     ).pipe(defaultIfEmpty([]));
   },

@@ -19,7 +19,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { DiscussionEmbed } from "disqus-react";
 import { connect } from "react-redux";
 import { IDAOState, IProposalState, ICompetitionSuggestionState, Address, CompetitionVote, IProposalOutcome,
-  CompetitionSuggestion, Proposal, Scheme  } from "@daostack/client";
+  CompetitionSuggestion, Proposal, Scheme  } from "@daostack/client-experimental";
 import gql from "graphql-tag";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as React from "react";
@@ -450,7 +450,7 @@ export default withSubscription({
           map((votes: Array<CompetitionVote>) => {
             const set = new Set<string>();
             votes.forEach(vote => {
-              set.add(vote.staticState.suggestion);
+              set.add(vote.coreState.suggestion);
             });
             return set;
           })

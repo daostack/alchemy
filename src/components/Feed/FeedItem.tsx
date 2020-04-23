@@ -3,7 +3,7 @@ import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
 import { generate } from "geopattern";
-import { fromWei } from "lib/util";
+import { fromWeiToString } from "lib/util";
 
 import moment = require("moment");
 import { Link } from "react-router-dom";
@@ -115,7 +115,7 @@ const FeedItem = (props: IProps) => {
       break;
     case "Stake": {
       const stakeForAgainst = eventData.outcome === "Pass" ? "Pass" : "Fail";
-      title = accountTitle(event, userProfile, `staked on ${stakeForAgainst} with ${fromWei(new BN(eventData.stakeAmount)).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} GEN`);
+      title = accountTitle(event, userProfile, `staked on ${stakeForAgainst} with ${fromWeiToString(new BN(eventData.stakeAmount))} GEN`);
       icon = <img src="/assets/images/Icon/v-small-line.svg" />;
       content = <ProposalFeedItem event={event} />;
       break;

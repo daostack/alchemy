@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalOutcome, IProposalState, Vote } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalState, Vote } from "@daostack/client-experimental";
 import { getArc } from "arc";
 import classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
@@ -25,7 +25,7 @@ interface IVoteRowProps {
 class VoteRow extends React.Component<IVoteRowProps, null> {
   public render(): RenderOutput {
     const {dao, proposal, vote, accountProfile } = this.props;
-    const voteState = vote.staticState;
+    const voteState = vote.coreState;
     return (
       <div className={css.voteRow}>
         <div className={css.voteRowContainer}>
@@ -80,19 +80,19 @@ class VotersModal extends React.Component<IProps, null> {
 
     const currentAccountVote = votes[0];
 
-    const yesVotes = votes.filter((vote) => vote.staticState.outcome === IProposalOutcome.Pass);
-    const noVotes = votes.filter((vote) => vote.staticState.outcome === IProposalOutcome.Fail);
+    const yesVotes = votes.filter((vote) => vote.coreState.outcome === IProposalOutcome.Pass);
+    const noVotes = votes.filter((vote) => vote.coreState.outcome === IProposalOutcome.Fail);
 
     const voteUpClass = classNames({
       [css.voteBreakdown]: true,
       [css.voteUp]: true,
-      [css.votedFor]: currentAccountVote.staticState.outcome === IProposalOutcome.Pass,
+      [css.votedFor]: currentAccountVote.coreState.outcome === IProposalOutcome.Pass,
     });
 
     const voteDownClass = classNames({
       [css.voteBreakdown]: true,
       [css.voteDown]: true,
-      [css.votedAgainst]: currentAccountVote.staticState.outcome === IProposalOutcome.Fail,
+      [css.votedAgainst]: currentAccountVote.coreState.outcome === IProposalOutcome.Fail,
     });
 
     const votersDownClass = classNames({[css.container]: true, [css.notAnyVotes]: true });
@@ -130,14 +130,14 @@ class VotersModal extends React.Component<IProps, null> {
           <div className={css.voters}>
             <div className={css.yesVotes}>
               {yesVotes.length ?
-                <div className={css.container}>{yesVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} accountProfile={profiles[vote.staticState.voter]} />)}</div>
+                <div className={css.container}>{yesVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} accountProfile={profiles[vote.coreState.voter]} />)}</div>
                 :
                 <div className={votersDownClass}><div className={css.notAnyVotes}>No one has voted For</div></div>
               }
             </div>
             <div className={css.noVotes}>
               {noVotes.length ?
-                <div className={css.container}>{noVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} accountProfile={profiles[vote.staticState.voter]} />)}</div>
+                <div className={css.container}>{noVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} accountProfile={profiles[vote.coreState.voter]} />)}</div>
                 :
                 <div className={votersDownClass}><div className={css.notAnyVotes}>No one has voted Against</div></div>
               }

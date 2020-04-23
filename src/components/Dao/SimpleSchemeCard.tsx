@@ -1,4 +1,4 @@
-import { IDAOState, ISchemeState, Scheme } from "@daostack/client";
+import { IDAOState, ISchemeState, Scheme } from "@daostack/client-experimental";
 import { schemeName } from "lib/schemeUtils";
 import * as React from "react";
 import { Link } from "react-router-dom";
@@ -13,10 +13,10 @@ const SimpleSchemeCard = (props: IProps) => {
   const { dao, scheme } = props;
 
   return (
-    <div className={css.wrapper} data-test-id={`schemeCard-${scheme.staticState.name}`}>
+    <div className={css.wrapper} data-test-id={`schemeCard-${scheme.coreState.name}`}>
       <Link className={css.headerLink} to={`/dao/${dao.address}/scheme/${scheme.id}`}>
-        {/* TODO: schemeName should be able to accept an ISchemeStaticState once the client exports that */}
-        <h2>{schemeName(scheme.staticState as ISchemeState, "[Unknown]")}</h2>
+        {/* TODO: schemeName should be able to accept an ISchemecoreState once the client exports that */}
+        <h2>{schemeName(scheme.coreState as ISchemeState, "[Unknown]")}</h2>
       </Link>
     </div>
   );

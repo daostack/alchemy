@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState } from "@daostack/client";
+import { IDAOState, IProposalState } from "@daostack/client-experimental";
 import classNames from "classnames";
 import { linkToEtherScan } from "lib/util";
 import * as React from "react";

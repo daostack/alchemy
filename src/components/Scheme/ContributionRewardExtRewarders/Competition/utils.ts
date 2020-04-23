@@ -1,4 +1,4 @@
-import { ICompetitionProposalState, Competition, CompetitionSuggestion, ICompetitionSuggestionState, CompetitionVote, Address } from "@daostack/client";
+import { ICompetitionProposalState, Competition, CompetitionSuggestion, ICompetitionSuggestionState, CompetitionVote, Address } from "@daostack/client-experimental";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 
@@ -109,7 +109,7 @@ export const createCompetitionSubmission = (proposalId: string, options: ICreate
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Create Submission");
-      const competition = new Competition(proposalId, getArc());
+      const competition = new Competition(getArc(), proposalId);
       await competition.createSuggestion(options).subscribe(...observer);
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -127,7 +127,7 @@ export const voteForSubmission = (options: IVoteSubmissionOptions ): ThunkAction
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Vote Submission");
-      const submission = new CompetitionSuggestion(options.id, getArc());
+      const submission = new CompetitionSuggestion(getArc(), options.id);
 
       await submission.vote().subscribe(...observer);
     } catch (err) {
@@ -146,7 +146,7 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkActi
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Redeem Submission");
-      const submission = new CompetitionSuggestion(options.id, getArc());
+      const submission = new CompetitionSuggestion(getArc(), options.id);
 
       await submission.redeem().subscribe(...observer);
     } catch (err) {
@@ -159,7 +159,7 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkActi
 
 export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestionState>> => {
   // fetchAllData so .state() comes from cache
-  const competition = new Competition(proposalId, getArc());
+  const competition = new Competition(getArc(), proposalId);
   return competition.suggestions({}, { subscribe, fetchAllData: true })
     .pipe(
       mergeMap(submissions => of(submissions).pipe(
@@ -170,12 +170,12 @@ export const getProposalSubmissions = (proposalId: string, subscribe = false): O
 };
 
 export const getSubmission = (id: string, subscribe = false): Observable<ICompetitionSuggestionState> => {
-  const submission = new CompetitionSuggestion(id, getArc());
+  const submission = new CompetitionSuggestion(getArc(), id);
   return submission.state({ subscribe });
 };
 
 export const getCompetitionVotes = (competitionId: string, voterAddress: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
-  const competition = new Competition(competitionId, getArc());
+  const competition = new Competition(getArc(), competitionId);
   /**
    * none of the current uses require the vote state
    */
@@ -185,7 +185,7 @@ export const getCompetitionVotes = (competitionId: string, voterAddress: Address
 
 const getSubmissionVotes = (submissionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
   // submissionId is the actual id, not the count
-  const submission = new CompetitionSuggestion(submissionId, getArc());
+  const submission = new CompetitionSuggestion(getArc(), submissionId);
   return submission.votes(voterAddress ? { where: { voter: voterAddress } } : {}, { subscribe, fetchAllData: true });
 };
 

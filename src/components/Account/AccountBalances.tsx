@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState } from "@daostack/client";
+import { Address, IDAOState, IMemberState } from "@daostack/client-experimental";
 import { baseTokenName, ethErrorHandler, genName } from "lib/util";
 
 import BN = require("bn.js");

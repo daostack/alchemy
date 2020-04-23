@@ -1,7 +1,8 @@
 import { promisify } from "util";
-import { Address, ISchemeState, Token } from "@daostack/client";
+import { Address, ISchemeState, Token } from "@daostack/client-experimental";
 import axios from "axios";
 import { getWeb3Provider, getArcSettings } from "arc";
+import { SigningKey } from "ethers/utils";
 import { soliditySHA3 } from "ethereumjs-abi";
 import { parse } from "query-string";
 import { RouteComponentProps } from "react-router-dom";
@@ -9,7 +10,7 @@ import { NotificationStatus } from "reducers/notifications";
 import { redeemReputationFromToken } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { fromWei } from "lib/util";
+import { fromWei, isAddress } from "lib/util";
 import { schemeName } from "lib/schemeUtils";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -70,12 +71,11 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     const queryValues = parse(this.props.location.search);
     let pk = queryValues["pk"] as string;
     if (pk) {
-      const arc = getArc();
       if (!pk.startsWith("0x")) {
         pk = `0x${pk}`;
       }
       try {
-        redeemerAddress = arc.web3.eth.accounts.privateKeyToAccount(pk).address;
+        redeemerAddress = new SigningKey(pk).address;
       } catch(err) {
         throw Error(`Invalide private key: ${pk}`);
       }
@@ -99,7 +99,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       const arc = getArc();
       const schemeContract = await arc.getContract(schemeAddress);
       const tokenContractAddress = await schemeContract.methods.tokenContract().call();
-      const tokenContract = new Token(tokenContractAddress, arc);
+      const tokenContract = new Token(arc, tokenContractAddress);
       const balance = new BN(await tokenContract.contract().methods.balanceOf(redeemerAddress).call());
       const alreadyRedeemed = await schemeContract.methods.redeems(redeemerAddress).call();
       let redemptionAmount;
@@ -271,8 +271,6 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     const { daoAvatarAddress, schemeState, currentAccountAddress } = this.props;
     const redeemerAddress = this.state.redeemerAddress;
 
-    const arc = getArc();
-
     return (
       <div className={schemeCss.schemeContainer}>
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeState.id}`}>{schemeName(schemeState, schemeState.address)}</BreadcrumbsItem>
@@ -303,7 +301,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
 
               require("accountAddress");
 
-              if (!arc.web3.utils.isAddress(values.accountAddress)) {
+              if (!isAddress(values.accountAddress)) {
                 errors.otherScheme = "Invalid address";
               }
 
