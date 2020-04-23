@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/daostack/alchemy.svg?branch=dev)](https://travis-ci.org/daostack/alchemy)
 
-**Alchemy is a budgeting and resource-allocation tool for decentralized organizations.** It is a dApp that enables thousands of individuals to coordinate towards a common purpose, by proposing and deciding on how to spend funds in alignment with their goals and values.
+**Alchemy is a budgeting and resource-allocation tool for decentralized organizations.** It is an interface that enables thousands of individuals to coordinate towards a common purpose, by proposing and deciding on how to spend funds in alignment with their goals and values.
 
 Some example use cases for Alchemy include decentralized venture funds, charitable funds, innovation funds, a budget proposal system (like Dash but more sophisticated), or prioritizing features for an open-source project.
 
