@@ -130,8 +130,8 @@ class VoteButtons extends React.Component<IProps, IState> {
       [css.disabled]: votingDisabled,
     });
     const wrapperClass = classNames({
-      [css.altStyle] : altStyle,
-      [css.contextMenu] : contextMenu,
+      [css.altStyle]: altStyle,
+      [css.contextMenu]: contextMenu,
       [css.wrapper]: true,
       [css.hasVoted]: ((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)),
       [css.votedFor]: currentVote === IProposalOutcome.Pass,

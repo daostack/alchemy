@@ -118,7 +118,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
   private stakeOnChange = (e: any) => this.setState({stakeAmount: Number(e.target.value)});
   private ref = (input: any) => { this.stakeInput = input; };
   private exchangeHtml = (item: any) => {
-    return(
+    return (
       <li key={item.name}>
         <a href={item.url} target="_blank" rel="noopener noreferrer" className="buyGenLink">
           <b><img src={item.logo}/></b>

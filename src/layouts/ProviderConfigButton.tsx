@@ -4,7 +4,7 @@ import Tooltip from "rc-tooltip";
 
 interface IExternalProps {
   providerName: string;
-  provider: any; 
+  provider: any;
 }
 
 export default class ProviderConfigButton extends React.Component<IExternalProps, null> {

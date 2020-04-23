@@ -325,7 +325,7 @@ export async function getNetworkName(id?: string): Promise<Networks> {
 export function linkToEtherScan(address: Address) {
   let prefix = "";
   const arc = getArc();
-  switch(arc.web3.currentProvider.__networkId) {
+  switch (arc.web3.currentProvider.__networkId) {
     case "4":
       prefix = "rinkeby.";
       break;
@@ -514,7 +514,7 @@ export function ensureHttps(url: string) {
   if (url) {
     const pattern = /^((http|https):\/\/)/;
 
-    if(!pattern.test(url)) {
+    if (!pattern.test(url)) {
       url = "https://" + url;
     }
   }

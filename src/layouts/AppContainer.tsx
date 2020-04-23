@@ -18,7 +18,7 @@ import { parse } from "query-string";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
-import { matchPath,Link, Route, RouteComponentProps, Switch } from "react-router-dom";
+import { matchPath, Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { ModalContainer } from "react-router-modal";
 import { History } from "history";
 import classNames from "classnames";
@@ -210,7 +210,8 @@ class AppContainer extends React.Component<IProps, IState> {
                 <Route path="/profile/:accountAddress" component={AccountProfilePage} />
                 <Route path="/redemptions" component={RedemptionsPage} />
                 <Route path="/daos" component={DaosPage} />
-                <Route path="/" component={FeedPage} />
+                <Route path="/feed" component={FeedPage} />
+                <Route path="/" component={DaosPage} />
               </Switch>
             </div>
 

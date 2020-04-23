@@ -33,16 +33,7 @@ const config = merge(baseConfig, {
     minimize: true,
     minimizer: [
       new OptimizeCSSAssetsPlugin({}),
-      new TerserPlugin({
-        terserOptions: {
-          /**
-           * We are adding this because there's a problem with graphql module when it's being minified + uglified
-           * and the NODE_ENV is set to something different than production
-           * More info: https://github.com/graphql/graphql-js/issues/1182
-           */
-          keep_fnames: process.env.NODE_ENV === "production" ? false : /^GraphQL/
-        }
-      })
+      new TerserPlugin()
     ],
     splitChunks: {
       chunks: 'all',
@@ -102,6 +93,7 @@ plugins: [
     new webpack.EnvironmentPlugin({
       NETWORK: "main",
       NODE_ENV: "production",
+      SHOW_ALL_DAOS: "false",
       BASE_URL: "https://alchemy.daostack.io",
       DISQUS_SITE: 'daostack-alchemy',
       ARC_GRAPHQLHTTPPROVIDER: "",
@@ -113,6 +105,7 @@ plugins: [
       ARC_IPFSPROVIDER_PORT : "",
       ARC_IPFSPROVIDER_PROTOCOL : "",
       ARC_IPFSPROVIDER_API_PATH : "",
+      INFURA_ID : "",
       MIXPANEL_TOKEN: "",
     }),
 

@@ -91,6 +91,7 @@ module.exports = merge(baseConfig, {
     new webpack.EnvironmentPlugin({
       NETWORK: "ganache",
       NODE_ENV: "development",
+      SHOW_ALL_DAOS: "true",
       BASE_URL: "http://127.0.0.1:3000",
       DISQUS_SITE: 'daostack-alchemy',
       ARC_GRAPHQLHTTPPROVIDER: "",
@@ -102,6 +103,7 @@ module.exports = merge(baseConfig, {
       ARC_IPFSPROVIDER_PORT : "",
       ARC_IPFSPROVIDER_PROTOCOL : "",
       ARC_IPFSPROVIDER_API_PATH : "",
+      INFURA_ID : "",
       MIXPANEL_TOKEN: ""
     }),
   ]
