@@ -67,11 +67,13 @@ class DaosPage extends React.Component<IProps, IState> {
     // If search string greater than 2 search on server for any other DAOs not yet loaded that match this search
     if (searchString.length > 2) {
       const arc = getArc();
+      const firstChar = searchString.charAt(0);
       const foundDaos = await combineLatest(
         // eslint-disable-next-line @typescript-eslint/camelcase
         arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: searchString } }, { fetchAllData: true }),
+        // If string is all lower case also search for string with first character uppercased so "gen" matches "Gen" too
         // eslint-disable-next-line @typescript-eslint/camelcase
-        arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: searchString.charAt(0).toUpperCase() + searchString.slice(1) } }, { fetchAllData: true }),
+        firstChar.toLowerCase() === firstChar ? arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: firstChar.toUpperCase() + searchString.slice(1) } }, { fetchAllData: true }) : of([]),
         (data1, data2) => data1.concat(data2),
       ).pipe(first()).toPromise();
       this.setState({ searchDaos: foundDaos });
