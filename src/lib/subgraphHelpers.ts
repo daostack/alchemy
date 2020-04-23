@@ -36,6 +36,7 @@ async function monitorGraphNodeSubgraph() {
         }
       }
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error("Failed in monitoring graph node", e);
       return { id: null, failed: true, synced: false, latestEthereumBlockNumber: 0 };
     }
@@ -56,6 +57,7 @@ async function monitorGraphNodeSubgraph() {
       return { id, failed, synced, latestEthereumBlockNumber };
     }
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error("Failed in monitoring graph node", e);
     return { id: null, failed: true, synced: false, latestEthereumBlockNumber: 0 };
   }
@@ -74,16 +76,21 @@ export function pollSubgraphUpdating(): Observable<boolean> {
         running = true;
         try {
           const status = await monitorGraphNodeSubgraph();
-          const curBlock = (await getCurrentBlock()).number;
 
-          // Subgraph not updating if returns an error, is not synced fully, or latest block is more than 2 blocks behind web3
-          if (status.failed || !status.synced || (curBlock - Number(status.latestEthereumBlockNumber) > 2)) {
-            observer.next(false);
-          } else {
-            observer.next(true);
-          }
+          // Check if the subgraph is up to date with latest block
+          // This only works if user is connected to web3, that's why we need the try
+          let atCurrentBlock = true;
+          try {
+            const curBlock = (await getCurrentBlock()).number;
+            atCurrentBlock = curBlock - Number(status.latestEthereumBlockNumber) <= 2;
+          // eslint-disable-next-line no-empty
+          } catch (e) { }
+
+          // Return false if subgraph returned an error, or is not synced fully, or latest block is more than 2 blocks behind web3
+          observer.next(!status.failed && status.synced && atCurrentBlock);
         } catch (ex) {
-          console.error(ex ? ex.message : "unknown error");
+          // eslint-disable-next-line no-console
+          console.error(ex ? "Error polling for subgraph " + ex.message : "Unknown error polling for subgraph");
           observer.next(false);
         } finally {
           running = false;
