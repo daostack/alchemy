@@ -64,7 +64,7 @@ describe("Redemptions page", () => {
 
   it("should redeem a reward", async () => {
     await hideCookieAcceptWindow();
-    
+
     await browser.url("http://127.0.0.1:3000/redemptions");
     const connectButton = await $("*[data-test-id=\"connectButton\"]");
     await connectButton.waitForDisplayed();

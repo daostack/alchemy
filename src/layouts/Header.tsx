@@ -44,7 +44,7 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
   });
   const queryValues = parse(ownProps.location.search);
 
-  // TODO: this is a temporary hack to send less requests during the ethDenver conference: 
+  // TODO: this is a temporary hack to send less requests during the ethDenver conference:
   // we hide the demptionsbutton when the URL contains "crx". Should probably be disabled at later date..
   let showRedemptionsButton;
   if (ETHDENVER_OPTIMIZATION) {
@@ -179,7 +179,7 @@ class Header extends React.Component<IProps, null> {
     const web3Provider = getWeb3Provider();
     const trainingTooltipsOn = this.getTrainingTooltipsEnabled();
 
-    return(
+    return (
       <div className={css.headerContainer}>
         <nav className={css.header}>
           <div className={css.menuToggle} onClick={this.handleToggleMenu}>

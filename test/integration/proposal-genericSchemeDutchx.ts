@@ -54,7 +54,7 @@ describe("Proposals", () => {
     await titleElement.waitForExist();
 
   });
-  
+
   it("Export a DutchX Generic Scheme proposal", async () => {
     const url = `/dao/${daoAddress}/`;
     await browser.url(url);

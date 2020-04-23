@@ -43,8 +43,8 @@ export class CompetitionStatus {
   /**
    * in voting period, but not implying there are any submissions
    */
-  public get inVotingPeriod() { 
-    return this.now.isSameOrAfter(this.competition.votingStartTime) && (this.status !== CompetitionStatusEnum.Ended); 
+  public get inVotingPeriod() {
+    return this.now.isSameOrAfter(this.competition.votingStartTime) && (this.status !== CompetitionStatusEnum.Ended);
   }
   /**
    * in voting period and there are submissions
@@ -54,10 +54,10 @@ export class CompetitionStatus {
    * Voting can no longer occur. Implies neither thatn any voting has occurred,
    * nor the actual current stage (entire competition may or may not be over).
    */
-  public get votingIsOver() { 
-    return ((this.status === CompetitionStatusEnum.Ended) || 
+  public get votingIsOver() {
+    return ((this.status === CompetitionStatusEnum.Ended) ||
             (this.status === CompetitionStatusEnum.EndedNoWinners) ||
-            (this.status === CompetitionStatusEnum.EndedNoSubmissions)); 
+            (this.status === CompetitionStatusEnum.EndedNoSubmissions));
   }
   /**
    * competition is over, with or without submissions or winners

@@ -6,7 +6,7 @@ const notifications = (state: IRootState): INotificationsState => state.notifica
 
 export type IStateChecker = (state: IRootState) => INotificationsState;
 
-export const sortedNotifications = (): IStateChecker => 
+export const sortedNotifications = (): IStateChecker =>
   createSelector(
     [notifications],
     (notifications: INotificationsState): INotificationsState => {
