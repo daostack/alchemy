@@ -43,8 +43,23 @@
     }
   }
 
-  .editHomePagePopup {
-    display: none;
+  .modalHeader {
+    display: flex;
+
+    .title {
+      display: inline-block;
+    }
+
+    .closeButton {
+      flex-grow: 2;
+      width: 60%;
+      img {
+        position: relative;
+        top: 4px;
+        width: 13px;
+        height: 13px;
+      }
+    }
   }
 
   .welcome,
@@ -76,18 +91,4 @@
       }
     }
   }
-
-  // .infoContainer {
-  //   .members,
-  //   .proposals {
-  //     .count {
-  //       display: inline-block;
-  //       margin-right: 6px;
-  //     }
-
-  //     .body {
-  //       display: inline-block;
-  //     }
-  //   }
-  // }
 }

@@ -6,20 +6,36 @@ import Analytics from "lib/analytics";
 import { Link } from "react-router-dom";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { DiscussionEmbed } from "disqus-react";
+import ModalPopup from "components/Shared/ModalPopup";
 
 type IExternalProps = {
   daoState: IDAOState;
 };
 
-// interface IHasNewPosts {
-//   hasNewPosts: boolean;
-// }
+interface IStateProps {
+  showingEditPagePopup: boolean;
+}
 
 type IProps = IExternalProps;
 
-export default class DaoLandingPage extends React.Component<IProps, null> {
+export default class DaoLandingPage extends React.Component<IProps, IStateProps> {
+
+  private disqusConfig: any;
+
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      showingEditPagePopup: false,
+    };
+  }
 
   public componentDidMount() {
+    this.disqusConfig = {
+      url: process.env.BASE_URL + "/dao/" + this.props.daoState.address + "/discussion",
+      identifier: this.props.daoState.address,
+      title: "Discuss " + this.props.daoState.name,
+    };
+
     Analytics.track("Page View", {
       "Page Name": Page.DAOLanding,
       "DAO Address": this.props.daoState.id,
@@ -27,18 +43,16 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
     });
   }
 
-  private editLandingPageContent = () => {
-    alert("Stay Tuned!");
+  private showLandingPageContent = () => {
+    this.setState({ showingEditPagePopup: true });
+  }
+
+  private hideLandingPageContent = () => {
+    this.setState({ showingEditPagePopup: false });
   }
 
   public render() {
     const daoState = this.props.daoState;
-
-    const disqusConfig = {
-      url: process.env.BASE_URL + "/dao/" + daoState.address + "/discussion",
-      identifier: daoState.address,
-      title: "Discuss " + daoState.name,
-    };
 
     return (
       <div className={css.landingPage}>
@@ -50,7 +64,7 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
             <div className={css.row}>
               <div className={css.headerText}>{daoState.name}</div>
               <div className={css.editButton}>
-                <button onClick={this.editLandingPageContent}>Edit Home Page</button>
+                <button onClick={this.showLandingPageContent}>Edit Home Page</button>
               </div>
             </div>
           </div>
@@ -73,45 +87,28 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
               Discuss {daoState.name}
           </div>
 
-          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig} />
+          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
         </div>
 
-        <div className={css.editHomePagePopup}></div>
+        { this.state.showingEditPagePopup ?
+          <ModalPopup
+            closeHandler={this.hideLandingPageContent}
+            width={500}
+            header={
+              <div className={css.modalHeader}>
+                <div className={css.title}>Edit Home Page</div>
+                <div className={css.closeButton} onClick={this.hideLandingPageContent}><img src={" /assets/images/Icon/close-grey.svg"} />
+                </div>
+              </div>
+            }
+            body={<div>
+              <div>Editing the content on this DAO’s home page will soon be possible via proposal. Stay tuned!</div>
+              <div>For now, if you need a change made to a DAO’s home page content, please contact us at <a href="https://support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a></div>
+            </div>}
+          />
+          : ""
+        }
       </div>
-
     );
   }
 }
-
-// export default withSubscription({
-//   wrappedComponent: DaoLandingPage,
-//   checkForUpdate: [],
-//   loadingComponent: <div></div>,
-//   createObservable: (props: IProps) => {
-//     const daoAddress = props.daoState.address;
-//     if (daoAddress) {
-//       const lastAccessDate = localStorage.getItem(`daoWallEntryDate_${daoAddress}`) || "0";
-
-//       const promise = axios.get(`https://disqus.com/api/3.0/threads/listPosts.json?api_key=KVISHbDLtTycaGw5eoR8aQpBYN8bcVixONCXifYcih5CXanTLq0PpLh2cGPBkM4v&forum=${process.env.DISQUS_SITE}&thread:ident=${daoAddress}&since=${lastAccessDate}&limit=1&order=asc`)
-//         .then((response: AxiosResponse<any>): IHasNewPosts => {
-//           if (response.status) {
-//             const posts = response.data.response;
-//             return { hasNewPosts: posts && posts.length };
-//           } else {
-//             // eslint-disable-next-line no-console
-//             console.error(`request for disqus posts failed: ${response.statusText}`);
-//             return { hasNewPosts: false };
-//           }
-//         })
-//         .catch((error: Error): IHasNewPosts => {
-//           // eslint-disable-next-line no-console
-//           console.error(`request for disqus posts failed: ${error.message}`);
-//           return { hasNewPosts: false };
-//         });
-
-//       return from(promise);
-//     } else {
-//       return of(null);
-//     }
-//   },
-// });
