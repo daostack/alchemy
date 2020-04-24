@@ -1,18 +1,20 @@
 import { NotificationStatus } from "reducers/notifications";
 import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
-import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
+import { settings, Settings, USE_CONTRACTINFOS_CACHE } from "./settings";
 import { IProviderInfo } from "web3modal/lib/helpers/types";
 import { RetryLink } from "apollo-link-retry";
 import { Address, Arc } from "@daostack/client";
 import Web3Modal, { getProviderInfo } from "web3modal";
-import { Observable } from "rxjs";
-import { JsonRpcProvider, Web3Provider as EthersWeb3Provider } from "ethers/providers";
+import { Observable, } from "rxjs";
+import { first } from "rxjs/operators";
+import { JsonRpcProvider, Web3Provider as EthersWeb3JsProvider, Web3Provider } from "ethers/providers";
 
 /**
  * This is only set after the user has selected a provider and enabled an account.
  * It is like window.ethereum, but has not necessarily been injected as such.
  */
-let selectedProvider: JsonRpcProvider | undefined;
+let selectedProvider: EthersWeb3JsProvider | undefined;
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 let web3Modal: Web3Modal;
@@ -21,31 +23,21 @@ let initializedAccount: Address;
 /**
  * return the default Arc configuration given the execution environment
  */
-export function getArcSettings(): any {
+export function getArcSettings(): Settings {
   const network = targetedNetwork();
   const arcSettings = settings[network];
   return arcSettings;
 }
 
 /**
- * Return the web3 in current use by Arc.
- */
-function getWeb3(): JsonRpcProvider {
-  const arc = (window as any).arc as Arc;
-  const web3 = arc ? arc.web3 : null;
-  return web3;
-}
-
-/**
  * Return the default account in current use by Arc.
  */
-async function _getCurrentAccountFromProvider(web3?: JsonRpcProvider): Promise<string> {
-  web3 = web3 || getWeb3();
-  if (!web3) {
+async function _getCurrentAccountFromProvider(arc?: Arc): Promise<string> {
+  arc = arc ? arc : (window as any).arc as Arc;
+  if (!arc) {
     return null;
   }
-  const accounts = await web3.eth.getAccounts();
-  return accounts[0] ? accounts[0].toLowerCase() : null;
+  return await arc.getAccount().pipe(first()).toPromise();
 }
 
 /**
@@ -63,37 +55,36 @@ export function getArc(): Arc {
 /**
  * Return currently-selected and fully-enabled web3Provider (an account can be presumed to exist).
  */
-export function getWeb3Provider(): JsonRpcProvider | undefined {
+export function getWeb3Provider(): EthersWeb3JsProvider | undefined {
   return selectedProvider;
 }
 
-async function getProviderNetworkName(provider?: JsonRpcProvider): Promise<string> {
+async function getProviderNetworkName(provider?: EthersWeb3JsProvider): Promise<string> {
   provider = provider || selectedProvider;
   if (!provider) { return null; }
   const networkId = await getNetworkId(provider);
   return getNetworkName(networkId);
 }
 
-
 /**
  * Returns a IWeb3ProviderInfo when a provider has been selected and is fully available.
  * Does not know about the default read-only providers.
  */
-export function getWeb3ProviderInfo(provider?: JsonRpcProvider): IWeb3ProviderInfo {
+export function getWeb3ProviderInfo(provider?: EthersWeb3JsProvider): IWeb3ProviderInfo {
   provider = provider || selectedProvider;
-  return provider ? getProviderInfo(provider) : null;
+  return provider ? getProviderInfo(provider._web3Provider) : null;
 }
 
-export function providerHasConfigUi(provider?: JsonRpcProvider): boolean | undefined {
+export function providerHasConfigUi(provider?: EthersWeb3JsProvider): boolean | undefined {
   provider = provider || selectedProvider;
-  return provider && provider.isTorus;
+  return provider && (provider._web3Provider as any).isTorus;
 }
 
 /**
  * initialize Arc.  Does not throw exceptions, returns boolean success.
  * @param provider Optional web3Provider
  */
-export async function initializeArc(provider?: JsonRpcProvider): Promise<boolean> {
+export async function initializeArc(provider?: string | EthersWeb3JsProvider): Promise<boolean> {
 
   let success = false;
   let arc: Arc;
@@ -102,9 +93,7 @@ export async function initializeArc(provider?: JsonRpcProvider): Promise<boolean
 
     const arcSettings = getArcSettings();
 
-    if (provider) {
-      arcSettings.web3Provider = provider;
-    } else {
+    if (!provider) {
       provider = arcSettings.web3Provider;
     }
 
@@ -139,7 +128,7 @@ export async function initializeArc(provider?: JsonRpcProvider): Promise<boolean
       if (typeof provider === "string") {
         arc.web3 = new JsonRpcProvider(provider);
       } else {
-        arc.web3 = new EthersWeb3Provider(provider);
+        arc.web3 = new EthersWeb3JsProvider(provider);
       }
     } else {
       arc = new Arc(arcSettings);
@@ -160,7 +149,7 @@ export async function initializeArc(provider?: JsonRpcProvider): Promise<boolean
     success = !!contractInfos;
 
     if (success) {
-      initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
+      initializedAccount = await _getCurrentAccountFromProvider(arc);
 
       if (!initializedAccount) {
       // then something went wrong
@@ -172,16 +161,14 @@ export async function initializeArc(provider?: JsonRpcProvider): Promise<boolean
     }
 
     if (success) {
-      provider = arc.web3.currentProvider; // won't be a string, but the actual provider
-      // save for future reference
-      // eslint-disable-next-line require-atomic-updates
-      provider.__networkId = await getNetworkId(provider);
       if ((window as any).ethereum) {
         // if this is metamask this should prevent a browser refresh when the network changes
         (window as any).ethereum.autoRefreshOnNetworkChange = false;
       }
+      const network = await arc.web3.getNetwork()
+      const networkName = await getNetworkName(network.chainId.toString())
       // eslint-disable-next-line no-console
-      console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
+      console.log(`Connected Arc to ${networkName}${readonly ? " (readonly)" : ""} `);
     }
   } catch (reason) {
     // eslint-disable-next-line no-console
@@ -192,7 +179,6 @@ export async function initializeArc(provider?: JsonRpcProvider): Promise<boolean
 
   return success;
 }
-
 
 /**
  * Checks if the web3 provider is set to the required network.
@@ -285,7 +271,7 @@ async function enableWeb3Provider(): Promise<void> {
     return;
   }
 
-  let provider: JsonRpcProvider;
+  let provider: Web3Provider;
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
   let _web3Modal: Web3ConnectModal;

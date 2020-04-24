@@ -79,7 +79,7 @@
   "dependencies": {
     "3box": "1.17.1",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
-    "@daostack/client": "2.0.0-experimental.1",
+    "@daostack/client": "2.0.0-experimental.2",
     "@dorgtech/daocreator-ui-experimental": "1.1.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
@@ -145,13 +145,13 @@
     "rxjs": "6.4.0",
     "ts-node": "^5.0.1",
     "utility-types": "^3.7.0",
+    "web3": "1.2.4",
     "web3modal": "^1.1.0",
     "webpack": "^4.36.1",
     "ws": "^7.1.0"
   },
   "devDependencies": {
     "@babel/plugin-syntax-dynamic-import": "^7.7.4",
-    "@daostack/migration": "0.0.1-rc.41-v4",
     "@storybook/addon-info": "^5.0.10",
     "@storybook/react": "^5.0.10",
     "@types/chai": "^4.1.7",
@@ -185,6 +185,7 @@
     "@types/react-toggle": "^4.0.2",
     "@types/react-transition-group": "^2.0.15",
     "@types/storybook__react": "^4.0.1",
+    "@types/web3": "1.0.20",
     "@types/webpack-env": "^1.13.0",
     "@typescript-eslint/eslint-plugin": "^2.3.0",
     "@typescript-eslint/parser": "^2.3.0",

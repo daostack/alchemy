@@ -5,6 +5,8 @@ export const USE_CONTRACTINFOS_CACHE = false;
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Torus from "@toruslabs/torus-embed";
+import { IArcOptions } from "@daostack/client";
+import { RetryLink } from "apollo-link-retry";
 
 const Portis = require("@portis/web3");
 const Fortmatic = require("fortmatic");
@@ -163,13 +165,22 @@ function getWeb3ConnectProviderOptions(network: string) {
   }
 }
 
-export const settings = {
+export type Settings = IArcOptions & {
+  txSenderServiceUrl: string,
+  web3ConnectProviderOptions: any,
+  retryLink?: RetryLink
+}
+
+export type NetworkSettings = {
+  [network: string]: Settings
+}
+
+export const settings: NetworkSettings = {
   ganache: {
     graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
     graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
     graphqlSubscribeToQueries: false,
     web3Provider: "ws://127.0.0.1:8545",
-    web3ProviderRead: "ws://127.0.0.1:8545",
     ipfsProvider: "http://127.0.0.1:5001/api/v0",
     txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
     web3ConnectProviderOptions: {},
@@ -179,7 +190,6 @@ export const settings = {
     graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_rinkeby",
     graphqlSubscribeToQueries: false,
     web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
-    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("rinkeby"),
@@ -189,7 +199,6 @@ export const settings = {
     graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_kovan",
     graphqlSubscribeToQueries: false,
     web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://kovan.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
-    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://kovan.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("kovan"),
@@ -199,7 +208,6 @@ export const settings = {
     graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1_xdai",
     graphqlSubscribeToQueries: false,
     web3Provider:  process.env.ARC_WEB3PROVIDER || "https://poa.api.nodesmith.io/v1/dai/jsonrpc?apiKey=128059b9320a462699aef283a7ae2546",
-    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://poa.api.nodesmith.io/v1/dai/jsonrpc/ws?apiKey=128059b9320a462699aef283a7ae2546",
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     txSenderServiceUrl: "",
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("xdai"),
@@ -209,11 +217,9 @@ export const settings = {
     graphqlWsProvider: process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_1",
     graphqlSubscribeToQueries: false,
     web3Provider: process.env.ARC_WEB3PROVIDER || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
-    web3ProviderRead: process.env.ARC_WEB3PROVIDERREAD || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     // txSenderServiceUrl: "https://tx-sender-service-mainnet.herokuapp.com/send-tx",
     txSenderServiceUrl: "",
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("mainnet"),
   },
 };
-

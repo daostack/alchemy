@@ -14,8 +14,6 @@ async function fetchContracts() {
   console.log("Fetching contract data from subgraph for network", network);
 
   const arcSettings = settings[network];
-  const provider = arcSettings.web3Provider;
-
   const arc = new Arc(arcSettings);
 
   // get contract information from the subgraph

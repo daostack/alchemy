@@ -163,12 +163,11 @@ class ReputationFromToken extends React.Component<IProps, IState> {
 
       // Create promise-based version of send
       const web3Provider = await getWeb3Provider();
-      const send = promisify(web3Provider.sendAsync);
       const params = [messageToSign, this.props.currentAccountAddress];
       let result;
 
       try {
-        result = await send({ method, params, from: this.props.currentAccountAddress });
+        result = await web3Provider.send(method, params);
       } catch(err) {
         this.props.showNotification(NotificationStatus.Failure, "The redemption was canceled");
         setSubmitting(false);

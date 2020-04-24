@@ -1,11 +1,12 @@
-import { promisify } from "util";
 import {
+  Arc,
   Address,
   IProposalStage,
   IProposalState,
   IRewardState,
   utils
 } from "@daostack/client";
+import { JsonRpcProvider, Provider } from "ethers/providers";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
@@ -16,7 +17,9 @@ import BN = require("bn.js");
 import "moment";
 import * as moment from "moment-timezone";
 import { getArc } from "../arc";
+import { Network } from "ethers/utils";
 
+const Web3 = require("web3");
 
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
@@ -267,9 +270,8 @@ export function sleep(milliseconds: number): Promise<void> {
  * return network id, independent of the presence of Arc
  * @param web3Provider
  */
-export async function getNetworkId(web3Provider?: JsonRpcProvider): Promise<string> {
+export async function getNetworkId(web3Provider?: Provider): Promise<string> {
   let arc: Arc;
-  let web3: JsonRpcProvider;
 
   try {
     arc = getArc();
@@ -277,23 +279,19 @@ export async function getNetworkId(web3Provider?: JsonRpcProvider): Promise<stri
     // Do nothing
   }
 
-  /**
-   * make sure that if the web3Provider is passed in, then the web3 we use matches it
-   */
-  if (arc && arc.web3 && (!web3Provider || (arc.web3.currentProvider === web3Provider))) {
-    web3 = arc.web3;
-  } else if ((window as any).web3 &&
-    (!web3Provider || ((window as any).web3.currentProvider === web3Provider))) {
-    web3 = (window as any).web3;
-  } else if (web3Provider) {
-    web3 = new Web3(web3Provider);
-  }
+  let network: Network;
 
-  if (!web3) {
+  if (arc) {
+    network = await arc.web3.getNetwork();
+  } else if (web3Provider) {
+    network = await web3Provider.getNetwork();
+  } else if ((window as any).web3) {
+    return (window as any).web3.
+  } else {
     throw new Error("getNetworkId: unable to find web3");
   }
 
-  return (await (web3.eth.net ? web3.eth.net.getId() : promisify(web3.version.getNetwork)())).toString();
+  return network.chainId.toString();
 }
 
 export async function getNetworkName(id?: string): Promise<Networks> {
