@@ -1,9 +1,7 @@
 import { IDAOState } from "@daostack/client";
 import { DiscussionEmbed } from "disqus-react";
 import * as React from "react";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import * as Sticky from "react-stickynode";
-import * as css from "./Dao.scss";
+import * as css from "./DaoLandingPage.scss";
 
 import moment = require("moment");
 
@@ -27,18 +25,8 @@ export default class DaoDiscussionPage extends React.Component<IProps, null> {
     };
 
     return (
-      <div>
-        <BreadcrumbsItem to={"/dao/" + dao.address + "/discussion"}>Discussion</BreadcrumbsItem>
-
-        <Sticky enabled top={50} innerZ={10000}>
-          <div className={css.daoHistoryHeader}>
-            Discuss {dao.name}
-          </div>
-        </Sticky>
-
-        <div>
-          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig}/>
-        </div>
+      <div className={css.discussionContainer}>
+        <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig}/>
       </div>
     );
   }

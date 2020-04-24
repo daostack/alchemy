@@ -18,12 +18,11 @@ import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import DetailsPageRouter from "components/Scheme/ContributionRewardExtRewarders/DetailsPageRouter";
 import { combineLatest, Subscription } from "rxjs";
-import DaoDiscussionPage from "./DaoDiscussionPage";
 import DaoSchemesPage from "./DaoSchemesPage";
 import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
-import DaoLandingPage from "components/Daos/DaoLandingPage";
+import DaoLandingPage from "components/Dao/DaoLandingPage";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -65,7 +64,6 @@ class DaoContainer extends React.Component<IProps, null> {
 
   private daoHistoryRoute = (routeProps: any) => <DaoHistoryPage {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
   private daoMembersRoute = (routeProps: any) => <DaoMembersPage {...routeProps} daoState={this.props.data[0]} />;
-  private daoDiscussionRoute = (routeProps: any) => <DaoDiscussionPage {...routeProps} dao={this.props.data[0]} />;
   private daoProposalRoute = (routeProps: any) =>
     <ProposalDetailsPage {...routeProps}
       currentAccountAddress={this.props.currentAccountAddress}
@@ -81,7 +79,7 @@ class DaoContainer extends React.Component<IProps, null> {
 
   private schemeRoute = (routeProps: any) => <SchemeContainer {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
   private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} daoState={this.props.data[0]} />;
-  private daoLandingRoute = (routeProps: any) => <DaoLandingPage {...routeProps} daoState={this.props.data[0]} />;
+  private daoLandingRoute = (_routeProps: any) => <DaoLandingPage daoState={this.props.data[0]} />;
   private modalRoute = (route: any) => `/dao/${route.params.daoAvatarAddress}/scheme/${route.params.schemeId}/`;
 
   public render(): RenderOutput {
@@ -114,8 +112,6 @@ class DaoContainer extends React.Component<IProps, null> {
               render={this.daoHistoryRoute} />
             <Route exact path="/dao/:daoAvatarAddress/members"
               render={this.daoMembersRoute} />
-            <Route exact path="/dao/:daoAvatarAddress/discussion"
-              render={this.daoDiscussionRoute} />
 
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={this.daoProposalRoute}

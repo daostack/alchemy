@@ -1,0 +1,74 @@
+.landingPage {
+  .infoContainer {
+    margin-bottom: 30px;
+  }
+
+  .infoContainer .titleContainer,
+  .wallContainer .headerText {
+    border-bottom: 1px solid rgba(45, 109, 181, 0.2);
+    margin-bottom: 30px;
+    padding-bottom: 5px;
+  }
+
+  .headerText {
+    font-size: 28px;
+    font-weight: bold;
+    color: rgba(104, 155, 214, 1);
+  }
+
+  .infoContainer .titleContainer .row {
+    display: flex;
+    align-items: center;
+
+    .headerText {
+      flex-grow: 2;
+    }
+    .followButton {
+      padding-right: 8px;
+    }
+  }
+
+  .welcome,
+  //.infoContainer,
+  .visitProposals {
+    margin-bottom: 16px;
+  }
+
+  .wallContainer {
+    padding-bottom: 5px;
+
+    .discussionContainer {
+      overflow-y: auto;
+    }
+
+    .hasNewDiscussions {
+      display: none;
+
+      &.red {
+        height: 8px;
+        width: 8px;
+        margin-left: 0;
+        margin-right: 5px;
+        background-color: #f65050;
+        border-radius: 50%;
+        bottom: 5px;
+        position: relative;
+        display: inline-block;
+      }
+    }
+  }
+
+  // .infoContainer {
+  //   .members,
+  //   .proposals {
+  //     .count {
+  //       display: inline-block;
+  //       margin-right: 6px;
+  //     }
+
+  //     .body {
+  //       display: inline-block;
+  //     }
+  //   }
+  // }
+}
