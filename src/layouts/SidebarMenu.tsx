@@ -119,7 +119,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
           <span className={css.daoNavHeading}><b>DAO Menu</b></span>
           <ul>
             <li>
-              <Link to={`/dao/${dao.address}/schemes`} onClick={this.handleCloseMenu}>
+              <Link to={`/dao/${dao.address}/schemes`} onClick={this.handleCloseMenu} data-test-id="daoschemes">
                 <span className={css.menuDot} />
                 <span className={
                   classNames({

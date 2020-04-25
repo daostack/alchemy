@@ -1,6 +1,6 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
-import { getArc } from "./utils";
+import { getArc, gotoDaoSchemes } from "./utils";
 
 describe("Proposals ENS Resolver", () => {
   let daoAddress: string;
@@ -11,12 +11,10 @@ describe("Proposals ENS Resolver", () => {
     const daos = await arc.daos({ where: { name: "Nectar DAO"}}).pipe(first()).toPromise();
     const dao = daos[0];
     daoAddress = dao.id;
-
   });
 
   it("Create a Generic Scheme ENS Public Resolver proposal and check that the data is submitted correctly", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+    await gotoDaoSchemes(daoAddress);
 
     const ensTitle = await $("h2=EnsPublicResolver");
     await ensTitle.waitForExist();
