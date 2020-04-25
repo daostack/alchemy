@@ -113,13 +113,15 @@ class VoteButtons extends React.Component<IProps, IState> {
         "Can't change your vote" :
         (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
           "Requires reputation in this DAO" :
-          proposal.stage === IProposalStage.ExpiredInQueue ||
-              (proposal.stage === IProposalStage.Boosted && expired) ||
-              (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
-              (proposal.stage === IProposalStage.Queued && expired) ?
-            "Can't vote on expired proposals" :
-            proposal.stage === IProposalStage.Executed ?
-              `Can't vote on ${proposal.winningOutcome === IProposalOutcome.Pass ? "passed" : "failed"} proposals` : "";
+          (proposal.createdAt < currentAccountState.createdAt) ?
+            "Must have had reputation in this DAO when the proposal was created" :
+            proposal.stage === IProposalStage.ExpiredInQueue ||
+                (proposal.stage === IProposalStage.Boosted && expired) ||
+                (proposal.stage === IProposalStage.QuietEndingPeriod && expired)  ||
+                (proposal.stage === IProposalStage.Queued && expired) ?
+              "Can't vote on expired proposals" :
+              proposal.stage === IProposalStage.Executed ?
+                `Can't vote on ${proposal.winningOutcome === IProposalOutcome.Pass ? "passed" : "failed"} proposals` : "";
 
     const voteUpButtonClass = classNames({
       [css.votedFor]: currentVote === IProposalOutcome.Pass,
