@@ -76,24 +76,14 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
         </div>
 
         <div className={css.wallContainer}>
-          <div className={css.headerText}>
-            {
-            // <span className={
-            //   classNames({
-            //     [css.hasNewDiscussions]: true,
-            //     [css.red]: hasNewPosts,
-            //   })}></span>
-            }
-              Discuss {daoState.name}
-          </div>
-
+          <div className={css.headerText}>Discuss {daoState.name}</div>
           <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
         </div>
 
         { this.state.showingEditPagePopup ?
           <ModalPopup
             closeHandler={this.hideLandingPageContent}
-            width={500}
+            width="60%"
             header={
               <div className={css.modalHeader}>
                 <div className={css.title}>Edit Home Page</div>
@@ -102,10 +92,11 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
               </div>
             }
             body={
-              <div>
+              <div className={css.modalBody}>
                 <div>Editing the content on this DAO’s home page will soon be possible via proposal. Stay tuned!</div>
                 <div>For now, if you need a change made to a DAO’s home page content, please contact us at <a href="https://support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a></div>
-              </div>}
+              </div>
+            }
           />
           : ""
         }

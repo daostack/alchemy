@@ -1,6 +1,8 @@
 .landingPage {
+  padding-top: 18px;
+
   .infoContainer {
-    margin-bottom: 30px;
+    margin-bottom: 40px;
   }
 
   .infoContainer .titleContainer,
@@ -43,27 +45,7 @@
     }
   }
 
-  .modalHeader {
-    display: flex;
-
-    .title {
-      display: inline-block;
-    }
-
-    .closeButton {
-      flex-grow: 2;
-      width: 60%;
-      img {
-        position: relative;
-        top: 4px;
-        width: 13px;
-        height: 13px;
-      }
-    }
-  }
-
   .welcome,
-  //.infoContainer,
   .visitProposals {
     margin-bottom: 16px;
   }
@@ -90,5 +72,27 @@
         display: inline-block;
       }
     }
+  }
+}
+
+.modalHeader {
+  display: flex;
+
+  .title {
+    flex-grow: 2;
+  }
+
+  .closeButton {
+    img {
+      position: relative;
+      width: 13px;
+      height: 13px;
+    }
+  }
+}
+
+.modalBody {
+  div {
+    margin-bottom: 1rem;
   }
 }
