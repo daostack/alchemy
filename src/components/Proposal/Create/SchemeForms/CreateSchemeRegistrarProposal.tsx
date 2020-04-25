@@ -14,7 +14,7 @@ import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSION
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
-import { IProposalType, ISchemeState, Scheme } from "@daostack/client";
+import { IProposalType, ISchemeState, Scheme } from "@dorgtech/client";
 import { connect } from "react-redux";
 import * as React from "react";
 import * as css from "../CreateProposal.scss";

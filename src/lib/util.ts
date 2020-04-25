@@ -4,9 +4,10 @@ import {
   IProposalStage,
   IProposalState,
   IRewardState,
-  utils
-} from "@daostack/client";
-import { JsonRpcProvider, Provider } from "ethers/providers";
+  utils,
+  Web3Provider
+} from "@dorgtech/client";
+import { JsonRpcProvider } from "ethers/providers";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
@@ -17,9 +18,9 @@ import BN = require("bn.js");
 import "moment";
 import * as moment from "moment-timezone";
 import { getArc } from "../arc";
-import { Network } from "ethers/utils";
-
-const Web3 = require("web3");
+import "ethers/dist/shims";
+import { Signer } from "ethers";
+import { promisify } from "util";
 
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
@@ -270,7 +271,7 @@ export function sleep(milliseconds: number): Promise<void> {
  * return network id, independent of the presence of Arc
  * @param web3Provider
  */
-export async function getNetworkId(web3Provider?: Provider): Promise<string> {
+export async function getNetworkId(web3Provider?: Web3Provider): Promise<string> {
   let arc: Arc;
 
   try {
@@ -279,19 +280,36 @@ export async function getNetworkId(web3Provider?: Provider): Promise<string> {
     // Do nothing
   }
 
-  let network: Network;
-
   if (arc) {
-    network = await arc.web3.getNetwork();
+    const network = await arc.web3.getNetwork();
+    return network.chainId.toString();
   } else if (web3Provider) {
-    network = await web3Provider.getNetwork();
+    if (typeof web3Provider === "string") {
+      const provider = new JsonRpcProvider(web3Provider);
+      const network = await provider.getNetwork()
+      return network.chainId.toString();
+    } else if (Signer.isSigner(web3Provider)) {
+      const network = await web3Provider.provider.getNetwork();
+      return network.chainId.toString();
+    } else {
+      const promise = new Promise<string>((resolve, reject) => {
+        web3Provider.send('net_version', (error, response) => {
+          if (error) {
+            reject(error)
+          } else {
+            resolve(response)
+          }
+        })
+      });
+
+      return await promise;
+    }
   } else if ((window as any).web3) {
-    return (window as any).web3.
+    const web3 = (window as any).web3
+    return (await (web3.eth.net ? web3.eth.net.getId() : promisify(web3.version.getNetwork)())).toString()
   } else {
     throw new Error("getNetworkId: unable to find web3");
   }
-
-  return network.chainId.toString();
 }
 
 export async function getNetworkName(id?: string): Promise<Networks> {

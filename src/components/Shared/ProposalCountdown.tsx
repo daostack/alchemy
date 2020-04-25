@@ -1,4 +1,4 @@
-import { IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
+import { IProposalOutcome, IProposalStage, IProposalState } from "@dorgtech/client";
 import * as classNames from "classnames";
 import * as moment from "moment";
 import * as React from "react";

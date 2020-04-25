@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { IDAOState, Token } from "@daostack/client";
+import { IDAOState, Token } from "@dorgtech/client";
 import { hideMenu } from "actions/uiActions";
 import { getArc } from "arc";
 import TrainingTooltip from "components/Shared/TrainingTooltip";

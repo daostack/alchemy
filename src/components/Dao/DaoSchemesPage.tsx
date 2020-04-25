@@ -1,4 +1,4 @@
-import { IDAOState, Scheme } from "@daostack/client";
+import { IDAOState, Scheme } from "@dorgtech/client";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UnknownSchemeCard from "components/Dao/UnknownSchemeCard";

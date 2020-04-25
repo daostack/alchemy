@@ -1,4 +1,4 @@
-import { IProposalState } from "@daostack/client";
+import { IProposalState } from "@dorgtech/client";
 
 import BN = require("bn.js");
 import classNames from "classnames";

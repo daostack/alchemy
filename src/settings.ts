@@ -5,7 +5,7 @@ export const USE_CONTRACTINFOS_CACHE = false;
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Torus from "@toruslabs/torus-embed";
-import { IArcOptions } from "@daostack/client";
+import { IArcOptions } from "@dorgtech/client";
 import { RetryLink } from "apollo-link-retry";
 
 const Portis = require("@portis/web3");

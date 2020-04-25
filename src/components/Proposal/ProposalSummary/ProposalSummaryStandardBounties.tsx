@@ -1,4 +1,4 @@
-import { IProposalState } from "@daostack/client";
+import { IProposalState } from "@dorgtech/client";
 import * as classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
 import { linkToEtherScan, fromWeiToString } from "lib/util";

@@ -1,4 +1,4 @@
-import { IDAOState, ISchemeState, IProposalCreateOptionsComp } from "@daostack/client";
+import { IDAOState, ISchemeState, IProposalCreateOptionsComp } from "@dorgtech/client";
 import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";

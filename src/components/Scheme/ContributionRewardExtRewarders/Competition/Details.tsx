@@ -19,7 +19,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { DiscussionEmbed } from "disqus-react";
 import { connect } from "react-redux";
 import { IDAOState, IProposalState, ICompetitionSuggestionState, Address, CompetitionVote, IProposalOutcome,
-  CompetitionSuggestion, Proposal, Scheme  } from "@daostack/client";
+  CompetitionSuggestion, Proposal, Scheme  } from "@dorgtech/client";
 import gql from "graphql-tag";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as React from "react";

@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Vote, Proposal } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, Vote, Proposal } from "@dorgtech/client";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";

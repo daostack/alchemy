@@ -1,4 +1,4 @@
-import { ISchemeState } from "@daostack/client";
+import { ISchemeState } from "@dorgtech/client";
 import { getArc } from "arc";
 import CreateKnownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateKnownGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "components/Proposal/Create/SchemeForms/CreateSchemeRegistrarProposal";

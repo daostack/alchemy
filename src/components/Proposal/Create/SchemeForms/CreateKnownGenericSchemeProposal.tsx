@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { connect } from "react-redux";
-import { IProposalType, ISchemeState } from "@daostack/client";
+import { IProposalType, ISchemeState } from "@dorgtech/client";
 import { enableWalletProvider } from "arc";
 import { isHexString } from "ethers/utils"
 

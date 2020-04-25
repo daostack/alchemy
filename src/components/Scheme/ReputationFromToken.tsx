@@ -1,7 +1,6 @@
-import { promisify } from "util";
-import { Address, ISchemeState, Token } from "@daostack/client";
+import { Address, ISchemeState, Token } from "@dorgtech/client";
 import axios from "axios";
-import { getWeb3Provider, getArcSettings } from "arc";
+import { getArcSettings } from "arc";
 import { SigningKey } from "ethers/utils";
 import { soliditySHA3 } from "ethereumjs-abi";
 import { parse } from "query-string";
@@ -162,12 +161,11 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       const method = "personal_sign";
 
       // Create promise-based version of send
-      const web3Provider = await getWeb3Provider();
       const params = [messageToSign, this.props.currentAccountAddress];
       let result;
 
       try {
-        result = await web3Provider.send(method, params);
+        result = await arc.web3.send(method, params);
       } catch(err) {
         this.props.showNotification(NotificationStatus.Failure, "The redemption was canceled");
         setSubmitting(false);

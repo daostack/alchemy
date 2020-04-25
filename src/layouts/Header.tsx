@@ -20,7 +20,7 @@ import { of } from "rxjs";
 import Toggle from "react-toggle";
 import { RefObject } from "react";
 import classNames from "classnames";
-import { Address, IDAOState } from "@daostack/client";
+import { Address, IDAOState } from "@dorgtech/client";
 import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 import ProviderConfigButton from "layouts/ProviderConfigButton";

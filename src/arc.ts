@@ -1,19 +1,21 @@
 import { NotificationStatus } from "reducers/notifications";
 import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
 import { settings, Settings, USE_CONTRACTINFOS_CACHE } from "./settings";
-import { IProviderInfo } from "web3modal/lib/helpers/types";
+import { IProviderInfo } from "web3modal";
 import { RetryLink } from "apollo-link-retry";
-import { Address, Arc } from "@daostack/client";
+import { Address, Arc, Web3Provider } from "@dorgtech/client";
 import Web3Modal, { getProviderInfo } from "web3modal";
 import { Observable, } from "rxjs";
 import { first } from "rxjs/operators";
-import { JsonRpcProvider, Web3Provider as EthersWeb3JsProvider, Web3Provider } from "ethers/providers";
+import "ethers/dist/shims";
+import { Signer } from "ethers";
+import { AsyncSendable } from "ethers/providers";
 
 /**
  * This is only set after the user has selected a provider and enabled an account.
  * It is like window.ethereum, but has not necessarily been injected as such.
  */
-let selectedProvider: EthersWeb3JsProvider | undefined;
+let selectedProvider: Web3Provider | undefined;
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -55,11 +57,11 @@ export function getArc(): Arc {
 /**
  * Return currently-selected and fully-enabled web3Provider (an account can be presumed to exist).
  */
-export function getWeb3Provider(): EthersWeb3JsProvider | undefined {
+export function getWeb3Provider(): Web3Provider | undefined {
   return selectedProvider;
 }
 
-async function getProviderNetworkName(provider?: EthersWeb3JsProvider): Promise<string> {
+async function getProviderNetworkName(provider?: Web3Provider): Promise<string> {
   provider = provider || selectedProvider;
   if (!provider) { return null; }
   const networkId = await getNetworkId(provider);
@@ -70,21 +72,26 @@ async function getProviderNetworkName(provider?: EthersWeb3JsProvider): Promise<
  * Returns a IWeb3ProviderInfo when a provider has been selected and is fully available.
  * Does not know about the default read-only providers.
  */
-export function getWeb3ProviderInfo(provider?: EthersWeb3JsProvider): IWeb3ProviderInfo {
+export function getWeb3ProviderInfo(provider?: Web3Provider): IWeb3ProviderInfo {
   provider = provider || selectedProvider;
-  return provider ? getProviderInfo(provider._web3Provider) : null;
+
+  if (provider && (typeof provider === "string" || Signer.isSigner(provider))) {
+    throw Error("Cannot get ProviderInfo from a non-web3.js provider.");
+  } else {
+    return provider ? getProviderInfo(provider) : null;
+  }
 }
 
-export function providerHasConfigUi(provider?: EthersWeb3JsProvider): boolean | undefined {
+export function providerHasConfigUi(provider?: Web3Provider): boolean | undefined {
   provider = provider || selectedProvider;
-  return provider && (provider._web3Provider as any).isTorus;
+  return provider && (provider as any).isTorus;
 }
 
 /**
  * initialize Arc.  Does not throw exceptions, returns boolean success.
  * @param provider Optional web3Provider
  */
-export async function initializeArc(provider?: string | EthersWeb3JsProvider): Promise<boolean> {
+export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
 
   let success = false;
   let arc: Arc;
@@ -124,12 +131,7 @@ export async function initializeArc(provider?: string | EthersWeb3JsProvider): P
     // if there is no existing arc, we create a new one
     if ((window as any).arc) {
       arc = (window as any).arc as Arc;
-
-      if (typeof provider === "string") {
-        arc.web3 = new JsonRpcProvider(provider);
-      } else {
-        arc.web3 = new EthersWeb3JsProvider(provider);
-      }
+      arc.setWeb3(provider);
     } else {
       arc = new Arc(arcSettings);
     }
@@ -187,7 +189,7 @@ export async function initializeArc(provider?: string | EthersWeb3JsProvider): P
  * @param provider web3Provider
  * @return the expected network nameif not correct
 */
-async function ensureCorrectNetwork(provider: JsonRpcProvider): Promise<void> {
+async function ensureCorrectNetwork(provider: Web3Provider): Promise<void> {
 
   /**
    * It is required that the provider be the correct one for the current platform
@@ -234,8 +236,8 @@ export function uncacheWeb3Info(accountToo = true): void {
      * But clearing its cache will ensure that
      * the user can rescan a qrcode when changing WalletConnect provider.
      */
-  if (selectedProvider && selectedProvider.close) {
-    selectedProvider.close(); // no need to await
+  if (selectedProvider && (selectedProvider as any).close) {
+    (selectedProvider as any).close(); // no need to await
   }
 }
 
@@ -253,7 +255,7 @@ function inTesting(): boolean {
     // in test mode, we have an unlocked ganache and we are not using any wallet
     // eslint-disable-next-line no-console
     console.log("not using any wallet, because we are in automated test");
-    selectedProvider = new JsonRpcProvider(settings.ganache.web3Provider);
+    selectedProvider = settings.ganache.web3Provider;
     return true;
   }
   return false;
@@ -314,7 +316,7 @@ async function enableWeb3Provider(): Promise<void> {
     return rejectOnClosePromise(error);
   });
 
-  _web3Modal.on("connect", (newProvider: foo): any => {
+  _web3Modal.on("connect", (newProvider: AsyncSendable): any => {
     provider = newProvider;
     /**
      * Because we won't receive the "close" event in this case, even though
@@ -352,12 +354,15 @@ async function enableWeb3Provider(): Promise<void> {
  * whatever the provider requires....
  */
   try {
-  // brings up the provider UI as needed
-    await provider.enable();
+    // brings up the provider UI as needed
+    if ((provider as any).enable) {
+      await (provider as any).enable();
+    }
+
     // eslint-disable-next-line no-console
     console.log(`Connected to network provider ${getWeb3ProviderInfo(provider).name}`);
   } catch (ex) {
-  // eslint-disable-next-line no-console
+    // eslint-disable-next-line no-console
     console.error(`Unable to enable provider: ${ex.message ? ex : "unknown error"}`);
     throw new Error("Unable to enable provider");
   }
@@ -448,7 +453,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
 
     // If not MetaMask or other injected web3 and on ganache then try to connect to local ganache directly
     if (targetedNetwork() === "ganache" && !(window as any).web3 && !(window as any).ethereum) {
-      selectedProvider = new JsonRpcProvider(settings.ganache.web3Provider);
+      selectedProvider = settings.ganache.web3Provider;
       return true;
     }
 

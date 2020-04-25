@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { IDAOState, ISchemeState } from "@daostack/client";
+import { IDAOState, ISchemeState } from "@dorgtech/client";
 import { createProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";

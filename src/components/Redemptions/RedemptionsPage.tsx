@@ -1,4 +1,4 @@
-import { Address, DAO, IContributionReward, IDAOState, IRewardState, Proposal, Reputation, Token } from "@daostack/client";
+import { Address, DAO, IContributionReward, IDAOState, IRewardState, Proposal, Reputation, Token } from "@dorgtech/client";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -74,29 +74,29 @@ const createDaoStateFromQuery = (queryData: IDAOData): IDAOState => {
   const arc = getArc();
   const reputation = new Reputation(arc, queryData.nativeReputation.id);
   const token = new Token(arc, queryData.nativeToken.id);
-  const daoSpec = {
+  const daoSpec: IDAOState & IDAOData = {
     ...queryData,
     address: queryData.id,
     reputation,
     token,
     tokenName: queryData.nativeToken.name,
     tokenSymbol: queryData.nativeToken.symbol,
+    memberCount: Number(queryData.reputationHoldersCount),
+    reputationTotalSupply: new BN(queryData.nativeReputation.totalSupply),
+    tokenTotalSupply: queryData.nativeToken.totalSupply,
   };
   const dao = new DAO(arc, daoSpec);
 
   return {
     ...daoSpec,
     dao,
-    memberCount: Number(daoSpec.reputationHoldersCount),
     numberOfBoostedProposals: Number(daoSpec.numberOfBoostedProposals),
     numberOfPreBoostedProposals: Number(daoSpec.numberOfPreBoostedProposals),
     numberOfQueuedProposals: Number(daoSpec.numberOfQueuedProposals),
     reputation,
-    reputationTotalSupply: new BN(daoSpec.nativeReputation.totalSupply),
     token,
     tokenName: daoSpec.nativeToken.name,
     tokenSymbol: daoSpec.nativeToken.symbol,
-    tokenTotalSupply: daoSpec.nativeToken.totalSupply,
   };
 };
 

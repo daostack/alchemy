@@ -1,4 +1,4 @@
-import { ICompetitionProposalState, Competition, CompetitionSuggestion, ICompetitionSuggestionState, CompetitionVote, Address } from "@daostack/client";
+import { ICompetitionProposalState, Competition, CompetitionSuggestion, ICompetitionSuggestionState, CompetitionVote, Address } from "@dorgtech/client";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 
