@@ -1,0 +1,367 @@
+/*
+ * [hi-base32]{@link https://github.com/emn178/hi-base32}
+ *
+ * @version 0.5.0
+ * @author Chen, Yi-Cyuan [emn178@gmail.com]
+ * @copyright Chen, Yi-Cyuan 2015-2018
+ * @license MIT
+ */
+
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+/*!
+  * prr
+  * (c) 2013 Rod Vagg <rod@vagg.org>
+  * https://github.com/rvagg/prr
+  * License: MIT
+  */
+
+/*!
+  Copyright (c) 2017 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+
+/*!
+  Copyright (c) 2018 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+
+/*!
+ * @description Recursive object extending
+ * @author Viacheslav Lotsmanov <lotsmanov89@gmail.com>
+ * @license MIT
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2013-2018 Viacheslav Lotsmanov
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+/*!
+ * Determine if an object is a Buffer
+ *
+ * @author   Feross Aboukhadijeh <https://feross.org>
+ * @license  MIT
+ */
+
+/*!
+ * The MIT License
+   Copyright (c) 2018 Dmitriy Kubyshkin
+   Copied from https://github.com/grassator/insert-text-at-cursor
+ */
+
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <http://feross.org>
+ * @license  MIT
+ */
+
+/*!
+ * bytes
+ * Copyright(c) 2012-2014 TJ Holowaychuk
+ * Copyright(c) 2015 Jed Watson
+ * MIT Licensed
+ */
+
+/*!
+ * escape-html
+ * Copyright(c) 2012-2013 TJ Holowaychuk
+ * Copyright(c) 2015 Andreas Lubbe
+ * Copyright(c) 2015 Tiancheng "Timothy" Gu
+ * MIT Licensed
+ */
+
+/*!
+ * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+ *
+ * Copyright (c) 2014-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ */
+
+/*!
+ * isobject <https://github.com/jonschlinkert/isobject>
+ *
+ * Copyright (c) 2014-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ */
+
+/*!
+ * js-logger - http://github.com/jonnyreeves/js-logger
+ * Jonny Reeves, http://jonnyreeves.co.uk/
+ * js-logger may be freely distributed under the MIT license.
+ */
+
+/*!
+ * repeat-string <https://github.com/jonschlinkert/repeat-string>
+ *
+ * Copyright (c) 2014-2015, Jon Schlinkert.
+ * Licensed under the MIT License.
+ */
+
+/*!
+ * shallow-clone <https://github.com/jonschlinkert/shallow-clone>
+ *
+ * Copyright (c) 2015-present, Jon Schlinkert.
+ * Released under the MIT License.
+ */
+
+/*!
+ * web3.js - Ethereum JavaScript API
+ *
+ * @license lgpl-3.0
+ * @see https://github.com/ethereum/web3.js
+*/
+
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
+
+THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+MERCHANTABLITY OR NON-INFRINGEMENT.
+
+See the Apache Version 2.0 License for specific language governing permissions
+and limitations under the License.
+***************************************************************************** */
+
+/*! MIT License © Sindre Sorhus */
+
+/*! bignumber.js v2.0.7 https://github.com/MikeMcl/bignumber.js/LICENCE */
+
+/*! https://mths.be/punycode v1.4.1 by @mathias */
+
+/*! https://mths.be/utf8js v2.1.2 by @mathias */
+
+/**
+	 * A handy class to calculate color values.
+	 *
+	 * @version 1.0
+	 * @author Robert Eisele <robert@xarg.org>
+	 * @copyright Copyright (c) 2010, Robert Eisele
+	 * @link http://www.xarg.org/2010/03/generate-client-side-png-files-using-javascript/
+	 * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+	 *
+	 */
+
+/**
+ * @copyright   2016-2019, Miles Johnson
+ * @license     https://opensource.org/licenses/MIT
+ */
+
+/**
+ * A better abstraction over CSS.
+ *
+ * @copyright Oleg Isonen (Slobodskoi) / Isonen 2014-present
+ * @website https://github.com/cssinjs/jss
+ * @license MIT
+ */
+
+/**
+ * Timestamp for 64-bit time_t, nanosecond precision and strftime
+ *
+ * @author Yusuke Kawasaki
+ * @license MIT
+ * @see https://github.com/kawanet/timestamp-nano
+ */
+
+/**
+ * [js-sha256]{@link https://github.com/emn178/js-sha256}
+ *
+ * @version 0.9.0
+ * @author Chen, Yi-Cyuan [emn178@gmail.com]
+ * @copyright Chen, Yi-Cyuan 2014-2017
+ * @license MIT
+ */
+
+/**
+ * [js-sha3]{@link https://github.com/emn178/js-sha3}
+ *
+ * @version 0.5.7
+ * @author Chen, Yi-Cyuan [emn178@gmail.com]
+ * @copyright Chen, Yi-Cyuan 2015-2016
+ * @license MIT
+ */
+
+/**
+ * [js-sha3]{@link https://github.com/emn178/js-sha3}
+ *
+ * @version 0.8.0
+ * @author Chen, Yi-Cyuan [emn178@gmail.com]
+ * @copyright Chen, Yi-Cyuan 2015-2018
+ * @license MIT
+ */
+
+/** @license React v0.15.0
+ * scheduler.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v0.19.1
+ * scheduler.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v16.13.1
+ * react-dom.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v16.13.1
+ * react-is.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v16.13.1
+ * react.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v16.9.0
+ * react-dom.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v16.9.0
+ * react-is.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v16.9.0
+ * react.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @module promise-nodeify
+ * @copyright Copyright 2016-2018 Kevin Locke <kevin@kevinlocke.name>
+ * @license MIT
+ */
+
+/** @preserve
+	 * Counter block mode compatible with  Dr Brian Gladman fileenc.c
+	 * derived from CryptoJS.mode.CTR
+	 * Jan Hruby jhruby.web@gmail.com
+	 */
+
+/** @preserve
+	(c) 2012 by Cédric Mesnil. All rights reserved.
+
+	Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+	    - Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+	    - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	*/
+
+/** PROMISIFY CALLBACK-STYLE FUNCTIONS TO ES6 PROMISES
+*
+* EXAMPLE:
+* const fn = promisify( (callback) => callback(null, "Hello world!") );
+* fn((err, str) => console.log(str));
+* fn().then((str) => console.log(str));
+* //Both functions, will log 'Hello world!'
+*
+* Note: The function you pass, may have any arguments you want, but the latest
+* have to be the callback, which you will call with: next(err, value)
+*
+* @param method: Function/Array/Map = The function(s) to promisify
+* @param options: Map =
+*  "context" (default is function): The context which to apply the called function
+*  "replace" (default is falsy): When passed an array/map, if to replace the original object
+*
+* @return: A promise if passed a function, otherwise the object with the promises
+*
+* @license: MIT
+* @version: 1.0.3
+* @author: Manuel Di Iorio
+**/
+
+/**!
+ * @fileOverview Kickass library to create and place poppers near their reference elements.
+ * @version 1.16.1
+ * @license
+ * Copyright (c) 2016 Federico Zivolo and contributors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
