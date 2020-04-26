@@ -84,7 +84,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
   }
 
   public daoMenu() {
-    const [ dao, { hasNewPosts } ] = this.props.data ;
+    const [ dao, { hasNewPosts } ] = this.props.data;
 
     const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
     const bgPattern = generate(dao.address + dao.name);
@@ -199,7 +199,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} REP`} placement="right">
                 <strong>{formatTokens(dao.reputationTotalSupply)} REP</strong>
               </Tooltip>
-            </li>            
+            </li>
 
             <SubscribedEthBalance dao={dao} />
 
@@ -223,14 +223,16 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
     return (
       <div className={sidebarClass}>
         <div className={css.menuContent}>
-          { this.props.daoAvatarAddress && this.props.data ? this.daoMenu() : ""}
+          <div className={css.daoContentWrapper}>
+            { this.props.daoAvatarAddress && this.props.data ? this.daoMenu() : ""}
+          </div>
 
           <div className={css.siteLinksWrapper}>
             <ul>
               <li><Link to="/" onClick={this.handleCloseMenu}>Home</Link></li>
               <li>
-                <TrainingTooltip overlay="List of all DAOs accessible by Alchemy" placement="right">
-                  <Link to="/daos" onClick={this.handleCloseMenu}>All DAOs</Link>
+                <TrainingTooltip overlay="See a feed of recent updates to DAOs you follow" placement="right">
+                  <Link to="/feed" onClick={this.handleCloseMenu}>Feed</Link>
                 </TrainingTooltip>
               </li>
               <li>
@@ -252,7 +254,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                 </ul>
               </li>
               <li><a className="externalLink" href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">Help Center</a></li>
-              <li><a className="externalLink" href="https://hub.gendao.org/" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
+              <li><a className="externalLink" href="https://daotalk.org/" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
               <li><Link to="/daos/create" onClick={this.handleCloseMenu}>Create A DAO</Link></li>
               <li><Link to="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link></li>
               <li className={css.daoStack}>
@@ -341,17 +343,17 @@ const SubscribedSidebarMenu = withSubscription({
         .then((response: AxiosResponse<any>): IHasNewPosts => {
           if (response.status) {
             const posts = response.data.response;
-            return { hasNewPosts : posts && posts.length };
+            return { hasNewPosts: posts && posts.length };
           } else {
             // eslint-disable-next-line no-console
             console.error(`request for disqus posts failed: ${response.statusText}`);
-            return { hasNewPosts : false };
+            return { hasNewPosts: false };
           }
         })
         .catch((error: Error): IHasNewPosts => {
           // eslint-disable-next-line no-console
           console.error(`request for disqus posts failed: ${error.message}`);
-          return { hasNewPosts : false };
+          return { hasNewPosts: false };
         });
 
       const arc = getArc();

@@ -10,7 +10,6 @@
 
 .headerTitle {
   width: 100%;
-  padding-top: 30px;
   background-color: rgba(229, 235, 242, 1);
 
   h2 {
@@ -26,25 +25,24 @@
 
 .searchBox {
   position: relative;
-  float: left;
-  margin-top: 5px;
+  margin-top: 15px;
 
   span {
     color: #4f6176;
   }
 
   input {
-    margin-left: 5px;
-    font-size: 15px;
+    font-size: 22px;
     width: 425px;
     padding: 2px;
   }
 }
 
 .createDaoButton {
-  position: absolute;
+  position: fixed;
   right: 20px;
-  bottom: 5px;
+  top: 122px;
+  z-index: 100000000;
   border-radius: 15px;
   background-color: rgba(3, 118, 255, 1);
   color: $white;

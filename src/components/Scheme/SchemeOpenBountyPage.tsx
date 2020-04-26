@@ -47,7 +47,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
     const json = await res.json();
 
     this.setState({
-      totalResults: json.count ? json.count : 0, 
+      totalResults: json.count ? json.count : 0,
       bounties: json.results,
     });
   }
@@ -65,7 +65,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
       page: this.state.page - 25,
     });
   }
-  
+
   public componentDidMount(): void {
     // call for open bounties on page load
     this.getApi();
@@ -114,7 +114,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
           createCard()
         }
         <div className={css.pageSelectionContainer}>
-          {this.state.page - 25 > 0 && ( 
+          {this.state.page - 25 > 0 && (
             <button className={css.pageButton} onClick={this.prevPage}>
               prev
             </button>

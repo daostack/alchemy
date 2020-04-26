@@ -12,7 +12,6 @@ a.historyView {
   overflow: hidden;
   height: 20px;
   position: relative;
-  left: 5px;
 }
 
 a.detailView {
@@ -356,12 +355,6 @@ input {
 .alignCenter {
   text-align: center;
   margin-top: 30px;
-}
-
-@media only screen and (max-width: 1430px) {
-  a.historyView {
-    width: 60%;
-  }
 }
 
 @media only screen and (max-width: 1280px) {

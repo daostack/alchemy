@@ -76,7 +76,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       }
       try {
         redeemerAddress = arc.web3.eth.accounts.privateKeyToAccount(pk).address;
-      } catch(err) {
+      } catch (err) {
         throw Error(`Invalide private key: ${pk}`);
       }
     } else {
@@ -152,7 +152,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       // construct the message to sign
       // const signatureType = 1
       const messageToSign = "0x"+ soliditySHA3(
-        ["address","address"],
+        ["address", "address"],
         [schemeAddress, values.accountAddress]
       ).toString("hex");
 
@@ -169,7 +169,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
 
       try {
         result = await send({ method, params, from: this.props.currentAccountAddress });
-      } catch(err) {
+      } catch (err) {
         this.props.showNotification(NotificationStatus.Failure, "The redemption was canceled");
         setSubmitting(false);
         return;
@@ -243,7 +243,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             this.props.showNotification(NotificationStatus.Success, `You've successfully redeemed rep to ${values.accountAddress}`);
             this.redemptionSucceeded();
           }
-        } catch(err) {
+        } catch (err) {
           this.props.showNotification(NotificationStatus.Failure, `${err.message}}`);
         }
         // const tx = await contract.methods.redeemWithSignature(values.accountAddress.toLowerCase(), signatureType, signature).send(
@@ -265,7 +265,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     this.setState( { redemptionAmount: new BN(0) });
   }
 
-  private onSubmitClick = (setFieldValue: any) => ()=>{ setFieldValue("useTxSenderService",false); }
+  private onSubmitClick = (setFieldValue: any) => () => { setFieldValue("useTxSenderService", false); }
 
   public render(): RenderOutput {
     const { daoAvatarAddress, schemeState, currentAccountAddress } = this.props;

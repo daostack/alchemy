@@ -44,7 +44,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[BN,BN]>;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[BN, BN]>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const proposalState = ownProps.proposalState;

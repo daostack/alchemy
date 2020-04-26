@@ -3,7 +3,6 @@
   max-width: 250px;
   height: 100%;
   color: $white;
-  flex-grow: 1;
   overflow: visible;
   position: fixed;
   top: 50px;
@@ -17,10 +16,16 @@
 .menuContent {
   position: relative;
   height: 100%;
-  min-height: 780px;
+  display: flex;
+  flex-direction: column;
   height: -webkit-fill-available;
   height: -opera-fill-available;
   background-color: $sky;
+
+  .daoContentWrapper {
+    overflow-y: auto;
+    flex: 1;
+  }
 
   .daoIcon {
     width: 40px;
@@ -202,9 +207,7 @@
 }
 
 .siteLinksWrapper {
-  bottom: 0;
-  position: absolute;
-  height: 270px;
+  min-height: 270px;
   left: 0;
   width: 100%;
   border-top: 2px solid rgba(78, 137, 208, 1);
@@ -374,7 +377,6 @@
     width: 48px;
     max-width: 100%;
     height: auto;
-    flex-grow: unset;
     z-index: 100000;
     background-color: rgba(49, 120, 202, 0);
     transition: height 0.25s ease, width 0s 0.25s;
@@ -386,8 +388,12 @@
     .menuContent {
       height: 0px;
       min-height: auto;
-      overflow: hidden;
+      overflow-y: auto;
       transition: all 0.25s ease;
+
+      .daoContentWrapper {
+        overflow-y: visible;
+      }
 
       .daoName {
         padding: 20px 20px 10px 20px;
@@ -423,7 +429,6 @@
     z-index: 1000000;
     width: 100%;
     background-color: rgba(49, 120, 202, 1);
-    padding-bottom: 50px;
     transition: width 0s 0s, height 0.25s ease;
 
     .menuContent {
@@ -441,8 +446,7 @@
 
   .siteLinksWrapper {
     position: relative;
-    height: auto;
-    padding-bottom: 20px;
+    min-height: 220px;
 
     ul li {
       height: auto;

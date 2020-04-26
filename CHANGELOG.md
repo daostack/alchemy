@@ -1,9 +1,15 @@
 ## 0.10.5
   - Features Added
-    - Recommended node.js version to build Alchemy is set to 12.16.1.
+    - change home page to show DAOs again instead of feed. Show separate "Your DAOs" section containing DAOs the user follows or is a member of, then the list of other DAOs below.
+    - added support for embedded youtube and vimeo videos in proposal descriptions
+    - recommended node.js version to build Alchemy is set to 12.16.2
+    - upgrade to use subgraph v39_3
+    - add subgraph_endpoints.json so it could be read externaly
+    - add CENNZ ERC20 token to be showen as dao owned tokens/balance
 
-- Bugs fixed
-    - Allow following/unfollowing DAOs again
+  - Bugs Fixed
+    - fix Torus not connecting on first try
+    - fix Torus should not describe itself as "Metamask"
 
 ## 0.10.4
   - Features Added
@@ -14,6 +20,7 @@
     - Enable Alchemy to run against kovan
 
   - Bugs Fixed
+    - Allow following/unfollowing DAOs again
     - Fix crash on the redemptions page when there are more than 100 DAOs and not all of them initially load. Only currently an issue in Rinkeby
     - Removed "Powered by DAOstack" from Create DAO page
 
