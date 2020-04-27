@@ -36,6 +36,7 @@ const mapStateToProps = (state: IRootState): IStateProps => {
 type IProps = IStateProps & ISubscriptionProps<SubscriptionData>;
 
 interface IState {
+  isMobile: boolean;
   search: string;
   searchDaos: DAO[];
 }
@@ -48,15 +49,29 @@ class DaosPage extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
+      isMobile: window.innerWidth <= 550,
       search: "",
       searchDaos: [],
     };
   }
 
   public componentDidMount() {
+    window.addEventListener("resize", this.updateWindowDimensions);
+
     Analytics.track("Page View", {
       "Page Name": Page.AllDAOs,
     });
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateWindowDimensions);
+  }
+
+  private updateWindowDimensions = (_e: any) => {
+    const nowMobile = window.innerWidth <= 550;
+    if (nowMobile !== this.state.isMobile) {
+      this.setState({ isMobile: nowMobile });
+    }
   }
 
   onSearchChange = async (e: any) => {
@@ -136,16 +151,16 @@ class DaosPage extends React.Component<IProps, IState> {
       <div className={css.wrapper}>
         <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
 
-        <Link to={"/daos/create"} className={css.createDaoButton}>
-          Create A DAO
-        </Link>
-
         <div className={css.searchBox}>
           <input type="text" name="search" placeholder="Search DAOs" onChange={this.onSearchChange} value={this.state.search} />
         </div>
 
+        <Link to={"/daos/create"} className={css.createDaoButton}>
+          Create A DAO
+        </Link>
+
         {yourDAOs.length ? <React.Fragment>
-          <Sticky enabled top={50} innerZ={10000}>
+          <Sticky enabled top={this.state.isMobile ? 75 : 50} innerZ={10000}>
             <div className={css.headerWrapper}>
               <div className={css.headerTitle + " clearfix"}>
                 <h2 data-test-id="header-all-daos">Your DAOs</h2>
@@ -160,7 +175,7 @@ class DaosPage extends React.Component<IProps, IState> {
           : ""
         }
 
-        <Sticky enabled top={50} innerZ={10000}>
+        <Sticky enabled top={this.state.isMobile ? 75 : 50} innerZ={10000}>
           <div className={css.headerWrapper}>
             <div className={css.headerTitle + " clearfix"}>
               <h2 data-test-id="header-all-daos">Other DAOs</h2>
