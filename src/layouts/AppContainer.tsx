@@ -13,12 +13,13 @@ import SidebarMenu from "layouts/SidebarMenu";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification, INotification } from "reducers/notifications";
 import { getCachedAccount, cacheWeb3Info, logout, pollForAccountChanges } from "arc";
+import { pollSubgraphUpdating } from "lib/subgraphHelpers";
 import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { parse } from "query-string";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
-import { matchPath,Link, Route, RouteComponentProps, Switch } from "react-router-dom";
+import { matchPath, Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { ModalContainer } from "react-router-modal";
 import { History } from "history";
 import classNames from "classnames";
@@ -140,6 +141,12 @@ class AppContainer extends React.Component<IProps, IState> {
           this.props.threeBoxLogout();
         }
       });
+
+    pollSubgraphUpdating().subscribe(async (subgraphRunning: boolean) => {
+      if (!subgraphRunning) {
+        this.props.showNotification(NotificationStatus.Failure, "The subgraph is no longer updating, please refresh the page to see the latest data");
+      }
+    });
   }
 
   private clearError = () => {
@@ -210,7 +217,8 @@ class AppContainer extends React.Component<IProps, IState> {
                 <Route path="/profile/:accountAddress" component={AccountProfilePage} />
                 <Route path="/redemptions" component={RedemptionsPage} />
                 <Route path="/daos" component={DaosPage} />
-                <Route path="/" component={FeedPage} />
+                <Route path="/feed" component={FeedPage} />
+                <Route path="/" component={DaosPage} />
               </Switch>
             </div>
 

@@ -182,7 +182,7 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
         await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
         dispatch(showNotification(NotificationStatus.Success, "Transaction was succesful!"));
         redemptionSucceededCallback();
-      } catch(err) {
+      } catch (err) {
         dispatch(showNotification(NotificationStatus.Failure, `Transaction failed: ${err.message}`));
       }
     } else {

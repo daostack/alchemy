@@ -155,7 +155,7 @@ export enum GetSchemeIsActiveActions {
 
 const schemeActionPropNames = new Map<string, Map<GetSchemeIsActiveActions, string>>([
   [
-    "SchemeRegistrar" , new Map<GetSchemeIsActiveActions, string>([
+    "SchemeRegistrar", new Map<GetSchemeIsActiveActions, string>([
       [GetSchemeIsActiveActions.Register, "voteRegisterParams"],
       [GetSchemeIsActiveActions.Remove, "voteRemoveParams"],
     ]),

@@ -34,7 +34,7 @@ export default class ProposalSummary extends React.Component<IProps> {
       return <ProposalSummaryDutchX {...this.props} />;
     } else if (genericSchemeInfo.specs.name === "Standard Bounties") {
       return <ProposalSummaryStandardBounties {...this.props} />;
-    } else if(genericSchemeInfo.specs.name === "CO2ken") {
+    } else if (genericSchemeInfo.specs.name === "CO2ken") {
       return <ProposalSummaryCO2ken {...this.props} />;
     }
     const proposalSummaryClass = classNames({

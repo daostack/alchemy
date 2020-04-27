@@ -35,7 +35,7 @@ export default class Countdown extends React.Component<IProps, IState> {
   public componentDidMount() {
     this.setInterval();
   }
-  
+
   public setInterval() {
     if (!this.interval) {
 

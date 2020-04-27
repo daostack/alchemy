@@ -31,7 +31,7 @@ describe("Proposals Registry Lookup", () => {
   });
 
   it("Create a Generic Scheme RegistryLookup proposal to add tokens", async () => {
-    
+
     const masterCopyTab = await $("*[data-test-id=\"action-tab-addNewTokens\"]");
     await masterCopyTab.click();
 
@@ -92,7 +92,7 @@ describe("Proposals Registry Lookup", () => {
     await tokensAdd.click();
     const tokens1Input = await $("*[id=\"_tokens.1\"]");
     await tokens1Input.setValue("0x501eab934f76b876c116cfffb511f5a065ea7945");
-    
+
     const windowSize = await browser.getWindowSize();
     await browser.setWindowSize(windowSize.width, windowSize.height + 300);
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
@@ -104,7 +104,7 @@ describe("Proposals Registry Lookup", () => {
     await titleElement.waitForExist();
     // await titleElement.scrollIntoView(false);
     // await titleElement.click();
-    
+
     // const summaryDetailsElement = await $("[class*=\"summaryDetails\"]");
     // await summaryDetailsElement.waitForExist();
 

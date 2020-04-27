@@ -236,7 +236,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       description: "",
       title: "",
       url: "",
-      currentActionId:"",
+      currentActionId: "",
       tags: [],
     };
     const actions = this.props.genericSchemeInfo.actions();

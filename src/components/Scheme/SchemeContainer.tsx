@@ -197,7 +197,7 @@ const SubscribedSchemeContainer = withSubscription({
       // eslint-disable-next-line @typescript-eslint/camelcase
       {where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted, IProposalStage.Executed ]}},
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      { fetchAllData: true, subscribe: true }).subscribe(()=>{});
+      { fetchAllData: true, subscribe: true }).subscribe(() => {});
     // end cache priming
 
     const schemeState = await scheme.state().pipe(first()).toPromise();

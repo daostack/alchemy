@@ -1,10 +1,9 @@
 import { NotificationStatus } from "reducers/notifications";
 import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
 import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
-import { IProviderInfo } from "web3modal/lib/helpers/types";
 import { RetryLink } from "apollo-link-retry";
 import { Address, Arc } from "@daostack/client";
-import Web3Modal, { getProviderInfo } from "web3modal";
+import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
 import { Observable } from "rxjs";
 
 const Web3 = require("web3");
@@ -48,6 +47,18 @@ async function _getCurrentAccountFromProvider(web3?: any): Promise<string> {
   const accounts = await web3.eth.getAccounts();
   return accounts[0] ? accounts[0].toLowerCase() : null;
 }
+
+/**
+ * Return the most recently synced block from web3
+ */
+export async function getCurrentBlock(web3?: any): Promise<any> {
+  web3 = web3 || getWeb3();
+  if (!web3) {
+    return null;
+  }
+  return await web3.eth.getBlock("latest");
+}
+
 
 /**
  * Returns the Arc instance
@@ -148,7 +159,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     } else {
       try {
         contractInfos = await arc.fetchContractInfos();
-      } catch(err) {
+      } catch (err) {
         // eslint-disable-next-line no-console
         console.error(`Error fetching contractinfos: ${err.message}`);
       }
@@ -492,7 +503,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
       }
     }
 
-  } catch(err) {
+  } catch (err) {
     let msg: string;
     msg = err ? err.message : "Unable to connect to the ethereum provider";
     if (msg.match(/response has no error or result for request/g)) {
