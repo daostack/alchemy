@@ -4,7 +4,7 @@
 
 ## 0.10.5
   - Features Added
-    - Change home page to show DAOs again instead of feed. Show sepatate Your DAOs section of DAOs the user follows or is a member of, with the list of other DAOs below.
+    - change home page to show DAOs again instead of feed. Show separate "Your DAOs" section containing DAOs the user follows or is a member of, then the list of other DAOs below.
     - added support for embedded youtube and vimeo videos in proposal descriptions
     - recommended node.js version to build Alchemy is set to 12.16.2
     - upgrade to use subgraph v39_3
