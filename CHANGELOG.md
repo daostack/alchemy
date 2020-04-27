@@ -1,3 +1,7 @@
+## 0.10.6
+  - Features Added
+    - Show warning if subgraph is not updating
+
 ## 0.10.5
   - Features Added
     - change home page to show DAOs again instead of feed. Show separate "Your DAOs" section containing DAOs the user follows or is a member of, then the list of other DAOs below.

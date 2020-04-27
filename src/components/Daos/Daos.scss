@@ -6,6 +6,7 @@
 
 .headerWrapper {
   position: relative;
+  top: 45px;
 }
 
 .headerTitle {
@@ -19,29 +20,31 @@
     font-weight: bold;
     border-bottom: 1px solid rgba(195, 212, 231, 1);
     padding: 0;
-    margin-bottom: 0;
+    margin: 0;
   }
 }
 
 .searchBox {
-  position: relative;
-  margin-top: 15px;
+  position: sticky;
+  display: inline-block;
+  top: 65px;
+  z-index: 1000000000;
 
   span {
     color: #4f6176;
   }
 
   input {
-    font-size: 22px;
+    font-size: 15px;
     width: 425px;
     padding: 2px;
   }
 }
 
 .createDaoButton {
-  position: fixed;
-  right: 20px;
-  top: 122px;
+  position: sticky;
+  float: right;
+  top: 60px;
   z-index: 100000000;
   border-radius: 15px;
   background-color: rgba(3, 118, 255, 1);
@@ -174,6 +177,7 @@ table.daoInfoContainer {
   .wrapper {
     width: auto;
     padding: 0;
+    top: 32px;
   }
 
   .headerTitle {
@@ -185,11 +189,16 @@ table.daoInfoContainer {
   }
 
   .searchBox {
+    top: 85px;
     padding-left: 10px;
 
     input {
       width: 320px;
     }
+  }
+
+  .createDaoButton {
+    top: 122px;
   }
 
   .daoList {

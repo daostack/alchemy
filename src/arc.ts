@@ -49,6 +49,18 @@ async function _getCurrentAccountFromProvider(web3?: any): Promise<string> {
 }
 
 /**
+ * Return the most recently synced block from web3
+ */
+export async function getCurrentBlock(web3?: any): Promise<any> {
+  web3 = web3 || getWeb3();
+  if (!web3) {
+    return null;
+  }
+  return await web3.eth.getBlock("latest");
+}
+
+
+/**
  * Returns the Arc instance
  * Throws an exception when Arc hasn't yet been initialized!
  */
