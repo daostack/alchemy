@@ -36,6 +36,7 @@ const mapStateToProps = (state: IRootState): IStateProps => {
 type IProps = IStateProps & ISubscriptionProps<SubscriptionData>;
 
 interface IState {
+  isMobile: boolean;
   search: string;
   searchDaos: DAO[];
 }
@@ -48,15 +49,29 @@ class DaosPage extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
+      isMobile: window.innerWidth <= 550,
       search: "",
       searchDaos: [],
     };
   }
 
   public componentDidMount() {
+    window.addEventListener("resize", this.updateWindowDimensions);
+
     Analytics.track("Page View", {
       "Page Name": Page.AllDAOs,
     });
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateWindowDimensions);
+  }
+
+  private updateWindowDimensions = (_e: any) => {
+    const nowMobile = window.innerWidth <= 550;
+    if (nowMobile !== this.state.isMobile) {
+      this.setState({ isMobile: nowMobile });
+    }
   }
 
   onSearchChange = async (e: any) => {
@@ -67,11 +82,13 @@ class DaosPage extends React.Component<IProps, IState> {
     // If search string greater than 2 search on server for any other DAOs not yet loaded that match this search
     if (searchString.length > 2) {
       const arc = getArc();
+      const firstChar = searchString.charAt(0);
       const foundDaos = await combineLatest(
         // eslint-disable-next-line @typescript-eslint/camelcase
         arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: searchString } }, { fetchAllData: true }),
+        // If string is all lower case also search for string with first character uppercased so "gen" matches "Gen" too
         // eslint-disable-next-line @typescript-eslint/camelcase
-        arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: searchString.charAt(0).toUpperCase() + searchString.slice(1) } }, { fetchAllData: true }),
+        firstChar.toLowerCase() === firstChar ? arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: firstChar.toUpperCase() + searchString.slice(1) } }, { fetchAllData: true }) : of([]),
         (data1, data2) => data1.concat(data2),
       ).pipe(first()).toPromise();
       this.setState({ searchDaos: foundDaos });
@@ -134,16 +151,16 @@ class DaosPage extends React.Component<IProps, IState> {
       <div className={css.wrapper}>
         <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
 
-        <Link to={"/daos/create"} className={css.createDaoButton}>
-          Create A DAO
-        </Link>
-
         <div className={css.searchBox}>
           <input type="text" name="search" placeholder="Search DAOs" onChange={this.onSearchChange} value={this.state.search} />
         </div>
 
+        <Link to={"/daos/create"} className={css.createDaoButton}>
+          Create A DAO
+        </Link>
+
         {yourDAOs.length ? <React.Fragment>
-          <Sticky enabled top={50} innerZ={10000}>
+          <Sticky enabled top={this.state.isMobile ? 75 : 50} innerZ={10000}>
             <div className={css.headerWrapper}>
               <div className={css.headerTitle + " clearfix"}>
                 <h2 data-test-id="header-all-daos">Your DAOs</h2>
@@ -158,7 +175,7 @@ class DaosPage extends React.Component<IProps, IState> {
           : ""
         }
 
-        <Sticky enabled top={50} innerZ={10000}>
+        <Sticky enabled top={this.state.isMobile ? 75 : 50} innerZ={10000}>
           <div className={css.headerWrapper}>
             <div className={css.headerTitle + " clearfix"}>
               <h2 data-test-id="header-all-daos">Other DAOs</h2>
