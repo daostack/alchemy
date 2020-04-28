@@ -138,7 +138,7 @@ function DaoWiki(props: IProps) {
         description: "This will allow DAO to have Wiki functionality",
         parametersHash: "0x00000000000000000000000000000000000000000",
         scheme: schemeRegistrar.staticState.address,
-        schemeToRegister: "0xc8E06C1b6fB9a60f727C538233dac6Ff5c1dDbf8", // rinkeby
+        schemeToRegister: "0x0F6b62C1702Ad7790940c2CB3F433b61a1195E3b", // rinkeby
       };
       await createProposal(proposalValues);
     }
