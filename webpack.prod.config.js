@@ -110,6 +110,8 @@ plugins: [
       ARC_IPFSPROVIDER_API_PATH : "",
       INFURA_ID : "",
       MIXPANEL_TOKEN: "",
+      BICONOMY_DAPP_ID: "",
+      BICONOMY_API_KEY: "",
     }),
 
     new CopyWebpackPlugin([
