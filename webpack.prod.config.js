@@ -111,7 +111,7 @@ plugins: [
       INFURA_ID : "",
       MIXPANEL_TOKEN: "",
       BICONOMY_DAPP_ID: "",
-      BICONOMY_API_KEY: "",
+      BICONOMY_API_KEY: ""
     }),
 
     new CopyWebpackPlugin([
