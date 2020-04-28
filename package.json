@@ -67,7 +67,7 @@
     "start-docker": "cross-env NODE_ENV=production SHOW_ALL_DAOS=true NETWORK=private node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js  --config webpack.docker.config.js",
     "start-prod": "cross-env NODE_ENV=production SHOW_ALL_DAOS=false NETWORK=main node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js  --config webpack.dev.config.js",
     "start-staging-kovan": "cross-env NODE_ENV=production SHOW_ALL_DAOS=true NETWORK=kovan node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.config.js",
-    "start-staging-rinkeby": "cross-env NODE_ENV=production SHOW_ALL_DAOS=true NETWORK=rinkeby node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.config.js",
+    "start-staging-rinkeby": "cross-env NODE_ENV=production BICONOMY_DAPP_ID=5e961edab93bbb3218f4ca4d BICONOMY_API_KEY=FnUirn0bX.7e02bb26-8725-45a4-8180-2f67a52871d3 SHOW_ALL_DAOS=true NETWORK=rinkeby node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.config.js",
     "start-staging": "npm run start-staging-rinkeby",
     "start-xdai": "cross-env NODE_ENV=production SHOW_ALL_DAOS=true NETWORK=xdai node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.config.js",
     "storybook": "start-storybook",

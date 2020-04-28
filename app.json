@@ -18,7 +18,15 @@
     "DISQUS_SITE": {
       "required": true,
       "value": "daostack-alchemy-staging"
-    }
+    },
+    "BICONOMY_DAPP_ID":{
+      "required": true,
+      "value":"5e961edab93bbb3218f4ca4d"
+    },
+    "BICONOMY_API_KEY":{
+      "required": true,
+      "value":"FnUirn0bX.7e02bb26-8725-45a4-8180-2f67a52871d3"
+    }
   },
   "formation": {
     "web": {
