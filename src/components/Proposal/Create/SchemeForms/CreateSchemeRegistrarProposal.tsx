@@ -244,15 +244,21 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
             <div className={css.helpText}>
               <p>You&quot;ll soon be able to add and edit plugins from this interface. Stay tuned!</p>
 
-              <p>For now, please contact us at <a href="mailto:email@email.com">email@email.com</a> to get one of the following plugins added to your DAO, or to add a new custom plugin of your own creation.</p>
+              <p>For now, <b>please contact us at</b> <a href="mailto:support@daostack.zendesk.com">support@daostack.zendesk.com</a> to get one of the following plugins added to your DAO, or to add a new custom plugin of your own creation.</p>
 
-              <p><b>Available Plugins:</b></p>
-              <ul>
-                <li>Funding and Voting Power - explanation</li>
-                <li>Plugin Manager - explanation</li>
-              </ul>
+              <h2>Available Plugins</h2>
+              <p><b>Funding and Voting Power Plugin</b> &mdash; Send token and Reputation rewards to any Ethereum address via proposal.</p>
+              <p><b>Plugin Manager</b> &mdash; Remove plugins via proposal (adding and editing plugins to be added soon).</p>
+              <p><b>Competition Plugin</b> &mdash; Create competitions with prizes split between any number of winners. Competitions accept submissions from anyone, and Reputation-holders vote to decide the winners.</p>
+              <p><b>ENS Plugins</b> &mdash; A set of plugins that enables the DAO to control Ethereum Name Service addresses via proposals.</p>
+              <p><b>Reputation from Token</b> &mdash; Allow anyone to redeem Reputation using a token of your choice.</p>
+              <p><b>Bounties Plugins</b> &mdash; Via proposal, create DAO-administered bounties on Bounties Network.</p>
+              <p><b>Join and Quit Plugins</b> &mdash; Allow anyone to join the DAO via a donation and quit anytime, reclaiming at least part of their original funds (“rage quit”). Coming soon.</p>
+              <p><b>NFT Plugins</b> &mdash; Allow the DAO to hold, send, mint, and sell NFTs (non-fungible tokens). Coming soon.</p>
 
-              <button id="showFormButton" onClick={this.toggleShowForm}>{showForm ? "Hide" : "Show"} proposal form</button>
+              <p><b>Need help creating a plugin not on this list?</b> Contact us at <a href="mailto:support@daostack.zendesk.com">support@daostack.zendesk.com</a></p>
+
+              <button id="showFormButton" className={css.showFormButton} onClick={this.toggleShowForm}>{showForm ? "Hide" : "Show"} proposal form</button>
             </div>
             : ""}
 

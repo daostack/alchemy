@@ -583,6 +583,26 @@
   }
 }
 
+.showFormButton {
+  height: 30px;
+  border: none;
+  display: inline-block;
+  margin: 0 5px;
+  font-weight: normal;
+  font-size: 13px;
+  padding: 0 25px 2px 25px;
+  font-family: $body-font;
+  font-weight: bold;
+  transition: all 0.25s ease;
+  background-color: rgba(0, 113, 255, 1);
+  border-radius: 15px;
+  color: $white;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 form .radioButtons {
   input {
     display: inline-block;
