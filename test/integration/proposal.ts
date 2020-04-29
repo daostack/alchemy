@@ -1,5 +1,5 @@
 import * as uuid from "uuid";
-import { getContractAddresses, hideCookieAcceptWindow, hideTrainingTooltips } from "./utils";
+import { getContractAddresses, hideCookieAcceptWindow, hideTrainingTooltips, gotoDaoSchemes } from "./utils";
 
 describe("Proposals", () => {
   let daoAddress: string;
@@ -12,8 +12,7 @@ describe("Proposals", () => {
   });
 
   it("Create a proposal, vote for it, stake on it", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+    await gotoDaoSchemes(daoAddress);
 
     const loginButton = await $("*[data-test-id=\"loginButton\"]");
     await loginButton.click();
@@ -105,8 +104,7 @@ describe("Proposals", () => {
   });
 
   it("Fill out a proposal form and export it", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+    await gotoDaoSchemes(daoAddress);
 
     await hideCookieAcceptWindow();
     const schemeCard = await $("[data-test-id=\"schemeCard-ContributionReward\"]");
