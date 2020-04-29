@@ -67,6 +67,8 @@ class DaoSchemesPage extends React.Component<IProps, null> {
     const [allSchemes, signalsData] = data;
     const { signals } = signalsData.data;
     const signal = signals.length > 0 ? signals[0] : null;
+    // TODO:
+    // Once backend issues our fix we will uncomment lines 71, 72.
     // const daoHeaderBackground = signal ? JSON.parse(signal.data).Header : null;
     // const backgroundImage = daoHeaderBackground ? daoHeaderBackground : null;
     const backgroundImage = 'https://w.wallhaven.cc/full/13/wallhaven-13mk9v.jpg'

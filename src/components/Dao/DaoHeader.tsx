@@ -69,7 +69,7 @@ class DaoHeaderComponent extends React.Component<IProps, any> {
             data.holdings.map((holding, index) => {
               return (
                 <div key={index} className={css.holdingsAmount}>
-                  <span>
+                  <span className={css.holdingsNumber}>
                     { holding.amount }
                   </span>
                   <span className={css.holdingsName}>

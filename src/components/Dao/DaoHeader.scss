@@ -1,9 +1,10 @@
 .headerWrap {
   background: white;
-  margin: 8rem 2.5% 40px 0;
+  margin: 8rem 2.5% 0 0;
   padding: 25px;
   position: relative;
   border-radius: 20px 20px 0 0;
+  z-index: 9999999999;
 }
 
 .reputationHolders {
@@ -41,26 +42,39 @@
 }
 
 .daoImg {
-  top: -40px;
-  position: absolute
+  top: -40px !important;
+  left: 5px !important;
+  position: absolute;
 }
 
 .daoHeadingGroup {
-  margin-top: 10%;
   .header {
-    margin-bottom: unset;
+    margin: unset;
   }
   p {
     margin-top: unset;
   }
 }
+.daoImg {
+  top: -40px !important;
+  left: 5px !important;
+  position: absolute;
+}
 
+.headerWrap {
+  padding-top: 10vh;
+}
+
+.daoInfo {
+  margin-left: 10% !important;
+}
 .holdings {
   padding: 15px;
   border: 1px solid #dbd7d7;
   border-radius: 7px;
-  // width: 20%;
   float: right;
+  position: relative;
+  top: -50px;
 }
 
 .holdings .holdingsAmount {
@@ -71,16 +85,16 @@
 
 .holdings .holdingsAmount .holdingsName {
   float: right;
-  margin-right: 25px;
+  margin-left: 25px;
 }  
+
+.holdingsNumber {
+  margin-right: 10px;
+}
 
 @media only screen and (max-width: 550px) {
   .daoInfo {
     margin-left: 30% !important;
-  }
-  
-  .daoDescription {
-    
   }
 
   .holdings {
@@ -90,8 +104,50 @@
     left: 15px;
   }
 
-  .daoHeadingGroup {
-    margin-top: 20%;
+
+  .daoImg {
+    top: -40px !important;
+    left: 5px !important;
+    position: absolute;
+  }
+
+  .headerWrap {
+    padding-top: 10vh;
+  }
+
+  .daoInfo {
+    margin-left: 8% !important;
+    margin-top: 31% !important;
   }
 
 }
+@media only screen and (max-width: 1050px) {
+  .headerWrap {
+    padding-top: 10vh;
+  }
+
+  .daoInfo {
+    margin-left: 30% !important;
+  }
+  
+  .holdings {
+    top: -20px;
+  }
+}
+@media only screen and (max-width: 650px) { 
+  .daoImg {
+    top: -75px;
+    left: 75px;
+    position: absolute;
+  }
+
+  .daoInfo {
+    margin-left: 35% !important;
+    margin-top: 0% !important;
+  }
+  
+  .holdings {
+    top: -30px;
+  }
+}
+
