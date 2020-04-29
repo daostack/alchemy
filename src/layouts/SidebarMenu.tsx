@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { IDAOState, Token } from "@daostack/client";
+import { IDAOState, Token } from "@daostack/arc.js";
 import { hideMenu } from "actions/uiActions";
 import { getArc } from "arc";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -10,7 +10,7 @@ import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { generate } from "geopattern";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWei } from "lib/util";
+import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWeiToString } from "lib/util";
 import { parse } from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
@@ -195,8 +195,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
           <ul>
             <li key={"0x0"}>
               <Tooltip overlay={`${
-                fromWei(dao.reputationTotalSupply).toLocaleString(
-                  undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} REP`} placement="right">
+                fromWeiToString(dao.reputationTotalSupply)} REP`} placement="right">
                 <strong>{formatTokens(dao.reputationTotalSupply)} REP</strong>
               </Tooltip>
             </li>
@@ -287,9 +286,9 @@ const SubscribedEthBalance = withSubscription({
   checkForUpdate: (oldProps: IEthProps, newProps: IEthProps) => {
     return oldProps.dao.address !== newProps.dao.address;
   },
-  createObservable: (props: IEthProps) => {
+  createObservable: async (props: IEthProps) => {
     const arc = getArc();
-    return arc.dao(props.dao.address).ethBalance().pipe(ethErrorHandler());
+    return (await arc.dao(props.dao.address).ethBalance()).pipe(ethErrorHandler());
   },
 });
 
@@ -326,7 +325,7 @@ const SubscribedTokenBalance = withSubscription({
     await daoState.dao.members({ first: 1000, skip: 0 }).pipe(first()).toPromise();
 
     const arc = getArc();
-    const token = new Token(props.tokenAddress, arc);
+    const token = new Token(arc, props.tokenAddress);
     return token.balanceOf(props.dao.address).pipe(ethErrorHandler());
   },
 });

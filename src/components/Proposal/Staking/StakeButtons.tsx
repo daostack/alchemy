@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, Stake } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, Stake } from "@daostack/arc.js";
 import { approveStakingGens, stakeProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 
@@ -138,7 +138,7 @@ class StakeButtons extends React.Component<IProps, IState> {
       currentStake = stakes[0];
     }
     if (currentStake) {
-      currentAccountPrediction = currentStake.staticState.outcome;
+      currentAccountPrediction = currentStake.coreState.outcome;
     }
 
     const isPredicting = pendingPrediction !== null;

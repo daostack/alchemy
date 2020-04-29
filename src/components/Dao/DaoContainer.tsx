@@ -1,4 +1,4 @@
-import { IDAOState, Member } from "@daostack/client";
+import { IDAOState, Member } from "@daostack/arc.js";
 import { getProfilesForAddresses } from "actions/profilesActions";
 import { getArc } from "arc";
 import CreateProposalPage from "components/Proposal/Create/CreateProposalPage";
@@ -59,7 +59,7 @@ class DaoContainer extends React.Component<IProps, null> {
 
   public async componentDidMount() {
     // TODO: use this once 3box fixes Box.getProfiles
-    //this.props.getProfilesForAddresses(this.props.data[1].map((member) => member.staticState.address));
+    //this.props.getProfilesForAddresses(this.props.data[1].map((member) => member.coreState.address));
   }
 
   private daoHistoryRoute = (routeProps: any) => <DaoHistoryPage {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;

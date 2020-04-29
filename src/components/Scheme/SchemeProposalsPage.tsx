@@ -1,5 +1,5 @@
 import { History } from "history";
-import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Vote, Reward, Scheme, Stake } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Vote, Reward, Scheme, Stake } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";

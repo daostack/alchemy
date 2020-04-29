@@ -2,7 +2,7 @@
 import {
   Address,
   IContractInfo,
-  ISchemeState} from "@daostack/client";
+  ISchemeState} from "@daostack/arc.js";
 import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 
@@ -93,8 +93,6 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       const schemeState = scheme as ISchemeState;
       if (schemeState.genericSchemeParams) {
         contractToCall = schemeState.genericSchemeParams.contractToCall;
-      } else {
-        contractToCall = schemeState.uGenericSchemeParams.contractToCall;
       }
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
       if (genericSchemeInfo) {
@@ -165,11 +163,6 @@ const schemeActionPropNames = new Map<string, Map<GetSchemeIsActiveActions, stri
 export function getSchemeIsActive(scheme: ISchemeState, action?: GetSchemeIsActiveActions): boolean {
   let votingMachineParamsPropertyName: string;
   let schemeName = scheme.name ? `${scheme.name[0].toLowerCase()}${scheme.name.slice(1)}` : "";
-  if (schemeName === "genericScheme") {
-    if (scheme.uGenericSchemeParams) {
-      schemeName = "uGenericScheme";
-    }
-  }
 
   if (action) { // then the name of the voting machine properties property depends on the action
     const schemeActionsMap = schemeActionPropNames.get(scheme.name);

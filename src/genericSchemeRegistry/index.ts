@@ -1,8 +1,8 @@
 // tslint:disable:max-classes-per-file
 import BN = require("bn.js");
-import { Networks, targetedNetwork } from "lib/util";
+import { Networks, targetedNetwork, toWei } from "lib/util";
+import { keccak256, Interface } from "ethers/utils";
 
-const Web3 = require("web3");
 const namehash = require("eth-ens-namehash");
 const dutchXInfo = require("./schemes/DutchX.json");
 const bountiesInfo = require("./schemes/StandardBounties.json");
@@ -111,17 +111,15 @@ export class ActionField {
       return (new BN(userValue as string).mul(new BN(10).pow(new BN(this.decimals)))).toString();
     }
 
-    const web3 = new Web3();
-
     switch (this.transformation) {
       case "namehash": {
         return namehash.hash(userValue);
       }
       case "keccak256": {
-        return web3.utils.keccak256(userValue);
+        return keccak256(userValue.toString());
       }
       case "toWei": {
-        return web3.utils.toWei(userValue.toString(), "ether").toString();
+        return toWei(Number(userValue)).toString();
       }
     }
 
@@ -137,6 +135,7 @@ interface IActionSpec {
   notes: string;
   fields: any[];
 }
+
 interface IGenericSchemeJSON {
   name: string;
   addresses: any[];
@@ -206,7 +205,8 @@ export class GenericSchemeInfo {
     return;
   }
   public encodeABI(action: IActionSpec, values: any[]) {
-    return (new Web3()).eth.abi.encodeFunctionCall(action.abi, values);
+    const abi = new Interface([action.abi]);
+    return abi.functions[action.abi.name].encode(values);
   }
 
   /*
@@ -215,12 +215,14 @@ export class GenericSchemeInfo {
    * It returns 'undefined' if the action could not be found
    */
   public decodeCallData(callData: string): { action: IActionSpec; values: any[]} {
-    const web3 = new Web3();
     let action: undefined|IActionSpec;
+    let actionAbi: Interface;
     for (const act of this.actions()) {
-      const encodedFunctionSignature = web3.eth.abi.encodeFunctionSignature(act.abi);
+      const abi = new Interface([act.abi]);
+      const encodedFunctionSignature = abi.functions[act.abi.name].sighash;
       if (callData.startsWith(encodedFunctionSignature)) {
         action = act;
+        actionAbi = abi;
         break;
       }
     }
@@ -228,8 +230,10 @@ export class GenericSchemeInfo {
       throw Error("No action matching these callData could be found");
     }
     // we've found our function, now we can decode the parameters
-    const decodedParams = web3.eth.abi
-      .decodeParameters(action.abi.inputs, "0x" + callData.slice(2 + 8));
+    const decodedParams = actionAbi.functions[action.abi.name].decode(
+      "0x" + callData.slice(2 + 8)
+    );
+
     const values =  [];
     for (const inputSpec of action.abi.inputs) {
       values.push(decodedParams[inputSpec.name]);

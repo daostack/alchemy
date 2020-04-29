@@ -4,7 +4,7 @@ import { Prompt } from "react-router-dom";
 import { showNotification } from "reducers/notifications";
 import { enableWalletProvider, getWeb3Provider } from "arc";
 
-const DAOcreator = React.lazy(() => import("@dorgtech/daocreator-ui"));
+const DAOcreator = React.lazy(() => import("@dorgtech/daocreator-ui-experimental"));
 
 interface IDispatchProps {
   showNotification: typeof showNotification;

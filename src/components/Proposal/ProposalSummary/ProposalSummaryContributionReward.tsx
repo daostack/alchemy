@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState } from "@daostack/client";
+import { IDAOState, IProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";

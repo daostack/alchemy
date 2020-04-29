@@ -1,7 +1,6 @@
 import { Arc } from '@daostack/client';
 const fs = require("fs");
 import { settings } from "../src/settings";
-const Web3 = require("web3");
 
 const network = process.argv[2] || process.env.NETWORK;
 if (!network) {
@@ -15,13 +14,10 @@ async function fetchContracts() {
   console.log("Fetching contract data from subgraph for network", network);
 
   const arcSettings = settings[network];
-  const provider = arcSettings.web3Provider;
-
   const arc = new Arc(arcSettings);
 
   // get contract information from the subgraph
   const contractInfos = await arc.fetchContractInfos();
-  const success = !!contractInfos;
 
   await fs.writeFile(`data/contractInfos-${network}.json`, JSON.stringify(contractInfos), (r) => {
     console.log(`Successfully wrote contracts to data/contractInfos-${network}.json`);

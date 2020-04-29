@@ -1,4 +1,4 @@
-import { Address, DAOFieldsFragment, IContributionReward, IDAOState, IRewardState, Proposal } from "@daostack/client";
+import { Address, IContributionReward, IDAOState, IRewardState, Proposal, DAO } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -153,7 +153,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
               key={"proposal_" + proposal.id}
               currentAccountAddress={currentAccountAddress}
               daoState={daoState}
-              proposal={new Proposal(proposal.id, arc)}
+              proposal={new Proposal(arc, proposal.id)}
             />;
           })}
         </div>
@@ -274,7 +274,7 @@ const SubscribedRedemptionsPage = withSubscription({
           }
         }
       }
-      ${DAOFieldsFragment}
+      ${DAO.fragments.DAOFields}
     `;
     const proposals = arc.getObservable(query, { subscribe: true })
       .pipe(map((result: any) => result.data.proposals));

@@ -76,7 +76,7 @@ module.exports = {
         include: [
           resolve("node_modules/@fortawesome/fontawesome-free/css/all.min.css"),
           resolve("node_modules/mdbreact/dist/css/mdb.css"),
-          resolve("node_modules/@dorgtech/daocreator-ui/dist")
+          resolve("node_modules/@dorgtech/daocreator-ui-experimental/dist")
         ],
         use: [MiniCssExtractPlugin.loader, "css-loader"]
       },
@@ -127,6 +127,7 @@ module.exports = {
   node: {
     fs: "empty",
     net: "empty",
-    tls: "empty"
+    tls: "empty",
+    child_process: "empty"
   }
 };

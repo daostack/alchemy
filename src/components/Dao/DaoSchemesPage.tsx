@@ -1,4 +1,4 @@
-import { IDAOState, Scheme } from "@daostack/client";
+import { IDAOState, Scheme } from "@daostack/arc.js";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UnknownSchemeCard from "components/Dao/UnknownSchemeCard";
@@ -50,16 +50,16 @@ class DaoSchemesPage extends React.Component<IProps, null> {
     const dao = this.props.daoState;
     const allSchemes = data;
 
-    const contributionReward = allSchemes.filter((scheme: Scheme) => scheme.staticState.name === "ContributionReward");
-    const knownSchemes = allSchemes.filter((scheme: Scheme) => scheme.staticState.name !== "ContributionReward" && KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) >= 0);
-    const unknownSchemes = allSchemes.filter((scheme: Scheme) =>  KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) === -1 );
+    const contributionReward = allSchemes.filter((scheme: Scheme) => scheme.coreState.name === "ContributionReward");
+    const knownSchemes = allSchemes.filter((scheme: Scheme) => scheme.coreState.name !== "ContributionReward" && KNOWN_SCHEME_NAMES.indexOf(scheme.coreState.name) >= 0);
+    const unknownSchemes = allSchemes.filter((scheme: Scheme) =>  KNOWN_SCHEME_NAMES.indexOf(scheme.coreState.name) === -1 );
     const allKnownSchemes = [...contributionReward, ...knownSchemes];
 
     const schemeCardsHTML = (
       <TransitionGroup>
         { allKnownSchemes.map((scheme: Scheme) => (
           <Fade key={"scheme " + scheme.id}>
-            {PROPOSAL_SCHEME_NAMES.includes(scheme.staticState.name)
+            {PROPOSAL_SCHEME_NAMES.includes(scheme.coreState.name)
               ?
               <ProposalSchemeCard dao={dao} scheme={scheme} />
               : <SimpleSchemeCard dao={dao} scheme={scheme} />

@@ -1,4 +1,4 @@
-import { IDAOState, Member } from "@daostack/client";
+import { IDAOState, Member } from "@daostack/arc.js";
 import { getProfile } from "actions/profilesActions";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -47,8 +47,8 @@ class DaoMembersPage extends React.Component<IProps, null> {
 
   public componentDidMount() {
     this.props.data.forEach((member) => {
-      if (!this.props.profiles[member.staticState.address]) {
-        this.props.getProfile(member.staticState.address);
+      if (!this.props.profiles[member.coreState.address]) {
+        this.props.getProfile(member.coreState.address);
       }
     });
 
@@ -67,7 +67,7 @@ class DaoMembersPage extends React.Component<IProps, null> {
     const { daoState, profiles } = this.props;
 
     const membersHTML = members.map((member) =>
-      <DaoMember key={member.staticState.address} dao={daoState} daoTotalReputation={daoTotalReputation} member={member} profile={profiles[member.staticState.address]} />);
+      <DaoMember key={member.coreState.address} dao={daoState} daoTotalReputation={daoTotalReputation} member={member} profile={profiles[member.coreState.address]} />);
 
     return (
       <div className={css.membersContainer}>
