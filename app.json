@@ -18,6 +18,10 @@
     "DISQUS_SITE": {
       "required": true,
       "value": "daostack-alchemy-staging"
+    },
+    "SHOW_ALL_DAOS": {
+      "required": true,
+      "value": "true"
     }
   },
   "formation": {
