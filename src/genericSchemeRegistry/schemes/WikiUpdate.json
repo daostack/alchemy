@@ -2,7 +2,7 @@
   "name": "WikiUpdate",
   "addresses": {
     "main": [ "" ],
-    "rinkeby": [ "0x840a979c8014d4b4cc6b7b0d26fb14f7782f28ec" ],
+    "rinkeby": [ "0x8607c51819beb3a2df2d18efcbe7c36082ccf97d" ],
     "kovan": ["0xb1db4a5e4c35727eec8e6285cddf1844cd71027c"],
     "private": [
       "0xA10f1c26d7D4BCB1a93F84652177D2E2b320378B",
