@@ -119,7 +119,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
           <span className={css.daoNavHeading}><b>DAO Menu</b></span>
           <ul>
             <li>
-              <Link to={`/dao/${dao.address}/schemes`} onClick={this.handleCloseMenu} data-test-id="daoschemes">
+              <Link to={`/dao/${dao.address}`} onClick={this.handleCloseMenu} data-test-id="daohome">
                 <span className={css.menuDot} />
                 <span className={
                   classNames({
@@ -128,6 +128,19 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   })
                 }></span>
                 <img src="/assets/images/Icon/menu/home.svg" />
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to={`/dao/${dao.address}/schemes`} onClick={this.handleCloseMenu} data-test-id="daoschemes">
+                <span className={css.menuDot} />
+                <span className={
+                  classNames({
+                    [css.notification]: true,
+                    [css.proposalsNotification]: true,
+                  })
+                }></span>
+                <img src="/assets/images/Icon/menu/chat.svg" />
                 Proposals
               </Link>
             </li>
