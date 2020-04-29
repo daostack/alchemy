@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState, IProposalType } from "@dorgtech/client";
+import { IDAOState, IProposalState, IProposalType } from "@daostack/arc.js";
 import classNames from "classnames";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import * as React from "react";

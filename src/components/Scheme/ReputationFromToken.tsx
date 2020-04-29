@@ -1,4 +1,4 @@
-import { Address, ISchemeState, Token } from "@dorgtech/client";
+import { Address, ISchemeState, Token } from "@daostack/arc.js";
 import axios from "axios";
 import { getArcSettings } from "arc";
 import { SigningKey } from "ethers/utils";

@@ -1,4 +1,4 @@
-import { ISchemeState } from "@dorgtech/client";
+import { ISchemeState } from "@daostack/arc.js";
 import { getArc } from "arc";
 
 export const hasRewarderContract = (schemeState: ISchemeState): boolean => {

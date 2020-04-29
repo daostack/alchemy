@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState, Address, ICompetitionSuggestionState, CompetitionVote } from "@dorgtech/client";
+import { IDAOState, IProposalState, Address, ICompetitionSuggestionState, CompetitionVote } from "@daostack/arc.js";
 import * as React from "react";
 
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";

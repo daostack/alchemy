@@ -1,4 +1,4 @@
-import { IProposalStage, IProposalState } from "@dorgtech/client";
+import { IProposalStage, IProposalState } from "@daostack/arc.js";
 
 import BN = require("bn.js");
 import classNames from "classnames";

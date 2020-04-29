@@ -1,4 +1,4 @@
-import { IProposalStage, IProposalState } from "@dorgtech/client";
+import { IProposalStage, IProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
 import * as React from "react";
 import { proposalExpired, proposalFailed, proposalPassed } from "lib/proposalHelpers";

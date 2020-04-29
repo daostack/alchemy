@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@dorgtech/client";
+import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@daostack/arc.js";
 import classNames from "classnames";
 import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
 import { schemeNameAndAddress } from "lib/schemeUtils";

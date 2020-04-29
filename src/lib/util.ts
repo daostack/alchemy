@@ -6,7 +6,7 @@ import {
   IRewardState,
   utils,
   Web3Provider
-} from "@dorgtech/client";
+} from "@daostack/arc.js";
 import { JsonRpcProvider } from "ethers/providers";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
@@ -18,7 +18,6 @@ import BN = require("bn.js");
 import "moment";
 import * as moment from "moment-timezone";
 import { getArc } from "../arc";
-import "ethers/dist/shims";
 import { Signer } from "ethers";
 import { promisify } from "util";
 

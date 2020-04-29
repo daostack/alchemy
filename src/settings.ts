@@ -5,7 +5,7 @@ export const USE_CONTRACTINFOS_CACHE = false;
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Torus from "@toruslabs/torus-embed";
-import { IArcOptions } from "@dorgtech/client";
+import { IArcOptions } from "@daostack/arc.js";
 import { RetryLink } from "apollo-link-retry";
 
 const Portis = require("@portis/web3");
@@ -180,7 +180,7 @@ export const settings: NetworkSettings = {
     graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
     graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
     graphqlSubscribeToQueries: false,
-    web3Provider: "ws://127.0.0.1:8545",
+    web3Provider: "http://127.0.0.1:8545",
     ipfsProvider: "http://127.0.0.1:5001/api/v0",
     txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
     web3ConnectProviderOptions: {},

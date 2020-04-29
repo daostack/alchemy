@@ -1,4 +1,4 @@
-import { IDAOState } from "@dorgtech/client";
+import { IDAOState } from "@daostack/arc.js";
 import { DiscussionEmbed } from "disqus-react";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";

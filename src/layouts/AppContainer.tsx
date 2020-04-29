@@ -23,7 +23,7 @@ import { ModalContainer } from "react-router-modal";
 import { History } from "history";
 import classNames from "classnames";
 import { captureException, withScope } from "@sentry/browser";
-import { Address } from "@dorgtech/client";
+import { Address } from "@daostack/arc.js";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
 

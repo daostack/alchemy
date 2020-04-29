@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState } from "@dorgtech/client";
+import { IDAOState, IProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
 import { linkToEtherScan } from "lib/util";
 import * as React from "react";
