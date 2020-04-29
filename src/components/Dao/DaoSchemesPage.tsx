@@ -87,7 +87,7 @@ class DaoSchemesPage extends React.Component<IProps, null> {
           ? <div>
             <img src="/assets/images/meditate.svg" />
             <div>
-              No schemes registered
+              No plugins registered
             </div>
           </div>
           :
