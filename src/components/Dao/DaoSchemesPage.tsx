@@ -108,7 +108,7 @@ class DaoSchemesPage extends React.Component<IProps, null> {
         <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
 
         <Sticky enabled top={50} innerZ={10000}>
-          <h1>All Plugins</h1>
+          <h1>Proposal Plugins</h1>
           { schemeManager ?
             <TrainingTooltip placement="topLeft" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
               <a className={
@@ -129,7 +129,7 @@ class DaoSchemesPage extends React.Component<IProps, null> {
           ? <div>
             <img src="/assets/images/meditate.svg" />
             <div>
-              No schemes registered
+              No plugins registered
             </div>
           </div>
           :

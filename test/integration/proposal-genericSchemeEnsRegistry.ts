@@ -1,6 +1,6 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
-import { getArc } from "./utils";
+import { getArc, gotoDaoSchemes } from "./utils";
 
 describe("Proposals ENS Registry", () => {
   let daoAddress: string;
@@ -15,8 +15,7 @@ describe("Proposals ENS Registry", () => {
   });
 
   it("Create a Generic Scheme ENS Registry proposal and check that the data is submitted correctly", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+    await gotoDaoSchemes(daoAddress);
 
     const ensTitle = await $("h2=EnsRegistry");
     await ensTitle.waitForExist();
