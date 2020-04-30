@@ -59,11 +59,13 @@ export async function getCurrentBlock(web3?: any): Promise<any> {
   try {
     // need the `await` so exceptions will be caught here
     return await web3.eth.getBlock("latest");
-  } catch {
+  } catch (ex) {
     /**
      * This often happens with the error:  "connection not open on send()".
      * See: https://github.com/ethereum/web3.js/issues/1354
      */
+    // eslint-disable-next-line no-console
+    console.log(`getCurrentBlock: web3.eth.getBlock failed: ${ex.message}`);
     return null;
   }
 }
