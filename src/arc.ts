@@ -126,7 +126,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     const retryLink = new RetryLink({
       attempts: {
         max: 5,
-        retryIf: (error, _operation) =>  {
+        retryIf: (error, _operation) => {
         // eslint-disable-next-line no-console
           console.error("error occurred fetching data, retrying...");
           // eslint-disable-next-line no-console
@@ -218,7 +218,7 @@ async function ensureCorrectNetwork(provider: any): Promise<void> {
   // TODO: we should not use the network NAME but the network ID to identify the network...
   const networkName = await getProviderNetworkName(provider);
 
-  if (networkName !== expectedNetworkName)  {
+  if (networkName !== expectedNetworkName) {
     if (expectedNetworkName === "xdai") {
       // TODO: xdai is reporting network 'unknown (100)` , it seems
       if (networkName === "unknown (100)") {
@@ -428,7 +428,7 @@ export async function logout(showNotification?: any): Promise<boolean> {
     success = await initializeArc();
 
     if (!success) {
-      const msg =  `Unable to disconnect from : ${networkName}`;
+      const msg = `Unable to disconnect from : ${networkName}`;
       if (showNotification) {
         showNotification(NotificationStatus.Failure, msg);
       } else {
@@ -529,7 +529,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
 export function pollForAccountChanges(currentAccountAddress: Address | null, interval = 2000): Observable<Address> {
   // eslint-disable-next-line no-console
   console.log(`start polling for account changes from: ${currentAccountAddress}`);
-  return Observable.create((observer: any): () => void  => {
+  return Observable.create((observer: any): () => void => {
     let prevAccount = currentAccountAddress;
     let running = false;
 

@@ -27,25 +27,25 @@ const uiReducer = (state = initialState, action: any) => {
   switch (action.type) {
 
     case ActionTypes.SHOW_TOUR:
-      return {...state, tourVisible: true  };
+      return {...state, tourVisible: true };
 
     case ActionTypes.HIDE_TOUR:
       return {...state, tourVisible: false };
 
     case ActionTypes.SHOW_MENU:
-      return {...state, menuOpen: true  };
+      return {...state, menuOpen: true };
 
     case ActionTypes.HIDE_MENU:
       return {...state, menuOpen: false };
 
     case ActionTypes.ENABLE_TRAINING_TOOLTIPS_ON_HOVER:
-      return {...state, trainingTooltipsOnHover: true  };
+      return {...state, trainingTooltipsOnHover: true };
 
     case ActionTypes.DISABLE_TRAINING_TOOLTIPS_ON_HOVER:
       return {...state, trainingTooltipsOnHover: false };
 
     case ActionTypes.ENABLE_TRAINING_TOOLTIPS_SHOW_ALL:
-      return {...state, trainingTooltipsShowAll: true  };
+      return {...state, trainingTooltipsShowAll: true };
 
     case ActionTypes.DISABLE_TRAINING_TOOLTIPS_SHOW_ALL:
       return {...state, trainingTooltipsShowAll: false };

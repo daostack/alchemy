@@ -68,7 +68,7 @@ async function monitorGraphNodeSubgraph() {
  * @returns Observable<boolean> indicating if subgraph is updating correctly
  */
 export function pollSubgraphUpdating(): Observable<boolean> {
-  return Observable.create((observer: any): () => void  => {
+  return Observable.create((observer: any): () => void => {
     let running = false;
 
     async function poll() {
