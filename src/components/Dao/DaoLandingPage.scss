@@ -53,6 +53,25 @@
   .wallContainer {
     padding-bottom: 5px;
   }
+
+  div.threeBoxLoginButton {
+    padding-right: 8px;
+    button {
+      height: 30px;
+      border-radius: 30px;
+      border-width: 1px;
+      background-color: #0071ff;
+      padding: 0 15px;
+      border-color: #0376ff;
+      color: white;
+      font-weight: bold;
+      font-size: 11px;
+      text-align: center;
+      cursor: pointer;
+      outline: none;
+      white-space: nowrap;
+    }
+  }
 }
 
 .modalHeader {
@@ -75,4 +94,10 @@
   div {
     margin-bottom: 1rem;
   }
+}
+
+.discussionWarning {
+  color: red;
+  margin-top: -20px;
+  margin-bottom: 20px;
 }

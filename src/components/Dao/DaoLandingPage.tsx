@@ -1,5 +1,12 @@
 import { IDAOState } from "@daostack/client";
+import ThreeBoxComments from '3box-comments-react';
+import { threeboxLogin } from "actions/profilesActions";
+import { enableWalletProvider } from "arc";
 import * as React from "react";
+import { connect } from "react-redux";
+import { IRootState } from "reducers";
+import { showNotification } from "reducers/notifications";
+import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./DaoLandingPage.scss";
 import { Page } from "pages";
 import Analytics from "lib/analytics";
@@ -13,12 +20,37 @@ type IExternalProps = {
 };
 
 interface IStateProps {
+  currentAccountAddress: string;
+  currentAccountProfile: IProfileState;
+  threeBox: any;
+}
+
+interface IDispatchProps {
+  showNotification: typeof showNotification;
+  threeboxLogin: typeof threeboxLogin;
+}
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+  return {
+    ...ownProps,
+    currentAccountAddress: state.web3.currentAccountAddress,
+    currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
+    threeBox: state.profiles.threeBox,
+  };
+};
+
+const mapDispatchToProps = {
+  showNotification,
+  threeboxLogin,
+};
+
+type IProps = IExternalProps & IDispatchProps & IStateProps;
+
+interface IState {
   showingEditPagePopup: boolean;
 }
 
-type IProps = IExternalProps;
-
-export default class DaoLandingPage extends React.Component<IProps, IStateProps> {
+class DaoLandingPage extends React.Component<IProps, IState> {
 
   private disqusConfig: any;
 
@@ -43,6 +75,11 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
     });
   }
 
+  private handleThreeBoxLogin = async () => {
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    await this.props.threeboxLogin(this.props.currentAccountAddress);
+  }
+
   private showLandingPageContent = () => {
     this.setState({ showingEditPagePopup: true });
   }
@@ -52,7 +89,7 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
   }
 
   public render() {
-    const daoState = this.props.daoState;
+    const { currentAccountAddress, currentAccountProfile, daoState, threeBox } = this.props;
 
     return (
       <div className={css.landingPage}>
@@ -77,6 +114,24 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
 
         <div className={css.wallContainer}>
           <div className={css.headerText}>Discuss {daoState.name}</div>
+          <p className={css.discussionWarning}>We are moving from Disqus to 3Box for commenting! Both are available here for a short time so important comments can be copied from Disqus to 3Box.</p>
+          { /* XXX: This is not what we want, we want to show comments without them having to login, but i cant get the loginFunction to work at all */ }
+          { threeBox ?
+            <ThreeBoxComments
+              spaceName="DAOstack"
+              threadName={daoState.id}
+              adminEthAddr={"0x0084FB1d84F2359Cafd00f92B901C121521d6809"}
+              box={threeBox}
+              currentUserAddr={currentAccountAddress}
+              currentUser3BoxProfile={currentAccountProfile}
+              loginFunction={this.handleThreeBoxLogin}
+              showCommentCount={10}
+              useHovers
+              userProfileURL={address => `${process.env.BASE_URL}/profile/${address}`}
+            />
+            : <div className={css.threeBoxLoginButton}><button onClick={this.handleThreeBoxLogin}>Login to 3box to comment</button></div>
+          }
+
           <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
         </div>
 
@@ -104,3 +159,5 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
     );
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(DaoLandingPage);

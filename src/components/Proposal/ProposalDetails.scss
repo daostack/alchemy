@@ -315,6 +315,12 @@ iframe.embeddedVideo {
   width: 100%;
 }
 
+.discussionWarning {
+  color: red;
+  margin-top: -20px;
+  margin-bottom: 20px;
+}
+
 @media only screen and (max-width: 425px) {
   .proposal {
     display: block;

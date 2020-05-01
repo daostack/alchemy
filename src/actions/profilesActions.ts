@@ -85,6 +85,42 @@ export function getProfile(accountAddress: string, currentAccount = false) {
   };
 }
 
+export function threeboxLogin(accountAddress: string) {
+  console.log("murp");
+  return async (dispatch: any, _getState: any) => {
+    console.log("yo");
+    const state = _getState();
+    let threeBox;
+
+    try {
+      if (state.profiles.threeBox) {
+        return;
+      } else {
+        const web3Provider = await getWeb3Provider();
+        threeBox = await Box.openBox(accountAddress, web3Provider);
+      }
+      await threeBox.syncDone;
+    } catch (e) {
+      const errorMsg = e.message;
+
+      // eslint-disable-next-line no-console
+      console.error("Error logging in to 3box: ", errorMsg);
+
+      dispatch(showNotification(NotificationStatus.Failure, `Logging in to 3box failed: ${errorMsg}`));
+      return false;
+    }
+
+    dispatch({
+      type: ActionTypes.SAVE_THREEBOX,
+      sequence: AsyncActionSequence.Success,
+      payload: { threeBox },
+    });
+
+    dispatch(showNotification(NotificationStatus.Success, "Logged in to 3box"));
+    return true;
+  };
+}
+
 export function threeBoxLogout() {
   return async (dispatch: any, _getState: any) => {
     const state = _getState();
