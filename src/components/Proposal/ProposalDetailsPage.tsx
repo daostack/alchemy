@@ -1,4 +1,5 @@
 import { Address, IDAOState, IProposalStage, Vote } from "@daostack/client";
+import { enableWalletProvider, getArc } from "arc";
 import ThreeBoxComments from '3box-comments-react';
 import { threeboxLogin } from "actions/profilesActions";
 import classNames from "classnames";
@@ -16,6 +17,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
+import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { closingTime, proposalEnded } from "lib/proposalHelpers";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
@@ -49,6 +51,7 @@ interface IStateProps {
 }
 
 interface IDispatchProps {
+  showNotification: typeof showNotification;
   threeboxLogin: typeof threeboxLogin;
 }
 
@@ -61,6 +64,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps & IInjected
 };
 
 const mapDispatchToProps = {
+  showNotification,
   threeboxLogin,
 };
 
@@ -122,6 +126,11 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     this.setState({ showVotersModal: false });
   }
 
+  private handleThreeBoxLogin = async () => {
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    await this.props.threeboxLogin(this.props.currentAccountAddress);
+  }
+
   private parseYouTubeVideoIdFromUri = (url: string): string => {
     const match = url.match(/(\/|%3D|v=)([0-9A-z-_]{11})([%#?&]|$)/);
     if (match) {
@@ -165,7 +174,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       rewards,
       stakes,
       threeBox,
-      //threeboxLogin,
       votes,
     } = this.props;
 
@@ -192,6 +200,8 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       [css.voteBox]: true,
       clearfix: true,
     });
+
+    const arc = getArc();
 
     return (
       <div className={css.wrapper}>
@@ -392,25 +402,26 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
         <h3 className={css.discussionTitle}>Discussion</h3>
         <p className={css.discussionWarning}>We are moving from Disqus to 3Box for commenting! Both are available here for a short time so important comments can be copied from Disqus to 3Box.</p>
         <div className={css.disqus}>
-           <ThreeBoxComments
+          <ThreeBoxComments
             // required
             spaceName="DAOstack"
             threadName={proposal.id}
             adminEthAddr={"0x0084FB1d84F2359Cafd00f92B901C121521d6809"}
 
-            // Required props for context A) & B)
             box={threeBox}
+
+            // Required props for context A) & B)
             currentUserAddr={currentAccountAddress}
 
             // Required prop for context B)
-            loginFunction={((a: any) => { console.log("yoyo", a)}) as any}
+            loginFunction={this.handleThreeBoxLogin}
 
             // Required prop for context C)
-            //ethereum={ethereum}
+            ethereum={arc.web3 ? arc.web3.eth : null}
 
             showCommentCount={10}
             useHovers
-            currentUser3BoxProfile={currentAccountProfile as any}
+            currentUser3BoxProfile={currentAccountProfile}
             userProfileURL={address => `${process.env.BASE_URL}/profile/${address}`}
           />
 
