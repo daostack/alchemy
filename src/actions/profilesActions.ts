@@ -87,7 +87,6 @@ export function getProfile(accountAddress: string, currentAccount = false) {
 
 export function threeboxLogin(accountAddress: string) {
   return async (dispatch: any, _getState: any) => {
-    console.log("doing threebox login");
     const state = _getState();
     let threeBox;
 

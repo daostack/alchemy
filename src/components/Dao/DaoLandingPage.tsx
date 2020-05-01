@@ -1,7 +1,7 @@
 import { IDAOState } from "@daostack/client";
 import ThreeBoxComments from '3box-comments-react';
 import { threeboxLogin } from "actions/profilesActions";
-import { enableWalletProvider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -90,6 +90,7 @@ class DaoLandingPage extends React.Component<IProps, IState> {
 
   public render() {
     const { currentAccountAddress, currentAccountProfile, daoState, threeBox } = this.props;
+    const arc = getArc();
 
     return (
       <div className={css.landingPage}>
@@ -115,22 +116,19 @@ class DaoLandingPage extends React.Component<IProps, IState> {
         <div className={css.wallContainer}>
           <div className={css.headerText}>Discuss {daoState.name}</div>
           <p className={css.discussionWarning}>We are moving from Disqus to 3Box for commenting! Both are available here for a short time so important comments can be copied from Disqus to 3Box.</p>
-          { /* XXX: This is not what we want, we want to show comments without them having to login, but i cant get the loginFunction to work at all */ }
-          { threeBox ?
-            <ThreeBoxComments
-              spaceName="DAOstack"
-              threadName={daoState.id}
-              adminEthAddr={"0x0084FB1d84F2359Cafd00f92B901C121521d6809"}
-              box={threeBox}
-              currentUserAddr={currentAccountAddress}
-              currentUser3BoxProfile={currentAccountProfile}
-              loginFunction={this.handleThreeBoxLogin}
-              showCommentCount={10}
-              useHovers
-              userProfileURL={address => `${process.env.BASE_URL}/profile/${address}`}
-            />
-            : <div className={css.threeBoxLoginButton}><button onClick={this.handleThreeBoxLogin}>Login to 3box to comment</button></div>
-          }
+          <ThreeBoxComments
+            spaceName="DAOstack"
+            threadName={daoState.id}
+            adminEthAddr={"0x0084FB1d84F2359Cafd00f92B901C121521d6809"}
+            box={threeBox}
+            currentUserAddr={currentAccountAddress}
+            currentUser3BoxProfile={currentAccountProfile}
+            ethereum={arc.web3 ? arc.web3.eth : null}
+            loginFunction={this.handleThreeBoxLogin}
+            showCommentCount={10}
+            useHovers
+            userProfileURL={address => `${process.env.BASE_URL}/profile/${address}`}
+          />
 
           <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
         </div>
