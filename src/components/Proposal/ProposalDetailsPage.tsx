@@ -1,4 +1,6 @@
 import { Address, IDAOState, IProposalStage, Vote } from "@daostack/arc.js";
+import ThreeBoxComments from '3box-comments-react';
+import { threeboxLogin } from "actions/profilesActions";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -11,8 +13,10 @@ import Analytics from "lib/analytics";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-
+import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
+import { IRootState } from "reducers";
+import { IProfileState } from "reducers/profilesReducer";
 import { closingTime, proposalEnded } from "lib/proposalHelpers";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
@@ -39,7 +43,28 @@ interface IExternalProps extends RouteComponentProps<any> {
   proposalId: string;
 }
 
-type IProps = IExternalProps & IInjectedProposalProps;
+interface IStateProps {
+  currentAccountProfile: IProfileState;
+  threeBox: any;
+}
+
+interface IDispatchProps {
+  threeboxLogin: typeof threeboxLogin;
+}
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & IInjectedProposalProps): IExternalProps & IInjectedProposalProps & IStateProps => {
+  return {
+    ...ownProps,
+    currentAccountProfile: state.profiles[ownProps.currentAccountAddress],
+    threeBox: state.profiles.threeBox,
+  };
+};
+
+const mapDispatchToProps = {
+  threeboxLogin,
+};
+
+type IProps = IExternalProps & IInjectedProposalProps & IStateProps & IDispatchProps;
 
 interface IState {
   showVotersModal: boolean;
@@ -130,6 +155,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       currentAccountAddress,
       currentAccountGenAllowance,
       currentAccountGenBalance,
+      currentAccountProfile,
       daoEthBalance,
       daoState,
       expired,
@@ -138,6 +164,8 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       proposal,
       rewards,
       stakes,
+      threeBox,
+      //threeboxLogin,
       votes,
     } = this.props;
 
@@ -362,7 +390,30 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
         </div>
 
         <h3 className={css.discussionTitle}>Discussion</h3>
+        <p className={css.discussionWarning}>We are moving from Disqus to 3Box for commenting! Both are available here for a short time so important comments can be copied from Disqus to 3Box.</p>
         <div className={css.disqus}>
+           <ThreeBoxComments
+            // required
+            spaceName="DAOstack"
+            threadName={proposal.id}
+            adminEthAddr={"0x0084FB1d84F2359Cafd00f92B901C121521d6809"}
+
+            // Required props for context A) & B)
+            box={threeBox}
+            currentUserAddr={currentAccountAddress}
+
+            // Required prop for context B)
+            loginFunction={((a: any) => { console.log("yoyo", a)}) as any}
+
+            // Required prop for context C)
+            //ethereum={ethereum}
+
+            showCommentCount={10}
+            useHovers
+            currentUser3BoxProfile={currentAccountProfile as any}
+            userProfileURL={address => `${process.env.BASE_URL}/profile/${address}`}
+          />
+
           <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
         </div>
 
@@ -387,9 +438,11 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
   }
 }
 
-export default function ProposalDetailsPageData(props: IExternalProps) {
+//const ConnectedProposalData = connect(mapStateToProps, null)(ProposalData);
+
+export default connect(mapStateToProps, mapDispatchToProps)((props: IExternalProps & IStateProps & IDispatchProps) => {
   const { currentAccountAddress, daoState, proposalId } = props;
   return <ProposalData currentAccountAddress={currentAccountAddress} daoState={daoState} proposalId={proposalId} subscribeToProposalDetails>
     { proposalData => <ProposalDetailsPage {...props} {...proposalData} /> }
   </ProposalData>;
-}
+});
