@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalStage, Vote } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
-import ThreeBoxComments from '3box-comments-react';
+import ThreeBoxComments from "3box-comments-react";
 import { threeboxLogin } from "actions/profilesActions";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";

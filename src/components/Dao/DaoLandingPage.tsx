@@ -1,5 +1,5 @@
 import { IDAOState } from "@daostack/client";
-import ThreeBoxComments from '3box-comments-react';
+import ThreeBoxComments from "3box-comments-react";
 import { threeboxLogin } from "actions/profilesActions";
 import { enableWalletProvider, getArc } from "arc";
 import * as React from "react";
