@@ -403,25 +403,16 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
         <p className={css.discussionWarning}>We are moving from Disqus to 3Box for commenting! Both are available here for a short time so important comments can be copied from Disqus to 3Box.</p>
         <div className={css.disqus}>
           <ThreeBoxComments
-            // required
             spaceName="DAOstack"
             threadName={proposal.id}
             adminEthAddr={"0x0084FB1d84F2359Cafd00f92B901C121521d6809"}
-
             box={threeBox}
-
-            // Required props for context A) & B)
             currentUserAddr={currentAccountAddress}
-
-            // Required prop for context B)
+            currentUser3BoxProfile={currentAccountProfile}
             loginFunction={this.handleThreeBoxLogin}
-
-            // Required prop for context C)
             ethereum={arc.web3 ? arc.web3.eth : null}
-
             showCommentCount={10}
             useHovers
-            currentUser3BoxProfile={currentAccountProfile}
             userProfileURL={address => `${process.env.BASE_URL}/profile/${address}`}
           />
 
