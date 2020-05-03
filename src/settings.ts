@@ -110,13 +110,10 @@ function getWeb3ConnectProviderOptions(network: string) {
     case "xdai":
       return {
         network: "xdai",
-        burnerconnect: {
-          package: BurnerConnectProvider,
-          options: {
-            defaultNetwork: "100",
-            defaultWallets: [
-              { origin: "https://buffidao.com/", name: "BuffiDAO" },
-              { origin: "https://judge.buffidao.com/", name: "Judges BuffiDAO Wallet" },
+        torus: {
+          package: Torus,
+          options: { network: "rinkeby" },
+        },
             ],
           },
         },
