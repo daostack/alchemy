@@ -112,7 +112,7 @@ function getWeb3ConnectProviderOptions(network: string) {
         network: "xdai",
         torus: {
           package: Torus,
-          options: { network: "rinkeby" },
+          options: { network: "xdai" },
         },
             ],
           },
