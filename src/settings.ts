@@ -114,9 +114,6 @@ function getWeb3ConnectProviderOptions(network: string) {
           package: Torus,
           options: { network: "xdai" },
         },
-            ],
-          },
-        },
       };
     case "mainnet":
       return {
