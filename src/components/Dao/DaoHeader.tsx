@@ -1,8 +1,13 @@
 import * as React from "react";
-import { IDAOState, Scheme } from "@daostack/client";
+import { IDAOState, Scheme, Token } from "@daostack/client";
+import { getArc } from "arc";
+import { first } from "rxjs/operators";
 
+import { formatTokens, supportedTokens, fromWei, baseTokenName, ethErrorHandler, genName  } from "lib/util";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import AccountImage from "components/Account/AccountImage";
+
+import BN = require("bn.js");
 import * as css from "./DaoHeader.scss";
 
 const styles = { 
@@ -19,31 +24,35 @@ interface ISignal {
 }
 
 interface IExternalProps {
-  daoState: IDAOState;
+  daoState: IDAOState | any;
   signal?: ISignal | any;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<[Scheme[], ISignal | any]>;
+type IProps = IExternalProps & ISubscriptionProps<[Scheme[], ISignal, IDAOState | any]>;
 
 class DaoHeaderComponent extends React.Component<IProps, any> {
+  
   render() {
     const { daoState, signal } = this.props;
-    console.log(this.props)
-    const { name, memberCount, address } = daoState;
+    const { name, memberCount, address, reputationTotalSupply } = daoState;
     const data = {
       daoImg: "/assets/images/generic-user-avatar.png",
       reputationHolders: memberCount,
-      holdings: [
-        { name: "GEN", amount: 0.24653 },
-        { name: "ETH", amount: 16.01 },
-        { name: "DAI", amount: 148.19 },
-      ],
       description: `
       ${name} is an independent, global community of people working together to build and promote Decentralized Autonomous Organizations (DAOs). 
       It’s the perfect place to get involved with DAOstack.
       `,
     };
-
+    
+    const SupportedTokens = (): any => {
+      const tokensSupported = (tokenAddress: any) => {
+        return <SubscribedTokenBalance tokenAddress={tokenAddress} dao={daoState} key={"token_" + tokenAddress} />;
+      };
+      return Object.keys(supportedTokens()).map(tokensSupported);
+    };
+    
+    const REP = fromWei(reputationTotalSupply).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    
     return (
       <div className={css.headerWrap}>
         <div className={css.daoImg}>
@@ -65,20 +74,13 @@ class DaoHeaderComponent extends React.Component<IProps, any> {
 
         <div className={css.holdings}>
           <span>Holdings</span>
-          {
-            data.holdings.map((holding, index) => {
-              return (
-                <div key={index} className={css.holdingsAmount}>
-                  <span className={css.holdingsNumber}>
-                    { holding.amount }
-                  </span>
-                  <span className={css.holdingsName}>
-                    { holding.name }
-                  </span>
-                </div>
-              );
-            })
-          }
+          <ul className={css.holdingsList}>
+            <li className={css.holdingsAmount}>
+              <span>{ REP } REP</span>
+            </li>    
+            <SubscribedEthBalance dao={daoState} />
+            <SupportedTokens />
+          </ul>
         </div>
         
         <div className={css.daoHeadingGroup}>
@@ -93,6 +95,67 @@ class DaoHeaderComponent extends React.Component<IProps, any> {
     );
   }
 }
+/***** DAO ETH Balance *****/
+interface IEthProps extends ISubscriptionProps<BN|null> {
+  dao: IDAOState;
+}
+
+const ETHBalance = (props: IEthProps) => {
+  const { data } = props;
+  return <li key="ETH" className={css.holdingsAmount}><span>{formatTokens(data)} {baseTokenName()}</span></li>;
+};
+
+const SubscribedEthBalance = withSubscription({
+  wrappedComponent: ETHBalance,
+  loadingComponent: <li key="ETH">... {baseTokenName()}</li>,
+  errorComponent: null,
+  checkForUpdate: (oldProps: IEthProps, newProps: IEthProps) => {
+    return oldProps.dao.address !== newProps.dao.address;
+  },
+  createObservable: (props: IEthProps) => {
+    const arc = getArc();
+    return arc.dao(props.dao.address).ethBalance().pipe(ethErrorHandler());
+  },
+});
+
+/***** Token Balance *****/
+interface ITokenProps extends ISubscriptionProps<any> {
+  dao: IDAOState;
+  tokenAddress: string;
+}
+
+const TokenBalance = (props: ITokenProps) => {
+  const { data, error, isLoading, tokenAddress } = props;
+
+  const tokenData = supportedTokens()[tokenAddress];
+  if (isLoading || error || ((data === null || isNaN(data) || data.isZero()) && tokenData.symbol !== genName())) {
+    return null;
+  }
+
+  return (
+    <li key={tokenAddress} className={css.holdingsAmount}>
+      <span>{formatTokens(data, tokenData["symbol"], tokenData["decimals"])}</span>
+    </li>
+  );
+};
+
+const SubscribedTokenBalance = withSubscription({
+  wrappedComponent: TokenBalance,
+  checkForUpdate: (oldProps: ITokenProps, newProps: ITokenProps) => {
+    return oldProps.dao.address !== newProps.dao.address || oldProps.tokenAddress !== newProps.tokenAddress;
+  },
+  createObservable: async (props: ITokenProps) => {
+    // General cache priming for the DAO we do here
+    // prime the cache: get all members fo this DAO -
+    const daoState = props.dao;
+
+    await daoState.dao.members({ first: 1000, skip: 0 }).pipe(first()).toPromise();
+
+    const arc = getArc();
+    const token = new Token(props.tokenAddress, arc);
+    return token.balanceOf(daoState.address).pipe(ethErrorHandler());
+  },
+});
 
 const DaoHeader = withSubscription({
   wrappedComponent: DaoHeaderComponent,
