@@ -3,7 +3,6 @@
     - new DAO landing page
     - show warnings if subgraph is not updating
     - added help text in the Plugin Editor popup
-    - make sure proposer name doesn't overlap avatar on proposal history rows
 
     - Bugs Fixed
       - Make sure proposer name doesn't overlap avatar on proposal history rows
