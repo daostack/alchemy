@@ -45,23 +45,23 @@ See [docker](./docker.md) for details about the docker containers.
 
 ## The setup
 
-Download and install the client package and use `npm link` for local development
+Download and install the arc.js package and use `npm link` for local development
 ```sh
-# get the dev branch from the client repository
-git clone https://github.com/daostack/client.git#dev
-cd client
+# get the dev branch from the arc.js repository
+git clone https://github.com/daostack/arc.js.git#dev
+cd arc.js
 npm install
 npm run build
 npm link
 cd ../alchemy # cd to the alchemy directory
 npm link @daostack/arc.js
 ```
-Now you should find a link to your local `client` directory in `node_modules/@daostack/arc.js`
+Now you should find a link to your local `arc.js` directory in `node_modules/@daostack/arc.js`
 
 ## The development cycle
 
 The alchemy webpack process uses the compiled `.js` files in `@daostack/arc.js/dist`.
-That means that when you make changes in the typescript `.ts` files in the client library, they will not be picked up until they are compiled to new `dist/*.js` files. You can do that by running:
+That means that when you make changes in the typescript `.ts` files in the arc.js library, they will not be picked up until they are compiled to new `dist/*.js` files. You can do that by running:
 ```sh
 npm run build:watch
 ```

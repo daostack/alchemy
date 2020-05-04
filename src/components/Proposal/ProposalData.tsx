@@ -141,7 +141,7 @@ export default withSubscription({
         arcDao.member(currentAccountAddress).state(),
         // TODO: also need the member state for the proposal proposer and beneficiary
         //      but since we need the proposal state first to get those addresses we will need to
-        //      update the client query to load them inline
+        //      update the arc.js query to load them inline
         concat(of(new BN("0")), arcDao.ethBalance())
           .pipe(ethErrorHandler()),
         arc.GENToken().balanceOf(currentAccountAddress)
