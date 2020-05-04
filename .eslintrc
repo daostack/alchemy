@@ -44,6 +44,7 @@
         "key-spacing": ["error", { "mode": "minimum" }],
         "semi-spacing": "error",
         "comma-spacing": "error",
+        "no-multi-spaces": "error",
         "no-trailing-spaces": "error",
         "no-useless-escape": "error",
         "react/prop-types": "off",

@@ -16,7 +16,7 @@ interface IExternalProps {
 
 type IProps = IExternalProps & ISubscriptionProps<[IMemberState, BN|null, BN|null]>
 
-class AccountBalances extends React.Component<IProps, null>  {
+class AccountBalances extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
     const { dao, data } = this.props;

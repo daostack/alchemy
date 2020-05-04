@@ -165,7 +165,7 @@ export class Action implements IActionSpec {
 
   public getFields(): ActionField[] {
     const result: ActionField[] = [];
-    for (let i = 0; i <  this.abi.inputs.length; i++) {
+    for (let i = 0; i < this.abi.inputs.length; i++) {
       result.push(new ActionField({
         name: this.abi.inputs[i].name,
         type: this.abi.inputs[i].type,
@@ -230,13 +230,13 @@ export class GenericSchemeInfo {
     // we've found our function, now we can decode the parameters
     const decodedParams = web3.eth.abi
       .decodeParameters(action.abi.inputs, "0x" + callData.slice(2 + 8));
-    const values =  [];
+    const values = [];
     for (const inputSpec of action.abi.inputs) {
       values.push(decodedParams[inputSpec.name]);
     }
 
     if (action) {
-      return { action,  values};
+      return { action, values};
     } else {
       throw Error("Could not find a known action that corresponds with these callData");
     }
