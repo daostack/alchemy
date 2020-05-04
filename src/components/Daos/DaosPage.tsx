@@ -1,4 +1,4 @@
-import { DAO, DAOFieldsFragment } from "@daostack/client";
+import { DAO, DAOFieldsFragment } from "@daostack/arc.js";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";

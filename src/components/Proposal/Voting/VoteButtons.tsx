@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
+import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/arc.js";
 import { voteOnProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 
@@ -113,11 +113,11 @@ class VoteButtons extends React.Component<IProps, IState> {
         "Can't change your vote" :
         (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
           "Requires reputation in this DAO" :
-          (proposal.createdAt < currentAccountState.createdAt) ?
+          (currentAccountState && (proposal.createdAt < currentAccountState.createdAt)) ?
             "Must have had reputation in this DAO when the proposal was created" :
             proposal.stage === IProposalStage.ExpiredInQueue ||
                 (proposal.stage === IProposalStage.Boosted && expired) ||
-                (proposal.stage === IProposalStage.QuietEndingPeriod && expired)  ||
+                (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
                 (proposal.stage === IProposalStage.Queued && expired) ?
               "Can't vote on expired proposals" :
               proposal.stage === IProposalStage.Executed ?

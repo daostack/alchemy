@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { connect } from "react-redux";
-import { IProposalType, ISchemeState } from "@daostack/client";
+import { IProposalType, ISchemeState } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";

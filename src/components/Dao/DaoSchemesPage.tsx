@@ -1,4 +1,4 @@
-import { CompetitionScheme, IDAOState, ISchemeState, Scheme } from "@daostack/client";
+import { CompetitionScheme, IDAOState, ISchemeState, Scheme } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";

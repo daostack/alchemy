@@ -6,7 +6,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
 import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
 import { connect } from "react-redux";
-import { IDAOState, IProposalState } from "@daostack/client";
+import { IDAOState, IProposalState } from "@daostack/arc.js";
 import { Link } from "react-router-dom";
 import * as React from "react";
 import { competitionStatus, CompetitionStatus } from "./utils";
