@@ -25,7 +25,7 @@ const ProposalSchemeCard = (props: IProps) => {
 
   const [schemeState, boostedProposals] = data;
 
-  const numProposals = schemeState.numberOfQueuedProposals + schemeState.numberOfBoostedProposals + schemeState.numberOfQueuedProposals;
+  const numProposals = schemeState.numberOfPreBoostedProposals + schemeState.numberOfBoostedProposals + schemeState.numberOfQueuedProposals;
   const proposals = boostedProposals.slice(0, 3);
 
   const proposalsHTML = proposals.map((proposal: Proposal) => <SubscribedProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
