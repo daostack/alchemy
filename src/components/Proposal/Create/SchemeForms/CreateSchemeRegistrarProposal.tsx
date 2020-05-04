@@ -249,7 +249,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                 {
                   currentTab === "addScheme" ?
                     <>
-                      <p>You&quot;ll soon be able to add plugins from this interface. Stay tuned!</p>
+                      <p>You will soon be able to add plugins from this interface. Stay tuned!</p>
                       <p>For now, <b>please contact us at</b> <a href="mailto:support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a> to get one of the following plugins added to your DAO, or to add a new custom plugin of your own creation.</p>
 
                       <h2>Available Plugins</h2>
@@ -267,7 +267,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
                     :
                     <>
-                      <p>You&quot;ll soon be able to edit plugins in this interface. Stay tuned!</p>
+                      <p>You will soon be able to edit plugins in this interface. Stay tuned!</p>
                       <p>For now, <b>please contact us at</b> <a href="mailto:support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a> to get help editing the parameters of this plugin.</p>
                     </>
                 }
