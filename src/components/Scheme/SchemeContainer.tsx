@@ -1,7 +1,7 @@
 import { History } from "history";
 import { first, filter, toArray, mergeMap } from "rxjs/operators";
-import { Address, IProposalStage, IDAOState, ISchemeState, IProposalState, IProposalOutcome } from "@daostack/client";
-import { enableWalletProvider, getArc } from "arc";
+import { Address, CompetitionScheme, IProposalStage, IDAOState, ISchemeState, IProposalState, IProposalOutcome, Scheme } from "@daostack/client";
+import { getArc } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -31,6 +31,7 @@ interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   history: History;
   daoState: IDAOState;
+  schemeManager: ISchemeState;
 }
 
 interface IExternalState {
@@ -42,7 +43,7 @@ interface IState {
   crxRewarderProps: ICrxRewarderProps;
 }
 
-type IProps = IExternalProps & IDispatchProps & IExternalState & ISubscriptionProps<[ISchemeState, Array<IProposalState>]>;
+type IProps = IExternalProps & IDispatchProps & IExternalState & ISubscriptionProps<[ISchemeState, ISchemeState, Array<IProposalState>]>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalState => {
   const match = ownProps.match;
@@ -67,24 +68,15 @@ class SchemeContainer extends React.Component<IProps, IState> {
     };
   }
 
-  public handleNewProposal = async (): Promise<void> => {
-    const { schemeId, showNotification, daoState } = this.props;
-    const daoAvatarAddress = daoState.address;
-
-    if (!await enableWalletProvider({ showNotification })) { return; }
-
-    this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
-  };
-
-  private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} daoState={this.props.daoState} scheme={this.props.data[0]} />;
-  private schemeProposalsPageHtml = (isActive: boolean) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} />;
+  private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} daoState={this.props.daoState} scheme={this.props.data[0]} schemeManager={this.props.data[1]} />;
+  private schemeProposalsPageHtml = (isActive: boolean, crxRewarderProps: ICrxRewarderProps) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data[0]} crxRewarderProps={crxRewarderProps} />;
   private contributionsRewardExtTabHtml = () => (props: any) =>
   {
     if (!this.state.crxListComponent) {
       return null;
     }
 
-    return <this.state.crxListComponent {...props} daoState={this.props.daoState} scheme={this.props.data[0]} proposals={this.props.data[1]} />;
+    return <this.state.crxListComponent {...props} daoState={this.props.daoState} scheme={this.props.data[0]} proposals={this.props.data[2]} />;
   };
 
   public async componentDidMount() {
@@ -106,7 +98,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
     const { schemeId, daoState } = this.props;
     const daoAvatarAddress = daoState.address;
     const schemeState = this.props.data[0];
-    const approvedProposals = this.props.data[1];
+    const approvedProposals = this.props.data[2];
 
     if (schemeState.name === "ReputationFromToken") {
       return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
@@ -171,23 +163,6 @@ class SchemeContainer extends React.Component<IProps, IState> {
                 : ""
             }
           </div>
-
-          { isProposalScheme ?
-            <div className={css.createProposal}>
-              <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
-                <a className={
-                  classNames({
-                    [css.createProposal]: true,
-                    [css.disabled]: !isActive,
-                  })}
-                data-test-id="createProposal"
-                href="#!"
-                onClick={isActive ? this.handleNewProposal : null}
-                >
-              + New { `${this.state.crxRewarderProps ? this.state.crxRewarderProps.contractName : schemeFriendlyName } `}Proposal</a>
-              </TrainingTooltip>
-            </div>
-            : ""}
         </Sticky>
 
         <Switch>
@@ -200,7 +175,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
               <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/crx" render={this.contributionsRewardExtTabHtml()} />
               : ""
           }
-          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId" render={isProposalScheme ? this.schemeProposalsPageHtml(isActive) : this.schemeInfoPageHtml} />
+          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId" render={isProposalScheme ? this.schemeProposalsPageHtml(isActive, this.state.crxRewarderProps) : this.schemeInfoPageHtml} />
         </Switch>
       </div>
     );
@@ -257,6 +232,8 @@ const SubscribedSchemeContainer = withSubscription({
 
     return combineLatest(
       of(schemeState),
+      // Find the SchemeManager scheme if this dao has one
+      Scheme.search(arc, {where: { dao: props.daoState.id, name: "SchemeRegistrar" }}).pipe(mergeMap((scheme: Array<Scheme | CompetitionScheme>): Observable<ISchemeState> => scheme[0] ? scheme[0].state() : of(null))),
       approvedProposals
     );
   },
