@@ -107,7 +107,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     } catch (e) {}
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ):  Promise<void> {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     let permissions = 1;
@@ -126,7 +126,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
     const currentTab = this.state.currentTab;
     let proposalType;
-    if (this.state.currentTab  === "removeScheme") {
+    if (this.state.currentTab === "removeScheme") {
       proposalType = IProposalType.SchemeRegistrarRemove;
     } else if (this.state.currentTab === "addScheme") {
       proposalType = IProposalType.SchemeRegistrarAdd;

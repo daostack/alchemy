@@ -106,7 +106,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     if (stakesOfCurrentUser.length > 0) {
       currentAccountStakeAmount = stakesOfCurrentUser
         .map((stake): BN => stake.staticState.amount)
-        .reduce((prev: BN, current: BN)  => { return prev.add(current); });
+        .reduce((prev: BN, current: BN) => { return prev.add(current); });
       currentAccountPrediction = stakesOfCurrentUser[0].staticState.outcome;
     }
 

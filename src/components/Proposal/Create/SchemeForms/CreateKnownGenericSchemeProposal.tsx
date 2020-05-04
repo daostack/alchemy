@@ -122,7 +122,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
     if (this.props.genericSchemeInfo.specs.name === "Standard Bounties") {
       const calcBountEth = await this.getBountyEth(values);
-      ethValue =  ethValue.add(calcBountEth);
+      ethValue = ethValue.add(calcBountEth);
     }
 
     const proposalValues = {

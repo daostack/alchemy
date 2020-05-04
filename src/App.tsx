@@ -48,7 +48,7 @@ export class App extends React.Component<{}, {
     const totalNumberOfAttempts = 3; /// we will try 3 times to init arc before actually throwing an error
     let numberOfAttempts = 0;
     let success = false;
-    const initArc = async ()  => {
+    const initArc = async () => {
       success = await initializeArc();
       if (!success) {
         throw Error("Initialize arc failed for an unknown reason (see the console)...");
@@ -111,7 +111,7 @@ export class App extends React.Component<{}, {
           <Loading/>
         </div>
       );
-    } else  {
+    } else {
       return (
         <Provider store={store}>
           <ThroughProvider>

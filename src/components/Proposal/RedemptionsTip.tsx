@@ -77,7 +77,7 @@ export default (props: IProps) => {
               "The beneficiary of the proposal is due to receive:"}
           </strong>
           <ul>
-            {contributionRewards["eth"]  ?
+            {contributionRewards["eth"] ?
               <li>
                 {formatTokens(contributionReward.ethReward, baseTokenName())}
               </li> : ""

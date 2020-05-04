@@ -115,7 +115,7 @@ class VoteButtons extends React.Component<IProps, IState> {
           "Requires reputation in this DAO" :
           proposal.stage === IProposalStage.ExpiredInQueue ||
               (proposal.stage === IProposalStage.Boosted && expired) ||
-              (proposal.stage === IProposalStage.QuietEndingPeriod && expired)  ||
+              (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
               (proposal.stage === IProposalStage.Queued && expired) ?
             "Can't vote on expired proposals" :
             proposal.stage === IProposalStage.Executed ?

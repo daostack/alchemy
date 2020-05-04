@@ -233,7 +233,7 @@ const SubscribedSchemeContainer = withSubscription({
      * However, it seems likely that this could be needed by other CrExt rewarder
      * contracts that might come along.
      */
-    let  approvedProposals: Observable<Array<IProposalState>>;
+    let approvedProposals: Observable<Array<IProposalState>>;
     if (hasRewarderContract(schemeState)) {
       approvedProposals = props.daoState.dao.proposals(
         // eslint-disable-next-line @typescript-eslint/camelcase
