@@ -113,12 +113,12 @@ function getWeb3ConnectProviderOptions(network: string) {
         torus: {
           package: Torus,
           options: {
-    host: "https://xdai.poanetwork.dev", // mandatory
-    chainId: 100, // optional
-    networkName: "xdai network" // optional
-  },
-        },
-      };
+                    host: "https://xdai.poanetwork.dev",
+                    chainId: 100, 
+                    networkName: "xdai network" 
+                   },
+               },
+             };
     case "mainnet":
       return {
         network: "mainnet",
