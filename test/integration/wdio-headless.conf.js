@@ -1,6 +1,6 @@
 // this config file is used for testing on travis
 
-const config  = require("./wdio.conf.js").config;
+const config = require("./wdio.conf.js").config;
 
 exports.config = {
   ...config,

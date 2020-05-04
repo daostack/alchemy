@@ -26,7 +26,7 @@ import DaoLandingPage from "components/Dao/DaoLandingPage";
 
 type IExternalProps = RouteComponentProps<any>;
 
-interface IStateProps  {
+interface IStateProps {
   currentAccountAddress: string;
   currentAccountProfile: IProfileState;
   daoAvatarAddress: string;

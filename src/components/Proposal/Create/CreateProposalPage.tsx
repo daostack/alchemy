@@ -107,23 +107,23 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     if (this.state.createCrxProposalComponent) {
       createSchemeComponent = <this.state.createCrxProposalComponent {...props} />;
     } else if (scheme.name === "ContributionReward") {
-      createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
+      createSchemeComponent = <CreateContributionRewardProposal {...props} />;
     } else if (scheme.name === "SchemeRegistrar") {
       createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
     } else if (scheme.name === "GenericScheme") {
       const genericSchemeRegistry = new GenericSchemeRegistry();
       let contractToCall: string;
       if (scheme.genericSchemeParams) {
-        contractToCall  = scheme.genericSchemeParams.contractToCall;
+        contractToCall = scheme.genericSchemeParams.contractToCall;
       } else if (scheme.uGenericSchemeParams) {
         // TODO: these lins are a workaround because of a  subgraph bug: https://github.com/daostack/subgraph/issues/342
-        contractToCall  = scheme.uGenericSchemeParams.contractToCall;
+        contractToCall = scheme.uGenericSchemeParams.contractToCall;
       } else {
         throw Error("No contractToCall for this genericScheme was found!");
       }
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
       if (genericSchemeInfo) {
-        createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
+        createSchemeComponent = <CreateKnownGenericSchemeProposal {...props} genericSchemeInfo={genericSchemeInfo} />;
       } else {
         createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
       }
@@ -131,7 +131,7 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
       const genericSchemeRegistry = new GenericSchemeRegistry();
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(props.scheme.uGenericSchemeParams.contractToCall);
       if (genericSchemeInfo) {
-        createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
+        createSchemeComponent = <CreateKnownGenericSchemeProposal {...props} genericSchemeInfo={genericSchemeInfo} />;
       } else {
         createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
       }
