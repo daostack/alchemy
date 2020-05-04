@@ -13,7 +13,7 @@ const baseConfig = require('./webpack.base.config.js');
 const config = merge(baseConfig, {
   mode: 'production',
 
-  devtool: 'source-map',
+  devtool: 'cheap-module-source-map',
 
   entry: {
     // the entry point of our app
