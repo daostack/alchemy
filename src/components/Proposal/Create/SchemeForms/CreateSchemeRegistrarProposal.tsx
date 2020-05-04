@@ -58,8 +58,10 @@ interface IFormValues {
   [key: string]: any;
 }
 
+type TabId = "addScheme" | "editScheme" | "removeScheme";
+
 interface IState {
-  currentTab: string;
+  currentTab: TabId;
   requiredPermissions: number;
   showForm: boolean;
   tags: Array<string>;
@@ -106,10 +108,10 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       const contractInfo = arc.getContractInfo(e.target.value);
       this.setState({ requiredPermissions: REQUIRED_SCHEME_PERMISSIONS[contractInfo.name] });
       /* eslint-disable-next-line no-empty */
-    } catch (e) {}
+    } catch (e) { }
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ):  Promise<void> {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     let permissions = 1;
@@ -128,7 +130,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
     const currentTab = this.state.currentTab;
     let proposalType;
-    if (this.state.currentTab  === "removeScheme") {
+    if (this.state.currentTab === "removeScheme") {
       proposalType = IProposalType.SchemeRegistrarRemove;
     } else if (this.state.currentTab === "addScheme") {
       proposalType = IProposalType.SchemeRegistrarAdd;
@@ -160,12 +162,12 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.props.handleClose();
   }
 
-  public handleTabClick = (tab: string) => (_e: any) => {
+  public handleTabClick = (tab: TabId) => (_e: any) => {
     this.setState({ currentTab: tab });
   }
 
   private onTagsChange = (tags: any[]): void => {
-    this.setState({tags});
+    this.setState({ tags });
   }
 
   private toggleShowForm = () => {
@@ -219,48 +221,62 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     return (
       <div className={css.containerWithSidebar}>
         <div className={css.sidebar}>
-          { isAddActive ?
+          {isAddActive ?
             <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")} data-test-id="tab-AddScheme">
               <span></span>
               Add Plugin
             </button>
-            : "" }
-          { isAddActive ?
+            : ""}
+          {isAddActive ?
             <button className={editSchemeButtonClass} onClick={this.handleTabClick("editScheme")} data-test-id="tab-EditScheme">
               <span></span>
               Edit Plugin
             </button>
-            : "" }
-          { isRemoveActive ?
+            : ""}
+          {isRemoveActive ?
             <button className={removeSchemeButtonClass} onClick={this.handleTabClick("removeScheme")} data-test-id="tab-RemoveScheme">
               <span></span>
             Remove Plugin
             </button>
-            : "" }
+            : ""}
         </div>
 
         <div className={contentWrapperClass}>
-          {currentTab !== "removeScheme" ?
-            <div className={css.helpText}>
-              <p>You&quot;ll soon be able to add and edit plugins from this interface. Stay tuned!</p>
+          {
+            currentTab !== "removeScheme" ?
 
-              <p>For now, <b>please contact us at</b> <a href="mailto:support@daostack.zendesk.com">support@daostack.zendesk.com</a> to get one of the following plugins added to your DAO, or to add a new custom plugin of your own creation.</p>
+              <div className={css.helpText}>
+                {
+                  currentTab === "addScheme" ?
+                    <>
+                      <p>You&quot;ll soon be able to add plugins from this interface. Stay tuned!</p>
+                      <p>For now, <b>please contact us at</b> <a href="mailto:support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a> to get one of the following plugins added to your DAO, or to add a new custom plugin of your own creation.</p>
 
-              <h2>Available Plugins</h2>
-              <p><b>Funding and Voting Power Plugin</b> &mdash; Send token and Reputation rewards to any Ethereum address via proposal.</p>
-              <p><b>Plugin Manager</b> &mdash; Remove plugins via proposal (adding and editing plugins to be added soon).</p>
-              <p><b>Competition Plugin</b> &mdash; Create competitions with prizes split between any number of winners. Competitions accept submissions from anyone, and Reputation-holders vote to decide the winners.</p>
-              <p><b>ENS Plugins</b> &mdash; A set of plugins that enables the DAO to control Ethereum Name Service addresses via proposals.</p>
-              <p><b>Reputation from Token</b> &mdash; Allow anyone to redeem Reputation using a token of your choice.</p>
-              <p><b>Bounties Plugins</b> &mdash; Via proposal, create DAO-administered bounties on Bounties Network.</p>
-              <p><b>Join and Quit Plugins</b> &mdash; Allow anyone to join the DAO via a donation and quit anytime, reclaiming at least part of their original funds (“rage quit”). Coming soon.</p>
-              <p><b>NFT Plugins</b> &mdash; Allow the DAO to hold, send, mint, and sell NFTs (non-fungible tokens). Coming soon.</p>
+                      <h2>Available Plugins</h2>
+                      <p><b>Funding and Voting Power Plugin</b> &mdash; Send token and Reputation rewards to any Ethereum address via proposal.</p>
+                      <p><b>Plugin Manager</b> &mdash; Remove plugins via proposal (adding and editing plugins to be added soon).</p>
+                      <p><b>Competition Plugin</b> &mdash; Create competitions with prizes split between any number of winners. Competitions accept submissions from anyone, and Reputation-holders vote to decide the winners.</p>
+                      <p><b>ENS Plugins</b> &mdash; A set of plugins that enables the DAO to control Ethereum Name Service addresses via proposals.</p>
+                      <p><b>Reputation from Token</b> &mdash; Allow anyone to redeem Reputation using a token of your choice.</p>
+                      <p><b>Bounties Plugins</b> &mdash; Via proposal, create DAO-administered bounties on Bounties Network.</p>
+                      <p><b>Join and Quit Plugins</b> &mdash; Allow anyone to join the DAO via a donation and quit anytime, reclaiming at least part of their original funds (“rage quit”). Coming soon.</p>
+                      <p><b>NFT Plugins</b> &mdash; Allow the DAO to hold, send, mint, and sell NFTs (non-fungible tokens). Coming soon.</p>
 
-              <p><b>Need help creating a plugin not on this list?</b> Contact us at <a href="mailto:support@daostack.zendesk.com">support@daostack.zendesk.com</a></p>
+                      <p><b>Need help creating a plugin not on this list?</b> Contact us at <a href="mailto:support@daostack.zendesk.com">support@daostack.zendesk.com</a></p>
+                    </>
 
-              <button id="showFormButton" className={css.showFormButton} onClick={this.toggleShowForm}>{showForm ? "Hide" : "Show"} proposal form</button>
-            </div>
-            : ""}
+                    :
+                    <>
+                      <p>You&quot;ll soon be able to edit plugins in this interface. Stay tuned!</p>
+                      <p>For now, <b>please contact us at</b> <a href="mailto:support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a> to get help editing the parameters of this plugin.</p>
+                    </>
+                }
+
+                <button id="showFormButton" className={css.showFormButton} onClick={this.toggleShowForm}>{showForm ? "Hide" : "Show"} proposal form</button>
+
+              </div>
+              : ""
+          }
 
           <div className={formContentClass}>
             <Formik
@@ -320,8 +336,8 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
               }: FormikProps<IFormValues>) => {
                 return (
                   <Form noValidate>
-                    <br/>
-                    { (currentTab === "addScheme") ?
+                    <br />
+                    {(currentTab === "addScheme") ?
                       <div className={css.description}>Create a proposal to add a new plugin to the DAO. If this plugin is a universal scheme, you must also supply its param hash configuration.</div> :
                       (currentTab === "editScheme") ?
                         <div className={css.description}>Create a proposal to edit param hash configuration of a plugin.</div> :
@@ -349,7 +365,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                       <label htmlFor="descriptionInput">
                         <div className={css.requiredMarker}>*</div>
                       Description
-                        <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                        <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg" />
                         <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
                     </TrainingTooltip>
@@ -364,7 +380,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
                     <TrainingTooltip overlay="Add some tags to give context about your proposal e.g. idea, signal, bounty, research, etc" placement="right">
                       <label className={css.tagSelectorLabel}>
-                      Tags
+                        Tags
                       </label>
                     </TrainingTooltip>
 
@@ -374,7 +390,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
                     <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
                       <label htmlFor="urlInput">
-                      URL
+                        URL
                         <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
                     </TrainingTooltip>
@@ -540,7 +556,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                       </button>
                       <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
                         <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                        Submit proposal
+                          Submit proposal
                         </button>
                       </TrainingTooltip>
                     </div>
@@ -557,7 +573,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
 const SubscribedCreateSchemeRegistrarProposal = withSubscription({
   wrappedComponent: CreateSchemeRegistrarProposal,
-  loadingComponent: <Loading/>,
+  loadingComponent: <Loading />,
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {

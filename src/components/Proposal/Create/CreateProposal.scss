@@ -58,7 +58,6 @@
   }
 
   form {
-
     input {
       width: 100%;
       margin-top: 3px;
@@ -588,7 +587,6 @@
   border: none;
   display: inline-block;
   margin: 0 5px;
-  font-weight: normal;
   font-size: 13px;
   padding: 0 25px 2px 25px;
   font-family: $body-font;
@@ -597,6 +595,7 @@
   background-color: rgba(0, 113, 255, 1);
   border-radius: 15px;
   color: $white;
+  outline: none;
 
   &:hover {
     cursor: pointer;
@@ -648,7 +647,6 @@ div.description {
 }
 
 @media only screen and (max-width: 475px) {
-
   .createProposalWrapper {
     top: 0;
     left: 0;
@@ -683,7 +681,7 @@ div.description {
   }
 
   .containerNoSidebar {
-   width: auto;
+    width: auto;
   }
 
   .containerWithSidebar {
