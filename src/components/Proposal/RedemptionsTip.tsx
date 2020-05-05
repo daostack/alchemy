@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalState, IProposalOutcome } from "@daostack/client";
+import { Address, IDAOState, IProposalState, IProposalOutcome } from "@daostack/arc.js";
 import Reputation from "components/Account/Reputation";
 import { baseTokenName, formatTokens, fromWei, genName, tokenDecimals, tokenSymbol, AccountClaimableRewardsType } from "lib/util";
 import * as React from "react";

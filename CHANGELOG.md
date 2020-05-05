@@ -1,11 +1,19 @@
+## 0.10.7
+  - Features Added
+
+  - Bugs Fixed
+    - Display a proper msg for daos members with no reputation at the moment of a proposal creation
+    - Fix summing up the number of schemes open proposals
+
 ## 0.10.6
   - Features Added
     - new DAO landing page
     - show warnings if subgraph is not updating
     - added help text in the Plugin Editor popup
 
-    - Bugs Fixed
-      - Make sure proposer name doesn't overlap avatar on proposal history rows
+  - Bugs Fixed
+    - Make sure proposer name doesn't overlap avatar on proposal history rows
+
 
 ## 0.10.5
   - Features Added

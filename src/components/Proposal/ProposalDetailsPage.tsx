@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Vote } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, Vote } from "@daostack/arc.js";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";

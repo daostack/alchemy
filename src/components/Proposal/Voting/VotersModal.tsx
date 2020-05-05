@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalOutcome, IProposalState, Vote } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalState, Vote } from "@daostack/arc.js";
 import { getArc } from "arc";
 import classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
