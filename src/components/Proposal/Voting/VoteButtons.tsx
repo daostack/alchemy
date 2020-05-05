@@ -117,13 +117,13 @@ class VoteButtons extends React.Component<IProps, IState> {
            * The following condition deduces that the user could not have had rep when the
            * proposal was created because of the following behavior in the subgraph:
            *
-           * 1) `currentAccountState` (`ReputationHolder` in the subgraph) is an entity that associates
+           * 1) `currentAccountState` (`ReputationHolder` in the subgraph) represents an entity that associates
            * a single DAO with an ethereum account
            * 2) currentAccountState can only exist in the subgraph when the account has > 0 rep in the DAO
            * 3) `currentAccountState.createdAt` is set only once:  When currentAccountState is being instantiated
-           * for the first time, in response to a Mint event
+           * for the first time, in response to a Mint event that brings the rep > 0
            * 4) when a Burn event brings the rep <= 0, then the entity is removed from the subgraph
-           * 5) when `currentAccount` is not found in the subgraph, then a fake currentAccountState is created with
+           * 5) when `currentAccount` is not found in the subgraph, then a fake `currentAccountState` is created with
            * rep == 0
            */
           (currentAccountState && (proposal.createdAt < currentAccountState.createdAt)) ?
