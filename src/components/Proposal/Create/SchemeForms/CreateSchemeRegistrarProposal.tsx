@@ -578,7 +578,7 @@ const SubscribedCreateSchemeRegistrarProposal = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
-    return arc.dao(props.daoAvatarAddress).schemes({ where: { isRegistered: true } }, { fetchAllData: true, subscribe: true });
+    return arc.dao(props.daoAvatarAddress).schemes({ where: { isRegistered: true } }, { fetchAllData: true });
   },
 });
 
