@@ -1,4 +1,4 @@
-import { Address, ISchemeState, Token } from "@daostack/arc.js";
+import { Address, IPluginState, ReputationFromToken as ReputationFromTokenPlugin, Token } from "@daostack/arc.js";
 import axios from "axios";
 import { getArcSettings } from "arc";
 import { SigningKey } from "ethers/utils";
@@ -10,21 +10,21 @@ import { redeemReputationFromToken } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { fromWei, isAddress } from "lib/util";
-import { schemeName } from "lib/schemeUtils";
+import { pluginName } from "lib/pluginUtils";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as Sticky from "react-stickynode";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
-import * as schemeCss from "./Scheme.scss";
+import * as pluginCss from "./Plugin.scss";
 import * as css from "./ReputationFromToken.scss";
 
 import BN = require("bn.js");
 
 interface IExternalProps extends RouteComponentProps<any> {
   daoAvatarAddress: Address;
-  schemeState: ISchemeState;
+  pluginState: IPluginState;
 }
 
 interface IStateProps {
@@ -93,14 +93,14 @@ class ReputationFromToken extends React.Component<IProps, IState> {
 
   private async _loadReputationBalance(redeemerAddress: string) {
     if (redeemerAddress) {
-      const schemeState = this.props.schemeState;
-      const schemeAddress = schemeState.address;
+      const pluginState = this.props.pluginState;
+      const pluginAddress = pluginState.address;
       const arc = getArc();
-      const schemeContract = await arc.getContract(schemeAddress);
-      const tokenContractAddress = await schemeContract.methods.tokenContract().call();
+      const pluginContract = await arc.getContract(pluginAddress);
+      const tokenContractAddress = await pluginContract.methods.tokenContract().call();
       const tokenContract = new Token(arc, tokenContractAddress);
       const balance = new BN(await tokenContract.contract().methods.balanceOf(redeemerAddress).call());
-      const alreadyRedeemed = await schemeContract.methods.redeems(redeemerAddress).call();
+      const alreadyRedeemed = await pluginContract.methods.redeems(redeemerAddress).call();
       let redemptionAmount;
       if (alreadyRedeemed) {
         redemptionAmount = new BN(0);
@@ -139,11 +139,11 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       return;
     }
 
-    const schemeState = this.props.schemeState;
-    const schemeAddress = schemeState.address;
+    const pluginState = this.props.pluginState;
+    const pluginAddress = pluginState.address;
     const arc = getArc();
-    const schemeContract = await arc.getContract(schemeAddress);
-    const alreadyRedeemed = await schemeContract.methods.redeems(this.state.redeemerAddress).call();
+    const pluginContract = await arc.getContract(pluginAddress);
+    const alreadyRedeemed = await pluginContract.methods.redeems(this.state.redeemerAddress).call();
     if (alreadyRedeemed) {
       this.props.showNotification(NotificationStatus.Failure, `Reputation for the account ${this.state.redeemerAddress} was already redeemed`);
       this.redemptionSucceeded();
@@ -152,7 +152,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       // const signatureType = 1
       const messageToSign = "0x"+ soliditySHA3(
         ["address", "address"],
-        [schemeAddress, values.accountAddress]
+        [pluginAddress, values.accountAddress]
       ).toString("hex");
 
       // console.log(`Sign this message of type ${signatureType}: ${messageToSign}`)
@@ -185,16 +185,14 @@ class ReputationFromToken extends React.Component<IProps, IState> {
         signature = signature1+"1c";
       }
       const signatureType = 1;
-      // const scheme = arc.scheme(schemeState.id);
-      // const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
-      const contract =  arc.getContract(schemeState.address);
+      const contract =  arc.getContract(pluginState.address);
 
       // send the transaction and get notifications
       if (contract) {
         // more information on this service is here: https://github.com/dOrgTech/TxPayerService
         const txServiceUrl = getArcSettings().txSenderServiceUrl;
         const data = {
-          to: schemeState.address,
+          to: pluginState.address,
           methodAbi: {
             "constant": false,
             "inputs": [
@@ -247,13 +245,13 @@ class ReputationFromToken extends React.Component<IProps, IState> {
         //   {from: this.props.currentAccountAddress}
         // )
       } else {
-        throw Error("Scheme not found!?!");
+        throw Error("Plugin not found!?!");
       }
       // return (await _testSetup.reputationFromToken.redeemWithSignature(_beneficiary,signatureType,signature
       // ,{from:_fromAccount}));
     } else {
-      const scheme = arc.scheme(schemeState.id);
-      await this.props.redeemReputationFromToken(scheme, values.accountAddress, this.state.privateKey, this.state.redeemerAddress, this.redemptionSucceeded);
+      const plugin = new ReputationFromTokenPlugin(arc, pluginState.id);
+      await this.props.redeemReputationFromToken(plugin, values.accountAddress, this.state.privateKey, this.state.redeemerAddress, this.redemptionSucceeded);
     }
     setSubmitting(false);
   }

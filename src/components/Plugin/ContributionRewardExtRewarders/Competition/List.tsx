@@ -1,6 +1,6 @@
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { ISchemeState, IDAOState, IProposalState, CompetitionSuggestion, CompetitionVote } from "@daostack/arc.js";
+import { IContributionRewardExtState, IDAOState, ICompetitionProposalState, CompetitionSuggestion, CompetitionVote } from "@daostack/arc.js";
 import { SortService } from "lib/sortService";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { combineLatest, of } from "rxjs";
@@ -12,8 +12,8 @@ import * as css from "./Competitions.scss";
 
 interface IExternalProps {
   daoState: IDAOState;
-  scheme: ISchemeState;
-  proposals: Array<IProposalState>;
+  scheme: IContributionRewardExtState;
+  proposals: Array<ICompetitionProposalState>;
 }
 
 interface IStateProps {
@@ -29,7 +29,7 @@ class CompetitionsList extends React.Component<IProps, IStateProps> {
     this.state = { statusMap: new Map() };
   }
 
-  private handleStatusChange = (proposalState: IProposalState, status: CompetitionStatus) => {
+  private handleStatusChange = (proposalState: ICompetitionProposalState, status: CompetitionStatus) => {
     /**
      * the Cards maintain, through countdowns, the Copetition status, and provide it here
      * where we save the status and force a rerender
@@ -39,7 +39,7 @@ class CompetitionsList extends React.Component<IProps, IStateProps> {
     this.setState({ statusMap: this.state.statusMap });
   }
 
-  private compareCompetitions = (a: IProposalState, b: IProposalState): number => {
+  private compareCompetitions = (a: ICompetitionProposalState, b: ICompetitionProposalState): number => {
 
     const statusA = this.state.statusMap.get(a.id);
     const statusB = this.state.statusMap.get(b.id);
@@ -58,8 +58,8 @@ class CompetitionsList extends React.Component<IProps, IStateProps> {
       return retval;
     }
     else {
-      const competitionA = a.competition;
-      const competitionB = b.competition;
+      const competitionA = a;
+      const competitionB = b;
       /**
        * There is a tie in status.  Compare the dates of the next stage
        */
@@ -83,7 +83,7 @@ class CompetitionsList extends React.Component<IProps, IStateProps> {
 
   public render(): RenderOutput {
 
-    const { daoState, scheme, proposals} = this.props;
+    const { daoState, scheme, proposals } = this.props;
     const daoAvatarAddress = daoState.address;
 
     return <React.Fragment>
@@ -92,7 +92,7 @@ class CompetitionsList extends React.Component<IProps, IStateProps> {
         {
           proposals
             .sort(this.compareCompetitions)
-            .map((proposal: IProposalState) => {
+            .map((proposal: ICompetitionProposalState) => {
               return <Card key={proposal.id} proposalState={proposal} daoState={daoState} handleStatusChange={this.handleStatusChange}></Card>;
             })
         }

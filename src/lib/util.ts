@@ -393,7 +393,7 @@ export function getGpRewards(reward: IRewardState, daoBalances: { [key: string]:
   return result;
 }
 
-// TOOD: move this function to the client library!
+// TOOD: move this function to the arc.js library!
 export function hasGpRewards(reward: IRewardState) {
   const claimableRewards = getGpRewards(reward);
   for (const key of Object.keys(claimableRewards)) {

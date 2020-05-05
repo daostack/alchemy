@@ -2,9 +2,9 @@ import { RouteComponentProps } from "react-router";
 import * as React from "react";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { getArc } from "arc";
-import { IDAOState, IProposalState, Address } from "@daostack/arc.js";
+import { IDAOState, IContributionRewardExtState, IContributionRewardExtProposalState, ContributionRewardExtProposal, Address } from "@daostack/arc.js";
 import Loading from "components/Shared/Loading";
-import { getCrxRewarderComponent, CrxRewarderComponentType } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
+import { getCrxRewarderComponent, CrxRewarderComponentType } from "components/Plugin/ContributionRewardExtRewarders/rewardersProps";
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
@@ -16,7 +16,7 @@ interface IStateProps {
   crxDetailsComponent: any;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<IProposalState>;
+type IProps = IExternalProps & ISubscriptionProps<IContributionRewardExtProposalState>;
 
 class DetailsPageRouter extends React.Component<IProps, IStateProps>
 {
@@ -30,7 +30,10 @@ class DetailsPageRouter extends React.Component<IProps, IStateProps>
 
   public async componentDidMount() {
     if (!this.state.crxDetailsComponent) {
-      this.setState({ crxDetailsComponent: await getCrxRewarderComponent(this.props.data.scheme, CrxRewarderComponentType.Details) });
+      this.setState({ crxDetailsComponent: await getCrxRewarderComponent(
+        (await this.props.data.plugin.entity.fetchState()) as IContributionRewardExtState,
+        CrxRewarderComponentType.Details
+      ) });
     }
   }
 
@@ -62,6 +65,7 @@ export default withSubscription({
   checkForUpdate: [],
   createObservable: (props: IProps) => {
     const arc = getArc();
-    return arc.proposal(props.proposalId).state( { subscribe: true });
+    const proposal = new ContributionRewardExtProposal(arc, props.proposalId);
+    return proposal.state( { subscribe: true });
   },
 });

@@ -1,4 +1,4 @@
-import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/arc.js";
+import { Address, DAO, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromToken } from "@daostack/arc.js";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import { toWei } from "lib/util";
@@ -145,16 +145,13 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
   };
 }
 
-export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string, privateKey: string|undefined, redeemerAddress: Address|undefined, redemptionSucceededCallback: () => void) {
+export function redeemReputationFromToken(reputationFromTokenScheme: ReputationFromToken, addressToRedeem: string, privateKey: string|undefined, redeemerAddress: Address|undefined, redemptionSucceededCallback: () => void) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
 
-    // ensure that scheme.ReputationFromToken is set
-    await scheme.fetchState();
+    const state = await reputationFromTokenScheme.fetchState();
 
     if (privateKey) {
-      const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
-      const state = await reputationFromTokenScheme.scheme.fetchState();
       const contract =  arc.getContract(state.address);
       const block = await arc.web3.getBlock("latest");
       const gas = block.gasLimit.toNumber() - 100000;
@@ -187,7 +184,6 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       }
     } else {
       const observer = operationNotifierObserver(dispatch, "Redeem reputation");
-      const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
 
       // send the transaction and get notifications
       if (reputationFromTokenScheme) {

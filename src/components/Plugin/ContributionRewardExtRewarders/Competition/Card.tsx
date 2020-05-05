@@ -4,9 +4,9 @@ import { humanProposalTitle } from "lib/util";
 import RewardsString from "components/Proposal/RewardsString";
 import { IProfileState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
-import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
+import CountdownText from "components/Plugin/ContributionRewardExtRewarders/Competition/CountdownText";
 import { connect } from "react-redux";
-import { IDAOState, IProposalState } from "@daostack/arc.js";
+import { IDAOState, ICompetitionProposalState } from "@daostack/arc.js";
 import { Link } from "react-router-dom";
 import * as React from "react";
 import { competitionStatus, CompetitionStatus } from "./utils";
@@ -23,8 +23,8 @@ interface IStateProps {
 
 interface IExternalProps {
   daoState: IDAOState;
-  proposalState: IProposalState;
-  handleStatusChange: (proposal: IProposalState, newStatus: CompetitionStatus) => void;
+  proposalState: ICompetitionProposalState;
+  handleStatusChange: (proposal: ICompetitionProposalState, newStatus: CompetitionStatus) => void;
 }
 
 type IProps = IExternalProps & IExternalStateProps;
@@ -48,7 +48,7 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
   }
 
   private getCompetitionState = (): CompetitionStatus => {
-    const competition = this.props.proposalState.competition;
+    const competition = this.props.proposalState;
     return competitionStatus(competition);
   }
 
@@ -74,7 +74,7 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
       proposalState,
     } = this.props;
 
-    const competition = proposalState.competition;
+    const competition = proposalState;
     const numSubmissions = competition.totalSuggestions;
     const numVotes = competition.totalVotes;
     const numWinningSubmissions = competition.numberOfWinningSuggestions;

@@ -1,4 +1,4 @@
-import { IDAOState, ISchemeState, IProposalCreateOptionsComp } from "@daostack/arc.js";
+import { IDAOState, IProposalCreateOptionsComp, IContributionRewardExtState } from "@daostack/arc.js";
 import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -8,10 +8,10 @@ import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
 import { showNotification } from "reducers/notifications";
-import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
-import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
+import MarkdownField from "components/Proposal/Create/PluginForms/MarkdownField";
 import { checkTotalPercent } from "lib/util";
 import * as Datetime from "react-datetime";
 
@@ -19,7 +19,7 @@ import moment = require("moment");
 import BN = require("bn.js");
 
 interface IExternalProps {
-  scheme: ISchemeState;
+  plugin: IContributionRewardExtState;
   daoAvatarAddress: string;
   handleClose: () => any;
 }
@@ -134,7 +134,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     }
 
 
-    // TODO: reward split should be fixed in client for now split here
+    // TODO: reward split should be fixed in arc.js for now split here
     let rewardSplit = [];
     if (values.rewardSplit === "") {
       const unit = 100.0 / Number(values.numWinners);
@@ -149,8 +149,8 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     if (reputationReward.isZero()) {
       reputationReward = new BN(1);
     }
-    // Parameters to be passed to client
-    const proposalOptions: IProposalCreateOptionsComp  = {
+    // Parameters to be passed to arc.js
+    const proposalOptions: IProposalCreateOptionsComp = {
       dao: this.props.daoAvatarAddress,
       description: values.description,
       endTime: values.compEndTimeInput.toDate(),
@@ -158,11 +158,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       externalTokenReward,
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
       numberOfVotesPerVoter:  Number(values.numberOfVotesPerVoter),
-      proposalType: "competition", // this makes `createPRoposal` create a competition rather then a 'normal' contributionRewardExt
       proposerIsAdmin: values.proposerIsAdmin,
       reputationReward,
       rewardSplit,
-      scheme: this.props.scheme.address,
+      plugin: this.props.plugin.address,
       startTime: values.compStartTimeInput.toDate(),
       suggestionsEndTime: values.suggestionEndTimeInput.toDate(),
       tags: this.state.tags,

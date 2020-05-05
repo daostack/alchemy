@@ -2,7 +2,7 @@ import { DAO, IDAOState, Reputation, Token } from "@daostack/arc.js";
 import { getArc } from "arc";
 import BN = require("bn.js");
 
-// TODO: all this should really be in the client library, after new client is done i will move it there if its not already
+// TODO: all this should really be in the arc.js library, after new arc.js is done i will move it there if its not already
 
 export interface IDAOData {
   id: string;

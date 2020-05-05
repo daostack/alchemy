@@ -1,9 +1,9 @@
-.schemeContainer {
+.pluginContainer {
   padding-bottom: 150px;
   position: relative;
 }
 
-.schemeName {
+.pluginName {
   font-size: 28px;
   color: #689ad6;
   padding: 0;
@@ -42,7 +42,7 @@
   }
 }
 
-.schemeMenu {
+.pluginMenu {
   width: 100%;
   background-color: rgba(229, 235, 242, 1);
   border-bottom: 1px solid rgba(212, 220, 228, 1);
@@ -90,7 +90,7 @@
   }
 }
 
-.schemeRedemptionContainer {
+.pluginRedemptionContainer {
   max-width: 610px;
   margin: 80px auto;
   background-color: $white;
@@ -185,18 +185,18 @@
     text-align: center;
   }
 
-  .schemeName {
+  .pluginName {
     font-size: 18px;
     padding-left: 15px;
   }
 
-  .schemeRedemptionContainer {
+  .pluginRedemptionContainer {
     width: 90%;
     margin: 30px auto;
     padding: 20px;
   }
 
-  .schemeMenu {
+  .pluginMenu {
     a {
       font-size: 12px;
     }

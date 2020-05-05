@@ -1,4 +1,4 @@
-import { ICompetitionProposalState, Competition, CompetitionSuggestion, ICompetitionSuggestionState, CompetitionVote, Address } from "@daostack/arc.js";
+import { ICompetitionProposalState, CompetitionProposal, CompetitionSuggestion, ICompetitionSuggestionState, CompetitionVote, Address } from "@daostack/arc.js";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 
@@ -109,7 +109,7 @@ export const createCompetitionSubmission = (proposalId: string, options: ICreate
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Create Submission");
-      const competition = new Competition(getArc(), proposalId);
+      const competition = new CompetitionProposal(getArc(), proposalId);
       await competition.createSuggestion(options).subscribe(...observer);
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -159,7 +159,7 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkActi
 
 export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestionState>> => {
   // fetchAllData so .state() comes from cache
-  const competition = new Competition(getArc(), proposalId);
+  const competition = new CompetitionProposal(getArc(), proposalId);
   return competition.suggestions({}, { subscribe, fetchAllData: true })
     .pipe(
       mergeMap(submissions => of(submissions).pipe(
@@ -175,11 +175,11 @@ export const getSubmission = (id: string, subscribe = false): Observable<ICompet
 };
 
 export const getCompetitionVotes = (competitionId: string, voterAddress: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
-  const competition = new Competition(getArc(), competitionId);
+  const competition = new CompetitionProposal(getArc(), competitionId);
   /**
    * none of the current uses require the vote state
    */
-  return competition.votes({ where: { voter: voterAddress } },
+  return competition.competitionVotes({ where: { voter: voterAddress.toLowerCase() } } as any,
     { subscribe: subscribe, fetchAllData: true });
 };
 

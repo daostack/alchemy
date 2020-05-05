@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState, Address, ICompetitionSuggestionState, CompetitionVote } from "@daostack/arc.js";
+import { IDAOState, ICompetitionProposalState, Address, ICompetitionSuggestionState, CompetitionVote } from "@daostack/arc.js";
 import * as React from "react";
 
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -29,7 +29,7 @@ interface IExternalStateProps {
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   daoState: IDAOState;
-  proposalState: IProposalState;
+  proposalState: ICompetitionProposalState;
   status: CompetitionStatus;
   suggestionId: string; // this is the real id (not the counter)
   handleClose: () => any;
@@ -60,7 +60,7 @@ class SubmissionDetails extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
 
-    const competition = this.props.proposalState.competition;
+    const competition = this.props.proposalState;
     const submission = this.props.data[0];
     const currentAccountVotedForIt = this.props.data[1];
     const currentAccountVotes = this.props.data[2];

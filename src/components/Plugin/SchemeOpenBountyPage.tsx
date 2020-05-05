@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { Address, ISchemeState } from "@daostack/arc.js";
+import { Address, IPluginState } from "@daostack/arc.js";
 import { schemeName } from "lib/schemeUtils";
 import { getNetworkName } from "lib/util";
 import * as css from "./SchemeInfo.scss";
@@ -12,7 +12,7 @@ const ReactMarkdown = require("react-markdown");
 
 interface IProps {
   daoAvatarAddress: Address;
-  scheme: ISchemeState;
+  plugin: IPluginState;
 }
 
 interface IState {

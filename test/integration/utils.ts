@@ -1,4 +1,4 @@
-import { Arc, IArcOptions } from "@daostack/client";
+import { Arc, IArcOptions } from "@daostack/arc.js";
 
 const settings: IArcOptions & { txSenderServiceUrl: string } = {
   graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",

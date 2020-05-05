@@ -1,15 +1,15 @@
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
 import { humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens, isAddress } from "lib/util";
-import { schemeName } from "lib/schemeUtils";
-import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import { pluginName } from "lib/pluginUtils";
+import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
 import { showNotification } from "reducers/notifications";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
-import CountdownText from "components/Scheme/ContributionRewardExtRewarders/Competition/CountdownText";
+import CountdownText from "components/Plugin/ContributionRewardExtRewarders/Competition/CountdownText";
 import { map } from "rxjs/operators";
 import Tooltip from "rc-tooltip";
 import { combineLatest, of } from "rxjs";
@@ -18,8 +18,8 @@ import classNames from "classnames";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { DiscussionEmbed } from "disqus-react";
 import { connect } from "react-redux";
-import { IDAOState, IProposalState, ICompetitionSuggestionState, Address, CompetitionVote, IProposalOutcome,
-  CompetitionSuggestion, Proposal, Scheme  } from "@daostack/arc.js";
+import { IDAOState, ICompetitionSuggestionState, Address, CompetitionVote, IProposalOutcome,
+  CompetitionSuggestion, CompetitionProposal, ICompetitionProposalState, Competition } from "@daostack/arc.js";
 import gql from "graphql-tag";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as React from "react";
@@ -54,7 +54,7 @@ interface IStateProps {
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   daoState: IDAOState;
-  proposalState: IProposalState;
+  proposalState: ICompetitionProposalState;
 }
 
 type IProps = IExternalProps & IDispatchProps & IExternalStateProps & ISubscriptionProps<ISubscriptionState>;
@@ -87,11 +87,11 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   private disqusConfig = { url: "", identifier: "", title: "" };
 
   private getCompetitionState = (): CompetitionStatus => {
-    const competition = this.props.proposalState.competition;
+    const competition = this.props.proposalState;
     return competitionStatus(competition);
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     /**
      * use `window` because a route with these params isn't configured
      * externally to the Competition code in Alchemy, and thus the params
@@ -116,6 +116,9 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         this.setState({ showingSubmissionDetails: urlSubmission });
       }
     }
+
+    // Ensure the plugin's state is hydrated
+    await this.props.proposalState.plugin.entity.fetchState()
   }
 
   private onEndCountdown = () => {
@@ -171,7 +174,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   }
 
   private distributionsHtml() {
-    return this.props.proposalState.competition.rewardSplit.map((split: number, index: number) => {
+    return this.props.proposalState.rewardSplit.map((split: number, index: number) => {
       return (<div key={index} className={css.winner}>
         <div className={css.position}>{index+1}</div>
         <div className={css.proportion}>{split}%</div>
@@ -244,7 +247,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const { daoState, proposalState } = this.props;
     const submissions = this.props.data[0];
     const tags = proposalState.tags;
-    const competition = proposalState.competition;
+    const competition = proposalState;
     const notStarted = status.notStarted;
     const inSubmissions = status.open;
     const isPaused = status.paused;
@@ -266,7 +269,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     this.disqusConfig.identifier = `competition-${proposalState.id}`;
 
     return <React.Fragment>
-      <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}/crx`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
+      <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/plugin/${proposalState.plugin.id}/crx`}>{pluginName(proposalState.plugin.entity.coreState, proposalState.plugin.entity.coreState.address)}</BreadcrumbsItem>
       <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/crx/proposal/${proposalState.id}`}>{humanProposalTitle(proposalState, 40)}</BreadcrumbsItem>
 
       <div className={css.competitionDetailsContainer}>
@@ -428,14 +431,14 @@ export default withSubscription({
         }
       }
     }
-    ${Proposal.fragments.ProposalFields}
-    ${Scheme.fragments.SchemeFields}
+    ${CompetitionProposal.baseFragment}
+    ${Competition.baseFragment}
     ${CompetitionSuggestion.fragments.CompetitionSuggestionFields}
     `;
 
     console.log(getArc, cacheQuery);
     // const arc = await getArc();
-    // // sending the query before subscribing seems to resolve a weird cache error - this would ideally be handled in the client
+    // // sending the query before subscribing seems to resolve a weird cache error - this would ideally be handled in the arc.js
     // await arc.sendQuery(cacheQuery);
     // // eslint-disable-next-line @typescript-eslint/no-empty-function
     // await arc.getObservable(cacheQuery, {subscribe: true}).subscribe(() => {});

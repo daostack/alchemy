@@ -1,17 +1,17 @@
-import { IDAOState, IProposalState } from "@daostack/arc.js";
+import { IDAOState, ICompetitionProposalState } from "@daostack/arc.js";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { isValidUrl, isAddress } from "lib/util";
 import * as React from "react";
-import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
+import MarkdownField from "components/Proposal/Create/PluginForms/MarkdownField";
 import UserSearchField from "components/Shared/UserSearchField";
 import { ICreateSubmissionOptions } from "./utils";
 import * as css from "./Competitions.scss";
 
 interface IExternalProps {
   daoState: IDAOState;
-  proposalState: IProposalState;
+  proposalState: ICompetitionProposalState;
   handleCancel: () => any;
   handleSubmit: (values: ICreateSubmissionOptions) => any;
 }

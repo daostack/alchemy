@@ -1,1 +1,0 @@
-npm link @daostack/client

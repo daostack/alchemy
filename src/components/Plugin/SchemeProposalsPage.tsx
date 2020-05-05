@@ -1,5 +1,5 @@
 import { History } from "history";
-import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Vote, Reward, Scheme, Stake } from "@daostack/arc.js";
+import { Address, DAO, IDAOState, IProposalStage, IPluginState, AnyProposal, Vote, Reward, AnyPlugin, Stake, Proposal, Plugin } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -42,7 +42,7 @@ interface IExternalProps {
   currentAccountAddress: Address;
   history: History;
   isActive: boolean;
-  scheme: ISchemeState;
+  scheme: IPluginState;
   daoState: IDAOState;
 }
 
@@ -50,7 +50,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type SubscriptionData = [Proposal[], Proposal[], Proposal[], Proposal[]];
+type SubscriptionData = [AnyProposal[], AnyProposal[], AnyProposal[], AnyProposal[]];
 type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
 
 const mapDispatchToProps = {
@@ -89,7 +89,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
     const queuedProposalsHTML = (
       <TransitionGroup className="queued-proposals-list">
-        { proposalsQueued.map((proposal: Proposal): any => (
+        { proposalsQueued.map((proposal: AnyProposal): any => (
           <Fade key={"proposal_" + proposal.id}>
             <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0}/>
           </Fade>
@@ -101,7 +101,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
     const preBoostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
-        { proposalsPreBoosted.map((proposal: Proposal): any => (
+        { proposalsPreBoosted.map((proposal: AnyProposal): any => (
           <Fade key={"proposal_" + proposal.id}>
             <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0}/>
           </Fade>
@@ -113,7 +113,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
     const boostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
-        { proposalsBoosted.map((proposal: Proposal): any => (
+        { proposalsBoosted.map((proposal: AnyProposal): any => (
           <Fade key={"proposal_" + proposal.id}>
             <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0}/>
           </Fade>
@@ -235,7 +235,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
 
   createObservable: async (props: IExternalProps) => {
     const arc = getArc();
-    const dao = props.daoState.dao;
+    const dao = new DAO(arc, props.daoState.id);
     const schemeId = props.scheme.id;
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server
@@ -264,11 +264,11 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
             }
           }
         }
-        ${Proposal.fragments.ProposalFields}
+        ${Proposal.baseFragment}
         ${Vote.fragments.VoteFields}
         ${Stake.fragments.StakeFields}
         ${Reward.fragments.RewardFields}
-        ${Scheme.fragments.SchemeFields}
+        ${Plugin.baseFragment}
       `;
     } else {
       bigProposalQuery = gql`
@@ -285,8 +285,8 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
             ...ProposalFields
           }
         }
-        ${Proposal.fragments.ProposalFields}
-        ${Scheme.fragments.SchemeFields}
+        ${Proposal.baseFragment}
+        ${Plugin.baseFragment}
       `;
     }
 
@@ -314,12 +314,12 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
         orderBy: "boostedAt",
       }, { subscribe: true}),
       // big subscription query to make all other subscription queries obsolete
-      arc.getObservable(bigProposalQuery, {subscribe: true}) as Observable<Proposal[]>,
+      arc.getObservable(bigProposalQuery, {subscribe: true}) as Observable<AnyProposal[]>,
     );
   },
 
   getFetchMoreObservable: (props: IExternalProps, data: SubscriptionData) => {
-    const dao = props.daoState.dao;
+    const dao = new DAO(getArc(), props.daoState.id);
 
     return dao.proposals({
       // eslint-disable-next-line @typescript-eslint/camelcase
@@ -331,7 +331,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
     }, { subscribe: true, fetchAllData: true });
   },
 
-  fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {
+  fetchMoreCombine: (prevState: SubscriptionData, newData: AnyProposal[]) => {
     return [prevState[0].concat(newData), prevState[1], prevState[2], []];
   },
 });
