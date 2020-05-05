@@ -101,6 +101,7 @@ class VoteButtons extends React.Component<IProps, IState> {
                             (proposal.stage === IProposalStage.Boosted && expired) ||
                             (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
                             (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ||
+                            (currentAccountState && (proposal.createdAt < currentAccountState.createdAt)) ||
                             currentVote === IProposalOutcome.Pass ||
                             currentVote === IProposalOutcome.Fail
                             ;
