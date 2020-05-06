@@ -4,9 +4,9 @@ export enum Page {
   CreateProposal = "Create Proposal",
   DAOHistory = "DAO History",
   DAOMembers = "DAO Members",
-  DAOSchemes = "DAO Schemes",
+  DAOPlugins = "DAO Plugins",
   ProposalDetails = "Proposal Details",
   Redemptions = "Redemptions",
   RedemptionsMenu = "Redemptions Menu",
-  SchemeProposals = "Scheme Proposals",
+  PluginProposals = "Plugin Proposals",
 }

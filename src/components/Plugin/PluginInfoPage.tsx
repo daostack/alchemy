@@ -2,14 +2,14 @@
 
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { Address, ISchemeState, IGenesisProtocolParams, IDAOState } from "@daostack/arc.js";
+import { Address, IPluginState, IGenesisProtocolParams, IDAOState } from "@daostack/arc.js";
 import { copyToClipboard, fromWei, linkToEtherScan, roundUp } from "lib/util";
-import { schemeName } from "lib/schemeUtils";
+import { pluginName } from "lib/pluginUtils";
 import * as moment from "moment";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { connect } from "react-redux";
 import Tooltip from "rc-tooltip";
-import * as css from "./SchemeInfo.scss";
+import * as css from "./PluginInfo.scss";
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -17,7 +17,7 @@ interface IDispatchProps {
 
 interface IExternalProps {
   daoState: IDAOState;
-  scheme: ISchemeState;
+  plugin: IPluginState;
 }
 
 type IProps = IExternalProps & IDispatchProps;
@@ -26,7 +26,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-class SchemeInfo extends React.Component<IProps, null> {
+class PluginInfo extends React.Component<IProps, null> {
 
   private copyToClipboardHandler = (str: string) => (_event: any) => {
     copyToClipboard(str);
@@ -34,7 +34,7 @@ class SchemeInfo extends React.Component<IProps, null> {
   };
 
   public render(): RenderOutput {
-    const { daoState, scheme } = this.props;
+    const { daoState, plugin } = this.props;
     const daoAvatarAddress = daoState.address;
 
     const duration = (durationSeconds: number): any => {
@@ -111,35 +111,34 @@ class SchemeInfo extends React.Component<IProps, null> {
       </tbody>;
     };
 
+    const pluginParams = (plugin as any).pluginParams
     const votingMachine = (
-      (scheme.genericSchemeParams && scheme.genericSchemeParams.votingMachine) ||
-      (scheme.contributionRewardParams && scheme.contributionRewardParams.votingMachine) ||
-      (scheme.schemeRegistrarParams && scheme.schemeRegistrarParams.votingMachine)
+      pluginParams && pluginParams.votingMachine
     );
     return <div>
-      <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>Info</BreadcrumbsItem>
+      <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/plugin/${plugin.id}/info`}>Info</BreadcrumbsItem>
 
-      <div className={css.schemeInfoContainer}>
-        <h3>{schemeName(scheme, scheme.address)}</h3>
+      <div className={css.pluginInfoContainer}>
+        <h3>{pluginName(plugin, plugin.address)}</h3>
         <table className={css.infoCardContent}>
           <tbody>
             <tr>
-              <th>Address of plugin: <a href={linkToEtherScan(scheme.address)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></th>
+              <th>Address of plugin: <a href={linkToEtherScan(plugin.address)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></th>
               <td>
-                <span>{scheme.address}</span>
+                <span>{plugin.address}</span>
               </td>
               <td>
-                <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.address)} />
+                <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(plugin.address)} />
               </td>
             </tr>
-            { scheme.genericSchemeParams ?
+            { pluginParams && pluginParams.contractToCall ?
               <tr>
-                <th>will call this contract: <a href={linkToEtherScan(scheme.genericSchemeParams.contractToCall)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></th>
+                <th>will call this contract: <a href={linkToEtherScan(pluginParams.contractToCall)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></th>
                 <td>
-                  <span>{scheme.genericSchemeParams.contractToCall}</span>
+                  <span>{pluginParams.contractToCall}</span>
                 </td>
                 <td>
-                  <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.genericSchemeParams.contractToCall)} />
+                  <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(pluginParams.contractToCall)} />
                 </td>
               </tr> : undefined
             }
@@ -147,7 +146,7 @@ class SchemeInfo extends React.Component<IProps, null> {
             <tr>
               <th>Can Register Plugins?</th>
               <td>
-                {scheme.canRegisterSchemes ? "Yes" : "No"}
+                {plugin.canRegisterPlugins ? "Yes" : "No"}
               </td>
               <td>
               </td>
@@ -155,7 +154,7 @@ class SchemeInfo extends React.Component<IProps, null> {
             <tr>
               <th>Can Upgrade Controller?</th>
               <td>
-                {scheme.canUpgradeController ? "Yes" : "No"}
+                {plugin.canUpgradeController ? "Yes" : "No"}
               </td>
               <td>
               </td>
@@ -163,7 +162,7 @@ class SchemeInfo extends React.Component<IProps, null> {
             <tr>
               <th>Can Delegate Call?</th>
               <td>
-                {scheme.canDelegateCall ? "Yes" : "No"}
+                {plugin.canDelegateCall ? "Yes" : "No"}
               </td>
               <td>
               </td>
@@ -171,7 +170,7 @@ class SchemeInfo extends React.Component<IProps, null> {
             <tr>
               <th>Can Manage Global Constraints?</th>
               <td>
-                {scheme.canManageGlobalConstraints ? "Yes" : "No"}
+                {plugin.canManageGlobalConstraints ? "Yes" : "No"}
               </td>
               <td>
               </td>
@@ -186,34 +185,34 @@ class SchemeInfo extends React.Component<IProps, null> {
         </table>
       </div>
 
-      {scheme.contributionRewardParams || scheme.genericSchemeParams ?
-        <div className={css.schemeInfoContainer}>
+      {pluginParams && pluginParams.voteParams ?
+        <div className={css.pluginInfoContainer}>
           <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
           <table className={css.infoCardContent}>
             {renderVotingMachineLink(votingMachine)}
-            {renderGpParams(scheme.contributionRewardParams ? scheme.contributionRewardParams.voteParams : scheme.genericSchemeParams.voteParams)}
+            {renderGpParams(pluginParams.voteParams)}
           </table>
         </div>
         : ""
       }
 
-      {scheme.schemeRegistrarParams ?
-        <div className={css.schemeInfoContainer}>
+      {pluginParams && pluginParams.voteRegisterParams ?
+        <div className={css.pluginInfoContainer}>
           <h3>Genesis Protocol Params for Plugin Registration -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
           <table className={css.infoCardContent}>
             {renderVotingMachineLink(votingMachine)}
-            {renderGpParams(scheme.schemeRegistrarParams.voteRegisterParams)}
+            {renderGpParams(pluginParams.voteRegisterParams)}
           </table>
         </div>
         : ""
       }
 
-      {scheme.schemeRegistrarParams ?
-        <div className={css.schemeInfoContainer}>
+      {pluginParams && pluginParams.voteRemoveParams ?
+        <div className={css.pluginInfoContainer}>
           <h3>Genesis Protocol Params for Plugin Removal -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
           <table className={css.infoCardContent}>
             {renderVotingMachineLink(votingMachine)}
-            {renderGpParams(scheme.schemeRegistrarParams.voteRemoveParams)}
+            {renderGpParams(pluginParams.voteRemoveParams)}
           </table>
         </div>
         : ""
@@ -222,4 +221,4 @@ class SchemeInfo extends React.Component<IProps, null> {
   }
 }
 
-export default connect(null, mapDispatchToProps)(SchemeInfo);
+export default connect(null, mapDispatchToProps)(PluginInfo);

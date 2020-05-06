@@ -4,9 +4,9 @@
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, IPluginState } from "@daostack/arc.js";
-import { schemeName } from "lib/schemeUtils";
+import { pluginName } from "lib/pluginUtils";
 import { getNetworkName } from "lib/util";
-import * as css from "./SchemeInfo.scss";
+import * as css from "./PluginInfo.scss";
 
 const ReactMarkdown = require("react-markdown");
 
@@ -79,14 +79,14 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { daoAvatarAddress, scheme } = this.props;
+    const { daoAvatarAddress, plugin } = this.props;
     const createCard = () => {
 
       // Shows open bounty with bounty details if API returns bounty, else, shows "no open bounty" message
       if (this.state.totalResults > 0) {
         return this.state.bounties.map((bounty: any) => (
           <a href={bounty.attached_url} target="_blank" rel="noopener noreferrer" key={bounty.id}>
-            <div className={css.schemeInfoContainer}>
+            <div className={css.pluginInfoContainer}>
               <h3>{bounty.title} [{parseFloat(bounty.calculated_fulfillment_amount).toFixed(3)} {bounty.token_symbol }]</h3>
               <div className={css.infoCardContent}>
                 <strong>Bounty ID: </strong> {bounty.bounty_id}  | <strong>Issuer IDs:</strong> {bounty.issuers}
@@ -97,7 +97,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
         ));
       } else {
         return (
-          <div className={css.schemeInfoContainer}>
+          <div className={css.pluginInfoContainer}>
             <h3>No Open Bounties At This Time</h3>
             <div className={css.infoCardContent}>
                 New bounties can be created with a new bounty proposal.
@@ -109,7 +109,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
 
     return (
       <div>
-        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/plugin/${plugin.id}/info`}>{pluginName(plugin, plugin.address)}</BreadcrumbsItem>
         {
           createCard()
         }

@@ -3,7 +3,7 @@ import { getProfilesForAddresses } from "actions/profilesActions";
 import { getArc } from "arc";
 import CreateProposalPage from "components/Proposal/Create/CreateProposalPage";
 import ProposalDetailsPage from "components/Proposal/ProposalDetailsPage";
-import SchemeContainer from "components/Scheme/SchemeContainer";
+import SchemeContainer from "components/Plugin/SchemeContainer";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";

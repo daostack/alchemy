@@ -1,4 +1,4 @@
-import { Address, IPluginState, ReputationFromToken as ReputationFromTokenPlugin, Token } from "@daostack/arc.js";
+import { Address, IPluginState, ReputationFromTokenPlugin, Token } from "@daostack/arc.js";
 import axios from "axios";
 import { getArcSettings } from "arc";
 import { SigningKey } from "ethers/utils";
@@ -263,20 +263,20 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   private onSubmitClick = (setFieldValue: any) => () => { setFieldValue("useTxSenderService", false); }
 
   public render(): RenderOutput {
-    const { daoAvatarAddress, schemeState, currentAccountAddress } = this.props;
+    const { daoAvatarAddress, pluginState, currentAccountAddress } = this.props;
     const redeemerAddress = this.state.redeemerAddress;
 
     return (
-      <div className={schemeCss.schemeContainer}>
-        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeState.id}`}>{schemeName(schemeState, schemeState.address)}</BreadcrumbsItem>
+      <div className={pluginCss.pluginContainer}>
+        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/plugin/${pluginState.id}`}>{pluginName(pluginState, pluginState.address)}</BreadcrumbsItem>
 
         <Sticky enabled top={50} innerZ={10000}>
-          <h2 className={schemeCss.schemeName}>
-            {schemeName(schemeState, schemeState.address)}
+          <h2 className={pluginCss.pluginName}>
+            {pluginName(pluginState, pluginState.address)}
           </h2>
         </Sticky>
         { this.state.alreadyRedeemed ? <div>Reputation for account {redeemerAddress} has already been redeemed</div> : <div />  }
-        <div className={schemeCss.schemeRedemptionContainer}>
+        <div className={pluginCss.pluginRedemptionContainer}>
           <Formik
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             initialValues={{
@@ -297,7 +297,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
               require("accountAddress");
 
               if (!isAddress(values.accountAddress)) {
-                errors.otherScheme = "Invalid address";
+                errors.otherPlugin = "Invalid address";
               }
 
               return errors;
@@ -312,10 +312,10 @@ class ReputationFromToken extends React.Component<IProps, IState> {
               setFieldValue,
             }: FormikProps<IFormValues>) => {
               return <Form noValidate>
-                <div className={schemeCss.fields}>
+                <div className={pluginCss.fields}>
                   <h3>{ this.state.redemptionAmount ? fromWei(this.state.redemptionAmount) : "..." } Rep to redeem </h3>
                   <b>Redeem reputation to which account?</b>
-                  <div className={schemeCss.redemptionAddress}>
+                  <div className={pluginCss.redemptionAddress}>
                     <label htmlFor="accountAddressInput">
                       <ErrorMessage name="accountAddress">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     </label>
@@ -329,7 +329,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                   </div>
                   <b>⚠️ After redemption, reputation is not transferable</b>
                 </div>
-                <div className={schemeCss.redemptionButton}>
+                <div className={pluginCss.redemptionButton}>
                   <button type="submit"
                     disabled={this.state.alreadyRedeemed || this.state.redemptionAmount.isZero()}
                     onClick={this.onSubmitClick(setFieldValue)}
@@ -338,7 +338,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                   </button>
                 </div>
                 {  getArcSettings().txSenderServiceUrl ?
-                  <div className={schemeCss.redemptionButton}>
+                  <div className={pluginCss.redemptionButton}>
                     <div>Or try our new experimental feature:</div>
                     <button type="submit"
                       disabled={this.state.alreadyRedeemed || this.state.redemptionAmount.isZero()}

@@ -12,7 +12,7 @@ import * as css from "./Competitions.scss";
 
 interface IExternalProps {
   daoState: IDAOState;
-  scheme: IContributionRewardExtState;
+  plugin: IContributionRewardExtState;
   proposals: Array<ICompetitionProposalState>;
 }
 
@@ -83,11 +83,11 @@ class CompetitionsList extends React.Component<IProps, IStateProps> {
 
   public render(): RenderOutput {
 
-    const { daoState, scheme, proposals } = this.props;
+    const { daoState, plugin, proposals } = this.props;
     const daoAvatarAddress = daoState.address;
 
     return <React.Fragment>
-      <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/crx`}>Competitions</BreadcrumbsItem>
+      <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/plugin/${plugin.id}/crx`}>Competitions</BreadcrumbsItem>
       <div className={css.competitionCards}>
         {
           proposals
@@ -110,7 +110,7 @@ export default withSubscription({
   createObservable: async (props: IExternalProps) => {
     // prime the cache before creating the observable...
     const cacheQuery = gql`query cacheSuggestions {
-      proposals (where: {scheme: "${props.scheme.id}"}) {
+      proposals (where: {scheme: "${props.plugin.id}"}) {
         id
         competition {
           id

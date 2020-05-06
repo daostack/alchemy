@@ -12,7 +12,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import { IProfilesState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import Tooltip from "rc-tooltip";
-import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import { DiscussionEmbed } from "disqus-react";
 import { RouteComponentProps } from "react-router-dom";
 import { getSubmission, getSubmissionVoterHasVoted, getCompetitionVotes, CompetitionStatus } from "./utils";

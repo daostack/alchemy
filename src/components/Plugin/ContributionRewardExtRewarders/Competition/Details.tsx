@@ -19,7 +19,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { DiscussionEmbed } from "disqus-react";
 import { connect } from "react-redux";
 import { IDAOState, ICompetitionSuggestionState, Address, CompetitionVote, IProposalOutcome,
-  CompetitionSuggestion, CompetitionProposal, ICompetitionProposalState, Competition } from "@daostack/arc.js";
+  CompetitionSuggestion, Proposal, ICompetitionProposalState, Plugin } from "@daostack/arc.js";
 import gql from "graphql-tag";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as React from "react";
@@ -431,8 +431,8 @@ export default withSubscription({
         }
       }
     }
-    ${CompetitionProposal.baseFragment}
-    ${Competition.baseFragment}
+    ${Proposal.baseFragment}
+    ${Plugin.baseFragment}
     ${CompetitionSuggestion.fragments.CompetitionSuggestionFields}
     `;
 

@@ -48,7 +48,7 @@ export enum CrxRewarderComponentType {
 export const getCrxRewarderComponent = (pluginState: IContributionRewardExtState, type: CrxRewarderComponentType): Promise<any> => {
   const contractName = rewarderContractName(pluginState);
   if (contractName) {
-    return import(`components/Scheme/ContributionRewardExtRewarders/${contractName}/${CrxRewarderComponentType[type]}`)
+    return import(`components/Plugin/ContributionRewardExtRewarders/${contractName}/${CrxRewarderComponentType[type]}`)
       .then(module => module.default);
   } else {
     return null;

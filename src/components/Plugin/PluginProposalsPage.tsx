@@ -5,7 +5,7 @@ import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
 import Analytics from "lib/analytics";
-import { schemeName } from "lib/schemeUtils";
+import { pluginName } from "lib/pluginUtils";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -18,7 +18,7 @@ import { showNotification } from "reducers/notifications";
 import classNames from "classnames";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ProposalCard from "../Proposal/ProposalCard";
-import * as css from "./SchemeProposals.scss";
+import * as css from "./PluginProposals.scss";
 
 // For infinite scrolling
 const PAGE_SIZE = 100;
@@ -42,7 +42,7 @@ interface IExternalProps {
   currentAccountAddress: Address;
   history: History;
   isActive: boolean;
-  scheme: IPluginState;
+  plugin: IPluginState;
   daoState: IDAOState;
 }
 
@@ -57,26 +57,26 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-class SchemeProposalsPage extends React.Component<IProps, null> {
+class PluginProposalsPage extends React.Component<IProps, null> {
 
   public componentDidMount() {
     Analytics.track("Page View", {
-      "Page Name": Page.SchemeProposals,
+      "Page Name": Page.PluginProposals,
       "DAO Address": this.props.daoState.address,
       "DAO Name": this.props.daoState.name,
-      "Scheme Address": this.props.scheme.address,
-      "Scheme Name": this.props.scheme.name,
+      "Plugin Address": this.props.plugin.address,
+      "Plugin Name": this.props.plugin.name,
     });
   }
 
-  private async handleNewProposal(daoAvatarAddress: Address, schemeId: any): Promise<void> {
+  private async handleNewProposal(daoAvatarAddress: Address, pluginId: any): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
+    this.props.history.push(`/dao/${daoAvatarAddress}/plugin/${pluginId}/proposals/create/`);
   }
 
   private _handleNewProposal = (e: any): void => {
-    this.handleNewProposal(this.props.daoState.address, this.props.scheme.id);
+    this.handleNewProposal(this.props.daoState.address, this.props.plugin.id);
     e.preventDefault();
   };
 
@@ -84,7 +84,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
     const { data } = this.props;
 
     const [proposalsQueued, proposalsPreBoosted, proposalsBoosted ] = data;
-    const { currentAccountAddress, daoState, fetchMore, isActive, scheme } = this.props;
+    const { currentAccountAddress, daoState, fetchMore, isActive, plugin } = this.props;
     let proposalCount=0;
 
     const queuedProposalsHTML = (
@@ -121,11 +121,11 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
       </TransitionGroup>
     );
 
-    const schemeFriendlyName = schemeName(scheme, scheme.address);
+    const pluginFriendlyName = pluginName(plugin, plugin.address);
 
     return (
       <div>
-        <BreadcrumbsItem to={`/dao/${daoState.address}/scheme/${scheme.id}`}>{schemeFriendlyName}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${daoState.address}/plugin/${plugin.id}`}>{pluginFriendlyName}</BreadcrumbsItem>
 
         { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
           ?
@@ -134,10 +134,10 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             <div className={css.proposalsHeader}>
               No upcoming proposals
             </div>
-            <p>You can be the first one to create a {schemeFriendlyName} proposal today! :)</p>
+            <p>You can be the first one to create a {pluginFriendlyName} proposal today! :)</p>
             <div className={css.cta}>
               <Link to={"/dao/" + daoState.address}>
-                <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
+                <img className={css.relax} src="/assets/images/lt.svg"/> Back to plugins
               </Link>
               <a className={classNames({
                 [css.blueButton]: true,
@@ -154,7 +154,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             <div className={css.boostedContainer}>
               <div className={css.proposalsHeader}>
                 <TrainingTooltip placement="bottom" overlay={"Boosted proposals are passed or failed via relative majority over a configured voting period"}>
-                  <span>Boosted Proposals ({scheme.numberOfBoostedProposals})</span>
+                  <span>Boosted Proposals ({plugin.numberOfBoostedProposals})</span>
                 </TrainingTooltip>
                 {proposalsBoosted.length === 0
                   ?
@@ -172,7 +172,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
                 <TrainingTooltip placement="bottom" overlay={"Pending boosting proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
-                  <span>Pending Boosting Proposals ({scheme.numberOfPreBoostedProposals})</span>
+                  <span>Pending Boosting Proposals ({plugin.numberOfPreBoostedProposals})</span>
                 </TrainingTooltip>
                 {proposalsPreBoosted.length === 0
                   ?
@@ -189,7 +189,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
                 <TrainingTooltip placement="bottom" overlay={"Regular proposals are passed or failed via absolute majority over a configured voting period. If enough GEN is staked predicting they will pass, they can move to the pending and then boosted queues."}>
-                  <span>Regular Proposals ({scheme.numberOfQueuedProposals})</span>
+                  <span>Regular Proposals ({plugin.numberOfQueuedProposals})</span>
                 </TrainingTooltip>
                 {proposalsQueued.length === 0
                   ?
@@ -204,7 +204,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
                   style={{overflow: "visible"}}
                   dataLength={proposalsQueued.length} //This is important field to render the next data
                   next={fetchMore}
-                  hasMore={proposalsQueued.length < scheme.numberOfQueuedProposals}
+                  hasMore={proposalsQueued.length < plugin.numberOfQueuedProposals}
                   loader={<h4>Fetching more proposals...</h4>}
                   endMessage={
                     <p style={{textAlign: "center"}}>
@@ -224,27 +224,27 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
 // For some reason there is a weird maybe bug in TypeScript where adding the functions for fetchingMOre
 //   is causing it to misinterpret the type of the SubscriptionData, so have to manually specificy here
-const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>({
-  wrappedComponent: SchemeProposalsPage,
+const SubscribedPluginProposalsPage = withSubscription<IProps, SubscriptionData>({
+  wrappedComponent: PluginProposalsPage,
   loadingComponent: <Loading/>,
   errorComponent: null,
 
   checkForUpdate: (oldProps, newProps) => {
-    return oldProps.scheme.id !== newProps.scheme.id;
+    return oldProps.plugin.id !== newProps.plugin.id;
   },
 
   createObservable: async (props: IExternalProps) => {
     const arc = getArc();
     const dao = new DAO(arc, props.daoState.id);
-    const schemeId = props.scheme.id;
+    const pluginId = props.plugin.id;
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server
     let bigProposalQuery;
     if (props.currentAccountAddress) {
       bigProposalQuery = gql`
-        query ProposalDataForSchemeProposalsPage {
+        query ProposalDataForPluginProposalsPage {
           proposals (where: {
-            scheme: "${schemeId}"
+            scheme: "${pluginId}"
             stage_in: [
               "${IProposalStage[IProposalStage.Boosted]}",
               "${IProposalStage[IProposalStage.PreBoosted]}",
@@ -274,7 +274,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
       bigProposalQuery = gql`
         query ProposalDataForSchemeProposalsPage {
           proposals (where: {
-            scheme: "${schemeId}"
+            scheme: "${pluginId}"
             stage_in: [
               "${IProposalStage[IProposalStage.Boosted]}",
               "${IProposalStage[IProposalStage.PreBoosted]}",
@@ -294,7 +294,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
       // the list of queued proposals
       dao.proposals({
         // eslint-disable-next-line @typescript-eslint/camelcase
-        where: { scheme: schemeId, stage: IProposalStage.Queued },
+        where: { plugin: pluginId, stage: IProposalStage.Queued },
         orderBy: "confidence",
         orderDirection: "desc",
         first: PAGE_SIZE,
@@ -303,14 +303,14 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
 
       // the list of preboosted proposals
       dao.proposals({
-        where: { scheme: schemeId, stage: IProposalStage.PreBoosted },
+        where: { plugin: pluginId, stage: IProposalStage.PreBoosted },
         orderBy: "preBoostedAt",
       }, { subscribe: true }),
 
       // the list of boosted proposals
       dao.proposals({
         // eslint-disable-next-line @typescript-eslint/camelcase
-        where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
+        where: { plugin: pluginId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
         orderBy: "boostedAt",
       }, { subscribe: true}),
       // big subscription query to make all other subscription queries obsolete
@@ -323,7 +323,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
 
     return dao.proposals({
       // eslint-disable-next-line @typescript-eslint/camelcase
-      where: { scheme: props.scheme.id, stage: IProposalStage.Queued },
+      where: { plugin: props.plugin.id, stage: IProposalStage.Queued },
       orderBy: "confidence",
       orderDirection: "desc",
       first: PAGE_SIZE,
@@ -336,4 +336,4 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
   },
 });
 
-export default connect(null, mapDispatchToProps)(SubscribedSchemeProposalsPage);
+export default connect(null, mapDispatchToProps)(SubscribedPluginProposalsPage);
