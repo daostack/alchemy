@@ -211,7 +211,7 @@ export function getSchemeIsActive(scheme: ISchemeState, action?: GetSchemeIsActi
     return true;
   } else {
     if (moment(votingMachineParams.activationTime*1000).isSameOrBefore(moment())) {
-       return true;
+      return true;
     }
     // eslint-disable-next-line no-console
     console.warn(` getSchemeIsActive: future activation time: ${scheme.name}`);
