@@ -1,4 +1,4 @@
-import { DAO, IDAOState, Reputation, Token } from "@daostack/client";
+import { DAO, IDAOState, Reputation, Token } from "@daostack/arc.js";
 import { getArc } from "arc";
 import BN = require("bn.js");
 

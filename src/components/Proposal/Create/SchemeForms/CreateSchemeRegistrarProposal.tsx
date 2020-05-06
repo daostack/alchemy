@@ -14,7 +14,7 @@ import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSION
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
-import { IProposalType, ISchemeState, Scheme } from "@daostack/client";
+import { IProposalType, ISchemeState, Scheme } from "@daostack/arc.js";
 import { connect } from "react-redux";
 import * as React from "react";
 import * as css from "../CreateProposal.scss";
@@ -578,7 +578,7 @@ const SubscribedCreateSchemeRegistrarProposal = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
-    return arc.dao(props.daoAvatarAddress).schemes();
+    return arc.dao(props.daoAvatarAddress).schemes({ where: { isRegistered: true } }, { fetchAllData: true });
   },
 });
 

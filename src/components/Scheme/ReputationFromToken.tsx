@@ -1,5 +1,5 @@
 import { promisify } from "util";
-import { Address, ISchemeState, Token } from "@daostack/client";
+import { Address, ISchemeState, Token } from "@daostack/arc.js";
 import axios from "axios";
 import { getWeb3Provider, getArcSettings } from "arc";
 import { soliditySHA3 } from "ethereumjs-abi";

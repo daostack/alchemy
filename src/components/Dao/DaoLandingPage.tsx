@@ -1,4 +1,4 @@
-import { IDAOState } from "@daostack/client";
+import { IDAOState } from "@daostack/arc.js";
 import ThreeBoxComments from "3box-comments-react";
 import { threeboxLogin } from "actions/profilesActions";
 import { enableWalletProvider, getArc } from "arc";

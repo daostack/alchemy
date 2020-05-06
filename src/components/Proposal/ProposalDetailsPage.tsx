@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Vote } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, Vote } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import ThreeBoxComments from "3box-comments-react";
 import { threeboxLogin } from "actions/profilesActions";

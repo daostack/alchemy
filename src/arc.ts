@@ -2,7 +2,7 @@ import { NotificationStatus } from "reducers/notifications";
 import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
 import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
 import { RetryLink } from "apollo-link-retry";
-import { Address, Arc } from "@daostack/client";
+import { Address, Arc } from "@daostack/arc.js";
 import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
 import { Observable } from "rxjs";
 
