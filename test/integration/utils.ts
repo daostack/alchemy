@@ -79,3 +79,7 @@ export const setCalendarDate = async (element: any, date: string): Promise<void>
   await element.click(); // hide previous calendar
   await element.setValue(date);
 };
+
+export async function gotoDaoSchemes(daoAddress: string): Promise<any> {
+  return browser.url(`/dao/${daoAddress}/schemes`);
+}
