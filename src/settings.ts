@@ -116,6 +116,7 @@ function getWeb3ConnectProviderOptions(network: string) {
             host: "https://xdai.poanetwork.dev",
             chainId: 100,
             networkName: "xdai",
+            network: "xdai",
           },
         },
       };
