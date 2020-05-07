@@ -109,8 +109,7 @@ function getWeb3ConnectProviderOptions(network: string) {
       };
     case "xdai":
       return {
-        // use url due to https://github.com/Web3Modal/web3modal/issues/157
-        network: "https://xdai.poanetwork.dev",
+        network: "xdai",
         torus: {
           package: Torus,
           options: {
