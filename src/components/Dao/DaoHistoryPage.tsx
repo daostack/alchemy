@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Proposal, Vote, Scheme, Stake } from "@daostack/arc.js";
+import { Address, DAO, IDAOState, IProposalStage, AnyProposal, Vote, Plugin, Stake } from "@daostack/arc.js";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -10,6 +10,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
+import { combineLatest, from } from "rxjs";
 import { first } from "rxjs/operators";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
 import * as css from "./Dao.scss";
@@ -18,28 +19,30 @@ const PAGE_SIZE = 50;
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
-  daoState: IDAOState;
+  dao: DAO;
 }
 
-type SubscriptionData = Proposal[];
+type SubscriptionData = [AnyProposal[], IDAOState];
 type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 class DaoHistoryPage extends React.Component<IProps, null> {
 
   public componentDidMount() {
+    const [, daoState] = this.props.data;
+
     Analytics.track("Page View", {
       "Page Name": Page.DAOHistory,
-      "DAO Address": this.props.daoState.address,
-      "DAO Name": this.props.daoState.name,
+      "DAO Address": daoState.address,
+      "DAO Name": daoState.name,
     });
   }
 
   public render(): RenderOutput {
-    const { data, hasMoreToLoad, fetchMore, daoState, currentAccountAddress } = this.props;
+    const { data, hasMoreToLoad, fetchMore, currentAccountAddress } = this.props;
 
-    const proposals = data;
+    const [proposals, daoState] = data;
 
-    const proposalsHTML = proposals.map((proposal: Proposal) => {
+    const proposalsHTML = proposals.map((proposal: AnyProposal) => {
       return (<ProposalHistoryRow key={"proposal_" + proposal.id} history={this.props.history} proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} />);
     });
 
@@ -101,7 +104,7 @@ export default withSubscription({
 
   createObservable: async (props: IExternalProps) => {
     const arc = getArc();
-    const dao = props.daoState.dao;
+    const dao = props.dao;
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server
     // with all separate queries for votes and stakes and stuff...
@@ -138,32 +141,36 @@ export default withSubscription({
           }
         }
       }
-      ${Proposal.fragments.ProposalFields}
+      ${AnyProposal.baseFragment}
       ${Vote.fragments.VoteFields}
       ${Stake.fragments.StakeFields}
-      ${Scheme.fragments.SchemeFields}
+      ${Plugin.baseFragment}
     `;
     await arc.getObservable(prefetchQuery, { subscribe: true }).pipe(first()).toPromise();
-    return dao.proposals({
-      where: {
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed, IProposalStage.Queued],
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        closingAt_lte: Math.floor(new Date().getTime() / 1000),
+    return combineLatest(
+      dao.proposals({
+        where: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed, IProposalStage.Queued],
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          closingAt_lte: Math.floor(new Date().getTime() / 1000),
+        },
+        orderBy: "closingAt",
+        orderDirection: "desc",
+        first: PAGE_SIZE,
+        skip: 0,
       },
-      orderBy: "closingAt",
-      orderDirection: "desc",
-      first: PAGE_SIZE,
-      skip: 0,
-    }, { fetchAllData: true } // get and subscribe to all data, so that subcomponents do nto have to send separate queries
-    );
+      // get and subscribe to all data, so that subcomponents do nto have to send separate queries
+      { fetchAllData: true }),
+      from(dao.fetchState())
+    )
   },
 
   // used for hacky pagination tracking
   pageSize: PAGE_SIZE,
 
   getFetchMoreObservable: (props: IExternalProps, data: SubscriptionData) => {
-    const dao = props.daoState.dao;
+    const dao = props.dao;
     return dao.proposals({
       where: {
         // eslint-disable-next-line @typescript-eslint/camelcase

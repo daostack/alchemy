@@ -12,7 +12,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./Dao.scss";
 
 interface IProps extends ISubscriptionProps<IMemberState> {
-  dao: IDAOState;
+  daoState: IDAOState;
   member: Member;
   daoTotalReputation: BN;
   profile: IProfileState;
@@ -26,14 +26,14 @@ class DaoMember extends React.Component<IProps, null> {
   }
 
   public render(): RenderOutput {
-    const { dao, daoTotalReputation, profile } = this.props;
+    const { daoState, daoTotalReputation, profile } = this.props;
     const memberState = this.props.data;
 
     return (
       <div className={css.member + " clearfix"}
         key={"member_" + memberState.address}
         data-test-id={"member_" + memberState.address}>
-        <Link to={"/profile/" + memberState.address + (dao ? "?daoAvatarAddress=" + dao.address : "")}>
+        <Link to={"/profile/" + memberState.address + (daoState ? "?daoAvatarAddress=" + daoState.address : "")}>
           <table className={css.memberTable}>
             <tbody>
               <tr>
@@ -47,7 +47,7 @@ class DaoMember extends React.Component<IProps, null> {
                 <td className={css.memberName}>
                   { profile ?
                     <div>
-                      <AccountProfileName accountAddress={memberState.address} accountProfile={profile} daoAvatarAddress={dao.address} />
+                      <AccountProfileName accountAddress={memberState.address} accountProfile={profile} daoAvatarAddress={daoState.address} />
                       <br/>
                     </div>
                     : <div className={css.noProfile}>No Profile</div>
@@ -59,7 +59,7 @@ class DaoMember extends React.Component<IProps, null> {
                 <td className={css.memberReputation}>
                   <span className={css.reputationAmount}>{fromWeiToString(memberState.reputation)}</span>
                   <div className={css.reputationAmounts}>
-                    (<Reputation daoName={dao.name} totalReputation={daoTotalReputation} reputation={memberState.reputation}/>)
+                    (<Reputation daoName={daoState.name} totalReputation={daoTotalReputation} reputation={memberState.reputation}/>)
                   </div>
                 </td>
                 <td className={css.memberSocial}>

@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState } from "@daostack/arc.js";
+import { Address, DAO, IDAOState, IMemberState } from "@daostack/arc.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getProfile } from "actions/profilesActions";
 import AccountImage from "components/Account/AccountImage";
@@ -9,6 +9,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import { copyToClipboard  } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
+import { combineLatest, from } from "rxjs";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
@@ -20,7 +21,7 @@ import * as css from "./Account.scss";
 
 interface IExternalProps {
   accountAddress: Address;
-  daoState: IDAOState;
+  dao: DAO;
   width?: number;
 }
 
@@ -49,13 +50,21 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IMemberState>;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[IMemberState, IDAOState]>;
 
 class AccountPopup extends React.Component<IProps, null> {
 
-  public componentDidMount() {
-    if (!this.props.profile) {
-      this.props.getProfile(this.props.accountAddress);
+  public async componentDidMount() {
+    const { profile, getProfile, accountAddress, dao } = this.props;
+
+    if (!profile) {
+      getProfile(accountAddress);
+    }
+
+    if (dao) {
+      this.setState({
+        daoState: await dao.fetchState()
+      })
     }
   }
 
@@ -67,8 +76,8 @@ class AccountPopup extends React.Component<IProps, null> {
   }
 
   public render(): RenderOutput {
-    const accountInfo = this.props.data;
-    const { accountAddress, daoState, profile, width } = this.props;
+    const [accountInfo, daoState] = this.props.data;
+    const { accountAddress, dao, profile, width } = this.props;
     const reputation = accountInfo ? accountInfo.reputation : new BN(0);
 
     const _width = width || 12;
@@ -79,7 +88,7 @@ class AccountPopup extends React.Component<IProps, null> {
           <AccountImage accountAddress={accountAddress} profile={profile} width={_width} />
         </div>
         <div className={css.accountInfo}>
-          <div className={css.name}><AccountProfileName accountAddress={accountAddress} accountProfile={profile} daoAvatarAddress={daoState.address} /></div>
+          <div className={css.name}><AccountProfileName accountAddress={accountAddress} accountProfile={profile} daoAvatarAddress={dao.id} /></div>
           <div>
             {!profile || Object.keys(profile.socialURLs).length === 0 ? "No social profiles" :
               <span>
@@ -123,11 +132,14 @@ const SubscribedAccountPopup = withSubscription({
   loadingComponent: <div>Loading...</div>,
   errorComponent: (props) => <div>{props.error.message}</div>,
 
-  checkForUpdate: (oldProps, newProps) => { return oldProps.accountAddress !== newProps.accountAddress || oldProps.daoState.address !== newProps.daoState.address; },
+  checkForUpdate: (oldProps: IProps, newProps: IProps) => { return oldProps.accountAddress !== newProps.accountAddress || oldProps.dao.id !== newProps.dao.id; },
 
   createObservable: (props: IProps) => {
     // we set 'fetchPolicy'= 'cache-only' so as to not send queries for addresses that are not members. The cache is filled higher up.
-    return props.daoState.dao.member(props.accountAddress).state({ fetchPolicy: "cache-only"});
+    return combineLatest(
+      props.dao.member(props.accountAddress).state({ fetchPolicy: "cache-only"}),
+      from(props.dao.fetchState())
+    );
   },
 });
 

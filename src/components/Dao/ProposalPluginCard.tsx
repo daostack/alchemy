@@ -1,58 +1,58 @@
-import { IDAOState, IProposalStage, IProposalState, ISchemeState, Proposal, Scheme } from "@daostack/arc.js";
+import { IDAOState, IProposalStage, IProposalState, IPluginState, AnyProposal } from "@daostack/arc.js";
 import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { humanProposalTitle } from "lib/util";
-import { schemeName } from "lib/schemeUtils";
+import { pluginName } from "lib/pluginUtils";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { combineLatest } from "rxjs";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-import * as css from "./SchemeCard.scss";
+import * as css from "./PluginCard.scss";
 
 interface IExternalProps {
-  dao: IDAOState;
-  scheme: Scheme;
+  daoState: IDAOState;
+  pluginState: IPluginState;
 }
 
-type SubscriptionData = [ISchemeState, Proposal[]];
+type SubscriptionData = [AnyProposal[]];
 type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
-const ProposalSchemeCard = (props: IProps) => {
-  const { data, dao } = props;
+const ProposalPluginCard = (props: IProps) => {
+  const { data, daoState, pluginState } = props;
 
-  const [schemeState, boostedProposals] = data;
+  const [boostedProposals] = data;
 
-  const numProposals =  schemeState.numberOfQueuedProposals + schemeState.numberOfBoostedProposals + schemeState.numberOfQueuedProposals;
+  const numProposals =  pluginState.numberOfQueuedProposals + pluginState.numberOfBoostedProposals + pluginState.numberOfQueuedProposals;
   const proposals = boostedProposals.slice(0, 3);
 
-  const proposalsHTML = proposals.map((proposal: Proposal) => <SubscribedProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
-  const headerHtml = <h2>{schemeName(schemeState, "[Unknown]")}</h2>;
+  const proposalsHTML = proposals.map((proposal: AnyProposal) => <SubscribedProposalDetail key={proposal.id} proposal={proposal} daoState={daoState} />);
+  const headerHtml = <h2>{pluginName(pluginState, "[Unknown]")}</h2>;
 
   let trainingTooltipMessage: string;
 
-  switch (schemeState.name) {
+  switch (pluginState.name) {
     case "ContributionReward":
     case "ContributionRewardExt":
-      trainingTooltipMessage = "Use this scheme to reward users (rep and/or funds) for their contributions to the DAO";
+      trainingTooltipMessage = "Use this plugin to reward users (rep and/or funds) for their contributions to the DAO";
       break;
     case "SchemeRegistrar":
-      trainingTooltipMessage = "Use this scheme to install, remove or edit the schemes of the DAO";
+      trainingTooltipMessage = "Use this plugin to install, remove or edit the plugins of the DAO";
       break;
   }
 
   return (
-    <div className={css.wrapper} data-test-id={`schemeCard-${schemeState.name}`}>
-      <Link className={css.headerLink} to={`/dao/${dao.address}/scheme/${schemeState.id}`}>
+    <div className={css.wrapper} data-test-id={`pluginCard-${pluginState.name}`}>
+      <Link className={css.headerLink} to={`/dao/${daoState.address}/plugin/${pluginState.id}`}>
         { trainingTooltipMessage ?
           <TrainingTooltip placement="topLeft" overlay={trainingTooltipMessage}>
             {headerHtml}
           </TrainingTooltip> : headerHtml
         }
         <div>
-          <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending Boosting</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
+          <b>{pluginState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{pluginState.numberOfPreBoostedProposals}</b> <span>Pending Boosting</span> <b>{pluginState.numberOfQueuedProposals}</b> <span>Regular</span>
         </div>
         {proposals.length === 0 ?
           <div className={css.loading}>
@@ -69,7 +69,7 @@ const ProposalSchemeCard = (props: IProps) => {
         <div>
           {proposalsHTML}
           <div className={css.numProposals}>
-            <Link to={`/dao/${dao.address}/scheme/${schemeState.id}/proposals`}>View all {numProposals} &gt;</Link>
+            <Link to={`/dao/${daoState.address}/plugin/${pluginState.id}/proposals`}>View all {numProposals} &gt;</Link>
           </div>
         </div>
         : " "
@@ -79,21 +79,20 @@ const ProposalSchemeCard = (props: IProps) => {
 };
 
 export default withSubscription({
-  wrappedComponent: ProposalSchemeCard,
+  wrappedComponent: ProposalPluginCard,
   loadingComponent: <Loading/>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
   checkForUpdate: (oldProps: IExternalProps, newProps: IExternalProps) => {
-    return oldProps.dao.address !== newProps.dao.address;
+    return oldProps.daoState.address !== newProps.daoState.address;
   },
 
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
-    const dao = arc.dao(props.dao.address);
+    const dao = arc.dao(props.daoState.address);
     return combineLatest(
-      props.scheme.state(),
       dao.proposals({ where: {
-        scheme:  props.scheme.id,
+        plugin:  props.pluginState.id,
         // eslint-disable-next-line @typescript-eslint/camelcase
         stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
       }}, {
@@ -108,15 +107,16 @@ export default withSubscription({
 // TODO: move this to a separate file
 /***** ProposalDetail Component *****/
 interface IProposalDetailProps extends ISubscriptionProps<IProposalState> {
-  dao: IDAOState;
-  proposal: Proposal;
+  daoState: IDAOState;
+  proposal: AnyProposal;
 }
+
 const ProposalDetail = (props: IProposalDetailProps) => {
-  const { data, dao, proposal } = props;
+  const { data, daoState, proposal } = props;
 
   const proposalState = data;
   return (
-    <Link className={css.proposalTitle} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
+    <Link className={css.proposalTitle} to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
       <div className={css.container}>
         <div className={css.miniGraph}>
           <VoteGraph size={20} proposal={proposalState} />
@@ -125,7 +125,7 @@ const ProposalDetail = (props: IProposalDetailProps) => {
           {humanProposalTitle(proposalState)}
         </div>
         <div className={css.countdown}>
-          <ProposalCountdown proposal={proposalState} schemeView />
+          <ProposalCountdown proposal={proposalState} pluginView />
         </div>
       </div>
     </Link>
@@ -140,6 +140,6 @@ const SubscribedProposalDetail = withSubscription({
     return oldProps.proposal.id !== newProps.proposal.id;
   },
   createObservable: (props: IProposalDetailProps) => {
-    return props.proposal.state();
+    return props.proposal.state({});
   },
 });

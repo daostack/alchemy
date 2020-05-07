@@ -49,19 +49,19 @@
       min-width: 8px;
     }
 
-    .schemeLink {
+    .pluginLink {
       display:inline-block;
       color: rgba(154, 169, 181, 1.000);
       position: relative;
       bottom: 3px;
     }
 
-    .schemeLink:hover {
+    .pluginLink:hover {
       text-decoration: underline;
     }
 
     @media only screen and (max-width: 975px) {
-      .schemeLink {
+      .pluginLink {
         width:11rem;
         overflow-x: hidden;
         text-overflow: ellipsis;
@@ -70,13 +70,13 @@
     }
 
     @media only screen and (max-width: 815px) {
-      .schemeLink {
+      .pluginLink {
         width:7rem;
       }
     }
 
     @media only screen and (max-width: 715px) {
-      .schemeLink {
+      .pluginLink {
         width:6rem;
       }
     }

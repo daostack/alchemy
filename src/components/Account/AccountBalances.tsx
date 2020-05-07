@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState } from "@daostack/arc.js";
+import { Address, DAO, IMemberState, IDAOState } from "@daostack/arc.js";
 import { baseTokenName, ethErrorHandler, genName } from "lib/util";
 
 import BN = require("bn.js");
@@ -7,16 +7,16 @@ import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as css from "layouts/App.scss";
 import * as React from "react";
-import { combineLatest, of } from "rxjs";
+import { combineLatest, of, from } from "rxjs";
 
 interface IExternalProps {
-  dao?: IDAOState;
+  dao?: DAO;
   address: Address;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<[IMemberState, BN|null, BN|null]>
+type IProps = IExternalProps & ISubscriptionProps<[IMemberState, BN|null, BN|null, IDAOState]>
 
-class AccountBalances extends React.Component<IProps, null>  {
+class AccountBalances extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
     const { dao, data } = this.props;
@@ -25,15 +25,15 @@ class AccountBalances extends React.Component<IProps, null>  {
       return null;
     }
 
-    const [currentAccountState, ethBalance, genBalance] = data;
+    const [currentAccountState, ethBalance, genBalance, daoState] = data;
 
     return (
       <div className={css.balances}>
         <h2>Reputation</h2>
         { dao ?
           <div className={css.daoBalance}>
-            <b>{dao.name}</b>
-            <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} hideTooltip/>
+            <b>{daoState.name}</b>
+            <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={currentAccountState.reputation} hideTooltip/>
           </div>
           :
           <div className={css.noReputation}>
@@ -60,19 +60,21 @@ export default withSubscription({
   errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps, newProps) => {
-    return oldProps.address !== newProps.address || (oldProps.dao && oldProps.dao.address) !== (newProps.dao && newProps.dao.address);
+    const oldDao = oldProps.dao;
+    const newDao = newProps.dao;
+    return !oldDao || !newDao || oldDao.id !== newDao.id;
   },
 
   createObservable: ({ dao, address }: IExternalProps) => {
     if (!dao) {
       return of(null);
     }
-    const daoState = dao;
-    const arc = daoState.dao.context;
+    const arc = dao.context;
     return combineLatest(
-      address && daoState.dao.member(address).state( { subscribe: true }) || of(null),
+      address && dao.member(address).state( { subscribe: true }) || of(null),
       arc.ethBalance(address).pipe(ethErrorHandler()),
       arc.GENToken().balanceOf(address).pipe(ethErrorHandler()),
+      from(dao.fetchState())
     );
   },
 });

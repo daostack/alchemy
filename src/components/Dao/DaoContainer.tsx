@@ -3,7 +3,7 @@ import { getProfilesForAddresses } from "actions/profilesActions";
 import { getArc } from "arc";
 import CreateProposalPage from "components/Proposal/Create/CreateProposalPage";
 import ProposalDetailsPage from "components/Proposal/ProposalDetailsPage";
-import SchemeContainer from "components/Plugin/SchemeContainer";
+import PluginContainer from "components/Plugin/PluginContainer";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
@@ -16,10 +16,10 @@ import { ModalRoute } from "react-router-modal";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import DetailsPageRouter from "components/Scheme/ContributionRewardExtRewarders/DetailsPageRouter";
+import DetailsPageRouter from "components/Plugin/ContributionRewardExtRewarders/DetailsPageRouter";
 import { combineLatest, Subscription } from "rxjs";
 import DaoDiscussionPage from "./DaoDiscussionPage";
-import DaoSchemesPage from "./DaoSchemesPage";
+import DaoPluginsPage from "./DaoPluginsPage";
 import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
@@ -78,9 +78,9 @@ class DaoContainer extends React.Component<IProps, null> {
       proposalId={routeProps.match.params.proposalId}
     />;
 
-  private schemeRoute = (routeProps: any) => <SchemeContainer {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
-  private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} daoState={this.props.data[0]} />;
-  private modalRoute = (route: any) => `/dao/${route.params.daoAvatarAddress}/scheme/${route.params.schemeId}/`;
+  private pluginRoute = (routeProps: any) => <PluginContainer {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
+  private daoPluginsRoute = (routeProps: any) => <DaoPluginsPage {...routeProps} daoState={this.props.data[0]} />;
+  private modalRoute = (route: any) => `/dao/${route.params.daoAvatarAddress}/plugin/${route.params.pluginId}/`;
 
   public render(): RenderOutput {
     const daoState = this.props.data[0];
@@ -120,15 +120,15 @@ class DaoContainer extends React.Component<IProps, null> {
             <Route path="/dao/:daoAvatarAddress/crx/proposal/:proposalId"
               render={this.daoCrxProposalRoute} />
 
-            <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-              render={this.schemeRoute} />
+            <Route path="/dao/:daoAvatarAddress/plugin/:pluginId"
+              render={this.pluginRoute} />
 
-            <Route path="/dao/:daoAvatarAddress" render={this.daoSchemesRoute} />
+            <Route path="/dao/:daoAvatarAddress" render={this.daoPluginsRoute} />
 
           </Switch>
 
           <ModalRoute
-            path="/dao/:daoAvatarAddress/scheme/:schemeId/proposals/create"
+            path="/dao/:daoAvatarAddress/plugin/:pluginId/proposals/create"
             parentPath={this.modalRoute}
             component={CreateProposalPage}
           />
