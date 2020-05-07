@@ -32,11 +32,6 @@
     color: rgba(0, 29, 53, 1);
   }
 
-  .createProposal a:visited,
-  a.createProposal {
-    color: white;
-  }
-
   .proposals,
   .info,
   .crx,
@@ -152,10 +147,6 @@
 }
 
 @media only screen and (max-width: 425px) {
-  .createProposal {
-    text-align: center;
-  }
-
   .schemeName {
     font-size: 18px;
     padding-left: 15px;
