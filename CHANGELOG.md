@@ -8,7 +8,6 @@
 ## 0.10.6
   - Features Added
     - new DAO landing page
-    - show warnings if subgraph is not updating
     - added help text in the Plugin Editor popup
 
   - Bugs Fixed
