@@ -1,5 +1,7 @@
 /* tslint:disable:max-classes-per-file */
 
+import { enableWalletProvider } from "arc";
+import { History } from "history";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState, IGenesisProtocolParams, IDAOState } from "@daostack/client";
@@ -9,6 +11,7 @@ import * as moment from "moment";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { connect } from "react-redux";
 import Tooltip from "rc-tooltip";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "./SchemeInfo.scss";
 
 interface IDispatchProps {
@@ -17,7 +20,9 @@ interface IDispatchProps {
 
 interface IExternalProps {
   daoState: IDAOState;
+  history: History;
   scheme: ISchemeState;
+  schemeManager: ISchemeState;
 }
 
 type IProps = IExternalProps & IDispatchProps;
@@ -32,6 +37,13 @@ class SchemeInfo extends React.Component<IProps, null> {
     copyToClipboard(str);
     this.props.showNotification(NotificationStatus.Success, "Copied to clipboard!");
   };
+
+  private handleEditPlugin = async (e: any) => {
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    this.props.history.push(`/dao/${this.props.daoState.id}/scheme/${this.props.schemeManager.id}/proposals/create/?currentTab=editScheme`);
+    e.preventDefault();
+  }
 
   public render(): RenderOutput {
     const { daoState, scheme } = this.props;
@@ -84,7 +96,7 @@ class SchemeInfo extends React.Component<IProps, null> {
       // represent time in locale-independent UTC format
       const activationTime = moment.unix(params.activationTime).utc();
 
-      return <tbody>
+      return <React.Fragment>
         <tr><th>Activation Time:</th><td className={css.ellipsis}>{
           `${ activationTime.format("h:mm A [UTC] on MMMM Do, YYYY")} ${activationTime.isSameOrBefore(moment()) ? "(active)" : "(inactive)"}`
         }</td></tr>
@@ -108,7 +120,7 @@ class SchemeInfo extends React.Component<IProps, null> {
           </Tooltip>
         </td></tr>
         <tr><th>Voters Reputation Loss:</th><td>{params.votersReputationLossRatio}%</td></tr>
-      </tbody>;
+      </React.Fragment>;
     };
 
     const votingMachine = (
@@ -119,6 +131,18 @@ class SchemeInfo extends React.Component<IProps, null> {
     );
     return <div>
       <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>Info</BreadcrumbsItem>
+
+      <div className={css.editPlugin}>
+        <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+          <a
+            data-test-id="createProposal"
+            href="#!"
+            onClick={this.handleEditPlugin}
+          >
+            Edit Plugin
+          </a>
+        </TrainingTooltip>
+      </div>
 
       <div className={css.schemeInfoContainer}>
         <h3>{schemeName(scheme, scheme.address)}</h3>
@@ -210,20 +234,20 @@ class SchemeInfo extends React.Component<IProps, null> {
       {scheme.contributionRewardParams || scheme.genericSchemeParams ?
         <div className={css.schemeInfoContainer}>
           <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
-          <table className={css.infoCardContent}>
+          <table className={css.infoCardContent}><tbody>
             {renderVotingMachineLink(votingMachine)}
             {renderGpParams(scheme.contributionRewardParams ? scheme.contributionRewardParams.voteParams : scheme.genericSchemeParams.voteParams)}
-          </table>
+          </tbody></table>
         </div>
         : ""
       }
       { scheme.uGenericSchemeParams ?
         <div className={css.schemeInfoContainer}>
           <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
-          <table className={css.infoCardContent}>
+          <table className={css.infoCardContent}><tbody>
             {renderVotingMachineLink(votingMachine)}
             {renderGpParams(scheme.uGenericSchemeParams.voteParams)}
-          </table>
+          </tbody></table>
         </div>
         : ""
       }
@@ -231,10 +255,10 @@ class SchemeInfo extends React.Component<IProps, null> {
       {scheme.schemeRegistrarParams ?
         <div className={css.schemeInfoContainer}>
           <h3>Genesis Protocol Params for Plugin Registration -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
-          <table className={css.infoCardContent}>
+          <table className={css.infoCardContent}><tbody>
             {renderVotingMachineLink(votingMachine)}
             {renderGpParams(scheme.schemeRegistrarParams.voteRegisterParams)}
-          </table>
+          </tbody></table>
         </div>
         : ""
       }
@@ -242,10 +266,10 @@ class SchemeInfo extends React.Component<IProps, null> {
       {scheme.schemeRegistrarParams ?
         <div className={css.schemeInfoContainer}>
           <h3>Genesis Protocol Params for Plugin Removal -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
-          <table className={css.infoCardContent}>
+          <table className={css.infoCardContent}><tbody>
             {renderVotingMachineLink(votingMachine)}
             {renderGpParams(scheme.schemeRegistrarParams.voteRemoveParams)}
-          </table>
+          </tbody></table>
         </div>
         : ""
       }

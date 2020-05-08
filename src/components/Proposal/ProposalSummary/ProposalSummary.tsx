@@ -37,7 +37,7 @@ export default class ProposalSummary extends React.Component<IProps> {
       const genericSchemeRegistry = new GenericSchemeRegistry();
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(proposal.genericScheme.contractToCall);
       if (genericSchemeInfo) {
-        return <ProposalSummaryKnownGenericScheme  {...this.props} genericSchemeInfo={genericSchemeInfo} />;
+        return <ProposalSummaryKnownGenericScheme {...this.props} genericSchemeInfo={genericSchemeInfo} />;
       } else {
         return <ProposalSummaryUnknownGenericScheme {...this.props} />;
       }

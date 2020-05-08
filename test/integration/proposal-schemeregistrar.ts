@@ -1,5 +1,5 @@
 import * as uuid from "uuid";
-import { getContractAddresses, hideCookieAcceptWindow } from "./utils";
+import { getContractAddresses, hideCookieAcceptWindow, gotoDaoSchemes } from "./utils";
 
 describe("SchemeRegistrar Proposals", () => {
   let daoAddress: string;
@@ -11,8 +11,7 @@ describe("SchemeRegistrar Proposals", () => {
   });
 
   it("Create a proposal to add a scheme", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+    await gotoDaoSchemes(daoAddress);
 
     const schemeCard = await $("[data-test-id=\"schemeCard-SchemeRegistrar\"]");
     await schemeCard.click();
@@ -25,6 +24,9 @@ describe("SchemeRegistrar Proposals", () => {
 
     const tab = await $("*[data-test-id=\"tab-AddScheme\"]");
     await tab.click();
+
+    const showFormButton = await $("#showFormButton");
+    await showFormButton.click();
 
     const titleInput = await $("*[id=\"titleInput\"]");
     await titleInput.waitForExist();
@@ -54,8 +56,7 @@ describe("SchemeRegistrar Proposals", () => {
   });
 
   it("Create a proposal to edit a scheme", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+    await gotoDaoSchemes(daoAddress);
 
     const schemeCard = await $("[data-test-id=\"schemeCard-SchemeRegistrar\"]");
     await schemeCard.click();
@@ -68,6 +69,9 @@ describe("SchemeRegistrar Proposals", () => {
 
     const tab = await $("*[data-test-id=\"tab-EditScheme\"]");
     await tab.click();
+
+    const showFormButton = await $("#showFormButton");
+    await showFormButton.click();
 
     const titleInput = await $("*[id=\"titleInput\"]");
     await titleInput.waitForExist();
@@ -92,11 +96,12 @@ describe("SchemeRegistrar Proposals", () => {
   });
 
   it("Create a proposal to remove a scheme", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+    await gotoDaoSchemes(daoAddress);
 
     const schemeCard = await $("[data-test-id=\"schemeCard-SchemeRegistrar\"]");
     await schemeCard.click();
+
+    await hideCookieAcceptWindow();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();

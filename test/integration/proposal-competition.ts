@@ -1,7 +1,7 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
 import { DAO, Arc } from "@daostack/client";
-import { getArc, setCalendarDate, hideCookieAcceptWindow } from "./utils";
+import { getArc, setCalendarDate, hideCookieAcceptWindow, gotoDaoSchemes } from "./utils";
 
 describe("Proposals", () => {
   let dao: DAO;
@@ -13,7 +13,7 @@ describe("Proposals", () => {
     arc = getArc();
     await arc.fetchContractInfos();
     const ARC_VERSION = "0.0.1-rc.40";
-    const contributionRewardExtContract  = arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);
+    const contributionRewardExtContract = arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);
 
     // find the corresponding scheme object
     const contributionRewardExts = await arc
@@ -27,8 +27,7 @@ describe("Proposals", () => {
 
   it("Create a Competition Scheme proposal, vote for it, stake on it", async () => {
 
-    const url = `/dao/${dao.id}/`;
-    await browser.url(url);
+    await gotoDaoSchemes(dao.id);
 
     const schemeTitle = await $("h2=Competition");
     await schemeTitle.click();

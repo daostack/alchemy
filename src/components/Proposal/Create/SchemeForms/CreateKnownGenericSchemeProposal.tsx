@@ -122,7 +122,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
     if (this.props.genericSchemeInfo.specs.name === "Standard Bounties") {
       const calcBountEth = await this.getBountyEth(values);
-      ethValue =  ethValue.add(calcBountEth);
+      ethValue = ethValue.add(calcBountEth);
     }
 
     const proposalValues = {
@@ -287,7 +287,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     const currentAction = this.state.currentAction;
 
     return (
-      <div className={css.createWrapperWithSidebar}>
+      <div className={css.containerWithSidebar}>
         <div className={css.sidebar}>
           { actions.map((action) =>
             <button
@@ -304,7 +304,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
           )}
         </div>
 
-        <div className={css.formWrapper}>
+        <div className={css.contentWrapper}>
           <Formik
             initialValues={this.initialFormValues}
             // eslint-disable-next-line react/jsx-no-bind

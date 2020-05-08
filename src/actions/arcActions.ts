@@ -155,7 +155,7 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
       const agreementHash = await reputationFromTokenScheme.getAgreementHash();
       const state = await reputationFromTokenScheme.scheme.fetchStaticState();
-      const contract =  arc.getContract(state.address);
+      const contract = arc.getContract(state.address);
       const block = await arc.web3.eth.getBlock("latest");
       const gas = block.gasLimit - 100000;
       const redeemMethod = contract.methods.redeem(addressToRedeem, agreementHash);

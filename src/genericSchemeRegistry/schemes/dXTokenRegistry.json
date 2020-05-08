@@ -18,8 +18,8 @@
     {
       "id": "addTokens",
       "label": "Add tokens",
-      "description": "Add tokens to the Token Registry",
-      "notes": "A list of available ListIds can be found <a target=\"_blank\" href=\"https://www.notion.so/DxDAO-Token-Registry-Lists-220e1411482342c4a7e47a641a676fcb\">here</a>",
+      "description": "Add tokens to the Token Registry. A list of available ListIds can be found <a target=\"_blank\" href=\"https://www.notion.so/DxDAO-Token-Registry-Lists-220e1411482342c4a7e47a641a676fcb\">here</a>.",
+      "notes": "",
       "fields": [
         {
           "label": "ListId",
@@ -53,8 +53,8 @@
     {
       "id": "removeTokens",
       "label": "Remove tokens",
-      "description": "Remove tokens from the Token Registry",
-      "notes": "A list of available ListIds can be found <a target=\"_blank\" href=\"https://www.notion.so/DxDAO-Token-Registry-Lists-220e1411482342c4a7e47a641a676fcb\">here</a>",
+      "description": "Remove tokens from the Token Registry. A list of available ListIds can be found <a target=\"_blank\" href=\"https://www.notion.so/DxDAO-Token-Registry-Lists-220e1411482342c4a7e47a641a676fcb\">here</a>.",
+      "notes": "",
       "fields": [
         {
           "label": "ListId",
@@ -81,6 +81,37 @@
         ],
         "name": "removeTokens",
         "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "addList",
+      "label": "Add new list",
+      "description": "Add a new list.",
+      "notes": "",
+      "fields": [
+        {
+          "label": "List name",
+          "name": "_listName"
+        }
+      ],
+      "abi": {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_listName",
+            "type": "string"
+          }
+        ],
+        "name": "addList",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "stateMutability": "nonpayable",
         "type": "function"
       }

@@ -184,7 +184,7 @@ export function formatTokens(amountWei: BN|null, symbol?: string, decimals = 18)
   }
 
   const negative = amountWei.lt(new BN(0));
-  const toSignedString = (amount: string) => { return  (negative ? "-" : "") + amount + (symbol ? " " + symbol : ""); };
+  const toSignedString = (amount: string) => { return (negative ? "-" : "") + amount + (symbol ? " " + symbol : ""); };
 
   if (amountWei.isZero()) {
     return toSignedString("0");

@@ -1,3 +1,11 @@
+## 0.10.6
+  - Features Added
+    - new DAO landing page
+    - added help text in the Plugin Editor popup
+
+    - Bugs Fixed
+      - Make sure proposer name doesn't overlap avatar on proposal history rows
+
 ## 0.10.5
   - Features Added
     - change home page to show DAOs again instead of feed. Show separate "Your DAOs" section containing DAOs the user follows or is a member of, then the list of other DAOs below.
