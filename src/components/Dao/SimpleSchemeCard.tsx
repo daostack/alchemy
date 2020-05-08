@@ -1,4 +1,4 @@
-import { IDAOState, ISchemeState, Scheme } from "@daostack/client";
+import { IDAOState, ISchemeState, Scheme } from "@daostack/arc.js";
 import { schemeName } from "lib/schemeUtils";
 import * as React from "react";
 import { Link } from "react-router-dom";

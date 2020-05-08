@@ -110,14 +110,15 @@ function getWeb3ConnectProviderOptions(network: string) {
     case "xdai":
       return {
         network: "xdai",
-        burnerconnect: {
-          package: BurnerConnectProvider,
+        torus: {
+          package: Torus,
           options: {
-            defaultNetwork: "100",
-            defaultWallets: [
-              { origin: "https://buffidao.com/", name: "BuffiDAO" },
-              { origin: "https://judge.buffidao.com/", name: "Judges BuffiDAO Wallet" },
-            ],
+            networkParams: {
+              host: "https://xdai.poanetwork.dev",
+              chainId: 100,
+              networkName: "xdai",
+              network: "xdai",
+            },
           },
         },
       };
@@ -199,7 +200,7 @@ export const settings = {
     graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.http_xdai,
     graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || SubgraphEndpoints.ws_xdai,
     graphqlSubscribeToQueries: false,
-    web3Provider:  process.env.ARC_WEB3PROVIDER || "https://poa.api.nodesmith.io/v1/dai/jsonrpc?apiKey=128059b9320a462699aef283a7ae2546",
+    web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://poa.api.nodesmith.io/v1/dai/jsonrpc?apiKey=128059b9320a462699aef283a7ae2546",
     web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://poa.api.nodesmith.io/v1/dai/jsonrpc/ws?apiKey=128059b9320a462699aef283a7ae2546",
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     txSenderServiceUrl: "",

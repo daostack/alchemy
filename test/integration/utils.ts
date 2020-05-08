@@ -1,4 +1,4 @@
-import { Arc } from "@daostack/client";
+import { Arc } from "@daostack/arc.js";
 
 const settings = {
   graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
@@ -79,3 +79,7 @@ export const setCalendarDate = async (element: any, date: string): Promise<void>
   await element.click(); // hide previous calendar
   await element.setValue(date);
 };
+
+export async function gotoDaoSchemes(daoAddress: string): Promise<any> {
+  return browser.url(`/dao/${daoAddress}/schemes`);
+}

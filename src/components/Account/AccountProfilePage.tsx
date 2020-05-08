@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, DAO } from "@daostack/client";
+import { IDAOState, IMemberState, DAO } from "@daostack/arc.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import BN = require("bn.js");
@@ -127,7 +127,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
     if (this.props.threeBox || parseInt(localStorage.getItem("dontShowThreeboxModal"))) {
       await updateProfile(currentAccountAddress, values.name, values.description);
     } else {
-      this.setState({ showThreeBoxModal: true,  description: values.description, name: values.name });
+      this.setState({ showThreeBoxModal: true, description: values.description, name: values.name });
     }
 
     setSubmitting(false);

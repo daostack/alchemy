@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { IDAOState, ISchemeState } from "@daostack/client";
+import { IDAOState, ISchemeState } from "@daostack/arc.js";
 import { createProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
@@ -172,7 +172,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     const arc = getArc();
 
     return (
-      <div className={css.contributionReward}>
+      <div className={css.containerNoSidebar}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           initialValues={this.initialFormValues}
@@ -230,7 +230,6 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
             values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
-              <label className={css.description}>What to Expect</label>
               <div className={css.description}>This proposal can send eth / erc20 token, mint new DAO tokens ({dao.tokenSymbol}) and mint / slash reputation in the DAO. Each proposal can have one of each of these actions. e.g. 100 rep for completing a project + 0.05 ETH for covering expenses.</div>
               <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
                 <label htmlFor="titleInput">

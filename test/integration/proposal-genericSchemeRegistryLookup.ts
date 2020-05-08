@@ -1,13 +1,12 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
-import { getArc, hideCookieAcceptWindow } from "./utils";
+import { getArc, hideCookieAcceptWindow, gotoDaoSchemes } from "./utils";
 
 describe("Proposals Registry Lookup", () => {
-
-  let url: string;
+  let daoAddress: string;
 
   beforeEach(async () => {
-    await browser.url(url);
+    await gotoDaoSchemes(daoAddress);
 
     await hideCookieAcceptWindow();
 
@@ -26,8 +25,7 @@ describe("Proposals Registry Lookup", () => {
     const arc = getArc();
 
     const daos = await arc.daos({ where: { name: "Nectar DAO"}}).pipe(first()).toPromise();
-    const dao = daos[0];
-    url = `/dao/${dao.id}/`;
+    daoAddress = daos[0].id;
   });
 
   it("Create a Generic Scheme RegistryLookup proposal to add tokens", async () => {

@@ -19,7 +19,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { DiscussionEmbed } from "disqus-react";
 import { connect } from "react-redux";
 import { IDAOState, IProposalState, ICompetitionSuggestionState, Address, CompetitionVote, IProposalOutcome,
-  CompetitionSuggestion, Proposal, Scheme  } from "@daostack/client";
+  CompetitionSuggestion, Proposal, Scheme } from "@daostack/arc.js";
 import gql from "graphql-tag";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as React from "react";
@@ -280,7 +280,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
                 {
                   <Tooltip overlay={
                     (!proposalState.executedAt || (proposalState.winningOutcome !== IProposalOutcome.Pass)) ? "The competition proposal has not been approved" :
-                      notStarted  ? "The submission period has not yet begun" :
+                      notStarted ? "The submission period has not yet begun" :
                         (isAddress(competition.admin) && (this.props.currentAccountAddress !== competition.admin)) ? "Only the \"admin\" user is allowed to create submissions" :
                           "Create a submission"
                   }

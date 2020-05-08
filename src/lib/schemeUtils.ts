@@ -2,7 +2,7 @@
 import {
   Address,
   IContractInfo,
-  ISchemeState} from "@daostack/client";
+  ISchemeState} from "@daostack/arc.js";
 import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 
@@ -111,7 +111,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
   } else if (scheme.name === "ContributionReward") {
     name ="Funding and Voting Power";
   } else if (scheme.name === "SchemeRegistrar") {
-    name ="Scheme Manager";
+    name ="Plugin Manager";
   } else if (scheme.name) {
     if (scheme.name === "ContributionRewardExt") {
       name = rewarderContractName(scheme as ISchemeState);
@@ -210,6 +210,11 @@ export function getSchemeIsActive(scheme: ISchemeState, action?: GetSchemeIsActi
     console.warn(` getSchemeIsActive: voting machine appears not to be GenesisProtocol: ${scheme.name}`);
     return true;
   } else {
-    return moment(votingMachineParams.activationTime*1000).isSameOrBefore(moment());
+    if (moment(votingMachineParams.activationTime*1000).isSameOrBefore(moment())) {
+      return true;
+    }
+    // eslint-disable-next-line no-console
+    console.warn(` getSchemeIsActive: future activation time: ${scheme.name}`);
+    return false;
   }
 }

@@ -29,14 +29,7 @@ export default class Notification extends React.Component<IProps, null> {
   }
 
   private handleClose = (): void => {
-    const { dismiss, status } = this.props;
-    if (status === NotificationViewStatus.Pending) {
-      if (confirm("Often transactions get approved after 24h, closing this will prevent you from following the status of the tx, are you sure you would like to close this?")) {
-        dismiss();
-      }
-    } else {
-      dismiss();
-    }
+    this.props.dismiss();
   }
 
   private copyToClipboard = (message: string) => (): void => {
@@ -92,9 +85,9 @@ export default class Notification extends React.Component<IProps, null> {
             { (status === NotificationViewStatus.Pending) ?
               <button className={css.pending} onClick={this.handleClose} data-test-id="button-notification-close"><img src="/assets/images/Icon/x-grey.svg" /></button>
               : (status === NotificationViewStatus.Success) ?
-                <button className={css.success} onClick={this.handleClose}  data-test-id="button-notification-close"><img src="/assets/images/Icon/x-grey.svg" /></button>
+                <button className={css.success} onClick={this.handleClose} data-test-id="button-notification-close"><img src="/assets/images/Icon/x-grey.svg" /></button>
                 : (status === NotificationViewStatus.Failure) ?
-                  <button className={css.error} onClick={this.handleClose}  data-test-id="button-notification-close"><img src="/assets/images/Icon/x-grey.svg" /></button>
+                  <button className={css.error} onClick={this.handleClose} data-test-id="button-notification-close"><img src="/assets/images/Icon/x-grey.svg" /></button>
                   : ""
             }
           </div>

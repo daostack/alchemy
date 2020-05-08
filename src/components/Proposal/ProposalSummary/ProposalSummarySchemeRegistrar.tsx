@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@daostack/client";
+import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@daostack/arc.js";
 import classNames from "classnames";
 import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
 import { schemeNameAndAddress } from "lib/schemeUtils";
@@ -51,7 +51,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
     return (
       <div className={proposalSummaryClass}>
-        { schemeRegistrar.schemeToRemove  ?
+        { schemeRegistrar.schemeToRemove ?
           <div>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/delete.svg"/>&nbsp;

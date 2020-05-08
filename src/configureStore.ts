@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === "production") {
 } else {
   store = createStore(
     reducers,
-    composeWithDevTools(   // makes the store available to the Chrome redux dev tools
+    composeWithDevTools( // makes the store available to the Chrome redux dev tools
       applyMiddleware(
         thunkMiddleware,
         routerMiddleware(history)

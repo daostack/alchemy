@@ -1,6 +1,6 @@
 {
   "name": "alchemy-client",
-  "version": "0.10.5",
+  "version": "0.10.6",
   "description": "An app for collaborative networks (DAOs), based on the DAO stack.",
   "author": "DAOstack",
   "license": "GPL-3.0",
@@ -79,7 +79,7 @@
   "dependencies": {
     "3box": "1.17.1",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
-    "@daostack/client": "0.2.67",
+    "@daostack/arc.js": "0.2.68",
     "@dorgtech/daocreator-ui": "^1.0.8",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
@@ -141,7 +141,7 @@
     "ts-node": "^5.0.1",
     "utility-types": "^3.7.0",
     "web3": "1.2.4",
-    "web3modal": "1.5.0"
+    "web3modal": "1.6.3"
   },
   "devDependencies": {
     "@babel/plugin-syntax-dynamic-import": "^7.7.4",

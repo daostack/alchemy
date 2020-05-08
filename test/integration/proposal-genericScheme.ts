@@ -1,5 +1,5 @@
 import * as uuid from "uuid";
-import { getContractAddresses, hideCookieAcceptWindow } from "./utils";
+import { getContractAddresses, hideCookieAcceptWindow, gotoDaoSchemes } from "./utils";
 
 describe("Proposals", () => {
   let daoAddress: string;
@@ -11,8 +11,8 @@ describe("Proposals", () => {
   });
 
   it("Create a Generic Scheme proposal, vote for it, stake on it", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+
+    await gotoDaoSchemes(daoAddress);
 
     await hideCookieAcceptWindow();
 
@@ -52,8 +52,7 @@ describe("Proposals", () => {
   });
 
   it("Fill out a generic scheme proposal form and export it", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+    await gotoDaoSchemes(daoAddress);
 
     const schemeCard = await $("[data-test-id=\"schemeCard-GenericScheme\"]");
     await schemeCard.click();

@@ -1,4 +1,4 @@
-import { ISchemeState } from "@daostack/client";
+import { ISchemeState } from "@daostack/arc.js";
 import { getArc } from "arc";
 
 export const hasRewarderContract = (schemeState: ISchemeState): boolean => {
@@ -30,10 +30,10 @@ export interface ICrxRewarderProps
  * If the scheme is a ContributionRewardExt, return props for its rewarder contract, if any
  * @param scheme
  */
-export const getCrxRewarderProps = (scheme: ISchemeState): Promise<ICrxRewarderProps> | null  => {
+export const getCrxRewarderProps = (scheme: ISchemeState): Promise<ICrxRewarderProps> | null => {
   const contractName = rewarderContractName(scheme);
   // dynamic imports are enabled and optimized by @babel/plugin-syntax-dynamic-import
-  return contractName ?  import(`./${contractName}/props.json`) : null;
+  return contractName ? import(`./${contractName}/props.json`) : null;
 };
 
 export enum CrxRewarderComponentType {

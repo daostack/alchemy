@@ -13,7 +13,6 @@ import SidebarMenu from "layouts/SidebarMenu";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification, INotification } from "reducers/notifications";
 import { getCachedAccount, cacheWeb3Info, logout, pollForAccountChanges } from "arc";
-import { pollSubgraphUpdating } from "lib/subgraphHelpers";
 import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { parse } from "query-string";
 import * as React from "react";
@@ -24,7 +23,7 @@ import { ModalContainer } from "react-router-modal";
 import { History } from "history";
 import classNames from "classnames";
 import { captureException, withScope } from "@sentry/browser";
-import { Address } from "@daostack/client";
+import { Address } from "@daostack/arc.js";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
 
@@ -142,11 +141,14 @@ class AppContainer extends React.Component<IProps, IState> {
         }
       });
 
+    /**
+     * display checking the subgraph.  It is falsely reporting that the subgraph is down.
     pollSubgraphUpdating().subscribe(async (subgraphRunning: boolean) => {
       if (!subgraphRunning) {
         this.props.showNotification(NotificationStatus.Failure, "The subgraph is no longer updating, please refresh the page to see the latest data");
       }
     });
+     */
   }
 
   private clearError = () => {
