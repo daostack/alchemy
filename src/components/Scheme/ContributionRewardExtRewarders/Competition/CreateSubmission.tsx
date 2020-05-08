@@ -131,7 +131,6 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
                 <label htmlFor="descriptionInput">
                   <div className={css.requiredMarker}>*</div>
                 Description
-                  <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>
