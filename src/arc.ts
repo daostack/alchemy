@@ -128,50 +128,66 @@ function showUserNotification(message: string, options?: IEnableWalletProviderPa
  */
 function biconomyLogin(userAccount: string, options?: IEnableWalletProviderParams) {
   return new Promise<string>((resolve, reject) => {
-    if (biconomy && !biconomy.isLogin) {
-      biconomy.getUserContract(userAccount).then((response: any) => {
-        if (!response.userContract) {
-          showUserNotification("Please provide your signature in your wallet to use gas less transactions", options, NotificationStatus.Pending);
-          biconomy.login(userAccount, (error: any, loginResponse: any) => {
-            if (error) {
-              return reject(error);
-            }
-            if (loginResponse && loginResponse.transactionHash) {
-              // First time user. Contract wallet transaction pending.
-              showUserNotification("Your on-chain identity is being created. Please wait.", options, NotificationStatus.Pending);
-              biconomy.onEvent(biconomy.LOGIN_CONFIRMATION, async () => {
-                // User's Contract Wallet creation successful
-                showUserNotification("Your on-chain identity created successfully", options, NotificationStatus.Success);
-                const response = await biconomy.getUserContract(userAccount);
-                if (response.userContract) {
-                  resolve(response.userContract);
-                } else {
-                  reject(response);
-                }
-              });
-            } else if (loginResponse && loginResponse.userContract) {
-              // Existing user login successful
-              resolve(loginResponse.userContract);
-            }
-          });
+    if (biconomy) {
+      if (!biconomy.isLogin) {
+        biconomy.getUserContract(userAccount).then((response: any) => {
+          if (!response.userContract) {
+            showUserNotification("Please provide your signature in your wallet to use gasless transactions", options, NotificationStatus.Pending);
+            biconomy.login(userAccount, (error: any, loginResponse: any) => {
+              if (error) {
+                return reject(error);
+              }
+              if (loginResponse && loginResponse.transactionHash) {
+                // First time user. Contract wallet transaction pending.
+                showUserNotification("Your on-chain identity is being created. Please wait.", options, NotificationStatus.Pending);
+                biconomy.onEvent(biconomy.LOGIN_CONFIRMATION, async () => {
+                  // User's Contract Wallet creation successful
+                  showUserNotification("Your on-chain identity created successfully", options, NotificationStatus.Success);
+                  const response = await biconomy.getUserContract(userAccount);
+                  if (response.userContract) {
+                    resolve(response.userContract);
+                  } else {
+                    reject(response);
+                  }
+                });
+              } else if (loginResponse && loginResponse.userContract) {
+                // Existing user login successful
+                resolve(loginResponse.userContract);
+              }
+            });
 
-        } else {
-          resolve(response.userContract);
-        }
-      });
-
-    } else if (biconomy) {
-      biconomy.getUserContract(userAccount).then((response: any) => {
-        if (response.userContract) {
-          resolve(response.userContract);
-        } else {
-          reject(response);
-        }
-      });
+          } else {
+            resolve(response.userContract);
+          }
+        });
+      } else {
+        biconomy.getUserContract(userAccount).then((response: any) => {
+          if (response.userContract) {
+            resolve(response.userContract);
+          } else {
+            reject(response);
+          }
+        });
+      }
     } else {
-      reject("Biconomy is not initialized");
+      return reject("Biconomy is not initialized");
     }
   });
+}
+
+/**
+ * Function to show user contract wallet address to inform him that he/she
+ * should make sure to have reputation in this address in order to vote for dao
+ * without paying transaction fee.
+ * @param userContract User contract wallet address
+ */
+function showUserContractAddress(userContract: string) {
+  if (userContract) {
+    // eslint-disable-next-line no-console
+    console.info(`User contract wallet ${userContract}`);
+    // Show a modal popup to show the user contract wallet address here
+    alert(`User contract wallet ${userContract}. Make sure to have reputation in this address to vote without paying transaction fee.`);
+  }
 }
 
 /**
@@ -466,11 +482,7 @@ async function enableWeb3Provider(options: IEnableWalletProviderParams): Promise
     }
     if (initializedAccount) {
       const userContract = await biconomyLogin(initializedAccount, options);
-      if (userContract) {
-        // Show a modal popup to show the user contract wallet address here
-        // eslint-disable-next-line no-console
-        console.info(`User contract wallet ${userContract}`);
-      }
+      showUserContractAddress(userContract);
     }
   }).onEvent(biconomy.ERROR, async (error: any) => {
     // eslint-disable-next-line no-console
@@ -484,6 +496,11 @@ async function enableWeb3Provider(options: IEnableWalletProviderParams): Promise
     }
     selectedProvider = provider;
   });
+  // Biconomy login when user logout and login again
+  if (biconomy.isReady() && !biconomy.isLogin && initializedAccount) {
+    const userContract = await biconomyLogin(initializedAccount, options);
+    showUserContractAddress(userContract);
+  }
 
   // eslint-disable-next-line require-atomic-updates
   selectedProvider = biconomy;
@@ -646,17 +663,13 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
                    * burner address at the time of connecting.
                    */
                   await initializeArc(selectedProvider);
+                  await biconomy.logout();
+                  const userContract = await biconomyLogin(account);
+                  showUserContractAddress(userContract);
                 }
                 observer.next(account);
                 // eslint-disable-next-line require-atomic-updates
                 prevAccount = account;
-                await biconomy.logout();
-                const userContract = await biconomyLogin(account);
-                if (userContract) {
-                  // eslint-disable-next-line no-console
-                  console.info(`User contract wallet ${userContract}`);
-                  // Show a modal popup to show the user contract wallet address here
-                }
               }
             })
             // eslint-disable-next-line no-console
