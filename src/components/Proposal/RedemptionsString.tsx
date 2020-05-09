@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
+import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/arc.js";
 
 import BN = require("bn.js");
 import Reputation from "components/Account/Reputation";
@@ -32,7 +32,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
         reputation = reputation.add(gpRewards.reputationForVoter);
       } else if (gpRewards.tokensForStaker) {
         gen = gen.add(gpRewards.tokensForStaker);
-      }  else if (gpRewards.daoBountyForStaker) {
+      } else if (gpRewards.daoBountyForStaker) {
         gen = gen.add(gpRewards.daoBountyForStaker);
       }
     }

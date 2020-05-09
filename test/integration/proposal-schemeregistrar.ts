@@ -25,6 +25,9 @@ describe("SchemeRegistrar Proposals", () => {
     const tab = await $("*[data-test-id=\"tab-AddScheme\"]");
     await tab.click();
 
+    const showFormButton = await $("#showFormButton");
+    await showFormButton.click();
+
     const titleInput = await $("*[id=\"titleInput\"]");
     await titleInput.waitForExist();
 
@@ -67,6 +70,9 @@ describe("SchemeRegistrar Proposals", () => {
     const tab = await $("*[data-test-id=\"tab-EditScheme\"]");
     await tab.click();
 
+    const showFormButton = await $("#showFormButton");
+    await showFormButton.click();
+
     const titleInput = await $("*[id=\"titleInput\"]");
     await titleInput.waitForExist();
     const title = uuid();
@@ -94,6 +100,8 @@ describe("SchemeRegistrar Proposals", () => {
 
     const schemeCard = await $("[data-test-id=\"schemeCard-SchemeRegistrar\"]");
     await schemeCard.click();
+
+    await hideCookieAcceptWindow();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();

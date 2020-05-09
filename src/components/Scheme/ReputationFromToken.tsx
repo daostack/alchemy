@@ -1,5 +1,5 @@
 import { promisify } from "util";
-import { Address, ISchemeState, Token } from "@daostack/client";
+import { Address, ISchemeState, Token } from "@daostack/arc.js";
 import axios from "axios";
 import { getWeb3Provider, getArcSettings } from "arc";
 import { soliditySHA3 } from "ethereumjs-abi";
@@ -180,7 +180,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
         return;
       }
       let signature = result.result;
-      const signature1 =  signature.substring(0, signature.length-2);
+      const signature1 = signature.substring(0, signature.length-2);
       const v = signature.substring(signature.length-2, signature.length);
       if (v === "00") {
         signature = signature1+"1b";
@@ -190,7 +190,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       const signatureType = 1;
       // const scheme = arc.scheme(schemeState.id);
       // const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
-      const contract =  arc.getContract(schemeState.address);
+      const contract = arc.getContract(schemeState.address);
 
       // send the transaction and get notifications
       if (contract) {
@@ -282,7 +282,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             {schemeName(schemeState, schemeState.address)}
           </h2>
         </Sticky>
-        { this.state.alreadyRedeemed ? <div>Reputation for account {redeemerAddress} has already been redeemed</div> : <div />  }
+        { this.state.alreadyRedeemed ? <div>Reputation for account {redeemerAddress} has already been redeemed</div> : <div /> }
         <div className={schemeCss.schemeRedemptionContainer}>
           <Formik
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -344,7 +344,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                     <img src="/assets/images/Icon/redeem.svg"/> Redeem
                   </button>
                 </div>
-                {  getArcSettings().txSenderServiceUrl ?
+                { getArcSettings().txSenderServiceUrl ?
                   <div className={schemeCss.redemptionButton}>
                     <div>Or try our new experimental feature:</div>
                     <button type="submit"

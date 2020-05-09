@@ -68,7 +68,7 @@ async function monitorGraphNodeSubgraph() {
  * @returns Observable<boolean> indicating if subgraph is updating correctly
  */
 export function pollSubgraphUpdating(): Observable<boolean> {
-  return Observable.create((observer: any): () => void  => {
+  return Observable.create((observer: any): () => void => {
     let running = false;
 
     async function poll() {
@@ -81,7 +81,10 @@ export function pollSubgraphUpdating(): Observable<boolean> {
           // This only works if user is connected to web3, that's why we need the try
           let atCurrentBlock = true;
           try {
-            const curBlock = (await getCurrentBlock()).number;
+            const curBlock = (await getCurrentBlock())?.number;
+            if (curBlock === undefined) {
+              return; // try again next time
+            }
             atCurrentBlock = curBlock - Number(status.latestEthereumBlockNumber) <= 2;
           // eslint-disable-next-line no-empty
           } catch (e) { }

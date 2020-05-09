@@ -20,7 +20,7 @@ import { of } from "rxjs";
 import Toggle from "react-toggle";
 import { RefObject } from "react";
 import classNames from "classnames";
-import { Address, IDAOState } from "@daostack/client";
+import { Address, IDAOState } from "@daostack/arc.js";
 import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 import ProviderConfigButton from "layouts/ProviderConfigButton";
@@ -70,7 +70,7 @@ interface IDispatchProps {
   toggleTrainingTooltipsOnHover: typeof uiActions.toggleTrainingTooltipsOnHover;
   enableTrainingTooltipsOnHover: typeof uiActions.enableTrainingTooltipsOnHover;
   disableTrainingTooltipsOnHover: typeof uiActions.disableTrainingTooltipsOnHover;
-  enableTrainingTooltipsShowAll: typeof  uiActions.enableTrainingTooltipsShowAll;
+  enableTrainingTooltipsShowAll: typeof uiActions.enableTrainingTooltipsShowAll;
   disableTrainingTooltipsShowAll: typeof uiActions.disableTrainingTooltipsShowAll;
   threeBoxLogout: typeof threeBoxLogout;
 }
@@ -143,7 +143,7 @@ class Header extends React.Component<IProps, null> {
     /**
      * maybe making this asynchronous can address reports of the button responding very slowly
      */
-    const checked =  event.target.checked;
+    const checked = event.target.checked;
     setTimeout(() => {
       localStorage.setItem(Header.trainingTooltipsEnabledKey, checked);
       this.props.toggleTrainingTooltipsOnHover();
@@ -261,9 +261,9 @@ class Header extends React.Component<IProps, null> {
                           <div className={css.providerconfig}><ProviderConfigButton provider={web3Provider} providerName={web3ProviderInfo.name}></ProviderConfigButton></div>
                           : ""
                         }
-                        <div className={css.web3ProviderLogInOut}  onClick={this.handleClickLogout}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div>
+                        <div className={css.web3ProviderLogInOut} onClick={this.handleClickLogout}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div>
                       </div> :
-                      <div className={css.web3ProviderLogInOut}  onClick={this.handleConnect}><div className={css.text}>Connect</div> <img src="/assets/images/Icon/login.svg"/></div> }
+                      <div className={css.web3ProviderLogInOut} onClick={this.handleConnect}><div className={css.text}>Connect</div> <img src="/assets/images/Icon/login.svg"/></div> }
                   </div>
                 </div>
               </span> : <span></span>

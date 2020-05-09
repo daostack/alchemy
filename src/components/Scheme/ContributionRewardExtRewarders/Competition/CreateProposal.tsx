@@ -1,4 +1,4 @@
-import { IDAOState, ISchemeState, IProposalCreateOptionsCompetition } from "@daostack/client";
+import { IDAOState, ISchemeState, IProposalCreateOptionsCompetition } from "@daostack/arc.js";
 import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -150,7 +150,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       reputationReward = new BN(1);
     }
     // Parameters to be passed to client
-    const proposalOptions: IProposalCreateOptionsCompetition  = {
+    const proposalOptions: IProposalCreateOptionsCompetition = {
       dao: this.props.daoAvatarAddress,
       description: values.description,
       endTime: values.compEndTimeInput.toDate(),
@@ -192,7 +192,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     const now = moment();
 
     return (
-      <div className={css.contributionReward}>
+      <div className={css.containerNoSidebar}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           initialValues={{

@@ -1,6 +1,6 @@
 import Countdown from "components/Shared/Countdown";
 import { formatFriendlyDateForLocalTimezone } from "lib/util";
-import { ICompetitionProposalState } from "@daostack/client";
+import { ICompetitionProposalState } from "@daostack/arc.js";
 import * as React from "react";
 import { CompetitionStatus, CompetitionStatusEnum } from "./utils";
 import * as css from "./Competitions.scss";
@@ -20,7 +20,7 @@ export default class CountdownText extends React.Component<IExternalProps, null>
   public render(): RenderOutput {
 
     const {status, competition } = this.props;
-    const inSubmissions =  status.now.isSameOrAfter(competition.startTime) && status.now.isBefore(competition.suggestionsEndTime);
+    const inSubmissions = status.now.isSameOrAfter(competition.startTime) && status.now.isBefore(competition.suggestionsEndTime);
     const pausedWithSubmissions = status.paused;
     const hasSubmissions = !!competition.totalSuggestions;
     const inVotingWithSubmissions = hasSubmissions && (status.now.isSameOrAfter(competition.votingStartTime) && status.now.isBefore(competition.endTime));
@@ -57,7 +57,7 @@ export default class CountdownText extends React.Component<IExternalProps, null>
                   <div className={css.countdown}>
                     <div className={css.startsIn}>Ended on:</div>
                     <div className={css.container}>{formatFriendlyDateForLocalTimezone(competition.endTime)}</div>
-                  </div> :  ""
+                  </div> : ""
       }
     </React.Fragment>;
   }

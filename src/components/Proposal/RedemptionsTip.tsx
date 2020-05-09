@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalState, IProposalOutcome } from "@daostack/client";
+import { Address, IDAOState, IProposalState, IProposalOutcome } from "@daostack/arc.js";
 import Reputation from "components/Account/Reputation";
 import { baseTokenName, formatTokens, fromWei, genName, tokenDecimals, tokenSymbol, AccountClaimableRewardsType } from "lib/util";
 import * as React from "react";
@@ -77,7 +77,7 @@ export default (props: IProps) => {
               "The beneficiary of the proposal is due to receive:"}
           </strong>
           <ul>
-            {contributionRewards["eth"]  ?
+            {contributionRewards["eth"] ?
               <li>
                 {formatTokens(contributionReward.ethReward, baseTokenName())}
               </li> : ""
