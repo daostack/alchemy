@@ -104,7 +104,6 @@ module.exports = merge(baseConfig, {
       ARC_IPFSPROVIDER_API_PATH : "",
       INFURA_ID : "",
       MIXPANEL_TOKEN: "eac39430f2d26472411099a0407ad610",
-      BICONOMY_DAPP_ID: "",
       BICONOMY_API_KEY: ""
     })
   ]
