@@ -1,6 +1,6 @@
-import { IDAOState, IProposalState } from "@daostack/arc.js";
+import { IDAOState, IGenericPluginProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
-import { GenericSchemeInfo } from "genericSchemeRegistry";
+import { GenericPluginInfo } from "genericPluginRegistry";
 import { linkToEtherScan } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
@@ -12,10 +12,10 @@ import ProposalSummaryCO2ken from "./ProposalSummaryCO2ken";
 interface IProps {
   beneficiaryProfile?: IProfileState;
   detailView?: boolean;
-  dao: IDAOState;
-  proposal: IProposalState;
+  daoState: IDAOState;
+  proposalState: IGenericPluginProposalState;
   transactionModal?: boolean;
-  genericSchemeInfo: GenericSchemeInfo;
+  genericPluginInfo: GenericPluginInfo;
 }
 
 export default class ProposalSummary extends React.Component<IProps> {
@@ -29,12 +29,12 @@ export default class ProposalSummary extends React.Component<IProps> {
 
 
   public render(): RenderOutput {
-    const { proposal, detailView, transactionModal, genericSchemeInfo } = this.props;
-    if (genericSchemeInfo.specs.name === "DutchX") {
+    const { proposalState, detailView, transactionModal, genericPluginInfo } = this.props;
+    if (genericPluginInfo.specs.name === "DutchX") {
       return <ProposalSummaryDutchX {...this.props} />;
-    } else if (genericSchemeInfo.specs.name === "Standard Bounties") {
+    } else if (genericPluginInfo.specs.name === "Standard Bounties") {
       return <ProposalSummaryStandardBounties {...this.props} />;
-    } else if (genericSchemeInfo.specs.name === "CO2ken") {
+    } else if (genericPluginInfo.specs.name === "CO2ken") {
       return <ProposalSummaryCO2ken {...this.props} />;
     }
     const proposalSummaryClass = classNames({
@@ -45,15 +45,15 @@ export default class ProposalSummary extends React.Component<IProps> {
     });
     let decodedCallData: any;
     try {
-      decodedCallData = genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
+      decodedCallData = genericPluginInfo.decodeCallData(proposalState.callData);
     } catch (err) {
       return (
         <div className={proposalSummaryClass}>
           <span className={css.summaryTitle}>Unknown function call</span>
           {detailView ?
             <div className={css.summaryDetails}>
-              to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
-              with callData: <pre>{proposal.genericScheme.callData}</pre>
+              to contract at <a href={linkToEtherScan(proposalState.contractToCall)}>{proposalState.contractToCall.substr(0, 8)}...</a>
+              with callData: <pre>{proposalState.callData}</pre>
             </div>
             : ""
           }
@@ -75,7 +75,7 @@ export default class ProposalSummary extends React.Component<IProps> {
           </pre>
           with values <pre>{ decodedCallData.values.map(this.callDataHtml)}</pre>
           on contract at
-          <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
+          <pre><a href={linkToEtherScan(proposalState.contractToCall)}>{proposalState.contractToCall}</a></pre>
         </div>
         : ""
       }

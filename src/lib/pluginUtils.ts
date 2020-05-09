@@ -7,7 +7,7 @@ import {
   IContributionRewardExtState
 } from "@daostack/arc.js";
 import { rewarderContractName } from "components/Plugin/ContributionRewardExtRewarders/rewardersProps";
-import { GenericSchemeRegistry } from "genericSchemeRegistry";
+import { GenericSchemeRegistry } from "genericPluginRegistry";
 
 /**
  * gotta load moment in order to use moment-timezone directly

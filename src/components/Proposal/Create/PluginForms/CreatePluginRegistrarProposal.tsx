@@ -3,18 +3,18 @@ import { enableWalletProvider, getArc } from "arc";
 
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 
 import { createProposal } from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
 import { isValidUrl, isAddress } from "lib/util";
-import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSIONS, schemeNameAndAddress, SchemePermissions } from "lib/schemeUtils";
+import { GetPluginIsActiveActions, getPluginIsActive, REQUIRED_PLUGIN_PERMISSIONS, pluginNameAndAddress, PluginPermissions } from "lib/pluginUtils";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
-import { IProposalType, ISchemeState, Scheme } from "@daostack/arc.js";
+import { ProposalName, IPluginState, AnyPlugin } from "@daostack/arc.js";
 import { connect } from "react-redux";
 import * as React from "react";
 import * as css from "../CreateProposal.scss";
@@ -23,7 +23,7 @@ import MarkdownField from "./MarkdownField";
 interface IExternalProps {
   daoAvatarAddress: string;
   handleClose: () => any;
-  scheme: ISchemeState;
+  pluginState: IPluginState;
 }
 
 interface IDispatchProps {
@@ -36,21 +36,20 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<Scheme[]>;
+type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<AnyPlugin[]>;
 
 interface IFormValues {
   description: string;
-  otherScheme: string;
+  otherPlugin: string;
   parametersHash: string;
   permissions: {
-    registerSchemes: boolean;
+    registerPlugins: boolean;
     changeConstraints: boolean;
     upgradeController: boolean;
     genericCall: boolean;
   };
-  schemeToAdd: string;
-  schemeToEdit: string;
-  schemeToRemove: string;
+  pluginToAdd: string;
+  pluginToRemove: string;
   title: string;
   url: string;
 
@@ -63,7 +62,7 @@ interface IState {
   requiredPermissions: number;
 }
 
-class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
+class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
 
   initialFormValues: IFormValues;
 
@@ -73,20 +72,19 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.initialFormValues = importUrlValues<IFormValues>({
       description: "",
-      otherScheme: "",
-      schemeToAdd: "",
-      schemeToEdit: "",
-      schemeToRemove: "",
+      otherPlugin: "",
+      pluginToAdd: "",
+      pluginToRemove: "",
       parametersHash: "",
       permissions: {
-        registerSchemes: false,
+        registerPlugins: false,
         changeConstraints: false,
         upgradeController: false,
         genericCall: false,
       },
       title: "",
       url: "",
-      currentTab: "addScheme",
+      currentTab: "addPlugin",
       tags: [],
     });
     this.state = {
@@ -96,12 +94,12 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     };
   }
 
-  public handleChangeScheme = (e: any) => {
+  public handleChangePlugin = (e: any) => {
     const arc = getArc();
     try {
       // If we know about this contract then require the minimum permissions for it
       const contractInfo = arc.getContractInfo(e.target.value);
-      this.setState({ requiredPermissions: REQUIRED_SCHEME_PERMISSIONS[contractInfo.name] });
+      this.setState({ requiredPermissions: REQUIRED_PLUGIN_PERMISSIONS[contractInfo.name] });
       /* eslint-disable-next-line no-empty */
     } catch (e) {}
   }
@@ -110,7 +108,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     let permissions = 1;
-    if (values.permissions.registerSchemes) {
+    if (values.permissions.registerPlugins) {
       permissions += 2;
     }
     if (values.permissions.changeConstraints) {
@@ -124,13 +122,11 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     }
 
     const currentTab = this.state.currentTab;
-    let proposalType;
-    if (this.state.currentTab  === "removeScheme") {
-      proposalType = IProposalType.SchemeRegistrarRemove;
-    } else if (this.state.currentTab === "addScheme") {
-      proposalType = IProposalType.SchemeRegistrarAdd;
+    let proposalType: ProposalName;
+    if (this.state.currentTab  === "removePlugin") {
+      proposalType = "SchemeRegistrarRemove";
     } else {
-      proposalType = IProposalType.SchemeRegistrarEdit;
+      proposalType = "SchemeRegistrarAdd";
     }
     const proposalValues = {
       ...values,
@@ -138,10 +134,10 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       type: proposalType,
       parametersHash: values.parametersHash,
       permissions: "0x" + permissions.toString(16).padStart(8, "0"),
-      scheme: this.props.scheme.address,
-      schemeToRegister: currentTab === "addScheme" ? values.schemeToAdd :
-        currentTab === "editScheme" ? values.schemeToEdit :
-          values.schemeToRemove,
+      plugin: this.props.pluginState.address,
+      pluginToRegister: currentTab === "addPlugin" ?
+        values.pluginToAdd :
+        values.pluginToRemove,
       tags: this.state.tags,
     };
     setSubmitting(false);
@@ -150,8 +146,8 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     Analytics.track("Submit Proposal", {
       "DAO Address": this.props.daoAvatarAddress,
       "Proposal Title": values.title,
-      "Scheme Address": this.props.scheme.address,
-      "Scheme Name": this.props.scheme.name,
+      "Plugin Address": this.props.pluginState.address,
+      "Plugin Name": this.props.pluginState.name,
     });
 
     this.props.handleClose();
@@ -175,58 +171,48 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
   }
 
   public render(): RenderOutput {
-    // "schemes" are the schemes registered in this DAO
-    const schemes = this.props.data;
+    // "plugins" are the plugins registered in this DAO
+    const plugins = this.props.data;
     const { handleClose } = this.props;
 
     const { currentTab, requiredPermissions } = this.state;
 
-    const addSchemeButtonClass = classNames({
-      [css.addSchemeButton]: true,
-      [css.selected]: currentTab === "addScheme",
+    const addPluginButtonClass = classNames({
+      [css.addPluginButton]: true,
+      [css.selected]: currentTab === "addPlugin",
     });
-    const editSchemeButtonClass = classNames({
-      [css.selected]: currentTab === "editScheme",
-    });
-    const removeSchemeButtonClass = classNames({
-      [css.selected]: currentTab === "removeScheme",
+    const removePluginButtonClass = classNames({
+      [css.selected]: currentTab === "removePlugin",
     });
 
-    const schemeRegistrarFormClass = classNames({
+    const pluginRegistrarFormClass = classNames({
       [css.formWrapper]: true,
-      [css.addScheme]: currentTab === "addScheme",
-      [css.removeScheme]: currentTab === "removeScheme",
-      [css.editScheme]: currentTab === "editScheme",
+      [css.addPlugin]: currentTab === "addPlugin",
+      [css.removePlugin]: currentTab === "removePlugin",
     });
 
-    const isAddActive = getSchemeIsActive(this.props.scheme, GetSchemeIsActiveActions.Register);
-    const isRemoveActive = getSchemeIsActive(this.props.scheme, GetSchemeIsActiveActions.Remove);
+    const isAddActive = getPluginIsActive(this.props.pluginState, GetPluginIsActiveActions.Register);
+    const isRemoveActive = getPluginIsActive(this.props.pluginState, GetPluginIsActiveActions.Remove);
     const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
     return (
       <div className={css.createWrapperWithSidebar}>
         <div className={css.sidebar}>
           { isAddActive ?
-            <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")} data-test-id="tab-AddScheme">
+            <button className={addPluginButtonClass} onClick={this.handleTabClick("addPlugin")} data-test-id="tab-AddPlugin">
               <span></span>
               Add Plugin
             </button>
             : "" }
-          { isAddActive ?
-            <button className={editSchemeButtonClass} onClick={this.handleTabClick("editScheme")} data-test-id="tab-EditScheme">
-              <span></span>
-              Edit Plugin
-            </button>
-            : "" }
           { isRemoveActive ?
-            <button className={removeSchemeButtonClass} onClick={this.handleTabClick("removeScheme")} data-test-id="tab-RemoveScheme">
+            <button className={removePluginButtonClass} onClick={this.handleTabClick("removePlugin")} data-test-id="tab-RemovePlugin">
               <span></span>
             Remove Plugin
             </button>
             : "" }
         </div>
 
-        <div className={schemeRegistrarFormClass}>
+        <div className={pluginRegistrarFormClass}>
           <Formik
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             initialValues={this.initialFormValues}
@@ -247,22 +233,19 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                 errors.title = "Title is too long (max 120 characters)";
               }
 
-              if (currentTab === "addScheme") {
-                require("schemeToAdd");
+              if (currentTab === "addPlugin") {
+                require("pluginToAdd");
                 require("parametersHash");
-              } else if (currentTab === "editScheme") {
-                require("schemeToEdit");
-                require("parametersHash");
-              } else if (currentTab === "removeScheme") {
-                require("schemeToRemove");
+              } else if (currentTab === "removePlugin") {
+                require("pluginToRemove");
               }
 
-              if (currentTab === "addScheme" && values.otherScheme && !isAddress(values.otherScheme)) {
-                errors.otherScheme = "Invalid address";
+              if (currentTab === "addPlugin" && values.otherPlugin && !isAddress(values.otherPlugin)) {
+                errors.otherPlugin = "Invalid address";
               }
 
               const parametersHashPattern = /0x([\da-f]){64}/i;
-              if (currentTab !== "removeScheme" && values.parametersHash && !parametersHashPattern.test(values.parametersHash)) {
+              if (currentTab !== "removePlugin" && values.parametersHash && !parametersHashPattern.test(values.parametersHash)) {
                 errors.parametersHash = "Invalid parameters hash";
               }
 
@@ -285,12 +268,10 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
               return (
                 <Form noValidate>
                   <label className={css.description}>What to Expect</label>
-                  { (currentTab === "addScheme") ?
-                    <div className={css.description}>Propose to add a new plugin to the DAO. If this plugin is a universal scheme, you must also supply its param hash configuration.</div> :
-                    (currentTab === "editScheme") ?
-                      <div className={css.description}>Propose to edit param hash configuration of a plugin.</div> :
-                      (currentTab === "removeScheme") ?
-                        <div className={css.description}>Propose to remove a plugin from the DAO.</div> : ""
+                  { (currentTab === "addPlugin") ?
+                    <div className={css.description}>Propose to add a new plugin to the DAO.</div> :
+                      (currentTab === "removePlugin") ?
+                      <div className={css.description}>Propose to remove a plugin from the DAO.</div> : ""
                   }
                   <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
                     <label htmlFor="titleInput">
@@ -351,47 +332,23 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                     className={touched.url && errors.url ? css.error : null}
                   />
 
-                  <div className={css.addEditSchemeFields}>
-                    <div className={css.addSchemeSelectContainer}>
-                      <label htmlFor="schemeToAddInput">
+                  <div className={css.addEditPluginFields}>
+                    <div className={css.addPluginSelectContainer}>
+                      <label htmlFor="pluginToAddInput">
                         <div className={css.requiredMarker}>*</div>
                         Plugin
-                        <ErrorMessage name="schemeToAdd">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        <ErrorMessage name="pluginToAdd">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
                       <Field
-                        id="schemeToAddInput"
+                        id="pluginToAddInput"
                         placeholder="Enter plugin address"
-                        name="schemeToAdd"
+                        name="pluginToAdd"
                         onChange={(e: any) => {
                           // call the built-in handleChange
                           handleChange(e);
-                          this.handleChangeScheme(e);
+                          this.handleChangePlugin(e);
                         }}
                       />
-                    </div>
-
-                    <div className={css.editSchemeSelectContainer}>
-                      <label htmlFor="schemeToEditInput">
-                        <div className={css.requiredMarker}>*</div>
-                        Plugin
-                        <ErrorMessage name="schemeToEdit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="schemeToEditInput"
-                        name="schemeToEdit"
-                        component="select"
-                        className={css.schemeSelect}
-                        onChange={(e: any) => {
-                          // call the built-in handleChange
-                          handleChange(e);
-                          this.handleChangeScheme(e);
-                        }}
-                      >
-                        <option value="">Select a plugin...</option>
-                        {schemes.map((scheme, _i) => {
-                          return <option key={`edit_scheme_${scheme.coreState.address}`} value={scheme.coreState.address}>{schemeNameAndAddress(scheme.coreState.address)}</option>;
-                        })}
-                      </Field>
                     </div>
 
                     <div className={css.parametersHash}>
@@ -413,13 +370,13 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                       </div>
                       <div className={css.permissionCheckbox}>
                         <Field
-                          id="registerOtherSchemesInput"
+                          id="registerOtherPluginsInput"
                           type="checkbox"
-                          name="permissions.registerSchemes"
-                          checked={requiredPermissions & SchemePermissions.CanRegisterSchemes || values.permissions.registerSchemes}
-                          disabled={requiredPermissions & SchemePermissions.CanRegisterSchemes}
+                          name="permissions.registerPlugins"
+                          checked={requiredPermissions & PluginPermissions.CanRegisterPlugins || values.permissions.registerPlugins}
+                          disabled={requiredPermissions & PluginPermissions.CanRegisterPlugins}
                         />
-                        <label htmlFor="registerOtherSchemesInput">
+                        <label htmlFor="registerOtherPluginsInput">
                           Register other plugins
                         </label>
                       </div>
@@ -429,8 +386,8 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                           id="changeConstraintsInput"
                           type="checkbox"
                           name="permissions.changeConstraints"
-                          checked={requiredPermissions & SchemePermissions.CanAddRemoveGlobalConstraints || values.permissions.changeConstraints}
-                          disabled={requiredPermissions & SchemePermissions.CanAddRemoveGlobalConstraints}
+                          checked={requiredPermissions & PluginPermissions.CanAddRemoveGlobalConstraints || values.permissions.changeConstraints}
+                          disabled={requiredPermissions & PluginPermissions.CanAddRemoveGlobalConstraints}
                         />
                         <label htmlFor="changeConstraintsInput">
                           Add/remove global constraints
@@ -442,8 +399,8 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                           id="upgradeControllerInput"
                           type="checkbox"
                           name="permissions.upgradeController"
-                          checked={requiredPermissions & SchemePermissions.CanUpgradeController || values.permissions.upgradeController}
-                          disabled={requiredPermissions & SchemePermissions.CanUpgradeController}
+                          checked={requiredPermissions & PluginPermissions.CanUpgradeController || values.permissions.upgradeController}
+                          disabled={requiredPermissions & PluginPermissions.CanUpgradeController}
                         />
                         <label htmlFor="upgradeControllerInput">
                           Upgrade the controller
@@ -455,8 +412,8 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                           id="genericCallInput"
                           type="checkbox"
                           name="permissions.genericCall"
-                          checked={requiredPermissions & SchemePermissions.CanCallDelegateCall || values.permissions.genericCall}
-                          disabled={requiredPermissions & SchemePermissions.CanCallDelegateCall}
+                          checked={requiredPermissions & PluginPermissions.CanCallDelegateCall || values.permissions.genericCall}
+                          disabled={requiredPermissions & PluginPermissions.CanCallDelegateCall}
                         />
                         <label htmlFor="genericCallInput">
                           Call genericCall on behalf of
@@ -472,22 +429,22 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                     </div>
                   </div>
 
-                  <div className={css.removeSchemeFields}>
-                    <div className={css.removeSchemeSelectContainer}>
+                  <div className={css.removePluginFields}>
+                    <div className={css.removePluginSelectContainer}>
                       <label htmlFor="schemeToRemoveInput">
                         <div className={css.requiredMarker}>*</div>
                         Plugin
-                        <ErrorMessage name="schemeToRemove">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        <ErrorMessage name="pluginToRemove">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
                       <Field
-                        id="schemeToRemoveInput"
-                        name="schemeToRemove"
+                        id="pluginToRemoveInput"
+                        name="pluginToRemove"
                         component="select"
-                        className={css.schemeSelect}
+                        className={css.pluginSelect}
                       >
                         <option value="">Select a plugin...</option>
-                        {schemes.map((scheme, _i) => {
-                          return <option key={`remove_scheme_${scheme.coreState.address}`} value={scheme.coreState.address}>{schemeNameAndAddress(scheme.coreState.address)}</option>;
+                        {plugins.map((plugin, _i) => {
+                          return <option key={`remove_plugin_${plugin.coreState.address}`} value={plugin.coreState.address}>{pluginNameAndAddress(plugin.coreState.address)}</option>;
                         })}
                       </Field>
                     </div>
@@ -518,15 +475,15 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
   }
 }
 
-const SubscribedCreateSchemeRegistrarProposal = withSubscription({
-  wrappedComponent: CreateSchemeRegistrarProposal,
+const SubscribedCreatePluginRegistrarProposal = withSubscription({
+  wrappedComponent: CreatePluginRegistrarProposal,
   loadingComponent: <Loading/>,
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
-    return arc.dao(props.daoAvatarAddress).schemes();
+    return arc.dao(props.daoAvatarAddress).plugins();
   },
 });
 
-export default connect(null, mapDispatchToProps)(SubscribedCreateSchemeRegistrarProposal);
+export default connect(null, mapDispatchToProps)(SubscribedCreatePluginRegistrarProposal);

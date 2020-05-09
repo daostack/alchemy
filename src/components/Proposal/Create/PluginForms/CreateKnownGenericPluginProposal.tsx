@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { connect } from "react-redux";
-import { IProposalType, ISchemeState } from "@daostack/arc.js";
+import { IPluginState } from "@daostack/arc.js";
 import { enableWalletProvider } from "arc";
 import { isHexString } from "ethers/utils"
 
@@ -9,7 +9,7 @@ import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProp
 import * as classNames from "classnames";
 import Interweave from "interweave";
 
-import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";
+import { Action, ActionField, GenericPluginInfo } from "genericPluginRegistry";
 
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
@@ -19,7 +19,7 @@ import Analytics from "lib/analytics";
 import { isValidUrl, isAddress } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
-import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
@@ -28,9 +28,9 @@ const BN = require("bn.js");
 
 interface IStateProps {
   daoAvatarAddress: string;
-  genericSchemeInfo: GenericSchemeInfo;
+  genericPluginInfo: GenericPluginInfo;
   handleClose: () => any;
-  scheme: ISchemeState;
+  pluginState: IPluginState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IStateProps) => {
@@ -62,21 +62,21 @@ interface IState {
   tags: Array<string>;
 }
 
-class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
+class CreateKnownPluginProposal extends React.Component<IProps, IState> {
 
   initialFormValues: IFormValues;
 
   constructor(props: IProps) {
     super(props);
 
-    if (!props.genericSchemeInfo) {
-      throw Error("GenericSchemeInfo should be provided");
+    if (!props.genericPluginInfo) {
+      throw Error("GenericPluginInfo should be provided");
     }
     this.setInititialFormValues();
-    const actions = props.genericSchemeInfo.actions();
+    const actions = props.genericPluginInfo.actions();
     const initialActionId = this.initialFormValues.currentActionId;
     this.state = {
-      actions: props.genericSchemeInfo.actions(),
+      actions: props.genericPluginInfo.actions(),
       currentAction: initialActionId ? actions.find(action => action.id === initialActionId) : actions[0],
       tags: this.initialFormValues.tags,
     };
@@ -111,7 +111,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
     let callData = "";
     try {
-      callData = this.props.genericSchemeInfo.encodeABI(currentAction, callValues);
+      callData = this.props.genericPluginInfo.encodeABI(currentAction, callValues);
     } catch (err) {
       showNotification(NotificationStatus.Failure, err.message);
       setSubmitting(false);
@@ -121,7 +121,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
     let ethValue = new BN(0);
 
-    if (this.props.genericSchemeInfo.specs.name === "Standard Bounties") {
+    if (this.props.genericPluginInfo.specs.name === "Standard Bounties") {
       const calcBountEth = await this.getBountyEth(values);
       ethValue =  ethValue.add(calcBountEth);
     }
@@ -130,9 +130,9 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       ...values,
       callData,
       dao: this.props.daoAvatarAddress,
-      scheme: this.props.scheme.address,
+      plugin: this.props.pluginState.address,
       tags: this.state.tags,
-      type: IProposalType.GenericScheme,
+      type: "GenericScheme",
       value: ethValue.toString(), // amount of eth to send with the call
     };
 
@@ -146,15 +146,15 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     Analytics.track("Submit Proposal", {
       "DAO Address": this.props.daoAvatarAddress,
       "Proposal Title": values.title,
-      "Scheme Address": this.props.scheme.address,
-      "Scheme Name": this.props.scheme.name,
+      "Plugin Address": this.props.pluginState.address,
+      "Plugin Name": this.props.pluginState.name,
     });
 
     this.props.handleClose();
   }
 
   public handleTabClick = (tab: string) => (_e: any) => {
-    this.setState({ currentAction: this.props.genericSchemeInfo.action(tab) });
+    this.setState({ currentAction: this.props.genericPluginInfo.action(tab) });
   }
 
   public renderField(field: ActionField, values: IFormValues, touched: FormikTouched<IFormValues>, errors: FormikErrors<IFormValues>) {
@@ -240,7 +240,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       currentActionId: "",
       tags: [],
     };
-    const actions = this.props.genericSchemeInfo.actions();
+    const actions = this.props.genericPluginInfo.actions();
     const daoAvatarAddress = this.props.daoAvatarAddress;
     actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
       if (typeof(field.defaultValue) !== "undefined") {
@@ -492,4 +492,4 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateKnownSchemeProposal);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateKnownPluginProposal);

@@ -1,36 +1,35 @@
 import BN = require("bn.js");
 import * as React from "react";
 
-import { IDAOState, IProposalState } from "@daostack/arc.js";
+import { IDAOState, IContributionRewardProposalState } from "@daostack/arc.js";
 import { baseTokenName, formatTokens, tokenDetails } from "lib/util";
 
 import Reputation from "components/Account/Reputation";
 
 interface IProps {
-  dao: IDAOState;
-  proposal: IProposalState;
+  daoState: IDAOState;
+  proposalState: IContributionRewardProposalState;
   separator?: string;
 }
 
 export default class RewardsString extends React.Component<IProps, null> {
   public render(): RenderOutput {
-    const { dao, proposal, separator } = this.props;
+    const { daoState, proposalState, separator } = this.props;
 
-    const contributionReward = proposal.contributionReward;
     const rewards = [];
-    if (contributionReward.ethReward && contributionReward.ethReward.gt(new BN(0))) {
-      rewards.push(formatTokens(contributionReward.ethReward, baseTokenName()));
+    if (proposalState.ethReward && proposalState.ethReward.gt(new BN(0))) {
+      rewards.push(formatTokens(proposalState.ethReward, baseTokenName()));
     }
-    if (contributionReward.externalToken && contributionReward.externalTokenReward && contributionReward.externalTokenReward.gt(new BN(0))) {
-      const tokenData = tokenDetails(contributionReward.externalToken);
-      rewards.push(formatTokens(contributionReward.externalTokenReward, tokenData ? tokenData["symbol"] : "?", tokenData ? tokenData["decimals"] : 18));
+    if (proposalState.externalToken && proposalState.externalTokenReward && proposalState.externalTokenReward.gt(new BN(0))) {
+      const tokenData = tokenDetails(proposalState.externalToken);
+      rewards.push(formatTokens(proposalState.externalTokenReward, tokenData ? tokenData["symbol"] : "?", tokenData ? tokenData["decimals"] : 18));
     }
-    if (contributionReward.nativeTokenReward && contributionReward.nativeTokenReward.gt(new BN(0))) {
-      rewards.push(formatTokens(contributionReward.nativeTokenReward, dao.tokenSymbol));
+    if (proposalState.nativeTokenReward && proposalState.nativeTokenReward.gt(new BN(0))) {
+      rewards.push(formatTokens(proposalState.nativeTokenReward, daoState.tokenSymbol));
     }
-    if (contributionReward.reputationReward && !contributionReward.reputationReward.isZero()) {
+    if (proposalState.reputationReward && !proposalState.reputationReward.isZero()) {
       rewards.push(
-        <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={contributionReward.reputationReward}/>
+        <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={proposalState.reputationReward}/>
       );
     }
     return <strong>

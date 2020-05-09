@@ -1,4 +1,4 @@
-import { DAO } from "@daostack/arc.js";
+import { Arc, DAO } from "@daostack/arc.js";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -226,7 +226,13 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
     }
     ${DAO.fragments.DAOFields}
   `;
-  const memberOfDAOs = currentAccountAddress ? arc.getObservableList(memberDAOsquery, (r: any) => createDaoStateFromQuery(r.dao).dao, { subscribe: true }) : of([]);
+  const memberOfDAOs = currentAccountAddress ? arc.getObservableList(
+    arc,
+    memberDAOsquery,
+    (arc: Arc, r: any) => createDaoStateFromQuery(r.dao),
+    undefined,
+    { subscribe: true }
+  ) : of([]);
   // eslint-disable-next-line @typescript-eslint/camelcase
   const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc"}, { fetchAllData: true, subscribe: true }) : of([]);
 

@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState } from "@daostack/arc.js";
+import { IGenericPluginProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
 import { linkToEtherScan } from "lib/util";
 import * as React from "react";
@@ -8,8 +8,7 @@ import * as css from "./ProposalSummary.scss";
 interface IProps {
   beneficiaryProfile?: IProfileState;
   detailView?: boolean;
-  dao: IDAOState;
-  proposal: IProposalState;
+  proposalState: IGenericPluginProposalState;
   transactionModal?: boolean;
 }
 
@@ -24,7 +23,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
   }
 
   public render(): RenderOutput {
-    const { proposal, detailView, transactionModal } = this.props;
+    const { proposalState, detailView, transactionModal } = this.props;
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
       [css.transactionModal]: transactionModal,
@@ -36,7 +35,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
         <span className={css.summaryTitle}>Unknown function call</span>
         {detailView ?
           <div className={css.summaryDetails}>
-            to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
+            to contract at <a href={linkToEtherScan(proposalState.contractToCall)}>{proposalState.contractToCall.substr(0, 8)}...</a>
           </div>
           : ""
         }

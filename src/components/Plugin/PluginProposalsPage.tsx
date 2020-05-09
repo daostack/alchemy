@@ -1,5 +1,5 @@
 import { History } from "history";
-import { Address, DAO, IDAOState, IProposalStage, IPluginState, AnyProposal, Vote, Reward, AnyPlugin, Stake, Proposal, Plugin } from "@daostack/arc.js";
+import { Address, DAO, IDAOState, IProposalStage, IPluginState, AnyProposal, Vote, Reward, Stake, Proposal, Plugin } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -42,7 +42,7 @@ interface IExternalProps {
   currentAccountAddress: Address;
   history: History;
   isActive: boolean;
-  plugin: IPluginState;
+  pluginState: IPluginState;
   daoState: IDAOState;
 }
 
@@ -64,8 +64,8 @@ class PluginProposalsPage extends React.Component<IProps, null> {
       "Page Name": Page.PluginProposals,
       "DAO Address": this.props.daoState.address,
       "DAO Name": this.props.daoState.name,
-      "Plugin Address": this.props.plugin.address,
-      "Plugin Name": this.props.plugin.name,
+      "Plugin Address": this.props.pluginState.address,
+      "Plugin Name": this.props.pluginState.name,
     });
   }
 
@@ -76,7 +76,7 @@ class PluginProposalsPage extends React.Component<IProps, null> {
   }
 
   private _handleNewProposal = (e: any): void => {
-    this.handleNewProposal(this.props.daoState.address, this.props.plugin.id);
+    this.handleNewProposal(this.props.daoState.address, this.props.pluginState.id);
     e.preventDefault();
   };
 
@@ -84,7 +84,7 @@ class PluginProposalsPage extends React.Component<IProps, null> {
     const { data } = this.props;
 
     const [proposalsQueued, proposalsPreBoosted, proposalsBoosted ] = data;
-    const { currentAccountAddress, daoState, fetchMore, isActive, plugin } = this.props;
+    const { currentAccountAddress, daoState, fetchMore, isActive, pluginState } = this.props;
     let proposalCount=0;
 
     const queuedProposalsHTML = (
@@ -121,11 +121,11 @@ class PluginProposalsPage extends React.Component<IProps, null> {
       </TransitionGroup>
     );
 
-    const pluginFriendlyName = pluginName(plugin, plugin.address);
+    const pluginFriendlyName = pluginName(pluginState, pluginState.address);
 
     return (
       <div>
-        <BreadcrumbsItem to={`/dao/${daoState.address}/plugin/${plugin.id}`}>{pluginFriendlyName}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${daoState.address}/plugin/${pluginState.id}`}>{pluginFriendlyName}</BreadcrumbsItem>
 
         { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
           ?
@@ -154,7 +154,7 @@ class PluginProposalsPage extends React.Component<IProps, null> {
             <div className={css.boostedContainer}>
               <div className={css.proposalsHeader}>
                 <TrainingTooltip placement="bottom" overlay={"Boosted proposals are passed or failed via relative majority over a configured voting period"}>
-                  <span>Boosted Proposals ({plugin.numberOfBoostedProposals})</span>
+                  <span>Boosted Proposals ({pluginState.numberOfBoostedProposals})</span>
                 </TrainingTooltip>
                 {proposalsBoosted.length === 0
                   ?
@@ -172,7 +172,7 @@ class PluginProposalsPage extends React.Component<IProps, null> {
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
                 <TrainingTooltip placement="bottom" overlay={"Pending boosting proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
-                  <span>Pending Boosting Proposals ({plugin.numberOfPreBoostedProposals})</span>
+                  <span>Pending Boosting Proposals ({pluginState.numberOfPreBoostedProposals})</span>
                 </TrainingTooltip>
                 {proposalsPreBoosted.length === 0
                   ?
@@ -189,7 +189,7 @@ class PluginProposalsPage extends React.Component<IProps, null> {
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
                 <TrainingTooltip placement="bottom" overlay={"Regular proposals are passed or failed via absolute majority over a configured voting period. If enough GEN is staked predicting they will pass, they can move to the pending and then boosted queues."}>
-                  <span>Regular Proposals ({plugin.numberOfQueuedProposals})</span>
+                  <span>Regular Proposals ({pluginState.numberOfQueuedProposals})</span>
                 </TrainingTooltip>
                 {proposalsQueued.length === 0
                   ?
@@ -204,7 +204,7 @@ class PluginProposalsPage extends React.Component<IProps, null> {
                   style={{overflow: "visible"}}
                   dataLength={proposalsQueued.length} //This is important field to render the next data
                   next={fetchMore}
-                  hasMore={proposalsQueued.length < plugin.numberOfQueuedProposals}
+                  hasMore={proposalsQueued.length < pluginState.numberOfQueuedProposals}
                   loader={<h4>Fetching more proposals...</h4>}
                   endMessage={
                     <p style={{textAlign: "center"}}>
@@ -230,13 +230,13 @@ const SubscribedPluginProposalsPage = withSubscription<IProps, SubscriptionData>
   errorComponent: null,
 
   checkForUpdate: (oldProps, newProps) => {
-    return oldProps.plugin.id !== newProps.plugin.id;
+    return oldProps.pluginState.id !== newProps.pluginState.id;
   },
 
   createObservable: async (props: IExternalProps) => {
     const arc = getArc();
     const dao = new DAO(arc, props.daoState.id);
-    const pluginId = props.plugin.id;
+    const pluginId = props.pluginState.id;
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server
     let bigProposalQuery;
@@ -323,7 +323,7 @@ const SubscribedPluginProposalsPage = withSubscription<IProps, SubscriptionData>
 
     return dao.proposals({
       // eslint-disable-next-line @typescript-eslint/camelcase
-      where: { plugin: props.plugin.id, stage: IProposalStage.Queued },
+      where: { plugin: props.pluginState.id, stage: IProposalStage.Queued },
       orderBy: "confidence",
       orderDirection: "desc",
       first: PAGE_SIZE,

@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState } from "@daostack/arc.js";
+import { IDAOState, IContributionRewardProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -11,8 +11,8 @@ import * as css from "./ProposalSummary.scss";
 interface IProps {
   beneficiaryProfile?: IProfileState;
   detailView?: boolean;
-  dao: IDAOState;
-  proposal: IProposalState;
+  daoState: IDAOState;
+  proposalState: IContributionRewardProposalState;
   transactionModal?: boolean;
 }
 
@@ -24,7 +24,7 @@ export default class ProposalSummaryContributionReward extends React.Component<I
 
   public render(): RenderOutput {
 
-    const { beneficiaryProfile, proposal, dao, detailView, transactionModal } = this.props;
+    const { beneficiaryProfile, proposalState, daoState, detailView, transactionModal } = this.props;
 
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
@@ -33,12 +33,12 @@ export default class ProposalSummaryContributionReward extends React.Component<I
     });
     return (
       <div className={proposalSummaryClass}>
-        <span className={css.transferType}><RewardsString proposal={proposal} dao={dao} /></span>
+        <span className={css.transferType}><RewardsString proposalState={proposalState} daoState={daoState} /></span>
         <strong className={css.transferAmount}></strong>
         <img className={css.transferIcon} src="/assets/images/Icon/Transfer.svg" />
-        <AccountPopup accountAddress={proposal.contributionReward.beneficiary} daoState={dao} width={12} />
+        <AccountPopup accountAddress={proposalState.beneficiary} daoState={daoState} width={12} />
         <strong>
-          <AccountProfileName accountAddress={proposal.contributionReward.beneficiary} accountProfile={beneficiaryProfile} daoAvatarAddress={dao.address}/>
+          <AccountProfileName accountAddress={proposalState.beneficiary} accountProfile={beneficiaryProfile} daoAvatarAddress={daoState.address}/>
         </strong>
       </div>
     );

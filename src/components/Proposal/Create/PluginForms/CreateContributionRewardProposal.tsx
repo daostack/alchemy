@@ -1,12 +1,12 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { IDAOState, ISchemeState } from "@daostack/arc.js";
+import { IDAOState, IContributionRewardState } from "@daostack/arc.js";
 import { createProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UserSearchField from "components/Shared/UserSearchField";
-import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Analytics from "lib/analytics";
 import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress } from "lib/util";
@@ -18,7 +18,7 @@ import MarkdownField from "./MarkdownField";
 const Select = React.lazy(() => import("react-select"));
 
 interface IExternalProps {
-  scheme: ISchemeState;
+  pluginState: IContributionRewardState;
   daoAvatarAddress: string;
   handleClose: () => any;
 }
@@ -125,7 +125,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     }
 
     const proposalValues = {...values,
-      scheme: this.props.scheme.address,
+      plugin: this.props.pluginState.address,
       dao: this.props.daoAvatarAddress,
       ethReward: toWei(Number(values.ethReward)),
       externalTokenReward,
@@ -140,8 +140,8 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     Analytics.track("Submit Proposal", {
       "DAO Address": this.props.daoAvatarAddress,
       "Proposal Title": values.title,
-      "Scheme Address": this.props.scheme.address,
-      "Scheme Name": this.props.scheme.name,
+      "Plugin Address": this.props.pluginState.address,
+      "Plugin Name": this.props.pluginState.name,
       "Reputation Requested": values.reputationReward,
       "ETH Requested": values.ethReward,
       "External Token Requested": values.externalTokenAddress,

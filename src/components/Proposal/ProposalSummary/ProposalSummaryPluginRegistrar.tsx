@@ -1,7 +1,7 @@
-import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@daostack/arc.js";
+import { IDAOState, ISchemeRegistrarProposalState, ProposalName } from "@daostack/arc.js";
 import classNames from "classnames";
 import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
-import { schemeNameAndAddress } from "lib/schemeUtils";
+import { pluginNameAndAddress } from "lib/pluginUtils";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
@@ -9,8 +9,8 @@ import * as css from "./ProposalSummary.scss";
 interface IProps {
   beneficiaryProfile?: IProfileState;
   detailView?: boolean;
-  dao: IDAOState;
-  proposal: IProposalState;
+  daoState: IDAOState;
+  proposalState: ISchemeRegistrarProposalState;
   transactionModal?: boolean;
 }
 
@@ -33,10 +33,10 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
 
-  private copySchemeAddressOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void => copyToClipboard(schemeRegistrar.schemeToRegister);
+  private copyPluginAddressOnClick = (proposalState: ISchemeRegistrarProposalState) => (): void => copyToClipboard(proposalState.pluginToRegister);
 
   public render(): RenderOutput {
-    const { proposal, detailView, transactionModal } = this.props;
+    const { proposalState, detailView, transactionModal } = this.props;
 
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
@@ -45,17 +45,16 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       [css.withDetails]: true,
     });
 
-    const schemeRegistrar = proposal.schemeRegistrar;
-    const permissions = parseInt(schemeRegistrar.schemeToRegisterPermission, 16);
+    const permissions = parseInt(proposalState.pluginToRegisterPermission, 16);
 
     return (
       <div className={proposalSummaryClass}>
-        { schemeRegistrar.schemeToRemove  ?
+        { proposalState.pluginToRemove  ?
           <div>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/delete.svg"/>&nbsp;
-                  Remove Scheme&nbsp;
-              <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank" rel="noopener noreferrer">{schemeNameAndAddress(schemeRegistrar.schemeToRemove)}</a>
+                  Remove Plugin&nbsp;
+              <a href={linkToEtherScan(proposalState.pluginToRemove)} target="_blank" rel="noopener noreferrer">{pluginNameAndAddress(proposalState.pluginToRemove)}</a>
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
@@ -63,23 +62,23 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                   <tr>
                     <th>
                           Address:
-                      <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank" rel="noopener noreferrer">
+                      <a href={linkToEtherScan(proposalState.pluginToRemove)} target="_blank" rel="noopener noreferrer">
                         <img src="/assets/images/Icon/Link-blue.svg"/>
                       </a>
                     </th>
-                    <td>{schemeRegistrar.schemeToRemove}</td>
+                    <td>{proposalState.pluginToRemove}</td>
                   </tr>
                 </tbody></table>
               </div>
               : ""
             }
           </div>
-          : schemeRegistrar.schemeToRegister ?
+          : proposalState.pluginToRegister ?
             <div>
               <span className={css.summaryTitle}>
-                <b className={css.schemeRegisterIcon}>{proposal.type === IProposalType.SchemeRegistrarEdit ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
-                {proposal.type === IProposalType.SchemeRegistrarEdit ? "Edit" : "Add"} Scheme&nbsp;
-                <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank" rel="noopener noreferrer">{schemeNameAndAddress(schemeRegistrar.schemeToRegister)}</a>
+                <b className={css.pluginRegisterIcon}>{proposalState.type === "SchemeRegistrarEdit" ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
+                {proposalState.type === "SchemeRegistrarEdit" ? "Edit" : "Add"} Plugin&nbsp;
+                <a href={linkToEtherScan(proposalState.pluginToRegister)} target="_blank" rel="noopener noreferrer">{pluginNameAndAddress(proposalState.pluginToRegister)}</a>
               </span>
               { detailView ?
                 <div className={css.summaryDetails}>
@@ -88,13 +87,13 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                       <tr>
                         <th>
                           Address:
-                          <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank" rel="noopener noreferrer">
+                          <a href={linkToEtherScan(proposalState.pluginToRegister)} target="_blank" rel="noopener noreferrer">
                             <img src="/assets/images/Icon/Link-blue.svg"/>
                           </a>
                         </th>
                         <td>
-                          <span>{schemeRegistrar.schemeToRegister}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copySchemeAddressOnClick(schemeRegistrar)} />
+                          <span>{proposalState.pluginToRegister}</span>
+                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyPluginAddressOnClick(proposalState)} />
                         </td>
                       </tr>
                       <tr>
@@ -102,7 +101,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                         <td>
                           {
                             // eslint-disable-next-line no-bitwise
-                            permissions & 2 ? <div>Register other schemes</div> : ""
+                            permissions & 2 ? <div>Register other Plugins</div> : ""
                           }
                           {
                             // eslint-disable-next-line no-bitwise
@@ -132,15 +131,5 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
         }
       </div>
     );
-    // } else if (proposal.genericScheme) {
-    //   return (
-    //     <div className={proposalSummaryClass}>Unknown function call
-    //     to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
-    //     with callData: <em>{proposal.genericScheme.callData}</em>
-    //     </div>
-    //   );
-    // } else {
-    //   return <div> Unknown scheme...</div>;
-    // }
   }
 }

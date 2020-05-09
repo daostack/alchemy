@@ -1,6 +1,6 @@
 import { History } from "history";
 import { first, filter, toArray, mergeMap } from "rxjs/operators";
-import { Address, IProposalStage, IDAOState, IPluginState, IProposalState, IProposalOutcome, DAO, IContributionRewardExtState, IContributionRewardExtProposalState } from "@daostack/arc.js";
+import { Address, IProposalStage, IDAOState, IPluginState, IProposalState, IProposalOutcome, DAO, IContributionRewardExtState } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";

@@ -62,6 +62,10 @@ class StakeButtons extends React.Component<IProps, IState> {
     };
   }
 
+  public async componentDidMount() {
+    await this.props.proposal.plugin.entity.fetchState()
+  }
+
   public showApprovalModal = async (_event: any): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
@@ -106,8 +110,8 @@ class StakeButtons extends React.Component<IProps, IState> {
         "GEN Staked": amount,
         "Proposal Hash": proposal.id,
         "Proposal TItle": proposal.title,
-        "Scheme Address": proposal.scheme.address,
-        "Scheme Name": proposal.scheme.name,
+        "Plugin Address": proposal.plugin.entity.coreState.address,
+        "Plugin Name": proposal.plugin.entity.coreState.name,
         "Stake Type": pendingPrediction === IProposalOutcome.Fail ? "Fail" : pendingPrediction === IProposalOutcome.Pass ? "Pass" : "None",
       });
     };

@@ -55,6 +55,10 @@ class VoteButtons extends React.Component<IProps, IState> {
     };
   }
 
+  public async componentDidMount() {
+    await this.props.proposal.plugin.entity.fetchState()
+  }
+
   public handleClickVote = (vote: number) => async (): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
@@ -77,8 +81,8 @@ class VoteButtons extends React.Component<IProps, IState> {
       "Proposal Hash": proposal.id,
       "Proposal Title": proposal.title,
       "Reputation Voted": fromWei(currentAccountState.reputation),
-      "Scheme Address": proposal.scheme.address,
-      "Scheme Name": proposal.scheme.name,
+      "Plugin Address": proposal.plugin.entity.coreState.address,
+      "Plugin Name": proposal.plugin.entity.coreState.name,
       "Vote Type": this.state.currentVote === IProposalOutcome.Fail ? "Fail" : this.state.currentVote === IProposalOutcome.Pass ? "Pass" : "None",
     });
   };

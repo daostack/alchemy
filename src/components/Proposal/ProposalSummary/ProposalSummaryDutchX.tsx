@@ -1,26 +1,26 @@
-import { IProposalState } from "@daostack/arc.js";
+import { IGenericPluginProposalState } from "@daostack/arc.js";
 
 import BN = require("bn.js");
 import classNames from "classnames";
-import { GenericSchemeInfo } from "genericSchemeRegistry";
+import { GenericPluginInfo } from "genericPluginRegistry";
 import { formatTokens, linkToEtherScan } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
 
 interface IProps {
-  genericSchemeInfo: GenericSchemeInfo;
+  genericPluginInfo: GenericPluginInfo;
   detailView?: boolean;
-  proposal: IProposalState;
+  proposalState: IGenericPluginProposalState;
   transactionModal?: boolean;
 }
 
 export default class ProposalSummaryDutchX extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
-    const { proposal, detailView, genericSchemeInfo, transactionModal } = this.props;
+    const { proposalState, detailView, genericPluginInfo, transactionModal } = this.props;
     let decodedCallData: any;
     try {
-      decodedCallData = genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
+      decodedCallData = genericPluginInfo.decodeCallData(proposalState.callData);
     } catch (err) {
       if (err.message.match(/no action matching/gi)) {
         return <div>Error: {err.message} </div>;

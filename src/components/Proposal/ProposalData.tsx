@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Reward, Stake, Vote } from "@daostack/arc.js";
+import { Address, AnyProposal, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote } from "@daostack/arc.js";
 import { getArc } from "arc";
 import { ethErrorHandler } from "lib/util";
 
@@ -31,7 +31,7 @@ interface IStateProps {
   creatorProfile?: IProfileState;
 }
 
-type SubscriptionData = [IProposalState, Vote[], Stake[], IRewardState, IMemberState, BN, BN, BN];
+type SubscriptionData = [AnyProposal, Vote[], Stake[], IRewardState, IMemberState, BN, BN, BN];
 type IPreProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
@@ -43,7 +43,7 @@ export interface IInjectedProposalProps {
   daoEthBalance: BN;
   expired: boolean;
   member: IMemberState;
-  proposal: IProposalState;
+  proposal: AnyProposal;
   rewards: IRewardState;
   stakes: Stake[];
   votes: Vote[];

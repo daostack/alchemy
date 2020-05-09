@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Token } from "@daostack/arc.js";
+import { Address, IDAOState, IContributionRewardProposalState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Token, IContributionRewardState } from "@daostack/arc.js";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import classNames from "classnames";
@@ -49,7 +49,8 @@ type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const proposalState = ownProps.proposalState;
   return {...ownProps,
-    beneficiaryProfile: proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
+    beneficiaryProfile: proposalState.name === "ContributionReward" ?
+      state.profiles[(proposalState as IContributionRewardProposalState).beneficiary] : null,
   };
 };
 
@@ -73,6 +74,10 @@ class ActionButton extends React.Component<IProps, IState> {
     this.handleRedeemProposal = this.handleRedeemProposal.bind(this);
   }
 
+  public async componentDidMount() {
+    await this.props.proposalState.plugin.entity.fetchState()
+  }
+
   private handleClickExecute = (type: string) => async (e: any): Promise<void> => {
     e.preventDefault();
 
@@ -88,8 +93,8 @@ class ActionButton extends React.Component<IProps, IState> {
       "Origin": parentPage,
       "Proposal Hash": proposalState.id,
       "Proposal Title": proposalState.title,
-      "Scheme Address": proposalState.scheme.address,
-      "Scheme Name": proposalState.scheme.name,
+      "Plugin Address": proposalState.plugin.entity.coreState.address,
+      "Plugin Name": proposalState.plugin.entity.coreState.name,
       "Type": type,
     });
   }
@@ -149,7 +154,7 @@ class ActionButton extends React.Component<IProps, IState> {
     let daoLacksRequiredCrRewards = false;
     let daoLacksAllRequiredCrRewards = false;
     let contributionRewards;
-    if (proposalState.contributionReward) {
+    if (proposalState.name === "ContributionReward") {
       /**
        * unredeemed by the beneficiary
        */
@@ -264,7 +269,7 @@ class ActionButton extends React.Component<IProps, IState> {
                       >
                         <img src="/assets/images/Icon/redeem.svg" />
                         {
-                          (((beneficiaryNumUnredeemedCrRewards > 0) && (currentAccountAddress !== proposalState.contributionReward.beneficiary)) &&
+                          (((beneficiaryNumUnredeemedCrRewards > 0) && (currentAccountAddress !== (proposalState as IContributionRewardProposalState).beneficiary)) &&
                            (currentAccountNumUnredeemedGpRewards === 0)) ?
                             // note beneficiary can be the current account
                             " Redeem for beneficiary" : " Redeem"
@@ -296,8 +301,8 @@ class ActionButton extends React.Component<IProps, IState> {
       "DAO Name": daoState.name,
       "Proposal Hash": proposalState.id,
       "Proposal Title": proposalState.title,
-      "Scheme Address": proposalState.scheme.address,
-      "Scheme Name": proposalState.scheme.name,
+      "Plugin Address": proposalState.plugin.entity.coreState.address,
+      "Plugin Name": proposalState.plugin.entity.coreState.name,
       "Reputation Requested": fromWei(contributionRewards.reputationReward),
       "ETH Requested": fromWei(contributionRewards.ethReward),
       "External Token Requested": fromWei(contributionRewards.externalTokenReward),
@@ -318,19 +323,19 @@ const SubscribedActionButton = withSubscription({
 
     const arc = getArc();
     const genToken = arc.GENToken();
+    const crState = props.proposalState as IContributionRewardProposalState
 
-    if (props.proposalState.contributionReward &&
-      props.proposalState.contributionReward.externalTokenReward &&
-      !props.proposalState.contributionReward.externalTokenReward.isZero()) {
+    if (props.proposalState.name === "ContributionReward" &&
+        crState.externalTokenReward && !crState.externalTokenReward.isZero()) {
 
-      if (new BN(props.proposalState.contributionReward.externalToken.slice(2), 16).isZero()) {
+      if (new BN(crState.externalToken.slice(2), 16).isZero()) {
         // handle an old bug that enabled corrupt proposals
         // eslint-disable-next-line no-console
-        console.error(`externalTokenReward is set (to ${fromWei(props.proposalState.contributionReward.externalTokenReward).toString()}) but externalToken address is not`);
-        props.proposalState.contributionReward.externalTokenReward = undefined;
+        console.error(`externalTokenReward is set (to ${fromWei(crState.externalTokenReward).toString()}) but externalToken address is not`);
+        crState.externalTokenReward = undefined;
         externalTokenObservable = of(undefined);
       } else {
-        const token = new Token(arc, props.proposalState.contributionReward.externalToken);
+        const token = new Token(arc, crState.externalToken);
         externalTokenObservable = token.balanceOf(props.daoState.address).pipe(ethErrorHandler());
       }
     } else {

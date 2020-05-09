@@ -1,23 +1,27 @@
-import { IDAOState, IProposalState, IProposalType } from "@daostack/arc.js";
+import { IDAOState, AnyProposal, IContributionRewardProposalState, IGenericPluginProposalState, ISchemeRegistrarProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
-import { GenericSchemeRegistry } from "genericSchemeRegistry";
+import { GenericPluginRegistry } from "genericPluginRegistry";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
 import ProposalSummaryContributionReward from "./ProposalSummaryContributionReward";
-import ProposalSummaryKnownGenericScheme from "./ProposalSummaryKnownGenericScheme";
-import ProposalSummarySchemeRegistrar from "./ProposalSummarySchemeRegistrar";
-import ProposalSummaryUnknownGenericScheme from "./ProposalSummaryUnknownGenericScheme";
+import ProposalSummaryKnownGenericPlugin from "./ProposalSummaryKnownGenericPlugin";
+import ProposalSummaryPluginRegistrar from "./ProposalSummaryPluginRegistrar";
+import ProposalSummaryUnknownGenericPlugin from "./ProposalSummaryUnknownGenericPlugin";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;
   detailView?: boolean;
-  dao: IDAOState;
-  proposal: IProposalState;
+  daoState: IDAOState;
+  proposal: AnyProposal;
   transactionModal?: boolean;
 }
 
 export default class ProposalSummary extends React.Component<IProps> {
+
+  public async componentDidMount() {
+    await this.props.proposal.fetchState();
+  }
 
   public render(): RenderOutput {
 
@@ -29,19 +33,21 @@ export default class ProposalSummary extends React.Component<IProps> {
       [css.proposalSummary]: true,
     });
 
-    if (proposal.contributionReward) {
-      return <ProposalSummaryContributionReward {...this.props} />;
-    } else if (proposal.schemeRegistrar) {
-      return <ProposalSummarySchemeRegistrar {...this.props} />;
-    } else if (proposal.type === IProposalType.GenericScheme) {
-      const genericSchemeRegistry = new GenericSchemeRegistry();
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(proposal.genericScheme.contractToCall);
-      if (genericSchemeInfo) {
-        return <ProposalSummaryKnownGenericScheme  {...this.props} genericSchemeInfo={genericSchemeInfo} />;
+    if (proposal.coreState.name === "ContributionReward") {
+      const state = proposal.coreState as IContributionRewardProposalState;
+      return <ProposalSummaryContributionReward {...this.props} proposalState={state} />;
+    } else if (proposal.coreState.name.includes("SchemeRegistrar")) {
+      const state = proposal.coreState as ISchemeRegistrarProposalState;
+      return <ProposalSummaryPluginRegistrar {...this.props} proposalState={state} />;
+    } else if (proposal.coreState.name === "GenericScheme") {
+      const state = proposal.coreState as IGenericPluginProposalState;
+      const genericPluginRegistry = new GenericPluginRegistry();
+      const genericPluginInfo = genericPluginRegistry.getPluginInfo(state.contractToCall);
+      if (genericPluginInfo) {
+        return <ProposalSummaryKnownGenericPlugin  {...this.props} proposalState={state} genericPluginInfo={genericPluginInfo} />;
       } else {
-        return <ProposalSummaryUnknownGenericScheme {...this.props} />;
+        return <ProposalSummaryUnknownGenericPlugin {...this.props} proposalState={state} />;
       }
-
     } else {
       return <div className={proposalSummaryClass}>Unknown proposal type</div>;
     }

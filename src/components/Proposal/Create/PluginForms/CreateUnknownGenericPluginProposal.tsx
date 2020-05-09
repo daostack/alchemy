@@ -1,4 +1,4 @@
-import { ISchemeState } from "@daostack/arc.js";
+import { IPluginState } from "@daostack/arc.js";
 import { createProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { baseTokenName, isValidUrl } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
-import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
@@ -16,7 +16,7 @@ import MarkdownField from "./MarkdownField";
 interface IExternalProps {
   daoAvatarAddress: string;
   handleClose: () => any;
-  scheme: ISchemeState;
+  pluginState: IPluginState;
 }
 
 interface IDispatchProps {
@@ -44,7 +44,7 @@ interface IFormValues {
   [key: string]: any;
 }
 
-class CreateGenericScheme extends React.Component<IProps, IStateProps> {
+class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
 
   initialFormValues: IFormValues;
 
@@ -70,7 +70,7 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
 
     const proposalValues = {...values,
       dao: this.props.daoAvatarAddress,
-      scheme: this.props.scheme.address,
+      plugin: this.props.pluginState.address,
       tags: this.state.tags,
     };
 
@@ -80,8 +80,8 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
     Analytics.track("Submit Proposal", {
       "DAO Address": this.props.daoAvatarAddress,
       "Proposal Title": values.title,
-      "Scheme Address": this.props.scheme.address,
-      "Scheme Name": this.props.scheme.name,
+      "Plugin Address": this.props.pluginState.address,
+      "Plugin Name": this.props.pluginState.name,
     });
 
     this.props.handleClose();
@@ -281,4 +281,4 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
   }
 }
 
-export default connect(null, mapDispatchToProps)(CreateGenericScheme);
+export default connect(null, mapDispatchToProps)(CreateGenericPlugin);

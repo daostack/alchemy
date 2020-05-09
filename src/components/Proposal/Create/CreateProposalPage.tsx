@@ -1,11 +1,11 @@
-import { ISchemeState } from "@daostack/arc.js";
+import { IPluginState, IContributionRewardExtState, IGenericPluginState, IContributionRewardState } from "@daostack/arc.js";
 import { getArc } from "arc";
-import CreateKnownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateKnownGenericSchemeProposal";
-import CreateSchemeRegistrarProposal from "components/Proposal/Create/SchemeForms/CreateSchemeRegistrarProposal";
-import CreateUnknownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateUnknownGenericSchemeProposal";
+import CreateKnownGenericPluginProposal from "components/Proposal/Create/PluginForms/CreateKnownGenericPluginProposal";
+import CreatePluginRegistrarProposal from "components/Proposal/Create/PluginForms/CreatePluginRegistrarProposal";
+import CreateUnknownGenericPluginProposal from "components/Proposal/Create/PluginForms/CreateUnknownGenericPluginProposal";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { GenericSchemeRegistry } from "genericSchemeRegistry";
+import { GenericPluginRegistry } from "genericPluginRegistry";
 import Analytics from "lib/analytics";
 import { History } from "history";
 import { Page } from "pages";
@@ -14,30 +14,32 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { RouteComponentProps } from "react-router-dom";
-import { CrxRewarderComponentType, getCrxRewarderComponent, rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
-import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
-import { schemeName } from "lib/schemeUtils";
+import { CrxRewarderComponentType, getCrxRewarderComponent, rewarderContractName } from "components/Plugin/ContributionRewardExtRewarders/rewardersProps";
+import CreateContributionRewardProposal from "components/Proposal/Create/PluginForms/CreateContributionRewardProposal";
+import { pluginName } from "lib/pluginUtils";
 import * as css from "./CreateProposal.scss";
+import { from } from "rxjs";
+import { first } from "rxjs/operators";
 
 type IExternalProps = RouteComponentProps<any>;
 
 interface IExternalStateProps {
   daoAvatarAddress: string;
   history: History;
-  schemeId: string;
+  pluginId: string;
 }
 
 interface IStateProps {
   createCrxProposalComponent: any;
 }
 
-type IProps = IExternalProps & IExternalStateProps & ISubscriptionProps<ISchemeState>;
+type IProps = IExternalProps & IExternalStateProps & ISubscriptionProps<IPluginState>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
   return {
     ...ownProps,
     daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
-    schemeId: ownProps.match.params.schemeId,
+    pluginId: ownProps.match.params.pluginId,
   };
 };
 
@@ -56,8 +58,8 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
   }
 
   public doClose = () => {
-    const { daoAvatarAddress, history, schemeId } = this.props;
-    history.push("/dao/" + daoAvatarAddress + "/scheme/" + schemeId);
+    const { daoAvatarAddress, history, pluginId } = this.props;
+    history.push("/dao/" + daoAvatarAddress + "/plugin/" + pluginId);
   }
 
   public async componentDidMount() {
@@ -66,16 +68,18 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     Analytics.track("Page View", {
       "Page Name": Page.CreateProposal,
       "DAO Address": this.props.daoAvatarAddress,
-      "Scheme Address": this.props.schemeId,
+      "Plugin Address": this.props.pluginId,
     });
     const newState = {};
 
     /**
      * Get the "CreateProposal" modal dialog component supplied by the rewarder contract associated
-     * with this CrExt scheme (if it is a CrExt scheme -- very cheap if not a CrExt).
+     * with this CrExt plugin (if it is a CrExt plugin -- very cheap if not a CrExt).
      */
     if (!this.state.createCrxProposalComponent) {
-      Object.assign(newState, { createCrxProposalComponent: await getCrxRewarderComponent(this.props.data, CrxRewarderComponentType.CreateProposal) });
+      Object.assign(newState, { createCrxProposalComponent: await getCrxRewarderComponent(
+        this.props.data as IContributionRewardExtState, CrxRewarderComponentType.CreateProposal
+      ) });
     }
 
     this.setState(newState);
@@ -94,46 +98,44 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
 
   public render(): RenderOutput {
     const { daoAvatarAddress } = this.props;
-    const scheme = this.props.data;
+    const pluginState = this.props.data;
 
-    let createSchemeComponent = <div />;
+    let createPluginComponent = <div />;
     const props = {
       daoAvatarAddress,
       handleClose: this.doClose,
-      scheme,
+      pluginState,
     };
-    const schemeTitle = this.state.createCrxProposalComponent ? rewarderContractName(scheme) : schemeName(scheme);
+    const pluginTitle = this.state.createCrxProposalComponent ? rewarderContractName(pluginState as IContributionRewardExtState) : pluginName(pluginState);
 
     if (this.state.createCrxProposalComponent) {
-      createSchemeComponent = <this.state.createCrxProposalComponent {...props} />;
-    } else if (scheme.name === "ContributionReward") {
-      createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
-    } else if (scheme.name === "SchemeRegistrar") {
-      createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
-    } else if (scheme.name === "GenericScheme") {
-      const genericSchemeRegistry = new GenericSchemeRegistry();
-      let contractToCall: string;
-      if (scheme.genericSchemeParams) {
-        contractToCall  = scheme.genericSchemeParams.contractToCall;
-      } else {
-        throw Error("No contractToCall for this genericScheme was found!");
+      createPluginComponent = <this.state.createCrxProposalComponent {...props} />;
+    } else if (pluginState.name === "ContributionReward") {
+      createPluginComponent = <CreateContributionRewardProposal {...props} pluginState={props.pluginState as IContributionRewardState} />;
+    } else if (pluginState.name === "SchemeRegistrar") {
+      createPluginComponent = <CreatePluginRegistrarProposal {...props} />;
+    } else if (pluginState.name === "GenericScheme") {
+      let contractToCall = (pluginState as IGenericPluginState).pluginParams.contractToCall;
+      if (!contractToCall) {
+        throw Error("No contractToCall for this genericPlugin was found!");
       }
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
-      if (genericSchemeInfo) {
-        createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
+      const genericPluginRegistry = new GenericPluginRegistry();
+      const genericPluginInfo = genericPluginRegistry.getPluginInfo(contractToCall);
+      if (genericPluginInfo) {
+        createPluginComponent = <CreateKnownGenericPluginProposal  {...props} genericPluginInfo={genericPluginInfo} />;
       } else {
-        createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
+        createPluginComponent = <CreateUnknownGenericPluginProposal {...props} />;
       }
     }
 
     return (
       <div className={css.createProposalWrapper}>
-        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/create`}>Create {schemeTitle} Proposal</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/plugin/${pluginState.id}/proposals/create`}>Create {pluginTitle} Proposal</BreadcrumbsItem>
         <h2 className={css.header}>
-          <span>+ New proposal <b>| {schemeTitle}</b></span>
+          <span>+ New proposal <b>| {pluginTitle}</b></span>
           <button className={css.closeButton} aria-label="Close Create Proposal Modal" onClick={this.handleClose}>&times;</button>
         </h2>
-        { createSchemeComponent }
+        { createPluginComponent }
       </div>
     );
   }
@@ -144,10 +146,10 @@ const SubscribedCreateProposalPage = withSubscription({
   loadingComponent: <Loading/>,
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
-  createObservable: (props: IExternalStateProps) => {
+  createObservable: async (props: IExternalStateProps) => {
     const arc = getArc();
-    const scheme = arc.scheme(props.schemeId);
-    return scheme.state();
+    const plugin = await arc.plugins({ where: { plugin: props.pluginId } }).pipe(first()).toPromise();
+    return from(plugin[0].fetchState());
   },
 });
 

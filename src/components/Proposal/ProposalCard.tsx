@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Vote, Proposal } from "@daostack/arc.js";
+import { Address, IDAOState, IProposalStage, Vote, AnyProposal } from "@daostack/arc.js";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -10,7 +10,7 @@ import * as React from "react";
 import TrackVisibility from "react-on-screen";
 import { Link } from "react-router-dom";
 import { closingTime } from "lib/proposalHelpers";
-import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
@@ -27,7 +27,7 @@ import * as css from "./ProposalCard.scss";
 interface IExternalProps {
   currentAccountAddress: Address;
   daoState: IDAOState;
-  proposal: Proposal;
+  proposal: AnyProposal;
   suppressTrainingTooltips?: boolean;
 }
 
@@ -115,7 +115,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
               dao={daoState}
               expired={expired}
               proposal={proposal}
-              parentPage={Page.SchemeProposals}
+              parentPage={Page.PluginProposals}
             />
           </div>
         </div>;
@@ -136,7 +136,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
               expired={expired}
               proposal={proposal}
               stakes={stakes}
-              parentPage={Page.SchemeProposals}
+              parentPage={Page.PluginProposals}
             />
           </div>
         </div>;
@@ -168,7 +168,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   proposalState={proposal}
                   rewards={rewards}
                   expired={expired}
-                  parentPage={Page.SchemeProposals}
+                  parentPage={Page.PluginProposals}
                 />
 
                 <div onClick={this.stopClick} className={css.contextMenu} data-test-id="proposalContextMenu">
@@ -189,7 +189,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                         expired={expired}
                         proposal={proposal}
                         contextMenu
-                        parentPage={Page.SchemeProposals}
+                        parentPage={Page.PluginProposals}
                       />
 
                       <StakeButtons
@@ -202,7 +202,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                         expired={expired}
                         proposal={proposal}
                         stakes={stakes}
-                        parentPage={Page.SchemeProposals}
+                        parentPage={Page.PluginProposals}
                       />
                     </div>
                   }

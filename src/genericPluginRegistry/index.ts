@@ -4,17 +4,17 @@ import { Networks, targetedNetwork, toWei } from "lib/util";
 import { keccak256, Interface } from "ethers/utils";
 
 const namehash = require("eth-ens-namehash");
-const dutchXInfo = require("./schemes/DutchX.json");
-const bountiesInfo = require("./schemes/StandardBounties.json");
-const gpInfo = require("./schemes/GenesisProtocol.json");
-const ensRegistrarInfo = require("./schemes/EnsRegistrar.json");
-const ensRegistryInfo = require("./schemes/ENSRegistry.json");
-const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
-const registryLookupInfo = require("./schemes/RegistryLookup.json");
-const co2kenInfo = require("./schemes/CO2ken.json");
-const dXTokenRegistry = require("./schemes/dXTokenRegistry.json");
+const dutchXInfo = require("./plugins/DutchX.json");
+const bountiesInfo = require("./plugins/StandardBounties.json");
+const gpInfo = require("./plugins/GenesisProtocol.json");
+const ensRegistrarInfo = require("./plugins/EnsRegistrar.json");
+const ensRegistryInfo = require("./plugins/ENSRegistry.json");
+const ensPublicResolverInfo = require("./plugins/ENSPublicResolver.json");
+const registryLookupInfo = require("./plugins/RegistryLookup.json");
+const co2kenInfo = require("./plugins/CO2ken.json");
+const dXTokenRegistry = require("./plugins/dXTokenRegistry.json");
 
-const KNOWNSCHEMES = [
+const KNOWNPLUGINS = [
   dutchXInfo,
   co2kenInfo,
   bountiesInfo,
@@ -26,7 +26,7 @@ const KNOWNSCHEMES = [
   dXTokenRegistry,
 ];
 
-const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
+const PLUGINADDRESSES: {[network: string]: { [address: string]: any}} = {
   main: {},
   rinkeby: {},
   kovan: {},
@@ -34,13 +34,13 @@ const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
   ganache: {},
 };
 
-for (const schemeInfo of KNOWNSCHEMES) {
-  for (const network of Object.keys(SCHEMEADDRESSES)) {
+for (const pluginInfo of KNOWNPLUGINS) {
+  for (const network of Object.keys(PLUGINADDRESSES)) {
     const networkId = (network === "ganache" && "private" || network);
-    const addresses = schemeInfo.addresses[networkId];
+    const addresses = pluginInfo.addresses[networkId];
     if (addresses) {
       for (const address of addresses) {
-        SCHEMEADDRESSES[network][address.toLowerCase()] = schemeInfo;
+        PLUGINADDRESSES[network][address.toLowerCase()] = pluginInfo;
       }
     }
   }
@@ -136,7 +136,7 @@ interface IActionSpec {
   fields: any[];
 }
 
-interface IGenericSchemeJSON {
+interface IGenericPluginJSON {
   name: string;
   addresses: any[];
   actions: IActionSpec[];
@@ -176,13 +176,13 @@ export class Action implements IActionSpec {
 }
 
 /**
- * represents information we have about a generic scheme and the actions it can call
+ * represents information we have about a generic plugin and the actions it can call
  * @param info [description]
  */
-export class GenericSchemeInfo {
-  public specs: IGenericSchemeJSON;
+export class GenericPluginInfo {
+  public specs: IGenericPluginJSON;
 
-  constructor(info: IGenericSchemeJSON) {
+  constructor(info: IGenericPluginJSON) {
     this.specs = info;
   }
   public actions() {
@@ -248,21 +248,20 @@ export class GenericSchemeInfo {
 }
 
 
-export class GenericSchemeRegistry {
+export class GenericPluginRegistry {
   /**
    * Check the address to see if this is a known contract, and if so
    * return an object with information on how to call it
    * @param  address an ethereum address
    * @return an object [specs to be written..]
    */
-  public getSchemeInfo(address: string, network?: Networks): GenericSchemeInfo {
+  public getPluginInfo(address: string, network?: Networks): GenericPluginInfo {
     if (!network) {
       network = targetedNetwork();
     }
-    const spec = SCHEMEADDRESSES[network][address.toLowerCase()];
+    const spec = PLUGINADDRESSES[network][address.toLowerCase()];
     if (spec) {
-      return new GenericSchemeInfo(spec);
+      return new GenericPluginInfo(spec);
     }
   }
-
 }
