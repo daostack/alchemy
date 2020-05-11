@@ -3,7 +3,7 @@
 There are different ways a developer can use the docker environment for development.
 
 Probably the most flexible way is to run the services that alchemy depends on in one terminal,
-and run the alchemy server in a separate terminal:
+and run the graph-node server in a separate terminal:
 
 ```sh
   # run this only if package.json has changed

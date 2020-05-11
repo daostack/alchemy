@@ -4,10 +4,6 @@ You can run all needed services locally
 
 # Run app locally
 
-## Run the Alchemy Server
-1. If you want to be able to save and display the proposal titles and descriptions you will need the Alchemy Server app running.
-2. Follow instructions [here](https://github.com/daostack/alchemy-server)
-
 ## Working with Ganache without MetaMask
 1. Make sure plugins such as MetaMask or Parity extension are deactivated
 2. Run `npm run auto-start-ganache`
