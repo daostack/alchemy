@@ -125,7 +125,8 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
     const schemeFriendlyName = schemeName(scheme, scheme.address);
 
     return (
-      <div>
+      <>
+        <BreadcrumbsItem to={`/dao/${daoState.address}/schemes`}>Proposal Plugins</BreadcrumbsItem>
         <BreadcrumbsItem to={`/dao/${daoState.address}/scheme/${scheme.id}`}>{schemeFriendlyName}</BreadcrumbsItem>
 
         <div className={css.createProposal}>
@@ -233,7 +234,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             </div>
           </div>
         }
-      </div>
+      </>
     );
   }
 }
