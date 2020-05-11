@@ -1,7 +1,7 @@
 ## 0.10.7
   - Features Added
-    - added "Stake for Reputation Plugin" to the list of known plugins that can be registered to a DAO
-    - use Tor.us and Metamask providers when running against xDAI network (removes Burner Connect)
+    - Added "Stake for Reputation Plugin" to the list of known plugins that can be registered to a DAO
+    - Use Tor.us and Metamask providers when running against xDAI network (removes Burner Connect)
 
   - Bugs Fixed
     - Display a proper msg for daos members with no reputation at the moment of a proposal creation
