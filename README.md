@@ -18,7 +18,7 @@ While anyone can propose and predict, only people who hold reputation (voting po
 
 ## Dependencies:
 * [NVM](https://github.com/creationix/nvm#installation) can be helpful to manage different versions of node
-* [NodeJS 9.4 or greater + NPM](https://github.com/creationix/nvm#usage)
+* [NodeJS 12.6.2 or greater + NPM](https://github.com/creationix/nvm#usage)
 
 ## Installation
 
