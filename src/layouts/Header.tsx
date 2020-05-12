@@ -1,6 +1,6 @@
 import * as uiActions from "actions/uiActions";
 import { threeBoxLogout } from "actions/profilesActions";
-import { enableWalletProvider, getAccountIsEnabled, getArc, logout, getWeb3ProviderInfo, getWeb3Provider, providerHasConfigUi } from "arc";
+import { enableWalletProvider, getArc, logout, getAccountIsEnabled, getWeb3Provider, getWeb3ProviderInfo, providerHasConfigUi } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -14,7 +14,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { parse } from "query-string";
 import * as React from "react";
 import { connect } from "react-redux";
-import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom";
+import { Link, NavLink, matchPath, RouteComponentProps } from "react-router-dom";
 import { Breadcrumbs } from "react-breadcrumbs-dynamic";
 import { of } from "rxjs";
 import Toggle from "react-toggle";
@@ -101,12 +101,14 @@ class Header extends React.Component<IProps, null> {
   private toggleDiv: RefObject<HTMLDivElement>;
 
   public componentDidMount() {
-    this.toggleDiv.current.onmouseenter = (_ev: MouseEvent) => {
-      this.props.enableTrainingTooltipsShowAll();
-    };
-    this.toggleDiv.current.onmouseleave = (_ev: MouseEvent) => {
-      this.props.disableTrainingTooltipsShowAll();
-    };
+    if (this.toggleDiv.current) {
+      this.toggleDiv.current.onmouseenter = (_ev: MouseEvent) => {
+        this.props.enableTrainingTooltipsShowAll();
+      };
+      this.toggleDiv.current.onmouseleave = (_ev: MouseEvent) => {
+        this.props.disableTrainingTooltipsShowAll();
+      };
+    }
   }
 
   public copyAddress(e: any): void {
@@ -216,7 +218,7 @@ class Header extends React.Component<IProps, null> {
             </div> : ""
           }
           <div className={css.accountInfo}>
-            { currentAccountAddress ?
+            { currentAccountAddress && currentAccountAddress !== "" ?
               <span>
                 <div className={css.accountInfoContainer}>
                   <div className={css.accountImage}>
@@ -268,7 +270,7 @@ class Header extends React.Component<IProps, null> {
                 </div>
               </span> : <span></span>
             }
-            {!currentAccountAddress ?
+            { !currentAccountAddress || currentAccountAddress === "" ?
               <div className={css.web3ProviderLogin}>
                 <TrainingTooltip placement="bottomLeft" overlay={"Click here to connect your wallet provider"}>
                   <button onClick={this.handleClickLogin} data-test-id="loginButton">

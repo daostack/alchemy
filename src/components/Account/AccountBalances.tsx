@@ -31,7 +31,7 @@ class AccountBalances extends React.Component<IProps, null> {
     return (
       <div className={css.balances}>
         <h2>Reputation</h2>
-        { daoState ?
+        {daoState ?
           <div className={css.daoBalance}>
             <b>{daoState.name}</b>
             <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={currentAccountState.reputation} hideTooltip/>
@@ -63,7 +63,7 @@ export default withSubscription({
   checkForUpdate: (oldProps, newProps) => {
     const oldDao = oldProps.daoState;
     const newDao = newProps.daoState;
-    return !oldDao || !newDao || oldDao.id !== newDao.id;
+    return oldProps.address !== newProps.address || (oldDao && oldDao.address) !== (newDao && newDao.address);
   },
 
   createObservable: ({ daoState, address }: IExternalProps) => {

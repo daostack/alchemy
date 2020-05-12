@@ -1,10 +1,10 @@
 import { NotificationStatus } from "reducers/notifications";
 import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
 import { settings, Settings, USE_CONTRACTINFOS_CACHE } from "./settings";
-import { IProviderInfo } from "web3modal";
+import { IProviderInfo, getProviderInfo } from "web3modal";
 import { RetryLink } from "apollo-link-retry";
 import { Address, Arc, Web3Client, Web3Provider } from "@daostack/arc.js";
-import Web3Modal, { getProviderInfo } from "web3modal";
+import Web3Modal from "web3modal";
 import { Observable, } from "rxjs";
 import { first } from "rxjs/operators";
 import { Signer } from "ethers";
@@ -89,7 +89,13 @@ export function getWeb3ProviderInfo(provider?: Web3Provider): IWeb3ProviderInfo 
   if (provider && (typeof provider === "string" || Signer.isSigner(provider))) {
     throw Error("Cannot get ProviderInfo from a non-web3.js provider.");
   } else {
-    return provider ? getProviderInfo(provider) : null;
+    return provider ? getProviderInfo(provider) : {
+      name: "unknown",
+      id: "unknown",
+      type: "unknown",
+      check: "unknown",
+      logo: "unknown"
+    };
   }
 }
 
