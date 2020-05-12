@@ -1,4 +1,4 @@
-import { Address, IContributionRewardProposalState, IDAOState, IRewardState, Proposal, DAO } from "@daostack/arc.js";
+import { Address, IContributionRewardProposalState, IDAOState, IRewardState, Proposal, DAO, AnyProposal } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -48,6 +48,7 @@ interface IProposalData {
   dao: IDAOData;
   gpRewards: IRewardState[];
   contributionRewardState: IContributionRewardProposalState;
+  proposal: AnyProposal;
 }
 
 class RedemptionsPage extends React.Component<IProps, null> {
@@ -129,8 +130,6 @@ class RedemptionsPage extends React.Component<IProps, null> {
   private renderProposalsPerDAO(): RenderOutput[] {
     const { currentAccountAddress, data: proposals } = this.props;
 
-    const arc = getArc();
-
     const daoStatePerAddress = new Map<Address, IDAOState>();
     const proposalsPerDao = new Map<Address, IProposalData[]>();
     proposals.forEach(proposal => {
@@ -153,7 +152,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
               key={"proposal_" + proposal.id}
               currentAccountAddress={currentAccountAddress}
               daoState={daoState}
-              proposal={Proposal.create(arc, proposal.id)}
+              proposal={proposal.proposal}
             />;
           })}
         </div>
@@ -277,7 +276,18 @@ const SubscribedRedemptionsPage = withSubscription({
       ${DAO.fragments.DAOFields}
     `;
     const proposals = arc.getObservable(query, { subscribe: true })
-      .pipe(map((result: any) => result.data.proposals));
+      .pipe(map(async (result: any) => {
+        let proposals: IProposalData[] = result.data.proposals;
+
+        proposals = await Promise.all(proposals.map(async (proposal) => {
+          return {
+            ...proposal,
+            proposal: await Proposal.create(arc, proposal.id)
+          }
+        }));
+
+        return proposals;
+      }));
     return proposals;
   },
 });

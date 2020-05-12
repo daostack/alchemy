@@ -44,7 +44,7 @@ const ProposalFeedItem = (props: IProps) => {
   return (
     <div data-test-id={`eventCardContent-${event.id}`} className={css.proposalItem}>
       <div className={css.daoName}>
-        <Link to={`/dao/${dao.address}/scheme/${event.proposal.scheme.id}`}>{dao.name} &gt; {event.proposal.scheme.name} &gt;</Link>
+        <Link to={`/dao/${dao.address}/plugin/${event.proposal.scheme.id}`}>{dao.name} &gt; {event.proposal.scheme.name} &gt;</Link>
       </div>
 
       <div className={css.proposalDetails}>
@@ -91,4 +91,3 @@ const SubscribedProposalFeedItem = withSubscription({
 });
 
 export default connect(mapStateToProps)(SubscribedProposalFeedItem);
-

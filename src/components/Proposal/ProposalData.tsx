@@ -1,4 +1,4 @@
-import { Address, AnyProposal, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote } from "@daostack/arc.js";
+import { Address, AnyProposal, DAO, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, IContributionRewardProposalState } from "@daostack/arc.js";
 import { getArc } from "arc";
 import { ethErrorHandler } from "lib/util";
 
@@ -50,11 +50,13 @@ export interface IInjectedProposalProps {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IPreProps => {
-  const proposalState = ownProps.data ? ownProps.data[0] : null;
+  const proposal = ownProps.data ? ownProps.data[0] : null;
+  const proposalState = proposal.coreState;
+  const crState = proposal.coreState as IContributionRewardProposalState;
 
   return {
     ...ownProps,
-    beneficiaryProfile: proposalState && proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
+    beneficiaryProfile: proposalState && proposalState.name === "ContributionReward" ? state.profiles[crState.beneficiary] : null,
     creatorProfile: proposalState ? state.profiles[proposalState.proposer] : null,
   };
 };
@@ -70,7 +72,7 @@ class ProposalData extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      expired: props.data ? closingTime(props.data[0]).isSameOrBefore(moment()) : false,
+      expired: props.data ? closingTime(props.data[0].coreState).isSameOrBefore(moment()) : false,
     };
   }
 
@@ -78,7 +80,7 @@ class ProposalData extends React.Component<IProps, IState> {
     // Expire proposal in real time
 
     // Don't schedule timeout if its too long to wait, because browser will fail and trigger the timeout immediately
-    const millisecondsUntilExpires = closingTime(this.props.data[0]).diff(moment());
+    const millisecondsUntilExpires = closingTime(this.props.data[0].coreState).diff(moment());
     if (!this.state.expired && millisecondsUntilExpires < 2147483647) {
       this.expireTimeout = setTimeout(() => { this.setState({ expired: true });}, millisecondsUntilExpires);
     }
@@ -122,9 +124,8 @@ export default withSubscription({
   createObservable: async (props) => {
     const arc = getArc();
     const { currentAccountAddress, daoState, proposalId } = props;
-    const arcDao = daoState.dao;
-    // TODO @jordan
-    const proposal = arc.proposal(proposalId);
+    const arcDao = new DAO(arc, daoState);
+    const proposal = await Proposal.create(arc, proposalId);
     await proposal.fetchState();
     const spender = proposal.coreState.votingMachine;
 
@@ -152,7 +153,7 @@ export default withSubscription({
       );
     } else {
       return combineLatest(
-        proposal.state(), // state of the current proposal
+        proposal.state({}), // state of the current proposal
         of([]), // votes
         of([]), // stakes
         of(null), // rewards

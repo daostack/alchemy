@@ -155,15 +155,16 @@ class ActionButton extends React.Component<IProps, IState> {
     let daoLacksAllRequiredCrRewards = false;
     let contributionRewards;
     if (proposal.coreState.name === "ContributionReward") {
+      const crState = proposal.coreState as IContributionRewardProposalState;
       /**
        * unredeemed by the beneficiary
        */
-      contributionRewards = getCRRewards(proposal.coreState);
+      contributionRewards = getCRRewards(crState);
       beneficiaryNumUnredeemedCrRewards = Object.keys(contributionRewards).length;
       /**
        * unredeemed and available to the beneficiary
        */
-      const availableCrRewards = getCRRewards(proposal.coreState, daoBalances);
+      const availableCrRewards = getCRRewards(crState, daoBalances);
       // only true if there are rewards and the DAO can't pay them. false if there are no rewards or they can be paid.
       daoLacksRequiredCrRewards = Object.keys(availableCrRewards).length < beneficiaryNumUnredeemedCrRewards;
       daoLacksAllRequiredCrRewards = (Object.keys(availableCrRewards).length === 0) && (beneficiaryNumUnredeemedCrRewards > 0);
@@ -290,19 +291,20 @@ class ActionButton extends React.Component<IProps, IState> {
     const {
       currentAccountAddress,
       daoState,
-      proposalState,
+      proposal,
       redeemProposal,
     } = this.props;
 
-    await redeemProposal(daoState.address, proposalState.id, currentAccountAddress);
+    await proposal.fetchState();
+    await redeemProposal(daoState.address, proposal.id, currentAccountAddress);
 
     Analytics.track("Redeem", {
       "DAO Address": daoState.address,
       "DAO Name": daoState.name,
-      "Proposal Hash": proposalState.id,
-      "Proposal Title": proposalState.title,
-      "Plugin Address": proposalState.plugin.entity.coreState.address,
-      "Plugin Name": proposalState.plugin.entity.coreState.name,
+      "Proposal Hash": proposal.coreState.id,
+      "Proposal Title": proposal.coreState.title,
+      "Plugin Address": proposal.coreState.plugin.entity.coreState.address,
+      "Plugin Name": proposal.coreState.plugin.entity.coreState.name,
       "Reputation Requested": fromWei(contributionRewards.reputationReward),
       "ETH Requested": fromWei(contributionRewards.ethReward),
       "External Token Requested": fromWei(contributionRewards.externalTokenReward),
@@ -323,9 +325,9 @@ const SubscribedActionButton = withSubscription({
 
     const arc = getArc();
     const genToken = arc.GENToken();
-    const crState = props.proposalState as IContributionRewardProposalState
+    const crState = props.proposal.coreState as IContributionRewardProposalState
 
-    if (props.proposalState.name === "ContributionReward" &&
+    if (crState.name === "ContributionReward" &&
         crState.externalTokenReward && !crState.externalTokenReward.isZero()) {
 
       if (new BN(crState.externalToken.slice(2), 16).isZero()) {

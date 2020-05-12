@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Vote } from "@daostack/arc.js";
+import { Address, IDAOState, IProposalStage, Vote, IContributionRewardExtState } from "@daostack/arc.js";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -6,7 +6,6 @@ import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
 import { DiscussionEmbed } from "disqus-react";
 import { humanProposalTitle, ensureHttps } from "lib/util";
-import { pluginName } from "lib/pluginUtils";
 import Analytics from "lib/analytics";
 import { Page } from "pages";
 import * as React from "react";
@@ -14,6 +13,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 
 import { Link, RouteComponentProps } from "react-router-dom";
 import { closingTime, proposalEnded } from "lib/proposalHelpers";
+import { pluginName } from "lib/pluginUtils";
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import { rewarderContractName } from "components/Plugin/ContributionRewardExtRewarders/rewardersProps";
 import SocialShareModal from "../Shared/SocialShareModal";
@@ -64,9 +64,9 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       "DAO Name": this.props.daoState.name,
       "Proposal Hash": this.props.proposal.id,
       // TODO @jordan proposal data component (injected props)
-      "Proposal Title": this.props.proposal.title,
-      "Plugin Address": this.props.proposal.plugin.id,
-      "Plugin Name": this.props.proposal.plugin.name,
+      "Proposal Title": this.props.proposal.coreState.title,
+      "Plugin Address": this.props.proposal.coreState.plugin.id,
+      "Plugin Name": this.props.proposal.coreState.plugin.entity.coreState.name,
     });
   }
 
@@ -141,12 +141,13 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       stakes,
       votes,
     } = this.props;
+    const proposalState = proposal.coreState;
 
-    this.disqusConfig.title = proposal.title;
+    this.disqusConfig.title = proposalState.title;
     this.disqusConfig.url = process.env.BASE_URL + this.props.location.pathname;
     this.disqusConfig.identifier = proposalId;
 
-    const tags = proposal.tags;
+    const tags = proposalState.tags;
     let currentAccountVote = 0;
 
     // TODO: the next line, is a hotfix for a  which filters the votes, should not be necessary,
@@ -158,8 +159,8 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       currentAccountVote = currentVote.coreState.outcome;
     }
 
-    const url = ensureHttps(proposal.url);
-    const crxContractName = rewarderContractName(proposal.scheme);
+    const url = ensureHttps(proposal.coreState.url);
+    const crxContractName = rewarderContractName(proposalState.plugin.entity.coreState as IContributionRewardExtState);
 
     const voteWrapperClass = classNames({
       [css.voteBox]: true,
@@ -168,13 +169,13 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
     return (
       <div className={css.wrapper}>
-        <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme.id}`}>{schemeName(proposal.scheme, proposal.scheme.address)}</BreadcrumbsItem>
-        <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal, 40)}</BreadcrumbsItem>
+        <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/plugin/${proposalState.plugin.id}`}>{pluginName(proposalState.plugin.entity.coreState, proposalState.plugin.entity.coreState.address)}</BreadcrumbsItem>
+        <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposalState, 40)}</BreadcrumbsItem>
         <div className={this.proposalClass} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
             <div>
               <div className={css.statusContainer}>
-                <ProposalStatus proposalState={proposal} />
+                <ProposalStatus proposalState={proposalState} />
               </div>
 
               <div className={css.actionButtonContainer}>
@@ -184,7 +185,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   daoEthBalance={daoEthBalance}
                   detailView
                   parentPage={Page.ProposalDetails}
-                  proposalState={proposal}
+                  proposal={proposal}
                   rewards={rewards}
                   expired={expired}
                 />
@@ -198,19 +199,19 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               }
             </div>
             <h3 className={css.proposalTitleTop}>
-              <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
+              <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposalState)}</Link>
             </h3>
 
             <div className={css.timer + " clearfix"}>
-              {!proposalEnded(proposal) ?
+              {!proposalEnded(proposalState) ?
                 <span className={css.content}>
                   {!expired ?
-                    <ProposalCountdown proposal={proposal} detailView /> :
+                    <ProposalCountdown proposalState={proposalState} detailView /> :
                     <span className={css.closedTime}>
-                      {proposal.stage === IProposalStage.Queued ? "Expired" :
-                        proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
+                      {proposalState.stage === IProposalStage.Queued ? "Expired" :
+                        proposalState.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
                           "Closed"}&nbsp;
-                      {closingTime(proposal).format("MMM D, YYYY")}
+                      {closingTime(proposalState).format("MMM D, YYYY")}
                     </span>
                   }
                 </span>
@@ -218,12 +219,12 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.createdBy}>
-              <AccountPopup accountAddress={proposal.proposer} daoState={daoState} width={35} />
-              <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView />
+              <AccountPopup accountAddress={proposalState.proposer} daoState={daoState} width={35} />
+              <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView />
             </div>
 
             <div className={css.description}>
-              <ReactMarkdown source={proposal.description}
+              <ReactMarkdown source={proposalState.description}
                 renderers={{link: (props: { href: string; children: React.ReactNode }) => {
                   if (props.href) {
                     const url = new URL(props.href);
@@ -260,7 +261,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               [css.proposalSummaryContainer]: true,
               [css.hasTags]: tags && tags.length,
             })}>
-              <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView />
+              <ProposalSummary proposalState={proposalState} daoState={daoState} beneficiaryProfile={beneficiaryProfile} detailView />
             </div>
 
             { tags && tags.length ? <div className={css.tagsContainer}>
@@ -275,10 +276,10 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                     altStyle
                     currentAccountAddress={currentAccountAddress}
                     currentVote={currentAccountVote}
-                    dao={daoState}
+                    daoState={daoState}
                     expired={expired}
                     currentAccountState={member}
-                    proposal={proposal}
+                    proposalState={proposalState}
                     parentPage={Page.ProposalDetails}
                   />
                 </div>
@@ -298,8 +299,8 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               <div>
                 <div className={css.statusTitle}>
                   <h3>Votes</h3>
-                  <span onClick={this.showVotersModal(proposal.votesCount)} className={classNames({ [css.clickable]: proposal.votesCount > 0 })}>
-                    {proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"} &gt;
+                  <span onClick={this.showVotersModal(proposalState.votesCount)} className={classNames({ [css.clickable]: proposalState.votesCount > 0 })}>
+                    {proposalState.votesCount} Vote{proposalState.votesCount === 1 ? "" : "s"} &gt;
                   </span>
                 </div>
 
@@ -308,9 +309,9 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                     currentAccountAddress={currentAccountAddress}
                     currentAccountState={member}
                     currentVote={currentAccountVote}
-                    dao={daoState}
+                    daoState={daoState}
                     expired={expired}
-                    proposal={proposal}
+                    proposalState={proposalState}
                     parentPage={Page.ProposalDetails}
                   />
                 </div>
@@ -318,7 +319,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
               <div className={css.voteStatus + " clearfix"}>
                 <div className={css.voteGraph}>
-                  <VoteGraph size={90} proposal={proposal} />
+                  <VoteGraph size={90} proposalState={proposalState} />
                 </div>
 
                 <VoteBreakdown
@@ -327,7 +328,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   currentVote={currentAccountVote}
                   daoState={daoState}
                   detailView
-                  proposal={proposal} />
+                  proposalState={proposalState} />
               </div>
             </div>
 
@@ -342,20 +343,20 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   currentAccountAddress={currentAccountAddress}
                   currentAccountGens={currentAccountGenBalance}
                   currentAccountGenStakingAllowance={currentAccountGenAllowance}
-                  dao={daoState}
+                  daoState={daoState}
                   parentPage={Page.ProposalDetails}
                   expired={expired}
-                  proposal={proposal}
+                  proposalState={proposalState}
                   stakes={stakes}
                 />
               </div>
 
               <div className={css.predictionStatus}>
                 <StakeGraph
-                  proposal={proposal}
+                  proposalState={proposalState}
                   detailView
                 />
-                <BoostAmount detailView expired={expired} proposal={proposal} />
+                <BoostAmount detailView expired={expired} proposalState={proposalState} />
               </div>
             </div>
 
@@ -371,8 +372,8 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
           <VotersModal
             closeAction={this.closeVotersModal}
             currentAccountAddress={this.props.currentAccountAddress}
-            dao={daoState}
-            proposal={proposal}
+            daoState={daoState}
+            proposalState={proposalState}
             accountProfile={creatorProfile}
           /> : ""
         }

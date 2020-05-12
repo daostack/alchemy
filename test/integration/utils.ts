@@ -16,7 +16,7 @@ chai.Should();
 
 export const LATEST_ARC_VERSION = "0.0.1-rc.19";
 // because we do not have a "real" dutchX test, we'll just choose one (older) version
-// not thtat the correct address (migration.private.base[VERSION_FOR_DUTCHX_TEST]. GEenericScheme)
+// not thtat the correct address (migration.private.base[VERSION_FOR_DUTCHX_TEST]. GenericPlugin)
 // needs to be set in the generiscEhemeRegiststry/dutchx.json file for the tests to pass
 // (ie.e. for version 0.0.1-rc.17 this is 0xa6f8431c9eee4ac2859207af4004f7a948924c30)
 export const VERSION_FOR_DUTCHX_TEST = "0.0.1-rc.17";
@@ -28,6 +28,35 @@ export const userAddresses = [
 export function getArc() {
   const arc = new Arc(settings);
   return arc;
+}
+
+export interface ITestAddresses {
+  dao: {
+    name: string
+    Avatar: string
+    DAOToken: string
+    Reputation: string
+    Controller: string
+    Schemes: Array<{
+      name: string
+      alias: string
+      address: string
+    }>
+  }
+  queuedProposalId: string
+  preBoostedProposalId: string
+  boostedProposalId: string
+  executedProposalId: string
+  organs: {
+    DemoAvatar: string
+    DemoDAOToken: string
+    DemoReputation: string
+    ActionMock: string
+  }
+}
+
+export function getTestAddresses(version: string = LATEST_ARC_VERSION): ITestAddresses {
+  return require('@daostack/test-env-experimental/daos.json').demo[version]
 }
 
 /**

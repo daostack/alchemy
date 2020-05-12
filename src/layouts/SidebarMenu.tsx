@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { IDAOState, Token } from "@daostack/arc.js";
+import { IDAOState, Token, Member } from "@daostack/arc.js";
 import { hideMenu } from "actions/uiActions";
 import { getArc } from "arc";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -322,7 +322,13 @@ const SubscribedTokenBalance = withSubscription({
     // prime the cache: get all members fo this DAO -
     const daoState = props.dao;
 
-    await daoState.dao.members({ first: 1000, skip: 0 }).pipe(first()).toPromise();
+    await Member.search(getArc(), {
+      where: {
+        dao: daoState.id
+      },
+      first: 1000,
+      skip: 0
+    }).pipe(first()).toPromise();
 
     const arc = getArc();
     const token = new Token(arc, props.tokenAddress);

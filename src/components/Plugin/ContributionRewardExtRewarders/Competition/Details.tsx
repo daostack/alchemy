@@ -323,7 +323,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             <div className={css.header}>
               <div className={css.isWinner}><img src="/assets/images/Icon/winner.svg"></img></div>
               <div className={css.results}>
-                <RewardsString proposal={proposalState} dao={daoState} />
+                <RewardsString proposalState={proposalState} daoState={daoState} />
                 <img className={css.transferIcon} src="/assets/images/Icon/Transfer.svg" />
                 <div className={css.winners}>{competition.numberOfWinners} anticipated winner(s)</div>
               </div>

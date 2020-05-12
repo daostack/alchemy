@@ -1,11 +1,11 @@
-import { getContractAddresses } from "./utils";
+import { getTestAddresses, ITestAddresses } from "./utils";
 
 describe("History page", () => {
-  let addresses;
+  let addresses: ITestAddresses;
   let daoAddress: string;
 
   before(async () => {
-    addresses = getContractAddresses();
+    addresses = getTestAddresses();
     daoAddress = addresses.dao.Avatar.toLowerCase();
   });
 

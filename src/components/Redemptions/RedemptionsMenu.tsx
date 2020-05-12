@@ -157,7 +157,7 @@ class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
     const [daoState, daoEthBalance, rewards] = data;
     return <React.Fragment>
       <ProposalSummary
-        proposal={proposal}
+        proposalState={proposal.coreState}
         daoState={daoState}
         beneficiaryProfile={beneficiaryProfile}
         detailView={false}

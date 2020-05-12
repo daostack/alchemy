@@ -3,11 +3,11 @@ import {
   Address,
   IContractInfo,
   IPluginState,
-  IGenericSchemeState,
+  IGenericPluginState,
   IContributionRewardExtState
 } from "@daostack/arc.js";
 import { rewarderContractName } from "components/Plugin/ContributionRewardExtRewarders/rewardersProps";
-import { GenericSchemeRegistry } from "genericPluginRegistry";
+import { GenericPluginRegistry } from "genericPluginRegistry";
 
 /**
  * gotta load moment in order to use moment-timezone directly
@@ -88,12 +88,12 @@ export function isKnownPlugin(address: Address) {
 export function pluginName(plugin: IPluginState|IContractInfo, fallback?: string) {
   let name: string;
   if (plugin.name === "GenericScheme") {
-    const generic = plugin as IGenericSchemeState;
+    const generic = plugin as IGenericPluginState;
     if (generic.pluginParams && generic.pluginParams.contractToCall) {
-      const genericSchemeRegistry = new GenericSchemeRegistry();
+      const genericSchemeRegistry = new GenericPluginRegistry();
       let contractToCall;
       contractToCall = generic.pluginParams.contractToCall;
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
+      const genericSchemeInfo = genericSchemeRegistry.getPluginInfo(contractToCall);
       if (genericSchemeInfo) {
         name = genericSchemeInfo.specs.name;
       } else {
@@ -161,7 +161,6 @@ const pluginActionPropNames = new Map<string, Map<GetPluginIsActiveActions, stri
 
 export function getPluginIsActive(plugin: IPluginState, action?: GetPluginIsActiveActions): boolean {
   let votingMachineParamsPropertyName: string;
-  let pluginName = plugin.name ? `${plugin.name[0].toLowerCase()}${plugin.name.slice(1)}` : "";
 
   if (action) { // then the name of the voting machine properties property depends on the action
     const pluginActionsMap = pluginActionPropNames.get(plugin.name);

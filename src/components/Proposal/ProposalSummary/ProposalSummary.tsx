@@ -1,4 +1,4 @@
-import { IDAOState, AnyProposal, IContributionRewardProposalState, IGenericPluginProposalState, ISchemeRegistrarProposalState } from "@daostack/arc.js";
+import { IDAOState, AnyProposal, IContributionRewardProposalState, IGenericPluginProposalState, ISchemeRegistrarProposalState, IProposalState, Proposal } from "@daostack/arc.js";
 import classNames from "classnames";
 import { GenericPluginRegistry } from "genericPluginRegistry";
 import * as React from "react";
@@ -8,24 +8,32 @@ import ProposalSummaryContributionReward from "./ProposalSummaryContributionRewa
 import ProposalSummaryKnownGenericPlugin from "./ProposalSummaryKnownGenericPlugin";
 import ProposalSummaryPluginRegistrar from "./ProposalSummaryPluginRegistrar";
 import ProposalSummaryUnknownGenericPlugin from "./ProposalSummaryUnknownGenericPlugin";
+import { getArc } from "arc";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;
   detailView?: boolean;
   daoState: IDAOState;
-  proposal: AnyProposal;
+  proposalState: IProposalState;
   transactionModal?: boolean;
 }
 
-export default class ProposalSummary extends React.Component<IProps> {
+interface IState {
+  proposal: AnyProposal;
+}
+
+export default class ProposalSummary extends React.Component<IProps, IState> {
 
   public async componentDidMount() {
-    await this.props.proposal.fetchState();
+    this.setState({
+      proposal: await Proposal.create(getArc(), this.props.proposalState.id)
+    })
   }
 
   public render(): RenderOutput {
 
-    const { proposal, detailView, transactionModal } = this.props;
+    const { detailView, transactionModal } = this.props;
+    const { proposal } = this.state;
 
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,

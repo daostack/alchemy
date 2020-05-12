@@ -21,7 +21,7 @@ describe("Proposals", () => {
 
     const contributionRewardExt = contributionRewardExts[0];
     const contributionRewardExtState = await contributionRewardExt.state().pipe(first()).toPromise();
-    dao = new DAO(contributionRewardExtState.dao, arc);
+    dao = new DAO(arc, contributionRewardExtState.dao);
   });
 
 

@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, AnyProposal, IProposalStage  } from "@daostack/arc.js";
+import { IDAOState, IMemberState, IProposalStage, IProposalState  } from "@daostack/arc.js";
 import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
@@ -36,7 +36,7 @@ interface IProps {
   daoState: IDAOState;
   effectText?: string | JSX.Element;
   parentPage: Page;
-  proposal: AnyProposal;
+  proposalState: IProposalState;
   secondaryHeader?: string;
   showNotification: typeof showNotification;
   multiLineMsg?: boolean;
@@ -129,9 +129,8 @@ class PreTransactionModal extends React.Component<IProps, IState> {
   };
 
   public render(): RenderOutput {
-    const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, daoState, effectText, multiLineMsg, parentPage, proposal, secondaryHeader } = this.props;
+    const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, daoState, effectText, multiLineMsg, parentPage, proposalState, secondaryHeader } = this.props;
     const { stakeAmount } = this.state;
-    const proposalState = proposal.coreState;
 
     let icon; let transactionType; let rulesHeader; let rules; let actionTypeClass;
     let accountGens; let buyGensClass; let reputationFor; let reputationAgainst;
@@ -337,7 +336,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                 <div className={css.proposalTitle}>
                   <strong>{humanProposalTitle(proposalState)}</strong>
                 </div>
-                <ProposalSummary beneficiaryProfile={beneficiaryProfile} proposal={proposal} daoState={daoState} transactionModal/>
+                <ProposalSummary beneficiaryProfile={beneficiaryProfile} proposalState={proposalState} daoState={daoState} transactionModal/>
               </div>
               { /******* Staking form ******  **/
                 actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass ?

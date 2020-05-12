@@ -13,7 +13,7 @@ const SimplePluginCard = (props: IProps) => {
   const { daoState, pluginState } = props;
 
   return (
-    <div className={css.wrapper} data-test-id={`pluginCard-${plugin.name}`}>
+    <div className={css.wrapper} data-test-id={`pluginCard-${pluginState.name}`}>
       <Link className={css.headerLink} to={`/dao/${daoState.address}/plugin/${pluginState.id}`}>
         <h2>{pluginName(pluginState, "[Unknown]")}</h2>
       </Link>

@@ -1,13 +1,13 @@
 import * as uuid from "uuid";
-import { getContractAddresses, hideCookieAcceptWindow } from "./utils";
+import { getTestAddresses, hideCookieAcceptWindow, ITestAddresses } from "./utils";
 
 describe("SchemeRegistrar Proposals", () => {
   let daoAddress: string;
-  let addresses;
+  let addresses: ITestAddresses;
 
   before(() => {
-    addresses = getContractAddresses();
-    daoAddress = addresses.test.Avatar.toLowerCase();
+    addresses = getTestAddresses();
+    daoAddress = addresses.dao.Avatar.toLowerCase();
   });
 
   it("Create a proposal to add a scheme", async () => {

@@ -281,7 +281,7 @@ class StakeButtons extends React.Component<IProps, IState> {
                   </Tooltip> :
                   passButton
               }
-              {parentPage !== Page.ProposalDetails && proposalState.stage === IProposalStage.Queued && !expired && proposal.upstakeNeededToPreBoost.gten(0) ?
+              {parentPage !== Page.ProposalDetails && proposalState.stage === IProposalStage.Queued && !expired && proposalState.upstakeNeededToPreBoost.gten(0) ?
                 <div className={css.toBoostMessage}>&gt; {formatTokens(proposalState.upstakeNeededToPreBoost, "GEN to boost")}</div>
                 : ""}
               {

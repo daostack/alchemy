@@ -1,4 +1,4 @@
-import { Address, DAO, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromToken } from "@daostack/arc.js";
+import { Address, DAO, IProposalOutcome, IProposalBaseCreateOptions, ITransactionState, ITransactionUpdate, ReputationFromTokenPlugin } from "@daostack/arc.js";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import { toWei } from "lib/util";
@@ -39,7 +39,7 @@ export const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, tx
   ];
 };
 
-export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAction<any, IRootState, null> {
+export function createProposal(proposalOptions: IProposalBaseCreateOptions): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const arc = getArc();
@@ -47,7 +47,7 @@ export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAc
       const dao = new DAO(arc, proposalOptions.dao);
 
       const observer = operationNotifierObserver(dispatch, "Create proposal");
-      await dao.createProposal(proposalOptions).subscribe(...observer);
+      await (await dao.createProposal(proposalOptions)).subscribe(...observer);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err);
@@ -60,7 +60,7 @@ export function executeProposal(avatarAddress: string, proposalId: string, _acco
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
-    const proposalObj = await arc.dao(avatarAddress).proposal(proposalId);
+    const proposalObj = await arc.dao(avatarAddress).proposal({ where: { id: proposalId } });
 
     // Call redeemRewards to both execute the proposal and redeem the ContributionReward rewards,
     //   pass in null to not redeem any GenesisProtocol rewards
@@ -69,7 +69,9 @@ export function executeProposal(avatarAddress: string, proposalId: string, _acco
       observer[1] = originalErrorHandler;
       return await proposalObj.execute().subscribe(...observer);
     };
-    await proposalObj.redeemRewards().subscribe(...observer);
+
+    // TODO @jordan should all proposal types use the redeem contract?
+    // await proposalObj.redeemRewards().subscribe(...observer);
   };
 }
 
@@ -88,7 +90,7 @@ export type VoteAction = IAsyncAction<"ARC_VOTE", {
 export function voteOnProposal(daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     const arc = getArc();
-    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
+    const proposalObj = await arc.dao(daoAvatarAddress).proposal({ where: { id: proposalId } });
     const observer = operationNotifierObserver(dispatch, "Vote");
     await proposalObj.vote(voteOption).subscribe(...observer);
   };
@@ -108,7 +110,7 @@ export type StakeAction = IAsyncAction<"ARC_STAKE", {
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
   return async (dispatch: Redux.Dispatch<any, any>, ) => {
     const arc = getArc();
-    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
+    const proposalObj = await arc.dao(daoAvatarAddress).proposal({ where: { id: proposalId } });
     const observer = operationNotifierObserver(dispatch, "Stake");
     await proposalObj.stake(prediction, toWei(stakeAmount)).subscribe(...observer);
   };
@@ -138,18 +140,19 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
 
 export function redeemProposal(daoAvatarAddress: string, proposalId: string, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    const arc = getArc();
-    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
-    const observer = operationNotifierObserver(dispatch, "Reward");
-    await proposalObj.redeemRewards(accountAddress).subscribe(...observer);
+    //const arc = getArc();
+    //const proposalObj = await arc.dao(daoAvatarAddress).proposal({ where: { id: proposalId } });
+    //const observer = operationNotifierObserver(dispatch, "Reward");
+    // TODO @jordan
+    // await proposalObj.redeemRewards(accountAddress).subscribe(...observer);
   };
 }
 
-export function redeemReputationFromToken(reputationFromTokenScheme: ReputationFromToken, addressToRedeem: string, privateKey: string|undefined, redeemerAddress: Address|undefined, redemptionSucceededCallback: () => void) {
+export function redeemReputationFromToken(reputationFromTokenPlugin: ReputationFromTokenPlugin, addressToRedeem: string, privateKey: string|undefined, redeemerAddress: Address|undefined, redemptionSucceededCallback: () => void) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
 
-    const state = await reputationFromTokenScheme.fetchState();
+    const state = await reputationFromTokenPlugin.fetchState();
 
     if (privateKey) {
       const contract =  arc.getContract(state.address);
@@ -186,8 +189,8 @@ export function redeemReputationFromToken(reputationFromTokenScheme: ReputationF
       const observer = operationNotifierObserver(dispatch, "Redeem reputation");
 
       // send the transaction and get notifications
-      if (reputationFromTokenScheme) {
-        reputationFromTokenScheme.redeem(addressToRedeem).subscribe(observer[0], observer[1], redemptionSucceededCallback);
+      if (reputationFromTokenPlugin) {
+        reputationFromTokenPlugin.redeem(addressToRedeem).subscribe(observer[0], observer[1], redemptionSucceededCallback);
       }
     }
   };

@@ -1,12 +1,13 @@
 import {
   Arc,
   Address,
+  IContributionRewardProposalState,
   IProposalStage,
   IProposalState,
   IRewardState,
-  utils,
   Web3Provider
 } from "@daostack/arc.js";
+import * as utils from "@daostack/arc.js";
 import { JsonRpcProvider } from "ethers/providers";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
@@ -117,7 +118,7 @@ export function toBaseUnit(value: string, decimals: number) {
 
 export function fromWei(amount: BN): number {
   try {
-    return Number(utils.fromWei(amount));
+    return Number(fromWei(amount));
   } catch (err) {
     // eslint-disable-next-line no-console
     console.warn(`Invalid number value passed to fromWei: "${amount}": ${err.message}`);
@@ -410,14 +411,13 @@ export function hasGpRewards(reward: IRewardState) {
  * @param  reward unredeemed CR rewards
  * @param daoBalances
  */
-export function getCRRewards(proposalState: IProposalState, daoBalances: { [key: string]: BN|null } = {}): AccountClaimableRewardsType {
+export function getCRRewards(reward: IContributionRewardProposalState, daoBalances: { [key: string]: BN|null } = {}): AccountClaimableRewardsType {
   const result: AccountClaimableRewardsType = {};
 
-  if (proposalState.stage === IProposalStage.ExpiredInQueue) {
+  if (reward.stage === IProposalStage.ExpiredInQueue) {
     return {};
   }
 
-  const reward = proposalState.contributionReward;
   if (
     reward.ethReward &&
     !reward.ethReward.isZero()
@@ -456,7 +456,7 @@ export function getCRRewards(proposalState: IProposalState, daoBalances: { [key:
   return result;
 }
 
-export function hasCrRewards(reward: IProposalState) {
+export function hasCrRewards(reward: IContributionRewardProposalState) {
   const claimableRewards = getCRRewards(reward);
   for (const key of Object.keys(claimableRewards)) {
     if (claimableRewards[key].gt(new BN(0))) {

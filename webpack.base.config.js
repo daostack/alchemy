@@ -24,7 +24,7 @@ module.exports = {
       components: resolve("src/components"),
       constants: resolve("src/constants"),
       data: resolve("data"),
-      genericSchemeRegistry: resolve("src/genericSchemeRegistry"),
+      genericPluginRegistry: resolve("src/genericPluginRegistry"),
       crxRegistry: resolve("src/crxRegistry"),
       layouts: resolve("src/layouts"),
       lib: resolve("src/lib"),

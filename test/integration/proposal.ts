@@ -1,12 +1,12 @@
 import * as uuid from "uuid";
-import { getContractAddresses, hideCookieAcceptWindow, hideTrainingTooltips } from "./utils";
+import { getTestAddresses, hideCookieAcceptWindow, hideTrainingTooltips } from "./utils";
 
 describe("Proposals", () => {
   let daoAddress: string;
   let addresses;
 
   before(() => {
-    addresses = getContractAddresses();
+    addresses = getTestAddresses();
     daoAddress = addresses.dao.Avatar.toLowerCase();
     hideTrainingTooltips();
   });
@@ -19,8 +19,8 @@ describe("Proposals", () => {
     await loginButton.click();
 
     await hideCookieAcceptWindow();
-    const schemeCard = await $("[data-test-id=\"schemeCard-ContributionReward\"]");
-    await schemeCard.click();
+    const pluginCard = await $("[data-test-id=\"pluginCard-ContributionReward\"]");
+    await pluginCard.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();

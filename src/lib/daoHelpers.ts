@@ -1,4 +1,4 @@
-import { DAO, IDAOState, Reputation, Token } from "@daostack/arc.js";
+import { IDAOState, Reputation, Token } from "@daostack/arc.js";
 import { getArc } from "arc";
 import BN = require("bn.js");
 
@@ -31,24 +31,34 @@ export function createDaoStateFromQuery(queryData: IDAOData): IDAOState {
   const daoSpec: IDAOState & IDAOData = {
     ...queryData,
     address: queryData.id,
-    reputation,
-    token,
+    reputation: {
+      id: reputation.id,
+      entity: reputation
+    },
+    token: {
+      id: token.id,
+      entity: token
+    },
     tokenName: queryData.nativeToken.name,
     tokenSymbol: queryData.nativeToken.symbol,
     memberCount: Number(queryData.reputationHoldersCount),
     tokenTotalSupply: queryData.nativeToken.totalSupply,
     reputationTotalSupply: new BN(queryData.nativeReputation.totalSupply)
   };
-  const dao = new DAO(arc, daoSpec);
 
   return {
     ...daoSpec,
-    dao,
     numberOfBoostedProposals: Number(daoSpec.numberOfBoostedProposals),
     numberOfPreBoostedProposals: Number(daoSpec.numberOfPreBoostedProposals),
     numberOfQueuedProposals: Number(daoSpec.numberOfQueuedProposals),
-    reputation,
-    token,
+    reputation: {
+      id: reputation.id,
+      entity: reputation
+    },
+    token: {
+      id: token.id,
+      entity: token
+    },
     tokenName: daoSpec.nativeToken.name,
     tokenSymbol: daoSpec.nativeToken.symbol
   };

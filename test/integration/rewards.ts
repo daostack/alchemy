@@ -1,5 +1,5 @@
 import * as chai from "chai";
-import { getContractAddresses, hideCookieAcceptWindow } from "./utils";
+import { getTestAddresses, hideCookieAcceptWindow, ITestAddresses } from "./utils";
 
 chai.should();
 
@@ -49,10 +49,10 @@ describe("Header redemptions button", () => {
 });
 
 describe("Redemptions page", () => {
-  let testAddresses;
+  let testAddresses: ITestAddresses;
 
   before(() => {
-    testAddresses = getContractAddresses();
+    testAddresses = getTestAddresses();
   });
 
   it("should exist", async () => {
@@ -70,7 +70,7 @@ describe("Redemptions page", () => {
     await connectButton.waitForDisplayed();
     await connectButton.click();
 
-    const proposalId = testAddresses.test.executedProposalId;
+    const proposalId = testAddresses.executedProposalId;
     const proposalCard = await $(`[data-test-id="proposal-${proposalId}"]`);
     await proposalCard.waitForExist();
 

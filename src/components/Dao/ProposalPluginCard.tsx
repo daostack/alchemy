@@ -119,13 +119,13 @@ const ProposalDetail = (props: IProposalDetailProps) => {
     <Link className={css.proposalTitle} to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
       <div className={css.container}>
         <div className={css.miniGraph}>
-          <VoteGraph size={20} proposal={proposalState} />
+          <VoteGraph size={20} proposalState={proposalState} />
         </div>
         <div className={css.title}>
           {humanProposalTitle(proposalState)}
         </div>
         <div className={css.countdown}>
-          <ProposalCountdown proposal={proposalState} pluginView />
+          <ProposalCountdown proposalState={proposalState} pluginView />
         </div>
       </div>
     </Link>
