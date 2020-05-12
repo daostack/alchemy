@@ -123,6 +123,7 @@ export default withSubscription({
     const arc = getArc();
     const { currentAccountAddress, daoState, proposalId } = props;
     const arcDao = daoState.dao;
+    // TODO @jordan
     const proposal = arc.proposal(proposalId);
     await proposal.fetchState();
     const spender = proposal.coreState.votingMachine;

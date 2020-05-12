@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalState, IRewardState, Proposal, Reward } from "@daostack/arc.js";
+import { Address, AnyProposal, IDAOState, IRewardState, Reward, IContributionRewardProposalState } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -20,7 +20,7 @@ import { defaultIfEmpty, map, mergeMap } from "rxjs/operators";
 import * as css from "./RedemptionsMenu.scss";
 
 interface IExternalProps {
-  redeemableProposals: any[];
+  redeemableProposals: AnyProposal[];
   handleClose: () => void;
 }
 
@@ -45,7 +45,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IProposalState[]>;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<AnyProposal[]>;
 
 class RedemptionsMenu extends React.Component<IProps, null> {
   public render(): RenderOutput {
@@ -97,7 +97,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
     if (!await enableWalletProvider({ showNotification })) { return; }
 
     redeemableProposals.forEach(proposal => {
-      redeemProposal(proposal.dao.id, proposal.id, currentAccountAddress);
+      redeemProposal(proposal.coreState.dao.id, proposal.id, currentAccountAddress);
     });
   }
 }
@@ -108,17 +108,14 @@ const SubscribedRedemptionsMenu = withSubscription({
   errorComponent: (props) => <div className={css.menu}>{ props.error.message }</div>,
   checkForUpdate: ["redeemableProposals"],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
     return combineLatest(
-      props.redeemableProposals.map(proposalData => (
-        new Proposal(arc, proposalData.id).state()
-      ))
-    ).pipe(defaultIfEmpty([]));
+      props.redeemableProposals
+    ).pipe(defaultIfEmpty<AnyProposal[]>([]));
   },
 });
 
 interface IMenuItemProps {
-  proposal: IProposalState;
+  proposal: AnyProposal;
   currentAccountAddress: Address;
 }
 
@@ -127,8 +124,8 @@ class MenuItem extends React.Component<IMenuItemProps, null> {
     const { proposal } = this.props;
     return <div className={css.proposal}>
       <div className={css.title}>
-        <Link to={"/dao/" + proposal.dao.id + "/proposal/" + proposal.id}>
-          <span>{humanProposalTitle(proposal)}</span>
+        <Link to={"/dao/" + proposal.coreState.dao.id + "/proposal/" + proposal.id}>
+          <span>{humanProposalTitle(proposal.coreState)}</span>
           <img src="/assets/images/Icon/Open.svg" />
         </Link>
       </div>
@@ -143,9 +140,12 @@ interface IMenuItemContentStateProps {
 
 const mapStateToItemContentProps = (state: IRootState, ownProps: IMenuItemProps) => {
   const { proposal } = ownProps;
+
+  const proposalState = proposal.coreState;
+  const contributionReward = proposal.coreState as IContributionRewardProposalState;
   return {
     ...ownProps,
-    beneficiaryProfile: proposal.contributionReward ? state.profiles[proposal.contributionReward.beneficiary] : null,
+    beneficiaryProfile: proposalState.name === "ContributionReward" ? state.profiles[contributionReward.beneficiary] : null,
   };
 };
 
@@ -154,18 +154,18 @@ type IMenuItemContentProps = IMenuItemProps & IMenuItemContentStateProps & ISubs
 class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
   public render(): RenderOutput {
     const { beneficiaryProfile, currentAccountAddress, data, proposal } = this.props;
-    const [dao, daoEthBalance, rewards] = data;
+    const [daoState, daoEthBalance, rewards] = data;
     return <React.Fragment>
       <ProposalSummary
         proposal={proposal}
-        dao={dao}
+        daoState={daoState}
         beneficiaryProfile={beneficiaryProfile}
         detailView={false}
       />
       <div className={css.rewards}>
         <RedemptionsString
           currentAccountAddress={currentAccountAddress}
-          dao={dao}
+          daoState={daoState}
           proposal={proposal}
           rewards={rewards}
         />
@@ -173,11 +173,11 @@ class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
       <div className={css.redeemButton}>
         <ActionButton
           currentAccountAddress={currentAccountAddress}
-          daoState={dao}
+          daoState={daoState}
           daoEthBalance={daoEthBalance}
           expanded
           expired
-          proposalState={proposal}
+          proposal={proposal}
           rewards={rewards}
           parentPage={Page.RedemptionsMenu}
         />
@@ -194,9 +194,9 @@ const SubscribedMenuItemContent = withSubscription({
   createObservable: (props: IMenuItemProps) => {
     const { currentAccountAddress, proposal } = props;
     const arc = getArc();
-    const dao = arc.dao(proposal.dao.id);
+    const dao = arc.dao(proposal.coreState.dao.id);
     const ethBalance = concat(of(new BN("0")), dao.ethBalance()).pipe(ethErrorHandler());
-    const rewards = proposal.proposal.rewards({ where: { beneficiary: currentAccountAddress }})
+    const rewards = proposal.rewards({ where: { beneficiary: currentAccountAddress }})
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
     // subscribe to dao to get DAO reputation supply updates

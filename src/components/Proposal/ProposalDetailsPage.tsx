@@ -6,7 +6,7 @@ import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
 import { DiscussionEmbed } from "disqus-react";
 import { humanProposalTitle, ensureHttps } from "lib/util";
-import { schemeName } from "lib/schemeUtils";
+import { pluginName } from "lib/pluginUtils";
 import Analytics from "lib/analytics";
 import { Page } from "pages";
 import * as React from "react";
@@ -14,8 +14,8 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 
 import { Link, RouteComponentProps } from "react-router-dom";
 import { closingTime, proposalEnded } from "lib/proposalHelpers";
-import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
-import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
+import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
+import { rewarderContractName } from "components/Plugin/ContributionRewardExtRewarders/rewardersProps";
 import SocialShareModal from "../Shared/SocialShareModal";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
@@ -63,9 +63,10 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       "DAO Address": this.props.daoState.address,
       "DAO Name": this.props.daoState.name,
       "Proposal Hash": this.props.proposal.id,
+      // TODO @jordan proposal data component (injected props)
       "Proposal Title": this.props.proposal.title,
-      "Scheme Address": this.props.proposal.scheme.id,
-      "Scheme Name": this.props.proposal.scheme.name,
+      "Plugin Address": this.props.proposal.plugin.id,
+      "Plugin Name": this.props.proposal.plugin.name,
     });
   }
 

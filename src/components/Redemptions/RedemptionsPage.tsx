@@ -1,4 +1,4 @@
-import { Address, IContributionReward, IDAOState, IRewardState, Proposal, DAO } from "@daostack/arc.js";
+import { Address, IContributionRewardProposalState, IDAOState, IRewardState, Proposal, DAO } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -47,7 +47,7 @@ interface IProposalData {
   id: string;
   dao: IDAOData;
   gpRewards: IRewardState[];
-  contributionReward: IContributionReward;
+  contributionRewardState: IContributionRewardProposalState;
 }
 
 class RedemptionsPage extends React.Component<IProps, null> {
@@ -153,7 +153,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
               key={"proposal_" + proposal.id}
               currentAccountAddress={currentAccountAddress}
               daoState={daoState}
-              proposal={new Proposal(arc, proposal.id)}
+              proposal={Proposal.create(arc, proposal.id)}
             />;
           })}
         </div>
@@ -187,7 +187,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
       });
 
       // Add ContributionReward redemptions
-      const contributionReward = proposal.contributionReward;
+      const contributionReward = proposal.contributionRewardState;
       if (contributionReward && contributionReward.beneficiary === currentAccountAddress) {
         ethReward.iadd(new BN(contributionReward.ethReward));
 

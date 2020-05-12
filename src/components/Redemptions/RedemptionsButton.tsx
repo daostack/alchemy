@@ -1,4 +1,4 @@
-import { Address } from "@daostack/arc.js";
+import { Address, AnyProposal } from "@daostack/arc.js";
 import { getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
@@ -14,7 +14,7 @@ interface IExternalProps {
   currentAccountAddress?: Address;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<any[]>;
+type IProps = IExternalProps & ISubscriptionProps<AnyProposal[]>;
 
 class RedemptionsButton extends React.Component<IProps, null> {
   private menu = React.createRef<Tooltip>()

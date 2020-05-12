@@ -20,10 +20,10 @@ interface IExternalProps {
   currentAccountAddress: Address;
   currentAccountState: IMemberState;
   currentVote: IProposalOutcome|undefined;
-  dao: IDAOState;
+  daoState: IDAOState;
   expired?: boolean;
   parentPage: Page;
-  proposal: IProposalState;
+  proposalState: IProposalState;
 }
 
 interface IDispatchProps {
@@ -56,7 +56,7 @@ class VoteButtons extends React.Component<IProps, IState> {
   }
 
   public async componentDidMount() {
-    await this.props.proposal.plugin.entity.fetchState()
+    await this.props.proposalState.plugin.entity.fetchState()
   }
 
   public handleClickVote = (vote: number) => async (): Promise<void> => {
@@ -71,18 +71,18 @@ class VoteButtons extends React.Component<IProps, IState> {
   private closePreVoteModal = (_event: any): void => { this.setState({ showPreVoteModal: false }); }
 
   private handleVoteOnProposal = (): void => {
-    const { currentAccountState, dao, proposal } = this.props;
+    const { currentAccountState, daoState, proposalState } = this.props;
 
-    this.props.voteOnProposal(dao.address, proposal.id, this.state.currentVote);
+    this.props.voteOnProposal(daoState.address, proposalState.id, this.state.currentVote);
 
     Analytics.track("Vote", {
-      "DAO Address": dao.address,
-      "DAo Name": dao.name,
-      "Proposal Hash": proposal.id,
-      "Proposal Title": proposal.title,
+      "DAO Address": daoState.address,
+      "DAo Name": daoState.name,
+      "Proposal Hash": proposalState.id,
+      "Proposal Title": proposalState.title,
       "Reputation Voted": fromWei(currentAccountState.reputation),
-      "Plugin Address": proposal.plugin.entity.coreState.address,
-      "Plugin Name": proposal.plugin.entity.coreState.name,
+      "Plugin Address": proposalState.plugin.entity.coreState.address,
+      "Plugin Name": proposalState.plugin.entity.coreState.name,
       "Vote Type": this.state.currentVote === IProposalOutcome.Fail ? "Fail" : this.state.currentVote === IProposalOutcome.Pass ? "Pass" : "None",
     });
   };
@@ -94,16 +94,16 @@ class VoteButtons extends React.Component<IProps, IState> {
       currentVote,
       currentAccountState,
       parentPage,
-      proposal,
-      dao,
+      proposalState,
+      daoState,
       expired,
     } = this.props;
 
-    const votingDisabled = proposal.stage === IProposalStage.ExpiredInQueue ||
-                            proposal.stage === IProposalStage.Executed ||
-                            (proposal.stage === IProposalStage.Queued && expired) ||
-                            (proposal.stage === IProposalStage.Boosted && expired) ||
-                            (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
+    const votingDisabled = proposalState.stage === IProposalStage.ExpiredInQueue ||
+                            proposalState.stage === IProposalStage.Executed ||
+                            (proposalState.stage === IProposalStage.Queued && expired) ||
+                            (proposalState.stage === IProposalStage.Boosted && expired) ||
+                            (proposalState.stage === IProposalStage.QuietEndingPeriod && expired) ||
                             (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ||
                             currentVote === IProposalOutcome.Pass ||
                             currentVote === IProposalOutcome.Fail
@@ -117,13 +117,13 @@ class VoteButtons extends React.Component<IProps, IState> {
         "Can't change your vote" :
         (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
           "Requires reputation in this DAO" :
-          proposal.stage === IProposalStage.ExpiredInQueue ||
-              (proposal.stage === IProposalStage.Boosted && expired) ||
-              (proposal.stage === IProposalStage.QuietEndingPeriod && expired)  ||
-              (proposal.stage === IProposalStage.Queued && expired) ?
+          proposalState.stage === IProposalStage.ExpiredInQueue ||
+              (proposalState.stage === IProposalStage.Boosted && expired) ||
+              (proposalState.stage === IProposalStage.QuietEndingPeriod && expired)  ||
+              (proposalState.stage === IProposalStage.Queued && expired) ?
             "Can't vote on expired proposals" :
-            proposal.stage === IProposalStage.Executed ?
-              `Can't vote on ${proposal.winningOutcome === IProposalOutcome.Pass ? "passed" : "failed"} proposals` : "";
+            proposalState.stage === IProposalStage.Executed ?
+              `Can't vote on ${proposalState.winningOutcome === IProposalOutcome.Pass ? "passed" : "failed"} proposals` : "";
 
     const voteUpButtonClass = classNames({
       [css.votedFor]: currentVote === IProposalOutcome.Pass,
@@ -152,10 +152,10 @@ class VoteButtons extends React.Component<IProps, IState> {
             action={this.handleVoteOnProposal}
             closeAction={this.closePreVoteModal}
             currentAccount={currentAccountState}
-            dao={dao}
-            effectText={<span>Your influence: <strong><Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
+            daoState={daoState}
+            effectText={<span>Your influence: <strong><Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
             parentPage={parentPage}
-            proposal={proposal}
+            proposalState={proposalState}
           /> : ""
         }
         {contextMenu ?

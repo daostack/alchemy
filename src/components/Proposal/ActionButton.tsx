@@ -1,4 +1,4 @@
-import { Address, IDAOState, IContributionRewardProposalState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Token, IContributionRewardState } from "@daostack/arc.js";
+import { Address, IDAOState, IContributionRewardProposalState, IProposalOutcome, IProposalStage, IRewardState, Token, AnyProposal } from "@daostack/arc.js";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import classNames from "classnames";
@@ -26,7 +26,7 @@ interface IExternalProps {
   detailView?: boolean;
   expanded?: boolean;
   parentPage: Page;
-  proposalState: IProposalState;
+  proposal: AnyProposal;
   /**
    * unredeemed GP rewards owed to the current account
    */
@@ -47,7 +47,7 @@ interface IDispatchProps {
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[BN, BN]>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
-  const proposalState = ownProps.proposalState;
+  const proposalState = ownProps.proposal.coreState;
   return {...ownProps,
     beneficiaryProfile: proposalState.name === "ContributionReward" ?
       state.profiles[(proposalState as IContributionRewardProposalState).beneficiary] : null,
@@ -75,7 +75,7 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 
   public async componentDidMount() {
-    await this.props.proposalState.plugin.entity.fetchState()
+    await this.props.proposal.coreState.plugin.entity.fetchState()
   }
 
   private handleClickExecute = (type: string) => async (e: any): Promise<void> => {
@@ -83,18 +83,18 @@ class ActionButton extends React.Component<IProps, IState> {
 
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    const { currentAccountAddress, daoState, parentPage, proposalState } = this.props;
+    const { currentAccountAddress, daoState, parentPage, proposal } = this.props;
 
-    await this.props.executeProposal(daoState.address, proposalState.id, currentAccountAddress);
+    await this.props.executeProposal(daoState.address, proposal.id, currentAccountAddress);
 
     Analytics.track("Transition Proposal", {
       "DAO Address": daoState.address,
       "DAO Name": daoState.name,
       "Origin": parentPage,
-      "Proposal Hash": proposalState.id,
-      "Proposal Title": proposalState.title,
-      "Plugin Address": proposalState.plugin.entity.coreState.address,
-      "Plugin Name": proposalState.plugin.entity.coreState.name,
+      "Proposal Hash": proposal.id,
+      "Proposal Title": proposal.coreState.title,
+      "Plugin Address": proposal.coreState.plugin.entity.coreState.address,
+      "Plugin Name": proposal.coreState.plugin.entity.coreState.name,
       "Type": type,
     });
   }
@@ -121,7 +121,7 @@ class ActionButton extends React.Component<IProps, IState> {
       expired,
       expanded,
       parentPage,
-      proposalState,
+      proposal,
       /**
        * unredeemed GP rewards owed to the current account
        */
@@ -154,16 +154,16 @@ class ActionButton extends React.Component<IProps, IState> {
     let daoLacksRequiredCrRewards = false;
     let daoLacksAllRequiredCrRewards = false;
     let contributionRewards;
-    if (proposalState.name === "ContributionReward") {
+    if (proposal.coreState.name === "ContributionReward") {
       /**
        * unredeemed by the beneficiary
        */
-      contributionRewards = getCRRewards(proposalState);
+      contributionRewards = getCRRewards(proposal.coreState);
       beneficiaryNumUnredeemedCrRewards = Object.keys(contributionRewards).length;
       /**
        * unredeemed and available to the beneficiary
        */
-      const availableCrRewards = getCRRewards(proposalState, daoBalances);
+      const availableCrRewards = getCRRewards(proposal.coreState, daoBalances);
       // only true if there are rewards and the DAO can't pay them. false if there are no rewards or they can be paid.
       daoLacksRequiredCrRewards = Object.keys(availableCrRewards).length < beneficiaryNumUnredeemedCrRewards;
       daoLacksAllRequiredCrRewards = (Object.keys(availableCrRewards).length === 0) && (beneficiaryNumUnredeemedCrRewards > 0);
@@ -194,19 +194,19 @@ class ActionButton extends React.Component<IProps, IState> {
      *
      * We'll display the redeem button even if the CR beneficiary is not the current account.
      */
-    const displayRedeemButton = proposalState.executedAt &&
+    const displayRedeemButton = proposal.coreState.executedAt &&
                         ((currentAccountNumUnredeemedGpRewards > 0) ||
-                        ((proposalState.winningOutcome === IProposalOutcome.Pass) && (beneficiaryNumUnredeemedCrRewards > 0)));
+                        ((proposal.coreState.winningOutcome === IProposalOutcome.Pass) && (beneficiaryNumUnredeemedCrRewards > 0)));
 
     const redemptionsTip = RedemptionsTip({
       canRewardNone,
       canRewardOnlySome: canRewardSomeNotAll,
       contributionRewards,
       currentAccountAddress,
-      dao: daoState,
+      daoState: daoState,
       gpRewards,
       id: rewards ? rewards.id : "0",
-      proposal: proposalState,
+      proposal: proposal,
     });
 
     const redeemButtonClass = classNames({
@@ -227,31 +227,31 @@ class ActionButton extends React.Component<IProps, IState> {
             action={this.handleRedeemProposal(contributionRewards, gpRewards)}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreRedeemModal}
-            dao={daoState}
+            daoState={daoState}
             parentPage={parentPage}
             effectText={redemptionsTip}
-            proposal={proposalState}
+            proposalState={proposal.coreState}
             multiLineMsg
           /> : ""
         }
 
-        { proposalState.stage === IProposalStage.Queued && proposalState.upstakeNeededToPreBoost.ltn(0) ?
+        { proposal.coreState.stage === IProposalStage.Queued && proposal.coreState.upstakeNeededToPreBoost.ltn(0) ?
           <button className={css.preboostButton} onClick={this.handleClickExecute("Pre-Boost")} data-test-id="buttonBoost">
             <img src="/assets/images/Icon/boost.svg"/>
             { /* space after <span> is there on purpose */ }
             <span> Pre-Boost</span>
           </button> :
-          proposalState.stage === IProposalStage.PreBoosted && expired && proposalState.downStakeNeededToQueue.lten(0) ?
+          proposal.coreState.stage === IProposalStage.PreBoosted && expired && proposal.coreState.downStakeNeededToQueue.lten(0) ?
             <button className={css.unboostButton} onClick={this.handleClickExecute("Un-boost")} data-test-id="buttonBoost">
               <img src="/assets/images/Icon/boost.svg"/>
               <span> Un-Boost</span>
             </button> :
-            proposalState.stage === IProposalStage.PreBoosted && expired ?
+            proposal.coreState.stage === IProposalStage.PreBoosted && expired ?
               <button className={css.boostButton} onClick={this.handleClickExecute("Boost")} data-test-id="buttonBoost">
                 <img src="/assets/images/Icon/boost.svg"/>
                 <span> Boost</span>
               </button> :
-              (proposalState.stage === IProposalStage.Boosted || proposalState.stage === IProposalStage.QuietEndingPeriod) && expired ?
+              (proposal.coreState.stage === IProposalStage.Boosted || proposal.coreState.stage === IProposalStage.QuietEndingPeriod) && expired ?
                 <button className={css.executeButton} onClick={this.handleClickExecute("Execute")}>
                   <img src="/assets/images/Icon/execute.svg"/>
                   { /* space after <span> is there on purpose */ }
@@ -269,7 +269,7 @@ class ActionButton extends React.Component<IProps, IState> {
                       >
                         <img src="/assets/images/Icon/redeem.svg" />
                         {
-                          (((beneficiaryNumUnredeemedCrRewards > 0) && (currentAccountAddress !== (proposalState as IContributionRewardProposalState).beneficiary)) &&
+                          (((beneficiaryNumUnredeemedCrRewards > 0) && (currentAccountAddress !== (proposal.coreState as IContributionRewardProposalState).beneficiary)) &&
                            (currentAccountNumUnredeemedGpRewards === 0)) ?
                             // note beneficiary can be the current account
                             " Redeem for beneficiary" : " Redeem"

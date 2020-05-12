@@ -8,7 +8,7 @@ import * as css from "./StakeGraph.scss";
 interface IProps {
   detailView?: boolean;
   historyView?: boolean;
-  proposal: IProposalState;
+  proposalState: IProposalState;
 }
 
 export default class StakeGraph extends React.Component<IProps, null> {
@@ -17,12 +17,12 @@ export default class StakeGraph extends React.Component<IProps, null> {
     const {
       detailView,
       historyView,
-      proposal,
+      proposalState,
     } = this.props;
 
     // round second decimal up
-    const stakesFor = fromWei(proposal.stakesFor);
-    const stakesAgainst = fromWei(proposal.stakesAgainst);
+    const stakesFor = fromWei(proposalState.stakesFor);
+    const stakesAgainst = fromWei(proposalState.stakesAgainst);
     const isPassing = stakesFor >= stakesAgainst;
     const isFailing = stakesAgainst >= stakesFor;
     const maxWidth = Math.max(stakesFor, stakesAgainst);
@@ -45,12 +45,12 @@ export default class StakeGraph extends React.Component<IProps, null> {
             <div className={css.stakesFor}>
               <img className={css.defaultIcon} src="/assets/images/Icon/v-small-line.svg"/>
               <img className={css.detailIcon} src="/assets/images/Icon/v-small.svg"/>
-              {formatTokens(proposal.stakesFor)}
+              {formatTokens(proposalState.stakesFor)}
             </div>
             <div className={css.stakesAgainst}>
               <img className={css.defaultIcon} src="/assets/images/Icon/x-small-line.svg"/>
               <img className={css.detailIcon} src="/assets/images/Icon/x-small.svg"/>
-              {formatTokens(proposal.stakesAgainst)}
+              {formatTokens(proposalState.stakesAgainst)}
             </div>
           </div>
           <div className={css.rightColumn}>

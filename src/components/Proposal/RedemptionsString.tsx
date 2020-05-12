@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/arc.js";
+import { Address, IDAOState, AnyProposal, IRewardState, IContributionRewardProposalState } from "@daostack/arc.js";
 
 import BN = require("bn.js");
 import Reputation from "components/Account/Reputation";
@@ -7,8 +7,8 @@ import * as React from "react";
 
 interface IProps {
   currentAccountAddress: Address;
-  dao: IDAOState;
-  proposal: IProposalState;
+  daoState: IDAOState;
+  proposal: AnyProposal;
   rewards: IRewardState;
   separator?: string;
 }
@@ -16,7 +16,7 @@ interface IProps {
 export default class RedemptionsString extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
-    const { currentAccountAddress, dao, proposal, rewards, separator } = this.props;
+    const { currentAccountAddress, daoState, proposal, rewards, separator } = this.props;
 
     const zero = new BN(0);
     const rewardComponents: any = [];
@@ -37,10 +37,11 @@ export default class RedemptionsString extends React.Component<IProps, null> {
       }
     }
 
-    const contributionReward = proposal.contributionReward;
+    const proposalState = proposal.coreState;
+    const contributionReward = proposal.coreState as IContributionRewardProposalState;
 
-    if (contributionReward && currentAccountAddress === contributionReward.beneficiary) {
-      const rewards = getCRRewards(proposal);
+    if (proposalState.name === "ContributionReward" && currentAccountAddress === contributionReward.beneficiary) {
+      const rewards = getCRRewards(proposalState);
       if (rewards.ethReward) {
         rewardComponents.push(formatTokens(rewards.ethReward, baseTokenName()));
       }
@@ -48,7 +49,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
         rewardComponents.push(formatTokens(rewards.externalTokenReward, tokenSymbol(contributionReward.externalToken), tokenDecimals(contributionReward.externalToken)));
       }
       if (rewards.nativeTokenReward) {
-        rewardComponents.push(formatTokens(rewards.nativeTokenReward, dao.tokenSymbol));
+        rewardComponents.push(formatTokens(rewards.nativeTokenReward, daoState.tokenSymbol));
       }
       if (rewards.reputationReward) {
         reputation.add(rewards.reputationReward);
@@ -61,7 +62,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
 
     if (reputation.gt(zero)) {
       rewardComponents.push(
-        <Reputation reputation={reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} />);
+        <Reputation reputation={reputation} totalReputation={daoState.reputationTotalSupply} daoName={daoState.name} />);
     }
 
     const redemptionsStyle = {

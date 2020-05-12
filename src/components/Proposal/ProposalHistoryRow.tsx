@@ -1,10 +1,11 @@
-import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/arc.js";
+import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, AnyProposal, Member } from "@daostack/arc.js";
+import { getArc } from "arc";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { formatTokens, humanProposalTitle } from "lib/util";
-import { schemeName } from "lib/schemeUtils";
+import { pluginName } from "lib/pluginUtils";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -18,7 +19,7 @@ import * as css from "./ProposalHistoryRow.scss";
 import BN = require("bn.js");
 
 interface IExternalProps {
-  proposal: Proposal;
+  proposal: AnyProposal;
   daoState: IDAOState;
   currentAccountAddress: Address;
   history: any;
@@ -152,8 +153,8 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
         <td onClick={this.gotoProposal} className={css.endDate}>
           {closingTime(proposalState) ? closingTime(proposalState).format("MMM D, YYYY") : ""}
         </td>
-        <td onClick={this.gotoProposal} className={css.scheme}>
-          {schemeName(proposalState.scheme)}
+        <td onClick={this.gotoProposal} className={css.plugin}>
+          {pluginName(proposalState.plugin.entity.coreState)}
         </td>
         <td onClick={this.gotoProposal} className={css.title}>
           {humanProposalTitle(proposalState)}
@@ -164,12 +165,12 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
               currentAccountAddress={currentAccountAddress}
               currentAccountState={currentMemberState}
               currentVote={currentAccountVote} daoState={daoState}
-              proposal={proposalState} historyView />
+              proposalState={proposalState} historyView />
           </div>
         </td>
         <td onClick={this.gotoProposal} className={css.predictions}>
           <StakeGraph
-            proposal={proposalState}
+            proposalState={proposalState}
             historyView
           />
         </td>
@@ -218,18 +219,23 @@ export default withSubscription({
     const proposal = props.proposal;
     if (!props.currentAccountAddress) {
       return combineLatest(
-        proposal.state(),
+        proposal.state({}),
         of([]),
         of([]),
         of(null),
       );
     } else {
+      const member = new Member(getArc(), Member.calculateId({
+        contract: props.daoState.reputation.id,
+        address: props.currentAccountAddress
+      }));
+
       return combineLatest(
-        proposal.state(),
+        proposal.state({}),
         proposal.stakes({ where: { staker: props.currentAccountAddress}}),
         proposal.votes({ where: { voter: props.currentAccountAddress }}),
         // we set 'fetchPolicy' to 'cache-only' so as to not send queries for addresses that are not members. The cache is filled higher up.
-        props.daoState.dao.member(props.currentAccountAddress).state({ fetchPolicy: "cache-only"}),
+        member.state({ fetchPolicy: "cache-only"}),
       );
     }
   },

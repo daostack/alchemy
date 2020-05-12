@@ -15,7 +15,7 @@ interface IExternalProps {
   daoState: IDAOState;
   detailView?: boolean;
   currentAccountState: IMemberState;
-  proposal: IProposalState;
+  proposalState: IProposalState;
   historyView?: boolean;
 }
 
@@ -62,7 +62,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
       currentVote,
       detailView,
       historyView,
-      proposal,
+      proposalState,
       daoState,
     } = this.props;
 
@@ -92,7 +92,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
           <span className={css.reputation}>
             <span className={css.label}>For</span>
             <br className={css.label}/>
-            <Reputation daoName={daoState.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesFor} hideSymbol hideTooltip={!detailView} />
+            <Reputation daoName={daoState.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesFor} hideSymbol hideTooltip={!detailView} />
             <b className={css.label}> Rep</b>
           </span>
         </div>
@@ -102,7 +102,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
           <span className={css.reputation}>
             <span className={css.label}>Against</span>
             <br className={css.label}/>
-            <Reputation daoName={daoState.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesAgainst} hideSymbol hideTooltip={!detailView} />
+            <Reputation daoName={daoState.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesAgainst} hideSymbol hideTooltip={!detailView} />
             <b className={css.label}> Rep</b>
           </span>
         </div>

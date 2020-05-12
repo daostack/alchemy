@@ -8,7 +8,7 @@ import * as React from "react";
 import * as css from "./VoteGraph.scss";
 
 interface IProps {
-  proposal: IProposalState;
+  proposalState: IProposalState;
   size: number;
   newVotesAgainst?: BN;
   newVotesFor?: BN;
@@ -16,11 +16,11 @@ interface IProps {
 
 export default class VoteGraph extends React.Component<IProps, null> {
   public render(): RenderOutput {
-    const { newVotesAgainst, newVotesFor, proposal, size } = this.props;
+    const { newVotesAgainst, newVotesFor, proposalState, size } = this.props;
 
-    const totalReputationSupply = fromWei(proposal.totalRepWhenCreated);
-    const votesFor = fromWei(proposal.votesFor.add(newVotesFor || new BN(0)));
-    const votesAgainst = fromWei(proposal.votesAgainst.add(newVotesAgainst || new BN(0)));
+    const totalReputationSupply = fromWei(proposalState.totalRepWhenCreated);
+    const votesFor = fromWei(proposalState.votesFor.add(newVotesFor || new BN(0)));
+    const votesAgainst = fromWei(proposalState.votesAgainst.add(newVotesAgainst || new BN(0)));
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
     const yesPercentage = totalReputationSupply && votesFor ? Math.max(2, +(votesFor / totalReputationSupply * 100).toFixed(2)) : 0;
@@ -35,7 +35,7 @@ export default class VoteGraph extends React.Component<IProps, null> {
       [css.yesWinning]: yesWinning,
     });
 
-    const relative = proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod;
+    const relative = proposalState.stage === IProposalStage.Boosted || proposalState.stage === IProposalStage.QuietEndingPeriod;
     const displayYesPercentage = relative ? yesPercentage / Math.max(1, yesPercentage + noPercentage) * 100 : yesPercentage;
     const displayNoPercentage = relative ? noPercentage / Math.max(1, yesPercentage + noPercentage) * 100 : noPercentage;
 
