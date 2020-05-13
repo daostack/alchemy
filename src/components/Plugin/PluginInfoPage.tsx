@@ -22,7 +22,7 @@ interface IExternalProps {
   daoState: IDAOState;
   history: History;
   plugin: IPluginState;
-  pluginRegistrar: ISchemeRegistrarState;
+  pluginRegistrar?: ISchemeRegistrarState;
 }
 
 type IProps = IExternalProps & IDispatchProps;
@@ -131,17 +131,19 @@ class PluginInfo extends React.Component<IProps, null> {
     return <div>
       <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/plugin/${plugin.id}/info`}>Info</BreadcrumbsItem>
 
-      <div className={css.editPlugin}>
-        <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
-          <a
-            data-test-id="createProposal"
-            href="#!"
-            onClick={this.handleEditPlugin}
-          >
-            Edit Plugin
-          </a>
-        </TrainingTooltip>
-      </div>
+      { this.props.pluginRegistrar ?
+        <div className={css.editPlugin}>
+          <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+            <a
+              data-test-id="createProposal"
+              href="#!"
+              onClick={this.handleEditPlugin}
+            >
+              Edit Plugin
+            </a>
+          </TrainingTooltip>
+        </div> : undefined
+      }
 
       <div className={css.pluginInfoContainer}>
         <h3>{pluginName(plugin, plugin.address)}</h3>
