@@ -77,3 +77,10 @@ npm run build:watch
     docker rm $(docker ps -a -q)
     docker rmi $(docker images -a -q)
     ```
+# Environment Variables
+
+Heroku uses app.json to supply default values to the Heroku app environment variable configuration GUI.
+
+Webpack-dev-server, for local builds in absence of Heroku, uses the webpack.*.config.js `EnvironmentPlugin` to supply default values to the npm command line commands in package.json.  Without these default values, which may be no more that an empty string if you are sure the correct value will be supplied in package.json, the values in package.json will not work at all.
+
+To supply different network-specific values the final values will have to come from package.json for local builds, and Heroku app configurations for Heroku builds.

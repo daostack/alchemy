@@ -1,7 +1,7 @@
 import { History } from "history";
 import { first, filter, toArray, mergeMap } from "rxjs/operators";
-import { Address, IProposalStage, IDAOState, IPluginState, IProposalState, IProposalOutcome, DAO, IContributionRewardExtState } from "@daostack/arc.js";
-import { enableWalletProvider, getArc } from "arc";
+import { Address, AnyPlugin, DAO, IProposalStage, IDAOState, IPluginState, IProposalState, IProposalOutcome, IContributionRewardExtState, ISchemeRegistrarState, Plugin } from "@daostack/arc.js";
+import { getArc } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -31,6 +31,7 @@ interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   history: History;
   daoState: IDAOState;
+  pluginRegistrar: ISchemeRegistrarState;
 }
 
 interface IExternalState {
@@ -42,7 +43,7 @@ interface IState {
   crxRewarderProps: ICrxRewarderProps;
 }
 
-type IProps = IExternalProps & IDispatchProps & IExternalState & ISubscriptionProps<[IPluginState, Array<IProposalState>]>;
+type IProps = IExternalProps & IDispatchProps & IExternalState & ISubscriptionProps<[IPluginState, IPluginState, Array<IProposalState>]>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalState => {
   const match = ownProps.match;
@@ -67,24 +68,15 @@ class PluginContainer extends React.Component<IProps, IState> {
     };
   }
 
-  public handleNewProposal = async (): Promise<void> => {
-    const { pluginId, showNotification, daoState } = this.props;
-    const daoAvatarAddress = daoState.address;
-
-    if (!await enableWalletProvider({ showNotification })) { return; }
-
-    this.props.history.push(`/dao/${daoAvatarAddress}/plugin/${pluginId}/proposals/create/`);
-  };
-
-  private pluginInfoPageHtml = (props: any) => <PluginInfoPage {...props} daoState={this.props.daoState} plugin={this.props.data[0]} />;
-  private pluginProposalsPageHtml = (isActive: boolean) => (props: any) => <PluginProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} plugin={this.props.data[0]} />;
+  private pluginInfoPageHtml = (props: any) => <PluginInfoPage {...props} daoState={this.props.daoState} plugin={this.props.data[0]} pluginRegistrar={this.props.data[1]} />;
+  private pluginProposalsPageHtml = (isActive: boolean, crxRewarderProps: ICrxRewarderProps) => (props: any) => <PluginProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} pluginState={this.props.data[0]} crxRewarderProps={crxRewarderProps} />;
   private contributionsRewardExtTabHtml = () => (props: any) =>
   {
     if (!this.state.crxListComponent) {
       return null;
     }
 
-    return <this.state.crxListComponent {...props} daoState={this.props.daoState} plugin={this.props.data[0]} proposals={this.props.data[1]} />;
+    return <this.state.crxListComponent {...props} daoState={this.props.daoState} plugin={this.props.data[0]} proposals={this.props.data[2]} />;
   };
 
   public async componentDidMount() {
@@ -111,7 +103,7 @@ class PluginContainer extends React.Component<IProps, IState> {
     const { pluginId, daoState } = this.props;
     const daoAvatarAddress = daoState.address;
     const pluginState = this.props.data[0];
-    const approvedProposals = this.props.data[1];
+    const approvedProposals = this.props.data[2];
 
     if (pluginState.name === "ReputationFromToken") {
       return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} pluginState={pluginState} />;
@@ -175,23 +167,6 @@ class PluginContainer extends React.Component<IProps, IState> {
                 : ""
             }
           </div>
-
-          { isProposalPlugin ?
-            <div className={css.createProposal}>
-              <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
-                <a className={
-                  classNames({
-                    [css.createProposal]: true,
-                    [css.disabled]: !isActive,
-                  })}
-                data-test-id="createProposal"
-                href="#!"
-                onClick={isActive ? this.handleNewProposal : null}
-                >
-              + New { `${this.state.crxRewarderProps ? this.state.crxRewarderProps.contractName : pluginFriendlyName } `}Proposal</a>
-              </TrainingTooltip>
-            </div>
-            : ""}
         </Sticky>
 
         <Switch>
@@ -204,7 +179,7 @@ class PluginContainer extends React.Component<IProps, IState> {
               <Route exact path="/dao/:daoAvatarAddress/plugin/:pluginId/crx" render={this.contributionsRewardExtTabHtml()} />
               : ""
           }
-          <Route path="/dao/:daoAvatarAddress/plugin/:pluginId" render={isProposalPlugin ? this.pluginProposalsPageHtml(isActive) : this.pluginInfoPageHtml} />
+          <Route path="/dao/:daoAvatarAddress/plugin/:pluginId" render={isProposalPlugin ? this.pluginProposalsPageHtml(isActive, this.state.crxRewarderProps) : this.pluginInfoPageHtml} />
         </Switch>
       </div>
     );
@@ -247,9 +222,8 @@ const SubscribedPluginContainer = withSubscription({
     let  approvedProposals: Observable<Array<IProposalState>>;
     if (hasRewarderContract(pluginState as IContributionRewardExtState)) {
       approvedProposals = dao.proposals(
-        // TODO: change scheme to plugin once this is closed https://github.com/daostack/subgraph/issues/537
         // eslint-disable-next-line @typescript-eslint/camelcase
-        { where: { scheme: plugin.id, stage_in: [IProposalStage.Executed]},
+        { where: { plugin: plugin.id, stage_in: [IProposalStage.Executed]},
           orderBy: "closingAt",
           orderDirection: "desc",
         },
@@ -269,6 +243,8 @@ const SubscribedPluginContainer = withSubscription({
 
     return combineLatest(
       of(pluginState),
+      // Find the SchemeRegistrar plugin if this dao has one
+      Plugin.search(arc, {where: { dao: props.daoState.id, name: "SchemeRegistrar" }}).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null))),
       approvedProposals
     );
   },

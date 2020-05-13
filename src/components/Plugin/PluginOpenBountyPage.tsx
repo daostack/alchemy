@@ -21,7 +21,7 @@ interface IState {
   totalResults: number;
 }
 
-export default class SchemeOpenBounty extends React.Component<IProps, IState> {
+export default class PluginOpenBounty extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {

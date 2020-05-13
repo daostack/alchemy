@@ -283,7 +283,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
                 {
                   <Tooltip overlay={
                     (!proposalState.executedAt || (proposalState.winningOutcome !== IProposalOutcome.Pass)) ? "The competition proposal has not been approved" :
-                      notStarted  ? "The submission period has not yet begun" :
+                      notStarted ? "The submission period has not yet begun" :
                         (isAddress(competition.admin) && (this.props.currentAccountAddress !== competition.admin)) ? "Only the \"admin\" user is allowed to create submissions" :
                           "Create a submission"
                   }

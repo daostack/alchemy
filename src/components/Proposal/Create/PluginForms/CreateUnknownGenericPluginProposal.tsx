@@ -103,7 +103,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
     const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
     return (
-      <div className={css.contributionReward}>
+      <div className={css.containerNoSidebar}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           initialValues={this.initialFormValues}

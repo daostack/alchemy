@@ -86,7 +86,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
     </div>;
   }
 
-  private  redeemAll = async (): Promise<void> => {
+  private redeemAll = async (): Promise<void> => {
     const {
       currentAccountAddress,
       data: redeemableProposals,
@@ -190,7 +190,7 @@ const SubscribedMenuItemContent = withSubscription({
   wrappedComponent: MenuItemContent,
   loadingComponent: <div>Loading...</div>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
-  checkForUpdate: [],  // Parent component will rerender anyway.
+  checkForUpdate: [], // Parent component will rerender anyway.
   createObservable: (props: IMenuItemProps) => {
     const { currentAccountAddress, proposal } = props;
     const arc = getArc();

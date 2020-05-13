@@ -310,7 +310,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               </div>
               {actionType !== ActionTypes.Redeem && actionType !== ActionTypes.Execute ?
                 <div className={classNames({[css.helpButton]: true, [css.open]: this.state.instructionsOpen})}>
-                  <button className={css.hover}  onClick={this.toggleInstructions}>
+                  <button className={css.hover} onClick={this.toggleInstructions}>
                     <b> &lt; Got it</b>
                     <span>x</span>
                     <span>?</span>

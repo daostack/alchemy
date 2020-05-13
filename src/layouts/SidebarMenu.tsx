@@ -1,4 +1,3 @@
-import axios, { AxiosResponse } from "axios";
 import { IDAOState, Token, Member } from "@daostack/arc.js";
 import { hideMenu } from "actions/uiActions";
 import { getArc } from "arc";
@@ -17,7 +16,7 @@ import { matchPath, Link, RouteComponentProps } from "react-router-dom";
 import { first } from "rxjs/operators";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
-import { combineLatest, of, from } from "rxjs";
+import { of } from "rxjs";
 
 import Tooltip from "rc-tooltip";
 import * as css from "./SidebarMenu.scss";
@@ -29,10 +28,6 @@ interface IStateProps {
   menuOpen: boolean;
 }
 
-interface IHasNewPosts {
-  hasNewPosts: boolean;
-}
-
 interface IDispatchProps {
   hideMenu: typeof hideMenu;
 }
@@ -41,7 +36,7 @@ const mapDispatchToProps = {
   hideMenu,
 };
 
-type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[IDAOState, IHasNewPosts]>;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const match = matchPath(ownProps.location.pathname, {
@@ -84,7 +79,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
   }
 
   public daoMenu() {
-    const [ dao, { hasNewPosts } ] = this.props.data;
+    const dao = this.props.data;
 
     const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
     const bgPattern = generate(dao.address + dao.name);
@@ -121,10 +116,10 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
         </div>
         <div className={css.followButton}><FollowButton id={dao.address} type="daos" style="white" /></div>
         <div className={css.daoNavigation}>
-          <span className={css.daoNavHeading}><b>Menu</b></span>
+          <span className={css.daoNavHeading}><b>DAO Menu</b></span>
           <ul>
             <li>
-              <Link to={"/dao/" + dao.address} onClick={this.handleCloseMenu}>
+              <Link to={`/dao/${dao.address}`} onClick={this.handleCloseMenu} data-test-id="daohome">
                 <span className={css.menuDot} />
                 <span className={
                   classNames({
@@ -134,6 +129,19 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                 }></span>
                 <img src="/assets/images/Icon/menu/home.svg" />
                 Home
+              </Link>
+            </li>
+            <li>
+              <Link to={`/dao/${dao.address}/plugins`} onClick={this.handleCloseMenu} data-test-id="daopluginss">
+                <span className={css.menuDot} />
+                <span className={
+                  classNames({
+                    [css.notification]: true,
+                    [css.proposalsNotification]: true,
+                  })
+                }></span>
+                <img src="/assets/images/Icon/menu/chat.svg" />
+                Proposals
               </Link>
             </li>
             <li>
@@ -147,7 +155,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                     })
                   }></span>
                   <img src="/assets/images/Icon/menu/holders.svg" />
-                  DAO Members
+                  Members
                 </Link>
               </TrainingTooltip>
             </li>
@@ -163,25 +171,6 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                 <img src="/assets/images/Icon/menu/history.svg" />
                 History
               </Link>
-            </li>
-            <li>
-              <TrainingTooltip placement="right" overlay={"Space designated for general questions, statements and comments"}>
-                <Link to={"/dao/" + dao.address + "/discussion/"} onClick={this.handleCloseMenu}>
-                  <span className={
-                    classNames({
-                      [css.menuDot]: true,
-                      [css.red]: hasNewPosts,
-                    })} />
-                  <span className={
-                    classNames({
-                      [css.notification]: true,
-                      [css.discussionNotification]: true,
-                    })
-                  }></span>
-                  <img src="/assets/images/Icon/menu/chat.svg" />
-                DAO Wall
-                </Link>
-              </TrainingTooltip>
             </li>
           </ul>
         </div>
@@ -342,27 +331,8 @@ const SubscribedSidebarMenu = withSubscription({
   loadingComponent: <div></div>,
   createObservable: (props: IProps) => {
     if (props.daoAvatarAddress) {
-      const lastAccessDate = localStorage.getItem(`daoWallEntryDate_${props.daoAvatarAddress}`) || "0";
-
-      const promise = axios.get(`https://disqus.com/api/3.0/threads/listPosts.json?api_key=KVISHbDLtTycaGw5eoR8aQpBYN8bcVixONCXifYcih5CXanTLq0PpLh2cGPBkM4v&forum=${process.env.DISQUS_SITE}&thread:ident=${props.daoAvatarAddress}&since=${lastAccessDate}&limit=1&order=asc`)
-        .then((response: AxiosResponse<any>): IHasNewPosts => {
-          if (response.status) {
-            const posts = response.data.response;
-            return { hasNewPosts: posts && posts.length };
-          } else {
-            // eslint-disable-next-line no-console
-            console.error(`request for disqus posts failed: ${response.statusText}`);
-            return { hasNewPosts: false };
-          }
-        })
-        .catch((error: Error): IHasNewPosts => {
-          // eslint-disable-next-line no-console
-          console.error(`request for disqus posts failed: ${error.message}`);
-          return { hasNewPosts: false };
-        });
-
       const arc = getArc();
-      return combineLatest(arc.dao(props.daoAvatarAddress).state({ subscribe: true }), from(promise));
+      return arc.dao(props.daoAvatarAddress).state({ subscribe: true } );
     } else {
       return of(null);
     }

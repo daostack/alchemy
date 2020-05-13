@@ -3,6 +3,7 @@ export enum Page {
   AllDAOs = "All Daos",
   CreateProposal = "Create Proposal",
   DAOHistory = "DAO History",
+  DAOLanding = "DAO Landing",
   DAOMembers = "DAO Members",
   DAOPlugins = "DAO Plugins",
   ProposalDetails = "Proposal Details",

@@ -1,8 +1,8 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
-import { getArc } from "./utils";
+import { getArc, gotoDaoPlugins } from "./utils";
 
-describe("Proposals ENS Resolver", () => {
+describe("Proposals ENS Registry", () => {
   let daoAddress: string;
 
   before(async () => {
@@ -14,11 +14,10 @@ describe("Proposals ENS Resolver", () => {
 
   });
 
-  it("Create a Generic Scheme ENS Public Resolver proposal and check that the data is submitted correctly", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+  it("Create a Generic Plugin ENS Registry proposal and check that the data is submitted correctly", async () => {
+    await gotoDaoPlugins(daoAddress);
 
-    const ensTitle = await $("h2=EnsPublicResolver");
+    const ensTitle = await $("h2=EnsRegistry");
     await ensTitle.waitForExist();
     await ensTitle.click();
 
@@ -26,7 +25,7 @@ describe("Proposals ENS Resolver", () => {
     await createProposalButton.waitForExist();
     await createProposalButton.click();
 
-    const masterCopyTab = await $("*[data-test-id=\"action-tab-setABI\"]");
+    const masterCopyTab = await $("*[data-test-id=\"action-tab-setSubnodeOwner\"]");
     await masterCopyTab.click();
 
     const titleInput = await $("*[id=\"titleInput\"]");
@@ -43,11 +42,11 @@ describe("Proposals ENS Resolver", () => {
     const nodeInput = await $("*[data-test-id=\"node\"]");
     await nodeInput.setValue("alice.eth");
 
-    const contentTypeInput = await $("*[data-test-id=\"contentType\"]");
-    await contentTypeInput.setValue(1);
+    const labelInput = await $("*[data-test-id=\"label\"]");
+    await labelInput.setValue("iam");
 
-    const dataInput = await $("*[data-test-id=\"data\"]");
-    await dataInput.setValue("0x");
+    const ownerInput = await $("*[data-test-id=\"owner\"]");
+    await ownerInput.setValue("0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1");
 
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
     await createProposalSubmitButton.click();
@@ -56,7 +55,6 @@ describe("Proposals ENS Resolver", () => {
     // test for the title
     const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
     await titleElement.waitForExist();
-
     // await titleElement.scrollIntoView(false);
     // await titleElement.click();
     //

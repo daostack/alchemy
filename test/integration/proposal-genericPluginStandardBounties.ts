@@ -17,12 +17,12 @@ describe("Proposals", () => {
     }
   });
 
-  it("Create a Standard Bounties Generic Scheme proposal, issue and contribute", async () => {
+  it("Create a Standard Bounties Generic Plugin proposal, issue and contribute", async () => {
     const url = `/dao/${daoAddress}/`;
     await browser.url(url);
 
-    const schemeTitle = await $("h2=Standard Bounties");
-    await schemeTitle.click();
+    const pluginTitle = await $("h2=Standard Bounties");
+    await pluginTitle.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();

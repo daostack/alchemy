@@ -69,7 +69,7 @@ class DaoHistoryPage extends React.Component<IProps, null> {
           }
         >
           { proposals.length === 0 ?
-            <span>This DAO hasn&apos;t passed any proposals yet. Checkout the <Link to={"/dao/" + daoState.id + "/proposal/"}>DAO&apos;s installed schemes</Link> for any open proposals.</span> :
+            <span>This DAO hasn&apos;t passed any proposals yet. Checkout the <Link to={"/dao/" + daoState.id + "/proposal/"}>DAO&apos;s installed pluginss</Link> for any open proposals.</span> :
             <table className={css.proposalHistoryTable}>
               <thead>
                 <tr className={css.proposalHistoryTableHeader}>

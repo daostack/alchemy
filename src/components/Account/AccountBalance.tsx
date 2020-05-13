@@ -9,7 +9,7 @@ interface IProps {
   tokenSymbol: string;
 }
 
-export default class Balance extends React.Component<IProps, null>  {
+export default class Balance extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);

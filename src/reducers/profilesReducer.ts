@@ -17,7 +17,7 @@ export type IProfileState = {
   follows: {
     daos: string[];
     proposals: string[];
-    schemes: string[];
+    plugins: string[];
     users: string[];
   };
   image?: any;
@@ -38,7 +38,7 @@ export function newProfile(ethereumAccountAddress: string): IProfileState {
     follows: {
       daos: [],
       proposals: [],
-      schemes: [],
+      plugins: [],
       users: [],
     },
     name: "",

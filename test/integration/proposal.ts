@@ -1,5 +1,5 @@
 import * as uuid from "uuid";
-import { getTestAddresses, hideCookieAcceptWindow, hideTrainingTooltips } from "./utils";
+import { getTestAddresses, hideCookieAcceptWindow, hideTrainingTooltips, gotoDaoPlugins } from "./utils";
 
 describe("Proposals", () => {
   let daoAddress: string;
@@ -12,8 +12,7 @@ describe("Proposals", () => {
   });
 
   it("Create a proposal, vote for it, stake on it", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+    await gotoDaoPlugins(daoAddress);
 
     const loginButton = await $("*[data-test-id=\"loginButton\"]");
     await loginButton.click();
@@ -105,12 +104,11 @@ describe("Proposals", () => {
   });
 
   it("Fill out a proposal form and export it", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+    await gotoDaoPlugins(daoAddress);
 
     await hideCookieAcceptWindow();
-    const schemeCard = await $("[data-test-id=\"schemeCard-ContributionReward\"]");
-    await schemeCard.click();
+    const pluginCard = await $("[data-test-id=\"pluginCard-ContributionReward\"]");
+    await pluginCard.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();

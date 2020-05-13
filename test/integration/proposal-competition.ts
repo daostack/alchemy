@@ -1,37 +1,36 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
 import { DAO, Arc } from "@daostack/arc.js";
-import { getArc, setCalendarDate, hideCookieAcceptWindow } from "./utils";
+import { getArc, setCalendarDate, hideCookieAcceptWindow, gotoDaoPlugins } from "./utils";
 
 describe("Proposals", () => {
   let dao: DAO;
   let arc: Arc;
 
   beforeEach(async () => {
-    // we need to find a DAO with a competition scheme
+    // we need to find a DAO with a competition plugin
     // TODO: create a test_env with a nameed DAO so we can find it consistently
     arc = getArc();
     await arc.fetchContractInfos();
     const ARC_VERSION = "0.1.1-rc.16";
     const contributionRewardExtContract  = arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);
 
-    // find the corresponding scheme object
+    // find the corresponding plugin object
     const contributionRewardExts = await arc
-      .schemes({where: {address: contributionRewardExtContract.address}}).pipe(first()).toPromise();
+      .plugins({where: {address: contributionRewardExtContract.address}}).pipe(first()).toPromise();
 
     const contributionRewardExt = contributionRewardExts[0];
     const contributionRewardExtState = await contributionRewardExt.state().pipe(first()).toPromise();
-    dao = new DAO(arc, contributionRewardExtState.dao);
+    dao = new DAO(arc, contributionRewardExtState.dao.id);
   });
 
 
-  it("Create a Competition Scheme proposal, vote for it, stake on it", async () => {
+  it("Create a Competition Plugin proposal, vote for it, stake on it", async () => {
 
-    const url = `/dao/${dao.id}/`;
-    await browser.url(url);
+    await gotoDaoPlugins(dao.id);
 
-    const schemeTitle = await $("h2=Competition");
-    await schemeTitle.click();
+    const pluginTitle = await $("h2=Competition");
+    await pluginTitle.click();
 
 
     // const acceptCookiesButton = await $("a[data-test-id=\"acceptCookiesButton\"]");

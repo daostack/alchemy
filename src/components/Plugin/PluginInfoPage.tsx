@@ -1,14 +1,17 @@
 /* tslint:disable:max-classes-per-file */
 
+import { enableWalletProvider } from "arc";
+import { History } from "history";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { Address, IPluginState, IGenesisProtocolParams, IDAOState } from "@daostack/arc.js";
+import { Address, IPluginState, IGenesisProtocolParams, IDAOState, ISchemeRegistrarState } from "@daostack/arc.js";
 import { copyToClipboard, fromWei, linkToEtherScan, roundUp } from "lib/util";
 import { pluginName } from "lib/pluginUtils";
 import * as moment from "moment";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { connect } from "react-redux";
 import Tooltip from "rc-tooltip";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "./PluginInfo.scss";
 
 interface IDispatchProps {
@@ -17,7 +20,9 @@ interface IDispatchProps {
 
 interface IExternalProps {
   daoState: IDAOState;
+  history: History;
   plugin: IPluginState;
+  pluginRegistrar: ISchemeRegistrarState;
 }
 
 type IProps = IExternalProps & IDispatchProps;
@@ -32,6 +37,14 @@ class PluginInfo extends React.Component<IProps, null> {
     copyToClipboard(str);
     this.props.showNotification(NotificationStatus.Success, "Copied to clipboard!");
   };
+
+  private handleEditPlugin = async (e: any) => {
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    // TODO @jordan use the plugin manager, instead of the registrar
+    this.props.history.push(`/dao/${this.props.daoState.id}/plugin/${this.props.pluginRegistrar.id}/proposals/create/?currentTab=editPlugin`);
+    e.preventDefault();
+  }
 
   public render(): RenderOutput {
     const { daoState, plugin } = this.props;
@@ -84,7 +97,7 @@ class PluginInfo extends React.Component<IProps, null> {
       // represent time in locale-independent UTC format
       const activationTime = moment.unix(params.activationTime).utc();
 
-      return <tbody>
+      return <React.Fragment>
         <tr><th>Activation Time:</th><td className={css.ellipsis}>{
           `${ activationTime.format("h:mm A [UTC] on MMMM Do, YYYY")} ${activationTime.isSameOrBefore(moment()) ? "(active)" : "(inactive)"}`
         }</td></tr>
@@ -108,7 +121,7 @@ class PluginInfo extends React.Component<IProps, null> {
           </Tooltip>
         </td></tr>
         <tr><th>Voters Reputation Loss:</th><td>{params.votersReputationLossRatio}%</td></tr>
-      </tbody>;
+      </React.Fragment>;
     };
 
     const pluginParams = (plugin as any).pluginParams
@@ -117,6 +130,18 @@ class PluginInfo extends React.Component<IProps, null> {
     );
     return <div>
       <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/plugin/${plugin.id}/info`}>Info</BreadcrumbsItem>
+
+      <div className={css.editPlugin}>
+        <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+          <a
+            data-test-id="createProposal"
+            href="#!"
+            onClick={this.handleEditPlugin}
+          >
+            Edit Plugin
+          </a>
+        </TrainingTooltip>
+      </div>
 
       <div className={css.pluginInfoContainer}>
         <h3>{pluginName(plugin, plugin.address)}</h3>
@@ -188,10 +213,10 @@ class PluginInfo extends React.Component<IProps, null> {
       {pluginParams && pluginParams.voteParams ?
         <div className={css.pluginInfoContainer}>
           <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
-          <table className={css.infoCardContent}>
+          <table className={css.infoCardContent}><tbody>
             {renderVotingMachineLink(votingMachine)}
             {renderGpParams(pluginParams.voteParams)}
-          </table>
+          </tbody></table>
         </div>
         : ""
       }
@@ -199,10 +224,10 @@ class PluginInfo extends React.Component<IProps, null> {
       {pluginParams && pluginParams.voteRegisterParams ?
         <div className={css.pluginInfoContainer}>
           <h3>Genesis Protocol Params for Plugin Registration -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
-          <table className={css.infoCardContent}>
+          <table className={css.infoCardContent}><tbody>
             {renderVotingMachineLink(votingMachine)}
             {renderGpParams(pluginParams.voteRegisterParams)}
-          </table>
+          </tbody></table>
         </div>
         : ""
       }
@@ -210,10 +235,10 @@ class PluginInfo extends React.Component<IProps, null> {
       {pluginParams && pluginParams.voteRemoveParams ?
         <div className={css.pluginInfoContainer}>
           <h3>Genesis Protocol Params for Plugin Removal -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
-          <table className={css.infoCardContent}>
+          <table className={css.infoCardContent}><tbody>
             {renderVotingMachineLink(votingMachine)}
             {renderGpParams(pluginParams.voteRemoveParams)}
-          </table>
+          </tbody></table>
         </div>
         : ""
       }

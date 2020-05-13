@@ -33,6 +33,30 @@
   padding-top: 30px;
 }
 
+a.addPluginButton {
+  position: fixed;
+  right: 0;
+  top: 33px;
+  padding: 8px 15px;
+  color: $white;
+  background-color: rgba(3, 118, 255, 1);
+  border-radius: 15px;
+  font-size: 13px;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: $accent-1;
+    color: $white;
+  }
+
+  &.disabled,
+  &.disabled:hover {
+    background-color: rgba(200, 200, 200, 0.5);
+    border: 1px solid rgba(200, 200, 200, 1);
+    cursor: not-allowed;
+  }
+}
+
 @media only screen and (max-width: 425px) {
   .wrapper h1 {
     padding-left: 10px;

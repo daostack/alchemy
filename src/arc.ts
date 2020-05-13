@@ -42,16 +42,26 @@ async function _getCurrentAccountFromProvider(arc?: Arc): Promise<string> {
 }
 
 /**
- * Return the most recently synced block from web3
+ * Return the most recently synced block from web3, or null with no web3 or error
  */
 export async function getCurrentBlock(web3?: Web3Client): Promise<Block> {
   web3 = web3 || (window as any).arc?.web3;
   if (!web3) {
     return null;
   }
-  return await web3.getBlock("latest");
+  try {
+    // need the `await` so exceptions will be caught here
+    return await web3.getBlock("latest");
+  } catch (ex) {
+    /**
+     * This often happens with the error:  "connection not open on send()".
+     * See: https://github.com/ethereum/web3.js/issues/1354
+     */
+    // eslint-disable-next-line no-console
+    console.log(`getCurrentBlock: web3.getBlock failed: ${ex.message}`);
+    return null;
+  }
 }
-
 
 /**
  * Returns the Arc instance
@@ -127,7 +137,7 @@ export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
     const retryLink = new RetryLink({
       attempts: {
         max: 5,
-        retryIf: (error, _operation) =>  {
+        retryIf: (error, _operation) => {
         // eslint-disable-next-line no-console
           console.error("error occurred fetching data, retrying...");
           // eslint-disable-next-line no-console
@@ -216,7 +226,7 @@ async function ensureCorrectNetwork(provider: Web3Provider): Promise<void> {
   // TODO: we should not use the network NAME but the network ID to identify the network...
   const networkName = await getProviderNetworkName(provider);
 
-  if (networkName !== expectedNetworkName)  {
+  if (networkName !== expectedNetworkName) {
     if (expectedNetworkName === "xdai") {
       // TODO: xdai is reporting network 'unknown (100)` , it seems
       if (networkName === "unknown (100)") {
@@ -429,7 +439,7 @@ export async function logout(showNotification?: any): Promise<boolean> {
     success = await initializeArc();
 
     if (!success) {
-      const msg =  `Unable to disconnect from : ${networkName}`;
+      const msg = `Unable to disconnect from : ${networkName}`;
       if (showNotification) {
         showNotification(NotificationStatus.Failure, msg);
       } else {
@@ -530,7 +540,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
 export function pollForAccountChanges(currentAccountAddress: Address | null, interval = 2000): Observable<Address> {
   // eslint-disable-next-line no-console
   console.log(`start polling for account changes from: ${currentAccountAddress}`);
-  return Observable.create((observer: any): () => void  => {
+  return Observable.create((observer: any): () => void => {
     let prevAccount = currentAccountAddress;
     let running = false;
 

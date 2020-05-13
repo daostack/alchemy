@@ -1,28 +1,34 @@
 import * as uuid from "uuid";
-import { getTestAddresses, hideCookieAcceptWindow, ITestAddresses } from "./utils";
+import { first } from "rxjs/operators";
+import { getArc, gotoDaoPlugins } from "./utils";
 
 describe("Proposals", () => {
   let daoAddress: string;
-  let addresses: ITestAddresses;
 
-  before(() => {
-    addresses = getTestAddresses();
-    daoAddress = addresses.dao.Avatar.toLowerCase();
+  beforeEach(async () => {
+    const arc = getArc();
+    const daos = await arc.daos({ where: { name: "DutchX DAO"}}).pipe(first()).toPromise();
+    const dao = daos[0];
+    daoAddress = dao.id;
+    if (!daoAddress) {
+      throw Error("Could not find a DAO with this name");
+    }
+
   });
 
-  it("Create a Generic Scheme proposal, vote for it, stake on it", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+  it("Create a DutchX Generic Plugin proposal, vote for it, stake on it", async () => {
+    await gotoDaoPlugins(daoAddress);
 
-    await hideCookieAcceptWindow();
-
-    const schemeCard = await $("[data-test-id=\"schemeCard-GenericScheme\"]");
-    await schemeCard.click();
+    const pluginTitle = await $("h2=DutchX");
+    await pluginTitle.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();
 
     await createProposalButton.click();
+
+    const masterCopyTab = await $("*[data-test-id=\"action-tab-updateMasterCopy\"]");
+    await masterCopyTab.click();
 
     const titleInput = await $("*[id=\"titleInput\"]");
     await titleInput.waitForExist();
@@ -35,11 +41,8 @@ describe("Proposals", () => {
     const descriptionInput = await $(".mde-text");
     await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
-    const callDataInput = await $("*[id=\"callDataInput\"]");
-    await callDataInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
-
-    const valueInput = await $("*[id=\"valueInput\"]");
-    await valueInput.setValue("1");
+    const masterCopyInput = await $("*[data-test-id=\"_masterCopy\"]");
+    await masterCopyInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
 
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
     await createProposalSubmitButton.click();
@@ -51,17 +54,19 @@ describe("Proposals", () => {
 
   });
 
-  it("Fill out a generic scheme proposal form and export it", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+  it("Export a DutchX Generic Plugin proposal", async () => {
+    await gotoDaoPlugins(daoAddress);
 
-    const schemeCard = await $("[data-test-id=\"schemeCard-GenericScheme\"]");
-    await schemeCard.click();
+    const pluginTitle = await $("h2=DutchX");
+    await pluginTitle.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();
 
     await createProposalButton.click();
+
+    const masterCopyTab = await $("*[data-test-id=\"action-tab-updateMasterCopy\"]");
+    await masterCopyTab.click();
 
     const titleInput = await $("*[id=\"titleInput\"]");
     await titleInput.waitForExist();
@@ -74,15 +79,11 @@ describe("Proposals", () => {
     const descriptionInput = await $(".mde-text");
     await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
-    const callDataInput = await $("*[id=\"callDataInput\"]");
-    await callDataInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
-
-    const valueInput = await $("*[id=\"valueInput\"]");
-    await valueInput.setValue("0");
+    const masterCopyInput = await $("*[data-test-id=\"_masterCopy\"]");
+    await masterCopyInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
 
     const exportProposalSubmitButton = await $("*[id=\"export-proposal\"]");
     await exportProposalSubmitButton.click();
-
   });
 
 });

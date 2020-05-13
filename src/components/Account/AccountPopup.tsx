@@ -7,7 +7,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
 import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { copyToClipboard  } from "lib/util";
+import { copyToClipboard } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { from } from "rxjs";

@@ -92,13 +92,13 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
         </div>
       </div>
       <div className={css.description}>
-        <Link className={css.detailLink} to={"/dao/" + daoState.address +  "/crx/proposal/" + proposalState.id} data-test-id="proposal-title">
+        <Link className={css.detailLink} to={"/dao/" + daoState.address + "/crx/proposal/" + proposalState.id} data-test-id="proposal-title">
           <div className={css.name}>{humanProposalTitle(proposalState)}</div>
         </Link>
       </div>
       <div className={css.rewards}>
         <div className={css.winnerIcon}>
-          { overWithWinners ? <img src="/assets/images/Icon/winner.svg"></img>  : "" }
+          { overWithWinners ? <img src="/assets/images/Icon/winner.svg"></img> : "" }
         </div>
         <div className={css.transferType}><RewardsString proposalState={proposalState} daoState={daoState} /></div>
         <img src="/assets/images/Icon/Transfer.svg" />

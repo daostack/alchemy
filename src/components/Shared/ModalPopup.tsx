@@ -7,7 +7,7 @@ interface IProps {
   body: any;
   footer?: any;
   header: any;
-  width: number;
+  width: number | string;
 }
 
 export default class ModalPopup extends React.Component<IProps, null> {

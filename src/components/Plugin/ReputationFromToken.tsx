@@ -177,7 +177,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
         return;
       }
       let signature = result.result;
-      const signature1 =  signature.substring(0, signature.length-2);
+      const signature1 = signature.substring(0, signature.length-2);
       const v = signature.substring(signature.length-2, signature.length);
       if (v === "00") {
         signature = signature1+"1b";

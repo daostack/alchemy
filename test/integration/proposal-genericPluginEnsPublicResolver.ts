@@ -1,8 +1,8 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
-import { getArc } from "./utils";
+import { getArc, gotoDaoPlugins } from "./utils";
 
-describe("Proposals ENS Registry", () => {
+describe("Proposals ENS Resolver", () => {
   let daoAddress: string;
 
   before(async () => {
@@ -11,14 +11,12 @@ describe("Proposals ENS Registry", () => {
     const daos = await arc.daos({ where: { name: "Nectar DAO"}}).pipe(first()).toPromise();
     const dao = daos[0];
     daoAddress = dao.id;
-
   });
 
-  it("Create a Generic Scheme ENS Registry proposal and check that the data is submitted correctly", async () => {
-    const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+  it("Create a Generic Plugin ENS Public Resolver proposal and check that the data is submitted correctly", async () => {
+    await gotoDaoPlugins(daoAddress);
 
-    const ensTitle = await $("h2=EnsRegistry");
+    const ensTitle = await $("h2=EnsPublicResolver");
     await ensTitle.waitForExist();
     await ensTitle.click();
 
@@ -26,7 +24,7 @@ describe("Proposals ENS Registry", () => {
     await createProposalButton.waitForExist();
     await createProposalButton.click();
 
-    const masterCopyTab = await $("*[data-test-id=\"action-tab-setSubnodeOwner\"]");
+    const masterCopyTab = await $("*[data-test-id=\"action-tab-setABI\"]");
     await masterCopyTab.click();
 
     const titleInput = await $("*[id=\"titleInput\"]");
@@ -43,11 +41,11 @@ describe("Proposals ENS Registry", () => {
     const nodeInput = await $("*[data-test-id=\"node\"]");
     await nodeInput.setValue("alice.eth");
 
-    const labelInput = await $("*[data-test-id=\"label\"]");
-    await labelInput.setValue("iam");
+    const contentTypeInput = await $("*[data-test-id=\"contentType\"]");
+    await contentTypeInput.setValue(1);
 
-    const ownerInput = await $("*[data-test-id=\"owner\"]");
-    await ownerInput.setValue("0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1");
+    const dataInput = await $("*[data-test-id=\"data\"]");
+    await dataInput.setValue("0x");
 
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
     await createProposalSubmitButton.click();
@@ -56,6 +54,7 @@ describe("Proposals ENS Registry", () => {
     // test for the title
     const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
     await titleElement.waitForExist();
+
     // await titleElement.scrollIntoView(false);
     // await titleElement.click();
     //

@@ -32,7 +32,7 @@ export interface ITestAddresses {
     DAOToken: string
     Reputation: string
     Controller: string
-    Schemes: Array<{
+    Plugins: Array<{
       name: string
       alias: string
       address: string
@@ -72,3 +72,7 @@ export const setCalendarDate = async (element: any, date: string): Promise<void>
   await element.click(); // hide previous calendar
   await element.setValue(date);
 };
+
+export async function gotoDaoPlugins(daoAddress: string): Promise<any> {
+  return browser.url(`/dao/${daoAddress}/plugins`);
+}

@@ -18,4 +18,4 @@ Fetch the data that is used by many subcomponents in a single query, before thos
 
 *To avoid the cost of step 4:*
 The line `arcSettings.graphqlSubscribeToQueries = false;` overrides arc.js' default behavior to open a subscription for each query. So, by default, step 4 is skipped. Instead, we insert, in strategic places, subscriptions to relatively big queries, that will update the cache only for the data that we need.
-An example of this pattern is in `SchemeProposalsPage.tsx`
+An example of this pattern is in `PluginProposalsPage.tsx`

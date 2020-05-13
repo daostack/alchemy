@@ -1,13 +1,12 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
-import { getArc, hideCookieAcceptWindow } from "./utils";
+import { getArc, hideCookieAcceptWindow, gotoDaoPlugins } from "./utils";
 
 describe("Proposals Registry Lookup", () => {
-
-  let url: string;
+  let daoAddress: string;
 
   beforeEach(async () => {
-    await browser.url(url);
+    await gotoDaoPlugins(daoAddress);
 
     await hideCookieAcceptWindow();
 
@@ -26,11 +25,10 @@ describe("Proposals Registry Lookup", () => {
     const arc = getArc();
 
     const daos = await arc.daos({ where: { name: "Nectar DAO"}}).pipe(first()).toPromise();
-    const dao = daos[0];
-    url = `/dao/${dao.id}/`;
+    daoAddress = daos[0].id;
   });
 
-  it("Create a Generic Scheme RegistryLookup proposal to add tokens", async () => {
+  it("Create a Generic Plugin RegistryLookup proposal to add tokens", async () => {
 
     const masterCopyTab = await $("*[data-test-id=\"action-tab-addNewTokens\"]");
     await masterCopyTab.click();
@@ -70,7 +68,7 @@ describe("Proposals Registry Lookup", () => {
     // await summaryDetailsElement.waitForExist();
   });
 
-  it("Create a Generic Scheme RegistryLookup proposal to delete tokens", async () => {
+  it("Create a Generic Plugin RegistryLookup proposal to delete tokens", async () => {
 
     const masterCopyTab = await $("*[data-test-id=\"action-tab-removeTokens\"]");
     await masterCopyTab.click();

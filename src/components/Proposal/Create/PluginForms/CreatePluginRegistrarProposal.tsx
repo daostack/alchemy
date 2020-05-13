@@ -56,10 +56,13 @@ interface IFormValues {
   [key: string]: any;
 }
 
+type TabId = "addPlugin" | "removePlugin";
+
 interface IState {
-  currentTab: string;
-  tags: Array<string>;
+  currentTab: TabId;
   requiredPermissions: number;
+  showForm: boolean;
+  tags: Array<string>;
 }
 
 class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
@@ -89,8 +92,9 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
     });
     this.state = {
       currentTab: this.initialFormValues.currentTab,
-      tags: this.initialFormValues.tags,
       requiredPermissions: 0,
+      showForm: false,
+      tags: this.initialFormValues.tags,
     };
   }
 
@@ -101,10 +105,10 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
       const contractInfo = arc.getContractInfo(e.target.value);
       this.setState({ requiredPermissions: REQUIRED_PLUGIN_PERMISSIONS[contractInfo.name] });
       /* eslint-disable-next-line no-empty */
-    } catch (e) {}
+    } catch (e) { }
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ):  Promise<void> {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     let permissions = 1;
@@ -153,12 +157,16 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
     this.props.handleClose();
   }
 
-  public handleTabClick = (tab: string) => (_e: any) => {
+  public handleTabClick = (tab: TabId) => (_e: any) => {
     this.setState({ currentTab: tab });
   }
 
   private onTagsChange = (tags: any[]): void => {
-    this.setState({tags});
+    this.setState({ tags });
+  }
+
+  private toggleShowForm = () => {
+    this.setState({ showForm: !this.state.showForm });
   }
 
   public exportFormValues(values: IFormValues) {
@@ -175,7 +183,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
     const plugins = this.props.data;
     const { handleClose } = this.props;
 
-    const { currentTab, requiredPermissions } = this.state;
+    const { currentTab, requiredPermissions, showForm } = this.state;
 
     const addPluginButtonClass = classNames({
       [css.addPluginButton]: true,
@@ -185,10 +193,14 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
       [css.selected]: currentTab === "removePlugin",
     });
 
-    const pluginRegistrarFormClass = classNames({
-      [css.formWrapper]: true,
+    const contentWrapperClass = classNames({
+      [css.contentWrapper]: true,
       [css.addPlugin]: currentTab === "addPlugin",
-      [css.removePlugin]: currentTab === "removePlugin",
+      [css.removePlugin]: currentTab === "removePlugin"
+    });
+
+    const formContentClass = classNames({
+      [css.hidden]: !showForm && currentTab !== "removePlugin",
     });
 
     const isAddActive = getPluginIsActive(this.props.pluginState, GetPluginIsActiveActions.Register);
@@ -196,7 +208,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
     const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
     return (
-      <div className={css.createWrapperWithSidebar}>
+      <div className={css.containerWithSidebar}>
         <div className={css.sidebar}>
           { isAddActive ?
             <button className={addPluginButtonClass} onClick={this.handleTabClick("addPlugin")} data-test-id="tab-AddPlugin">
@@ -209,266 +221,290 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
               <span></span>
             Remove Plugin
             </button>
-            : "" }
+            : ""}
         </div>
 
-        <div className={pluginRegistrarFormClass}>
-          <Formik
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            initialValues={this.initialFormValues}
-            // eslint-disable-next-line react/jsx-no-bind
-            validate={(values: IFormValues) => {
-              const errors: any = {};
+        <div className={contentWrapperClass}>
+          {
+            currentTab !== "removePlugin" ?
 
-              const require = (name: string) => {
-                if (!(values as any)[name]) {
-                  errors[name] = "Required";
+              <div className={css.helpText}>
+                {
+                  currentTab === "addPlugin" ?
+                    <>
+                      <p>You will soon be able to add plugins from this interface. Stay tuned!</p>
+                      <p>For now, <b>please contact us at</b> <a href="mailto:support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a> to get one of the following plugins added to your DAO, or to add a new custom plugin of your own creation.</p>
+
+                      <h2>Available Plugins</h2>
+                      <p><b>Funding and Voting Power Plugin</b> &mdash; Send token and Reputation rewards to any Ethereum address via proposal.</p>
+                      <p><b>Plugin Manager</b> &mdash; Remove plugins via proposal (adding and editing plugins to be added soon).</p>
+                      <p><b>Competition Plugin</b> &mdash; Create competitions with prizes split between any number of winners. Competitions accept submissions from anyone, and Reputation-holders vote to decide the winners.</p>
+                      <p><b>ENS Plugins</b> &mdash; A set of plugins that enables the DAO to control Ethereum Name Service addresses via proposals.</p>
+                      <p><b>Reputation from Token</b> &mdash; Allow anyone to redeem Reputation using a token of your choice.</p>
+                      <p><b>Bounties Plugins</b> &mdash; Via proposal, create DAO-administered bounties on Bounties Network.</p>
+                      <p><b>Join and Quit Plugins</b> &mdash; Allow anyone to join the DAO via a donation and quit anytime, reclaiming at least part of their original funds (“rage quit”). Coming soon.</p>
+                      <p><b>NFT Plugins</b> &mdash; Allow the DAO to hold, send, mint, and sell NFTs (non-fungible tokens). Coming soon.</p>
+
+                      <p><b>Need help creating a plugin not on this list?</b> Contact us at <a href="mailto:support@daostack.zendesk.com">support@daostack.zendesk.com</a></p>
+                    </>
+
+                    :
+                    <>
+                      <p>You will soon be able to edit plugins in this interface. Stay tuned!</p>
+                      <p>For now, <b>please contact us at</b> <a href="mailto:support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a> to get help editing the parameters of this plugin.</p>
+                    </>
                 }
-              };
 
-              require("description");
-              require("title");
+                <button id="showFormButton" className={css.showFormButton} onClick={this.toggleShowForm}>{showForm ? "Hide" : "Show"} proposal form</button>
 
-              if (values.title.length > 120) {
-                errors.title = "Title is too long (max 120 characters)";
-              }
+              </div>
+              : ""
+          }
 
-              if (currentTab === "addPlugin") {
-                require("pluginToAdd");
-                require("parametersHash");
-              } else if (currentTab === "removePlugin") {
-                require("pluginToRemove");
-              }
+          <div className={formContentClass}>
+            <Formik
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              initialValues={this.initialFormValues}
+              // eslint-disable-next-line react/jsx-no-bind
+              validate={(values: IFormValues) => {
+                const errors: any = {};
 
-              if (currentTab === "addPlugin" && values.otherPlugin && !isAddress(values.otherPlugin)) {
-                errors.otherPlugin = "Invalid address";
-              }
-
-              const parametersHashPattern = /0x([\da-f]){64}/i;
-              if (currentTab !== "removePlugin" && values.parametersHash && !parametersHashPattern.test(values.parametersHash)) {
-                errors.parametersHash = "Invalid parameters hash";
-              }
-
-              if (!isValidUrl(values.url)) {
-                errors.url = "Invalid URL";
-              }
-
-              return errors;
-            }}
-            onSubmit={this.handleSubmit}
-            // eslint-disable-next-line react/jsx-no-bind
-            render={({
-              errors,
-              touched,
-              handleChange,
-              isSubmitting,
-              setFieldValue,
-              values,
-            }: FormikProps<IFormValues>) => {
-              return (
-                <Form noValidate>
-                  <label className={css.description}>What to Expect</label>
-                  { (currentTab === "addPlugin") ?
-                    <div className={css.description}>Propose to add a new plugin to the DAO.</div> :
-                      (currentTab === "removePlugin") ?
-                      <div className={css.description}>Propose to remove a plugin from the DAO.</div> : ""
+                const require = (name: string) => {
+                  if (!(values as any)[name]) {
+                    errors[name] = "Required";
                   }
-                  <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
-                    <label htmlFor="titleInput">
-                      <div className={css.requiredMarker}>*</div>
-                    Title
-                      <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                    </label>
-                  </TrainingTooltip>
-                  <Field
-                    autoFocus
-                    id="titleInput"
-                    maxLength={120}
-                    placeholder="Summarize your proposal"
-                    name="title"
-                    type="text"
-                    className={touched.title && errors.title ? css.error : null}
-                  />
+                };
 
-                  <TrainingTooltip overlay={fnDescription} placement="right">
-                    <label htmlFor="descriptionInput">
-                      <div className={css.requiredMarker}>*</div>
-                    Description
-                      <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-                      <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                    </label>
-                  </TrainingTooltip>
-                  <Field
-                    component={MarkdownField}
-                    onChange={(value: any) => { setFieldValue("description", value); }}
-                    id="descriptionInput"
-                    placeholder="Describe your proposal in greater detail"
-                    name="description"
-                    className={touched.description && errors.description ? css.error : null}
-                  />
+                require("description");
+                require("title");
 
-                  <TrainingTooltip overlay="Add some tags to give context about your proposal e.g. idea, signal, bounty, research, etc" placement="right">
-                    <label className={css.tagSelectorLabel}>
-                    Tags
-                    </label>
-                  </TrainingTooltip>
+                if (values.title.length > 120) {
+                  errors.title = "Title is too long (max 120 characters)";
+                }
 
-                  <div className={css.tagSelectorContainer}>
-                    <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
-                  </div>
+                if (currentTab === "addPlugin") {
+                  require("pluginToAdd");
+                  require("parametersHash");
+                } else {
+                  require("pluginToRemove");
+                }
 
-                  <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
-                    <label htmlFor="urlInput">
-                    URL
-                      <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                    </label>
-                  </TrainingTooltip>
-                  <Field
-                    id="urlInput"
-                    maxLength={120}
-                    placeholder="Description URL"
-                    name="url"
-                    type="text"
-                    className={touched.url && errors.url ? css.error : null}
-                  />
+                if (currentTab === "addPlugin" && values.otherPlugin && !isAddress(values.otherPlugin)) {
+                  errors.otherPlugin = "Invalid address";
+                }
 
-                  <div className={css.addEditPluginFields}>
-                    <div className={css.addPluginSelectContainer}>
-                      <label htmlFor="pluginToAddInput">
+                const parametersHashPattern = /0x([\da-f]){64}/i;
+                if (currentTab !== "removePlugin" && values.parametersHash && !parametersHashPattern.test(values.parametersHash)) {
+                  errors.parametersHash = "Invalid parameters hash";
+                }
+
+                if (!isValidUrl(values.url)) {
+                  errors.url = "Invalid URL";
+                }
+
+                return errors;
+              }}
+              onSubmit={this.handleSubmit}
+              // eslint-disable-next-line react/jsx-no-bind
+              render={({
+                errors,
+                touched,
+                handleChange,
+                isSubmitting,
+                setFieldValue,
+                values,
+              }: FormikProps<IFormValues>) => {
+                return (
+                  <Form noValidate>
+                    <br />
+                    {(currentTab === "addPlugin") ?
+                      <div className={css.description}>Create a proposal to add a new plugin to the DAO.</div> :
+                        <div className={css.description}>Create a proposal to remove a plugin from the DAO.</div>
+                    }
+                    <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
+                      <label htmlFor="titleInput">
                         <div className={css.requiredMarker}>*</div>
-                        Plugin
-                        <ErrorMessage name="pluginToAdd">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      Title
+                        <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
-                      <Field
-                        id="pluginToAddInput"
-                        placeholder="Enter plugin address"
-                        name="pluginToAdd"
-                        onChange={(e: any) => {
-                          // call the built-in handleChange
-                          handleChange(e);
-                          this.handleChangePlugin(e);
-                        }}
-                      />
-                    </div>
-
-                    <div className={css.parametersHash}>
-                      <label htmlFor="parametersHashInput">
-                        <div className={css.requiredMarker}>*</div>
-                        Parameters Hash
-                        <ErrorMessage name="parametersHash">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="parametersHashInput"
-                        placeholder="e.g. 0x0000000000000000000000000000000000000000000000000000000000001234"
-                        name="parametersHash"
-                        className={touched.parametersHash && errors.parametersHash ? css.error : null}
-                      />
-                    </div>
-                    <div className={css.permissions}>
-                      <div className={css.permissionsLabel}>
-                        Permissions
-                      </div>
-                      <div className={css.permissionCheckbox}>
-                        <Field
-                          id="registerOtherPluginsInput"
-                          type="checkbox"
-                          name="permissions.registerPlugins"
-                          checked={requiredPermissions & PluginPermissions.CanRegisterPlugins || values.permissions.registerPlugins}
-                          disabled={requiredPermissions & PluginPermissions.CanRegisterPlugins}
-                        />
-                        <label htmlFor="registerOtherPluginsInput">
-                          Register other plugins
-                        </label>
-                      </div>
-
-                      <div className={css.permissionCheckbox}>
-                        <Field
-                          id="changeConstraintsInput"
-                          type="checkbox"
-                          name="permissions.changeConstraints"
-                          checked={requiredPermissions & PluginPermissions.CanAddRemoveGlobalConstraints || values.permissions.changeConstraints}
-                          disabled={requiredPermissions & PluginPermissions.CanAddRemoveGlobalConstraints}
-                        />
-                        <label htmlFor="changeConstraintsInput">
-                          Add/remove global constraints
-                        </label>
-                      </div>
-
-                      <div className={css.permissionCheckbox}>
-                        <Field
-                          id="upgradeControllerInput"
-                          type="checkbox"
-                          name="permissions.upgradeController"
-                          checked={requiredPermissions & PluginPermissions.CanUpgradeController || values.permissions.upgradeController}
-                          disabled={requiredPermissions & PluginPermissions.CanUpgradeController}
-                        />
-                        <label htmlFor="upgradeControllerInput">
-                          Upgrade the controller
-                        </label>
-                      </div>
-
-                      <div className={css.permissionCheckbox}>
-                        <Field
-                          id="genericCallInput"
-                          type="checkbox"
-                          name="permissions.genericCall"
-                          checked={requiredPermissions & PluginPermissions.CanCallDelegateCall || values.permissions.genericCall}
-                          disabled={requiredPermissions & PluginPermissions.CanCallDelegateCall}
-                        />
-                        <label htmlFor="genericCallInput">
-                          Call genericCall on behalf of
-                        </label>
-                      </div>
-
-                      <div className={css.permissionCheckbox}>
-                        <Field id="mintBurnReputation" type="checkbox" name="mintBurnReputation" disabled="disabled" checked="checked" />
-                        <label htmlFor="mintBurnReputation">
-                          Mint or burn reputation
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={css.removePluginFields}>
-                    <div className={css.removePluginSelectContainer}>
-                      <label htmlFor="schemeToRemoveInput">
-                        <div className={css.requiredMarker}>*</div>
-                        Plugin
-                        <ErrorMessage name="pluginToRemove">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="pluginToRemoveInput"
-                        name="pluginToRemove"
-                        component="select"
-                        className={css.pluginSelect}
-                      >
-                        <option value="">Select a plugin...</option>
-                        {plugins.map((plugin, _i) => {
-                          return <option key={`remove_plugin_${plugin.coreState.address}`} value={plugin.coreState.address}>{pluginNameAndAddress(plugin.coreState.address)}</option>;
-                        })}
-                      </Field>
-                    </div>
-                  </div>
-
-                  <div className={css.createProposalActions}>
-                    <TrainingTooltip overlay="Export proposal" placement="top">
-                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
-                        <img src="/assets/images/Icon/share-blue.svg" />
-                      </button>
                     </TrainingTooltip>
-                    <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
-                      Cancel
-                    </button>
-                    <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
-                      <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                      Submit proposal
-                      </button>
+                    <Field
+                      autoFocus
+                      id="titleInput"
+                      maxLength={120}
+                      placeholder="Summarize your proposal"
+                      name="title"
+                      type="text"
+                      className={touched.title && errors.title ? css.error : null}
+                    />
+
+                    <TrainingTooltip overlay={fnDescription} placement="right">
+                      <label htmlFor="descriptionInput">
+                        <div className={css.requiredMarker}>*</div>
+                      Description
+                        <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg" />
+                        <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      </label>
                     </TrainingTooltip>
-                  </div>
-                </Form>
-              );
-            }}
-          />
+                    <Field
+                      component={MarkdownField}
+                      onChange={(value: any) => { setFieldValue("description", value); }}
+                      id="descriptionInput"
+                      placeholder="Describe your proposal in greater detail"
+                      name="description"
+                      className={touched.description && errors.description ? css.error : null}
+                    />
+
+                    <TrainingTooltip overlay="Add some tags to give context about your proposal e.g. idea, signal, bounty, research, etc" placement="right">
+                      <label className={css.tagSelectorLabel}>
+                        Tags
+                      </label>
+                    </TrainingTooltip>
+
+                    <div className={css.tagSelectorContainer}>
+                      <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
+                    </div>
+
+                    <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
+                      <label htmlFor="urlInput">
+                        URL
+                        <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      </label>
+                    </TrainingTooltip>
+                    <Field
+                      id="urlInput"
+                      maxLength={120}
+                      placeholder="Description URL"
+                      name="url"
+                      type="text"
+                      className={touched.url && errors.url ? css.error : null}
+                    />
+
+                    <div className={css.addEditPluginFields}>
+                      <div className={css.addPluginSelectContainer}>
+                        <label htmlFor="pluginToAddInput">
+                          <div className={css.requiredMarker}>*</div>
+                          Plugin
+                          <ErrorMessage name="pluginToAdd">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="pluginToAddInput"
+                          placeholder="Enter plugin address"
+                          name="pluginToAdd"
+                          onChange={(e: any) => {
+                            // call the built-in handleChange
+                            handleChange(e);
+                            this.handleChangePlugin(e);
+                          }}
+                        />
+                      </div>
+
+                      <div className={css.permissions}>
+                        <div className={css.permissionsLabel}>
+                          Permissions
+                        </div>
+                        <div className={css.permissionCheckbox}>
+                          <Field
+                            id="registerOtherPluginsInput"
+                            type="checkbox"
+                            name="permissions.registerPlugins"
+                            checked={requiredPermissions & PluginPermissions.CanRegisterPlugins || values.permissions.registerPlugins}
+                            disabled={requiredPermissions & PluginPermissions.CanRegisterPlugins}
+                          />
+                          <label htmlFor="registerOtherPluginsInput">
+                            Register other plugins
+                          </label>
+                        </div>
+
+                        <div className={css.permissionCheckbox}>
+                          <Field
+                            id="changeConstraintsInput"
+                            type="checkbox"
+                            name="permissions.changeConstraints"
+                            checked={requiredPermissions & PluginPermissions.CanAddRemoveGlobalConstraints || values.permissions.changeConstraints}
+                            disabled={requiredPermissions & PluginPermissions.CanAddRemoveGlobalConstraints}
+                          />
+                          <label htmlFor="changeConstraintsInput">
+                            Add/remove global constraints
+                          </label>
+                        </div>
+
+                        <div className={css.permissionCheckbox}>
+                          <Field
+                            id="upgradeControllerInput"
+                            type="checkbox"
+                            name="permissions.upgradeController"
+                            checked={requiredPermissions & PluginPermissions.CanUpgradeController || values.permissions.upgradeController}
+                            disabled={requiredPermissions & PluginPermissions.CanUpgradeController}
+                          />
+                          <label htmlFor="upgradeControllerInput">
+                            Upgrade the controller
+                          </label>
+                        </div>
+
+                        <div className={css.permissionCheckbox}>
+                          <Field
+                            id="genericCallInput"
+                            type="checkbox"
+                            name="permissions.genericCall"
+                            checked={requiredPermissions & PluginPermissions.CanCallDelegateCall || values.permissions.genericCall}
+                            disabled={requiredPermissions & PluginPermissions.CanCallDelegateCall}
+                          />
+                          <label htmlFor="genericCallInput">
+                            Call genericCall on behalf of
+                          </label>
+                        </div>
+
+                        <div className={css.permissionCheckbox}>
+                          <Field id="mintBurnReputation" type="checkbox" name="mintBurnReputation" disabled="disabled" checked="checked" />
+                          <label htmlFor="mintBurnReputation">
+                            Mint or burn reputation
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={css.removePluginFields}>
+                      <div className={css.removePluginSelectContainer}>
+                        <label htmlFor="pluginToRemoveInput">
+                          <div className={css.requiredMarker}>*</div>
+                          Plugin
+                          <ErrorMessage name="pluginToRemove">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="pluginToRemoveInput"
+                          name="pluginToRemove"
+                          component="select"
+                          className={css.pluginSelect}
+                        >
+                          <option value="">Select a plugin...</option>
+                          {plugins.map((plugin, _i) => {
+                            return <option key={`remove_plugin_${plugin.coreState.address}`} value={plugin.coreState.address}>{pluginNameAndAddress(plugin.coreState.address)}</option>;
+                          })}
+                        </Field>
+                      </div>
+                    </div>
+
+                    <div className={css.createProposalActions}>
+                      <TrainingTooltip overlay="Export proposal" placement="top">
+                        <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                          <img src="/assets/images/Icon/share-blue.svg" />
+                        </button>
+                      </TrainingTooltip>
+                      <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
+                        Cancel
+                      </button>
+                      <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
+                        <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
+                          Submit proposal
+                        </button>
+                      </TrainingTooltip>
+                    </div>
+                  </Form>
+                );
+              }}
+            />
+          </div>
         </div>
       </div>
     );

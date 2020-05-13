@@ -164,7 +164,7 @@ export class Action implements IActionSpec {
 
   public getFields(): ActionField[] {
     const result: ActionField[] = [];
-    for (let i = 0; i <  this.abi.inputs.length; i++) {
+    for (let i = 0; i < this.abi.inputs.length; i++) {
       result.push(new ActionField({
         name: this.abi.inputs[i].name,
         type: this.abi.inputs[i].type,
@@ -240,7 +240,7 @@ export class GenericPluginInfo {
     }
 
     if (action) {
-      return { action,  values};
+      return { action, values};
     } else {
       throw Error("Could not find a known action that corresponds with these callData");
     }

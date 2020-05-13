@@ -90,12 +90,12 @@ export function pluginName(plugin: IPluginState|IContractInfo, fallback?: string
   if (plugin.name === "GenericScheme") {
     const generic = plugin as IGenericPluginState;
     if (generic.pluginParams && generic.pluginParams.contractToCall) {
-      const genericSchemeRegistry = new GenericPluginRegistry();
+      const genericPluginRegistry = new GenericPluginRegistry();
       let contractToCall;
       contractToCall = generic.pluginParams.contractToCall;
-      const genericSchemeInfo = genericSchemeRegistry.getPluginInfo(contractToCall);
-      if (genericSchemeInfo) {
-        name = genericSchemeInfo.specs.name;
+      const genericPluginInfo = genericPluginRegistry.getPluginInfo(contractToCall);
+      if (genericPluginInfo) {
+        name = genericPluginInfo.specs.name;
       } else {
         // Adding the address is a bit long for a title
         // name = `Blockchain Interaction (${contractToCall})`;
@@ -187,12 +187,12 @@ export function getPluginIsActive(plugin: IPluginState, action?: GetPluginIsActi
   const votingMachineParams = (plugin as any)[votingMachineParamsPropertyName];
   if (!votingMachineParams) {
     // eslint-disable-next-line no-console
-    console.warn(` getSchemeIsActive: voting machine parameters parameters not found for ${plugin.name}`);
+    console.warn(` getPluginIsActive: voting machine parameters parameters not found for ${plugin.name}`);
     return true;
   }
   if ((typeof(votingMachineParams.activationTime) === undefined) || (votingMachineParams.activationTime === null)) {
     // eslint-disable-next-line no-console
-    console.warn(` getSchemeIsActive: voting machine appears not to be GenesisProtocol: ${plugin.name}`);
+    console.warn(` getPluginIsActive: voting machine appears not to be GenesisProtocol: ${plugin.name}`);
     return true;
   } else {
     return moment(votingMachineParams.activationTime*1000).isSameOrBefore(moment());

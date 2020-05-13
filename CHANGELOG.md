@@ -1,6 +1,10 @@
 ## 0.10.6
   - Features Added
-    - Show warning if subgraph is not updating
+    - new DAO landing page
+    - added help text in the Plugin Editor popup
+
+    - Bugs Fixed
+      - Make sure proposer name doesn't overlap avatar on proposal history rows
 
 ## 0.10.5
   - Features Added
