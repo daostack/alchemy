@@ -211,14 +211,11 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       rewards,
       stakes,
       threeBox,
-      votes,
     } = this.props;
 
     const tags = proposal.tags;
 
     const url = ensureHttps(proposal.url);
-
-    const arc = getArc();
 
     const arc = getArc();
 
