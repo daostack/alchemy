@@ -20,7 +20,11 @@ type IProps = IExternalProps;
 
 export default class DaoLandingPage extends React.Component<IProps, IStateProps> {
 
-  private disqusConfig: any;
+  private disqusConfig = {
+    url: "",
+    identifier: "",
+    title: "",
+  };
 
   constructor(props: IProps) {
     super(props);
@@ -31,7 +35,7 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
 
   public componentDidMount() {
     this.disqusConfig = {
-      url: process.env.BASE_URL + "/dao/" + this.props.daoState.address + "/discussion",
+      url: `${process.env.BASE_URL}/dao/${this.props.daoState.address}/discussion`,
       identifier: this.props.daoState.address,
       title: "Discuss " + this.props.daoState.name,
     };
