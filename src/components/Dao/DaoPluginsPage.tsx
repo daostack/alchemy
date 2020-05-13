@@ -81,7 +81,7 @@ class DaoPluginsPage extends React.Component<IProps, null> {
     const allKnownPlugins = [...contributionReward, ...knownPlugins];
 
     const pluginManager = data[1];
-    const pluginManagerActive = getPluginIsActive(pluginManager);
+    const pluginManagerActive = pluginManager ? getPluginIsActive(pluginManager) : false;
 
     const pluginCardsHTML = (
       <TransitionGroup>
@@ -152,7 +152,7 @@ const SubscribedDaoPluginsPage = withSubscription({
 
     return combineLatest(
       dao.plugins({ where: { isRegistered: true } }, { fetchAllData: true, subscribe: true }),
-      // Find the SchemeManager plugin if this dao has one
+      // Find the SchemeRegistrar plugin if this dao has one
       Plugin.search(arc, {where: { dao: dao.id, name: "SchemeRegistrar" }}).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null)))
     );
   },
