@@ -14,7 +14,7 @@ import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSION
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
-import { IProposalType, ISchemeState, Scheme } from "@daostack/client";
+import { IProposalType, ISchemeState, Scheme } from "@daostack/arc.js";
 import { connect } from "react-redux";
 import * as React from "react";
 import * as css from "../CreateProposal.scss";
@@ -258,6 +258,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                       <p><b>Competition Plugin</b> &mdash; Create competitions with prizes split between any number of winners. Competitions accept submissions from anyone, and Reputation-holders vote to decide the winners.</p>
                       <p><b>ENS Plugins</b> &mdash; A set of plugins that enables the DAO to control Ethereum Name Service addresses via proposals.</p>
                       <p><b>Reputation from Token</b> &mdash; Allow anyone to redeem Reputation using a token of your choice.</p>
+                      <p><b>Stake for Reputation Plugin</b> &mdash; Allow anyone to stake a token of your choice to earn voting power in your DAO.</p>
                       <p><b>Bounties Plugins</b> &mdash; Via proposal, create DAO-administered bounties on Bounties Network.</p>
                       <p><b>Join and Quit Plugins</b> &mdash; Allow anyone to join the DAO via a donation and quit anytime, reclaiming at least part of their original funds (“rage quit”). Coming soon.</p>
                       <p><b>NFT Plugins</b> &mdash; Allow the DAO to hold, send, mint, and sell NFTs (non-fungible tokens). Coming soon.</p>
@@ -578,7 +579,7 @@ const SubscribedCreateSchemeRegistrarProposal = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
-    return arc.dao(props.daoAvatarAddress).schemes();
+    return arc.dao(props.daoAvatarAddress).schemes({ where: { isRegistered: true } }, { fetchAllData: true });
   },
 });
 

@@ -1,17 +1,15 @@
 /* tslint:disable:max-classes-per-file */
 
-import { enableWalletProvider } from "arc";
 import { History } from "history";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { Address, ISchemeState, IGenesisProtocolParams, IDAOState } from "@daostack/client";
+import { Address, ISchemeState, IGenesisProtocolParams, IDAOState } from "@daostack/arc.js";
 import { copyToClipboard, fromWei, linkToEtherScan, roundUp } from "lib/util";
 import { schemeName } from "lib/schemeUtils";
 import * as moment from "moment";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { connect } from "react-redux";
 import Tooltip from "rc-tooltip";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "./SchemeInfo.scss";
 
 interface IDispatchProps {
@@ -37,13 +35,6 @@ class SchemeInfo extends React.Component<IProps, null> {
     copyToClipboard(str);
     this.props.showNotification(NotificationStatus.Success, "Copied to clipboard!");
   };
-
-  private handleEditPlugin = async (e: any) => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
-
-    this.props.history.push(`/dao/${this.props.daoState.id}/scheme/${this.props.schemeManager.id}/proposals/create/?currentTab=editScheme`);
-    e.preventDefault();
-  }
 
   public render(): RenderOutput {
     const { daoState, scheme } = this.props;
@@ -131,18 +122,6 @@ class SchemeInfo extends React.Component<IProps, null> {
     );
     return <div>
       <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>Info</BreadcrumbsItem>
-
-      <div className={css.editPlugin}>
-        <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
-          <a
-            data-test-id="createProposal"
-            href="#!"
-            onClick={this.handleEditPlugin}
-          >
-            Edit Plugin
-          </a>
-        </TrainingTooltip>
-      </div>
 
       <div className={css.schemeInfoContainer}>
         <h3>{schemeName(scheme, scheme.address)}</h3>

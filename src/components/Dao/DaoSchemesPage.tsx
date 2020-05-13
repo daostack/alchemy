@@ -1,4 +1,4 @@
-import { CompetitionScheme, IDAOState, ISchemeState, Scheme } from "@daostack/client";
+import { CompetitionScheme, IDAOState, ISchemeState, Scheme } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";
@@ -105,7 +105,7 @@ class DaoSchemesPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.wrapper}>
-        <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${dao.address}/schemes`}>Proposal Plugins</BreadcrumbsItem>
 
         <Sticky enabled top={50} innerZ={10000}>
           <h1>Proposal Plugins</h1>

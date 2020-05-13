@@ -1,4 +1,4 @@
-import { IDAOState, IProposalStage, IProposalState, ISchemeState, Proposal, Scheme } from "@daostack/client";
+import { IDAOState, IProposalStage, IProposalState, ISchemeState, Proposal, Scheme } from "@daostack/arc.js";
 import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
@@ -25,7 +25,7 @@ const ProposalSchemeCard = (props: IProps) => {
 
   const [schemeState, boostedProposals] = data;
 
-  const numProposals = schemeState.numberOfQueuedProposals + schemeState.numberOfBoostedProposals + schemeState.numberOfQueuedProposals;
+  const numProposals = schemeState.numberOfPreBoostedProposals + schemeState.numberOfBoostedProposals + schemeState.numberOfQueuedProposals;
   const proposals = boostedProposals.slice(0, 3);
 
   const proposalsHTML = proposals.map((proposal: Proposal) => <SubscribedProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);

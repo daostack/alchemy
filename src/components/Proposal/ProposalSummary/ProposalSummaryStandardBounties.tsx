@@ -1,4 +1,4 @@
-import { IProposalState } from "@daostack/client";
+import { IProposalState } from "@daostack/arc.js";
 import * as classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
 import { linkToEtherScan } from "lib/util";

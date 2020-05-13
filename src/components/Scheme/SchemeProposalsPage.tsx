@@ -1,6 +1,6 @@
 import { History } from "history";
-import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Vote, Reward, Scheme, Stake } from "@daostack/client";
-import { enableWalletProvider, getArc } from "arc";
+import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Vote, Reward, Scheme, Stake } from "@daostack/arc.js";
+import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
@@ -45,6 +45,7 @@ interface IExternalProps {
   scheme: ISchemeState;
   daoState: IDAOState;
   crxRewarderProps: any;
+  handleNewProposal: (e: any) => void;
 }
 
 interface IDispatchProps {
@@ -69,17 +70,6 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
       "Scheme Name": this.props.scheme.name,
     });
   }
-
-  private async handleNewProposal(daoAvatarAddress: Address, schemeId: any): Promise<void> {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
-
-    this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
-  }
-
-  private _handleNewProposal = (e: any): void => {
-    this.handleNewProposal(this.props.daoState.address, this.props.scheme.id);
-    e.preventDefault();
-  };
 
   public render(): RenderOutput {
     const { data } = this.props;
@@ -125,23 +115,9 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
     const schemeFriendlyName = schemeName(scheme, scheme.address);
 
     return (
-      <div>
+      <>
+        <BreadcrumbsItem to={`/dao/${daoState.address}/schemes`}>Proposal Plugins</BreadcrumbsItem>
         <BreadcrumbsItem to={`/dao/${daoState.address}/scheme/${scheme.id}`}>{schemeFriendlyName}</BreadcrumbsItem>
-
-        <div className={css.createProposal}>
-          <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
-            <a className={
-              classNames({
-                [css.createProposal]: true,
-                [css.disabled]: !isActive,
-              })}
-            data-test-id="createProposal"
-            href="#!"
-            onClick={isActive ? this._handleNewProposal : null}
-            >
-          + New { `${this.props.crxRewarderProps ? this.props.crxRewarderProps.contractName : schemeFriendlyName } `}Proposal</a>
-          </TrainingTooltip>
-        </div>
 
         { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
           ?
@@ -160,7 +136,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
                 [css.disabled]: !isActive,
               })}
               href="#!"
-              onClick={isActive ? this._handleNewProposal : null}
+              onClick={isActive ? this.props.handleNewProposal : null}
               data-test-id="createProposal"
               >+ New Proposal</a>
             </div>
@@ -233,7 +209,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             </div>
           </div>
         }
-      </div>
+      </>
     );
   }
 }
