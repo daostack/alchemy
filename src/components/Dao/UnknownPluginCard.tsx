@@ -36,7 +36,7 @@ const UnknownPluginRow = (props: IRowProps) => {
     <td className={css.left}>&nbsp;</td>
     <td>
       <img className={css.attention} src="/assets/images/Icon/Alert-red.svg" />
-      <Link className={css.pluginLink} to={`/dao/${pluginState.dao}/plugin/${pluginState.id}`}>
+      <Link className={css.pluginLink} to={`/dao/${pluginState.dao.id}/plugin/${pluginState.id}`}>
         {pluginState.name ?
           splitByCamelCase(pluginState.name) :
           pluginState.address
