@@ -29,14 +29,6 @@ async function main() {
       url: 'http://127.0.0.1:8000/subgraphs/name/daostack'
     },
     {
-      name: 'Alchemy Server',
-      url: 'http://0.0.0.0:3001/explorer'
-    },
-    {
-      name: 'Alchemy server (accounts)',
-      url: 'http://127.0.0.1:3001/api/accounts'
-    },
-    {
       name: 'Alchemy Application',
       url: 'http://0.0.0.0:3000',
     },

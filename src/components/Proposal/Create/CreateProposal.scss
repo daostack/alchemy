@@ -64,7 +64,6 @@
       margin-bottom: 5px;
       padding: 0 15px;
       box-sizing: border-box;
-      border: none;
       background-color: transparent;
       border: $gray-border-2;
       font-size: 13px;
@@ -86,10 +85,19 @@
       color: rgba(154, 169, 181, 1);
     }
 
-    .contributionReward {
+    .containerNoSidebar {
       width: 110px;
       display: inline-block;
       height: calc(100% - 40px);
+    }
+
+    .proposalDescriptionLabelText {
+      display: flex;
+      padding-bottom: 4px;
+
+      .body {
+        margin-right: 6px;
+      }
     }
 
     .dates {
@@ -196,13 +204,6 @@
         color: rgba(104, 154, 214, 1);
         font-weight: bold;
         margin-right: 4px;
-      }
-
-      .infoTooltip {
-        position: absolute;
-        right: 0;
-        display: none;
-        right: -17px;
       }
     }
 
@@ -322,7 +323,6 @@
     border: none;
     display: inline-block;
     margin: 0 5px;
-    font-weight: normal;
     font-size: 13px;
     padding: 0 25px 2px 25px;
     font-family: $body-font;
@@ -532,7 +532,6 @@
     display: block;
     font-size: 13px;
     margin: 3px 0 5px 0;
-    border: 1px solid #aaa;
     border-radius: 0;
     -moz-appearance: none;
     -webkit-appearance: none;
@@ -737,6 +736,16 @@ div.description {
       top: 25px;
       background-color: #e9eef4;
       margin-left: -12px;
+    }
+  }
+
+  .createProposalWrapper {
+    form {
+      .proposerIsAdminCheckbox {
+        label {
+          bottom: 0;
+        }
+      }
     }
   }
 }

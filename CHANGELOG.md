@@ -1,14 +1,18 @@
 ## 0.10.7
   - Features Added
+    - Added "Stake for Reputation Plugin" to the list of known plugins that can be registered to a DAO
+    - Use Tor.us and Metamask providers when running against xDAI network (removes Burner Connect)
 
   - Bugs Fixed
     - Display a proper msg for daos members with no reputation at the moment of a proposal creation
     - Fix summing up the number of schemes open proposals
+    - Cosmetic improvement to the New Proposal button
+    - Fix to breadcrumbs relating to the new DAO landing page
+    - Don't display unregistered schemes in the Plugin Manager plugins dropdown
 
 ## 0.10.6
   - Features Added
     - new DAO landing page
-    - show warnings if subgraph is not updating
     - added help text in the Plugin Editor popup
 
   - Bugs Fixed
@@ -21,8 +25,8 @@
     - added support for embedded youtube and vimeo videos in proposal descriptions
     - recommended node.js version to build Alchemy is set to 12.16.2
     - upgrade to use subgraph v39_3
-    - add subgraph_endpoints.json so it could be read externaly
-    - add CENNZ ERC20 token to be showen as dao owned tokens/balance
+    - add subgraph_endpoints.json so it could be read externally
+    - add CENNZ ERC20 token to be shown as dao owned tokens/balance
 
   - Bugs Fixed
     - fix Torus not connecting on first try
