@@ -220,6 +220,8 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
     const arc = getArc();
 
+    const arc = getArc();
+
     return (
       <div className={css.wrapper}>
         <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme.id}`}>{schemeName(proposal.scheme, proposal.scheme.address)}</BreadcrumbsItem>

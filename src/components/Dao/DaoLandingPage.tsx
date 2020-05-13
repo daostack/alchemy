@@ -133,7 +133,7 @@ class DaoLandingPage extends React.Component<IProps, IState> {
           <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
         </div>
 
-        { this.state.showingEditPagePopup ?
+        {this.state.showingEditPagePopup ?
           <ModalPopup
             closeHandler={this.hideLandingPageContent}
             width="60%"

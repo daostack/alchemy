@@ -320,6 +320,12 @@ iframe.embeddedVideo {
   margin-bottom: 20px;
 }
 
+.discussionWarning {
+  color: red;
+  margin-top: -20px;
+  margin-bottom: 20px;
+}
+
 @media only screen and (max-width: 425px) {
   .proposal {
     display: block;
