@@ -229,7 +229,7 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
   const memberOfDAOs = currentAccountAddress ? arc.getObservableList(
     arc,
     memberDAOsquery,
-    (arc: Arc, r: any) => createDaoStateFromQuery(r.dao),
+    (arc: Arc, r: any) => new DAO(arc, createDaoStateFromQuery(r.dao)),
     undefined,
     { subscribe: true }
   ) : of([]);
