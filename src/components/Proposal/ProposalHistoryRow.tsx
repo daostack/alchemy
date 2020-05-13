@@ -4,7 +4,7 @@ import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { formatTokens, humanProposalTitle } from "lib/util";
+import { formatTokens, humanProposalTitle, ethErrorHandler } from "lib/util";
 import { pluginName } from "lib/pluginUtils";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -235,7 +235,7 @@ export default withSubscription({
         proposal.stakes({ where: { staker: props.currentAccountAddress}}),
         proposal.votes({ where: { voter: props.currentAccountAddress }}),
         // we set 'fetchPolicy' to 'cache-only' so as to not send queries for addresses that are not members. The cache is filled higher up.
-        member.state({ fetchPolicy: "cache-only"}),
+        member.state({ fetchPolicy: "cache-only"}).pipe(ethErrorHandler()),
       );
     }
   },

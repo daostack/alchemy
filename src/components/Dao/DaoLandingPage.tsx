@@ -27,15 +27,14 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
     this.state = {
       showingEditPagePopup: false,
     };
-  }
-
-  public componentDidMount() {
     this.disqusConfig = {
       url: process.env.BASE_URL + "/dao/" + this.props.daoState.address + "/discussion",
       identifier: this.props.daoState.address,
       title: "Discuss " + this.props.daoState.name,
     };
+  }
 
+  public componentDidMount() {
     Analytics.track("Page View", {
       "Page Name": Page.DAOLanding,
       "DAO Address": this.props.daoState.id,

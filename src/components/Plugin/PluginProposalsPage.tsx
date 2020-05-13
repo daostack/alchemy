@@ -1,5 +1,5 @@
 import { History } from "history";
-import { Address, DAO, IDAOState, IProposalStage, IPluginState, AnyProposal, Vote, Reward, Stake, Proposal, Plugin } from "@daostack/arc.js";
+import { Address, DAO, IDAOState, IProposalStage, IPluginState, AnyProposal, Vote, Reward, Stake, Proposal, Plugin, Proposals } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -268,7 +268,65 @@ const SubscribedPluginProposalsPage = withSubscription<IProps, SubscriptionData>
               "${IProposalStage[IProposalStage.QuietEndingPeriod]}",
             ]
           }){
-            ...ProposalFields
+            id
+            accountsWithUnclaimedRewards
+            boostedAt
+            closingAt
+            confidenceThreshold
+            createdAt
+            dao {
+              id
+              schemes {
+                id
+                address
+              }
+            }
+            description
+            descriptionHash
+            executedAt
+            executionState
+            expiresInQueueAt
+            genesisProtocolParams {
+              id
+              activationTime
+              boostedVotePeriodLimit
+              daoBountyConst
+              limitExponentValue
+              minimumDaoBounty
+              preBoostedVotePeriodLimit
+              proposingRepReward
+              queuedVotePeriodLimit
+              queuedVoteRequiredPercentage
+              quietEndingPeriod
+              thresholdConst
+              votersReputationLossRatio
+            }
+            scheme {
+              ...PluginFields
+            }
+            gpQueue {
+              id
+              threshold
+              votingMachine
+            }
+            organizationId
+            preBoostedAt
+            proposer
+            quietEndingPeriodBeganAt
+            stage
+            stakesFor
+            stakesAgainst
+            tags {
+              id
+            }
+            totalRepWhenCreated
+            totalRepWhenExecuted
+            title
+            url
+            votesAgainst
+            votesFor
+            votingMachine
+            winningOutcome
             votes (where: { voter: "${props.currentAccountAddress}"}) {
               ...VoteFields
             }
@@ -278,9 +336,16 @@ const SubscribedPluginProposalsPage = withSubscription<IProps, SubscriptionData>
             gpRewards (where: { beneficiary: "${props.currentAccountAddress}"}) {
               ...RewardFields
             }
+            ${Object.values(Proposals)
+              .filter((proposal) => proposal.fragment)
+              .map((proposal) => '...' + proposal.fragment?.name)
+              .join('\n')}
           }
         }
-        ${Proposal.baseFragment}
+        ${Object.values(Proposals)
+          .filter((proposal) => proposal.fragment)
+          .map((proposal) => proposal.fragment?.fragment.loc?.source.body)
+          .join('\n')}
         ${Vote.fragments.VoteFields}
         ${Stake.fragments.StakeFields}
         ${Reward.fragments.RewardFields}

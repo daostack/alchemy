@@ -20,7 +20,7 @@ type IProps = IExternalProps & ISubscriptionProps<[IMemberState, BN|null, BN|nul
 class AccountBalances extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
-    const { daoState, data } = this.props;
+    const { daoState, address, data } = this.props;
 
     if (!data) {
       return null;
@@ -31,7 +31,7 @@ class AccountBalances extends React.Component<IProps, null> {
     return (
       <div className={css.balances}>
         <h2>Reputation</h2>
-        {daoState ?
+        {daoState && currentAccountState ?
           <div className={css.daoBalance}>
             <b>{daoState.name}</b>
             <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={currentAccountState.reputation} hideTooltip/>
@@ -44,10 +44,10 @@ class AccountBalances extends React.Component<IProps, null> {
         <div className={css.userBalance}>
           <h2>Holdings</h2>
           <div>
-            <AccountBalance tokenSymbol={baseTokenName()} balance={ethBalance} accountAddress={currentAccountState.address} />
+            <AccountBalance tokenSymbol={baseTokenName()} balance={ethBalance} accountAddress={address} />
           </div>
           <div>
-            <AccountBalance tokenSymbol={genName()} balance={genBalance} accountAddress={currentAccountState.address} />
+            <AccountBalance tokenSymbol={genName()} balance={genBalance} accountAddress={address} />
           </div>
         </div>
       </div>
@@ -66,7 +66,7 @@ export default withSubscription({
     return oldProps.address !== newProps.address || (oldDao && oldDao.address) !== (newDao && newDao.address);
   },
 
-  createObservable: ({ daoState, address }: IExternalProps) => {
+  createObservable: async ({ daoState, address }: IExternalProps) => {
     if (!daoState) {
       return of(null);
     }
@@ -77,7 +77,7 @@ export default withSubscription({
     })) : undefined;
 
     return combineLatest(
-      member ? member.state( { subscribe: true }) : of(null),
+      member ? member.state( { subscribe: true }).pipe(ethErrorHandler()) : of(null),
       arc.ethBalance(address).pipe(ethErrorHandler()),
       arc.GENToken().balanceOf(address).pipe(ethErrorHandler())
     );

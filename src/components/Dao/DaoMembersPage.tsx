@@ -1,4 +1,5 @@
 import { DAO, IDAOState, Member } from "@daostack/arc.js";
+import { getArc } from "arc";
 import { getProfile } from "actions/profilesActions";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -18,7 +19,7 @@ import DaoMember from "./DaoMember";
 import * as css from "./Dao.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
-  dao: DAO;
+  daoState: IDAOState;
 }
 
 interface IStateProps {
@@ -114,8 +115,7 @@ const SubscribedDaoMembersPage = withSubscription({
   checkForUpdate: [], // (oldProps, newProps) => { return oldProps.daoState.address !== newProps.daoState.address; },
 
   createObservable: async (props: IExternalProps) => {
-    const dao = props.dao;
-
+    const dao = new DAO(getArc(), props.daoState);
     return combineLatest(
       dao.members({
         orderBy: "balance",
@@ -131,7 +131,7 @@ const SubscribedDaoMembersPage = withSubscription({
   pageSize: PAGE_SIZE,
 
   getFetchMoreObservable: (props: IExternalProps, data: [Member[], IDAOState]) => {
-    const dao = props.dao;
+    const dao = new DAO(getArc(), props.daoState);
     return combineLatest(
       dao.members({
         orderBy: "balance",

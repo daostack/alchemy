@@ -18,7 +18,7 @@ interface IExternalProps {
   altStyle?: boolean;
   contextMenu?: boolean;
   currentAccountAddress: Address;
-  currentAccountState: IMemberState;
+  currentAccountState: IMemberState | null;
   currentVote: IProposalOutcome|undefined;
   daoState: IDAOState;
   expired?: boolean;

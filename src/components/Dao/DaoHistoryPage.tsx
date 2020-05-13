@@ -1,4 +1,4 @@
-import { Address, DAO, IDAOState, IProposalStage, AnyProposal, Vote, Plugin, Stake } from "@daostack/arc.js";
+import { Address, DAO, IDAOState, IProposalStage, AnyProposal, Plugin, Stake, Vote, Proposals } from "@daostack/arc.js";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -19,7 +19,7 @@ const PAGE_SIZE = 50;
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
-  dao: DAO;
+  daoState: IDAOState;
 }
 
 type SubscriptionData = [AnyProposal[], IDAOState];
@@ -104,7 +104,7 @@ export default withSubscription({
 
   createObservable: async (props: IExternalProps) => {
     const arc = getArc();
-    const dao = props.dao;
+    const dao = new DAO(arc, props.daoState);
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server
     // with all separate queries for votes and stakes and stuff...
@@ -113,7 +113,6 @@ export default withSubscription({
     if (props.currentAccountAddress) {
       voterClause = `(where: { voter: "${props.currentAccountAddress}"})`;
       stakerClause = `(where: { staker: "${props.currentAccountAddress}"})`;
-
     }
     const prefetchQuery = gql`
       query prefetchProposalDataForDAOHistory {
@@ -132,16 +131,84 @@ export default withSubscription({
             closingAt_lte: "${Math.floor(new Date().getTime() / 1000)}"
           }
         ){
-          ...ProposalFields
+          id
+          accountsWithUnclaimedRewards
+          boostedAt
+          closingAt
+          confidenceThreshold
+          createdAt
+          dao {
+            id
+            schemes {
+              id
+              address
+            }
+          }
+          description
+          descriptionHash
+          executedAt
+          executionState
+          expiresInQueueAt
+          genesisProtocolParams {
+            id
+            activationTime
+            boostedVotePeriodLimit
+            daoBountyConst
+            limitExponentValue
+            minimumDaoBounty
+            preBoostedVotePeriodLimit
+            proposingRepReward
+            queuedVotePeriodLimit
+            queuedVoteRequiredPercentage
+            quietEndingPeriod
+            thresholdConst
+            votersReputationLossRatio
+          }
+          gpRewards {
+            id
+          }
+          scheme {
+            ...PluginFields
+          }
+          gpQueue {
+            id
+            threshold
+            votingMachine
+          }
+          organizationId
+          preBoostedAt
+          proposer
+          quietEndingPeriodBeganAt
+          stage
+          stakesFor
+          stakesAgainst
+          tags {
+            id
+          }
+          totalRepWhenCreated
+          totalRepWhenExecuted
+          title
+          url
+          votesAgainst
+          votesFor
+          votingMachine
+          winningOutcome
           votes ${voterClause} {
             ...VoteFields
           }
           stakes ${stakerClause} {
             ...StakeFields
           }
+          ${Object.values(Proposals)
+            .filter((proposal) => proposal.fragment)
+            .map((proposal) => '...' + proposal.fragment?.name)
+            .join('\n')}
         }
       }
-      ${AnyProposal.baseFragment}
+      ${Object.values(Proposals)
+        .filter((proposal) => proposal.fragment)
+        .map((proposal) => proposal.fragment?.fragment.loc?.source.body)
+        .join('\n')}
       ${Vote.fragments.VoteFields}
       ${Stake.fragments.StakeFields}
       ${Plugin.baseFragment}
@@ -170,7 +237,7 @@ export default withSubscription({
   pageSize: PAGE_SIZE,
 
   getFetchMoreObservable: (props: IExternalProps, data: SubscriptionData) => {
-    const dao = props.dao;
+    const dao = new DAO(getArc(), props.daoState);
     return dao.proposals({
       where: {
         // eslint-disable-next-line @typescript-eslint/camelcase

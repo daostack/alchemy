@@ -32,6 +32,10 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
 
+    if (!this.state) {
+      return null;
+    }
+
     const { detailView, transactionModal } = this.props;
     const { proposal } = this.state;
 

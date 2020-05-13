@@ -1,4 +1,4 @@
-import { Address, AnyProposal, DAO, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, IContributionRewardProposalState } from "@daostack/arc.js";
+import { Address, AnyProposal, DAO, IProposalState, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, IContributionRewardProposalState } from "@daostack/arc.js";
 import { getArc } from "arc";
 import { ethErrorHandler } from "lib/util";
 
@@ -31,7 +31,7 @@ interface IStateProps {
   creatorProfile?: IProfileState;
 }
 
-type SubscriptionData = [AnyProposal, Vote[], Stake[], IRewardState, IMemberState, BN, BN, BN];
+type SubscriptionData = [AnyProposal, IProposalState, Vote[], Stake[], IRewardState, IMemberState, BN, BN, BN];
 type IPreProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
@@ -50,7 +50,7 @@ export interface IInjectedProposalProps {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IPreProps => {
-  const proposal = ownProps.data ? ownProps.data[0] : null;
+  const proposal = ownProps.data[0];
   const proposalState = proposal.coreState;
   const crState = proposal.coreState as IContributionRewardProposalState;
 
@@ -71,14 +71,25 @@ class ProposalData extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    this.state = {
-      expired: props.data ? closingTime(props.data[0].coreState).isSameOrBefore(moment()) : false,
-    };
+    if (props.data) {
+      const proposal = props.data[0]
+
+      this.state = {
+        expired: proposal.coreState ? closingTime(proposal.coreState).isSameOrBefore(moment()) : false,
+      };
+    } else {
+      this.state = {
+        expired: false,
+      };
+    }
   }
 
-  componentDidMount() {
-    // Expire proposal in real time
+  async componentDidMount() {
+    if (!this.props.data) {
+      return;
+    }
 
+    // Expire proposal in real time
     // Don't schedule timeout if its too long to wait, because browser will fail and trigger the timeout immediately
     const millisecondsUntilExpires = closingTime(this.props.data[0].coreState).diff(moment());
     if (!this.state.expired && millisecondsUntilExpires < 2147483647) {
@@ -91,7 +102,11 @@ class ProposalData extends React.Component<IProps, IState> {
   }
 
   render(): RenderOutput {
-    const [proposal, votes, stakes, rewards, member, daoEthBalance, currentAccountGenBalance, currentAccountGenAllowance] = this.props.data;
+    if (!this.props.data) {
+      return;
+    }
+
+    const [proposal,, votes, stakes, rewards, member, daoEthBalance, currentAccountGenBalance, currentAccountGenAllowance] = this.props.data;
     const { beneficiaryProfile, creatorProfile } = this.props;
 
     return this.props.children({
@@ -131,6 +146,7 @@ export default withSubscription({
 
     if (currentAccountAddress) {
       return combineLatest(
+        of(proposal),
         proposal.state({ subscribe: props.subscribeToProposalDetails }), // state of the current proposal
         proposal.votes({where: { voter: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
         proposal.stakes({where: { staker: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
@@ -140,7 +156,7 @@ export default withSubscription({
 
         // we set 'fetchPolicy' to 'cache-only' so as to not send queries for addresses that are not members. The cache is filled higher up.
         // arcDao.member(currentAccountAddress).state({ fetchPolicy: "cache-only"}),
-        arcDao.member(currentAccountAddress).state(),
+        arcDao.member(currentAccountAddress).state().pipe(ethErrorHandler()),
         // TODO: also need the member state for the proposal proposer and beneficiary
         //      but since we need the proposal state first to get those addresses we will need to
         //      update the client query to load them inline
@@ -153,6 +169,7 @@ export default withSubscription({
       );
     } else {
       return combineLatest(
+        of(null),
         proposal.state({}), // state of the current proposal
         of([]), // votes
         of([]), // stakes

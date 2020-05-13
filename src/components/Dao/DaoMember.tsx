@@ -5,7 +5,7 @@ import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { fromWeiToString } from "lib/util";
+import { fromWeiToString, ethErrorHandler } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { IProfileState } from "reducers/profilesReducer";
@@ -91,5 +91,5 @@ export default withSubscription({
   loadingComponent: <div>Loading...</div>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: (oldProps, newProps) => { return oldProps.member.id !== newProps.member.id; },
-  createObservable: (props: IProps) => props.member.state(),
+  createObservable: (props: IProps) => props.member.state().pipe(ethErrorHandler()),
 });

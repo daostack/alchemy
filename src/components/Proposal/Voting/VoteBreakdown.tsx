@@ -14,7 +14,7 @@ interface IExternalProps {
   currentVote: number;
   daoState: IDAOState;
   detailView?: boolean;
-  currentAccountState: IMemberState;
+  currentAccountState: IMemberState | null;
   proposalState: IProposalState;
   historyView?: boolean;
 }
@@ -48,7 +48,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
   public async handleClickVote(vote: number, _event: any): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    if (this.props.currentAccountState.reputation.gt(new BN(0))) {
+    if (this.props.currentAccountAddress && this.props.currentAccountState.reputation.gt(new BN(0))) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
     }
   }
