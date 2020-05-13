@@ -8,7 +8,6 @@ import { humanProposalTitle } from "lib/util";
 import { pluginName } from "lib/pluginUtils";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { combineLatest } from "rxjs";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "./PluginCard.scss";
 
@@ -17,13 +16,13 @@ interface IExternalProps {
   pluginState: IPluginState;
 }
 
-type SubscriptionData = [AnyProposal[]];
+type SubscriptionData = AnyProposal[];
 type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 const ProposalPluginCard = (props: IProps) => {
   const { data, daoState, pluginState } = props;
 
-  const [boostedProposals] = data;
+  const boostedProposals = data;
 
   const numProposals =  pluginState.numberOfQueuedProposals + pluginState.numberOfBoostedProposals + pluginState.numberOfQueuedProposals;
   const proposals = boostedProposals.slice(0, 3);
@@ -90,16 +89,14 @@ export default withSubscription({
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
     const dao = arc.dao(props.daoState.address);
-    return combineLatest(
-      dao.proposals({ where: {
-        plugin:  props.pluginState.id,
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
-      }}, {
-        fetchAllData: true,
-        subscribe: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
-      }) // the list of boosted proposals
-    );
+    return dao.proposals({ where: {
+      plugin:  props.pluginState.id,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
+    }}, {
+      fetchAllData: true,
+      subscribe: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
+    }) // the list of boosted proposals
   },
 });
 

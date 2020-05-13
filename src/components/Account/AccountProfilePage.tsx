@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import BN = require("bn.js");
 import { getProfile, updateProfile } from "actions/profilesActions";
-import { getArc, enableWalletProvider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import Reputation from "components/Account/Reputation";
@@ -12,7 +12,7 @@ import ThreeboxModal from "components/Shared/ThreeboxModal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { Field, Formik, FormikProps } from "formik";
 import Analytics from "lib/analytics";
-import { baseTokenName, copyToClipboard, ethErrorHandler, genName, formatTokens } from "lib/util";
+import { baseTokenName, copyToClipboard, genName, ethErrorHandler, formatTokens } from "lib/util";
 import { Page } from "pages";
 import { parse } from "query-string";
 import * as React from "react";
@@ -333,8 +333,9 @@ const SubscribedAccountProfilePage = withSubscription({
 
     return combineLatest(
       // subscribe if only to to get DAO reputation supply updates
-      daoAvatarAddress ? dao.state( {subscribe: true}) : of(null),
+      daoAvatarAddress ? dao.state({subscribe: true}) : of(null),
       daoAvatarAddress ? dao.member(accountAddress).state() : of(null),
+      // TODO @jordan not returning...
       arc.ethBalance(accountAddress)
         .pipe(ethErrorHandler()),
       arc.GENToken().balanceOf(accountAddress)
