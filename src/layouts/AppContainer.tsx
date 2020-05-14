@@ -1,3 +1,4 @@
+import * as uiActions from "actions/uiActions";
 import { threeBoxLogout } from "actions/profilesActions";
 import { setCurrentAccount } from "actions/web3Actions";
 import AccountProfilePage from "components/Account/AccountProfilePage";
@@ -26,7 +27,8 @@ import { captureException, withScope } from "@sentry/browser";
 import { Address } from "@daostack/arc.js";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
-import SimpleMessagePopup from "components/Shared/SimpleMessagePopup";
+import SimpleMessagePopup, { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
+import { initializeUtils } from 'lib/util';
 
 interface IExternalProps extends RouteComponentProps<any> {
   history: History;
@@ -35,6 +37,7 @@ interface IExternalProps extends RouteComponentProps<any> {
 interface IStateProps {
   currentAccountAddress: string;
   daoAvatarAddress: string;
+  simpleMessageOpen: boolean;
   sortedNotifications: INotificationsState;
   threeBox: any;
 }
@@ -50,6 +53,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IStatePro
     ...ownProps,
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
+    simpleMessageOpen: state.ui.simpleMessageOpen,
     sortedNotifications: sortedNotifications()(state),
     threeBox: state.profiles.threeBox,
   };
@@ -60,6 +64,7 @@ interface IDispatchProps {
   setCurrentAccount: typeof setCurrentAccount;
   showNotification: typeof showNotification;
   threeBoxLogout: typeof threeBoxLogout;
+  showSimpleMessage: typeof uiActions.showSimpleMessage;
 }
 
 const mapDispatchToProps = {
@@ -67,6 +72,7 @@ const mapDispatchToProps = {
   setCurrentAccount,
   showNotification,
   threeBoxLogout,
+  showSimpleMessage: uiActions.showSimpleMessage,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps;
@@ -87,6 +93,10 @@ class AppContainer extends React.Component<IProps, IState> {
       error: null,
       sentryEventId: null,
     };
+  }
+
+  private showSimpleMessage = (options: ISimpleMessagePopupProps): void => {
+    this.props.showSimpleMessage(options);
   }
 
   public componentDidCatch(error: Error, errorInfo: any): void {
@@ -122,6 +132,9 @@ class AppContainer extends React.Component<IProps, IState> {
     }
 
     this.props.setCurrentAccount(currentAddress);
+
+    initializeUtils({ showSimpleMessage: this.showSimpleMessage });
+
     /**
      * Only supply currentAddress if it was obtained from a provider.  The poll
      * is only comparing changes with respect to the provider state.  Passing it a cached state
