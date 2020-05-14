@@ -69,7 +69,10 @@ class PluginContainer extends React.Component<IProps, IState> {
   }
 
   private pluginInfoPageHtml = (props: any) => <PluginInfoPage {...props} daoState={this.props.daoState} plugin={this.props.data[0]} pluginRegistrar={this.props.data[1]} />;
-  private pluginProposalsPageHtml = (isActive: boolean, crxRewarderProps: ICrxRewarderProps) => (props: any) => <PluginProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} pluginState={this.props.data[0]} crxRewarderProps={crxRewarderProps} />;
+  private pluginProposalsPageHtml = (isActive: boolean, crxRewarderProps: ICrxRewarderProps) => (props: any) => {
+    console.log("CORONA ", this.props.data[0])
+    return <PluginProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} pluginState={this.props.data[0]} crxRewarderProps={crxRewarderProps} />;
+  }
   private contributionsRewardExtTabHtml = () => (props: any) =>
   {
     if (!this.state.crxListComponent) {
@@ -244,7 +247,7 @@ const SubscribedPluginContainer = withSubscription({
     return combineLatest(
       of(pluginState),
       // Find the SchemeRegistrar plugin if this dao has one
-      Plugin.search(arc, {where: { dao: props.daoState.id, name: "SchemeRegistrar" }}).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null))),
+      Plugin.search(arc, {where: { dao: props.daoState.id, name: "SchemeFactory" }}).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null))),
       approvedProposals
     );
   },
