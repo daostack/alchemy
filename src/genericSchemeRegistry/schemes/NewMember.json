@@ -1,0 +1,49 @@
+{
+  "name": "NewMember",
+  "addresses": {
+    "xdai": [
+      "0xb24f5c82462634421b005dc7352bcfad04bc8d3a"
+    ]
+  },
+  "actions": [
+    {
+      "id": "NewMember"
+      "label": "This is a new member proposal to the builder collective",
+      "description": "Introduce yourself to the members of the cooperative and if approved by the members, recieve reputation (Voting power). Please fill out your name, Discord id (to find it write \@yourname in the discord chat), your skills, and something that you are excited about. for the full guide on how to participate please go <a target=\"_blank\" href=\"https://builderco.org/onboarding\">here</a>",
+      "notes": "builderco.org/proposal",
+      "fields": [
+        {
+          "label": "Your Address",
+          "name": "_user",
+          "placeholder": "Address (0x0000…)"
+        },
+         {
+          "label": "Reputation Amount",
+          "name": "_amount",
+         },
+      ],
+
+      "abi": {
+        "constant": false,
+        "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+  }
+      "name": "mint",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+  }

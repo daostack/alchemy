@@ -13,6 +13,7 @@ const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
 const registryLookupInfo = require("./schemes/RegistryLookup.json");
 const co2kenInfo = require("./schemes/CO2ken.json");
 const dXTokenRegistry = require("./schemes/dXTokenRegistry.json");
+const NewMember = require("./schemes/NewMember.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
@@ -24,6 +25,7 @@ const KNOWNSCHEMES = [
   gpInfo,
   registryLookupInfo,
   dXTokenRegistry,
+  NewMember,
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
