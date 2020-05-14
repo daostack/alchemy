@@ -148,7 +148,7 @@ const SubscribedCreateProposalPage = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: async (props: IExternalStateProps) => {
     const arc = getArc();
-    const plugin = await arc.plugins({ where: { plugin: props.pluginId } }).pipe(first()).toPromise();
+    const plugin = await arc.plugins({ where: { id: props.pluginId } }).pipe(first()).toPromise();
     return from(plugin[0].fetchState());
   },
 });
