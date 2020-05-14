@@ -1,0 +1,45 @@
+.modalContainer {
+  width: 60%;
+}
+
+.modalHeader {
+  display: flex;
+
+  .title {
+    flex-grow: 2;
+  }
+
+  .closeButtonX {
+    img {
+      position: relative;
+      width: 13px;
+      height: 13px;
+    }
+  }
+}
+
+.modalBody {
+  div {
+    margin-bottom: 1rem;
+  }
+}
+
+.modalFooter {
+  text-align: center;
+
+  .closeButton {
+    height: 30px;
+    border-radius: 30px;
+    border-width: 1px;
+    background-color: #0071ff;
+    padding: 0 15px;
+    border-color: #0376ff;
+    color: white;
+    font-weight: bold;
+    font-size: 11px;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    white-space: nowrap;
+  }
+}
