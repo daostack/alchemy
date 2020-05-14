@@ -1,4 +1,4 @@
-import { Address, AnyProposal, DAO, IProposalState, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, IContributionRewardProposalState } from "@dorgtech/arc.js";
+import { Address, AnyProposal, DAO, IProposalState, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, Member, IContributionRewardProposalState } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import { ethErrorHandler } from "lib/util";
 
@@ -154,7 +154,10 @@ export default withSubscription({
           .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
           .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
 
-        arcDao.member(currentAccountAddress).state().pipe(ethErrorHandler()),
+        arcDao.member(Member.calculateId({
+          address: currentAccountAddress,
+          contract: daoState.reputation.id
+        })).state().pipe(ethErrorHandler()),
         // TODO: also need the member state for the proposal proposer and beneficiary
         //      but since we need the proposal state first to get those addresses we will need to
         //      update the client query to load them inline
