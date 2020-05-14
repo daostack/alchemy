@@ -6,7 +6,7 @@ import Analytics from "lib/analytics";
 import { Link } from "react-router-dom";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { DiscussionEmbed } from "disqus-react";
-import { showSimpleMessage } from 'lib/util';
+import { showSimpleMessage } from "lib/util";
 
 type IExternalProps = {
   daoState: IDAOState;
@@ -35,7 +35,7 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
           <>
             <div>Editing the content on this DAO’s home page will soon be possible via proposal. Stay tuned!</div>
             <div>For now, if you need a change made to a DAO’s home page content, please contact us at <a href="https://support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a></div>
-          </>
+          </>,
       }
     );
   }

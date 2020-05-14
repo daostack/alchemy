@@ -28,7 +28,7 @@ import { Address } from "@daostack/arc.js";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
 import SimpleMessagePopup, { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
-import { initializeUtils } from 'lib/util';
+import { initializeUtils } from "lib/util";
 
 interface IExternalProps extends RouteComponentProps<any> {
   history: History;
