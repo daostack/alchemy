@@ -30,7 +30,7 @@ interface IExternalProps {
   /**
    * unredeemed GP rewards owed to the current account
    */
-  rewards: IRewardState;
+  rewards: IRewardState | null;
   expired: boolean;
 }
 
@@ -297,6 +297,11 @@ class ActionButton extends React.Component<IProps, IState> {
 
     await proposal.fetchState();
     await redeemProposal(daoState.address, proposal.id, currentAccountAddress);
+
+    gpRewards.daoBountyForStaker = gpRewards.daoBountyForStaker || new BN(0)
+    gpRewards.reputationForVoter = gpRewards.reputationForVoter || new BN(0)
+    gpRewards.tokensForStaker = gpRewards.tokensForStaker || new BN(0)
+    gpRewards.reputationForProposer = gpRewards.reputationForProposer || new BN(0)
 
     Analytics.track("Redeem", {
       "DAO Address": daoState.address,

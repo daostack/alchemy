@@ -9,7 +9,7 @@ interface IProps {
   currentAccountAddress: Address;
   daoState: IDAOState;
   proposal: AnyProposal;
-  rewards: IRewardState;
+  rewards: IRewardState | null;
   separator?: string;
 }
 
@@ -25,7 +25,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
 
     const gpRewards = getGpRewards(rewards);
 
-    if (gpRewards) {
+    if (gpRewards !== {}) {
       if (gpRewards.reputationForProposer) {
         reputation = reputation.add(gpRewards.reputationForProposer);
       } else if (gpRewards.reputationForVoter) {

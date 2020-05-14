@@ -149,7 +149,7 @@ const mapStateToItemContentProps = (state: IRootState, ownProps: IMenuItemProps)
   };
 };
 
-type IMenuItemContentProps = IMenuItemProps & IMenuItemContentStateProps & ISubscriptionProps<[IDAOState, BN|null, IRewardState]>;
+type IMenuItemContentProps = IMenuItemProps & IMenuItemContentStateProps & ISubscriptionProps<[IDAOState, BN|null, IRewardState|null]>;
 
 class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
   public render(): RenderOutput {
