@@ -1,6 +1,6 @@
 import { History } from "history";
 import { first, filter, toArray, mergeMap } from "rxjs/operators";
-import { Address, AnyPlugin, DAO, IProposalStage, IDAOState, IPluginState, IProposalState, IProposalOutcome, IContributionRewardExtState, ISchemeRegistrarState, Plugin } from "@daostack/arc.js";
+import { Address, AnyPlugin, DAO, IProposalStage, IDAOState, IPluginState, IProposalState, IProposalOutcome, IContributionRewardExtState, ISchemeRegistrarState, Plugin } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";

@@ -1,4 +1,4 @@
-import { IPluginState } from "@daostack/arc.js";
+import { IPluginState } from "@dorgtech/arc.js";
 import { createProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";

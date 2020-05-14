@@ -1,4 +1,4 @@
-import { Address, DAO, IProposalOutcome, IProposalBaseCreateOptions, ITransactionState, ITransactionUpdate, ReputationFromTokenPlugin } from "@daostack/arc.js";
+import { Address, DAO, IProposalOutcome, IProposalBaseCreateOptions, ITransactionState, ITransactionUpdate, ReputationFromTokenPlugin } from "@dorgtech/arc.js";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import { toWei } from "lib/util";

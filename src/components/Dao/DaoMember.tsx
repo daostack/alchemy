@@ -1,5 +1,5 @@
 import BN = require("bn.js");
-import { IDAOState, IMemberState, Member } from "@daostack/arc.js";
+import { IDAOState, IMemberState, Member } from "@dorgtech/arc.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";

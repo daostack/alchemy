@@ -1,4 +1,4 @@
-import { Address, AnyProposal, DAO, IProposalState, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, IContributionRewardProposalState } from "@daostack/arc.js";
+import { Address, AnyProposal, DAO, IProposalState, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, IContributionRewardProposalState } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import { ethErrorHandler } from "lib/util";
 
@@ -154,13 +154,11 @@ export default withSubscription({
           .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
           .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
 
-        // we set 'fetchPolicy' to 'cache-only' so as to not send queries for addresses that are not members. The cache is filled higher up.
-        // arcDao.member(currentAccountAddress).state({ fetchPolicy: "cache-only"}),
         arcDao.member(currentAccountAddress).state().pipe(ethErrorHandler()),
         // TODO: also need the member state for the proposal proposer and beneficiary
         //      but since we need the proposal state first to get those addresses we will need to
         //      update the client query to load them inline
-        concat(of(new BN("0")), arcDao.ethBalance())
+        concat(of(new BN("0")), await arcDao.ethBalance())
           .pipe(ethErrorHandler()),
         arc.GENToken().balanceOf(currentAccountAddress)
           .pipe(ethErrorHandler()),
@@ -175,7 +173,7 @@ export default withSubscription({
         of([]), // stakes
         of(null), // rewards
         of(null), // current account member state
-        concat(of(new BN(0)), arcDao.ethBalance()) // dao eth balance
+        concat(of(new BN(0)), await arcDao.ethBalance()) // dao eth balance
           .pipe(ethErrorHandler()),
         of(new BN(0)), // current account gen balance
         of(null), // current account GEN allowance

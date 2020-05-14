@@ -1,4 +1,4 @@
-import { IProposalState } from "@daostack/arc.js";
+import { IProposalState } from "@dorgtech/arc.js";
 import classNames from "classnames";
 import { formatTokens, fromWei } from "lib/util";
 import * as React from "react";

@@ -1,4 +1,4 @@
-import { Address, IDAOState, AnyProposal, IRewardState, IContributionRewardProposalState } from "@daostack/arc.js";
+import { Address, IDAOState, AnyProposal, IRewardState, IContributionRewardProposalState } from "@dorgtech/arc.js";
 
 import BN = require("bn.js");
 import Reputation from "components/Account/Reputation";

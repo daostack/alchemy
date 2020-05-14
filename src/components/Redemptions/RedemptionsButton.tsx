@@ -1,4 +1,4 @@
-import { Address, AnyProposal, Proposal } from "@daostack/arc.js";
+import { Address, AnyProposal, Proposal } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";

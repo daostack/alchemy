@@ -1,4 +1,4 @@
-import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, AnyProposal, Member } from "@daostack/arc.js";
+import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, AnyProposal, Member } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
@@ -234,8 +234,7 @@ export default withSubscription({
         proposal.state({}),
         proposal.stakes({ where: { staker: props.currentAccountAddress}}),
         proposal.votes({ where: { voter: props.currentAccountAddress }}),
-        // we set 'fetchPolicy' to 'cache-only' so as to not send queries for addresses that are not members. The cache is filled higher up.
-        member.state({ fetchPolicy: "cache-only"}).pipe(ethErrorHandler()),
+        member.state().pipe(ethErrorHandler()),
       );
     }
   },

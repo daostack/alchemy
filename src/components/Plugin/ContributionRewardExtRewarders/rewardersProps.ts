@@ -1,4 +1,4 @@
-import { IContributionRewardExtState } from "@daostack/arc.js";
+import { IContributionRewardExtState } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 
 export const hasRewarderContract = (pluginState: IContributionRewardExtState): boolean => {

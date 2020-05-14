@@ -1,4 +1,4 @@
-import { Address, IMemberState, IDAOState, Member } from "@daostack/arc.js";
+import { Address, IMemberState, IDAOState, Member } from "@dorgtech/arc.js";
 import { baseTokenName, ethErrorHandler, genName } from "lib/util";
 import { getArc } from "arc";
 

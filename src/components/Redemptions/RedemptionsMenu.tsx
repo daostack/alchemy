@@ -1,4 +1,4 @@
-import { Address, AnyProposal, IDAOState, IRewardState, Reward, IContributionRewardProposalState } from "@daostack/arc.js";
+import { Address, AnyProposal, IDAOState, IRewardState, Reward, IContributionRewardProposalState } from "@dorgtech/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -191,11 +191,11 @@ const SubscribedMenuItemContent = withSubscription({
   loadingComponent: <div>Loading...</div>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: [], // Parent component will rerender anyway.
-  createObservable: (props: IMenuItemProps) => {
+  createObservable: async (props: IMenuItemProps) => {
     const { currentAccountAddress, proposal } = props;
     const arc = getArc();
     const dao = arc.dao(proposal.coreState.dao.id);
-    const ethBalance = concat(of(new BN("0")), dao.ethBalance()).pipe(ethErrorHandler());
+    const ethBalance = concat(of(new BN("0")), await dao.ethBalance()).pipe(ethErrorHandler());
     const rewards = proposal.rewards({ where: { beneficiary: currentAccountAddress }})
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));

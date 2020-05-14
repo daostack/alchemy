@@ -1,4 +1,4 @@
-import { IPluginState, IContributionRewardExtState, IGenericPluginState, IContributionRewardState } from "@daostack/arc.js";
+import { IPluginState, IContributionRewardExtState, IGenericPluginState, IContributionRewardState } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import CreateKnownGenericPluginProposal from "components/Proposal/Create/PluginForms/CreateKnownGenericPluginProposal";
 import CreatePluginRegistrarProposal from "components/Proposal/Create/PluginForms/CreatePluginRegistrarProposal";

@@ -1,4 +1,4 @@
-import { Address, IDAOState, Member, IMemberState } from "@daostack/arc.js";
+import { Address, IDAOState, Member, IMemberState } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getProfile } from "actions/profilesActions";
@@ -131,7 +131,6 @@ const SubscribedAccountPopup = withSubscription({
   checkForUpdate: (oldProps: IProps, newProps: IProps) => { return oldProps.accountAddress !== newProps.accountAddress || oldProps.daoState.id !== newProps.daoState.id; },
 
   createObservable: (props: IProps) => {
-    // we set 'fetchPolicy'= 'cache-only' so as to not send queries for addresses that are not members. The cache is filled higher up.
     return from(
       Member.search(
         getArc(),
@@ -139,7 +138,6 @@ const SubscribedAccountPopup = withSubscription({
           address: props.accountAddress,
           dao: props.daoState.id
         } },
-        { fetchPolicy: "cache-only" }
       ).pipe(first()).toPromise()
       .then(members => members[0].fetchState())
     );

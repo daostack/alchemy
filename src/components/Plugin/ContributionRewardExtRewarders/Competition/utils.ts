@@ -1,4 +1,4 @@
-import { ICompetitionProposalState, CompetitionProposal, CompetitionSuggestion, ICompetitionSuggestionState, CompetitionVote, Address } from "@daostack/arc.js";
+import { ICompetitionProposalState, CompetitionProposal, CompetitionSuggestion, ICompetitionSuggestionState, CompetitionVote, Address } from "@dorgtech/arc.js";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 

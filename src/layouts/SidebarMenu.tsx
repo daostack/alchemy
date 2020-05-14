@@ -1,4 +1,4 @@
-import { IDAOState, Token, Member } from "@daostack/arc.js";
+import { IDAOState, Token, Member } from "@dorgtech/arc.js";
 import { hideMenu } from "actions/uiActions";
 import { getArc } from "arc";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -132,7 +132,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               </Link>
             </li>
             <li>
-              <Link to={`/dao/${dao.address}/plugins`} onClick={this.handleCloseMenu} data-test-id="daopluginss">
+              <Link to={`/dao/${dao.address}/plugins`} onClick={this.handleCloseMenu} data-test-id="daoplugins">
                 <span className={css.menuDot} />
                 <span className={
                   classNames({

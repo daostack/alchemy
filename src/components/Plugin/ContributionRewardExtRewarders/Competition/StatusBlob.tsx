@@ -1,4 +1,4 @@
-import { ICompetitionProposalState } from "@daostack/arc.js";
+import { ICompetitionProposalState } from "@dorgtech/arc.js";
 import * as React from "react";
 import classNames from "classnames";
 import { competitionStatus } from "./utils";

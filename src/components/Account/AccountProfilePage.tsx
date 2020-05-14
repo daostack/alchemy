@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, DAO } from "@daostack/arc.js";
+import { IDAOState, IMemberState, DAO } from "@dorgtech/arc.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import BN = require("bn.js");

@@ -1,4 +1,4 @@
-import { DAO, IDAOState, Member } from "@daostack/arc.js";
+import { DAO, IDAOState, Member } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import { getProfile } from "actions/profilesActions";
 import Loading from "components/Shared/Loading";

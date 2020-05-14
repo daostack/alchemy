@@ -1,4 +1,4 @@
-import { IGenericPluginProposalState } from "@daostack/arc.js";
+import { IGenericPluginProposalState } from "@dorgtech/arc.js";
 import classNames from "classnames";
 import { linkToEtherScan } from "lib/util";
 import * as React from "react";
