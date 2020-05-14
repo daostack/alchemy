@@ -1,4 +1,4 @@
-import { ISimpleMessagePopupProps } from 'components/Shared/SimpleMessagePopup';
+import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
 
 export enum ActionTypes {
   SHOW_TOUR = "SHOW_TOUR",

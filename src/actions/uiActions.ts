@@ -2,7 +2,7 @@ import * as Redux from "redux";
 
 import { IRootState } from "reducers";
 import { ActionTypes } from "reducers/uiReducer";
-import { ISimpleMessagePopupProps } from 'components/Shared/SimpleMessagePopup';
+import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
 
 export function showTour() {
   return (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
