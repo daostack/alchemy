@@ -364,8 +364,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
               <TrainingTooltip overlay={this.fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
-                  <div className={css.requiredMarker}>*</div>
-                  <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                  <div className={css.proposalDescriptionLabelText}>
+                    <div className={css.requiredMarker}>*</div>
+                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                  </div>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>

@@ -9,6 +9,7 @@ import { getArc } from "arc";
 import UserSearchField from "components/Shared/UserSearchField";
 import { ICreateSubmissionOptions } from "./utils";
 import * as css from "./Competitions.scss";
+import HelpButton from "components/Shared/HelpButton";
 
 interface IExternalProps {
   daoState: IDAOState;
@@ -59,7 +60,7 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
     return (
       <div className={css.createSubmissionForm}>
         <h2 className={css.header}>
-          <div className={css.content}>+ New Submission<div className={css.proposalTitle}>{proposalState.title ? <span> | {proposalState.title}</span> : "" }</div></div>
+          <div className={css.content}>+ New Submission <div className={css.proposalTitle}>{proposalState.title ? <span> | {proposalState.title}</span> : "" }</div></div>
         </h2>
 
         <Formik
@@ -129,8 +130,10 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
 
               <TrainingTooltip overlay={this.fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
-                  <div className={css.requiredMarker}>*</div>
-                Description
+                  <div className={css.proposalDescriptionLabelText}>
+                    <div className={css.requiredMarker}>*</div>
+                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                  </div>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>
