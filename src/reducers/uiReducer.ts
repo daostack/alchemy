@@ -1,8 +1,12 @@
+import { ISimpleMessagePopupProps } from 'components/Shared/SimpleMessagePopup';
+
 export enum ActionTypes {
   SHOW_TOUR = "SHOW_TOUR",
   HIDE_TOUR = "HIDE_TOUR",
   SHOW_MENU = "SHOW_MENU",
   HIDE_MENU = "HIDE_MENU",
+  SHOW_SIMPLE_MESSAGE = "SHOW_SIMPLE_MESSAGE",
+  HIDE_SIMPLE_MESSAGE = "HIDE_SIMPLE_MESSAGE",
   ENABLE_TRAINING_TOOLTIPS_ON_HOVER = "ENABLE_TRAINING_TOOLTIPS_ON_HOVER",
   DISABLE_TRAINING_TOOLTIPS_ON_HOVER = "DISABLE_TRAINING_TOOLTIPS_ON_HOVER",
   ENABLE_TRAINING_TOOLTIPS_SHOW_ALL = "ENABLE_TRAINING_TOOLTIPS_SHOW_ALL",
@@ -10,14 +14,18 @@ export enum ActionTypes {
 }
 
 export interface IUIState {
-  menuOpen: false;
+  menuOpen: boolean;
+  simpleMessageOpen: boolean;
+  simpleMessageOptions: ISimpleMessagePopupProps;
   tourVisible: boolean;
-  trainingTooltipsOnHover: true;
-  trainingTooltipsShowAll: false;
+  trainingTooltipsOnHover: boolean;
+  trainingTooltipsShowAll: boolean;
 }
 
 const initialState: IUIState = {
   menuOpen: false,
+  simpleMessageOpen: false,
+  simpleMessageOptions: { body: "" },
   tourVisible: false,
   trainingTooltipsOnHover: true,
   trainingTooltipsShowAll: false,
@@ -27,28 +35,34 @@ const uiReducer = (state = initialState, action: any) => {
   switch (action.type) {
 
     case ActionTypes.SHOW_TOUR:
-      return {...state, tourVisible: true };
+      return { ...state, tourVisible: true };
 
     case ActionTypes.HIDE_TOUR:
-      return {...state, tourVisible: false };
+      return { ...state, tourVisible: false };
 
     case ActionTypes.SHOW_MENU:
-      return {...state, menuOpen: true };
+      return { ...state, menuOpen: true };
 
     case ActionTypes.HIDE_MENU:
-      return {...state, menuOpen: false };
+      return { ...state, menuOpen: false };
+
+    case ActionTypes.SHOW_SIMPLE_MESSAGE:
+      return { ...state, simpleMessageOpen: true, simpleMessageOptions: action.options };
+
+    case ActionTypes.HIDE_SIMPLE_MESSAGE:
+      return { ...state, simpleMessageOpen: false };
 
     case ActionTypes.ENABLE_TRAINING_TOOLTIPS_ON_HOVER:
-      return {...state, trainingTooltipsOnHover: true };
+      return { ...state, trainingTooltipsOnHover: true };
 
     case ActionTypes.DISABLE_TRAINING_TOOLTIPS_ON_HOVER:
-      return {...state, trainingTooltipsOnHover: false };
+      return { ...state, trainingTooltipsOnHover: false };
 
     case ActionTypes.ENABLE_TRAINING_TOOLTIPS_SHOW_ALL:
-      return {...state, trainingTooltipsShowAll: true };
+      return { ...state, trainingTooltipsShowAll: true };
 
     case ActionTypes.DISABLE_TRAINING_TOOLTIPS_SHOW_ALL:
-      return {...state, trainingTooltipsShowAll: false };
+      return { ...state, trainingTooltipsShowAll: false };
 
     default: {
       return state;

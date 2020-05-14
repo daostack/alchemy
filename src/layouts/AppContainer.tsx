@@ -26,6 +26,7 @@ import { captureException, withScope } from "@sentry/browser";
 import { Address } from "@daostack/arc.js";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
+import SimpleMessagePopup from "components/Shared/SimpleMessagePopup";
 
 interface IExternalProps extends RouteComponentProps<any> {
   history: History;
@@ -100,7 +101,7 @@ class AppContainer extends React.Component<IProps, IState> {
     }
   }
 
-  public async componentDidMount (): Promise<void> {
+  public async componentDidMount(): Promise<void> {
     this.unlisten = this.props.history.listen((location) => {
       Analytics.register({
         URL: process.env.BASE_URL + location.pathname,
@@ -156,8 +157,8 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   private dismissNotif = (id: string) => () => this.props.dismissNotification(id);
-  private headerHtml = ( props: any ): any => <Header {...props} />;
-  private sidebarHtml = ( props: any ): any => <SidebarMenu {...props} />;
+  private headerHtml = (props: any): any => <Header {...props} />;
+  private sidebarHtml = (props: any): any => <SidebarMenu {...props} />;
 
   private notificationHtml = (notif: INotification): any => {
     return <div key={notif.id}>
@@ -202,7 +203,7 @@ class AppContainer extends React.Component<IProps, IState> {
       const hasAcceptedCookies = !!localStorage.getItem(AppContainer.hasAcceptedCookiesKey);
 
       return (
-        <div className={classNames({[css.outer]: true, [css.withDAO]: !!daoAvatarAddress})}>
+        <div className={classNames({ [css.outer]: true, [css.withDAO]: !!daoAvatarAddress })}>
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
           <div className={css.container}>
@@ -229,13 +230,16 @@ class AppContainer extends React.Component<IProps, IState> {
               containerClassName={css.modalContainer}
               bodyModalClassName={css.modalBody}
             />
+
+            <SimpleMessagePopup />
           </div>
 
           <div className={css.pendingTransactions}>
-            { sortedNotifications.map(this.notificationHtml) }
+            {sortedNotifications.map(this.notificationHtml)}
           </div>
           <div className={css.background}></div>
-          { hasAcceptedCookies ? "" :
+
+          {hasAcceptedCookies ? "" :
             <div className={css.cookieDisclaimerContainer}>
               <div className={css.cookieDisclaimer}>
                 <div className={css.body}>Alchemy stores cookies on your device to enhance platform experience and analyze platform usage. Please read the&nbsp;

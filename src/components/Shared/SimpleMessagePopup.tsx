@@ -1,61 +1,68 @@
+import * as uiActions from "actions/uiActions";
 import ModalPopup from "./ModalPopup";
 import * as React from "react";
 import * as css from "./SimpleMessagePopup.scss";
+import { connect } from "react-redux";
+import { IRootState } from "reducers";
 
-interface IState {
-  showing: boolean;
+interface IDispatchProps {
+  hideSimpleMessage: typeof uiActions.hideSimpleMessage;
 }
+
+const mapDispatchToProps = {
+  hideSimpleMessage: uiActions.hideSimpleMessage,
+};
 
 export enum EnumButtonSpec {
   Ok = 1,
   // eventually will turn this into a confirmation modal, adding OkCancel, Yes/No and stuff
 }
 
-interface IExternalProps {
+export interface ISimpleMessagePopupProps {
   closeHandler?: (event: any) => void;
   body: string | JSX.Element;
   buttonSpec?: EnumButtonSpec;
   title?: string | JSX.Element;
 }
 
-export default class SimpleMessagePopup extends React.Component<IExternalProps, IState> {
+interface IStateProps {
+  options: ISimpleMessagePopupProps;
+  showing: boolean;
+}
 
-  constructor(props: IExternalProps) {
-    super(props);
+const mapStateToProps = (state: IRootState): IStateProps => {
+  return {
+    options: state.ui.simpleMessageOptions,
+    showing: state.ui.simpleMessageOpen,
+  };
+};
 
-    this.state = {
-      showing: false,
-    };
-  }
+class SimpleMessagePopup extends React.Component<IDispatchProps & IStateProps, null> {
 
   private closeHandler = (event: any) => {
-    this.setState({ showing: false });
-    if (this.props.closeHandler) {
-      this.props.closeHandler(event);
+    this.props.hideSimpleMessage();
+    if (this.props.options.closeHandler) {
+      this.props.options.closeHandler(event);
     }
   }
 
   private renderButtons = (): JSX.Element => {
     const okButton = (<button className={css.closeButton} onClick={this.closeHandler}>OK</button>);
-    switch (this.props.buttonSpec) {
+    switch (this.props.options.buttonSpec) {
       case EnumButtonSpec.Ok:
       default:
         return okButton;
     }
   }
 
-  public show() {
-    this.setState({ showing: true });
-  }
-
   public render(): RenderOutput {
 
-    if (!this.state.showing) {
+    if (!this.props.showing) {
       return "";
     }
 
-    if (!this.props.body) {
-      throw new Error(`message body is required`);
+    if (!this.props.options.body) {
+      throw new Error("message body is required");
     }
 
     return (
@@ -64,13 +71,13 @@ export default class SimpleMessagePopup extends React.Component<IExternalProps, 
           closeHandler={this.closeHandler}
           header={
             <div className={css.modalHeader}>
-              <div className={css.title}>{this.props.title ?? "Alchemy"}</div>
+              <div className={css.title}>{this.props.options.title ?? "Alchemy"}</div>
               <div className={css.closeButtonX} onClick={this.closeHandler}><img src={"/assets/images/Icon/close-grey.svg"} />
               </div>
             </div>
           }
           body={
-            <div className={css.modalBody}>{this.props.body}</div>
+            <div className={css.modalBody}>{this.props.options.body}</div>
           }
           footer={
             <div className={css.modalFooter}>{this.renderButtons()}</div>
@@ -80,3 +87,5 @@ export default class SimpleMessagePopup extends React.Component<IExternalProps, 
     );
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(SimpleMessagePopup);

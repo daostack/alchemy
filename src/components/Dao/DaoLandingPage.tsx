@@ -1,3 +1,4 @@
+import * as uiActions from "actions/uiActions";
 import { IDAOState } from "@daostack/arc.js";
 import * as React from "react";
 import * as css from "./DaoLandingPage.scss";
@@ -6,18 +7,25 @@ import Analytics from "lib/analytics";
 import { Link } from "react-router-dom";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { DiscussionEmbed } from "disqus-react";
-import SimpleMessagePopup from "components/Shared/SimpleMessagePopup";
+import { connect } from "react-redux";
+
+interface IDispatchProps {
+  showSimpleMessage: typeof uiActions.showSimpleMessage;
+}
+
+const mapDispatchToProps = {
+  showSimpleMessage: uiActions.showSimpleMessage,
+};
 
 type IExternalProps = {
   daoState: IDAOState;
 };
 
-type IProps = IExternalProps;
+type IProps = IExternalProps & IDispatchProps;
 
-export default class DaoLandingPage extends React.Component<IProps, null> {
+class DaoLandingPage extends React.Component<IProps, null> {
 
   private disqusConfig: any;
-  private editPagePopup = React.createRef<SimpleMessagePopup>();
 
   public componentDidMount() {
 
@@ -29,7 +37,16 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
   }
 
   private showLandingPageContent = () => {
-    this.editPagePopup.current.show();
+    this.props.showSimpleMessage(
+      {
+        title: "Edit Home Page",
+        body:
+          <>
+            <div>Editing the content on this DAO’s home page will soon be possible via proposal. Stay tuned!</div>
+            <div>For now, if you need a change made to a DAO’s home page content, please contact us at <a href="https://support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a></div>
+          </>,
+      }
+    );
   }
 
   public render() {
@@ -78,18 +95,9 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
           <div className={css.headerText}>Discuss {daoState.name}</div>
           <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
         </div>
-
-        <SimpleMessagePopup
-          ref={this.editPagePopup}
-          title="Edit Home Page"
-          body={
-            <>
-              <div>Editing the content on this DAO’s home page will soon be possible via proposal. Stay tuned!</div>
-              <div>For now, if you need a change made to a DAO’s home page content, please contact us at <a href="https://support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a></div>
-            </>
-          }
-        />
       </div>
     );
   }
 }
+
+export default connect(null, mapDispatchToProps)(DaoLandingPage);
