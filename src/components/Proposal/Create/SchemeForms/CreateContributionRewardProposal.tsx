@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { IDAOState, ISchemeState } from "@daostack/arc.js";
+import { IDAOState, ISchemeState, Address } from "@daostack/arc.js";
 import { createProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
@@ -19,6 +19,7 @@ import HelpButton from "components/Shared/HelpButton";
 const Select = React.lazy(() => import("react-select"));
 
 interface IExternalProps {
+  currentAccountAddress: Address;
   scheme: ISchemeState;
   daoAvatarAddress: string;
   handleClose: () => any;
@@ -89,7 +90,6 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.initialFormValues = importUrlValues<IFormValues>({
       beneficiary: "",
       description: "",
@@ -111,6 +111,10 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    if (!values.beneficiary) {
+      values.beneficiary = this.props.currentAccountAddress;
+    }
 
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
 
@@ -197,7 +201,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               errors.title = "Title is too long (max 120 characters)";
             }
 
-            if (!arc.web3.utils.isAddress(values.beneficiary)) {
+            if (values.beneficiary && !arc.web3.utils.isAddress(values.beneficiary)) {
               errors.beneficiary = "Invalid address";
             }
 
@@ -211,7 +215,6 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
             require("description");
             require("title");
-            require("beneficiary");
 
             if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
               errors.rewards = "Please select at least some reward";
@@ -293,10 +296,9 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               />
 
               <div>
-                <TrainingTooltip overlay="Ethereum Address or Alchemy Username to receive rewards" placement="right">
+                <TrainingTooltip overlay="Ethereum Address or Alchemy Username to receive rewards, if not you" placement="right">
                   <label htmlFor="beneficiary">
-                    <div className={css.requiredMarker}>*</div>
-                    Recipient
+                    Recipient, if not you
                     <ErrorMessage name="beneficiary">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                 </TrainingTooltip>
