@@ -63,7 +63,7 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public async componentDidMount() {
-    await this.props.proposalState.plugin.entity.fetchState()
+    await this.props.proposalState.plugin.entity.fetchState();
   }
 
   public showApprovalModal = async (_event: any): Promise<void> => {

@@ -124,7 +124,7 @@ class PluginInfo extends React.Component<IProps, null> {
       </React.Fragment>;
     };
 
-    const pluginParams = (plugin as any).pluginParams
+    const pluginParams = (plugin as any).pluginParams;
     const votingMachine = (
       pluginParams && pluginParams.votingMachine
     );

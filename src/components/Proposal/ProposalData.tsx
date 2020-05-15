@@ -72,7 +72,7 @@ class ProposalData extends React.Component<IProps, IState> {
     super(props);
 
     if (props.data && props.data[0]) {
-      const proposal = props.data[0]
+      const proposal = props.data[0];
 
       this.state = {
         expired: proposal.coreState ? closingTime(proposal.coreState).isSameOrBefore(moment()) : false,
@@ -147,9 +147,9 @@ export default withSubscription({
     if (currentAccountAddress) {
       const member = new Member(arc, Member.calculateId({
         address: currentAccountAddress,
-        contract: daoState.reputation.id
-      }))
-      const memberState = await member.fetchState().catch(() => ({ reputation: new BN(0) }))
+        contract: daoState.reputation.id,
+      }));
+      const memberState = await member.fetchState().catch(() => ({ reputation: new BN(0) }));
 
       return combineLatest(
         of(proposal),

@@ -107,7 +107,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     if (stakesOfCurrentUser.length > 0) {
       currentAccountStakeAmount = stakesOfCurrentUser
         .map((stake): BN => stake.coreState.amount)
-        .reduce((prev: BN, current: BN)  => { return prev.add(current); });
+        .reduce((prev: BN, current: BN) => { return prev.add(current); });
       currentAccountPrediction = stakesOfCurrentUser[0].coreState.outcome;
     }
 
@@ -227,7 +227,7 @@ export default withSubscription({
     } else {
       const member = new Member(getArc(), Member.calculateId({
         contract: props.daoState.reputation.id,
-        address: props.currentAccountAddress
+        address: props.currentAccountAddress,
       }));
 
       return combineLatest(

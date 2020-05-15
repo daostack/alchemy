@@ -26,8 +26,8 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
   public async componentDidMount() {
     this.setState({
-      proposal: await Proposal.create(getArc(), this.props.proposalState.id)
-    })
+      proposal: await Proposal.create(getArc(), this.props.proposalState.id),
+    });
   }
 
   public render(): RenderOutput {
@@ -56,7 +56,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       const genericPluginRegistry = new GenericPluginRegistry();
       const genericPluginInfo = genericPluginRegistry.getPluginInfo(state.contractToCall);
       if (genericPluginInfo) {
-        return <ProposalSummaryKnownGenericPlugin  {...this.props} proposalState={state} genericPluginInfo={genericPluginInfo} />;
+        return <ProposalSummaryKnownGenericPlugin {...this.props} proposalState={state} genericPluginInfo={genericPluginInfo} />;
       } else {
         return <ProposalSummaryUnknownGenericPlugin {...this.props} proposalState={state} />;
       }

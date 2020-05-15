@@ -4,7 +4,7 @@ import {
   IContractInfo,
   IPluginState,
   IGenericPluginState,
-  IContributionRewardExtState
+  IContributionRewardExtState,
 } from "@dorgtech/arc.js";
 import { rewarderContractName } from "components/Plugin/ContributionRewardExtRewarders/rewardersProps";
 import { GenericPluginRegistry } from "genericPluginRegistry";
@@ -91,8 +91,7 @@ export function pluginName(plugin: IPluginState|IContractInfo, fallback?: string
     const generic = plugin as IGenericPluginState;
     if (generic.pluginParams && generic.pluginParams.contractToCall) {
       const genericPluginRegistry = new GenericPluginRegistry();
-      let contractToCall;
-      contractToCall = generic.pluginParams.contractToCall;
+      const contractToCall = generic.pluginParams.contractToCall;
       const genericPluginInfo = genericPluginRegistry.getPluginInfo(contractToCall);
       if (genericPluginInfo) {
         name = genericPluginInfo.specs.name;

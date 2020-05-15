@@ -167,13 +167,13 @@ function getWeb3ConnectProviderOptions(network: string) {
 }
 
 export type Settings = IArcOptions & {
-  txSenderServiceUrl: string,
-  web3ConnectProviderOptions: any,
-  retryLink?: RetryLink
+  txSenderServiceUrl: string;
+  web3ConnectProviderOptions: any;
+  retryLink?: RetryLink;
 }
 
 export type NetworkSettings = {
-  [network: string]: Settings
+  [network: string]: Settings;
 }
 
 export const settings: NetworkSettings = {

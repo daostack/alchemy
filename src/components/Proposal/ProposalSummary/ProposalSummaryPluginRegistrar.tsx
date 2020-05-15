@@ -49,7 +49,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
     return (
       <div className={proposalSummaryClass}>
-        { proposalState.pluginToRemove  ?
+        { proposalState.pluginToRemove ?
           <div>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/delete.svg"/>&nbsp;

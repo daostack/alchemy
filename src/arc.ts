@@ -5,7 +5,7 @@ import { IProviderInfo, getProviderInfo } from "web3modal";
 import { RetryLink } from "apollo-link-retry";
 import { Address, Arc, Web3Client, Web3Provider } from "@dorgtech/arc.js";
 import Web3Modal from "web3modal";
-import { Observable, } from "rxjs";
+import { Observable } from "rxjs";
 import { first } from "rxjs/operators";
 import { AsyncSendable, Block } from "ethers/providers";
 
@@ -99,7 +99,7 @@ export function getWeb3ProviderInfo(provider?: Web3Provider): IWeb3ProviderInfo 
     id: "unknown",
     type: "unknown",
     check: "unknown",
-    logo: "unknown"
+    logo: "unknown",
   };
 }
 
@@ -188,8 +188,8 @@ export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
         // if this is metamask this should prevent a browser refresh when the network changes
         (window as any).ethereum.autoRefreshOnNetworkChange = false;
       }
-      const network = await arc.web3.getNetwork()
-      const networkName = await getNetworkName(network.chainId.toString())
+      const network = await arc.web3.getNetwork();
+      const networkName = await getNetworkName(network.chainId.toString());
       // eslint-disable-next-line no-console
       console.log(`Connected Arc to ${networkName}${readonly ? " (readonly)" : ""} `);
     }

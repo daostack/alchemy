@@ -97,7 +97,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
     if (!await enableWalletProvider({ showNotification })) { return; }
 
     redeemableProposals.forEach(proposal => {
-      redeemProposal(proposal.coreState.dao.id, proposal.id, currentAccountAddress);
+      redeemProposal(proposal.id, currentAccountAddress);
     });
   }
 }

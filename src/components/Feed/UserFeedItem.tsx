@@ -73,7 +73,7 @@ const SubscribedUserFeedItem = withSubscription({
       dao.state(),
       dao.member(Member.calculateId({
         address: event.user,
-        contract: reputation.id
+        contract: reputation.id,
       })).state(),
     );
   },

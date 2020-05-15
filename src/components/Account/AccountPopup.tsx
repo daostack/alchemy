@@ -136,16 +136,16 @@ const SubscribedAccountPopup = withSubscription({
         getArc(),
         { where: {
           address: props.accountAddress,
-          dao: props.daoState.id
+          dao: props.daoState.id,
         } },
       ).pipe(first()).toPromise()
-      .then(members => {
-        if (members.length > 0) {
-          return members[0].fetchState()
-        } else {
-          return Promise.resolve(null);
-        }
-      })
+        .then(members => {
+          if (members.length > 0) {
+            return members[0].fetchState();
+          } else {
+            return Promise.resolve(null);
+          }
+        })
     );
   },
 });

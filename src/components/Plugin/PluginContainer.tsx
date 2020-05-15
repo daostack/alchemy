@@ -92,7 +92,7 @@ class PluginContainer extends React.Component<IProps, IState> {
         crxListComponent: await getCrxRewarderComponent(
           this.props.data[0] as IContributionRewardExtState,
           CrxRewarderComponentType.List
-        )
+        ),
       });
     }
 
@@ -219,7 +219,7 @@ const SubscribedPluginContainer = withSubscription({
      * However, it seems likely that this could be needed by other CrExt rewarder
      * contracts that might come along.
      */
-    let  approvedProposals: Observable<Array<IProposalState>>;
+    let approvedProposals: Observable<Array<IProposalState>>;
     if (hasRewarderContract(pluginState as IContributionRewardExtState)) {
       approvedProposals = dao.proposals(
         // eslint-disable-next-line @typescript-eslint/camelcase

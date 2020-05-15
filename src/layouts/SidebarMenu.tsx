@@ -313,10 +313,10 @@ const SubscribedTokenBalance = withSubscription({
 
     await Member.search(getArc(), {
       where: {
-        dao: daoState.id
+        dao: daoState.id,
       },
       first: 1000,
-      skip: 0
+      skip: 0,
     }).pipe(first()).toPromise();
 
     const arc = getArc();

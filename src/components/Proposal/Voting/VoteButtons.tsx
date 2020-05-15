@@ -56,7 +56,7 @@ class VoteButtons extends React.Component<IProps, IState> {
   }
 
   public async componentDidMount() {
-    await this.props.proposalState.plugin.entity.fetchState()
+    await this.props.proposalState.plugin.entity.fetchState();
   }
 
   public handleClickVote = (vote: number) => async (): Promise<void> => {
@@ -119,7 +119,7 @@ class VoteButtons extends React.Component<IProps, IState> {
           "Requires reputation in this DAO" :
           proposalState.stage === IProposalStage.ExpiredInQueue ||
               (proposalState.stage === IProposalStage.Boosted && expired) ||
-              (proposalState.stage === IProposalStage.QuietEndingPeriod && expired)  ||
+              (proposalState.stage === IProposalStage.QuietEndingPeriod && expired) ||
               (proposalState.stage === IProposalStage.Queued && expired) ?
             "Can't vote on expired proposals" :
             proposalState.stage === IProposalStage.Executed ?

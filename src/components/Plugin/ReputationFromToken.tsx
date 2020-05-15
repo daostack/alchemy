@@ -75,7 +75,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       }
       try {
         redeemerAddress = new SigningKey(pk).address;
-      } catch(err) {
+      } catch (err) {
         throw Error(`Invalide private key: ${pk}`);
       }
     } else {
@@ -166,7 +166,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
 
       try {
         result = await arc.web3.send(method, params);
-      } catch(err) {
+      } catch (err) {
         this.props.showNotification(NotificationStatus.Failure, "The redemption was canceled");
         setSubmitting(false);
         return;
@@ -185,7 +185,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
         signature = signature1+"1c";
       }
       const signatureType = 1;
-      const contract =  arc.getContract(pluginState.address);
+      const contract = arc.getContract(pluginState.address);
 
       // send the transaction and get notifications
       if (contract) {
@@ -275,7 +275,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             {pluginName(pluginState, pluginState.address)}
           </h2>
         </Sticky>
-        { this.state.alreadyRedeemed ? <div>Reputation for account {redeemerAddress} has already been redeemed</div> : <div />  }
+        { this.state.alreadyRedeemed ? <div>Reputation for account {redeemerAddress} has already been redeemed</div> : <div /> }
         <div className={pluginCss.pluginRedemptionContainer}>
           <Formik
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -337,7 +337,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                     <img src="/assets/images/Icon/redeem.svg"/> Redeem
                   </button>
                 </div>
-                {  getArcSettings().txSenderServiceUrl ?
+                { getArcSettings().txSenderServiceUrl ?
                   <div className={pluginCss.redemptionButton}>
                     <div>Or try our new experimental feature:</div>
                     <button type="submit"

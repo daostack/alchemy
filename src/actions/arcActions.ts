@@ -138,13 +138,28 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
   currentAccountRedemptions: IRedemptionState;
 }>;
 
-export function redeemProposal(daoAvatarAddress: string, proposalId: string, accountAddress: string) {
+export function redeemProposal(proposalId: string, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    //const arc = getArc();
-    //const proposalObj = await arc.dao(daoAvatarAddress).proposal({ where: { id: proposalId } });
-    //const observer = operationNotifierObserver(dispatch, "Reward");
-    // TODO @jordan
-    // await proposalObj.redeemRewards(accountAddress).subscribe(...observer);
+    // TODO @jordan finish implementing
+    // (need to publish arc.js, npmjs.com was down though...)
+    /*const arc = getArc();
+    const proposal = await Proposal.create(arc, proposalId);
+
+    switch (proposal.coreState.name) {
+      case "GenericScheme":
+      case "ContributionReward":
+      case "Competition":
+      case "ContributionRewardExt":
+      case "FundingRequest":
+      case "JoinAndQuit":
+      case "SchemeRegistrar":
+      case "SchemeRegistrarAdd":
+      case "SchemeRegistrarRemove":
+      case "SchemeFactory":
+      case "Unknown":
+    }
+    const observer = operationNotifierObserver(dispatch, "Reward");
+    await proposal.redeemRewards(accountAddress).subscribe(...observer);*/
   };
 }
 
@@ -155,7 +170,7 @@ export function redeemReputationFromToken(reputationFromTokenPlugin: ReputationF
     const state = await reputationFromTokenPlugin.fetchState();
 
     if (privateKey) {
-      const contract =  arc.getContract(state.address);
+      const contract = arc.getContract(state.address);
       const block = await arc.web3.getBlock("latest");
       const gas = block.gasLimit.toNumber() - 100000;
       const redeemMethod = contract.interface.functions["redeem"].encode([addressToRedeem]);
@@ -175,7 +190,7 @@ export function redeemReputationFromToken(reputationFromTokenPlugin: ReputationF
       if (userBalance < gasEstimate * gasPrice) {
         txToSign.gasPrice = Math.floor(userBalance/gasEstimate);
       }
-      const wallet = new Wallet(privateKey)
+      const wallet = new Wallet(privateKey);
       const signedTransaction = await wallet.sign(txToSign);
       dispatch(showNotification(NotificationStatus.Success, "Sending redeem transaction, please wait for it to be mined"));
       try {

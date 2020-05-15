@@ -88,8 +88,8 @@ export default withSubscription({
     const arc = getArc();
     return Proposal.search(arc, {
       where: {
-        accountsWithUnclaimedRewards_contains: [currentAccountAddress]
-      }
+        "accountsWithUnclaimedRewards_contains": [currentAccountAddress],
+      },
     });
   },
 });

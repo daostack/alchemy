@@ -332,17 +332,17 @@ const SubscribedAccountProfilePage = withSubscription({
     }
 
     let dao: DAO;
-    let memberState = null
+    let memberState = null;
     if (daoAvatarAddress) {
       dao = arc.dao(daoAvatarAddress);
       const daoState = await dao.fetchState();
       const member = new Member(arc, Member.calculateId({
         contract: daoState.reputation.id,
-        address: accountAddress
-      }))
+        address: accountAddress,
+      }));
       memberState = await member.fetchState().catch(() => ({
-        reputation: new BN(0)
-      }))
+        reputation: new BN(0),
+      }));
     }
 
     return combineLatest(

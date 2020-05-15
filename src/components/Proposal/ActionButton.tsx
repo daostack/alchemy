@@ -75,7 +75,7 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 
   public async componentDidMount() {
-    await this.props.proposal.coreState.plugin.entity.fetchState()
+    await this.props.proposal.coreState.plugin.entity.fetchState();
   }
 
   private handleClickExecute = (type: string) => async (e: any): Promise<void> => {
@@ -296,12 +296,12 @@ class ActionButton extends React.Component<IProps, IState> {
     } = this.props;
 
     await proposal.fetchState();
-    await redeemProposal(daoState.address, proposal.id, currentAccountAddress);
+    await redeemProposal(proposal.id, currentAccountAddress);
 
-    gpRewards.daoBountyForStaker = gpRewards.daoBountyForStaker || new BN(0)
-    gpRewards.reputationForVoter = gpRewards.reputationForVoter || new BN(0)
-    gpRewards.tokensForStaker = gpRewards.tokensForStaker || new BN(0)
-    gpRewards.reputationForProposer = gpRewards.reputationForProposer || new BN(0)
+    gpRewards.daoBountyForStaker = gpRewards.daoBountyForStaker || new BN(0);
+    gpRewards.reputationForVoter = gpRewards.reputationForVoter || new BN(0);
+    gpRewards.tokensForStaker = gpRewards.tokensForStaker || new BN(0);
+    gpRewards.reputationForProposer = gpRewards.reputationForProposer || new BN(0);
 
     Analytics.track("Redeem", {
       "DAO Address": daoState.address,
@@ -330,7 +330,7 @@ const SubscribedActionButton = withSubscription({
 
     const arc = getArc();
     const genToken = arc.GENToken();
-    const crState = props.proposal.coreState as IContributionRewardProposalState
+    const crState = props.proposal.coreState as IContributionRewardProposalState;
 
     if (crState.name === "ContributionReward" &&
         crState.externalTokenReward && !crState.externalTokenReward.isZero()) {

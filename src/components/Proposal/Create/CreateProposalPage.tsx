@@ -115,14 +115,14 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     } else if (pluginState.name === "SchemeRegistrar") {
       createPluginComponent = <CreatePluginRegistrarProposal {...props} pluginState={pluginState as IPluginRegistrarState} />;
     } else if (pluginState.name === "GenericScheme") {
-      let contractToCall = (pluginState as IGenericPluginState).pluginParams.contractToCall;
+      const contractToCall = (pluginState as IGenericPluginState).pluginParams.contractToCall;
       if (!contractToCall) {
         throw Error("No contractToCall for this genericPlugin was found!");
       }
       const genericPluginRegistry = new GenericPluginRegistry();
       const genericPluginInfo = genericPluginRegistry.getPluginInfo(contractToCall);
       if (genericPluginInfo) {
-        createPluginComponent = <CreateKnownGenericPluginProposal  {...props} genericPluginInfo={genericPluginInfo} pluginState={pluginState as IGenericPluginState} />;
+        createPluginComponent = <CreateKnownGenericPluginProposal {...props} genericPluginInfo={genericPluginInfo} pluginState={pluginState as IGenericPluginState} />;
       } else {
         createPluginComponent = <CreateUnknownGenericPluginProposal {...props} pluginState={pluginState as IGenericPluginState} />;
       }

@@ -127,7 +127,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
 
     const currentTab = this.state.currentTab;
     let proposalType: ProposalName;
-    if (this.state.currentTab  === "removePlugin") {
+    if (this.state.currentTab === "removePlugin") {
       proposalType = "SchemeRegistrarRemove";
     } else {
       proposalType = "SchemeRegistrarAdd";
@@ -196,7 +196,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
     const contentWrapperClass = classNames({
       [css.contentWrapper]: true,
       [css.addPlugin]: currentTab === "addPlugin",
-      [css.removePlugin]: currentTab === "removePlugin"
+      [css.removePlugin]: currentTab === "removePlugin",
     });
 
     const formContentClass = classNames({
@@ -319,7 +319,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                     <br />
                     {(currentTab === "addPlugin") ?
                       <div className={css.description}>Create a proposal to add a new plugin to the DAO.</div> :
-                        <div className={css.description}>Create a proposal to remove a plugin from the DAO.</div>
+                      <div className={css.description}>Create a proposal to remove a plugin from the DAO.</div>
                     }
                     <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
                       <label htmlFor="titleInput">

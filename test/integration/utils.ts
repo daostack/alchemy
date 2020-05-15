@@ -28,31 +28,31 @@ export function getArc() {
 
 export interface ITestAddresses {
   dao: {
-    name: string
-    Avatar: string
-    DAOToken: string
-    Reputation: string
-    Controller: string
+    name: string;
+    Avatar: string;
+    DAOToken: string;
+    Reputation: string;
+    Controller: string;
     Plugins: Array<{
-      name: string
-      alias: string
-      address: string
-    }>
-  }
-  queuedProposalId: string
-  preBoostedProposalId: string
-  boostedProposalId: string
-  executedProposalId: string
+      name: string;
+      alias: string;
+      address: string;
+    }>;
+  };
+  queuedProposalId: string;
+  preBoostedProposalId: string;
+  boostedProposalId: string;
+  executedProposalId: string;
   organs: {
-    DemoAvatar: string
-    DemoDAOToken: string
-    DemoReputation: string
-    ActionMock: string
-  }
+    DemoAvatar: string;
+    DemoDAOToken: string;
+    DemoReputation: string;
+    ActionMock: string;
+  };
 }
 
 export function getTestAddresses(version: string = LATEST_ARC_VERSION): ITestAddresses {
-  return require('@dorgtech/test-env-experimental/daos.json').demo[version]
+  return require("@dorgtech/test-env-experimental/daos.json").demo[version];
 }
 
 /**
