@@ -69,7 +69,7 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
             </div>
           </div>
 
-          { (daoState.address === "0xfaf05fedf06cac499b899d6a2052f23ae239b29d") ? // SoS Collective
+          { (daoState.address === "0xfaf05fedf06cac499b899d6a2052f23ae239b29d") ? // SoS Collective on xDAI
             <>
               <div className={css.welcome}>Welcome to the {daoState.name} digital co-op.</div>
               <div className={css.welcome}>Our first event is the <a href="https://soshackathon.com/" target="_blank" rel="noopener noreferrer">SoS Hackathon</a>: Fund your ideas and solutions to heal the world in crisis.</div>
