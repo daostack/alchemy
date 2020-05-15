@@ -349,7 +349,6 @@ const SubscribedAccountProfilePage = withSubscription({
       // subscribe if only to to get DAO reputation supply updates
       daoAvatarAddress ? dao.state({subscribe: true}) : of(null),
       of(memberState),
-      // TODO @jordan not returning...
       arc.ethBalance(accountAddress)
         .pipe(ethErrorHandler()),
       arc.GENToken().balanceOf(accountAddress)

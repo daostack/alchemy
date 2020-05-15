@@ -149,7 +149,6 @@ const SubscribedDaoContainer = withSubscription({
     const arc = getArc();
     const daoAddress = props.match.params.daoAvatarAddress;
     const dao = arc.dao(daoAddress);
-    // TODO @jordan this isn't working...
     const observable = combineLatest(
       dao.state({ subscribe: true, fetchAllData: true }), // DAO state
       dao.members()
