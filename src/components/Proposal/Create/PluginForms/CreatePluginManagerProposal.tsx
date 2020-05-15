@@ -53,6 +53,19 @@ interface IFormValues {
   pluginToReplace: string;
   title: string;
   url: string;
+  params: {
+    queuedVoteRequiredPercentage: number
+    queuedVotePeriodLimit: number
+    boostedVotePeriodLimit: number
+    preBoostedVotePeriodLimit: number
+    thresholdConst: number
+    quietEndingPeriod: number
+    proposingRepReward: number
+    votersReputationLossRatio: number
+    minimumDaoBounty: number
+    daoBountyConst: number
+    activationTime: number
+  }
 
   [key: string]: any;
 }
@@ -63,7 +76,7 @@ interface IState {
   requiredPermissions: number;
 }
 
-class CreatePluginFactoryProposal extends React.Component<IProps, IState> {
+class CreatePluginManagerProposal extends React.Component<IProps, IState> {
 
   initialFormValues: IFormValues;
 
@@ -86,6 +99,19 @@ class CreatePluginFactoryProposal extends React.Component<IProps, IState> {
       url: "",
       currentTab: "addPlugin",
       tags: [],
+      params: {
+        queuedVoteRequiredPercentage: 0,
+        queuedVotePeriodLimit: 0,
+        boostedVotePeriodLimit: 0,
+        preBoostedVotePeriodLimit: 0,
+        thresholdConst: 0,
+        quietEndingPeriod: 0,
+        proposingRepReward: 0,
+        votersReputationLossRatio: 0,
+        minimumDaoBounty: 0,
+        daoBountyConst: 0,
+        activationTime: 0
+      }
     });
     this.state = {
       currentTab: this.initialFormValues.currentTab,
@@ -192,7 +218,7 @@ class CreatePluginFactoryProposal extends React.Component<IProps, IState> {
       [css.selected]: currentTab === "replacePlugin",
     });
 
-    const pluginFactoryFormClass = classNames({
+    const pluginManagerFormClass = classNames({
       [css.addPlugin]: currentTab === "addPlugin",
       [css.removePlugin]: currentTab === "removePlugin",
       [css.replacePlugin]: currentTab === "replacePlugin",
@@ -226,7 +252,7 @@ class CreatePluginFactoryProposal extends React.Component<IProps, IState> {
             : "" }
         </div>
 
-        <div className={pluginFactoryFormClass}>
+        <div className={pluginManagerFormClass}>
           <Formik
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             initialValues={this.initialFormValues}
@@ -348,11 +374,11 @@ class CreatePluginFactoryProposal extends React.Component<IProps, IState> {
                     className={touched.url && errors.url ? css.error : null}
                   />
 
-                  <div className={css.addEditPluginFields}>
-                    <div className={css.addPluginSelectContainer}>
+                  <div className={`${css.addEditPluginFields} ${css.replacePluginFields}`}>
+                    <div className={`${css.addPluginSelectContainer} ${css.replacePluginSelectContainer}`}>
                       <label htmlFor="pluginNameInput">
                         <div className={css.requiredMarker}>*</div>
-                        Plugin
+                          Plugin to add
                         <ErrorMessage name="pluginName">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
                       <Field
@@ -373,18 +399,149 @@ class CreatePluginFactoryProposal extends React.Component<IProps, IState> {
                       </Field>
                     </div>
 
-                    <div className={css.parametersHash}>
-                      <label htmlFor="pluginDataInput">
-                        <div className={css.requiredMarker}>*</div>
-                        Parameters Hash
-                        <ErrorMessage name="pluginData">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="pluginDataInput"
-                        placeholder="e.g. 0x0000000000000000000000000000000000000000000000000000000000001234"
-                        name="pluginData"
-                        className={touched.pluginData && errors.pluginData ? css.error : null}
-                      />
+                    <div className={css.parameters}>
+                      <div>
+                        <label htmlFor="queuedVoteRequiredPercentage">
+                          <div className={css.requiredMarker}>*</div>
+                            Queued Vote Required Percentage
+                          <ErrorMessage name="params.queuedVoteRequiredPercentage">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="queuedVoteRequiredPercentage"
+                          name="params.queuedVoteRequiredPercentage"
+                          className={touched.queuedVoteRequiredPercentage && errors.queuedVoteRequiredPercentage ? css.error : null}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="queuedVotePeriodLimit">
+                          <div className={css.requiredMarker}>*</div>
+                            Queued Vote Period Limit
+                          <ErrorMessage name="params.queuedVotePeriodLimit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="queuedVotePeriodLimit"
+                          name="params.queuedVotePeriodLimit"
+                          className={touched.queuedVotePeriodLimit && errors.queuedVotePeriodLimit ? css.error : null}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="boostedVotePeriodLimit">
+                          <div className={css.requiredMarker}>*</div>
+                            Boosted Vote Period Limit
+                          <ErrorMessage name="params.boostedVotePeriodLimit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="boostedVotePeriodLimit"
+                          name="params.boostedVotePeriodLimit"
+                          className={touched.boostedVotePeriodLimit && errors.boostedVotePeriodLimit ? css.error : null}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="preBoostedVotePeriodLimit">
+                          <div className={css.requiredMarker}>*</div>
+                            Pre-Boosted Vote Period Limit
+                          <ErrorMessage name="params.preBoostedVotePeriodLimit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="preBoostedVotePeriodLimit"
+                          name="params.preBoostedVotePeriodLimit"
+                          className={touched.preBoostedVotePeriodLimit && errors.preBoostedVotePeriodLimit ? css.error : null}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="thresholdConst">
+                          <div className={css.requiredMarker}>*</div>
+                            Threshold Const
+                          <ErrorMessage name="params.thresholdConst">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="thresholdConst"
+                          name="params.thresholdConst"
+                          className={touched.thresholdConst && errors.thresholdConst ? css.error : null}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="quietEndingPeriod">
+                          <div className={css.requiredMarker}>*</div>
+                            Quiet Ending Period
+                          <ErrorMessage name="params.quietEndingPeriod">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="quietEndingPeriod"
+                          name="params.quietEndingPeriod"
+                          className={touched.quietEndingPeriod && errors.quietEndingPeriod ? css.error : null}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="proposingRepReward">
+                          <div className={css.requiredMarker}>*</div>
+                            Proposing Reputation Reward
+                          <ErrorMessage name="params.proposingRepReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="proposingRepReward"
+                          name="params.proposingRepReward"
+                          className={touched.proposingRepReward && errors.proposingRepReward ? css.error : null}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="votersReputationLossRatio">
+                          <div className={css.requiredMarker}>*</div>
+                            Voters Reputation Loss Ratio
+                          <ErrorMessage name="params.votersReputationLossRatio">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="votersReputationLossRatio"
+                          name="params.votersReputationLossRatio"
+                          className={touched.votersReputationLossRatio && errors.votersReputationLossRatio ? css.error : null}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="minimumDaoBounty">
+                          <div className={css.requiredMarker}>*</div>
+                            Minimum DAO Bounty
+                          <ErrorMessage name="params.minimumDaoBounty">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="minimumDaoBounty"
+                          name="params.minimumDaoBounty"
+                          className={touched.minimumDaoBounty && errors.minimumDaoBounty ? css.error : null}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="daoBountyConst">
+                          <div className={css.requiredMarker}>*</div>
+                            DAO Bounty Const
+                          <ErrorMessage name="params.daoBountyConst">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="daoBountyConst"
+                          name="params.daoBountyConst"
+                          className={touched.daoBountyConst && errors.daoBountyConst ? css.error : null}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="activationTime">
+                          <div className={css.requiredMarker}>*</div>
+                            Activation Time
+                          <ErrorMessage name="params.activationTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="activationTime"
+                          name="params.activationTime"
+                          className={touched.activationTime && errors.activationTime ? css.error : null}
+                        />
+                      </div>
                     </div>
                     <div className={css.permissions}>
                       <div className={css.permissionsLabel}>
@@ -451,11 +608,11 @@ class CreatePluginFactoryProposal extends React.Component<IProps, IState> {
                     </div>
                   </div>
 
-                  <div className={css.removePluginFields}>
-                    <div className={css.removePluginSelectContainer}>
+                  <div className={`${css.removePluginFields} ${css.replacePluginFields}`}>
+                    <div className={`${css.removePluginSelectContainer} ${css.replacePluginSelectContainer}`}>
                       <label htmlFor="schemeToRemoveInput">
                         <div className={css.requiredMarker}>*</div>
-                        Plugin
+                          Plugin to remove
                         <ErrorMessage name="pluginToReplace">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
                       <Field
@@ -469,125 +626,6 @@ class CreatePluginFactoryProposal extends React.Component<IProps, IState> {
                           return <option key={`remove_plugin_${plugin.coreState.address}`} value={plugin.coreState.address}>{pluginNameAndAddress(plugin.coreState.address)}</option>;
                         })}
                       </Field>
-                    </div>
-                  </div>
-
-                  <div className={css.replacePluginFields}>
-                    <div className={css.replacePluginSelectContainer}>
-                    <label htmlFor="replacepluginToReplaceInput">
-                        <div className={css.requiredMarker}>*</div>
-                        Plugin to replace
-                        <ErrorMessage name="pluginToReplace">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="replacepluginToReplaceInput"
-                        name="pluginToReplace"
-                        component="select"
-                        className={css.pluginSelect}
-                      >
-                        <option value="">Select a plugin...</option>
-                        {plugins.map((plugin, _i) => {
-                          return <option key={`remove_plugin_${plugin.coreState.address}`} value={plugin.coreState.address}>{pluginNameAndAddress(plugin.coreState.address)}</option>;
-                        })}
-                      </Field>
-                      <label htmlFor="replacePluginAddNameInput">
-                        <div className={css.requiredMarker}>*</div>
-                        Plugin to add
-                        <ErrorMessage name="pluginName">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="replacePluginAddNameInput"
-                        name="pluginName"
-                        component="select"
-                        className={css.pluginSelect}
-                        onChange={(e: any) => {
-                          // call the built-in handleChange
-                          handleChange(e);
-                          this.handleChangePlugin(e);
-                        }}
-                      >
-                        <option value="">Select a plugin...</option>
-                        {Object.values(PLUGIN_NAMES).map((name, _i) => {
-                          return <option key={`add_plugin_${name}`} value={name}>{name}</option>;
-                        })}
-                      </Field>
-                    </div>
-
-                    <div className={css.parametersHash}>
-                      <label htmlFor="replacePluginDataInput">
-                        <div className={css.requiredMarker}>*</div>
-                        Parameters Hash
-                        <ErrorMessage name="pluginData">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="replacePluginDataInput"
-                        placeholder="e.g. 0x0000000000000000000000000000000000000000000000000000000000001234"
-                        name="pluginData"
-                        className={touched.pluginData && errors.pluginData ? css.error : null}
-                      />
-                    </div>
-                    <div className={css.permissions}>
-                      <div className={css.permissionsLabel}>
-                        Permissions
-                      </div>
-                      <div className={css.permissionCheckbox}>
-                        <Field
-                          id="replaceRegisterOtherPluginsInput"
-                          type="checkbox"
-                          name="permissions.registerPlugins"
-                          checked={requiredPermissions & PluginPermissions.CanRegisterPlugins || values.permissions.registerPlugins}
-                          disabled={requiredPermissions & PluginPermissions.CanRegisterPlugins}
-                        />
-                        <label htmlFor="registerOtherPluginsInput">
-                          Register other plugins
-                        </label>
-                      </div>
-
-                      <div className={css.permissionCheckbox}>
-                        <Field
-                          id="replaceChangeConstraintsInput"
-                          type="checkbox"
-                          name="permissions.changeConstraints"
-                          checked={requiredPermissions & PluginPermissions.CanAddRemoveGlobalConstraints || values.permissions.changeConstraints}
-                          disabled={requiredPermissions & PluginPermissions.CanAddRemoveGlobalConstraints}
-                        />
-                        <label htmlFor="changeConstraintsInput">
-                          Add/remove global constraints
-                        </label>
-                      </div>
-
-                      <div className={css.permissionCheckbox}>
-                        <Field
-                          id="replaceUpgradeControllerInput"
-                          type="checkbox"
-                          name="permissions.upgradeController"
-                          checked={requiredPermissions & PluginPermissions.CanUpgradeController || values.permissions.upgradeController}
-                          disabled={requiredPermissions & PluginPermissions.CanUpgradeController}
-                        />
-                        <label htmlFor="upgradeControllerInput">
-                          Upgrade the controller
-                        </label>
-                      </div>
-
-                      <div className={css.permissionCheckbox}>
-                        <Field
-                          id="replaceGenericCallInput"
-                          type="checkbox"
-                          name="permissions.genericCall"
-                          checked={requiredPermissions & PluginPermissions.CanCallDelegateCall || values.permissions.genericCall}
-                          disabled={requiredPermissions & PluginPermissions.CanCallDelegateCall}
-                        />
-                        <label htmlFor="genericCallInput">
-                          Call genericCall on behalf of
-                        </label>
-                      </div>
-
-                      <div className={css.permissionCheckbox}>
-                        <Field id="replaceMintBurnReputation" type="checkbox" name="mintBurnReputation" disabled="disabled" checked="checked" />
-                        <label htmlFor="mintBurnReputation">
-                          Mint or burn reputation
-                        </label>
-                      </div>
                     </div>
                   </div>
 
@@ -616,8 +654,8 @@ class CreatePluginFactoryProposal extends React.Component<IProps, IState> {
   }
 }
 
-const SubscribedCreatePluginFactoryProposal = withSubscription({
-  wrappedComponent: CreatePluginFactoryProposal,
+const SubscribedCreatePluginManagerProposal = withSubscription({
+  wrappedComponent: CreatePluginManagerProposal,
   loadingComponent: <Loading/>,
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
@@ -627,4 +665,4 @@ const SubscribedCreatePluginFactoryProposal = withSubscription({
   },
 });
 
-export default connect(null, mapDispatchToProps)(SubscribedCreatePluginFactoryProposal);
+export default connect(null, mapDispatchToProps)(SubscribedCreatePluginManagerProposal);

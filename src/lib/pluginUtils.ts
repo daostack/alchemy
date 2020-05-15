@@ -113,9 +113,9 @@ export function pluginName(plugin: IPluginState|IContractInfo, fallback?: string
   } else if (plugin.name === "ContributionReward") {
     name ="Funding and Voting Power";
   } else if (plugin.name === "SchemeRegistrar") {
-    name ="Plugin Manager";
+    name ="Plugin Registrar";
   } else if (plugin.name === "SchemeFactory") {
-    name ="Plugin Factory";
+    name ="Plugin Manager";
   } else if (plugin.name) {
     if (plugin.name === "ContributionRewardExt") {
       name = rewarderContractName(plugin as IContributionRewardExtState);

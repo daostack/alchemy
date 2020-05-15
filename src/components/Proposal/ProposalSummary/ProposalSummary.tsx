@@ -7,7 +7,7 @@ import * as css from "./ProposalSummary.scss";
 import ProposalSummaryContributionReward from "./ProposalSummaryContributionReward";
 import ProposalSummaryKnownGenericPlugin from "./ProposalSummaryKnownGenericPlugin";
 import ProposalSummaryPluginRegistrar from "./ProposalSummaryPluginRegistrar";
-import ProposalSummaryPluginFactory from "./ProposalSummaryPluginFactory";
+import ProposalSummaryPluginManager from "./ProposalSummaryPluginManager";
 import ProposalSummaryUnknownGenericPlugin from "./ProposalSummaryUnknownGenericPlugin";
 import { getArc } from "arc";
 
@@ -54,7 +54,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       return <ProposalSummaryPluginRegistrar {...this.props} proposalState={state} />;
     } else if (proposal.coreState.name.includes("SchemeFactory")) {
       const state = proposal.coreState as IPluginManagerProposalState;
-      return <ProposalSummaryPluginFactory {...this.props} proposalState={state} />;
+      return <ProposalSummaryPluginManager {...this.props} proposalState={state} />;
     } else if (proposal.coreState.name === "GenericScheme") {
       const state = proposal.coreState as IGenericPluginProposalState;
       const genericPluginRegistry = new GenericPluginRegistry();
