@@ -61,7 +61,7 @@ export function getTestAddresses(version: string = LATEST_ARC_VERSION): ITestAdd
 export async function hideCookieAcceptWindow(): Promise<void> {
   let acceptCookiesButton = await $("*[data-test-id=\"acceptCookiesButton\"]");
   for (let i = 0; i < 3; ++i) {
-    await acceptCookiesButton.waitForExist({ timeout: 10000 });
+    await acceptCookiesButton.waitForExist({ timeout: 2000 });
     if (!acceptCookiesButton.error && await acceptCookiesButton.isDisplayedInViewport()) {
       await acceptCookiesButton.click();
       return;

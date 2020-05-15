@@ -12,7 +12,7 @@ describe("Header redemptions button", () => {
   });
 
   it("should show a quick menu on desktop devices", async () => {
-
+    await browser.url("http://127.0.0.1:3000");
     const loginButton = await $("[data-test-id=\"loginButton\"]");
     await loginButton.click();
 

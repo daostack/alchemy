@@ -1,6 +1,6 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
-import { getArc, gotoDaoPlugins } from "./utils";
+import { getArc, hideCookieAcceptWindow, gotoDaoPlugins } from "./utils";
 
 describe("Proposals ENS Registry", () => {
   let daoAddress: string;
@@ -11,11 +11,11 @@ describe("Proposals ENS Registry", () => {
     const daos = await arc.daos({ where: { name: "Nectar DAO"}}).pipe(first()).toPromise();
     const dao = daos[0];
     daoAddress = dao.id;
-
   });
 
   it("Create a Generic Plugin ENS Registry proposal and check that the data is submitted correctly", async () => {
     await gotoDaoPlugins(daoAddress);
+    await hideCookieAcceptWindow();
 
     // TODO: label must be hex?
     const ensTitle = await $("h2=EnsRegistry");
@@ -44,12 +44,14 @@ describe("Proposals ENS Registry", () => {
     await nodeInput.setValue("alice.eth");
 
     const labelInput = await $("*[data-test-id=\"label\"]");
-    await labelInput.setValue("iam");
+    await labelInput.setValue("0x9234234");
 
     const ownerInput = await $("*[data-test-id=\"owner\"]");
+    await ownerInput.scrollIntoView();
     await ownerInput.setValue("0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1");
 
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
+    await createProposalSubmitButton.scrollIntoView();
     await createProposalSubmitButton.click();
 
     // check that the proposal appears in the list

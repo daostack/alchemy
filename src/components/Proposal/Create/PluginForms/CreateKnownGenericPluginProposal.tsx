@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { connect } from "react-redux";
-import { IPluginState } from "@dorgtech/arc.js";
+import { IPluginState, IProposalCreateOptionsGS } from "@dorgtech/arc.js";
 import { enableWalletProvider } from "arc";
 import { isHexString } from "ethers/utils";
 
@@ -126,7 +126,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
       ethValue = ethValue.add(calcBountEth);
     }
 
-    const proposalValues = {
+    const proposalValues: IProposalCreateOptionsGS = {
       ...values,
       callData,
       dao: this.props.daoAvatarAddress,

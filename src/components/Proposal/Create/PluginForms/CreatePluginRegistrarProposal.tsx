@@ -126,16 +126,16 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
     }
 
     const currentTab = this.state.currentTab;
-    let proposalType: ProposalName;
+    let type: ProposalName;
     if (this.state.currentTab === "removePlugin") {
-      proposalType = "SchemeRegistrarRemove";
+      type = "SchemeRegistrarRemove";
     } else {
-      proposalType = "SchemeRegistrarAdd";
+      type = "SchemeRegistrarAdd";
     }
     const proposalValues = {
       ...values,
       dao: this.props.daoAvatarAddress,
-      type: proposalType,
+      type,
       parametersHash: values.parametersHash,
       permissions: "0x" + permissions.toString(16).padStart(8, "0"),
       plugin: this.props.pluginState.address,
@@ -284,7 +284,6 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
 
                 if (currentTab === "addPlugin") {
                   require("pluginToAdd");
-                  require("parametersHash");
                 } else {
                   require("pluginToRemove");
                 }
