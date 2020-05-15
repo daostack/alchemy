@@ -38,7 +38,7 @@
       "^actions/(.*)$": "<rootDir>/src/actions/$1",
       "^components(.*)$": "<rootDir>/src/components$1",
       "^data/(.*)$": "<rootDir>/data/$1",
-      "^genericSchemeRegistry(.*)$": "<rootDir>/src/genericSchemeRegistry$1",
+      "^genericPluginRegistry(.*)$": "<rootDir>/src/genericPluginRegistry$1",
       "^crxRegistry(.*)$": "<rootDir>/src/crxRegistry$1",
       "^layouts/(.*)$": "<rootDir>/src/layouts/$1",
       "^lib/(.*)$": "<rootDir>/src/lib/$1",
