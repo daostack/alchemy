@@ -33,17 +33,17 @@ export function createDaoStateFromQuery(queryData: IDAOData): IDAOState {
     address: queryData.id,
     reputation: {
       id: reputation.id,
-      entity: reputation
+      entity: reputation,
     },
     token: {
       id: token.id,
-      entity: token
+      entity: token,
     },
     tokenName: queryData.nativeToken.name,
     tokenSymbol: queryData.nativeToken.symbol,
     memberCount: Number(queryData.reputationHoldersCount),
     tokenTotalSupply: queryData.nativeToken.totalSupply,
-    reputationTotalSupply: new BN(queryData.nativeReputation.totalSupply)
+    reputationTotalSupply: new BN(queryData.nativeReputation.totalSupply),
   };
 
   return {
@@ -53,13 +53,13 @@ export function createDaoStateFromQuery(queryData: IDAOData): IDAOState {
     numberOfQueuedProposals: Number(daoSpec.numberOfQueuedProposals),
     reputation: {
       id: reputation.id,
-      entity: reputation
+      entity: reputation,
     },
     token: {
       id: token.id,
-      entity: token
+      entity: token,
     },
     tokenName: daoSpec.nativeToken.name,
-    tokenSymbol: daoSpec.nativeToken.symbol
+    tokenSymbol: daoSpec.nativeToken.symbol,
   };
 }

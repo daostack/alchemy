@@ -30,7 +30,7 @@ interface IExternalProps {
   /**
    * unredeemed GP rewards owed to the current account
    */
-  rewards: IRewardState;
+  rewards: IRewardState | null;
   expired: boolean;
 }
 
@@ -75,7 +75,7 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 
   public async componentDidMount() {
-    await this.props.proposal.coreState.plugin.entity.fetchState()
+    await this.props.proposal.coreState.plugin.entity.fetchState();
   }
 
   private handleClickExecute = (type: string) => async (e: any): Promise<void> => {
@@ -296,7 +296,12 @@ class ActionButton extends React.Component<IProps, IState> {
     } = this.props;
 
     await proposal.fetchState();
-    await redeemProposal(daoState.address, proposal.id, currentAccountAddress);
+    await redeemProposal(proposal.id, currentAccountAddress);
+
+    gpRewards.daoBountyForStaker = gpRewards.daoBountyForStaker || new BN(0);
+    gpRewards.reputationForVoter = gpRewards.reputationForVoter || new BN(0);
+    gpRewards.tokensForStaker = gpRewards.tokensForStaker || new BN(0);
+    gpRewards.reputationForProposer = gpRewards.reputationForProposer || new BN(0);
 
     Analytics.track("Redeem", {
       "DAO Address": daoState.address,
@@ -305,10 +310,10 @@ class ActionButton extends React.Component<IProps, IState> {
       "Proposal Title": proposal.coreState.title,
       "Plugin Address": proposal.coreState.plugin.entity.coreState.address,
       "Plugin Name": proposal.coreState.plugin.entity.coreState.name,
-      "Reputation Requested": fromWei(contributionRewards.reputationReward),
-      "ETH Requested": fromWei(contributionRewards.ethReward),
-      "External Token Requested": fromWei(contributionRewards.externalTokenReward),
-      "DAO Token Requested": fromWei(contributionRewards.nativeTokenReward),
+      "Reputation Requested": fromWei(contributionRewards.rep),
+      "ETH Requested": fromWei(contributionRewards.eth),
+      "External Token Requested": fromWei(contributionRewards.externalToken),
+      "DAO Token Requested": fromWei(contributionRewards.nativeToken),
       "GEN for staking": fromWei((gpRewards.daoBountyForStaker as BN).add(gpRewards.tokensForStaker)),
       "GP Reputation Flow": fromWei((gpRewards.reputationForVoter as BN).add(gpRewards.reputationForProposer)),
     });
@@ -325,7 +330,7 @@ const SubscribedActionButton = withSubscription({
 
     const arc = getArc();
     const genToken = arc.GENToken();
-    const crState = props.proposal.coreState as IContributionRewardProposalState
+    const crState = props.proposal.coreState as IContributionRewardProposalState;
 
     if (crState.name === "ContributionReward" &&
         crState.externalTokenReward && !crState.externalTokenReward.isZero()) {

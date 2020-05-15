@@ -13,7 +13,7 @@ describe("PluginRegistrar Proposals", () => {
   it("Create a proposal to add a plugin", async () => {
     await gotoDaoPlugins(daoAddress);
 
-    const pluginCard = await $("[data-test-id=\"pluginCard-PluginRegistrar\"]");
+    const pluginCard = await $("[data-test-id=\"pluginCard-SchemeRegistrar\"]");
     await pluginCard.click();
 
     await hideCookieAcceptWindow();
@@ -58,7 +58,7 @@ describe("PluginRegistrar Proposals", () => {
   it("Create a proposal to edit a plugin", async () => {
     await gotoDaoPlugins(daoAddress);
 
-    const pluginCard = await $("[data-test-id=\"pluginCard-PluginRegistrar\"]");
+    const pluginCard = await $("[data-test-id=\"pluginCard-SchemeRegistrar\"]");
     await pluginCard.click();
 
     await hideCookieAcceptWindow();
@@ -92,7 +92,7 @@ describe("PluginRegistrar Proposals", () => {
   it("Create a proposal to remove a plugin", async () => {
     await gotoDaoPlugins(daoAddress);
 
-    const pluginCard = await $("[data-test-id=\"pluginCard-PluginRegistrar\"]");
+    const pluginCard = await $("[data-test-id=\"pluginCard-SchemeRegistrar\"]");
     await pluginCard.click();
 
     await hideCookieAcceptWindow();

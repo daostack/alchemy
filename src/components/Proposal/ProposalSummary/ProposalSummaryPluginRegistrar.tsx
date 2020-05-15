@@ -1,4 +1,4 @@
-import { IDAOState, ISchemeRegistrarProposalState } from "@dorgtech/arc.js";
+import { IDAOState, IPluginRegistrarProposalState } from "@dorgtech/arc.js";
 import classNames from "classnames";
 import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
 import { pluginNameAndAddress } from "lib/pluginUtils";
@@ -10,7 +10,7 @@ interface IProps {
   beneficiaryProfile?: IProfileState;
   detailView?: boolean;
   daoState: IDAOState;
-  proposalState: ISchemeRegistrarProposalState;
+  proposalState: IPluginRegistrarProposalState;
   transactionModal?: boolean;
 }
 
@@ -33,7 +33,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
 
-  private copyPluginAddressOnClick = (proposalState: ISchemeRegistrarProposalState) => (): void => copyToClipboard(proposalState.pluginToRegister);
+  private copyPluginAddressOnClick = (proposalState: IPluginRegistrarProposalState) => (): void => copyToClipboard(proposalState.pluginToRegister);
 
   public render(): RenderOutput {
     const { proposalState, detailView, transactionModal } = this.props;
@@ -49,7 +49,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
     return (
       <div className={proposalSummaryClass}>
-        { proposalState.pluginToRemove  ?
+        { proposalState.pluginToRemove ?
           <div>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/delete.svg"/>&nbsp;
@@ -76,8 +76,8 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
           : proposalState.pluginToRegister ?
             <div>
               <span className={css.summaryTitle}>
-                <b className={css.pluginRegisterIcon}>{proposalState.type === "SchemeRegistrarEdit" ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
-                {proposalState.type === "SchemeRegistrarEdit" ? "Edit" : "Add"} Plugin&nbsp;
+                <b className={css.pluginRegisterIcon}>+</b>&nbsp;
+                Add Plugin&nbsp;
                 <a href={linkToEtherScan(proposalState.pluginToRegister)} target="_blank" rel="noopener noreferrer">{pluginNameAndAddress(proposalState.pluginToRegister)}</a>
               </span>
               { detailView ?

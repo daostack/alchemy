@@ -16,6 +16,7 @@ describe("Proposals ENS Resolver", () => {
   it("Create a Generic Plugin ENS Public Resolver proposal and check that the data is submitted correctly", async () => {
     await gotoDaoPlugins(daoAddress);
 
+    // TODO: can't find
     const ensTitle = await $("h2=EnsPublicResolver");
     await ensTitle.waitForExist();
     await ensTitle.click();

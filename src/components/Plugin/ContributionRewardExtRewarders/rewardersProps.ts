@@ -30,10 +30,10 @@ export interface ICrxRewarderProps
  * If the plugin is a ContributionRewardExt, return props for its rewarder contract, if any
  * @param plugin
  */
-export const getCrxRewarderProps = (pluginState: IContributionRewardExtState): Promise<ICrxRewarderProps> | null  => {
+export const getCrxRewarderProps = (pluginState: IContributionRewardExtState): Promise<ICrxRewarderProps> | null => {
   const contractName = rewarderContractName(pluginState);
   // dynamic imports are enabled and optimized by @babel/plugin-syntax-dynamic-import
-  return contractName ?  import(`./${contractName}/props.json`) : null;
+  return contractName ? import(`./${contractName}/props.json`) : null;
 };
 
 export enum CrxRewarderComponentType {

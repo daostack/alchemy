@@ -1,4 +1,4 @@
-import { IPluginState, IContributionRewardExtState, IGenericPluginState, IContributionRewardState } from "@dorgtech/arc.js";
+import { AnyPlugin, Plugin, IContributionRewardExtState, IGenericPluginState, IContributionRewardState, IPluginRegistrarState, IPluginManagerState } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import CreateKnownGenericPluginProposal from "components/Proposal/Create/PluginForms/CreateKnownGenericPluginProposal";
 import CreatePluginRegistrarProposal from "components/Proposal/Create/PluginForms/CreatePluginRegistrarProposal";
@@ -18,9 +18,8 @@ import { CrxRewarderComponentType, getCrxRewarderComponent, rewarderContractName
 import CreateContributionRewardProposal from "components/Proposal/Create/PluginForms/CreateContributionRewardProposal";
 import { pluginName } from "lib/pluginUtils";
 import * as css from "./CreateProposal.scss";
-import { from } from "rxjs";
-import { first } from "rxjs/operators";
 import CreatePluginManagerProposal from "./PluginForms/CreatePluginManagerProposal";
+import { of } from "rxjs";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -34,7 +33,7 @@ interface IStateProps {
   createCrxProposalComponent: any;
 }
 
-type IProps = IExternalProps & IExternalStateProps & ISubscriptionProps<IPluginState>;
+type IProps = IExternalProps & IExternalStateProps & ISubscriptionProps<AnyPlugin>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
   return {
@@ -79,7 +78,7 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
      */
     if (!this.state.createCrxProposalComponent) {
       Object.assign(newState, { createCrxProposalComponent: await getCrxRewarderComponent(
-        this.props.data as IContributionRewardExtState, CrxRewarderComponentType.CreateProposal
+        this.props.data.coreState as IContributionRewardExtState, CrxRewarderComponentType.CreateProposal
       ) });
     }
 
@@ -99,35 +98,36 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
 
   public render(): RenderOutput {
     const { daoAvatarAddress } = this.props;
-    const pluginState = this.props.data;
+    const plugin = this.props.data;
+    const pluginState = plugin.coreState;
 
     let createPluginComponent = <div />;
     const props = {
       daoAvatarAddress,
       handleClose: this.doClose,
-      pluginState,
+      plugin,
     };
     const pluginTitle = this.state.createCrxProposalComponent ? rewarderContractName(pluginState as IContributionRewardExtState) : pluginName(pluginState);
 
     if (this.state.createCrxProposalComponent) {
       createPluginComponent = <this.state.createCrxProposalComponent {...props} />;
     } else if (pluginState.name === "ContributionReward") {
-      createPluginComponent = <CreateContributionRewardProposal {...props} pluginState={props.pluginState as IContributionRewardState} />;
+      createPluginComponent = <CreateContributionRewardProposal {...props} pluginState={pluginState as IContributionRewardState} />;
     } else if (pluginState.name === "SchemeRegistrar") {
-      createPluginComponent = <CreatePluginRegistrarProposal {...props} />;
+      createPluginComponent = <CreatePluginRegistrarProposal {...props} pluginState={pluginState as IPluginRegistrarState} />;
     } else if (pluginState.name === "SchemeFactory") {
-      createPluginComponent = <CreatePluginManagerProposal {...props} />;
+      createPluginComponent = <CreatePluginManagerProposal {...props} pluginState={pluginState as IPluginManagerState} />;
     } else if (pluginState.name === "GenericScheme") {
-      let contractToCall = (pluginState as IGenericPluginState).pluginParams.contractToCall;
+      const contractToCall = (pluginState as IGenericPluginState).pluginParams.contractToCall;
       if (!contractToCall) {
         throw Error("No contractToCall for this genericPlugin was found!");
       }
       const genericPluginRegistry = new GenericPluginRegistry();
       const genericPluginInfo = genericPluginRegistry.getPluginInfo(contractToCall);
       if (genericPluginInfo) {
-        createPluginComponent = <CreateKnownGenericPluginProposal  {...props} genericPluginInfo={genericPluginInfo} />;
+        createPluginComponent = <CreateKnownGenericPluginProposal {...props} genericPluginInfo={genericPluginInfo} pluginState={pluginState as IGenericPluginState} />;
       } else {
-        createPluginComponent = <CreateUnknownGenericPluginProposal {...props} />;
+        createPluginComponent = <CreateUnknownGenericPluginProposal {...props} pluginState={pluginState as IGenericPluginState} />;
       }
     }
 
@@ -151,8 +151,8 @@ const SubscribedCreateProposalPage = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: async (props: IExternalStateProps) => {
     const arc = getArc();
-    const plugin = await arc.plugins({ where: { id: props.pluginId } }).pipe(first()).toPromise();
-    return from(plugin[0].fetchState());
+    const plugin = await Plugin.create(arc, props.pluginId);
+    return of(plugin);
   },
 });
 

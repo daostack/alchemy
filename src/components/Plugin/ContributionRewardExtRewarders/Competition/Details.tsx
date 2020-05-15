@@ -118,7 +118,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     }
 
     // Ensure the plugin's state is hydrated
-    await this.props.proposalState.plugin.entity.fetchState()
+    await this.props.proposalState.plugin.entity.fetchState();
   }
 
   private onEndCountdown = () => {

@@ -77,7 +77,7 @@ class DaoPluginsPage extends React.Component<IProps, null> {
 
     const contributionReward = allPlugins.filter((plugin: AnyPlugin) => plugin.coreState.name === "ContributionReward");
     const knownPlugins = allPlugins.filter((plugin: AnyPlugin) => plugin.coreState.name !== "ContributionReward" && KNOWN_PLUGIN_NAMES.indexOf(plugin.coreState.name) >= 0);
-    const unknownPlugins = allPlugins.filter((plugin: AnyPlugin) =>  KNOWN_PLUGIN_NAMES.indexOf(plugin.coreState.name) === -1 );
+    const unknownPlugins = allPlugins.filter((plugin: AnyPlugin) => KNOWN_PLUGIN_NAMES.indexOf(plugin.coreState.name) === -1 );
     const allKnownPlugins = [...contributionReward, ...knownPlugins];
 
     const pluginManager = data[1];

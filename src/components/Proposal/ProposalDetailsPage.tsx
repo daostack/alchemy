@@ -63,7 +63,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       "DAO Address": this.props.daoState.address,
       "DAO Name": this.props.daoState.name,
       "Proposal Hash": this.props.proposal.id,
-      // TODO @jordan proposal data component (injected props)
       "Proposal Title": this.props.proposal.coreState.title,
       "Plugin Address": this.props.proposal.coreState.plugin.id,
       "Plugin Name": this.props.proposal.coreState.plugin.entity.coreState.name,

@@ -12,8 +12,8 @@ describe("Proposals", () => {
     // TODO: create a test_env with a nameed DAO so we can find it consistently
     arc = getArc();
     await arc.fetchContractInfos();
-    const ARC_VERSION = "0.1.1-rc.16";
-    const contributionRewardExtContract  = arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);
+    const ARC_VERSION = "0.1.1-rc.18";
+    const contributionRewardExtContract = arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);
 
     // find the corresponding plugin object
     const contributionRewardExts = await arc

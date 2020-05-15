@@ -12,7 +12,7 @@ export type ConnectAction = IAsyncAction<"WEB3_CONNECT", void, IWeb3State>;
 export function setCurrentAccount(accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: Function) => {
     const payload = {
-      currentAccountAddress: accountAddress,
+      currentAccountAddress: accountAddress?.toLowerCase(),
     };
 
     const action = {

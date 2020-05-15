@@ -22,7 +22,7 @@ interface IExternalProps {
   daoState: IDAOState;
   history: History;
   plugin: IPluginState;
-  pluginRegistrar?: IPluginManagerState;
+  pluginManager?: IPluginManagerState;
 }
 
 type IProps = IExternalProps & IDispatchProps;
@@ -42,7 +42,7 @@ class PluginInfo extends React.Component<IProps, null> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     // TODO @jordan use the plugin manager, instead of the registrar
-    this.props.history.push(`/dao/${this.props.daoState.id}/plugin/${this.props.pluginRegistrar.id}/proposals/create/?currentTab=editPlugin`);
+    this.props.history.push(`/dao/${this.props.daoState.id}/plugin/${this.props.pluginManager.id}/proposals/create/?currentTab=editPlugin`);
     e.preventDefault();
   }
 
@@ -124,14 +124,14 @@ class PluginInfo extends React.Component<IProps, null> {
       </React.Fragment>;
     };
 
-    const pluginParams = (plugin as any).pluginParams
+    const pluginParams = (plugin as any).pluginParams;
     const votingMachine = (
       pluginParams && pluginParams.votingMachine
     );
     return <div>
       <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/plugin/${plugin.id}/info`}>Info</BreadcrumbsItem>
 
-      { this.props.pluginRegistrar ?
+      { this.props.pluginManager ?
         <div className={css.editPlugin}>
           <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
             <a

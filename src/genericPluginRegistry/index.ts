@@ -234,7 +234,7 @@ export class GenericPluginInfo {
       "0x" + callData.slice(2 + 8)
     );
 
-    const values =  [];
+    const values = [];
     for (const inputSpec of action.abi.inputs) {
       values.push(decodedParams[inputSpec.name]);
     }

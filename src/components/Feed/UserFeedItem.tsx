@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState } from "@dorgtech/arc.js";
+import { IDAOState, IMemberState, Member } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -62,14 +62,19 @@ const SubscribedUserFeedItem = withSubscription({
 
   checkForUpdate: ["event"],
 
-  createObservable: (props: IExternalProps) => {
+  createObservable: async (props: IExternalProps) => {
     const arc = getArc();
     const { event } = props;
     const dao = arc.dao(event.dao.id);
 
+    const { reputation } = await dao.fetchState();
+
     return combineLatest(
       dao.state(),
-      dao.member(event.user).state(),
+      dao.member(Member.calculateId({
+        address: event.user,
+        contract: reputation.id,
+      })).state(),
     );
   },
 });

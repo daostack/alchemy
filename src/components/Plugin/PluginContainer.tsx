@@ -31,7 +31,7 @@ interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   history: History;
   daoState: IDAOState;
-  pluginRegistrar: IPluginManagerState;
+  pluginManager: IPluginManagerState;
 }
 
 interface IExternalState {
@@ -72,7 +72,7 @@ class PluginContainer extends React.Component<IProps, IState> {
 
   private pluginInfoPageHtml = (props: any) => {
     console.log("LAVENDAYACAYO", this.props.data)
-    return <PluginInfoPage {...props} daoState={this.props.daoState} plugin={this.props.data[0]} pluginRegistrar={this.props.data[1]} />;
+    return <PluginInfoPage {...props} daoState={this.props.daoState} plugin={this.props.data[0]} pluginManager={this.props.data[1]} />;
   }
   private pluginProposalsPageHtml = (isActive: boolean, crxRewarderProps: ICrxRewarderProps) => (props: any) => {
     console.log("CORONA ", this.props.data[0])
@@ -100,7 +100,7 @@ class PluginContainer extends React.Component<IProps, IState> {
         crxListComponent: await getCrxRewarderComponent(
           this.props.data[0] as IContributionRewardExtState,
           CrxRewarderComponentType.List
-        )
+        ),
       });
     }
 
@@ -230,7 +230,7 @@ const SubscribedPluginContainer = withSubscription({
      * However, it seems likely that this could be needed by other CrExt rewarder
      * contracts that might come along.
      */
-    let  approvedProposals: Observable<Array<IProposalState>>;
+    let approvedProposals: Observable<Array<IProposalState>>;
     if (hasRewarderContract(pluginState as IContributionRewardExtState)) {
       approvedProposals = dao.proposals(
         // eslint-disable-next-line @typescript-eslint/camelcase

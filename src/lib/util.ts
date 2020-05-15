@@ -5,7 +5,7 @@ import {
   IProposalStage,
   IProposalState,
   IRewardState,
-  Web3Provider
+  Web3Provider,
 } from "@dorgtech/arc.js";
 import * as utils from "@dorgtech/arc.js";
 import { JsonRpcProvider } from "ethers/providers";
@@ -118,7 +118,7 @@ export function toBaseUnit(value: string, decimals: number) {
 
 export function fromWei(amount: BN): number {
   try {
-    return Number(fromWei(amount));
+    return Number(utils.fromWei(amount));
   } catch (err) {
     // eslint-disable-next-line no-console
     console.warn(`Invalid number value passed to fromWei: "${amount}": ${err.message}`);
@@ -129,7 +129,7 @@ export function fromWei(amount: BN): number {
 export function fromWeiToString(amount: BN): string {
   return fromWei(amount).toLocaleString(
     undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}
-  )
+  );
 }
 
 export function toWei(amount: number): BN {
@@ -286,27 +286,27 @@ export async function getNetworkId(web3Provider?: Web3Provider): Promise<string>
   } else if (web3Provider) {
     if (typeof web3Provider === "string") {
       const provider = new JsonRpcProvider(web3Provider);
-      const network = await provider.getNetwork()
+      const network = await provider.getNetwork();
       return network.chainId.toString();
     } else if (Signer.isSigner(web3Provider)) {
       const network = await web3Provider.provider.getNetwork();
       return network.chainId.toString();
     } else {
       const promise = new Promise<string>((resolve, reject) => {
-        web3Provider.send('net_version', (error, response) => {
+        web3Provider.send("net_version", (error, response) => {
           if (error) {
-            reject(error)
+            reject(error);
           } else {
-            resolve(response)
+            resolve(response);
           }
-        })
+        });
       });
 
       return await promise;
     }
   } else if ((window as any).web3) {
-    const web3 = (window as any).web3
-    return (await (web3.eth.net ? web3.eth.net.getId() : promisify(web3.version.getNetwork)())).toString()
+    const web3 = (window as any).web3;
+    return (await (web3.eth.net ? web3.eth.net.getId() : promisify(web3.version.getNetwork)())).toString();
   } else {
     throw new Error("getNetworkId: unable to find web3");
   }
@@ -348,7 +348,7 @@ export async function getNetworkName(id?: string): Promise<Networks> {
 export function linkToEtherScan(address: Address) {
   let prefix = "";
   const arc = getArc();
-  switch(arc.web3.network.chainId.toString()) {
+  switch (arc.web3.network.chainId.toString()) {
     case "4":
       prefix = "rinkeby.";
       break;
@@ -549,11 +549,13 @@ export function inTesting(): boolean {
 }
 
 export function isAddress(address: Address): boolean {
-  let result = false
+  let result = false;
   try {
-    utils.isAddress(address)
-    result = true
-  } catch (e) { }
+    utils.isAddress(address);
+    result = true;
+  } catch (e) {
+    console.log(e);
+  }
 
   return result;
 }

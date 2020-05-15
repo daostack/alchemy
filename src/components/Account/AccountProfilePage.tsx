@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, DAO } from "@dorgtech/arc.js";
+import { IDAOState, IMemberState, DAO, Member } from "@dorgtech/arc.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import BN = require("bn.js");
@@ -320,22 +320,35 @@ const SubscribedAccountProfilePage = withSubscription({
     return oldProps.daoAvatarAddress !== newProps.daoAvatarAddress || oldProps.accountAddress !== newProps.accountAddress;
   },
 
-  createObservable: (props: IProps) => {
+  createObservable: async (props: IProps) => {
     const arc = getArc();
 
     const queryValues = parse(props.location.search);
     const daoAvatarAddress = queryValues.daoAvatarAddress as string;
-    const accountAddress = props.match.params.accountAddress;
+    let accountAddress = props.match.params.accountAddress;
+
+    if (accountAddress) {
+      accountAddress = accountAddress.toLowerCase();
+    }
+
     let dao: DAO;
+    let memberState = null;
     if (daoAvatarAddress) {
       dao = arc.dao(daoAvatarAddress);
+      const daoState = await dao.fetchState();
+      const member = new Member(arc, Member.calculateId({
+        contract: daoState.reputation.id,
+        address: accountAddress,
+      }));
+      memberState = await member.fetchState().catch(() => ({
+        reputation: new BN(0),
+      }));
     }
 
     return combineLatest(
       // subscribe if only to to get DAO reputation supply updates
       daoAvatarAddress ? dao.state({subscribe: true}) : of(null),
-      daoAvatarAddress ? dao.member(accountAddress).state() : of(null),
-      // TODO @jordan not returning...
+      of(memberState),
       arc.ethBalance(accountAddress)
         .pipe(ethErrorHandler()),
       arc.GENToken().balanceOf(accountAddress)

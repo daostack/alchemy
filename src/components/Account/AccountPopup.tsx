@@ -32,7 +32,7 @@ interface IStateProps {
   profile: IProfileState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<IMemberState>): IExternalProps & IStateProps & ISubscriptionProps<IMemberState> => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<IMemberState>): IExternalProps & IStateProps & ISubscriptionProps<IMemberState | null> => {
   const account = ownProps.data;
 
   return {
@@ -136,10 +136,16 @@ const SubscribedAccountPopup = withSubscription({
         getArc(),
         { where: {
           address: props.accountAddress,
-          dao: props.daoState.id
+          dao: props.daoState.id,
         } },
       ).pipe(first()).toPromise()
-      .then(members => members[0].fetchState())
+        .then(members => {
+          if (members.length > 0) {
+            return members[0].fetchState();
+          } else {
+            return Promise.resolve(null);
+          }
+        })
     );
   },
 });

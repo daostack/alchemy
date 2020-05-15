@@ -3,7 +3,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { IPluginState } from "@dorgtech/arc.js";
 import { enableWalletProvider } from "arc";
-import { isHexString } from "ethers/utils"
+import { isHexString } from "ethers/utils";
 
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import * as classNames from "classnames";

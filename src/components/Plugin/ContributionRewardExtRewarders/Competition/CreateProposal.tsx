@@ -1,4 +1,4 @@
-import { IDAOState, IProposalCreateOptionsComp, IContributionRewardExtState } from "@dorgtech/arc.js";
+import { IDAOState, IProposalCreateOptionsComp, CompetitionPlugin } from "@dorgtech/arc.js";
 import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -19,7 +19,7 @@ import moment = require("moment");
 import BN = require("bn.js");
 
 interface IExternalProps {
-  plugin: IContributionRewardExtState;
+  plugin: CompetitionPlugin;
   daoAvatarAddress: string;
   handleClose: () => any;
 }
@@ -161,7 +161,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       proposerIsAdmin: values.proposerIsAdmin,
       reputationReward,
       rewardSplit,
-      plugin: this.props.plugin.address,
+      plugin: this.props.plugin.coreState.address,
       startTime: values.compStartTimeInput.toDate(),
       suggestionsEndTime: values.suggestionEndTimeInput.toDate(),
       tags: this.state.tags,

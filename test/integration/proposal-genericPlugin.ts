@@ -16,7 +16,8 @@ describe("Proposals", () => {
 
     await hideCookieAcceptWindow();
 
-    const pluginCard = await $("[data-test-id=\"pluginCard-GenericPlugin\"]");
+    const pluginCard = await $("[data-test-id=\"pluginCard-GenericScheme\"]");
+
     await pluginCard.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
@@ -54,7 +55,7 @@ describe("Proposals", () => {
   it("Fill out a generic plugin proposal form and export it", async () => {
     await gotoDaoPlugins(daoAddress);
 
-    const pluginCard = await $("[data-test-id=\"pluginCard-GenericPlugin\"]");
+    const pluginCard = await $("[data-test-id=\"pluginCard-GenericScheme\"]");
     await pluginCard.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");

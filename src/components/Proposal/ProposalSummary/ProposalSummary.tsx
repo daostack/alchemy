@@ -1,4 +1,4 @@
-import { IDAOState, AnyProposal, IContributionRewardProposalState, IGenericPluginProposalState, ISchemeRegistrarProposalState, IProposalState, Proposal, IPluginManagerProposalState } from "@dorgtech/arc.js";
+import { IDAOState, AnyProposal, IContributionRewardProposalState, IGenericPluginProposalState, IPluginRegistrarProposalState, IProposalState, Proposal, IPluginManagerProposalState } from "@dorgtech/arc.js";
 import classNames from "classnames";
 import { GenericPluginRegistry } from "genericPluginRegistry";
 import * as React from "react";
@@ -27,8 +27,8 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
   public async componentDidMount() {
     this.setState({
-      proposal: await Proposal.create(getArc(), this.props.proposalState.id)
-    })
+      proposal: await Proposal.create(getArc(), this.props.proposalState.id),
+    });
   }
 
   public render(): RenderOutput {
@@ -50,7 +50,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       const state = proposal.coreState as IContributionRewardProposalState;
       return <ProposalSummaryContributionReward {...this.props} proposalState={state} />;
     } else if (proposal.coreState.name.includes("SchemeRegistrar")) {
-      const state = proposal.coreState as ISchemeRegistrarProposalState;
+      const state = proposal.coreState as IPluginRegistrarProposalState;
       return <ProposalSummaryPluginRegistrar {...this.props} proposalState={state} />;
     } else if (proposal.coreState.name.includes("SchemeFactory")) {
       const state = proposal.coreState as IPluginManagerProposalState;
@@ -60,7 +60,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       const genericPluginRegistry = new GenericPluginRegistry();
       const genericPluginInfo = genericPluginRegistry.getPluginInfo(state.contractToCall);
       if (genericPluginInfo) {
-        return <ProposalSummaryKnownGenericPlugin  {...this.props} proposalState={state} genericPluginInfo={genericPluginInfo} />;
+        return <ProposalSummaryKnownGenericPlugin {...this.props} proposalState={state} genericPluginInfo={genericPluginInfo} />;
       } else {
         return <ProposalSummaryUnknownGenericPlugin {...this.props} proposalState={state} />;
       }

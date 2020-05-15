@@ -24,7 +24,7 @@ const ProposalPluginCard = (props: IProps) => {
 
   const boostedProposals = data;
 
-  const numProposals =  pluginState.numberOfQueuedProposals + pluginState.numberOfBoostedProposals + pluginState.numberOfPreBoostedProposals;
+  const numProposals = pluginState.numberOfQueuedProposals + pluginState.numberOfBoostedProposals + pluginState.numberOfPreBoostedProposals;
   const proposals = boostedProposals.slice(0, 3);
 
   const proposalsHTML = proposals.map((proposal: AnyProposal) => <SubscribedProposalDetail key={proposal.id} proposal={proposal} daoState={daoState} />);
@@ -99,7 +99,7 @@ export default withSubscription({
     }}, {
       fetchAllData: true,
       subscribe: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
-    }) // the list of boosted proposals
+    }); // the list of boosted proposals
   },
 });
 

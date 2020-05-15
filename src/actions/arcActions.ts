@@ -1,4 +1,4 @@
-import { Address, DAO, IProposalOutcome, IProposalBaseCreateOptions, ITransactionState, ITransactionUpdate, ReputationFromTokenPlugin } from "@dorgtech/arc.js";
+import { Address, DAO, IProposalOutcome, IProposalBaseCreateOptions, ITransactionState, ITransactionUpdate, ReputationFromTokenPlugin, Proposal, ContributionRewardProposal, GenericPluginProposal, CompetitionProposal, ContributionRewardExtProposal, FundingRequestProposal, JoinAndQuitProposal } from "@dorgtech/arc.js";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import { toWei } from "lib/util";
@@ -56,7 +56,49 @@ export function createProposal(proposalOptions: IProposalBaseCreateOptions): Thu
   };
 }
 
-export function executeProposal(avatarAddress: string, proposalId: string, _accountAddress: string) {
+async function tryRedeemProposal(proposalId: string, accountAddress: string, observer: any) {
+  const arc = getArc();
+  const proposal = await Proposal.create(arc, proposalId);
+
+  switch (proposal.coreState.name) {
+    case "GenericScheme":
+      await (proposal as GenericPluginProposal).redeemRewards(
+        accountAddress
+      ).subscribe(...observer);
+      break;
+    case "ContributionReward":
+      await (proposal as ContributionRewardProposal).redeemRewards(
+        accountAddress
+      ).subscribe(...observer);
+      break;
+    case "Competition":
+      await (proposal as CompetitionProposal).redeemRewards(
+        accountAddress
+      ).subscribe(...observer);
+      break;
+    case "ContributionRewardExt":
+      await (proposal as ContributionRewardExtProposal).redeemRewards(
+        accountAddress
+      ).subscribe(...observer);
+      break;
+    case "FundingRequest":
+      await (proposal as FundingRequestProposal).redeem().subscribe(...observer);
+      break;
+    case "JoinAndQuit":
+      await (proposal as JoinAndQuitProposal).redeem().subscribe(...observer);
+      break;
+    case "SchemeRegistrarRemove":
+    case "SchemeRegistrarAdd":
+    case "SchemeRegistrar":
+    case "SchemeFactory":
+    case "Unknown":
+      break; // no redemption
+  }
+
+  return Promise.resolve();
+}
+
+export function executeProposal(avatarAddress: string, proposalId: string, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
@@ -70,8 +112,7 @@ export function executeProposal(avatarAddress: string, proposalId: string, _acco
       return await proposalObj.execute().subscribe(...observer);
     };
 
-    // TODO @jordan should all proposal types use the redeem contract?
-    // await proposalObj.redeemRewards().subscribe(...observer);
+    await tryRedeemProposal(proposalId, accountAddress, observer);
   };
 }
 
@@ -138,13 +179,10 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
   currentAccountRedemptions: IRedemptionState;
 }>;
 
-export function redeemProposal(daoAvatarAddress: string, proposalId: string, accountAddress: string) {
+export function redeemProposal(proposalId: string, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    //const arc = getArc();
-    //const proposalObj = await arc.dao(daoAvatarAddress).proposal({ where: { id: proposalId } });
-    //const observer = operationNotifierObserver(dispatch, "Reward");
-    // TODO @jordan
-    // await proposalObj.redeemRewards(accountAddress).subscribe(...observer);
+    const observer = operationNotifierObserver(dispatch, "Reward");
+    await tryRedeemProposal(proposalId, accountAddress, observer);
   };
 }
 
@@ -155,7 +193,7 @@ export function redeemReputationFromToken(reputationFromTokenPlugin: ReputationF
     const state = await reputationFromTokenPlugin.fetchState();
 
     if (privateKey) {
-      const contract =  arc.getContract(state.address);
+      const contract = arc.getContract(state.address);
       const block = await arc.web3.getBlock("latest");
       const gas = block.gasLimit.toNumber() - 100000;
       const redeemMethod = contract.interface.functions["redeem"].encode([addressToRedeem]);
@@ -175,7 +213,7 @@ export function redeemReputationFromToken(reputationFromTokenPlugin: ReputationF
       if (userBalance < gasEstimate * gasPrice) {
         txToSign.gasPrice = Math.floor(userBalance/gasEstimate);
       }
-      const wallet = new Wallet(privateKey)
+      const wallet = new Wallet(privateKey);
       const signedTransaction = await wallet.sign(txToSign);
       dispatch(showNotification(NotificationStatus.Success, "Sending redeem transaction, please wait for it to be mined"));
       try {

@@ -73,7 +73,7 @@ export default withSubscription({
     const arc = getArc();
     const member = address ? new Member(arc, Member.calculateId({
       contract: daoState.reputation.id,
-      address
+      address,
     })) : undefined;
 
     return combineLatest(

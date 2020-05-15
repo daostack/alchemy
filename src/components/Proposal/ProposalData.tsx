@@ -1,4 +1,4 @@
-import { Address, AnyProposal, DAO, IProposalState, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, IContributionRewardProposalState } from "@dorgtech/arc.js";
+import { Address, AnyProposal, DAO, IProposalState, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, Member, IContributionRewardProposalState } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import { ethErrorHandler } from "lib/util";
 
@@ -31,7 +31,7 @@ interface IStateProps {
   creatorProfile?: IProfileState;
 }
 
-type SubscriptionData = [AnyProposal, IProposalState, Vote[], Stake[], IRewardState, IMemberState, BN, BN, BN];
+type SubscriptionData = [AnyProposal, IProposalState, Vote[], Stake[], IRewardState, IMemberState|null, BN, BN, BN];
 type IPreProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
@@ -51,8 +51,8 @@ export interface IInjectedProposalProps {
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IPreProps => {
   const proposal = ownProps.data[0];
-  const proposalState = proposal.coreState;
-  const crState = proposal.coreState as IContributionRewardProposalState;
+  const proposalState = proposal ? proposal.coreState : null;
+  const crState = proposal ? proposal.coreState as IContributionRewardProposalState : null;
 
   return {
     ...ownProps,
@@ -71,8 +71,8 @@ class ProposalData extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    if (props.data) {
-      const proposal = props.data[0]
+    if (props.data && props.data[0]) {
+      const proposal = props.data[0];
 
       this.state = {
         expired: proposal.coreState ? closingTime(proposal.coreState).isSameOrBefore(moment()) : false,
@@ -85,7 +85,7 @@ class ProposalData extends React.Component<IProps, IState> {
   }
 
   async componentDidMount() {
-    if (!this.props.data) {
+    if (!this.props.data || !this.props.data[0]) {
       return;
     }
 
@@ -102,8 +102,8 @@ class ProposalData extends React.Component<IProps, IState> {
   }
 
   render(): RenderOutput {
-    if (!this.props.data) {
-      return;
+    if (!this.props.data || !this.props.data[0]) {
+      return <></>;
     }
 
     const [proposal,, votes, stakes, rewards, member, daoEthBalance, currentAccountGenBalance, currentAccountGenAllowance] = this.props.data;
@@ -142,9 +142,15 @@ export default withSubscription({
     const arcDao = new DAO(arc, daoState);
     const proposal = await Proposal.create(arc, proposalId);
     await proposal.fetchState();
-    const spender = proposal.coreState.votingMachine;
+    const spender = proposal ? proposal.coreState.votingMachine : "0x0000000000000000000000000000000000000000";
 
     if (currentAccountAddress) {
+      const member = new Member(arc, Member.calculateId({
+        address: currentAccountAddress,
+        contract: daoState.reputation.id,
+      }));
+      const memberState = await member.fetchState().catch(() => ({ reputation: new BN(0) }));
+
       return combineLatest(
         of(proposal),
         proposal.state({ subscribe: props.subscribeToProposalDetails }), // state of the current proposal
@@ -154,7 +160,7 @@ export default withSubscription({
           .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
           .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
 
-        arcDao.member(currentAccountAddress).state().pipe(ethErrorHandler()),
+        of(memberState),
         // TODO: also need the member state for the proposal proposer and beneficiary
         //      but since we need the proposal state first to get those addresses we will need to
         //      update the client query to load them inline
@@ -167,8 +173,8 @@ export default withSubscription({
       );
     } else {
       return combineLatest(
-        of(null),
-        proposal.state({}), // state of the current proposal
+        of(proposal),
+        proposal.state({ subscribe: props.subscribeToProposalDetails }), // state of the current proposal
         of([]), // votes
         of([]), // stakes
         of(null), // rewards

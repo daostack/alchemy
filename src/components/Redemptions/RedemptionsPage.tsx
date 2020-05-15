@@ -123,7 +123,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
     if (!await enableWalletProvider({ showNotification })) { return; }
 
     proposals.forEach(proposal => {
-      redeemProposal(proposal.dao.id, proposal.id, currentAccountAddress);
+      redeemProposal(proposal.id, currentAccountAddress);
     });
   }
 
@@ -282,8 +282,8 @@ const SubscribedRedemptionsPage = withSubscription({
         proposals = await Promise.all(proposals.map(async (proposal) => {
           return {
             ...proposal,
-            proposal: await Proposal.create(arc, proposal.id)
-          }
+            proposal: await Proposal.create(arc, proposal.id),
+          };
         }));
 
         return proposals;

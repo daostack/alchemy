@@ -54,7 +54,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   Deadline: {(new Date(parseInt(decodedCallData.values[4], 10)*1000)).toString()}.
                 </div>
                 <div>
-                  Amount funded: {fromWeiToString(decodedCallData.values[7])} {decodedCallData.values[6].toString() === "0" ?  "ETH"  : "tokens"}. 
+                  Amount funded: {fromWeiToString(decodedCallData.values[7])} {decodedCallData.values[6].toString() === "0" ? "ETH" : "tokens"}.
                 </div>
                 <div>
                   Token Address: <a href={linkToEtherScan(decodedCallData.values[5])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[5]}</a>
@@ -133,7 +133,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
             { detailView &&
               <div className={css.summaryDetails}>
                 <div>
-                  Draining {fromWeiToString(decodedCallData.values[3])} amount of tokens for bounty ID {decodedCallData.values[1]}. 
+                  Draining {fromWeiToString(decodedCallData.values[3])} amount of tokens for bounty ID {decodedCallData.values[1]}.
                 </div>
                 <div>
                   Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
@@ -154,7 +154,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
             { detailView &&
               <div className={css.summaryDetails}>
                 <div>
-                  Accepting submission ID {decodedCallData.values[2]} for bounty ID {decodedCallData.values[1]} of {fromWeiToString(decodedCallData.values[4])} tokens. 
+                  Accepting submission ID {decodedCallData.values[2]} for bounty ID {decodedCallData.values[1]} of {fromWeiToString(decodedCallData.values[4])} tokens.
                 </div>
                 <div>
                   Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
@@ -274,7 +274,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   ))}
                 </ul>
                 <div>
-                  and send {fromWeiToString(decodedCallData.values[5])} tokens for bounty ID {decodedCallData.values[1]}. 
+                  and send {fromWeiToString(decodedCallData.values[5])} tokens for bounty ID {decodedCallData.values[1]}.
                 </div>
                 <div>
                   Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>

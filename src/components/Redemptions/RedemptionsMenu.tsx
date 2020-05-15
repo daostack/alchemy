@@ -97,7 +97,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
     if (!await enableWalletProvider({ showNotification })) { return; }
 
     redeemableProposals.forEach(proposal => {
-      redeemProposal(proposal.coreState.dao.id, proposal.id, currentAccountAddress);
+      redeemProposal(proposal.id, currentAccountAddress);
     });
   }
 }
@@ -149,7 +149,7 @@ const mapStateToItemContentProps = (state: IRootState, ownProps: IMenuItemProps)
   };
 };
 
-type IMenuItemContentProps = IMenuItemProps & IMenuItemContentStateProps & ISubscriptionProps<[IDAOState, BN|null, IRewardState]>;
+type IMenuItemContentProps = IMenuItemProps & IMenuItemContentStateProps & ISubscriptionProps<[IDAOState, BN|null, IRewardState|null]>;
 
 class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
   public render(): RenderOutput {

@@ -339,15 +339,15 @@ const SubscribedPluginProposalsPage = withSubscription<IProps, SubscriptionData>
               ...RewardFields
             }
             ${Object.values(Proposals)
-              .filter((proposal) => proposal.fragment)
-              .map((proposal) => '...' + proposal.fragment?.name)
-              .join('\n')}
+    .filter((proposal) => proposal.fragment)
+    .map((proposal) => "..." + proposal.fragment?.name)
+    .join("\n")}
           }
         }
         ${Object.values(Proposals)
-          .filter((proposal) => proposal.fragment)
-          .map((proposal) => proposal.fragment?.fragment.loc?.source.body)
-          .join('\n')}
+    .filter((proposal) => proposal.fragment)
+    .map((proposal) => proposal.fragment?.fragment.loc?.source.body)
+    .join("\n")}
         ${Vote.fragments.VoteFields}
         ${Stake.fragments.StakeFields}
         ${Reward.fragments.RewardFields}
