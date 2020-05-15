@@ -1,6 +1,6 @@
 import { History } from "history";
 import { first, filter, toArray, mergeMap } from "rxjs/operators";
-import { Address, AnyPlugin, DAO, IProposalStage, IDAOState, IPluginState, IProposalState, IProposalOutcome, IContributionRewardExtState, ISchemeRegistrarState, Plugin } from "@dorgtech/arc.js";
+import { Address, AnyPlugin, DAO, IProposalStage, IDAOState, IPluginState, IProposalState, IProposalOutcome, IContributionRewardExtState, IPluginRegistrarState, Plugin } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";
@@ -31,7 +31,7 @@ interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   history: History;
   daoState: IDAOState;
-  pluginRegistrar: ISchemeRegistrarState;
+  pluginRegistrar: IPluginRegistrarState;
 }
 
 interface IExternalState {
