@@ -17,6 +17,7 @@ describe("Proposals ENS Registry", () => {
   it("Create a Generic Plugin ENS Registry proposal and check that the data is submitted correctly", async () => {
     await gotoDaoPlugins(daoAddress);
 
+    // TODO: label must be hex?
     const ensTitle = await $("h2=EnsRegistry");
     await ensTitle.waitForExist();
     await ensTitle.click();

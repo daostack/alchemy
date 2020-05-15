@@ -7,7 +7,6 @@ import { Address, Arc, Web3Client, Web3Provider } from "@dorgtech/arc.js";
 import Web3Modal from "web3modal";
 import { Observable, } from "rxjs";
 import { first } from "rxjs/operators";
-import { Signer } from "ethers";
 import { AsyncSendable, Block } from "ethers/providers";
 
 /**
@@ -95,18 +94,13 @@ async function getProviderNetworkName(provider?: Web3Provider): Promise<string> 
  */
 export function getWeb3ProviderInfo(provider?: Web3Provider): IWeb3ProviderInfo {
   provider = provider || selectedProvider;
-
-  if (provider && (typeof provider === "string" || Signer.isSigner(provider))) {
-    throw Error("Cannot get ProviderInfo from a non-web3.js provider.");
-  } else {
-    return provider ? getProviderInfo(provider) : {
-      name: "unknown",
-      id: "unknown",
-      type: "unknown",
-      check: "unknown",
-      logo: "unknown"
-    };
-  }
+  return provider ? getProviderInfo(provider) : {
+    name: "unknown",
+    id: "unknown",
+    type: "unknown",
+    check: "unknown",
+    logo: "unknown"
+  };
 }
 
 export function providerHasConfigUi(provider?: Web3Provider): boolean | undefined {
@@ -474,12 +468,8 @@ export function getAccountIsEnabled(): boolean {
 export async function enableWalletProvider(options: IEnableWalletProviderParams): Promise<boolean> {
   try {
 
-    if (inTesting()) {
-      return true;
-    }
-
     // If not MetaMask or other injected web3 and on ganache then try to connect to local ganache directly
-    if (targetedNetwork() === "ganache" && !(window as any).web3 && !(window as any).ethereum) {
+    if (inTesting() || (targetedNetwork() === "ganache" && !(window as any).web3 && !(window as any).ethereum)) {
       selectedProvider = settings.ganache.web3Provider;
       return true;
     }

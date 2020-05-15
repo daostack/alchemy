@@ -184,7 +184,7 @@ export function getPluginIsActive(plugin: IPluginState, action?: GetPluginIsActi
     }
   }
 
-  const votingMachineParams = (plugin as any)[votingMachineParamsPropertyName];
+  const votingMachineParams = (plugin as any).pluginParams[votingMachineParamsPropertyName];
   if (!votingMachineParams) {
     // eslint-disable-next-line no-console
     console.warn(` getPluginIsActive: voting machine parameters parameters not found for ${plugin.name}`);

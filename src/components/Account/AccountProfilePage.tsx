@@ -325,16 +325,17 @@ const SubscribedAccountProfilePage = withSubscription({
 
     const queryValues = parse(props.location.search);
     const daoAvatarAddress = queryValues.daoAvatarAddress as string;
-    const accountAddress = props.match.params.accountAddress;
-    let dao: DAO;
-    if (daoAvatarAddress) {
-      dao = arc.dao(daoAvatarAddress);
+    let accountAddress = props.match.params.accountAddress;
+
+    if (accountAddress) {
+      accountAddress = accountAddress.toLowerCase();
     }
 
-    const daoState = await dao.fetchState();
+    let dao: DAO;
     let memberState = null
-
     if (daoAvatarAddress) {
+      dao = arc.dao(daoAvatarAddress);
+      const daoState = await dao.fetchState();
       const member = new Member(arc, Member.calculateId({
         contract: daoState.reputation.id,
         address: accountAddress
