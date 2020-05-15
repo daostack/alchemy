@@ -4,7 +4,7 @@ import { enableWalletProvider } from "arc";
 import { History } from "history";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { Address, IPluginState, IGenesisProtocolParams, IDAOState, ISchemeRegistrarState } from "@dorgtech/arc.js";
+import { Address, IPluginState, IGenesisProtocolParams, IDAOState, ISchemeRegistrarState, IPluginManagerState } from "@dorgtech/arc.js";
 import { copyToClipboard, fromWei, linkToEtherScan, roundUp } from "lib/util";
 import { pluginName } from "lib/pluginUtils";
 import * as moment from "moment";
@@ -22,7 +22,7 @@ interface IExternalProps {
   daoState: IDAOState;
   history: History;
   plugin: IPluginState;
-  pluginRegistrar?: ISchemeRegistrarState;
+  pluginRegistrar?: IPluginManagerState;
 }
 
 type IProps = IExternalProps & IDispatchProps;

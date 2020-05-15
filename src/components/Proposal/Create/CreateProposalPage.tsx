@@ -20,6 +20,7 @@ import { pluginName } from "lib/pluginUtils";
 import * as css from "./CreateProposal.scss";
 import { from } from "rxjs";
 import { first } from "rxjs/operators";
+import CreatePluginFactoryProposal from "./PluginForms/CreatePluginFactoryProposal";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -114,6 +115,8 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
       createPluginComponent = <CreateContributionRewardProposal {...props} pluginState={props.pluginState as IContributionRewardState} />;
     } else if (pluginState.name === "SchemeRegistrar") {
       createPluginComponent = <CreatePluginRegistrarProposal {...props} />;
+    } else if (pluginState.name === "SchemeFactory") {
+      createPluginComponent = <CreatePluginFactoryProposal {...props} />;
     } else if (pluginState.name === "GenericScheme") {
       let contractToCall = (pluginState as IGenericPluginState).pluginParams.contractToCall;
       if (!contractToCall) {

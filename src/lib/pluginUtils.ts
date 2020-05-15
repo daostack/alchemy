@@ -38,26 +38,31 @@ export const REQUIRED_PLUGIN_PERMISSIONS: any = {
   "ContributionReward": PluginPermissions.IsRegistered,
   "GlobalConstraintRegistrar": PluginPermissions.IsRegistered | PluginPermissions.CanAddRemoveGlobalConstraints,
   "SchemeRegistrar": PluginPermissions.All, // TODO: is this correct?
+  "SchemeFactory": PluginPermissions.All, //TODO: is this correct?
   "UpgradeScheme": PluginPermissions.IsRegistered | PluginPermissions.CanRegisterPlugins | PluginPermissions.CanUpgradeController,
   "VestingScheme": PluginPermissions.IsRegistered,
   "VoteInOrganizationScheme": PluginPermissions.IsRegistered | PluginPermissions.CanCallDelegateCall,
 };
 
 /** plugins that we know how to interpret  */
-export const KNOWN_PLUGIN_NAMES = [
-  "ContributionReward",
-  "GenericScheme",
-  "ReputationFromToken",
-  "SchemeRegistrar",
-  "Competition",
-  "ContributionRewardExt",
-];
+export const PLUGIN_NAMES = {
+  ContributionReward: "ContributionReward",
+  GenericScheme: "GenericScheme",
+  ReputationFromToken: "ReputationFromToken",
+  SchemeRegistrar: "SchemeRegistrar",
+  SchemeFactory: "SchemeFactory",
+  Competition: "Competition",
+  ContributionRewardExt: "ContributionRewardExt"
+}
+
+export const KNOWN_PLUGIN_NAMES = Object.values(PLUGIN_NAMES);
 
 export const PROPOSAL_PLUGIN_NAMES = [
   "ContributionReward",
   "GenericScheme",
   "SchemeRegistrar",
   "Competition",
+  "SchemeFactory",
   "ContributionRewardExt",
 ];
 
@@ -149,7 +154,8 @@ export function pluginNameAndAddress(address: string) {
 
 export enum GetPluginIsActiveActions {
   Register=1,
-  Remove
+  Remove,
+  Replace
 }
 
 const pluginActionPropNames = new Map<string, Map<GetPluginIsActiveActions, string>>([
@@ -157,7 +163,14 @@ const pluginActionPropNames = new Map<string, Map<GetPluginIsActiveActions, stri
     "SchemeRegistrar", new Map<GetPluginIsActiveActions, string>([
       [GetPluginIsActiveActions.Register, "voteRegisterParams"],
       [GetPluginIsActiveActions.Remove, "voteRemoveParams"],
-    ]),
+    ])
+  ],
+  [
+    "SchemeFactory", new Map<GetPluginIsActiveActions, string>([
+      [GetPluginIsActiveActions.Register, "voteParams"],
+      [GetPluginIsActiveActions.Remove, "voteParams"],
+      [GetPluginIsActiveActions.Replace, "voteParams"],
+    ])
   ],
 ]);
 
@@ -186,7 +199,8 @@ export function getPluginIsActive(plugin: IPluginState, action?: GetPluginIsActi
     }
   }
 
-  const votingMachineParams = (plugin as any)[votingMachineParamsPropertyName];
+  const votingMachineParams = (plugin as any).pluginParams[votingMachineParamsPropertyName];
+
   if (!votingMachineParams) {
     // eslint-disable-next-line no-console
     console.warn(` getPluginIsActive: voting machine parameters parameters not found for ${plugin.name}`);

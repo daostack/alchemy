@@ -1,6 +1,6 @@
 import { History } from "history";
 import { first, filter, toArray, mergeMap } from "rxjs/operators";
-import { Address, AnyPlugin, DAO, IProposalStage, IDAOState, IPluginState, IProposalState, IProposalOutcome, IContributionRewardExtState, ISchemeRegistrarState, Plugin } from "@dorgtech/arc.js";
+import { Address, AnyPlugin, DAO, IProposalStage, IDAOState, IPluginState, IProposalState, IProposalOutcome, IContributionRewardExtState, ISchemeRegistrarState, Plugin, IPluginManagerState } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";
@@ -31,7 +31,7 @@ interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   history: History;
   daoState: IDAOState;
-  pluginRegistrar: ISchemeRegistrarState;
+  pluginRegistrar: IPluginManagerState;
 }
 
 interface IExternalState {
@@ -47,6 +47,8 @@ type IProps = IExternalProps & IDispatchProps & IExternalState & ISubscriptionPr
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalState => {
   const match = ownProps.match;
+
+  console.log("MACHA", match)
 
   return {
     ...ownProps,
@@ -68,7 +70,10 @@ class PluginContainer extends React.Component<IProps, IState> {
     };
   }
 
-  private pluginInfoPageHtml = (props: any) => <PluginInfoPage {...props} daoState={this.props.daoState} plugin={this.props.data[0]} pluginRegistrar={this.props.data[1]} />;
+  private pluginInfoPageHtml = (props: any) => {
+    console.log("LAVENDAYACAYO", this.props.data)
+    return <PluginInfoPage {...props} daoState={this.props.daoState} plugin={this.props.data[0]} pluginRegistrar={this.props.data[1]} />;
+  }
   private pluginProposalsPageHtml = (isActive: boolean, crxRewarderProps: ICrxRewarderProps) => (props: any) => {
     console.log("CORONA ", this.props.data[0])
     return <PluginProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} pluginState={this.props.data[0]} crxRewarderProps={crxRewarderProps} />;
@@ -195,6 +200,7 @@ const SubscribedPluginContainer = withSubscription({
   errorComponent: null,
   checkForUpdate: ["pluginId"],
   createObservable: async (props: IProps) => {
+    console.log("THE HIDDEN LEAF PROPS", props)
     const arc = getArc();
     const plugins = await arc.plugins({ where: { id: props.pluginId } }).pipe(first()).toPromise();
 
@@ -215,6 +221,8 @@ const SubscribedPluginContainer = withSubscription({
     // end cache priming
 
     const pluginState = await plugin.fetchState();
+
+    console.log("AITANA", pluginState)
     /**
      * hack alert.  These approved proposals are for the Competition plugin.
      * Doesn't smell right to be doing Competition-specific stuff in the
