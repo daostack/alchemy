@@ -1,4 +1,4 @@
-import { Address, DAO, IProposalOutcome, IProposalBaseCreateOptions, ITransactionState, ITransactionUpdate, ReputationFromTokenPlugin } from "@dorgtech/arc.js";
+import { Address, DAO, IProposalOutcome, IProposalBaseCreateOptions, ITransactionState, ITransactionUpdate, ReputationFromTokenPlugin, Proposal, ContributionRewardProposal, GenericPluginProposal, CompetitionProposal, ContributionRewardExtProposal, FundingRequestProposal, JoinAndQuitProposal } from "@dorgtech/arc.js";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import { toWei } from "lib/util";
@@ -140,26 +140,44 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
 
 export function redeemProposal(proposalId: string, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    // TODO @jordan finish implementing
-    // (need to publish arc.js, npmjs.com was down though...)
-    /*const arc = getArc();
+    const arc = getArc();
     const proposal = await Proposal.create(arc, proposalId);
+    const observer = operationNotifierObserver(dispatch, "Reward");
 
     switch (proposal.coreState.name) {
       case "GenericScheme":
+        await (proposal as GenericPluginProposal).redeemRewards(
+          accountAddress
+        ).subscribe(...observer);
+        break;
       case "ContributionReward":
+        await (proposal as ContributionRewardProposal).redeemRewards(
+          accountAddress
+        ).subscribe(...observer);
+        break;
       case "Competition":
+        await (proposal as CompetitionProposal).redeemRewards(
+          accountAddress
+        ).subscribe(...observer);
+        break;
       case "ContributionRewardExt":
+        await (proposal as ContributionRewardExtProposal).redeemRewards(
+          accountAddress
+        ).subscribe(...observer);
+        break;
       case "FundingRequest":
+        await (proposal as FundingRequestProposal).redeem().subscribe(...observer);
+        break;
       case "JoinAndQuit":
-      case "SchemeRegistrar":
-      case "SchemeRegistrarAdd":
+        await (proposal as JoinAndQuitProposal).redeem().subscribe(...observer);
+        break;
       case "SchemeRegistrarRemove":
+      case "SchemeRegistrarAdd":
+      case "SchemeRegistrar":
       case "SchemeFactory":
       case "Unknown":
+        break; // no redemption
     }
-    const observer = operationNotifierObserver(dispatch, "Reward");
-    await proposal.redeemRewards(accountAddress).subscribe(...observer);*/
   };
 }
 
