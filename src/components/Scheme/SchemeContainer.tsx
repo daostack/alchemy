@@ -71,6 +71,11 @@ class SchemeContainer extends React.Component<IProps, IState> {
   private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} daoState={this.props.daoState} scheme={this.props.data[0]} schemeManager={this.props.data[1]} />;
   private schemeProposalsPageHtml = (isActive: boolean, crxRewarderProps: ICrxRewarderProps) => (props: any) =>
     <SchemeProposalsPage {...props}
+      /**
+       * Warning: since `props` is declared here as `any`, any missing attributes on `SchemeProposalsPage`
+       * will not be caught by the compiler.
+       */
+      handleNewProposal={this.handleNewProposal}
       isActive={isActive}
       daoState={this.props.daoState}
       currentAccountAddress={this.props.currentAccountAddress}
