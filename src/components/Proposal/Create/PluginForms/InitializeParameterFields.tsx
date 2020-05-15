@@ -21,17 +21,6 @@ const GenesisProtocolFields = () => (
       />
     </div>
     <div>
-      <label htmlFor="voteParamsHash">
-        <div className={css.requiredMarker}>*</div>
-          Vote parameters hash
-        <ErrorMessage name="initializeParams.genesisProtocolParams.voteParamsHash">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="voteParamsHash"
-        name="initializeParams.genesisProtocolParams.voteParamsHash"
-      />
-    </div>
-    <div>
       <label htmlFor="queuedVoteRequiredPercentage">
         <div className={css.requiredMarker}>*</div>
           Queued Vote Required Percentage
@@ -288,17 +277,6 @@ const SchemeRegistrarFields = () => (
       />
     </div>
     <div>
-      <label htmlFor="voteParamsHash">
-        <div className={css.requiredMarker}>*</div>
-          Register Vote parameters hash
-        <ErrorMessage name="initializeParams.genesisProtocolParamsRegister.voteParamsHash">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="voteParamsHash"
-        name="initializeParams.genesisProtocolParamsRegister.voteParamsHash"
-      />
-    </div>
-    <div>
       <label htmlFor="queuedVoteRequiredPercentage">
         <div className={css.requiredMarker}>*</div>
           Register Queued Vote Required Percentage
@@ -439,17 +417,6 @@ const SchemeRegistrarFields = () => (
       <Field
         id="voteOnBehalf"
         name="initializeParams.genesisProtocolParamsRemove.voteOnBehalf"
-      />
-    </div>
-    <div>
-      <label htmlFor="voteParamsHash">
-        <div className={css.requiredMarker}>*</div>
-          Remove Vote parameters hash
-        <ErrorMessage name="initializeParams.genesisProtocolParamsRemove.voteParamsHash">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="voteParamsHash"
-        name="initializeParams.genesisProtocolParamsRemove.voteParamsHash"
       />
     </div>
     <div>

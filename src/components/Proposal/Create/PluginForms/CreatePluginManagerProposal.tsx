@@ -54,7 +54,54 @@ interface IFormValues {
   pluginToReplace: string;
   title: string;
   url: string;
+  GenericScheme: {
+
+  },
   initializeParams: {
+    votingParams: number[];
+    voteOnBehalf: string;
+    voteParamsHash: string;,
+    contributionRewardExt: string,
+    daoFactory: string;
+    packageVersion: number[];
+    rewarderName: string;
+    fundingToken: string;
+    contractToCall: string;
+    tokenContract: string;
+    curveInterface: string;
+    minFeeToJoin: number;
+    memberReputation: number;
+    fundingGoal: number;
+    fundingGoalDeadline: number;
+    rageQuitEnable: boolean;
+    genesisProtocolParamsRegister: {
+      queuedVoteRequiredPercentage: number;
+      queuedVotePeriodLimit: number;
+      boostedVotePeriodLimit: number;
+      preBoostedVotePeriodLimit: number;
+      thresholdConst: number;
+      quietEndingPeriod: number;
+      proposingRepReward: number;
+      votersReputationLossRatio: number;
+      minimumDaoBounty: number;
+      daoBountyConst: number;
+      activationTime: number;
+      voteOnBehalf: string;
+    },
+    genesisProtocolParamsRemove: {
+      queuedVoteRequiredPercentage: number;
+      queuedVotePeriodLimit: number;
+      boostedVotePeriodLimit: number;
+      preBoostedVotePeriodLimit: number;
+      thresholdConst: number;
+      quietEndingPeriod: number;
+      proposingRepReward: number;
+      votersReputationLossRatio: number;
+      minimumDaoBounty: number;
+      daoBountyConst: number;
+      activationTime: number;
+      voteOnBehalf: string;
+    }
     genesisProtocolParams: {
       queuedVoteRequiredPercentage: number;
       queuedVotePeriodLimit: number;
@@ -104,6 +151,18 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
       currentTab: "addPlugin",
       tags: [],
       initializeParams: {
+        contributionRewardExt: '',
+        daoFactory: '',
+        rewarderName: '',
+        fundingToken: '',
+        contractToCall: '',
+        tokenContract: '',
+        curveInterface: '',
+        minFeeToJoin: 0,
+        memberReputation: 0,
+        fundingGoal: 0,
+        fundingGoalDeadline: 0,
+        rageQuitEnable: false,
         genesisProtocolParams: {
           queuedVoteRequiredPercentage: 50,
           queuedVotePeriodLimit: 2592000,
@@ -116,7 +175,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
           minimumDaoBounty: 150,
           daoBountyConst: 10,
           activationTime: 0,
-          voteOnBehalf: "0x0000000000000000000000000000000000000000",
+          voteOnBehalf: "0x0000000000000000000000000000000000000000"
         },
       },
     });
@@ -157,6 +216,70 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
     const packageVersion = [0, 1, Number(LATEST_ARC_VERSION.split(".").slice(-1)[0])];
 
     const currentTab = this.state.currentTab;
+
+    // Build Initialize Params Object
+
+    const votingMachine = getArc().getContractInfoByName("GenesisProtocol", LATEST_ARC_VERSION).address
+    const daoId = this.props.daoAvatarAddress
+
+    const votingParameters = (genesisProtocolParams: any) => [
+      genesisProtocolParams.queuedVoteRequiredPercentage,
+      genesisProtocolParams.queuedVotePeriodLimit,
+      genesisProtocolParams.boostedVotePeriodLimit,
+      genesisProtocolParams.preBoostedVotePeriodLimit,
+      genesisProtocolParams.thresholdConst,
+      genesisProtocolParams.quietEndingPeriod,
+      genesisProtocolParams.proposingRepReward,
+      genesisProtocolParams.votersReputationLossRatio,
+      genesisProtocolParams.minimumDaoBounty,
+      genesisProtocolParams.daoBountyConst,
+      genesisProtocolParams.activationTime
+    ]
+
+    const paramsMap = {
+      GenericScheme: {
+        votingMachine,
+        daoId,
+        votingParams: votingParameters(values.initializeParams.genesisProtocolParams),
+        voteOnBehalf: values.initializeParams.genesisProtocolParams.voteOnBehalf,
+        contractToCall: values.initializeParams.contractToCall,
+        voteParamsHash: "0x0000000000000000000000000000000000000000"
+      },
+      ContributionReward: {
+        votingMachine,
+        daoId,
+        votingParams: votingParameters(values.initializeParams.genesisProtocolParams),
+        voteOnBehalf: values.initializeParams.genesisProtocolParams.voteOnBehalf,
+        voteParamsHash: "0x0000000000000000000000000000000000000000"
+      },
+      ContributionRewardExt: {
+        votingMachine,
+        daoId,
+        votingParams: votingParameters(values.initializeParams.genesisProtocolParams),
+        voteOnBehalf: values.initializeParams.genesisProtocolParams.voteOnBehalf,
+        voteParamsHash: "0x0000000000000000000000000000000000000000",
+        daoFactory: values.initializeParams.daoFactory,
+        packageVersion,
+        rewarderName: values.initializeParams.rewarderName
+      },
+      SchemeFactory: {
+        votingMachine,
+        daoId,
+        daoFactory: values.initializeParams.daoFactory,
+        votingParams: votingParameters(values.initializeParams.genesisProtocolParams),
+        voteOnBehalf: values.initializeParams.genesisProtocolParams.voteOnBehalf,
+        voteParamsHash: "0x0000000000000000000000000000000000000000"
+      },
+      ReputationFromToken: {
+        daoId,
+        tokenContract: values.initializeParams.tokenContract,
+        curveInterface: values.initializeParams.curveInterface
+      },
+      Competition: {
+        contributionRewardExt: values.initializeParams.contributionRewardExt
+      }
+
+    }
 
     const proposalOptions: IProposalCreateOptionsPM = {
       description: values.description,
