@@ -19,6 +19,7 @@ import { connect } from "react-redux";
 import * as React from "react";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+import { InitializeParametersFields } from "./InitializeParameterFields";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -53,18 +54,21 @@ interface IFormValues {
   pluginToReplace: string;
   title: string;
   url: string;
-  params: {
-    queuedVoteRequiredPercentage: number
-    queuedVotePeriodLimit: number
-    boostedVotePeriodLimit: number
-    preBoostedVotePeriodLimit: number
-    thresholdConst: number
-    quietEndingPeriod: number
-    proposingRepReward: number
-    votersReputationLossRatio: number
-    minimumDaoBounty: number
-    daoBountyConst: number
-    activationTime: number
+  initializeParams: {
+    genesisProtocolParams: {
+      queuedVoteRequiredPercentage: number
+      queuedVotePeriodLimit: number
+      boostedVotePeriodLimit: number
+      preBoostedVotePeriodLimit: number
+      thresholdConst: number
+      quietEndingPeriod: number
+      proposingRepReward: number
+      votersReputationLossRatio: number
+      minimumDaoBounty: number
+      daoBountyConst: number
+      activationTime: number
+      voteOnBehalf: string
+    }
   }
 
   [key: string]: any;
@@ -99,18 +103,21 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
       url: "",
       currentTab: "addPlugin",
       tags: [],
-      params: {
-        queuedVoteRequiredPercentage: 0,
-        queuedVotePeriodLimit: 0,
-        boostedVotePeriodLimit: 0,
-        preBoostedVotePeriodLimit: 0,
-        thresholdConst: 0,
-        quietEndingPeriod: 0,
-        proposingRepReward: 0,
-        votersReputationLossRatio: 0,
-        minimumDaoBounty: 0,
-        daoBountyConst: 0,
-        activationTime: 0
+      initializeParams: {
+        genesisProtocolParams: {
+          queuedVoteRequiredPercentage: 50,
+          queuedVotePeriodLimit: 2592000,
+          boostedVotePeriodLimit: 345600,
+          preBoostedVotePeriodLimit: 86400,
+          thresholdConst: 1200,
+          quietEndingPeriod: 172800,
+          proposingRepReward: 50,
+          votersReputationLossRatio: 4,
+          minimumDaoBounty: 150,
+          daoBountyConst: 10,
+          activationTime: 0,
+          voteOnBehalf: '0x0000000000000000000000000000000000000000'
+        }
       }
     });
     this.state = {
@@ -293,6 +300,8 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                 errors.url = "Invalid URL";
               }
 
+              console.log(values)
+
               return errors;
             }}
             onSubmit={this.handleSubmit}
@@ -399,150 +408,8 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                       </Field>
                     </div>
 
-                    <div className={css.parameters}>
-                      <div>
-                        <label htmlFor="queuedVoteRequiredPercentage">
-                          <div className={css.requiredMarker}>*</div>
-                            Queued Vote Required Percentage
-                          <ErrorMessage name="params.queuedVoteRequiredPercentage">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        </label>
-                        <Field
-                          id="queuedVoteRequiredPercentage"
-                          name="params.queuedVoteRequiredPercentage"
-                          className={touched.queuedVoteRequiredPercentage && errors.queuedVoteRequiredPercentage ? css.error : null}
-                        />
-                      </div>
+                    <InitializeParametersFields pluginName={values.pluginName}/>
 
-                      <div>
-                        <label htmlFor="queuedVotePeriodLimit">
-                          <div className={css.requiredMarker}>*</div>
-                            Queued Vote Period Limit
-                          <ErrorMessage name="params.queuedVotePeriodLimit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        </label>
-                        <Field
-                          id="queuedVotePeriodLimit"
-                          name="params.queuedVotePeriodLimit"
-                          className={touched.queuedVotePeriodLimit && errors.queuedVotePeriodLimit ? css.error : null}
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="boostedVotePeriodLimit">
-                          <div className={css.requiredMarker}>*</div>
-                            Boosted Vote Period Limit
-                          <ErrorMessage name="params.boostedVotePeriodLimit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        </label>
-                        <Field
-                          id="boostedVotePeriodLimit"
-                          name="params.boostedVotePeriodLimit"
-                          className={touched.boostedVotePeriodLimit && errors.boostedVotePeriodLimit ? css.error : null}
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="preBoostedVotePeriodLimit">
-                          <div className={css.requiredMarker}>*</div>
-                            Pre-Boosted Vote Period Limit
-                          <ErrorMessage name="params.preBoostedVotePeriodLimit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        </label>
-                        <Field
-                          id="preBoostedVotePeriodLimit"
-                          name="params.preBoostedVotePeriodLimit"
-                          className={touched.preBoostedVotePeriodLimit && errors.preBoostedVotePeriodLimit ? css.error : null}
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="thresholdConst">
-                          <div className={css.requiredMarker}>*</div>
-                            Threshold Const
-                          <ErrorMessage name="params.thresholdConst">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        </label>
-                        <Field
-                          id="thresholdConst"
-                          name="params.thresholdConst"
-                          className={touched.thresholdConst && errors.thresholdConst ? css.error : null}
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="quietEndingPeriod">
-                          <div className={css.requiredMarker}>*</div>
-                            Quiet Ending Period
-                          <ErrorMessage name="params.quietEndingPeriod">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        </label>
-                        <Field
-                          id="quietEndingPeriod"
-                          name="params.quietEndingPeriod"
-                          className={touched.quietEndingPeriod && errors.quietEndingPeriod ? css.error : null}
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="proposingRepReward">
-                          <div className={css.requiredMarker}>*</div>
-                            Proposing Reputation Reward
-                          <ErrorMessage name="params.proposingRepReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        </label>
-                        <Field
-                          id="proposingRepReward"
-                          name="params.proposingRepReward"
-                          className={touched.proposingRepReward && errors.proposingRepReward ? css.error : null}
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="votersReputationLossRatio">
-                          <div className={css.requiredMarker}>*</div>
-                            Voters Reputation Loss Ratio
-                          <ErrorMessage name="params.votersReputationLossRatio">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        </label>
-                        <Field
-                          id="votersReputationLossRatio"
-                          name="params.votersReputationLossRatio"
-                          className={touched.votersReputationLossRatio && errors.votersReputationLossRatio ? css.error : null}
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="minimumDaoBounty">
-                          <div className={css.requiredMarker}>*</div>
-                            Minimum DAO Bounty
-                          <ErrorMessage name="params.minimumDaoBounty">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        </label>
-                        <Field
-                          id="minimumDaoBounty"
-                          name="params.minimumDaoBounty"
-                          className={touched.minimumDaoBounty && errors.minimumDaoBounty ? css.error : null}
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="daoBountyConst">
-                          <div className={css.requiredMarker}>*</div>
-                            DAO Bounty Const
-                          <ErrorMessage name="params.daoBountyConst">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        </label>
-                        <Field
-                          id="daoBountyConst"
-                          name="params.daoBountyConst"
-                          className={touched.daoBountyConst && errors.daoBountyConst ? css.error : null}
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="activationTime">
-                          <div className={css.requiredMarker}>*</div>
-                            Activation Time
-                          <ErrorMessage name="params.activationTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        </label>
-                        <Field
-                          id="activationTime"
-                          name="params.activationTime"
-                          className={touched.activationTime && errors.activationTime ? css.error : null}
-                        />
-                      </div>
-                    </div>
                     <div className={css.permissions}>
                       <div className={css.permissionsLabel}>
                         Permissions
