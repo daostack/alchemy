@@ -174,7 +174,7 @@ export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
     if (success) {
       initializedAccount = await _getCurrentAccountFromProvider(arc);
 
-      if (!initializedAccount) {
+      if (!initializedAccount || initializedAccount === "0x0000000000000000000000000000000000000000") {
       // then something went wrong
       // eslint-disable-next-line no-console
         console.error("Unable to obtain an account from the provider");

@@ -126,10 +126,11 @@ class Header extends React.Component<IProps, null> {
   }
 
   public handleConnect = async (_event: any): Promise<void> => {
-    enableWalletProvider({
+    await enableWalletProvider({
       suppressNotifyOnSuccess: true,
       showNotification: this.props.showNotification,
     });
+    this.forceUpdate()
   }
 
   public handleClickLogout = async (_event: any): Promise<void> => {
