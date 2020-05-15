@@ -88,8 +88,6 @@ class PluginProposalsPage extends React.Component<IProps, null> {
     const { currentAccountAddress, daoState, fetchMore, isActive, pluginState } = this.props;
     let proposalCount=0;
 
-    console.log("REGGIE", pluginState)
-
     const queuedProposalsHTML = (
       <TransitionGroup className="queued-proposals-list">
         { proposalsQueued.map((proposal: AnyProposal): any => (

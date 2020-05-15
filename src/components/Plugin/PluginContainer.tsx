@@ -48,8 +48,6 @@ type IProps = IExternalProps & IDispatchProps & IExternalState & ISubscriptionPr
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalState => {
   const match = ownProps.match;
 
-  console.log("MACHA", match)
-
   return {
     ...ownProps,
     pluginId: match.params.pluginId,
@@ -71,11 +69,9 @@ class PluginContainer extends React.Component<IProps, IState> {
   }
 
   private pluginInfoPageHtml = (props: any) => {
-    console.log("LAVENDAYACAYO", this.props.data)
     return <PluginInfoPage {...props} daoState={this.props.daoState} plugin={this.props.data[0]} pluginManager={this.props.data[1]} />;
   }
   private pluginProposalsPageHtml = (isActive: boolean, crxRewarderProps: ICrxRewarderProps) => (props: any) => {
-    console.log("CORONA ", this.props.data[0])
     return <PluginProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} pluginState={this.props.data[0]} crxRewarderProps={crxRewarderProps} />;
   }
   private contributionsRewardExtTabHtml = () => (props: any) =>
@@ -200,7 +196,6 @@ const SubscribedPluginContainer = withSubscription({
   errorComponent: null,
   checkForUpdate: ["pluginId"],
   createObservable: async (props: IProps) => {
-    console.log("THE HIDDEN LEAF PROPS", props)
     const arc = getArc();
     const plugins = await arc.plugins({ where: { id: props.pluginId } }).pipe(first()).toPromise();
 
@@ -222,7 +217,6 @@ const SubscribedPluginContainer = withSubscription({
 
     const pluginState = await plugin.fetchState();
 
-    console.log("AITANA", pluginState)
     /**
      * hack alert.  These approved proposals are for the Competition plugin.
      * Doesn't smell right to be doing Competition-specific stuff in the
