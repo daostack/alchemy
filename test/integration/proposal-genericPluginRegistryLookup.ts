@@ -4,17 +4,20 @@ import { getArc, hideCookieAcceptWindow, gotoDaoPlugins } from "./utils";
 
 describe("Proposals Registry Lookup", () => {
   let daoAddress: string;
+  let hideCookies = true;
 
   beforeEach(async () => {
     await gotoDaoPlugins(daoAddress);
 
-    await hideCookieAcceptWindow();
+    if (hideCookies) {
+      await hideCookieAcceptWindow();
+      hideCookies = false;
+    }
 
     const ensTitle = await $("h2=RegistryLookup");
     await ensTitle.waitForExist();
+    await ensTitle.scrollIntoView();
     await ensTitle.click();
-
-    await hideCookieAcceptWindow();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();
@@ -47,14 +50,17 @@ describe("Proposals Registry Lookup", () => {
     await tokens0Input.setValue("0x501eab934f76b876c116cfffb511f5a065ea7944");
 
     const tokensAdd = await $("*[data-test-id=\"_tokens.add\"]");
+    await tokensAdd.scrollIntoView();
     await tokensAdd.click();
     const tokens1Input = await $("*[id=\"_tokens.1\"]");
+    await tokens1Input.scrollIntoView();
     await tokens1Input.setValue("0x501eab934f76b876c116cfffb511f5a065ea7945");
 
     // need if not headless and your default browser zoom is less than 100%
     const windowSize = await browser.getWindowSize();
     await browser.setWindowSize(windowSize.width, windowSize.height + 300);
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
+    await createProposalSubmitButton.scrollIntoView();
     await createProposalSubmitButton.click();
 
     // check that the proposal appears in the list

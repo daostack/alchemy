@@ -17,7 +17,7 @@ import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { of } from "rxjs";
-import { map } from "rxjs/operators";
+import { map, first } from "rxjs/operators";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./RedemptionsPage.scss";
 
@@ -61,15 +61,13 @@ class RedemptionsPage extends React.Component<IProps, null> {
   }
 
   public render(): RenderOutput {
-    const { data } = this.props;
+    const { data: proposals } = this.props;
 
-    if (data === null) {
+    if (proposals === null) {
       return <div className={css.wrapper}>
         <h3 className={css.pleaseLogin}>Please log in to see your rewards.</h3>
       </div>;
     }
-
-    const proposals = data;
 
     return (
       <div className={css.wrapper}>
@@ -232,7 +230,7 @@ const SubscribedRedemptionsPage = withSubscription({
   loadingComponent: <Loading/>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["currentAccountAddress"],
-  createObservable: (props: IStateProps) => {
+  createObservable: async (props: IStateProps) => {
     const { currentAccountAddress } = props;
 
     if (!currentAccountAddress) {
@@ -275,20 +273,19 @@ const SubscribedRedemptionsPage = withSubscription({
       }
       ${DAO.fragments.DAOFields}
     `;
-    const proposals = arc.getObservable(query, { subscribe: true })
+    const proposals = await arc.getObservable(query, { subscribe: true })
       .pipe(map(async (result: any) => {
-        let proposals: IProposalData[] = result.data.proposals;
+        const proposals: IProposalData[] = result.data.proposals;
 
-        proposals = await Promise.all(proposals.map(async (proposal) => {
+        return Promise.all(proposals.map(async (proposal) => {
           return {
             ...proposal,
             proposal: await Proposal.create(arc, proposal.id),
           };
         }));
+      })).pipe(first()).toPromise();
 
-        return proposals;
-      }));
-    return proposals;
+    return of(proposals);
   },
 });
 

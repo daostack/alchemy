@@ -37,6 +37,9 @@ const ProposalPluginCard = (props: IProps) => {
     case "ContributionRewardExt":
       trainingTooltipMessage = "Use this plugin to reward users (rep and/or funds) for their contributions to the DAO";
       break;
+    case "SchemeFactory":
+      trainingTooltipMessage = "Use this plugin to add, remove or replace the plugins of the DAO";
+      break;
     case "SchemeRegistrar":
       trainingTooltipMessage = "Use this plugin to install, remove or edit the plugins of the DAO";
       break;

@@ -152,8 +152,8 @@ const SubscribedDaoPluginsPage = withSubscription({
 
     return combineLatest(
       dao.plugins({ where: { isRegistered: true } }, { fetchAllData: true, subscribe: true }),
-      // Find the SchemeRegistrar plugin if this dao has one
-      Plugin.search(arc, {where: { dao: dao.id, name: "SchemeRegistrar" }}).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null)))
+      // Find the SchemeFactory plugin if this dao has one
+      Plugin.search(arc, {where: { dao: dao.id, name: "SchemeFactory" }}).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null)))
     );
   },
 });

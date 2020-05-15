@@ -1,4 +1,4 @@
-import { AnyPlugin, Plugin, IContributionRewardExtState, IGenericPluginState, IContributionRewardState, IPluginRegistrarState } from "@dorgtech/arc.js";
+import { AnyPlugin, Plugin, IContributionRewardExtState, IGenericPluginState, IContributionRewardState, IPluginRegistrarState, IPluginManagerState } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import CreateKnownGenericPluginProposal from "components/Proposal/Create/PluginForms/CreateKnownGenericPluginProposal";
 import CreatePluginRegistrarProposal from "components/Proposal/Create/PluginForms/CreatePluginRegistrarProposal";
@@ -18,6 +18,7 @@ import { CrxRewarderComponentType, getCrxRewarderComponent, rewarderContractName
 import CreateContributionRewardProposal from "components/Proposal/Create/PluginForms/CreateContributionRewardProposal";
 import { pluginName } from "lib/pluginUtils";
 import * as css from "./CreateProposal.scss";
+import CreatePluginManagerProposal from "./PluginForms/CreatePluginManagerProposal";
 import { of } from "rxjs";
 
 type IExternalProps = RouteComponentProps<any>;
@@ -114,6 +115,8 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
       createPluginComponent = <CreateContributionRewardProposal {...props} pluginState={pluginState as IContributionRewardState} />;
     } else if (pluginState.name === "SchemeRegistrar") {
       createPluginComponent = <CreatePluginRegistrarProposal {...props} pluginState={pluginState as IPluginRegistrarState} />;
+    } else if (pluginState.name === "SchemeFactory") {
+      createPluginComponent = <CreatePluginManagerProposal {...props} pluginState={pluginState as IPluginManagerState} />;
     } else if (pluginState.name === "GenericScheme") {
       const contractToCall = (pluginState as IGenericPluginState).pluginParams.contractToCall;
       if (!contractToCall) {

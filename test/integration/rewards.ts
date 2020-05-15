@@ -1,5 +1,5 @@
 import * as chai from "chai";
-import { getTestAddresses, hideCookieAcceptWindow, ITestAddresses } from "./utils";
+import { getTestAddresses, ITestAddresses } from "./utils";
 
 chai.should();
 
@@ -12,7 +12,7 @@ describe("Header redemptions button", () => {
   });
 
   it("should show a quick menu on desktop devices", async () => {
-
+    await browser.url("http://127.0.0.1:3000");
     const loginButton = await $("[data-test-id=\"loginButton\"]");
     await loginButton.click();
 
@@ -63,12 +63,7 @@ describe("Redemptions page", () => {
   });
 
   it("should redeem a reward", async () => {
-    await hideCookieAcceptWindow();
-
     await browser.url("http://127.0.0.1:3000/redemptions");
-    const connectButton = await $("*[data-test-id=\"connectButton\"]");
-    await connectButton.waitForDisplayed();
-    await connectButton.click();
 
     const proposalId = testAddresses.executedProposalId;
     const proposalCard = await $(`[data-test-id="proposal-${proposalId}"]`);

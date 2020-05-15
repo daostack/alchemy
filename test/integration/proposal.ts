@@ -13,11 +13,11 @@ describe("Proposals", () => {
 
   it("Create a proposal, vote for it, stake on it", async () => {
     await gotoDaoPlugins(daoAddress);
+    await hideCookieAcceptWindow();
 
     const loginButton = await $("*[data-test-id=\"loginButton\"]");
     await loginButton.click();
 
-    await hideCookieAcceptWindow();
     const pluginCard = await $("[data-test-id=\"pluginCard-ContributionReward\"]");
     await pluginCard.click();
 
@@ -58,13 +58,13 @@ describe("Proposals", () => {
 
     // locate the new proposal element
     const proposal = await titleElement.$("./../../..");
+    await proposal.scrollIntoView();
 
     // await proposal.scrollIntoView(true);
 
     // Vote for the proposal
     // Click on context menu so voting controls appear
     const contextMenu = await proposal.$("[data-test-id=\"proposalContextMenu\"]");
-    await contextMenu.waitForDisplayed();
     await contextMenu.click();
 
     const voteButton = await proposal.$("[data-test-id=\"voteFor\"]");
@@ -106,7 +106,6 @@ describe("Proposals", () => {
   it("Fill out a proposal form and export it", async () => {
     await gotoDaoPlugins(daoAddress);
 
-    await hideCookieAcceptWindow();
     const pluginCard = await $("[data-test-id=\"pluginCard-ContributionReward\"]");
     await pluginCard.click();
 

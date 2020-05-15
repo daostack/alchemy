@@ -1,6 +1,6 @@
 import { History } from "history";
 import { first, filter, toArray, mergeMap } from "rxjs/operators";
-import { Address, AnyPlugin, DAO, IProposalStage, IDAOState, IPluginState, IProposalState, IProposalOutcome, IContributionRewardExtState, IPluginRegistrarState, Plugin } from "@dorgtech/arc.js";
+import { Address, AnyPlugin, DAO, IProposalStage, IDAOState, IPluginState, IProposalState, IProposalOutcome, IContributionRewardExtState, Plugin, IPluginManagerState } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";
@@ -31,7 +31,7 @@ interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   history: History;
   daoState: IDAOState;
-  pluginRegistrar: IPluginRegistrarState;
+  pluginManager: IPluginManagerState;
 }
 
 interface IExternalState {
@@ -68,8 +68,12 @@ class PluginContainer extends React.Component<IProps, IState> {
     };
   }
 
-  private pluginInfoPageHtml = (props: any) => <PluginInfoPage {...props} daoState={this.props.daoState} plugin={this.props.data[0]} pluginRegistrar={this.props.data[1]} />;
-  private pluginProposalsPageHtml = (isActive: boolean, crxRewarderProps: ICrxRewarderProps) => (props: any) => <PluginProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} pluginState={this.props.data[0]} crxRewarderProps={crxRewarderProps} />;
+  private pluginInfoPageHtml = (props: any) => {
+    return <PluginInfoPage {...props} daoState={this.props.daoState} plugin={this.props.data[0]} pluginManager={this.props.data[1]} />;
+  }
+  private pluginProposalsPageHtml = (isActive: boolean, crxRewarderProps: ICrxRewarderProps) => (props: any) => {
+    return <PluginProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} pluginState={this.props.data[0]} crxRewarderProps={crxRewarderProps} />;
+  }
   private contributionsRewardExtTabHtml = () => (props: any) =>
   {
     if (!this.state.crxListComponent) {
@@ -212,6 +216,7 @@ const SubscribedPluginContainer = withSubscription({
     // end cache priming
 
     const pluginState = await plugin.fetchState();
+
     /**
      * hack alert.  These approved proposals are for the Competition plugin.
      * Doesn't smell right to be doing Competition-specific stuff in the
@@ -244,7 +249,7 @@ const SubscribedPluginContainer = withSubscription({
     return combineLatest(
       of(pluginState),
       // Find the SchemeRegistrar plugin if this dao has one
-      Plugin.search(arc, {where: { dao: props.daoState.id, name: "SchemeRegistrar" }}).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null))),
+      Plugin.search(arc, {where: { dao: props.daoState.id, name: "SchemeFactory" }}).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null))),
       approvedProposals
     );
   },

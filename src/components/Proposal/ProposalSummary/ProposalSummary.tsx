@@ -1,4 +1,4 @@
-import { IDAOState, AnyProposal, IContributionRewardProposalState, IGenericPluginProposalState, IPluginRegistrarProposalState, IProposalState, Proposal } from "@dorgtech/arc.js";
+import { IDAOState, AnyProposal, IContributionRewardProposalState, IGenericPluginProposalState, IPluginRegistrarProposalState, IProposalState, Proposal, IPluginManagerProposalState } from "@dorgtech/arc.js";
 import classNames from "classnames";
 import { GenericPluginRegistry } from "genericPluginRegistry";
 import * as React from "react";
@@ -7,6 +7,7 @@ import * as css from "./ProposalSummary.scss";
 import ProposalSummaryContributionReward from "./ProposalSummaryContributionReward";
 import ProposalSummaryKnownGenericPlugin from "./ProposalSummaryKnownGenericPlugin";
 import ProposalSummaryPluginRegistrar from "./ProposalSummaryPluginRegistrar";
+import ProposalSummaryPluginManager from "./ProposalSummaryPluginManager";
 import ProposalSummaryUnknownGenericPlugin from "./ProposalSummaryUnknownGenericPlugin";
 import { getArc } from "arc";
 
@@ -51,6 +52,9 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     } else if (proposal.coreState.name.includes("SchemeRegistrar")) {
       const state = proposal.coreState as IPluginRegistrarProposalState;
       return <ProposalSummaryPluginRegistrar {...this.props} proposalState={state} />;
+    } else if (proposal.coreState.name.includes("SchemeFactory")) {
+      const state = proposal.coreState as IPluginManagerProposalState;
+      return <ProposalSummaryPluginManager {...this.props} proposalState={state} />;
     } else if (proposal.coreState.name === "GenericScheme") {
       const state = proposal.coreState as IGenericPluginProposalState;
       const genericPluginRegistry = new GenericPluginRegistry();

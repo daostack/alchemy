@@ -490,6 +490,7 @@
 
   .addEditPluginFields,
   .removePluginFields,
+  .replacePluginFields,
   .addPluginSelectContainer,
   .editPluginSelectContainer {
     display: none;
@@ -502,11 +503,16 @@
 
   .addPlugin .addEditPluginFields,
   .removePlugin .removePluginFields,
+  .replacePlugin .replacePluginFields,
   .editPlugin .addEditPluginFields {
     display: block;
   }
 
   .addPlugin .addPluginSelectContainer {
+    display: block;
+  }
+
+  .replacePlugin .replacePluginSelectContainer {
     display: block;
   }
 
@@ -544,7 +550,7 @@
     width: 477px;
   }
 
-  .parametersHash {
+  .parametersHash, .parameters {
     input {
       font-size: 12px;
     }

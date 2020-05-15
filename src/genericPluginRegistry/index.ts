@@ -1,7 +1,7 @@
 // tslint:disable:max-classes-per-file
 import BN = require("bn.js");
 import { Networks, targetedNetwork, toWei } from "lib/util";
-import { keccak256, Interface } from "ethers/utils";
+import { keccak256, hexlify, Interface } from "ethers/utils";
 
 const namehash = require("eth-ens-namehash");
 const dutchXInfo = require("./plugins/DutchX.json");
@@ -116,7 +116,7 @@ export class ActionField {
         return namehash.hash(userValue);
       }
       case "keccak256": {
-        return keccak256(userValue.toString());
+        return keccak256(hexlify(userValue.toString()));
       }
       case "toWei": {
         return toWei(Number(userValue)).toString();
