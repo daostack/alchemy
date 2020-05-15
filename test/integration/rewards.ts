@@ -1,5 +1,5 @@
 import * as chai from "chai";
-import { getTestAddresses, hideCookieAcceptWindow, ITestAddresses } from "./utils";
+import { getTestAddresses, ITestAddresses } from "./utils";
 
 chai.should();
 

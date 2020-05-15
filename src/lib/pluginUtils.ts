@@ -52,8 +52,8 @@ export const PLUGIN_NAMES = {
   SchemeRegistrar: "SchemeRegistrar",
   SchemeFactory: "SchemeFactory",
   Competition: "Competition",
-  ContributionRewardExt: "ContributionRewardExt"
-}
+  ContributionRewardExt: "ContributionRewardExt",
+};
 
 export const KNOWN_PLUGIN_NAMES = Object.values(PLUGIN_NAMES);
 
@@ -162,14 +162,14 @@ const pluginActionPropNames = new Map<string, Map<GetPluginIsActiveActions, stri
     "SchemeRegistrar", new Map<GetPluginIsActiveActions, string>([
       [GetPluginIsActiveActions.Register, "voteRegisterParams"],
       [GetPluginIsActiveActions.Remove, "voteRemoveParams"],
-    ])
+    ]),
   ],
   [
     "SchemeFactory", new Map<GetPluginIsActiveActions, string>([
       [GetPluginIsActiveActions.Register, "voteParams"],
       [GetPluginIsActiveActions.Remove, "voteParams"],
       [GetPluginIsActiveActions.Replace, "voteParams"],
-    ])
+    ]),
   ],
 ]);
 

@@ -46,11 +46,11 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     });
 
     const permissions = parseInt(proposalState.pluginToRegisterPermission, 16);
-    const isReplace = proposalState.pluginToRemove !== NULL_ADDRESS && proposalState.pluginToRegisterName
+    const isReplace = proposalState.pluginToRemove !== NULL_ADDRESS && proposalState.pluginToRegisterName;
 
     return (
       <div className={proposalSummaryClass}>
-        { proposalState.pluginToRemove  ?
+        { proposalState.pluginToRemove ?
           <div>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/delete.svg"/>&nbsp;

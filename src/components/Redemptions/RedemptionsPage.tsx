@@ -275,7 +275,7 @@ const SubscribedRedemptionsPage = withSubscription({
     `;
     const proposals = await arc.getObservable(query, { subscribe: true })
       .pipe(map(async (result: any) => {
-        let proposals: IProposalData[] = result.data.proposals;
+        const proposals: IProposalData[] = result.data.proposals;
 
         return Promise.all(proposals.map(async (proposal) => {
           return {

@@ -38,38 +38,38 @@ const mapDispatchToProps = {
 };
 
 type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<AnyPlugin[]>;
-type ITab = 'addPlugin' | 'replacePlugin' | 'removePlugin'
+type ITab = "addPlugin" | "replacePlugin" | "removePlugin"
 type PluginNames = keyof typeof PLUGIN_NAMES
 
 interface IFormValues {
-  description: string
-  pluginData: string
+  description: string;
+  pluginData: string;
   permissions: {
     registerPlugins: boolean;
     changeConstraints: boolean;
     upgradeController: boolean;
     genericCall: boolean;
   };
-  pluginName: PluginNames | '';
+  pluginName: PluginNames | "";
   pluginToReplace: string;
   title: string;
   url: string;
   initializeParams: {
     genesisProtocolParams: {
-      queuedVoteRequiredPercentage: number
-      queuedVotePeriodLimit: number
-      boostedVotePeriodLimit: number
-      preBoostedVotePeriodLimit: number
-      thresholdConst: number
-      quietEndingPeriod: number
-      proposingRepReward: number
-      votersReputationLossRatio: number
-      minimumDaoBounty: number
-      daoBountyConst: number
-      activationTime: number
-      voteOnBehalf: string
-    }
-  }
+      queuedVoteRequiredPercentage: number;
+      queuedVotePeriodLimit: number;
+      boostedVotePeriodLimit: number;
+      preBoostedVotePeriodLimit: number;
+      thresholdConst: number;
+      quietEndingPeriod: number;
+      proposingRepReward: number;
+      votersReputationLossRatio: number;
+      minimumDaoBounty: number;
+      daoBountyConst: number;
+      activationTime: number;
+      voteOnBehalf: string;
+    };
+  };
 
   [key: string]: any;
 }
@@ -116,9 +116,9 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
           minimumDaoBounty: 150,
           daoBountyConst: 10,
           activationTime: 0,
-          voteOnBehalf: '0x0000000000000000000000000000000000000000'
-        }
-      }
+          voteOnBehalf: "0x0000000000000000000000000000000000000000",
+        },
+      },
     });
     this.state = {
       currentTab: this.initialFormValues.currentTab,
@@ -137,7 +137,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
     } catch (e) {}
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ):  Promise<void> {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     let permissions = 1;
@@ -154,7 +154,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
       permissions += 16;
     }
 
-    const packageVersion = [0, 1, Number(LATEST_ARC_VERSION.split('.').slice(-1)[0])]
+    const packageVersion = [0, 1, Number(LATEST_ARC_VERSION.split(".").slice(-1)[0])];
 
     const currentTab = this.state.currentTab;
 
@@ -167,17 +167,17 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
       plugin: this.props.pluginState.address,
       tags: this.state.tags,
       pluginName: values.pluginName,
-      pluginToReplace: values.pluginToReplace
+      pluginToReplace: values.pluginToReplace,
+    };
+
+    if (currentTab === "removePlugin") {
+      proposalOptions.pluginName = "";
+    } else if (currentTab === "addPlugin") {
+      proposalOptions.pluginToReplace = NULL_ADDRESS;
     }
 
-    if(currentTab === 'removePlugin') {
-      proposalOptions.pluginName = ''
-    } else if(currentTab === 'addPlugin') {
-      proposalOptions.pluginToReplace = NULL_ADDRESS
-    }
-    
     setSubmitting(false);
-    
+
     await this.props.createProposal(proposalOptions);
 
     Analytics.track("Submit Proposal", {
@@ -233,7 +233,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
 
     const isAddActive = getPluginIsActive(this.props.pluginState, GetPluginIsActiveActions.Register);
     const isRemoveActive = getPluginIsActive(this.props.pluginState, GetPluginIsActiveActions.Remove);
-    const isReplaceActive = getPluginIsActive(this.props.pluginState, GetPluginIsActiveActions.Replace)
+    const isReplaceActive = getPluginIsActive(this.props.pluginState, GetPluginIsActiveActions.Replace);
     const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
     return (
@@ -286,7 +286,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
               } else if (currentTab === "removePlugin") {
                 require("pluginToReplace");
               } else if (currentTab === "replacePlugin") {
-                require("pluginName")
+                require("pluginName");
                 require("pluginData");
                 require("pluginToReplace");
               }
@@ -300,7 +300,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                 errors.url = "Invalid URL";
               }
 
-              console.log(values)
+              console.log(values);
 
               return errors;
             }}
@@ -319,9 +319,9 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                   <label className={css.description}>What to Expect</label>
                   { (currentTab === "addPlugin") ?
                     <div className={css.description}>Propose to add a new plugin to the DAO.</div> :
-                      (currentTab === "removePlugin") ?
+                    (currentTab === "removePlugin") ?
                       <div className={css.description}>Propose to remove a plugin from the DAO.</div> :
-                        (currentTab === "replacePlugin") ?
+                      (currentTab === "replacePlugin") ?
                         <div className={css.description}>Propose to replace a plugin from the DAO.</div> : ""
                   }
                   <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">

@@ -1,15 +1,169 @@
-import * as React from 'react'
-import { PLUGIN_NAMES } from 'lib/pluginUtils'
+import * as React from "react";
+import { PLUGIN_NAMES } from "lib/pluginUtils";
 import * as css from "../CreateProposal.scss";
 import { ErrorMessage, Field } from "formik";
 
-interface Props {
-  pluginName: keyof typeof PLUGIN_NAMES | ''
+interface IProps {
+  pluginName: keyof typeof PLUGIN_NAMES | "";
 }
 
-export const InitializeParametersFields: React.FC<Props> = ({ pluginName }) => {
-  return pluginName && fieldsMap[pluginName]? fieldsMap[pluginName]: null
-}
+const GenesisProtocolFields = () => (
+  <div className={css.parameters}>
+    <div>
+      <label htmlFor="voteOnBehalf">
+        <div className={css.requiredMarker}>*</div>
+          Vote on behalf
+        <ErrorMessage name="initializeParams.genesisProtocolParams.voteOnBehalf">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="voteOnBehalf"
+        name="initializeParams.genesisProtocolParams.voteOnBehalf"
+      />
+    </div>
+    <div>
+      <label htmlFor="voteParamsHash">
+        <div className={css.requiredMarker}>*</div>
+          Vote parameters hash
+        <ErrorMessage name="initializeParams.genesisProtocolParams.voteParamsHash">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="voteParamsHash"
+        name="initializeParams.genesisProtocolParams.voteParamsHash"
+      />
+    </div>
+    <div>
+      <label htmlFor="queuedVoteRequiredPercentage">
+        <div className={css.requiredMarker}>*</div>
+          Queued Vote Required Percentage
+        <ErrorMessage name="initializeParams.genesisProtocolParams.queuedVoteRequiredPercentage">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="queuedVoteRequiredPercentage"
+        name="initializeParams.genesisProtocolParams.queuedVoteRequiredPercentage"
+      />
+    </div>
+
+    <div>
+      <label htmlFor="queuedVotePeriodLimit">
+        <div className={css.requiredMarker}>*</div>
+          Queued Vote Period Limit
+        <ErrorMessage name="initializeParams.genesisProtocolParams.queuedVotePeriodLimit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="queuedVotePeriodLimit"
+        name="initializeParams.genesisProtocolParams.queuedVotePeriodLimit"
+      />
+    </div>
+
+    <div>
+      <label htmlFor="boostedVotePeriodLimit">
+        <div className={css.requiredMarker}>*</div>
+          Boosted Vote Period Limit
+        <ErrorMessage name="initializeParams.genesisProtocolParams.boostedVotePeriodLimit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="boostedVotePeriodLimit"
+        name="initializeParams.genesisProtocolParams.boostedVotePeriodLimit"
+      />
+    </div>
+
+    <div>
+      <label htmlFor="preBoostedVotePeriodLimit">
+        <div className={css.requiredMarker}>*</div>
+          Pre-Boosted Vote Period Limit
+        <ErrorMessage name="initializeParams.genesisProtocolParams.preBoostedVotePeriodLimit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="preBoostedVotePeriodLimit"
+        name="initializeParams.genesisProtocolParams.preBoostedVotePeriodLimit"
+      />
+    </div>
+
+    <div>
+      <label htmlFor="thresholdConst">
+        <div className={css.requiredMarker}>*</div>
+          Threshold Const
+        <ErrorMessage name="initializeParams.genesisProtocolParams.thresholdConst">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="thresholdConst"
+        name="initializeParams.genesisProtocolParams.thresholdConst"
+      />
+    </div>
+
+    <div>
+      <label htmlFor="quietEndingPeriod">
+        <div className={css.requiredMarker}>*</div>
+          Quiet Ending Period
+        <ErrorMessage name="initializeParams.genesisProtocolParams.quietEndingPeriod">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="quietEndingPeriod"
+        name="initializeParams.genesisProtocolParams.quietEndingPeriod"
+      />
+    </div>
+
+    <div>
+      <label htmlFor="proposingRepReward">
+        <div className={css.requiredMarker}>*</div>
+          Proposing Reputation Reward
+        <ErrorMessage name="initializeParams.genesisProtocolParams.proposingRepReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="proposingRepReward"
+        name="initializeParams.genesisProtocolParams.proposingRepReward"
+      />
+    </div>
+
+    <div>
+      <label htmlFor="votersReputationLossRatio">
+        <div className={css.requiredMarker}>*</div>
+          Voters Reputation Loss Ratio
+        <ErrorMessage name="initializeParams.genesisProtocolParams.votersReputationLossRatio">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="votersReputationLossRatio"
+        name="initializeParams.genesisProtocolParams.votersReputationLossRatio"
+      />
+    </div>
+
+    <div>
+      <label htmlFor="minimumDaoBounty">
+        <div className={css.requiredMarker}>*</div>
+          Minimum DAO Bounty
+        <ErrorMessage name="initializeParams.genesisProtocolParams.minimumDaoBounty">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="minimumDaoBounty"
+        name="initializeParams.genesisProtocolParams.minimumDaoBounty"
+      />
+    </div>
+
+    <div>
+      <label htmlFor="daoBountyConst">
+        <div className={css.requiredMarker}>*</div>
+          DAO Bounty Const
+        <ErrorMessage name="initializeParams.genesisProtocolParams.daoBountyConst">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="daoBountyConst"
+        name="initializeParams.genesisProtocolParams.daoBountyConst"
+      />
+    </div>
+
+    <div>
+      <label htmlFor="activationTime">
+        <div className={css.requiredMarker}>*</div>
+          Activation Time
+        <ErrorMessage name="initializeParams.genesisProtocolParams.activationTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="activationTime"
+        name="initializeParams.genesisProtocolParams.activationTime"
+      />
+    </div>
+  </div>
+);
 
 const ReputationFromTokenFields = () => (
   <div>
@@ -36,13 +190,13 @@ const ReputationFromTokenFields = () => (
       />
     </div>
   </div>
-)
+);
 
 const ContributionRewardFields = () => (
   <div>
     {GenesisProtocolFields()}
   </div>
-)
+);
 
 const PluginManagerFields = () => (
   <div>
@@ -59,7 +213,7 @@ const PluginManagerFields = () => (
     </div>
     {GenesisProtocolFields()}
   </div>
-)
+);
 
 const GenericSchemeFields = () => (
   <div>
@@ -76,7 +230,7 @@ const GenericSchemeFields = () => (
     </div>
     {GenesisProtocolFields()}
   </div>
-)
+);
 
 const ContributionRewardExtFields = () => (
   <div>
@@ -104,7 +258,7 @@ const ContributionRewardExtFields = () => (
     </div>
     {GenesisProtocolFields()}
   </div>
-)
+);
 
 const CompetitionFields = () => (
   <div>
@@ -118,7 +272,7 @@ const CompetitionFields = () => (
       name="initializeParams.contributionRewardExt"
     />
   </div>
-)
+);
 
 const SchemeRegistrarFields = () => (
   <div>
@@ -430,165 +584,7 @@ const SchemeRegistrarFields = () => (
       />
     </div>
   </div>
-)
-
-const GenesisProtocolFields = () => (
-  <div className={css.parameters}>
-    <div>
-      <label htmlFor="voteOnBehalf">
-        <div className={css.requiredMarker}>*</div>
-          Vote on behalf
-        <ErrorMessage name="initializeParams.genesisProtocolParams.voteOnBehalf">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="voteOnBehalf"
-        name="initializeParams.genesisProtocolParams.voteOnBehalf"
-      />
-    </div>
-    <div>
-      <label htmlFor="voteParamsHash">
-        <div className={css.requiredMarker}>*</div>
-          Vote parameters hash
-        <ErrorMessage name="initializeParams.genesisProtocolParams.voteParamsHash">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="voteParamsHash"
-        name="initializeParams.genesisProtocolParams.voteParamsHash"
-      />
-    </div>
-    <div>
-      <label htmlFor="queuedVoteRequiredPercentage">
-        <div className={css.requiredMarker}>*</div>
-          Queued Vote Required Percentage
-        <ErrorMessage name="initializeParams.genesisProtocolParams.queuedVoteRequiredPercentage">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="queuedVoteRequiredPercentage"
-        name="initializeParams.genesisProtocolParams.queuedVoteRequiredPercentage"
-      />
-    </div>
-
-    <div>
-      <label htmlFor="queuedVotePeriodLimit">
-        <div className={css.requiredMarker}>*</div>
-          Queued Vote Period Limit
-        <ErrorMessage name="initializeParams.genesisProtocolParams.queuedVotePeriodLimit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="queuedVotePeriodLimit"
-        name="initializeParams.genesisProtocolParams.queuedVotePeriodLimit"
-      />
-    </div>
-
-    <div>
-      <label htmlFor="boostedVotePeriodLimit">
-        <div className={css.requiredMarker}>*</div>
-          Boosted Vote Period Limit
-        <ErrorMessage name="initializeParams.genesisProtocolParams.boostedVotePeriodLimit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="boostedVotePeriodLimit"
-        name="initializeParams.genesisProtocolParams.boostedVotePeriodLimit"
-      />
-    </div>
-
-    <div>
-      <label htmlFor="preBoostedVotePeriodLimit">
-        <div className={css.requiredMarker}>*</div>
-          Pre-Boosted Vote Period Limit
-        <ErrorMessage name="initializeParams.genesisProtocolParams.preBoostedVotePeriodLimit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="preBoostedVotePeriodLimit"
-        name="initializeParams.genesisProtocolParams.preBoostedVotePeriodLimit"
-      />
-    </div>
-
-    <div>
-      <label htmlFor="thresholdConst">
-        <div className={css.requiredMarker}>*</div>
-          Threshold Const
-        <ErrorMessage name="initializeParams.genesisProtocolParams.thresholdConst">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="thresholdConst"
-        name="initializeParams.genesisProtocolParams.thresholdConst"
-      />
-    </div>
-
-    <div>
-      <label htmlFor="quietEndingPeriod">
-        <div className={css.requiredMarker}>*</div>
-          Quiet Ending Period
-        <ErrorMessage name="initializeParams.genesisProtocolParams.quietEndingPeriod">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="quietEndingPeriod"
-        name="initializeParams.genesisProtocolParams.quietEndingPeriod"
-      />
-    </div>
-
-    <div>
-      <label htmlFor="proposingRepReward">
-        <div className={css.requiredMarker}>*</div>
-          Proposing Reputation Reward
-        <ErrorMessage name="initializeParams.genesisProtocolParams.proposingRepReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="proposingRepReward"
-        name="initializeParams.genesisProtocolParams.proposingRepReward"
-      />
-    </div>
-
-    <div>
-      <label htmlFor="votersReputationLossRatio">
-        <div className={css.requiredMarker}>*</div>
-          Voters Reputation Loss Ratio
-        <ErrorMessage name="initializeParams.genesisProtocolParams.votersReputationLossRatio">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="votersReputationLossRatio"
-        name="initializeParams.genesisProtocolParams.votersReputationLossRatio"
-      />
-    </div>
-
-    <div>
-      <label htmlFor="minimumDaoBounty">
-        <div className={css.requiredMarker}>*</div>
-          Minimum DAO Bounty
-        <ErrorMessage name="initializeParams.genesisProtocolParams.minimumDaoBounty">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="minimumDaoBounty"
-        name="initializeParams.genesisProtocolParams.minimumDaoBounty"
-      />
-    </div>
-
-    <div>
-      <label htmlFor="daoBountyConst">
-        <div className={css.requiredMarker}>*</div>
-          DAO Bounty Const
-        <ErrorMessage name="initializeParams.genesisProtocolParams.daoBountyConst">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="daoBountyConst"
-        name="initializeParams.genesisProtocolParams.daoBountyConst"
-      />
-    </div>
-
-    <div>
-      <label htmlFor="activationTime">
-        <div className={css.requiredMarker}>*</div>
-          Activation Time
-        <ErrorMessage name="initializeParams.genesisProtocolParams.activationTime">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="activationTime"
-        name="initializeParams.genesisProtocolParams.activationTime"
-      />
-    </div>
-  </div>
-)
+);
 
 const fieldsMap = {
   ContributionReward: ContributionRewardFields(),
@@ -597,5 +593,9 @@ const fieldsMap = {
   SchemeRegistrar: SchemeRegistrarFields(),
   SchemeFactory: PluginManagerFields(),
   Competition: CompetitionFields(),
-  ContributionRewardExt: ContributionRewardExtFields()
-}
+  ContributionRewardExt: ContributionRewardExtFields(),
+};
+
+export const InitializeParametersFields: React.FC<IProps> = ({ pluginName }) => {
+  return pluginName && fieldsMap[pluginName]? fieldsMap[pluginName]: null;
+};
