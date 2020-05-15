@@ -56,7 +56,49 @@ export function createProposal(proposalOptions: IProposalBaseCreateOptions): Thu
   };
 }
 
-export function executeProposal(avatarAddress: string, proposalId: string, _accountAddress: string) {
+async function tryRedeemProposal(proposalId: string, accountAddress: string, observer: any) {
+  const arc = getArc();
+  const proposal = await Proposal.create(arc, proposalId);
+
+  switch (proposal.coreState.name) {
+    case "GenericScheme":
+      await (proposal as GenericPluginProposal).redeemRewards(
+        accountAddress
+      ).subscribe(...observer);
+      break;
+    case "ContributionReward":
+      await (proposal as ContributionRewardProposal).redeemRewards(
+        accountAddress
+      ).subscribe(...observer);
+      break;
+    case "Competition":
+      await (proposal as CompetitionProposal).redeemRewards(
+        accountAddress
+      ).subscribe(...observer);
+      break;
+    case "ContributionRewardExt":
+      await (proposal as ContributionRewardExtProposal).redeemRewards(
+        accountAddress
+      ).subscribe(...observer);
+      break;
+    case "FundingRequest":
+      await (proposal as FundingRequestProposal).redeem().subscribe(...observer);
+      break;
+    case "JoinAndQuit":
+      await (proposal as JoinAndQuitProposal).redeem().subscribe(...observer);
+      break;
+    case "SchemeRegistrarRemove":
+    case "SchemeRegistrarAdd":
+    case "SchemeRegistrar":
+    case "SchemeFactory":
+    case "Unknown":
+      break; // no redemption
+  }
+
+  return Promise.resolve();
+}
+
+export function executeProposal(avatarAddress: string, proposalId: string, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
@@ -70,8 +112,7 @@ export function executeProposal(avatarAddress: string, proposalId: string, _acco
       return await proposalObj.execute().subscribe(...observer);
     };
 
-    // TODO @jordan should all proposal types use the redeem contract?
-    // await proposalObj.redeemRewards().subscribe(...observer);
+    await tryRedeemProposal(proposalId, accountAddress, observer);
   };
 }
 
@@ -140,44 +181,8 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
 
 export function redeemProposal(proposalId: string, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    const arc = getArc();
-    const proposal = await Proposal.create(arc, proposalId);
     const observer = operationNotifierObserver(dispatch, "Reward");
-
-    switch (proposal.coreState.name) {
-      case "GenericScheme":
-        await (proposal as GenericPluginProposal).redeemRewards(
-          accountAddress
-        ).subscribe(...observer);
-        break;
-      case "ContributionReward":
-        await (proposal as ContributionRewardProposal).redeemRewards(
-          accountAddress
-        ).subscribe(...observer);
-        break;
-      case "Competition":
-        await (proposal as CompetitionProposal).redeemRewards(
-          accountAddress
-        ).subscribe(...observer);
-        break;
-      case "ContributionRewardExt":
-        await (proposal as ContributionRewardExtProposal).redeemRewards(
-          accountAddress
-        ).subscribe(...observer);
-        break;
-      case "FundingRequest":
-        await (proposal as FundingRequestProposal).redeem().subscribe(...observer);
-        break;
-      case "JoinAndQuit":
-        await (proposal as JoinAndQuitProposal).redeem().subscribe(...observer);
-        break;
-      case "SchemeRegistrarRemove":
-      case "SchemeRegistrarAdd":
-      case "SchemeRegistrar":
-      case "SchemeFactory":
-      case "Unknown":
-        break; // no redemption
-    }
+    await tryRedeemProposal(proposalId, accountAddress, observer);
   };
 }
 
