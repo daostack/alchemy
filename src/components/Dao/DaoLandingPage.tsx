@@ -69,12 +69,26 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
             </div>
           </div>
 
-          <div className={css.welcome}>Welcome to {daoState.name}, a decentralized organization built on DAOstack.</div>
+          { (daoState.address === "0xfaf05fedf06cac499b899d6a2052f23ae239b29d") ? // SoS Collective
+            <>
+              <div className={css.welcome}>Welcome to the {daoState.name} digital co-op.</div>
+              <div className={css.welcome}>Our first event is the <a href="https://soshackathon.com/" target="_blank" rel="noopener noreferrer">SoS Hackathon</a>: Fund your ideas and solutions to heal the world in crisis.</div>
+              <ul>
+                <li>Register for the hackathon <a href="https://bit.ly/GlobalSOSRegistration" target="_blank" rel="noopener noreferrer">here</a>.</li>
+                <li>Create an onboarding proposal for the cooperative <Link to={`/dao/${daoState.id}/scheme/0xd4b6ee901566c88f942c2a04803f65cb7a554d8bc9a8f4fb5ded5cd012ca0897`}>here</Link>.</li>
+                <li>Join our Discord community for further discussions here: <a href="https://discord.gg/rUr3rp7" target="_blank" rel="noopener noreferrer">https://discord.gg/rUr3rp7</a></li>
+              </ul>
+            </>
+            :
+            <>
+              <div className={css.welcome}>Welcome to {daoState.name}, a decentralized organization built on DAOstack.</div>
 
-          <div className={css.visitProposals}>Visit the <Link to={`/dao/${daoState.id}/schemes/`}>Proposals page</Link> to
-          make a proposal to the DAO or vote on existing proposals.</div>
+              <div className={css.visitProposals}>Visit the <Link to={`/dao/${daoState.id}/schemes/`}>Proposals page</Link> to
+                make a proposal to the DAO or vote on existing proposals.</div>
+            </>
+          }
+
         </div>
-
         <div className={css.wallContainer}>
           <div className={css.headerText}>Discuss {daoState.name}</div>
           <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
