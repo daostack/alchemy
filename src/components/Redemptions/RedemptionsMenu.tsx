@@ -108,7 +108,7 @@ const SubscribedRedemptionsMenu = withSubscription({
   errorComponent: (props) => <div className={css.menu}>{ props.error.message }</div>,
   checkForUpdate: ["redeemableProposals"],
   createObservable: (props: IExternalProps) => {
-    return combineLatest(
+    return of(
       props.redeemableProposals
     ).pipe(defaultIfEmpty<AnyProposal[]>([]));
   },
@@ -200,7 +200,7 @@ const SubscribedMenuItemContent = withSubscription({
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
     // subscribe to dao to get DAO reputation supply updates
-    return combineLatest(of(await dao.fetchState()), ethBalance, rewards);
+    return combineLatest(dao.state(), ethBalance, rewards);
   },
 });
 
