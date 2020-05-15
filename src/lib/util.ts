@@ -118,7 +118,7 @@ export function toBaseUnit(value: string, decimals: number) {
 
 export function fromWei(amount: BN): number {
   try {
-    return Number(fromWei(amount));
+    return Number(utils.fromWei(amount));
   } catch (err) {
     // eslint-disable-next-line no-console
     console.warn(`Invalid number value passed to fromWei: "${amount}": ${err.message}`);

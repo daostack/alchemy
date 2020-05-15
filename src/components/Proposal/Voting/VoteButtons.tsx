@@ -115,7 +115,7 @@ class VoteButtons extends React.Component<IProps, IState> {
     const disabledMessage =
       ((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)) ?
         "Can't change your vote" :
-        (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
+        (currentAccountState && currentAccountState?.reputation.eq(new BN(0))) ?
           "Requires reputation in this DAO" :
           proposalState.stage === IProposalStage.ExpiredInQueue ||
               (proposalState.stage === IProposalStage.Boosted && expired) ||

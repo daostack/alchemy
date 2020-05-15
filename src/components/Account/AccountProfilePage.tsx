@@ -332,14 +332,22 @@ const SubscribedAccountProfilePage = withSubscription({
     }
 
     const daoState = await dao.fetchState();
+    let memberState = null
+
+    if (daoAvatarAddress) {
+      const member = new Member(arc, Member.calculateId({
+        contract: daoState.reputation.id,
+        address: accountAddress
+      }))
+      memberState = await member.fetchState().catch(() => ({
+        reputation: new BN(0)
+      }))
+    }
 
     return combineLatest(
       // subscribe if only to to get DAO reputation supply updates
       daoAvatarAddress ? dao.state({subscribe: true}) : of(null),
-      daoAvatarAddress ? dao.member(Member.calculateId({
-        contract: daoState.reputation.id,
-        address: accountAddress
-      })).state() : of(null),
+      of(memberState),
       // TODO @jordan not returning...
       arc.ethBalance(accountAddress)
         .pipe(ethErrorHandler()),
