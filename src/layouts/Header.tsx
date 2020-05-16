@@ -130,7 +130,7 @@ class Header extends React.Component<IProps, null> {
       suppressNotifyOnSuccess: true,
       showNotification: this.props.showNotification,
     });
-    this.forceUpdate()
+    this.forceUpdate();
   }
 
   public handleClickLogout = async (_event: any): Promise<void> => {
