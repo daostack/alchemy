@@ -2,6 +2,7 @@
   background: white;
   margin: 8rem 2.5% 0 0;
   padding: 25px;
+  padding-top: 94px;
   position: relative;
   border-radius: 20px 20px 0 0;
   z-index: 9999999999;
@@ -22,7 +23,7 @@
 }
 
 .daoInfo {
-  margin-left: 15%;
+  margin-left: 100px;
   top: 15px;
   position: absolute;
 }
@@ -55,26 +56,15 @@
     margin-top: unset;
   }
 }
-.daoImg {
-  top: -40px !important;
-  left: 5px !important;
-  position: absolute;
-}
 
-.headerWrap {
-  padding-top: 10vh;
-}
 
-.daoInfo {
-  margin-left: 10% !important;
-}
 .holdings {
   padding: 15px;
   border: 1px solid #dbd7d7;
   border-radius: 7px;
   float: right;
   position: relative;
-  top: -50px;
+  top: -75px;
 }
 
 .holdings .holdingsAmount {
@@ -97,62 +87,16 @@
   padding-inline-start: 0px;
 }  
 
-@media only screen and (max-width: 550px) {
-  .daoInfo {
-    margin-left: 30% !important;
-  }
-
-  .holdings {
-    position: absolute;
-    position: relative;
-    width: unset;
-    left: 15px;
-  }
-
-
-  .daoImg {
-    top: -40px !important;
-    left: 5px !important;
-    position: absolute;
-  }
-
-  .headerWrap {
-    padding-top: 10vh;
-  }
-
-  .daoInfo {
-    margin-left: 8% !important;
-    margin-top: 31% !important;
-  }
-
-}
-@media only screen and (max-width: 1050px) {
-  .headerWrap {
-    padding-top: 10vh;
-  }
-
-  .daoInfo {
-    margin-left: 30% !important;
-  }
-  
-  .holdings {
-    top: -20px;
-  }
-}
 @media only screen and (max-width: 650px) { 
   .daoImg {
     top: -75px;
     left: 75px;
     position: absolute;
   }
-
-  .daoInfo {
-    margin-left: 35% !important;
-    margin-top: 0% !important;
-  }
-  
-  .holdings {
-    top: -30px;
-  }
 }
 
+@media only screen and (max-width: 768px) {  
+  .holdings {
+    top: unset;
+  }
+}
