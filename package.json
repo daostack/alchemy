@@ -38,7 +38,7 @@
       "^actions/(.*)$": "<rootDir>/src/actions/$1",
       "^components(.*)$": "<rootDir>/src/components$1",
       "^data/(.*)$": "<rootDir>/data/$1",
-      "^genericSchemeRegistry(.*)$": "<rootDir>/src/genericSchemeRegistry$1",
+      "^genericPluginRegistry(.*)$": "<rootDir>/src/genericPluginRegistry$1",
       "^crxRegistry(.*)$": "<rootDir>/src/crxRegistry$1",
       "^layouts/(.*)$": "<rootDir>/src/layouts/$1",
       "^lib/(.*)$": "<rootDir>/src/lib/$1",
@@ -79,7 +79,7 @@
   "dependencies": {
     "3box": "1.17.1",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
-    "@dorgtech/arc.js": "2.0.0-experimental.30",
+    "@dorgtech/arc.js": "2.0.0-experimental.32",
     "@dorgtech/daocreator-ui-experimental": "1.1.2",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",

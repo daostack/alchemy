@@ -3,10 +3,16 @@ import classNames from "classnames";
 import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
 import { pluginNameAndAddress } from "lib/pluginUtils";
 import * as React from "react";
+import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
+import { connect } from "react-redux";
 import * as css from "./ProposalSummary.scss";
 
-interface IProps {
+interface IDispatchProps {
+  showNotification: typeof showNotification;
+}
+
+interface IExternalProps {
   beneficiaryProfile?: IProfileState;
   detailView?: boolean;
   daoState: IDAOState;
@@ -14,26 +20,35 @@ interface IProps {
   transactionModal?: boolean;
 }
 
+type IProps = IExternalProps & IDispatchProps;
+
 interface IState {
   network: string;
-
 }
 
-export default class ProposalSummary extends React.Component<IProps, IState> {
+const mapDispatchToProps = {
+  showNotification,
+};
+
+class ProposalSummary extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
     this.state = {
-      network: "",
+      network: ""
     };
-
   }
+
+  private copyToClipboardHandler = (str: string) => (_event: any) => {
+    copyToClipboard(str);
+    this.props.showNotification(NotificationStatus.Success, "Copied to clipboard!");
+  };
 
   public async componentDidMount (): Promise<void> {
-    this.setState({ network: (await getNetworkName()).toLowerCase() });
+    this.setState({
+      network: (await getNetworkName()).toLowerCase()
+    });
   }
-
-  private copyPluginAddressOnClick = (proposalState: IPluginManagerProposalState) => (): void => copyToClipboard(proposalState.pluginToRegisterData);
 
   public render(): RenderOutput {
     const { proposalState, detailView, transactionModal } = this.props;
@@ -50,7 +65,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
     return (
       <div className={proposalSummaryClass}>
-        { proposalState.pluginToRemove ?
+        { proposalState.pluginToRemove !== NULL_ADDRESS ?
           <div>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/delete.svg"/>&nbsp;
@@ -79,22 +94,25 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
               <span className={css.summaryTitle}>
                 <b className={css.pluginRegisterIcon}>{isReplace ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
                 {isReplace ? "Replace" : "Add"} Plugin&nbsp;
-                <a href={linkToEtherScan(proposalState.pluginToRemove)} target="_blank" rel="noopener noreferrer">{pluginNameAndAddress(proposalState.pluginToRemove)}</a>
+                {proposalState.pluginToRegisterName}
               </span>
               { detailView ?
                 <div className={css.summaryDetails}>
                   <table>
                     <tbody>
                       <tr>
-                        <th>
-                          Address:
-                          <a href={linkToEtherScan(proposalState.pluginToRemove)} target="_blank" rel="noopener noreferrer">
-                            <img src="/assets/images/Icon/Link-blue.svg"/>
-                          </a>
-                        </th>
+                        <th>Name:</th>
+                        <td>{proposalState.pluginToRegisterName}</td>
+                      </tr>
+                      <tr>
+                        <th>Version:</th>
+                        <td>{proposalState.pluginToRegisterPackageVersion.join('.')}</td>
+                      </tr>
+                      <tr>
+                        <th>Init Calldata:</th>
                         <td>
-                          <span>{proposalState.pluginToRemove}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyPluginAddressOnClick(proposalState)} />
+                          {proposalState.pluginToRegisterData.substr(0, 10)}...
+                          <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(proposalState.pluginToRegisterData)} />
                         </td>
                       </tr>
                       <tr>
@@ -134,3 +152,5 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     );
   }
 }
+
+export default connect(null, mapDispatchToProps)(ProposalSummary);

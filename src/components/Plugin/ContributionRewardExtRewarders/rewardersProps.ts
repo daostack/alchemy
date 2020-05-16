@@ -6,15 +6,18 @@ export const hasRewarderContract = (pluginState: IContributionRewardExtState): b
 };
 
 export const rewarderContractName = (pluginState: IContributionRewardExtState): string => {
-  if (hasRewarderContract(pluginState)) {
-    const contractInfo = getArc().getContractInfo(pluginState.pluginParams.rewarder);
-    if (contractInfo) {
-      return contractInfo.name;
-    } else {
-      // eslint-disable-next-line no-console
-      console.error(`rewarder contract not found: ${pluginState.pluginParams.rewarder}`);
+  try {
+    if (hasRewarderContract(pluginState)) {
+      const contractInfo = getArc().getContractInfo(pluginState.pluginParams.rewarder);
+      if (contractInfo) {
+        return contractInfo.name;
+      } else {
+        // eslint-disable-next-line no-console
+        console.error(`rewarder contract not found: ${pluginState.pluginParams.rewarder}`);
+      }
     }
-  }
+  } catch (e) { console.error(e); }
+
   return null;
 };
 

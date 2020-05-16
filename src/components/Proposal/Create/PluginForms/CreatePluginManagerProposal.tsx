@@ -10,11 +10,11 @@ import { createProposal } from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
 import { isValidUrl } from "lib/util";
-import { GetPluginIsActiveActions, getPluginIsActive, REQUIRED_PLUGIN_PERMISSIONS, pluginNameAndAddress, PluginPermissions, PLUGIN_NAMES } from "lib/pluginUtils";
+import { GetPluginIsActiveActions, getPluginIsActive, REQUIRED_PLUGIN_PERMISSIONS, pluginNameAndAddress, PLUGIN_NAMES } from "lib/pluginUtils";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
-import { IPluginState, AnyPlugin, IProposalCreateOptionsPM, LATEST_ARC_VERSION, NULL_ADDRESS } from "@dorgtech/arc.js";
+import { IPluginState, AnyPlugin, IProposalCreateOptionsPM, LATEST_ARC_VERSION } from "@dorgtech/arc.js";
 import { connect } from "react-redux";
 import * as React from "react";
 import * as css from "../CreateProposal.scss";
@@ -41,84 +41,99 @@ type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<AnyPlugin[]>;
 type ITab = "addPlugin" | "replacePlugin" | "removePlugin"
 type PluginNames = keyof typeof PLUGIN_NAMES
 
-interface IFormValues {
+interface IPermissions {
+  registerPlugins: boolean;
+  changeConstraints: boolean;
+  upgradeController: boolean;
+  genericCall: boolean;
+}
+
+interface IGenesisProtocolFormValues {
+  queuedVoteRequiredPercentage: number;
+  queuedVotePeriodLimit: number;
+  boostedVotePeriodLimit: number;
+  preBoostedVotePeriodLimit: number;
+  thresholdConst: number;
+  quietEndingPeriod: number;
+  proposingRepReward: number;
+  votersReputationLossRatio: number;
+  minimumDaoBounty: number;
+  daoBountyConst: number;
+  activationTime: number;
+  voteOnBehalf: string;
+  voteParamsHash: string;
+}
+
+const gpFormValuesToVotingParams = (genesisProtocolParams: IGenesisProtocolFormValues) => [
+  genesisProtocolParams.queuedVoteRequiredPercentage,
+  genesisProtocolParams.queuedVotePeriodLimit,
+  genesisProtocolParams.boostedVotePeriodLimit,
+  genesisProtocolParams.preBoostedVotePeriodLimit,
+  genesisProtocolParams.thresholdConst,
+  genesisProtocolParams.quietEndingPeriod,
+  genesisProtocolParams.proposingRepReward,
+  genesisProtocolParams.votersReputationLossRatio,
+  genesisProtocolParams.minimumDaoBounty,
+  genesisProtocolParams.daoBountyConst,
+  genesisProtocolParams.activationTime,
+];
+
+export interface IFormValues {
   description: string;
-  pluginData: string;
-  permissions: {
-    registerPlugins: boolean;
-    changeConstraints: boolean;
-    upgradeController: boolean;
-    genericCall: boolean;
-  };
-  pluginName: PluginNames | "";
-  pluginToReplace: string;
+
+  currentTab: ITab;
+  tags: Array<string>;
   title: string;
   url: string;
+  pluginToRemove: string;
+  pluginToAdd: PluginNames | "";
   GenericScheme: {
-
-  },
-  initializeParams: {
-    votingParams: number[];
-    voteOnBehalf: string;
-    voteParamsHash: string;,
-    contributionRewardExt: string,
-    daoFactory: string;
-    packageVersion: number[];
-    rewarderName: string;
-    fundingToken: string;
+    permissions: IPermissions;
+    votingParams: IGenesisProtocolFormValues;
     contractToCall: string;
-    tokenContract: string;
-    curveInterface: string;
+  };
+  ContributionReward: {
+    permissions: IPermissions;
+    votingParams: IGenesisProtocolFormValues;
+  };
+  Competition: {
+    permissions: IPermissions;
+    votingParams: IGenesisProtocolFormValues;
+  };
+  ContributionRewardExt: {
+    permissions: IPermissions;
+    votingParams: IGenesisProtocolFormValues;
+    rewarderName: string;
+  };
+  FundingRequest: {
+    permissions: IPermissions;
+    votingParams: IGenesisProtocolFormValues;
+    fundingToken: string;
+  };
+  JoinAndQuit: {
+    permissions: IPermissions;
+    votingParams: IGenesisProtocolFormValues;
+    fundingToken: string;
     minFeeToJoin: number;
     memberReputation: number;
     fundingGoal: number;
     fundingGoalDeadline: number;
     rageQuitEnable: boolean;
-    genesisProtocolParamsRegister: {
-      queuedVoteRequiredPercentage: number;
-      queuedVotePeriodLimit: number;
-      boostedVotePeriodLimit: number;
-      preBoostedVotePeriodLimit: number;
-      thresholdConst: number;
-      quietEndingPeriod: number;
-      proposingRepReward: number;
-      votersReputationLossRatio: number;
-      minimumDaoBounty: number;
-      daoBountyConst: number;
-      activationTime: number;
-      voteOnBehalf: string;
-    },
-    genesisProtocolParamsRemove: {
-      queuedVoteRequiredPercentage: number;
-      queuedVotePeriodLimit: number;
-      boostedVotePeriodLimit: number;
-      preBoostedVotePeriodLimit: number;
-      thresholdConst: number;
-      quietEndingPeriod: number;
-      proposingRepReward: number;
-      votersReputationLossRatio: number;
-      minimumDaoBounty: number;
-      daoBountyConst: number;
-      activationTime: number;
-      voteOnBehalf: string;
-    }
-    genesisProtocolParams: {
-      queuedVoteRequiredPercentage: number;
-      queuedVotePeriodLimit: number;
-      boostedVotePeriodLimit: number;
-      preBoostedVotePeriodLimit: number;
-      thresholdConst: number;
-      quietEndingPeriod: number;
-      proposingRepReward: number;
-      votersReputationLossRatio: number;
-      minimumDaoBounty: number;
-      daoBountyConst: number;
-      activationTime: number;
-      voteOnBehalf: string;
-    };
   };
-
-  [key: string]: any;
+  SchemeRegistrar: {
+    permissions: IPermissions;
+    votingParamsRegister: IGenesisProtocolFormValues;
+    votingParamsRemove: IGenesisProtocolFormValues;
+  };
+  SchemeFactory: {
+    permissions: IPermissions;
+    votingParams: IGenesisProtocolFormValues;
+  };
+  ReputationFromToken: {
+    permissions: IPermissions;
+    tokenContract: string;
+    curveInterface: string;
+  };
 }
 
 interface IState {
@@ -135,50 +150,124 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    const votingParams: IGenesisProtocolFormValues = {
+      queuedVoteRequiredPercentage: 50,
+      queuedVotePeriodLimit: 2592000,
+      boostedVotePeriodLimit: 345600,
+      preBoostedVotePeriodLimit: 86400,
+      thresholdConst: 1200,
+      quietEndingPeriod: 172800,
+      proposingRepReward: 50,
+      votersReputationLossRatio: 4,
+      minimumDaoBounty: 150,
+      daoBountyConst: 10,
+      activationTime: 0,
+      voteOnBehalf: "0x0000000000000000000000000000000000000000",
+      voteParamsHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+    };
+
     this.initialFormValues = importUrlValues<IFormValues>({
       description: "",
-      pluginData: "",
-      pluginName: "",
-      pluginToReplace: "",
-      permissions: {
-        registerPlugins: false,
-        changeConstraints: false,
-        upgradeController: false,
-        genericCall: false,
-      },
+      pluginToAdd: "",
+      pluginToRemove: "",
       title: "",
       url: "",
       currentTab: "addPlugin",
       tags: [],
-      initializeParams: {
-        contributionRewardExt: '',
-        daoFactory: '',
-        rewarderName: '',
-        fundingToken: '',
-        contractToCall: '',
-        tokenContract: '',
-        curveInterface: '',
+      GenericScheme: {
+        votingParams: { ...votingParams },
+        permissions: {
+          registerPlugins: false,
+          changeConstraints: false,
+          upgradeController: false,
+          genericCall: true,
+        },
+        contractToCall: "",
+      },
+      ContributionReward: {
+        votingParams: { ...votingParams },
+        permissions: {
+          registerPlugins: false,
+          changeConstraints: false,
+          upgradeController: false,
+          genericCall: false,
+        },
+      },
+      Competition: {
+        votingParams: { ...votingParams },
+        permissions: {
+          registerPlugins: false,
+          changeConstraints: false,
+          upgradeController: false,
+          genericCall: false,
+        },
+      },
+      ContributionRewardExt: {
+        votingParams: { ...votingParams },
+        permissions: {
+          registerPlugins: false,
+          changeConstraints: false,
+          upgradeController: false,
+          genericCall: false,
+        },
+        rewarderName: "",
+      },
+      FundingRequest: {
+        votingParams: { ...votingParams },
+        permissions: {
+          registerPlugins: false,
+          changeConstraints: false,
+          upgradeController: false,
+          genericCall: false,
+        },
+        fundingToken: "0x0000000000000000000000000000000000000000",
+      },
+      JoinAndQuit: {
+        votingParams: { ...votingParams },
+        permissions: {
+          registerPlugins: false,
+          changeConstraints: false,
+          upgradeController: false,
+          genericCall: false,
+        },
+        fundingToken: "0x0000000000000000000000000000000000000000",
         minFeeToJoin: 0,
         memberReputation: 0,
         fundingGoal: 0,
         fundingGoalDeadline: 0,
-        rageQuitEnable: false,
-        genesisProtocolParams: {
-          queuedVoteRequiredPercentage: 50,
-          queuedVotePeriodLimit: 2592000,
-          boostedVotePeriodLimit: 345600,
-          preBoostedVotePeriodLimit: 86400,
-          thresholdConst: 1200,
-          quietEndingPeriod: 172800,
-          proposingRepReward: 50,
-          votersReputationLossRatio: 4,
-          minimumDaoBounty: 150,
-          daoBountyConst: 10,
-          activationTime: 0,
-          voteOnBehalf: "0x0000000000000000000000000000000000000000"
+        rageQuitEnable: true,
+      },
+      SchemeRegistrar: {
+        votingParamsRegister: { ...votingParams },
+        votingParamsRemove: { ...votingParams },
+        permissions: {
+          registerPlugins: true,
+          changeConstraints: false,
+          upgradeController: false,
+          genericCall: false,
         },
       },
+      SchemeFactory: {
+        votingParams: { ...votingParams },
+        permissions: {
+          registerPlugins: true,
+          changeConstraints: false,
+          upgradeController: false,
+          genericCall: false,
+        },
+      },
+      ReputationFromToken: {
+        permissions: {
+          registerPlugins: false,
+          changeConstraints: false,
+          upgradeController: false,
+          genericCall: false,
+        },
+        tokenContract: "0x0000000000000000000000000000000000000000",
+        curveInterface: "0x0000000000000000000000000000000000000000",
+      },
     });
+
     this.state = {
       currentTab: this.initialFormValues.currentTab,
       tags: this.initialFormValues.tags,
@@ -199,104 +288,126 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    let permissions = 1;
-    if (values.permissions.registerPlugins) {
-      permissions += 2;
-    }
-    if (values.permissions.changeConstraints) {
-      permissions += 4;
-    }
-    if (values.permissions.upgradeController) {
-      permissions += 8;
-    }
-    if (values.permissions.genericCall) {
-      permissions += 16;
-    }
-
     const packageVersion = [0, 1, Number(LATEST_ARC_VERSION.split(".").slice(-1)[0])];
 
     const currentTab = this.state.currentTab;
 
     // Build Initialize Params Object
-
-    const votingMachine = getArc().getContractInfoByName("GenesisProtocol", LATEST_ARC_VERSION).address
-    const daoId = this.props.daoAvatarAddress
-
-    const votingParameters = (genesisProtocolParams: any) => [
-      genesisProtocolParams.queuedVoteRequiredPercentage,
-      genesisProtocolParams.queuedVotePeriodLimit,
-      genesisProtocolParams.boostedVotePeriodLimit,
-      genesisProtocolParams.preBoostedVotePeriodLimit,
-      genesisProtocolParams.thresholdConst,
-      genesisProtocolParams.quietEndingPeriod,
-      genesisProtocolParams.proposingRepReward,
-      genesisProtocolParams.votersReputationLossRatio,
-      genesisProtocolParams.minimumDaoBounty,
-      genesisProtocolParams.daoBountyConst,
-      genesisProtocolParams.activationTime
-    ]
-
-    const paramsMap = {
-      GenericScheme: {
-        votingMachine,
-        daoId,
-        votingParams: votingParameters(values.initializeParams.genesisProtocolParams),
-        voteOnBehalf: values.initializeParams.genesisProtocolParams.voteOnBehalf,
-        contractToCall: values.initializeParams.contractToCall,
-        voteParamsHash: "0x0000000000000000000000000000000000000000"
-      },
-      ContributionReward: {
-        votingMachine,
-        daoId,
-        votingParams: votingParameters(values.initializeParams.genesisProtocolParams),
-        voteOnBehalf: values.initializeParams.genesisProtocolParams.voteOnBehalf,
-        voteParamsHash: "0x0000000000000000000000000000000000000000"
-      },
-      ContributionRewardExt: {
-        votingMachine,
-        daoId,
-        votingParams: votingParameters(values.initializeParams.genesisProtocolParams),
-        voteOnBehalf: values.initializeParams.genesisProtocolParams.voteOnBehalf,
-        voteParamsHash: "0x0000000000000000000000000000000000000000",
-        daoFactory: values.initializeParams.daoFactory,
-        packageVersion,
-        rewarderName: values.initializeParams.rewarderName
-      },
-      SchemeFactory: {
-        votingMachine,
-        daoId,
-        daoFactory: values.initializeParams.daoFactory,
-        votingParams: votingParameters(values.initializeParams.genesisProtocolParams),
-        voteOnBehalf: values.initializeParams.genesisProtocolParams.voteOnBehalf,
-        voteParamsHash: "0x0000000000000000000000000000000000000000"
-      },
-      ReputationFromToken: {
-        daoId,
-        tokenContract: values.initializeParams.tokenContract,
-        curveInterface: values.initializeParams.curveInterface
-      },
-      Competition: {
-        contributionRewardExt: values.initializeParams.contributionRewardExt
-      }
-
-    }
+    const arc = getArc();
+    const votingMachine = arc.getContractInfoByName("GenesisProtocol", LATEST_ARC_VERSION).address;
+    const daoId = this.props.daoAvatarAddress;
 
     const proposalOptions: IProposalCreateOptionsPM = {
+      dao: daoId,
       description: values.description,
-      packageVersion,
-      pluginData: values.pluginData,
-      dao: this.props.daoAvatarAddress,
-      permissions: "0x" + permissions.toString(16).padStart(8, "0"),
-      plugin: this.props.pluginState.address,
+      title: values.title,
       tags: this.state.tags,
-      pluginName: values.pluginName,
-      pluginToReplace: values.pluginToReplace,
+      plugin: this.props.pluginState.address,
+      url: values.url,
     };
 
-    if (currentTab === "removePlugin") {
-      proposalOptions.pluginName = "";
-    } else if (currentTab === "addPlugin") {
-      proposalOptions.pluginToReplace = NULL_ADDRESS;
+    if (currentTab === "removePlugin" || currentTab === "replacePlugin") {
+      proposalOptions.remove = {
+        plugin: values.pluginToRemove,
+      };
+    } else if (currentTab === "addPlugin" || currentTab === "replacePlugin") {
+      (proposalOptions.add as any) = {
+        pluginName: values.pluginToAdd
+      };
+
+      switch (proposalOptions.add.pluginName) {
+        case "Competition":
+          proposalOptions.add.pluginInitParams = {
+            daoId: daoId,
+            votingMachine: votingMachine,
+            votingParams: gpFormValuesToVotingParams(values.Competition.votingParams),
+            voteOnBehalf: values.Competition.votingParams.voteOnBehalf,
+            voteParamsHash: values.Competition.votingParams.voteParamsHash,
+            daoFactory: arc.getContractInfoByName("DAOFactoryInstance", LATEST_ARC_VERSION).address,
+            packageVersion: packageVersion,
+            rewarderName: "Competition",
+          };
+          break;
+        case "ContributionReward":
+          proposalOptions.add.pluginInitParams = {
+            daoId: daoId,
+            votingMachine: votingMachine,
+            votingParams: gpFormValuesToVotingParams(values.ContributionReward.votingParams),
+            voteOnBehalf: values.ContributionReward.votingParams.voteOnBehalf,
+            voteParamsHash: values.ContributionReward.votingParams.voteParamsHash,
+          };
+          break;
+        case "ContributionRewardExt":
+          proposalOptions.add.pluginInitParams = {
+            daoId: daoId,
+            votingMachine: votingMachine,
+            votingParams: gpFormValuesToVotingParams(values.ContributionRewardExt.votingParams),
+            voteOnBehalf: values.ContributionRewardExt.votingParams.voteOnBehalf,
+            voteParamsHash: values.ContributionRewardExt.votingParams.voteParamsHash,
+            daoFactory: arc.getContractInfoByName("DAOFactoryInstance", LATEST_ARC_VERSION).address,
+            packageVersion: packageVersion,
+            rewarderName: values.ContributionRewardExt.rewarderName,
+          };
+          break;
+        case "GenericScheme":
+          proposalOptions.add.pluginInitParams = {
+            daoId: daoId,
+            votingMachine: votingMachine,
+            votingParams: gpFormValuesToVotingParams(values.GenericScheme.votingParams),
+            voteOnBehalf: values.GenericScheme.votingParams.voteOnBehalf,
+            voteParamsHash: values.GenericScheme.votingParams.voteParamsHash,
+            contractToCall: values.GenericScheme.contractToCall,
+          };
+          break;
+        case "ReputationFromToken":
+          proposalOptions.add.pluginInitParams = {
+            daoId: daoId,
+            tokenContract: values.ReputationFromToken.tokenContract,
+            curveInterface: values.ReputationFromToken.curveInterface,
+          };
+          break;
+        case "SchemeFactory":
+          proposalOptions.add.pluginInitParams = {
+            daoId: daoId,
+            votingMachine: votingMachine,
+            votingParams: gpFormValuesToVotingParams(values.ContributionRewardExt.votingParams),
+            voteOnBehalf: values.ContributionRewardExt.votingParams.voteOnBehalf,
+            voteParamsHash: values.ContributionRewardExt.votingParams.voteParamsHash,
+            daoFactory: arc.getContractInfoByName("DAOFactoryInstance", LATEST_ARC_VERSION).address,
+          };
+          break;
+        case "SchemeRegistrar":
+          proposalOptions.add.pluginInitParams = {
+            daoId: daoId,
+            votingMachine: votingMachine,
+            votingParamsRegister: gpFormValuesToVotingParams(values.SchemeRegistrar.votingParamsRegister),
+            voteOnBehalfRegister: values.SchemeRegistrar.votingParamsRegister.voteOnBehalf,
+            voteRegisterParamsHash: values.SchemeRegistrar.votingParamsRegister.voteParamsHash,
+            votingParamsRemove: gpFormValuesToVotingParams(values.SchemeRegistrar.votingParamsRemove),
+            voteOnBehalfRemove: values.SchemeRegistrar.votingParamsRemove.voteOnBehalf,
+            voteRemoveParamsHash: values.SchemeRegistrar.votingParamsRemove.voteParamsHash,
+          };
+          break;
+        default:
+          throw Error(`Unimplemented Plugin Manager Plugin Type ${proposalOptions.add.pluginName}`);
+      }
+
+      let permissions = 1;
+      const pluginPermissions = (values as any)[values.pluginToAdd].permissions
+      if (pluginPermissions.registerPlugins) {
+        permissions += 2;
+      }
+      if (pluginPermissions.changeConstraints) {
+        permissions += 4;
+      }
+      if (pluginPermissions.upgradeController) {
+        permissions += 8;
+      }
+      if (pluginPermissions.genericCall) {
+        permissions += 16;
+      }
+
+      proposalOptions.add.permissions = "0x" + permissions.toString(16).padStart(8, "0")
     }
 
     setSubmitting(false);
@@ -335,7 +446,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
     const plugins = this.props.data;
     const { handleClose } = this.props;
 
-    const { currentTab, requiredPermissions } = this.state;
+    const { currentTab } = this.state;
 
     const addPluginButtonClass = classNames({
       [css.addPluginButton]: true,
@@ -404,26 +515,17 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
               }
 
               if (currentTab === "addPlugin") {
-                require("pluginName");
-                require("pluginData");
+                require("pluginToAdd");
               } else if (currentTab === "removePlugin") {
-                require("pluginToReplace");
+                require("pluginToRemove");
               } else if (currentTab === "replacePlugin") {
-                require("pluginName");
-                require("pluginData");
-                require("pluginToReplace");
-              }
-
-              const plguinData = /0x([\da-f]){64}/i;
-              if (currentTab !== "removePlugin" && values.pluginData && !plguinData.test(values.pluginData)) {
-                errors.pluginData = "Invalid parameters hash";
+                require("pluginToAdd");
+                require("pluginToRemove");
               }
 
               if (!isValidUrl(values.url)) {
                 errors.url = "Invalid URL";
               }
-
-              console.log(values);
 
               return errors;
             }}
@@ -506,16 +608,37 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                     className={touched.url && errors.url ? css.error : null}
                   />
 
-                  <div className={`${css.addEditPluginFields} ${css.replacePluginFields}`}>
-                    <div className={`${css.addPluginSelectContainer} ${css.replacePluginSelectContainer}`}>
-                      <label htmlFor="pluginNameInput">
+                  <div className={`${css.removePluginFields} ${css.replacePluginFields}`}>
+                    <div className={`${css.removePluginSelectContainer} ${css.replacePluginSelectContainer}`}>
+                      <label htmlFor="schemeToRemoveInput">
                         <div className={css.requiredMarker}>*</div>
-                          Plugin to add
-                        <ErrorMessage name="pluginName">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                          Plugin to remove
+                        <ErrorMessage name="pluginToRemove">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
                       <Field
-                        id="pluginNameInput"
-                        name="pluginName"
+                        id="pluginToRemove"
+                        name="pluginToRemove"
+                        component="select"
+                        className={css.pluginSelect}
+                      >
+                        <option value="">Select a plugin...</option>
+                        {plugins.map((plugin, _i) => {
+                          return <option key={`remove_plugin_${plugin.coreState.address}`} value={plugin.coreState.address}>{pluginNameAndAddress(plugin.coreState.address)}</option>;
+                        })}
+                      </Field>
+                    </div>
+                  </div>
+
+                  <div className={`${css.addEditPluginFields} ${css.replacePluginFields}`}>
+                    <div className={`${css.addPluginSelectContainer} ${css.replacePluginSelectContainer}`}>
+                      <label htmlFor="pluginToAdd">
+                        <div className={css.requiredMarker}>*</div>
+                          Plugin to add
+                        <ErrorMessage name="pluginToAdd">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      </label>
+                      <Field
+                        id="pluginToAdd"
+                        name="pluginToAdd"
                         component="select"
                         className={css.pluginSelect}
                         onChange={(e: any) => {
@@ -531,92 +654,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                       </Field>
                     </div>
 
-                    <InitializeParametersFields pluginName={values.pluginName}/>
-
-                    <div className={css.permissions}>
-                      <div className={css.permissionsLabel}>
-                        Permissions
-                      </div>
-                      <div className={css.permissionCheckbox}>
-                        <Field
-                          id="registerOtherPluginsInput"
-                          type="checkbox"
-                          name="permissions.registerPlugins"
-                          checked={requiredPermissions & PluginPermissions.CanRegisterPlugins || values.permissions.registerPlugins}
-                          disabled={requiredPermissions & PluginPermissions.CanRegisterPlugins}
-                        />
-                        <label htmlFor="registerOtherPluginsInput">
-                          Register other plugins
-                        </label>
-                      </div>
-
-                      <div className={css.permissionCheckbox}>
-                        <Field
-                          id="changeConstraintsInput"
-                          type="checkbox"
-                          name="permissions.changeConstraints"
-                          checked={requiredPermissions & PluginPermissions.CanAddRemoveGlobalConstraints || values.permissions.changeConstraints}
-                          disabled={requiredPermissions & PluginPermissions.CanAddRemoveGlobalConstraints}
-                        />
-                        <label htmlFor="changeConstraintsInput">
-                          Add/remove global constraints
-                        </label>
-                      </div>
-
-                      <div className={css.permissionCheckbox}>
-                        <Field
-                          id="upgradeControllerInput"
-                          type="checkbox"
-                          name="permissions.upgradeController"
-                          checked={requiredPermissions & PluginPermissions.CanUpgradeController || values.permissions.upgradeController}
-                          disabled={requiredPermissions & PluginPermissions.CanUpgradeController}
-                        />
-                        <label htmlFor="upgradeControllerInput">
-                          Upgrade the controller
-                        </label>
-                      </div>
-
-                      <div className={css.permissionCheckbox}>
-                        <Field
-                          id="genericCallInput"
-                          type="checkbox"
-                          name="permissions.genericCall"
-                          checked={requiredPermissions & PluginPermissions.CanCallDelegateCall || values.permissions.genericCall}
-                          disabled={requiredPermissions & PluginPermissions.CanCallDelegateCall}
-                        />
-                        <label htmlFor="genericCallInput">
-                          Call genericCall on behalf of
-                        </label>
-                      </div>
-
-                      <div className={css.permissionCheckbox}>
-                        <Field id="mintBurnReputation" type="checkbox" name="mintBurnReputation" disabled="disabled" checked="checked" />
-                        <label htmlFor="mintBurnReputation">
-                          Mint or burn reputation
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={`${css.removePluginFields} ${css.replacePluginFields}`}>
-                    <div className={`${css.removePluginSelectContainer} ${css.replacePluginSelectContainer}`}>
-                      <label htmlFor="schemeToRemoveInput">
-                        <div className={css.requiredMarker}>*</div>
-                          Plugin to remove
-                        <ErrorMessage name="pluginToReplace">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="pluginToReplaceInput"
-                        name="pluginToReplace"
-                        component="select"
-                        className={css.pluginSelect}
-                      >
-                        <option value="">Select a plugin...</option>
-                        {plugins.map((plugin, _i) => {
-                          return <option key={`remove_plugin_${plugin.coreState.address}`} value={plugin.coreState.address}>{pluginNameAndAddress(plugin.coreState.address)}</option>;
-                        })}
-                      </Field>
-                    </div>
+                    <InitializeParametersFields pluginName={values.pluginToAdd} values={values}/>
                   </div>
 
                   <div className={css.createProposalActions}>
