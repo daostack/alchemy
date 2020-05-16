@@ -35,7 +35,7 @@ class ProposalSummary extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      network: ""
+      network: "",
     };
   }
 
@@ -46,7 +46,7 @@ class ProposalSummary extends React.Component<IProps, IState> {
 
   public async componentDidMount (): Promise<void> {
     this.setState({
-      network: (await getNetworkName()).toLowerCase()
+      network: (await getNetworkName()).toLowerCase(),
     });
   }
 
@@ -106,7 +106,7 @@ class ProposalSummary extends React.Component<IProps, IState> {
                       </tr>
                       <tr>
                         <th>Version:</th>
-                        <td>{proposalState.pluginToRegisterPackageVersion.join('.')}</td>
+                        <td>{proposalState.pluginToRegisterPackageVersion.join(".")}</td>
                       </tr>
                       <tr>
                         <th>Init Calldata:</th>

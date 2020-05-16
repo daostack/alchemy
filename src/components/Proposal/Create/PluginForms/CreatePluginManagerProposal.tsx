@@ -312,7 +312,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
       };
     } else if (currentTab === "addPlugin" || currentTab === "replacePlugin") {
       (proposalOptions.add as any) = {
-        pluginName: values.pluginToAdd
+        pluginName: values.pluginToAdd,
       };
 
       switch (proposalOptions.add.pluginName) {
@@ -393,7 +393,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
       }
 
       let permissions = 1;
-      const pluginPermissions = (values as any)[values.pluginToAdd].permissions
+      const pluginPermissions = (values as any)[values.pluginToAdd].permissions;
       if (pluginPermissions.registerPlugins) {
         permissions += 2;
       }
@@ -407,7 +407,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
         permissions += 16;
       }
 
-      proposalOptions.add.permissions = "0x" + permissions.toString(16).padStart(8, "0")
+      proposalOptions.add.permissions = "0x" + permissions.toString(16).padStart(8, "0");
     }
 
     setSubmitting(false);
