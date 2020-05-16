@@ -1,36 +1,18 @@
 import * as React from "react";
+import { targetedNetwork, linkToEtherScan } from "lib/util";
 import { PLUGIN_NAMES } from "lib/pluginUtils";
+import { KNOWNPLUGINS, } from "genericPluginRegistry";
+import { IFormValues } from "./CreatePluginManagerProposal";
 import * as css from "../CreateProposal.scss";
 import { ErrorMessage, Field } from "formik";
 
 interface IProps {
   pluginName: keyof typeof PLUGIN_NAMES | "";
+  values: IFormValues;
 }
 
 const GenesisProtocolFields = () => (
   <div className={css.parameters}>
-    <div>
-      <label htmlFor="voteOnBehalf">
-        <div className={css.requiredMarker}>*</div>
-          Vote on behalf
-        <ErrorMessage name="initializeParams.genesisProtocolParams.voteOnBehalf">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="voteOnBehalf"
-        name="initializeParams.genesisProtocolParams.voteOnBehalf"
-      />
-    </div>
-    <div>
-      <label htmlFor="voteParamsHash">
-        <div className={css.requiredMarker}>*</div>
-          Vote parameters hash
-        <ErrorMessage name="initializeParams.genesisProtocolParams.voteParamsHash">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="voteParamsHash"
-        name="initializeParams.genesisProtocolParams.voteParamsHash"
-      />
-    </div>
     <div>
       <label htmlFor="queuedVoteRequiredPercentage">
         <div className={css.requiredMarker}>*</div>
@@ -162,6 +144,30 @@ const GenesisProtocolFields = () => (
         name="initializeParams.genesisProtocolParams.activationTime"
       />
     </div>
+
+    <div>
+      <label htmlFor="voteOnBehalf">
+        <div className={css.requiredMarker}>*</div>
+          Vote on behalf
+        <ErrorMessage name="initializeParams.genesisProtocolParams.voteOnBehalf">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="voteOnBehalf"
+        name="initializeParams.genesisProtocolParams.voteOnBehalf"
+      />
+    </div>
+
+    <div>
+      <label htmlFor="voteParamsHash">
+        <div className={css.requiredMarker}>*</div>
+          Vote parameters hash
+        <ErrorMessage name="initializeParams.genesisProtocolParams.voteParamsHash">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+      </label>
+      <Field
+        id="voteParamsHash"
+        name="initializeParams.genesisProtocolParams.voteParamsHash"
+      />
+    </div>
   </div>
 );
 
@@ -215,22 +221,57 @@ const PluginManagerFields = () => (
   </div>
 );
 
-const GenericSchemeFields = () => (
-  <div>
+const GenericSchemeFields: React.FC<IProps> = ({ values }) => {
+  // Create a list of all generic action templates
+  // that exist for this network
+  const network = targetedNetwork()
+  const templates = KNOWNPLUGINS
+    .filter((template) => {
+      const address = template.addresses[network];
+      return address && address !== "";
+    })
+    .map((template) => {
+      let address = template.addresses[network];
+
+      if (Array.isArray(address)) {
+        address = address[0];
+      }
+
+      return {
+        name: template.name,
+        address
+      }
+    });
+
+  const contractToCall = values.initializeParams.contractToCall
+
+  return (
     <div>
-      <label htmlFor="contractToCall">
-        <div className={css.requiredMarker}>*</div>
-          Contract to call
-        <ErrorMessage name="initializeParams.contractToCall">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-      </label>
-      <Field
-        id="contractToCall"
-        name="initializeParams.contractToCall"
-      />
+      <div>
+        <label htmlFor="contractToCall">
+          <div className={css.requiredMarker}>*</div>
+            Contract to call
+          <ErrorMessage name="initializeParams.contractToCall">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+        </label>
+        <Field
+          id="contractToCall"
+          name="initializeParams.contractToCall"
+          component="select"
+          className={css.pluginSelect}
+        >
+          <option value="">Select a contract...</option>
+          {templates.map((template) => (
+            <option key={`generic_action_${template.name}_${template.address}`} value={template.address}>
+              {template.name}
+            </option>
+          ))}
+        </Field>
+        <a href={linkToEtherScan(contractToCall)} target="_blank" rel="noopener noreferrer">{ contractToCall }</a>
+      </div>
+      {GenesisProtocolFields()}
     </div>
-    {GenesisProtocolFields()}
-  </div>
-);
+  );
+};
 
 const ContributionRewardExtFields = () => (
   <div>
@@ -587,15 +628,15 @@ const SchemeRegistrarFields = () => (
 );
 
 const fieldsMap = {
-  ContributionReward: ContributionRewardFields(),
-  GenericScheme: GenericSchemeFields(),
-  ReputationFromToken: ReputationFromTokenFields(),
-  SchemeRegistrar: SchemeRegistrarFields(),
-  SchemeFactory: PluginManagerFields(),
-  Competition: CompetitionFields(),
-  ContributionRewardExt: ContributionRewardExtFields(),
+  ContributionReward: ContributionRewardFields,
+  GenericScheme: GenericSchemeFields,
+  ReputationFromToken: ReputationFromTokenFields,
+  SchemeRegistrar: SchemeRegistrarFields,
+  SchemeFactory: PluginManagerFields,
+  Competition: CompetitionFields,
+  ContributionRewardExt: ContributionRewardExtFields,
 };
 
-export const InitializeParametersFields: React.FC<IProps> = ({ pluginName }) => {
-  return pluginName && fieldsMap[pluginName]? fieldsMap[pluginName]: null;
+export const InitializeParametersFields: React.FC<IProps> = ({ pluginName, values }) => {
+  return pluginName && fieldsMap[pluginName]? fieldsMap[pluginName]({ pluginName, values }): null;
 };

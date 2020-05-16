@@ -14,7 +14,7 @@ const registryLookupInfo = require("./plugins/RegistryLookup.json");
 const co2kenInfo = require("./plugins/CO2ken.json");
 const dXTokenRegistry = require("./plugins/dXTokenRegistry.json");
 
-const KNOWNPLUGINS = [
+export const KNOWNPLUGINS = [
   dutchXInfo,
   co2kenInfo,
   bountiesInfo,

@@ -41,7 +41,7 @@ type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<AnyPlugin[]>;
 type ITab = "addPlugin" | "replacePlugin" | "removePlugin"
 type PluginNames = keyof typeof PLUGIN_NAMES
 
-interface IFormValues {
+export interface IFormValues {
   description: string;
   pluginData: string;
   permissions: {
@@ -52,6 +52,8 @@ interface IFormValues {
   };
   pluginName: PluginNames | "";
   pluginToReplace: string;
+  currentTab: ITab;
+  tags: Array<string>;
   title: string;
   url: string;
   initializeParams: {
@@ -68,10 +70,10 @@ interface IFormValues {
       daoBountyConst: number;
       activationTime: number;
       voteOnBehalf: string;
+      voteParamsHash: string;
     };
+    [key: string]: any;
   };
-
-  [key: string]: any;
 }
 
 interface IState {
@@ -117,6 +119,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
           daoBountyConst: 10,
           activationTime: 0,
           voteOnBehalf: "0x0000000000000000000000000000000000000000",
+          voteParamsHash: "0x0000000000000000000000000000000000000000"
         },
       },
     });
@@ -383,6 +386,27 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                     className={touched.url && errors.url ? css.error : null}
                   />
 
+                  <div className={`${css.removePluginFields} ${css.replacePluginFields}`}>
+                    <div className={`${css.removePluginSelectContainer} ${css.replacePluginSelectContainer}`}>
+                      <label htmlFor="schemeToRemoveInput">
+                        <div className={css.requiredMarker}>*</div>
+                          Plugin to remove
+                        <ErrorMessage name="pluginToReplace">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      </label>
+                      <Field
+                        id="pluginToReplaceInput"
+                        name="pluginToReplace"
+                        component="select"
+                        className={css.pluginSelect}
+                      >
+                        <option value="">Select a plugin...</option>
+                        {plugins.map((plugin, _i) => {
+                          return <option key={`remove_plugin_${plugin.coreState.address}`} value={plugin.coreState.address}>{pluginNameAndAddress(plugin.coreState.address)}</option>;
+                        })}
+                      </Field>
+                    </div>
+                  </div>
+
                   <div className={`${css.addEditPluginFields} ${css.replacePluginFields}`}>
                     <div className={`${css.addPluginSelectContainer} ${css.replacePluginSelectContainer}`}>
                       <label htmlFor="pluginNameInput">
@@ -408,7 +432,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                       </Field>
                     </div>
 
-                    <InitializeParametersFields pluginName={values.pluginName}/>
+                    <InitializeParametersFields pluginName={values.pluginName} values={values}/>
 
                     <div className={css.permissions}>
                       <div className={css.permissionsLabel}>
@@ -472,27 +496,6 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                           Mint or burn reputation
                         </label>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className={`${css.removePluginFields} ${css.replacePluginFields}`}>
-                    <div className={`${css.removePluginSelectContainer} ${css.replacePluginSelectContainer}`}>
-                      <label htmlFor="schemeToRemoveInput">
-                        <div className={css.requiredMarker}>*</div>
-                          Plugin to remove
-                        <ErrorMessage name="pluginToReplace">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="pluginToReplaceInput"
-                        name="pluginToReplace"
-                        component="select"
-                        className={css.pluginSelect}
-                      >
-                        <option value="">Select a plugin...</option>
-                        {plugins.map((plugin, _i) => {
-                          return <option key={`remove_plugin_${plugin.coreState.address}`} value={plugin.coreState.address}>{pluginNameAndAddress(plugin.coreState.address)}</option>;
-                        })}
-                      </Field>
                     </div>
                   </div>
 
