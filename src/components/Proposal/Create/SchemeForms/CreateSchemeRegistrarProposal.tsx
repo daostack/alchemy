@@ -10,7 +10,7 @@ import { createProposal } from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
 import { isValidUrl } from "lib/util";
-import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSIONS, schemeNameAndAddress, SchemePermissions } from "lib/schemeUtils";
+import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSIONS, schemeNameAndAddress, SchemePermissions, schemeNameFromAddress } from "lib/schemeUtils";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
@@ -138,12 +138,18 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     } else {
       proposalType = IProposalType.SchemeRegistrarEdit;
     }
+
+    let permissionString = "0x" + permissions.toString(16).padStart(8, "0");
+    if (schemeNameFromAddress(values.schemeToEdit) === "Plugin Manager") {
+      permissionString = "0x0000001f";
+    }
+
     const proposalValues = {
       ...values,
       dao: this.props.daoAvatarAddress,
       type: proposalType,
       parametersHash: values.parametersHash,
-      permissions: "0x" + permissions.toString(16).padStart(8, "0"),
+      permissions: permissionString,
       scheme: this.props.scheme.address,
       schemeToRegister: currentTab === "addScheme" ? values.schemeToAdd :
         currentTab === "editScheme" ? values.schemeToEdit :

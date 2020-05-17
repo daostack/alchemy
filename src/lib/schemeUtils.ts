@@ -148,6 +148,24 @@ export function schemeNameAndAddress(address: string) {
   }
 }
 
+/**
+ * given the address (of a scheme), return scheme's name
+ * @param  address [description]
+ * @return         [description]
+ */
+export function schemeNameFromAddress(address: string) {
+  const arc = getArc();
+  try {
+    const contractInfo = arc.getContractInfo(address);
+    const name = schemeName(contractInfo);
+    return name;
+  } catch (err) {
+    if (err.message.match(/No contract/)) {
+      return "";
+    }
+  }
+}
+
 export enum GetSchemeIsActiveActions {
   Register=1,
   Remove
