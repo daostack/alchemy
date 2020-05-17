@@ -36,6 +36,9 @@ script:
   - npm run lint -- --quiet
   # unit tests
   - npm run test:unit -- --forceExit
+  
+  - echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
+  - sudo sysctl -p
 
   - docker-compose logs alchemy
   # run integration tests
