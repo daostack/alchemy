@@ -43,7 +43,6 @@ script:
   # get some diagnostic info fo debugging travis
   - echo 'Debug info:' && echo -en 'travis_fold:start:script.3\\r'
   - npm run service-status
-  - docker-compose logs alchemy
   - echo -en 'travis_fold:end:script.3\\r'
 
   - ./scripts/checkDaos.sh

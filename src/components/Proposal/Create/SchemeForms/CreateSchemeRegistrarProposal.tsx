@@ -158,7 +158,6 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     };
     setSubmitting(false);
     await this.props.createProposal(proposalValues);
-
     Analytics.track("Submit Proposal", {
       "DAO Address": this.props.daoAvatarAddress,
       "Proposal Title": values.title,
