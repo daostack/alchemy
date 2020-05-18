@@ -126,29 +126,6 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
 }
 
 /**
- * given the address (of a scheme), return  a friendly string represeting the scheme's address and it'sname
- * @param  address [description]
- * @return         [description]
- */
-export function schemeNameAndAddress(address: string) {
-  const arc = getArc();
-  try {
-    const contractInfo = arc.getContractInfo(address);
-    const name = schemeName(contractInfo);
-
-    if (name) {
-      return `${address.slice(0, 4)}...${address.slice(-4)} (${name})`;
-    } else {
-      return `${address.slice(0, 4)}...${address.slice(-4)}`;
-    }
-  } catch (err) {
-    if (err.message.match(/No contract/)) {
-      return `${address.slice(0, 4)}...${address.slice(-4)}`;
-    }
-  }
-}
-
-/**
  * given the address (of a scheme), return scheme's name
  * @param  address [description]
  * @return         [description]
@@ -162,6 +139,26 @@ export function schemeNameFromAddress(address: string) {
   } catch (err) {
     if (err.message.match(/No contract/)) {
       return "";
+    }
+  }
+}
+
+/**
+ * given the address (of a scheme), return  a friendly string represeting the scheme's address and it'sname
+ * @param  address [description]
+ * @return         [description]
+ */
+export function schemeNameAndAddress(address: string) {
+  try {
+    const name = schemeNameFromAddress(address);
+    if (name !== "") {
+      return `${address.slice(0, 4)}...${address.slice(-4)} (${name})`;
+    } else {
+      return `${address.slice(0, 4)}...${address.slice(-4)}`;
+    }
+  } catch (err) {
+    if (err.message.match(/No contract/)) {
+      return `${address.slice(0, 4)}...${address.slice(-4)}`;
     }
   }
 }

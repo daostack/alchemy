@@ -139,9 +139,13 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       proposalType = IProposalType.SchemeRegistrarEdit;
     }
 
-    let permissionString = "0x" + permissions.toString(16).padStart(8, "0");
+    let permissionString;
     if (schemeNameFromAddress(values.schemeToEdit) === "Plugin Manager") {
+      //The code "disable" by default all schemes permissions.
+      //This "hack" is to make sure editing "Plugin Manager" scheme give it propoper permissions.
       permissionString = "0x0000001f";
+    } else {
+      permissionString = "0x" + permissions.toString(16).padStart(8, "0");
     }
 
     const proposalValues = {
