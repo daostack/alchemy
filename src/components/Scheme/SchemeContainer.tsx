@@ -115,7 +115,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
   private handleEditPlugin = async (e: any) => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    this.props.history.push(`/dao/${this.props.daoState.id}/scheme/${this.props.schemeId}/proposals/create/?currentTab=editScheme`);
+    this.props.history.push(`/dao/${this.props.daoState.id}/scheme/${this.props.data[1].id}/proposals/create/?currentTab=editScheme`);
     e.preventDefault();
   }
 
@@ -125,14 +125,15 @@ class SchemeContainer extends React.Component<IProps, IState> {
     const daoAvatarAddress = daoState.address;
     const schemeState = this.props.data[0];
     const approvedProposals = this.props.data[2];
-    const inInfoTab = this.props.location.pathname.match(/info\/*$/i);
+    const isActive = getSchemeIsActive(schemeState);
+    const isProposalScheme = PROPOSAL_SCHEME_NAMES.includes(schemeState.name);
+    const isBountyScheme = schemeName(schemeState, schemeState.address) === "Standard Bounties";
+    // checking the special case here where the information tab is the default
+    const inInfoTab = this.props.location.pathname.match(/info\/*$/i) || !(isProposalScheme || isBountyScheme || this.state.crxRewarderProps);
 
     if (schemeState.name === "ReputationFromToken") {
       return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
     }
-
-    const isActive = getSchemeIsActive(schemeState);
-    const isProposalScheme = PROPOSAL_SCHEME_NAMES.includes(schemeState.name);
 
     const proposalsTabClass = classNames({
       [css.proposals]: true,
@@ -172,19 +173,25 @@ class SchemeContainer extends React.Component<IProps, IState> {
 
             <div className={css.row}>
               <div className={css.tabs}>
-                {isProposalScheme
-                  ? <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
-                  : ""}
 
-                { // if Bounties Scheme, create new tab
-                  (schemeName(schemeState, schemeState.address) === "Standard Bounties") &&
-                    <Link className={openBountiesTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/openbounties/`}>Open Bounties</Link>
+                { // Proposals tab
+                  isProposalScheme ?
+                    <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
+                    : ""}
+
+                { // Information tab
+                  <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
+                    <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Information</Link>
+                  </TrainingTooltip>
                 }
 
-                <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
-                  <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Information</Link>
-                </TrainingTooltip>
-                {
+                { // Standard Bounties scheme tab
+                  isBountyScheme ?
+                    <Link className={openBountiesTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/openbounties/`}>Open Bounties</Link>
+                    : ""
+                }
+
+                { // Competition scheme tab
                   this.state.crxRewarderProps ?
                     <TrainingTooltip placement="top" overlay={this.state.crxRewarderProps.shortDescription}>
                       <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/crx/`}>{this.state.crxRewarderProps.friendlyName} ({approvedProposals.length})</Link>
@@ -193,32 +200,34 @@ class SchemeContainer extends React.Component<IProps, IState> {
                 }
               </div>
 
-              {inInfoTab ?
-                <div className={css.editPlugin}>
-                  <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
-                    <a
+              { isProposalScheme ?
+                inInfoTab ?
+                  <div className={css.editPlugin}>
+                    <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+                      <a
+                        data-test-id="createProposal"
+                        href="#!"
+                        onClick={this.handleEditPlugin}
+                      >
+                    Edit Plugin
+                      </a>
+                    </TrainingTooltip>
+                  </div>
+                  :
+                  <div className={css.createProposal}>
+                    <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+                      <a className={
+                        classNames({
+                          [css.disabled]: !isActive,
+                        })}
                       data-test-id="createProposal"
                       href="#!"
-                      onClick={this.handleEditPlugin}
-                    >
-                    Edit Plugin
-                    </a>
-                  </TrainingTooltip>
-                </div>
-                :
-                <div className={css.createProposal}>
-                  <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
-                    <a className={
-                      classNames({
-                        [css.disabled]: !isActive,
-                      })}
-                    data-test-id="createProposal"
-                    href="#!"
-                    onClick={isActive ? this.handleNewProposal : null}
-                    >
-                  + New Proposal</a>
-                  </TrainingTooltip>
-                </div>
+                      onClick={isActive ? this.handleNewProposal : null}
+                      >
+                    + New Proposal</a>
+                    </TrainingTooltip>
+                  </div>
+                : ""
               }
             </div>
           </div>
