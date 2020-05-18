@@ -2,14 +2,17 @@
   - Features Added
     -- nicer formatting of embedded videos in proposal descriptions
     -- added help text for proposal descriptions
-
+    -- in the Plugin Manager, Edit Plugin Proposal details, make thecopy-to-clipboard button issue a notification when complete
+    
   - Bugs Fixed
     -- reenabled the "+ New Proposal" button at the bottom of plugin pages when there are currently no proposals
     -- fixed Disqus conversations that were leaking between proposals and DAOs
     -- fixed required permissions when editing a Plugin Manager scheme
     -- correct the ABI on the ensPublicResolver GenericScheme which caused execution of proposals to fail while seeming to succeed
     -- prevent embedded videos that are playing from stopping when an app notification appears
-
+    -- remove the "+ New Proposal" button on non-supported schemes
+    -- fix the Edit Scheme button to bring up the Edit Scheme popup isnteadl of the New Proposal popup
+    
 ## 0.10.7
   - Features Added
     - Added "Stake for Reputation Plugin" to the list of known plugins that can be registered to a DAO
@@ -29,7 +32,6 @@
 
   - Bugs Fixed
     - Make sure proposer name doesn't overlap avatar on proposal history rows
-
 
 ## 0.10.5
   - Features Added
