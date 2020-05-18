@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@daostack/arc.js";
+import { IDAOState, IProposalState, IProposalType } from "@daostack/arc.js";
 import classNames from "classnames";
 import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
 import { schemeNameAndAddress } from "lib/schemeUtils";
@@ -44,17 +44,9 @@ class ProposalSummary extends React.Component<IProps, IState> {
     this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
 
-  private copySchemeAddressOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void =>
-  {
+  private copyOnClick = (str: string) => (): void => {
     const { showNotification } = this.props;
-    copyToClipboard(schemeRegistrar.schemeToRegister);
-    showNotification(NotificationStatus.Success, "Copied to clipboard!");
-  }
-
-  private copySchemeParamsHashOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void =>
-  {
-    const { showNotification } = this.props;
-    copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash);
+    copyToClipboard(str);
     showNotification(NotificationStatus.Success, "Copied to clipboard!");
   }
 
@@ -117,14 +109,14 @@ class ProposalSummary extends React.Component<IProps, IState> {
                         </th>
                         <td>
                           <span>{schemeRegistrar.schemeToRegister}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copySchemeAddressOnClick(schemeRegistrar)} />
+                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyOnClick(schemeRegistrar.schemeToRegister)} />
                         </td>
                       </tr>
                       <tr>
                         <th>Param Hash:</th>
                         <td>
                           <span>{schemeRegistrar.schemeToRegisterParamsHash.slice(0, 43)}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copySchemeParamsHashOnClick(schemeRegistrar)} />
+                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyOnClick(schemeRegistrar.schemeToRegisterParamsHash)} />
                         </td>
                       </tr>
                       <tr>
