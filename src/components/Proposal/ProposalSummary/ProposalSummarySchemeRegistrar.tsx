@@ -5,8 +5,18 @@ import { schemeNameAndAddress } from "lib/schemeUtils";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
+import { NotificationStatus, showNotification } from "reducers/notifications";
+import { connect } from "react-redux";
 
-interface IProps {
+interface IDispatchProps {
+  showNotification: typeof showNotification;
+}
+
+const mapDispatchToProps = {
+  showNotification,
+};
+
+interface IExternalProps {
   beneficiaryProfile?: IProfileState;
   detailView?: boolean;
   dao: IDAOState;
@@ -16,10 +26,11 @@ interface IProps {
 
 interface IState {
   network: string;
-
 }
 
-export default class ProposalSummary extends React.Component<IProps, IState> {
+type IProps = IExternalProps & IDispatchProps;
+
+class ProposalSummary extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -33,8 +44,19 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
 
-  private copySchemeAddressOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void => copyToClipboard(schemeRegistrar.schemeToRegister);
-  private copySchemeParamsHashOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void => copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash);
+  private copySchemeAddressOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void =>
+  {
+    const { showNotification } = this.props;
+    copyToClipboard(schemeRegistrar.schemeToRegister);
+    showNotification(NotificationStatus.Success, "Copied to clipboard!");
+  }
+
+  private copySchemeParamsHashOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void =>
+  {
+    const { showNotification } = this.props;
+    copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash);
+    showNotification(NotificationStatus.Success, "Copied to clipboard!");
+  }
 
   public render(): RenderOutput {
     const { proposal, detailView, transactionModal } = this.props;
@@ -140,15 +162,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
         }
       </div>
     );
-    // } else if (proposal.genericScheme) {
-    //   return (
-    //     <div className={proposalSummaryClass}>Unknown function call
-    //     to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
-    //     with callData: <em>{proposal.genericScheme.callData}</em>
-    //     </div>
-    //   );
-    // } else {
-    //   return <div> Unknown scheme...</div>;
-    // }
   }
 }
+
+export default connect(null, mapDispatchToProps)(ProposalSummary);
