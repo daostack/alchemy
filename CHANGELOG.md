@@ -2,7 +2,7 @@
   - Features Added
     -- nicer formatting of embedded videos in proposal descriptions
     -- added help text for proposal descriptions
-    -- in the Plugin Manager, Edit Plugin Proposal details, make thecopy-to-clipboard button issue a notification when complete
+    -- in the Plugin Manager, Edit Plugin Proposal details, make the copy-to-clipboard button issue a notification when complete
     
   - Bugs Fixed
     -- reenabled the "+ New Proposal" button at the bottom of plugin pages when there are currently no proposals
