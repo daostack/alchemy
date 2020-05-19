@@ -42,14 +42,15 @@
 }
 
 .daoHeaderBackground {
+  // @TODO Image is repeating, check this later when using real image
+  // background-image: url(/assets/images/bg-test.jpeg);
+  width: 115%;
+  position: absolute;
   display: flex;
   height: 30%;
   top:0;
   right: 0;
   z-index: 9999999;
-  position: fixed;	
-  height: 30%;
-  width: 100vw;
 }
 
 @media only screen and (max-width: 425px) {

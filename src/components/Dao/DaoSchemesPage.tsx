@@ -33,12 +33,11 @@ const Fade = ({ children, ...props }: any) => (
   </CSSTransition>
 );
 
-const DAOHeaderBackground = (props: { backgroundImage: string }) => (
-  <img
+const DAOHeaderBackground = (props: any) => (
+  <div
     className={css.daoHeaderBackground}
-    src={props.backgroundImage}
-    alt="daoHeaderBackground"
-  />
+    style={{ backgroundImage: `url(${props.backgroundImage})`, backgroundRepeat: "no-repeat" }}
+  ></div>
 );
 
 type IExternalProps = {
@@ -101,7 +100,7 @@ class DaoSchemesPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.wrapper}>
-        { (signal && backgroundImage) &&  <DAOHeaderBackground backgroundImage={backgroundImage} /> }
+        { backgroundImage &&  <DAOHeaderBackground backgroundImage={backgroundImage} /> }
         <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
         { signal && <DAOHeader {...this.props} signal={signal} /> }
         <Sticky enabled top={50} innerZ={10000}>
