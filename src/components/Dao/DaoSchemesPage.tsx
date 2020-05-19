@@ -33,11 +33,12 @@ const Fade = ({ children, ...props }: any) => (
   </CSSTransition>
 );
 
-const DAOHeaderBackground = (props: any) => (
-  <div
+const DAOHeaderBackground = (props: { backgroundImage: string }) => (
+  <img
     className={css.daoHeaderBackground}
-    style={{ backgroundImage: `url(${props.backgroundImage})`, backgroundRepeat: "no-repeat" }}
-  ></div>
+    src={props.backgroundImage}
+    alt="daoHeaderBackground"
+  />
 );
 
 type IExternalProps = {
@@ -67,11 +68,10 @@ class DaoSchemesPage extends React.Component<IProps, null> {
     const [allSchemes, signalsData] = data;
     const { signals } = signalsData.data;
     const signal = signals.length > 0 ? signals[0] : null;
+    const daoHeaderBackground = signal ? JSON.parse(signal.data).Header : null;
     // TODO:
-    // Once backend issues our fix we will uncomment lines 71, 72.
-    // const daoHeaderBackground = signal ? JSON.parse(signal.data).Header : null;
-    // const backgroundImage = daoHeaderBackground ? daoHeaderBackground : null;
-    const backgroundImage = 'https://w.wallhaven.cc/full/13/wallhaven-13mk9v.jpg'
+    // Once backend issues are fix we will remove hardcoded background
+    const backgroundImage = daoHeaderBackground ? daoHeaderBackground : "https://i.picsum.photos/id/1006/1081/350.jpg";
     const contributionReward = allSchemes.filter((scheme: Scheme) => scheme.staticState.name === "ContributionReward");
     const knownSchemes = allSchemes.filter((scheme: Scheme) => scheme.staticState.name !== "ContributionReward" && KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) >= 0);
     const unknownSchemes = allSchemes.filter((scheme: Scheme) =>  KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) === -1 );
@@ -100,8 +100,8 @@ class DaoSchemesPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.wrapper}>
-        { backgroundImage &&  <DAOHeaderBackground backgroundImage={backgroundImage} /> }
         <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
+        { signal && backgroundImage &&  <DAOHeaderBackground backgroundImage={backgroundImage} /> }
         { signal && <DAOHeader {...this.props} signal={signal} /> }
         <Sticky enabled top={50} innerZ={10000}>
           <h1>All Plugins</h1>
