@@ -1,6 +1,6 @@
 import * as moment from "moment";
 
-import { IProposalOutcome, IProposalStage, IProposalState } from "@dorgtech/arc.js";
+import { IProposalOutcome, IProposalStage, IProposalState } from "@daostack/arc.js";
 
 export interface IRedemptionState {
   accountAddress: string;

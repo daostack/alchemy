@@ -4,7 +4,7 @@ import { enableWalletProvider } from "arc";
 import { History } from "history";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { Address, IPluginState, IGenesisProtocolParams, IDAOState, IPluginManagerState } from "@dorgtech/arc.js";
+import { Address, IPluginState, IGenesisProtocolParams, IDAOState, IPluginManagerState } from "@daostack/arc.js";
 import { copyToClipboard, fromWei, linkToEtherScan, roundUp } from "lib/util";
 import { pluginName } from "lib/pluginUtils";
 import * as moment from "moment";

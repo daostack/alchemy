@@ -1,7 +1,7 @@
 import BN = require("bn.js");
 import * as React from "react";
 
-import { IDAOState, IContributionRewardProposalState } from "@dorgtech/arc.js";
+import { IDAOState, IContributionRewardProposalState } from "@daostack/arc.js";
 import { baseTokenName, formatTokens, tokenDetails } from "lib/util";
 
 import Reputation from "components/Account/Reputation";

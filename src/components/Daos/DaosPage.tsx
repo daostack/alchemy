@@ -1,4 +1,4 @@
-import { Arc, DAO } from "@dorgtech/arc.js";
+import { Arc, DAO } from "@daostack/arc.js";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";

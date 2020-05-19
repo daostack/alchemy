@@ -1,4 +1,4 @@
-import { IDAOState } from "@dorgtech/arc.js";
+import { IDAOState } from "@daostack/arc.js";
 import { getArc } from "arc";
 import { generate } from "geopattern";
 import FollowButton from "components/Shared/FollowButton";

@@ -1,4 +1,4 @@
-import { Address, AnyProposal, IDAOState, IRewardState, Reward, IContributionRewardProposalState } from "@dorgtech/arc.js";
+import { Address, AnyProposal, IDAOState, IRewardState, Reward, IContributionRewardProposalState } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
