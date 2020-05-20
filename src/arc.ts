@@ -33,7 +33,7 @@ export function getArcSettings(): Settings {
  * Return the default account in current use by Arc.
  */
 async function _getCurrentAccountFromProvider(arc?: Arc): Promise<string> {
-  arc = arc ? arc : (window as any).arc as Arc;
+  arc = arc ?? (window as any).arc as Arc;
   if (!arc) {
     return null;
   }
