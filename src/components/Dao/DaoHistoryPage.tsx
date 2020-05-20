@@ -114,6 +114,10 @@ export default withSubscription({
       voterClause = `(where: { voter: "${props.currentAccountAddress}"})`;
       stakerClause = `(where: { staker: "${props.currentAccountAddress}"})`;
     }
+
+    // NOTE: We cannot use the fragment to reduce the boilerplate here because
+    // we're using nested where filters for voters & stakers. These fields are already
+    // present in the fragment. See here for a solution: https://github.com/daostack/arc.js/issues/471
     const prefetchQuery = gql`
       query prefetchProposalDataForDAOHistory {
         proposals (

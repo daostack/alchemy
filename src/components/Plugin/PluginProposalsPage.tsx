@@ -255,6 +255,9 @@ const SubscribedPluginProposalsPage = withSubscription<IProps, SubscriptionData>
     const pluginId = props.pluginState.id;
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server
+    // NOTE: We cannot use the fragment to reduce the boilerplate here because
+    // we're using nested where filters for votes, stakes, and gpRewards. These fields are already
+    // present in the fragment. See here for a solution: https://github.com/daostack/arc.js/issues/471
     let bigProposalQuery;
     if (props.currentAccountAddress) {
       bigProposalQuery = gql`

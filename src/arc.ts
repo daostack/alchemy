@@ -115,7 +115,7 @@ export function providerHasConfigUi(provider?: Web3Provider): boolean | undefine
 export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
 
   let success = false;
-  let arc: Arc;
+  let arc = (window as any).arc as Arc;
 
   try {
 
@@ -150,8 +150,7 @@ export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
     arcSettings.retryLink = retryLink;
 
     // if there is no existing arc, we create a new one
-    if ((window as any).arc) {
-      arc = (window as any).arc as Arc;
+    if (arc) {
       arc.setWeb3(provider);
     } else {
       arc = new Arc(arcSettings);
