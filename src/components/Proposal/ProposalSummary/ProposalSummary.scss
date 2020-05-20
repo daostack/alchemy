@@ -1,9 +1,8 @@
 .proposalSummary {
   position: relative;
-  border: 1px solid rgba(229, 235, 242, 1.000);
+  border: 1px solid rgba(229, 235, 242, 1);
   border-radius: 2px;
   font-size: 12px;
-  display: inline-block;
   padding: 5px;
   display: block;
   text-align: center;
@@ -14,19 +13,19 @@
   }
 
   a {
-    color: rgba(104, 154, 214, 1.000);
+    color: rgba(104, 154, 214, 1);
   }
 }
 
 .proposalSummary.detailView em {
   text-decoration: none;
   font-style: normal;
-  opacity: .6;
+  opacity: 0.6;
   word-break: break-word;
 }
 
 .schemeRegisterIcon {
-  color: rgba(0, 118, 255, 1.000);
+  color: rgba(0, 118, 255, 1);
   font-weight: bold;
 }
 
@@ -36,7 +35,8 @@
   padding: 6px 15px;
 }
 
-.detailView.proposalSummary, .transactionModal.proposalSummary {
+.detailView.proposalSummary,
+.transactionModal.proposalSummary {
   box-shadow: 0 1px 12px 0 rgba(26, 60, 88, 0.09);
   background-color: $white;
   font-size: 16px;
@@ -44,7 +44,6 @@
   margin: 0 0 0 0;
   width: 100%;
 }
-
 
 .detailView.proposalSummary.withDetails {
   font-size: 13px;
@@ -54,7 +53,7 @@
     padding: 20px;
     display: block;
     font-family: "AccordBold";
-    border-bottom: 1px solid rgba(233, 238, 244, 1.000);
+    border-bottom: 1px solid rgba(233, 238, 244, 1);
 
     b {
       display: inline-block;
@@ -76,7 +75,7 @@
     margin: 0;
 
     th {
-      color: rgba(78, 97, 118, 1.000);
+      color: rgba(78, 97, 118, 1);
       font-weight: normal;
       vertical-align: top;
 
@@ -105,6 +104,10 @@
         height: 14px;
       }
     }
+
+    .warning {
+      color: red;
+    }
   }
 
   ul.summaryDetails {
@@ -127,18 +130,18 @@
 }
 
 .accountName {
-  color: rgba(80, 97, 118, 1.000);
+  color: rgba(80, 97, 118, 1);
 }
 
 .transferType {
   display: inline-block;
-  color: rgba(80, 97, 118, 1.000);
+  color: rgba(80, 97, 118, 1);
 
   strong {
-    color: rgba(80, 97, 118, 1.000);
+    color: rgba(80, 97, 118, 1);
 
     em {
-      color: rgba(80, 97, 118, 1.000);
+      color: rgba(80, 97, 118, 1);
       font-style: normal;
       font-weight: normal;
     }
@@ -160,7 +163,8 @@
 }
 
 @media only screen and (max-width: 425px) {
-  .detailView.proposalSummary, .transactionModal.proposalSummary {
+  .detailView.proposalSummary,
+  .transactionModal.proposalSummary {
     width: auto;
   }
 }

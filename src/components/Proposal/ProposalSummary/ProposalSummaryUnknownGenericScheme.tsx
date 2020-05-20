@@ -1,6 +1,6 @@
 import { IDAOState, IProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
-import { linkToEtherScan } from "lib/util";
+import { linkToEtherScan, formatTokens } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
@@ -36,7 +36,10 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
         <span className={css.summaryTitle}>Unknown function call</span>
         {detailView ?
           <div className={css.summaryDetails}>
-            to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
+            on contract at:
+            <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
+            sending ETH to contract:
+            <pre className={proposal.genericScheme.value.isZero() ? "" : css.warning}>{formatTokens(proposal.genericScheme.value)}</pre>
           </div>
           : ""
         }
