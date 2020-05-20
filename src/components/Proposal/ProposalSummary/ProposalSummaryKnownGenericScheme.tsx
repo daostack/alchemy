@@ -51,7 +51,12 @@ export default class ProposalSummary extends React.Component<IProps> {
     } catch (err) {
       return (
         <div className={proposalSummaryClass}>
-          <span className={css.summaryTitle}>Unknown function call</span>
+          <span className={css.summaryTitle}>Unknown function call
+            {sendsETH ?
+              <div className={css.warning}>&gt; Sending {formatTokens(proposal.genericScheme.value)} ETH &lt;</div>
+              : ""
+            }
+          </span>
           {detailView ?
             <div className={css.summaryDetails}>
               to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
