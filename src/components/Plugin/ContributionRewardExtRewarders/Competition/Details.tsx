@@ -116,9 +116,6 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         this.setState({ showingSubmissionDetails: urlSubmission });
       }
     }
-
-    // Ensure the plugin's state is hydrated
-    await this.props.proposalState.plugin.entity.fetchState();
   }
 
   private onEndCountdown = () => {
@@ -418,6 +415,9 @@ export default withSubscription({
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["currentAccountAddress"],
   createObservable: async (props: IExternalProps & IExternalStateProps ) => {
+
+    // Ensure the plugin's state is hydrated
+    await props.proposalState.plugin.entity.fetchState();
 
     // prime the cache and subscribe
     const cacheQuery = gql`query cacheSuggestions {

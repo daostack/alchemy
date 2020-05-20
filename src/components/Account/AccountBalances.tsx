@@ -63,7 +63,7 @@ export default withSubscription({
   checkForUpdate: (oldProps, newProps) => {
     const oldDao = oldProps.daoState;
     const newDao = newProps.daoState;
-    return oldProps.accountAddress !== newProps.accountAddress || (oldDao && oldDao.accountAddress) !== (newDao && newDao.accountAddress);
+    return oldProps.accountAddress !== newProps.accountAddress || (oldDao && oldDao.address) !== (newDao && newDao.address);
   },
 
   createObservable: async ({ daoState, accountAddress }: IExternalProps) => {
