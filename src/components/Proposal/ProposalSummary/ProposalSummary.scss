@@ -15,6 +15,43 @@
   a {
     color: rgba(104, 154, 214, 1);
   }
+
+  /* Blink for Webkit and others
+(Chrome, Safari, Firefox, IE, ...)
+*/
+  @keyframes blinker {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @-webkit-keyframes blinker {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  .warning {
+    text-decoration: blink;
+    animation-name: blinker;
+    -webkit-animation-name: blinker;
+    animation-duration: 0.6s;
+    -webkit-animation-duration: 0.6s;
+    animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-direction: alternate;
+    -webkit-animation-direction: alternate;
+    color: red;
+    font-weight: 600;
+  }
 }
 
 .proposalSummary.detailView em {
@@ -104,13 +141,9 @@
         height: 14px;
       }
     }
-
-    .warning {
-      color: red;
-    }
   }
 
-  ul.summaryDetails {
+  .summaryDetails ul {
     padding-left: 40px;
   }
 

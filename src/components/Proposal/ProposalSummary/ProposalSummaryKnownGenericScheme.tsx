@@ -44,6 +44,8 @@ export default class ProposalSummary extends React.Component<IProps> {
       [css.withDetails]: true,
     });
     let decodedCallData: any;
+    const sendsETH = proposal.genericScheme.value.gtn(0);
+
     try {
       decodedCallData = genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
     } catch (err) {
@@ -65,6 +67,11 @@ export default class ProposalSummary extends React.Component<IProps> {
       <span className={css.summaryTitle}>
         <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
         { decodedCallData.action.label }
+
+        {sendsETH ?
+          <div className={css.warning}>&gt; Sending {formatTokens(proposal.genericScheme.value)} ETH &lt;</div>
+          : ""
+        }
       </span>
 
       {detailView ?
@@ -76,8 +83,8 @@ export default class ProposalSummary extends React.Component<IProps> {
           with values: <pre>{ decodedCallData.values.map(this.callDataHtml)}</pre>
           on contract at:
           <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
-          and send to contract:
-          <pre className={proposal.genericScheme.value.isZero() ? "" : css.warning}>{formatTokens(proposal.genericScheme.value)} ETH</pre>
+          sending to contract:
+          <pre className={sendsETH ? css.warning : ""}>{formatTokens(proposal.genericScheme.value)} ETH</pre>
         </div>
         : ""
       }

@@ -25,6 +25,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
     const { proposal, detailView, transactionModal } = this.props;
+    const sendsETH = proposal.genericScheme.value.gtn(0);
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
       [css.transactionModal]: transactionModal,
@@ -33,13 +34,19 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     });
     return (
       <div className={proposalSummaryClass}>
-        <span className={css.summaryTitle}>Unknown function call</span>
+        <span className={css.summaryTitle}>
+        Unknown function call
+          {sendsETH ?
+            <div className={css.warning}>&gt; Sending {formatTokens(proposal.genericScheme.value)} ETH &lt;</div>
+            : ""
+          }
+        </span>
         {detailView ?
           <div className={css.summaryDetails}>
             on contract at:
             <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
-            and send to contract:
-            <pre className={proposal.genericScheme.value.isZero() ? "" : css.warning}>{formatTokens(proposal.genericScheme.value)} ETH</pre>
+            sending to contract:
+            <pre className={sendsETH ? css.warning : ""}>{formatTokens(proposal.genericScheme.value)} ETH</pre>
           </div>
           : ""
         }
