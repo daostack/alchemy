@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import * as React from "react";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
-import { InitializeParametersFields } from "./InitializeParameterFields";
+import { PluginInitializeFields } from "./PluginInitializeFields";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -654,7 +654,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                       </Field>
                     </div>
 
-                    <InitializeParametersFields pluginName={values.pluginToAdd} values={values}/>
+                    <PluginInitializeFields pluginName={values.pluginToAdd} values={values}/>
                   </div>
 
                   <div className={css.createProposalActions}>

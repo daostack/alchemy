@@ -1,3 +1,6 @@
+// NOTE: Used to render form fields for all values needed to construct
+// a plugin's encoded initialize(...) data.
+
 import * as React from "react";
 import { targetedNetwork, linkToEtherScan } from "lib/util";
 import { PLUGIN_NAMES } from "lib/pluginUtils";
@@ -169,6 +172,6 @@ const fieldsMap = {
   ReputationFromToken: ReputationFromTokenFields,
 };
 
-export const InitializeParametersFields: React.FC<IProps> = ({ pluginName, values }) => {
+export const PluginInitializeFields: React.FC<IProps> = ({ pluginName, values }) => {
   return pluginName && fieldsMap[pluginName]? fieldsMap[pluginName]({ pluginName, values }): null;
 };
