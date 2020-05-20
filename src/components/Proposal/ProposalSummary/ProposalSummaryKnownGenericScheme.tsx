@@ -76,8 +76,8 @@ export default class ProposalSummary extends React.Component<IProps> {
           with values: <pre>{ decodedCallData.values.map(this.callDataHtml)}</pre>
           on contract at:
           <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
-          sending ETH to contract:
-          <pre className={proposal.genericScheme.value.isZero() ? "" : css.warning}>{formatTokens(proposal.genericScheme.value)}</pre>
+          and send to contract:
+          <pre className={proposal.genericScheme.value.isZero() ? "" : css.warning}>{formatTokens(proposal.genericScheme.value)} ETH</pre>
         </div>
         : ""
       }
