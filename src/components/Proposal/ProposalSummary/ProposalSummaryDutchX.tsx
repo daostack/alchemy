@@ -19,12 +19,13 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
   public render(): RenderOutput {
     const { proposal, detailView, genericSchemeInfo, transactionModal } = this.props;
     let decodedCallData: any;
+    const sendsETH = proposal.genericScheme.value.gtn(0);
     const renderValueHtml = () => {
-      return (
-        <div>
-          To send {proposal.genericScheme.value.isZero() ? "" : css.warning} {formatTokens(proposal.genericScheme.value)} ETH to contract
+      return sendsETH ?
+        <div className={sendsETH ? css.warning : ""}>
+          &gt; Send to contract: {formatTokens(proposal.genericScheme.value)} ETH &lt;
         </div>
-      );
+        : "";
     };
     try {
       decodedCallData = genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
@@ -51,10 +52,10 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
               {action.label}
+              {renderValueHtml()}
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
-                {renderValueHtml()}
                 <div>{ action.fields[0].label}: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a></div>
               </div>
               : ""
@@ -67,11 +68,11 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
               {action.label}
+              {renderValueHtml()}
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
                 New oracle address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
-                {renderValueHtml()}
               </div>
               : ""
             }
@@ -83,11 +84,11 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
               {action.label}
+              {renderValueHtml()}
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
                 New owner address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
-                {renderValueHtml()}
               </div>
               : ""
             }
@@ -99,13 +100,13 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             <span className={css.summaryTitle}>
               {decodedCallData.values[1] ? "+" : "-"}&nbsp;
               {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+              {renderValueHtml()}
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
                 <ul>
                   {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
                 </ul>
-                {renderValueHtml()}
               </div>
               : ""
             }
@@ -121,10 +122,10 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
               { field.label }: {formatTokens(new BN(value), field.unit, field.decimals)}
+              {renderValueHtml()}
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                {renderValueHtml()}
               </div>
               : ""
             }
