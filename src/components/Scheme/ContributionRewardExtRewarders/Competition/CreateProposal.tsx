@@ -17,6 +17,7 @@ import * as Datetime from "react-datetime";
 
 import moment = require("moment");
 import BN = require("bn.js");
+import HelpButton from "components/Shared/HelpButton";
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -364,8 +365,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               <TrainingTooltip overlay={this.fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
                   <div className={css.requiredMarker}>*</div>
-                  Description
-                  <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                  <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>

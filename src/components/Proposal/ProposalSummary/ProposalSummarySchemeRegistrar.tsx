@@ -1,12 +1,22 @@
-import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@daostack/arc.js";
+import { IDAOState, IProposalState, IProposalType } from "@daostack/arc.js";
 import classNames from "classnames";
 import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
 import { schemeNameAndAddress } from "lib/schemeUtils";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
+import { NotificationStatus, showNotification } from "reducers/notifications";
+import { connect } from "react-redux";
 
-interface IProps {
+interface IDispatchProps {
+  showNotification: typeof showNotification;
+}
+
+const mapDispatchToProps = {
+  showNotification,
+};
+
+interface IExternalProps {
   beneficiaryProfile?: IProfileState;
   detailView?: boolean;
   dao: IDAOState;
@@ -16,10 +26,11 @@ interface IProps {
 
 interface IState {
   network: string;
-
 }
 
-export default class ProposalSummary extends React.Component<IProps, IState> {
+type IProps = IExternalProps & IDispatchProps;
+
+class ProposalSummary extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -33,8 +44,11 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
 
-  private copySchemeAddressOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void => copyToClipboard(schemeRegistrar.schemeToRegister);
-  private copySchemeParamsHashOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void => copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash);
+  private copyOnClick = (str: string) => (): void => {
+    const { showNotification } = this.props;
+    copyToClipboard(str);
+    showNotification(NotificationStatus.Success, "Copied to clipboard!");
+  }
 
   public render(): RenderOutput {
     const { proposal, detailView, transactionModal } = this.props;
@@ -95,14 +109,14 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                         </th>
                         <td>
                           <span>{schemeRegistrar.schemeToRegister}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copySchemeAddressOnClick(schemeRegistrar)} />
+                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyOnClick(schemeRegistrar.schemeToRegister)} />
                         </td>
                       </tr>
                       <tr>
                         <th>Param Hash:</th>
                         <td>
                           <span>{schemeRegistrar.schemeToRegisterParamsHash.slice(0, 43)}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copySchemeParamsHashOnClick(schemeRegistrar)} />
+                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyOnClick(schemeRegistrar.schemeToRegisterParamsHash)} />
                         </td>
                       </tr>
                       <tr>
@@ -140,15 +154,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
         }
       </div>
     );
-    // } else if (proposal.genericScheme) {
-    //   return (
-    //     <div className={proposalSummaryClass}>Unknown function call
-    //     to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
-    //     with callData: <em>{proposal.genericScheme.callData}</em>
-    //     </div>
-    //   );
-    // } else {
-    //   return <div> Unknown scheme...</div>;
-    // }
   }
 }
+
+export default connect(null, mapDispatchToProps)(ProposalSummary);
