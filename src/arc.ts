@@ -1,5 +1,6 @@
+import * as React from "react";
 import { NotificationStatus } from "reducers/notifications";
-import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
+import { getNetworkId, getNetworkName, targetedNetwork, showSimpleMessage } from "./lib/util";
 import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
 import { RetryLink } from "apollo-link-retry";
 import { Address, Arc } from "@daostack/arc.js";
@@ -67,7 +68,7 @@ export async function getCurrentBlock(web3?: any): Promise<any> {
      * See: https://github.com/ethereum/web3.js/issues/1354
      */
     // eslint-disable-next-line no-console
-    console.log(`getCurrentBlock: web3.eth.getBlock failed: ${ex.message}`);
+    console.warn(`getCurrentBlock: web3.eth.getBlock failed: ${ex.message}`);
     return null;
   }
 }
@@ -124,9 +125,34 @@ function getBiconomy(provider: any): any {
   return biconomy;
 }
 
+
+/**
+ * Function to show user contract wallet address to inform him that he/she
+ * should make sure to have reputation in this address in order to vote for dao
+ * without paying transaction fee.
+ * @param userContract User contract wallet address
+ */
+function showUserContractAddress(userContract: string) {
+  if (userContract) {
+    // eslint-disable-next-line no-console
+    console.info(`User contract wallet ${userContract}`);
+    showSimpleMessage(
+      {
+        title: "Your Contract Wallet",
+        body: React.createElement('span', null,
+          React.createElement('div', null, `Your contract wallet address is: ${userContract}.`),
+          React.createElement('div', null, `So that you can vote without paying a transaction fee, make sure you have reputation in this address.`))
+      });
+  }
+}
+
 function showUserNotification(message: string, options?: IEnableWalletProviderParams, type?: NotificationStatus) {
-  if (options && options.showNotification && type)
+  if (options?.showNotification && type) {
     options.showNotification(type, message);
+  } else {
+    // eslint-disable-next-line no-console
+    console.log(message);
+  }
 }
 /**
  * Function to login to biconomy. For first time users a smart contract wallet will be created.
@@ -142,7 +168,6 @@ function biconomyLogin(userAccount: string, options?: IEnableWalletProviderParam
       if (!biconomy.isLogin) {
         biconomy.getUserContract(userAccount).then((response: any) => {
           if (!response.userContract) {
-            showUserNotification("Please provide your signature in your wallet to use gasless transactions", options, NotificationStatus.Pending);
             biconomy.login(userAccount, (error: any, loginResponse: any) => {
               if (error) {
                 return reject(error);
@@ -186,21 +211,6 @@ function biconomyLogin(userAccount: string, options?: IEnableWalletProviderParam
 }
 
 /**
- * Function to show user contract wallet address to inform him that he/she
- * should make sure to have reputation in this address in order to vote for dao
- * without paying transaction fee.
- * @param userContract User contract wallet address
- */
-function showUserContractAddress(userContract: string) {
-  if (userContract) {
-    // eslint-disable-next-line no-console
-    console.info(`User contract wallet ${userContract}`);
-    // Show a modal popup to show the user contract wallet address here
-    alert(`User contract wallet ${userContract}. Make sure to have reputation in this address to vote without paying transaction fee.`);
-  }
-}
-
-/**
  * initialize Arc.  Does not throw exceptions, returns boolean success.
  * @param provider Optional web3Provider
  */
@@ -226,7 +236,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       attempts: {
         max: 5,
         retryIf: (error, _operation) => {
-        // eslint-disable-next-line no-console
+          // eslint-disable-next-line no-console
           console.error("error occurred fetching data, retrying...");
           // eslint-disable-next-line no-console
           console.log(error);
@@ -268,8 +278,8 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     if (success) {
       initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
       if (!initializedAccount) {
-      // then something went wrong
-      // eslint-disable-next-line no-console
+        // then something went wrong
+        // eslint-disable-next-line no-console
         console.error("Unable to obtain an account from the provider");
       }
     } else {
@@ -384,7 +394,7 @@ function inTesting(): boolean {
  * Side-effect is that `selectedProvider` will be set on success.
  * @returns Throws exception on error.
  */
-async function enableWeb3Provider(options: IEnableWalletProviderParams): Promise<void> {
+async function enableWeb3Provider(): Promise<void> {
   if (selectedProvider) {
     return;
   }
@@ -414,32 +424,27 @@ async function enableWeb3Provider(options: IEnableWalletProviderParams): Promise
     _web3Modal = web3Modal;
   }
 
-  let resolveOnClosePromise: () => void;
-  let rejectOnClosePromise: (reason?: any) => void;
-
   const onClosePromise = new Promise(
     (resolve: () => void, reject: (reason?: any) => void): any => {
-      resolveOnClosePromise = resolve;
-      rejectOnClosePromise = reject;
       _web3Modal.on("close", (): any => {
         return resolve();
       });
+
+      _web3Modal.on("error", (error: Error): any => {
+        // eslint-disable-next-line no-console
+        console.error(`web3Connect closed on error:  ${error ? error.message : "cancelled or unknown error"}`);
+        return reject(error);
+      });
+
+      _web3Modal.on("connect", (newProvider: any): any => {
+        provider = newProvider;
+        /**
+         * Because we won't receive the "close" event in this case, even though
+         * the window will have closed
+         */
+        return resolve();
+      });
     });
-
-  _web3Modal.on("error", (error: Error): any => {
-    // eslint-disable-next-line no-console
-    console.error(`web3Connect closed on error:  ${error ? error.message : "cancelled or unknown error"}`);
-    return rejectOnClosePromise(error);
-  });
-
-  _web3Modal.on("connect", (newProvider: any): any => {
-    provider = newProvider;
-    /**
-     * Because we won't receive the "close" event in this case, even though
-     * the window will have closed
-     */
-    return resolveOnClosePromise();
-  });
 
   try {
     // note this will load from its cache, if present
@@ -470,50 +475,51 @@ async function enableWeb3Provider(options: IEnableWalletProviderParams): Promise
  * whatever the provider requires....
  */
   try {
-  // brings up the provider UI as needed
+    // brings up the provider UI as needed
     await provider.enable();
     // eslint-disable-next-line no-console
     console.log(`Connected to network provider ${getWeb3ProviderInfo(provider).name}`);
   } catch (ex) {
-  // eslint-disable-next-line no-console
+    // eslint-disable-next-line no-console
     console.error(`Unable to enable provider: ${ex.message ? ex : "unknown error"}`);
     throw new Error("Unable to enable provider");
   }
 
   biconomy = getBiconomy(provider);
-  biconomy.onEvent(biconomy.READY, async () => {
+
+  if (biconomy && !biconomy.isReady()) {
+    const onGetBiconomyPromise = new Promise(
+      (resolve: () => void, reject: (reason?: any) => void): any => {
+        biconomy.onEvent(biconomy.READY, async () => {
+          // eslint-disable-next-line no-console
+          console.debug("Biconomy initialized");
+          resolve();
+        }).onEvent(biconomy.ERROR, async (error: any) => {
+          // eslint-disable-next-line no-console
+          console.error(`Unable to initialize biconomy ${JSON.stringify(error)}`);
+          reject();
+        });
+      });
+
+    try {
+      await onGetBiconomyPromise;
+      provider = biconomy;
+    } catch (ex) {
+      // Fallback to default provider in case of any error
+    }
+  } else {
+    provider = biconomy;
+  }
+
+  // Initialize your dapp here like getting user accounts etc
+  if (!await initializeArc(provider)) {
     // eslint-disable-next-line no-console
-    console.debug("Biconomy initialized");
-    // Initialize your dapp here like getting user accounts etc
-    if (!await initializeArc(biconomy)) {
-      // eslint-disable-next-line no-console
-      console.error("Unable to initialize Arc");
-      throw new Error("Unable to initialize Arc");
-    }
-    if (initializedAccount) {
-      const userContract = await biconomyLogin(initializedAccount, options);
-      showUserContractAddress(userContract);
-    }
-  }).onEvent(biconomy.ERROR, async (error: any) => {
-    // eslint-disable-next-line no-console
-    console.error(`Unable to initialize biconmy ${JSON.stringify(error)}`);
-    // Fallback to default provider in case of any error
-    // eslint-disable-next-line require-atomic-updates
-    if (!await initializeArc(provider)) {
-      // eslint-disable-next-line no-console
-      console.error("Unable to initialize Arc");
-      throw new Error("Unable to initialize Arc");
-    }
-    selectedProvider = provider;
-  });
-  // Biconomy login when user logout and login again
-  if (biconomy.isReady() && !biconomy.isLogin && initializedAccount) {
-    const userContract = await biconomyLogin(initializedAccount, options);
-    showUserContractAddress(userContract);
+    console.error("Unable to initialize Arc");
+    throw new Error("Unable to initialize Arc");
   }
 
   // eslint-disable-next-line require-atomic-updates
-  selectedProvider = biconomy;
+  selectedProvider = provider;
 }
 
 /**
@@ -537,7 +543,7 @@ async function getCurrentAccountFromProvider(): Promise<Address | null> {
  * Clear caches as every case where we're manually logging out
  * implies that the cache should be cleared
  */
-export async function logout(showNotification?: any): Promise<boolean> {
+export async function logout(showNotification: any): Promise<boolean> {
   let success = false;
 
   uncacheWeb3Info();
@@ -552,11 +558,7 @@ export async function logout(showNotification?: any): Promise<boolean> {
 
     if (!success) {
       const msg = `Unable to disconnect from : ${networkName}`;
-      if (showNotification) {
-        showNotification(NotificationStatus.Failure, msg);
-      } else {
-        alert(msg);
-      }
+      showNotification(NotificationStatus.Failure, msg);
     }
   }
   else {
@@ -599,11 +601,21 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
     }
 
     if (!selectedProvider) {
-      await enableWeb3Provider(options);
+      await enableWeb3Provider();
       if (!selectedProvider) {
         // something went wrong somewhere
         throw new Error("Unable to connect to a wallet");
       }
+
+      /**
+       * login to Biconomy
+       */
+      const biconomyWrapper = selectedProvider.isBiconomy ? selectedProvider : null;
+      if (biconomyWrapper && biconomyWrapper.isReady() && !biconomyWrapper.isLogin && initializedAccount) {
+        const userContract = await biconomyLogin(initializedAccount, options);
+        showUserContractAddress(userContract);
+      }
+
       /**
        * notify on success
        */
@@ -637,13 +649,11 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
 
     uncacheWeb3Info(false);
 
-    if (options.showNotification) {
-      options.showNotification(NotificationStatus.Failure, msg);
-    } else {
-      alert(msg);
-    }
+    options.showNotification(NotificationStatus.Failure, msg);
+
     return false;
   }
+
   return true;
 }
 
@@ -683,7 +693,7 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
               }
             })
             // eslint-disable-next-line no-console
-            .catch((err): void => {console.error(err ? err.message : "unknown error"); });
+            .catch((err): void => { console.error(err ? err.message : "unknown error"); });
         } catch (ex) {
           // eslint-disable-next-line no-console
           console.error(ex ? ex.message : "unknown error");

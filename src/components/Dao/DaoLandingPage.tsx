@@ -6,28 +6,17 @@ import Analytics from "lib/analytics";
 import { Link } from "react-router-dom";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { DiscussionEmbed } from "disqus-react";
-import ModalPopup from "components/Shared/ModalPopup";
+import { showSimpleMessage } from 'lib/util';
 
 type IExternalProps = {
   daoState: IDAOState;
 };
 
-interface IStateProps {
-  showingEditPagePopup: boolean;
-}
-
 type IProps = IExternalProps;
 
-export default class DaoLandingPage extends React.Component<IProps, IStateProps> {
+export default class DaoLandingPage extends React.Component<IProps, null> {
 
   private disqusConfig: any;
-
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      showingEditPagePopup: false,
-    };
-  }
 
   public componentDidMount() {
     this.disqusConfig = {
@@ -43,12 +32,17 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
     });
   }
 
-  private showLandingPageContent = () => {
-    this.setState({ showingEditPagePopup: true });
-  }
-
-  private hideLandingPageContent = () => {
-    this.setState({ showingEditPagePopup: false });
+  private handleEditContent = () => {
+    showSimpleMessage(
+      {
+        title: "Edit Home Page",
+        body:
+          <>
+            <div>Editing the content on this DAO’s home page will soon be possible via proposal. Stay tuned!</div>
+            <div>For now, if you need a change made to a DAO’s home page content, please contact us at <a href="https://support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a></div>
+          </>
+      }
+    );
   }
 
   public render() {
@@ -64,7 +58,7 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
             <div className={css.row}>
               <div className={css.headerText}>{daoState.name}</div>
               <div className={css.editButton}>
-                <button onClick={this.showLandingPageContent}>Edit Home Page</button>
+                <button onClick={this.handleEditContent}>Edit Home Page</button>
               </div>
             </div>
           </div>
@@ -79,27 +73,6 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
           <div className={css.headerText}>Discuss {daoState.name}</div>
           <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
         </div>
-
-        { this.state.showingEditPagePopup ?
-          <ModalPopup
-            closeHandler={this.hideLandingPageContent}
-            width="60%"
-            header={
-              <div className={css.modalHeader}>
-                <div className={css.title}>Edit Home Page</div>
-                <div className={css.closeButton} onClick={this.hideLandingPageContent}><img src={" /assets/images/Icon/close-grey.svg"} />
-                </div>
-              </div>
-            }
-            body={
-              <div className={css.modalBody}>
-                <div>Editing the content on this DAO’s home page will soon be possible via proposal. Stay tuned!</div>
-                <div>For now, if you need a change made to a DAO’s home page content, please contact us at <a href="https://support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a></div>
-              </div>
-            }
-          />
-          : ""
-        }
       </div>
     );
   }
