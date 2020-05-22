@@ -14,7 +14,7 @@ const chai = require("chai");
 global.expect = chai.expect;
 chai.Should();
 
-export const LATEST_ARC_VERSION = "0.1.1-rc.18";
+export const LATEST_ARC_VERSION = "0.1.1-rc.20";
 
 export const userAddresses = [
   "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
