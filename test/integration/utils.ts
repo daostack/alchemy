@@ -52,7 +52,7 @@ export interface ITestAddresses {
 }
 
 export function getTestAddresses(version: string = LATEST_ARC_VERSION): ITestAddresses {
-  return require("@dorgtech/test-env-experimental/daos.json").demo[version];
+  return require("@daostack/test-env-experimental/daos.json").demo[version];
 }
 
 /**
