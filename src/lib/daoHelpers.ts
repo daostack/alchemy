@@ -22,6 +22,8 @@ export interface IDAOData {
   numberOfBoostedProposals: number;
   register: "na"|"proposed"|"registered"|"unRegistered";
   reputationHoldersCount: number;
+  metadata: string;
+  metadataHash: string;
 }
 
 export function createDaoStateFromQuery(queryData: IDAOData): IDAOState {
@@ -44,6 +46,8 @@ export function createDaoStateFromQuery(queryData: IDAOData): IDAOState {
     memberCount: Number(queryData.reputationHoldersCount),
     tokenTotalSupply: queryData.nativeToken.totalSupply,
     reputationTotalSupply: new BN(queryData.nativeReputation.totalSupply),
+    metadata: queryData.metadata,
+    metadataHash: queryData.metadataHash,
   };
 
   return {
