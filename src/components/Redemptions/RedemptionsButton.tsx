@@ -96,7 +96,7 @@ export default withSubscription({
           id
         }
       }`;
-    return arc.getObservable(redeemableProposalsQuery)
+    return arc.getObservable(redeemableProposalsQuery, { subscribe: true })
       .pipe(map((result: any) => result.data.proposals));
   },
 });
