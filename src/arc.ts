@@ -139,9 +139,9 @@ function showUserContractAddress(userContract: string) {
     showSimpleMessage(
       {
         title: "Your Contract Wallet",
-        body: React.createElement('span', null,
-          React.createElement('div', null, `Your contract wallet address is: ${userContract}.`),
-          React.createElement('div', null, `So that you can vote without paying a transaction fee, make sure you have reputation in this address.`))
+        body: React.createElement("span", null,
+          React.createElement("div", null, `Your contract wallet address is: ${userContract}.`),
+          React.createElement("div", null, "So that you can vote without paying a transaction fee, make sure you have reputation in this address.")),
       });
   }
 }

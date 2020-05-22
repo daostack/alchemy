@@ -3,7 +3,7 @@ import {
   Address,
   IProposalStage,
   IProposalState,
-  IRewardState
+  IRewardState,
 } from "@daostack/arc.js";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
@@ -15,7 +15,7 @@ import BN = require("bn.js");
 import "moment";
 import * as moment from "moment-timezone";
 import { getArc } from "../arc";
-import { ISimpleMessagePopupProps } from 'components/Shared/SimpleMessagePopup';
+import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
 
 
 const tokens = require("data/tokens.json");
@@ -177,7 +177,7 @@ export function supportedTokens() {
       decimals: 18,
       name: "DAOstack GEN",
       symbol: genName(),
-    }, ...tokens[targetedNetwork()]["tokens"]
+    }, ...tokens[targetedNetwork()]["tokens"],
   };
 }
 
@@ -541,7 +541,7 @@ interface IInitializeOptions {
 
 /**
  * initialize this service
- * @param options 
+ * @param options
  */
 export function initializeUtils(options: IInitializeOptions) {
   showSimpleMessage = options.showSimpleMessage;
