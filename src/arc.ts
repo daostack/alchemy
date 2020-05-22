@@ -32,7 +32,7 @@ export function getArcSettings(): Settings {
 /**
  * Return the default account in current use by Arc.
  */
-async function _getCurrentAccountFromProvider(arc?: Arc): Promise<string> {
+async function _getCurrentAccountFromArc(arc?: Arc): Promise<string> {
   arc = arc ?? (window as any).arc as Arc;
   if (!arc) {
     return null;
@@ -171,7 +171,7 @@ export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
     success = !!contractInfos;
 
     if (success) {
-      initializedAccount = await _getCurrentAccountFromProvider(arc);
+      initializedAccount = await _getCurrentAccountFromArc(arc);
 
       if (!initializedAccount || initializedAccount === "0x0000000000000000000000000000000000000000") {
       // then something went wrong
@@ -410,7 +410,7 @@ async function getCurrentAccountFromProvider(): Promise<Address | null> {
      */
     return null;
   }
-  return _getCurrentAccountFromProvider();
+  return _getCurrentAccountFromArc();
 }
 
 /**
