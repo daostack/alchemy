@@ -1,4 +1,4 @@
-import { IDAOState, IPluginRegistrarProposalState } from "@daostack/arc.js";
+import { IDAOState, IPluginRegistrarProposalState } from "@dorgtech/arc.js";
 import classNames from "classnames";
 import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
 import { pluginNameAndAddress } from "lib/pluginUtils";

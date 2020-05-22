@@ -5,7 +5,7 @@ import {
   IPluginState,
   IGenericPluginState,
   IContributionRewardExtState,
-} from "@daostack/arc.js";
+} from "@dorgtech/arc.js";
 import { rewarderContractName } from "components/Plugin/ContributionRewardExtRewarders/rewardersProps";
 import { GenericPluginRegistry } from "genericPluginRegistry";
 

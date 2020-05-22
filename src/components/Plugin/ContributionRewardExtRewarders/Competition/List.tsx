@@ -1,6 +1,6 @@
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { IContributionRewardExtState, IDAOState, ICompetitionProposalState, CompetitionSuggestion, CompetitionVote } from "@daostack/arc.js";
+import { IContributionRewardExtState, IDAOState, ICompetitionProposalState, CompetitionSuggestion, CompetitionVote } from "@dorgtech/arc.js";
 import { SortService } from "lib/sortService";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { combineLatest, of } from "rxjs";

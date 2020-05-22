@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { Address, IPluginState } from "@daostack/arc.js";
+import { Address, IPluginState } from "@dorgtech/arc.js";
 import { pluginName } from "lib/pluginUtils";
 import { getNetworkName } from "lib/util";
 import * as css from "./PluginInfo.scss";

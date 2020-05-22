@@ -1,4 +1,4 @@
-import { IProposalOutcome, IProposalStage, IProposalState } from "@daostack/arc.js";
+import { IProposalOutcome, IProposalStage, IProposalState } from "@dorgtech/arc.js";
 import * as classNames from "classnames";
 import * as moment from "moment";
 import * as React from "react";

@@ -1,4 +1,4 @@
-import { DAO, IDAOState, AnyPlugin, IPluginState, Plugin } from "@daostack/arc.js";
+import { DAO, IDAOState, AnyPlugin, IPluginState, Plugin } from "@dorgtech/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";

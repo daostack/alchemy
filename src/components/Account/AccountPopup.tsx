@@ -1,4 +1,4 @@
-import { Address, IDAOState, Member, IMemberState } from "@daostack/arc.js";
+import { Address, IDAOState, Member, IMemberState } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getProfile } from "actions/profilesActions";

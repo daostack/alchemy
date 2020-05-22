@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, Member } from "@daostack/arc.js";
+import { IDAOState, IMemberState, Member } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";

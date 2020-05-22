@@ -1,4 +1,4 @@
-import { Address, DAO, IDAOState, IProposalStage, AnyProposal, Plugin, Stake, Vote, Proposals } from "@daostack/arc.js";
+import { Address, DAO, IDAOState, IProposalStage, AnyProposal, Plugin, Stake, Vote, Proposals } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";

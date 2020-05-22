@@ -1,4 +1,4 @@
-import { IDAOState, IContributionRewardProposalState } from "@daostack/arc.js";
+import { IDAOState, IContributionRewardProposalState } from "@dorgtech/arc.js";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";

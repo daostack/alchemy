@@ -1,4 +1,4 @@
-import { IDAOState, Member } from "@daostack/arc.js";
+import { IDAOState, Member } from "@dorgtech/arc.js";
 import { getProfilesForAddresses } from "actions/profilesActions";
 import { getArc } from "arc";
 import CreateProposalPage from "components/Proposal/Create/CreateProposalPage";

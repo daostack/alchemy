@@ -1,4 +1,4 @@
-import { IDAOState, IProposalStage, IProposalState, IPluginState, AnyProposal } from "@daostack/arc.js";
+import { IDAOState, IProposalStage, IProposalState, IPluginState, AnyProposal } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import ProposalCountdown from "components/Shared/ProposalCountdown";

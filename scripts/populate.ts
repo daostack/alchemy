@@ -1,1 +1,1 @@
-import { Arc } from '@daostack/arc.js'
+import { Arc } from '@dorgtech/arc.js'
