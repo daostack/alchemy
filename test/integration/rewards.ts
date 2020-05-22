@@ -27,7 +27,7 @@ describe("Header redemptions button", () => {
 
   it("should redirect us to the redemptions page on mobile devices", async () => {
     await browser.url("http://127.0.0.1:3000");
-    await browser.setWindowRect( 0, 0, 600, 600 );
+    await browser.setWindowSize(600, 600);
     const windowSize = await browser.getWindowSize();
 
     // Skip test if the OS doesn't allow window to be resized

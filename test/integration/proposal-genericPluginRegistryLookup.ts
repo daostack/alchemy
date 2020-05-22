@@ -16,7 +16,6 @@ describe("Proposals Registry Lookup", () => {
 
     const ensTitle = await $("h2=RegistryLookup");
     await ensTitle.waitForExist();
-    await ensTitle.scrollIntoView();
     await ensTitle.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");

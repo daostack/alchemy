@@ -13,17 +13,15 @@ describe("Proposals", () => {
     arc = getArc();
     await arc.fetchContractInfos();
     const ARC_VERSION = "0.1.1-rc.20";
-    const contributionRewardExtContract = arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);
 
     // find the corresponding plugin object
     const contributionRewardExts = await arc
-      .plugins({where: {address: contributionRewardExtContract.address}}).pipe(first()).toPromise();
+      .plugins({where: { name: "ContributionRewardExt" }}).pipe(first()).toPromise();
 
     const contributionRewardExt = contributionRewardExts[0];
     const contributionRewardExtState = await contributionRewardExt.state().pipe(first()).toPromise();
     dao = new DAO(arc, contributionRewardExtState.dao.id);
   });
-
 
   it("Create a Competition Plugin proposal, vote for it, stake on it", async () => {
 
