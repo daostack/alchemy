@@ -16,14 +16,13 @@ type IProps = IExternalProps;
 
 export default class DaoLandingPage extends React.Component<IProps, null> {
 
-  private disqusConfig: any;
+  private disqusConfig = {
+    url: "",
+    identifier: "",
+    title: "",
+  };
 
   public componentDidMount() {
-    this.disqusConfig = {
-      url: process.env.BASE_URL + "/dao/" + this.props.daoState.address + "/discussion",
-      identifier: this.props.daoState.address,
-      title: "Discuss " + this.props.daoState.name,
-    };
 
     Analytics.track("Page View", {
       "Page Name": Page.DAOLanding,
@@ -47,6 +46,10 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
 
   public render() {
     const daoState = this.props.daoState;
+
+    this.disqusConfig.url = `${process.env.BASE_URL}/dao/${this.props.daoState.address}/discussion`;
+    this.disqusConfig.identifier = this.props.daoState.address;
+    this.disqusConfig.title = "Discuss " + this.props.daoState.name;
 
     return (
       <div className={css.landingPage}>

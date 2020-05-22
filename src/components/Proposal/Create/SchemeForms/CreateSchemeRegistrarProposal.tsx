@@ -10,7 +10,7 @@ import { createProposal } from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
 import { isValidUrl } from "lib/util";
-import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSIONS, schemeNameAndAddress, SchemePermissions } from "lib/schemeUtils";
+import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSIONS, schemeNameAndAddress, SchemePermissions, schemeNameFromAddress } from "lib/schemeUtils";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
@@ -19,6 +19,7 @@ import { connect } from "react-redux";
 import * as React from "react";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+import HelpButton from "components/Shared/HelpButton";
 
 
 interface IExternalProps {
@@ -137,12 +138,22 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     } else {
       proposalType = IProposalType.SchemeRegistrarEdit;
     }
+
+    let permissionString;
+    if (schemeNameFromAddress(values.schemeToEdit) === "Plugin Manager") {
+      //The code "disable" by default all schemes permissions.
+      //This "hack" is to make sure editing "Plugin Manager" scheme give it propoper permissions.
+      permissionString = "0x0000001f";
+    } else {
+      permissionString = "0x" + permissions.toString(16).padStart(8, "0");
+    }
+
     const proposalValues = {
       ...values,
       dao: this.props.daoAvatarAddress,
       type: proposalType,
       parametersHash: values.parametersHash,
-      permissions: "0x" + permissions.toString(16).padStart(8, "0"),
+      permissions: permissionString,
       scheme: this.props.scheme.address,
       schemeToRegister: currentTab === "addScheme" ? values.schemeToAdd :
         currentTab === "editScheme" ? values.schemeToEdit :
@@ -151,7 +162,6 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     };
     setSubmitting(false);
     await this.props.createProposal(proposalValues);
-
     Analytics.track("Submit Proposal", {
       "DAO Address": this.props.daoAvatarAddress,
       "Proposal Title": values.title,
@@ -258,6 +268,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                       <p><b>Competition Plugin</b> &mdash; Create competitions with prizes split between any number of winners. Competitions accept submissions from anyone, and Reputation-holders vote to decide the winners.</p>
                       <p><b>ENS Plugins</b> &mdash; A set of plugins that enables the DAO to control Ethereum Name Service addresses via proposals.</p>
                       <p><b>Reputation from Token</b> &mdash; Allow anyone to redeem Reputation using a token of your choice.</p>
+                      <p><b>Stake for Reputation Plugin</b> &mdash; Allow anyone to stake a token of your choice to earn voting power in your DAO.</p>
                       <p><b>Bounties Plugins</b> &mdash; Via proposal, create DAO-administered bounties on Bounties Network.</p>
                       <p><b>Join and Quit Plugins</b> &mdash; Allow anyone to join the DAO via a donation and quit anytime, reclaiming at least part of their original funds (“rage quit”). Coming soon.</p>
                       <p><b>NFT Plugins</b> &mdash; Allow the DAO to hold, send, mint, and sell NFTs (non-fungible tokens). Coming soon.</p>
@@ -363,9 +374,10 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
                     <TrainingTooltip overlay={fnDescription} placement="right">
                       <label htmlFor="descriptionInput">
-                        <div className={css.requiredMarker}>*</div>
-                      Description
-                        <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg" />
+                        <div className={css.proposalDescriptionLabelText}>
+                          <div className={css.requiredMarker}>*</div>
+                          <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                        </div>
                         <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
                     </TrainingTooltip>

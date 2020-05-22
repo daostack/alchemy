@@ -22,6 +22,7 @@ import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+import HelpButton from "components/Shared/HelpButton";
 
 const BN = require("bn.js");
 
@@ -409,9 +410,10 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   />
 
                   <label htmlFor="descriptionInput">
-                    <div className={css.requiredMarker}>*</div>
-                      Description
-                    <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                    <div className={css.proposalDescriptionLabelText}>
+                      <div className={css.requiredMarker}>*</div>
+                      <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                    </div>
                     <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field

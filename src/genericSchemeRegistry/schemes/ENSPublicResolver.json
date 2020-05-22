@@ -39,7 +39,7 @@
           },
           {
             "name": "address",
-            "type": "string"
+            "type": "address"
           }
         ],
         "name": "setAddr",
