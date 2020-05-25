@@ -375,7 +375,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             proposalState={proposalState}
             daoState={daoState}
             handleCancel={this.cancelNewSubmissionModal}
-            handleSubmit={this.submitNewSubmissionModal}></CreateSubmission>
+            handleSubmit={this.submitNewSubmissionModal}
+            currentAccountAddress={this.props.currentAccountAddress}></CreateSubmission>
         </Modal> : ""
       }
 
