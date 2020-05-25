@@ -4,6 +4,7 @@ import BN = require("bn.js");
 import Reputation from "components/Account/Reputation";
 import { baseTokenName, genName, getCRRewards, getGpRewards, formatTokens, tokenDecimals, tokenSymbol } from "lib/util";
 import * as React from "react";
+import * as css from "./RedemptionsString.scss";
 
 interface IProps {
   currentAccountAddress: Address;
@@ -16,7 +17,8 @@ interface IProps {
 export default class RedemptionsString extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
-    const { currentAccountAddress, dao, proposal, rewards, separator } = this.props;
+    const { currentAccountAddress, dao, proposal, rewards } = this.props;
+    let separator = this.props.separator;
 
     const zero = new BN(0);
     const rewardComponents: any = [];
@@ -26,13 +28,16 @@ export default class RedemptionsString extends React.Component<IProps, null> {
     const gpRewards = getGpRewards(rewards);
 
     if (gpRewards) {
-      if (gpRewards.reputationForProposer) {
+      if (gpRewards.reputationForProposer && gpRewards.reputationForProposer.gt(zero)) {
         reputation = reputation.add(gpRewards.reputationForProposer);
-      } else if (gpRewards.reputationForVoter) {
+      }
+      if (gpRewards.reputationForVoter && gpRewards.reputationForVoter.gt(zero)) {
         reputation = reputation.add(gpRewards.reputationForVoter);
-      } else if (gpRewards.tokensForStaker) {
+      }
+      if (gpRewards.tokensForStaker && gpRewards.tokensForStaker.gt(zero)) {
         gen = gen.add(gpRewards.tokensForStaker);
-      } else if (gpRewards.daoBountyForStaker) {
+      }
+      if (gpRewards.daoBountyForStaker && gpRewards.daoBountyForStaker.gt(zero)) {
         gen = gen.add(gpRewards.daoBountyForStaker);
       }
     }
@@ -41,17 +46,17 @@ export default class RedemptionsString extends React.Component<IProps, null> {
 
     if (contributionReward && currentAccountAddress === contributionReward.beneficiary) {
       const rewards = getCRRewards(proposal);
-      if (rewards.ethReward) {
+      if (rewards.ethReward && rewards.ethReward.gt(zero)) {
         rewardComponents.push(formatTokens(rewards.ethReward, baseTokenName()));
       }
-      if (rewards.externalTokenReward) {
+      if (rewards.externalTokenReward && rewards.externalTokenReward.gt(zero)) {
         rewardComponents.push(formatTokens(rewards.externalTokenReward, tokenSymbol(contributionReward.externalToken), tokenDecimals(contributionReward.externalToken)));
       }
-      if (rewards.nativeTokenReward) {
+      if (rewards.nativeTokenReward && rewards.nativeTokenReward.gt(zero)) {
         rewardComponents.push(formatTokens(rewards.nativeTokenReward, dao.tokenSymbol));
       }
-      if (rewards.reputationReward) {
-        reputation.add(rewards.reputationReward);
+      if (rewards.rep && rewards.rep.gt(zero)) {
+        reputation = reputation.add(rewards.rep);
       }
     }
 
@@ -64,16 +69,18 @@ export default class RedemptionsString extends React.Component<IProps, null> {
         <Reputation reputation={reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} />);
     }
 
-    const redemptionsStyle = {
-      position: "relative" as "relative",
-      display: "inline-block",
-      color: "rgba(49, 120, 202, 1.000)",
-    };
+    separator = separator || "+";
 
-    return <span style={redemptionsStyle}>
-      {rewardComponents.reduce((acc: any, v: any) => {
-        return acc === null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "+"}</em> {v}</React.Fragment>;
-      }, null)}
-    </span>;
+    return <div className={css.container}>
+      {rewardComponents.map((component: any, index: number) => {
+        return (
+          <div className={css.reward} key={index}>
+            {index ? <span className={css.separator}>{separator}</span> : ""}
+            {component}
+          </div>
+        );
+      })
+      }
+    </div>;
   }
 }

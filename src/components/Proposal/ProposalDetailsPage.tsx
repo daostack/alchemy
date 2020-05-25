@@ -29,8 +29,7 @@ import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
 import VotersModal from "./Voting/VotersModal";
 import * as css from "./ProposalDetails.scss";
-
-const ReactMarkdown = require("react-markdown");
+import ProposalDescription from "components/Shared/ProposalDescription";
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
@@ -79,10 +78,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       "Scheme Name": this.props.proposal.scheme.name,
     });
 
-    this.disqusConfig.title = this.props.proposal.title;
-    this.disqusConfig.url = process.env.BASE_URL + this.props.location.pathname;
-    this.disqusConfig.identifier = this.props.proposalId;
-
     // TODO: the next line, is a hotfix for a  which filters the votes, should not be necessary,
     // bc these should be filter in the `proposals.votes({where: {voter...}} query above)`
     // https://daostack.tpondemand.com/RestUI/Board.aspx#page=board/5209716961861964288&appConfig=eyJhY2lkIjoiQjgzMTMzNDczNzlCMUI5QUE0RUE1NUVEOUQyQzdFNkIifQ==&boardPopup=bug/1766
@@ -113,54 +108,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     this.setState({ showVotersModal: false });
   }
 
-  private parseYouTubeVideoIdFromUri = (url: string): string => {
-    const match = url.match(/(\/|%3D|v=)([0-9A-z-_]{11})([%#?&]|$)/);
-    if (match) {
-      if (match.length >= 3) {
-        return match[2];
-      } else {
-        // eslint-disable-next-line no-console
-        console.error("The outube url is not valid.");
-      }
-    }
-    return null;
-  }
-
-  private getVimeoIdFromUrl = (url: string): string => {
-    const match = url.match(/^.*(?:vimeo.com)\/(?:channels\/|channels\/\w+\/|groups\/[^/]*\/videos\/|album\/\d+\/video\/|video\/|)(\d+)(?:$|\/|\?)/);
-    if (match) {
-      if (match.length >= 2) {
-        return match[1];
-      } else {
-      // eslint-disable-next-line no-console
-        console.error("The vimeo url is not valid.");
-      }
-    }
-    return null;
-  }
-
-  private renderDescription = (props: { href: string; children: React.ReactNode }) => {
-    if (props.href) {
-      const url = new URL(props.href);
-      const videoId = this.parseYouTubeVideoIdFromUri(props.href);
-      if (videoId) {
-        const start = url.searchParams.get("t") || "0";
-
-        return <iframe className={css.embeddedVideo} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen
-          src={`${url.protocol}//www.youtube-nocookie.com/embed/${videoId}?start=${start}`}>
-        </iframe>;
-      } else {
-        const videoId = this.getVimeoIdFromUrl(props.href);
-        if (videoId) {
-          return <iframe className={css.embeddedVideo} frameBorder="0" allow="autoplay; fullscreen" allowFullScreen
-            src={`${url.protocol}//player.vimeo.com/video/${videoId}`}>
-          </iframe>;
-        }
-      }
-    }
-    return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
-  }
-
   public render(): RenderOutput {
     const {
       beneficiaryProfile,
@@ -180,6 +127,10 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     const tags = proposal.tags;
 
     const url = ensureHttps(proposal.url);
+
+    this.disqusConfig.title = this.props.proposal.title;
+    this.disqusConfig.url = process.env.BASE_URL + this.props.location.pathname;
+    this.disqusConfig.identifier = this.props.proposalId;
 
     return (
       <div className={css.wrapper}>
@@ -238,7 +189,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.description}>
-              <ReactMarkdown source={proposal.description} renderers={{ link: this.renderDescription}} />
+              <ProposalDescription description={proposal.description} />
             </div>
 
             {url ?

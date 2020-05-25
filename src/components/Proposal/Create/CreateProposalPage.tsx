@@ -1,4 +1,4 @@
-import { ISchemeState } from "@daostack/arc.js";
+import { ISchemeState, Address } from "@daostack/arc.js";
 import { getArc } from "arc";
 import CreateKnownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateKnownGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "components/Proposal/Create/SchemeForms/CreateSchemeRegistrarProposal";
@@ -22,6 +22,7 @@ import * as css from "./CreateProposal.scss";
 type IExternalProps = RouteComponentProps<any>;
 
 interface IExternalStateProps {
+  currentAccountAddress: Address;
   daoAvatarAddress: string;
   history: History;
   schemeId: string;
@@ -36,6 +37,7 @@ type IProps = IExternalProps & IExternalStateProps & ISubscriptionProps<ISchemeS
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
   return {
     ...ownProps,
+    currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
     schemeId: ownProps.match.params.schemeId,
   };
@@ -93,11 +95,12 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
   }
 
   public render(): RenderOutput {
-    const { daoAvatarAddress } = this.props;
+    const { daoAvatarAddress, currentAccountAddress } = this.props;
     const scheme = this.props.data;
 
     let createSchemeComponent = <div />;
     const props = {
+      currentAccountAddress,
       daoAvatarAddress,
       handleClose: this.doClose,
       scheme,
@@ -107,7 +110,7 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     if (this.state.createCrxProposalComponent) {
       createSchemeComponent = <this.state.createCrxProposalComponent {...props} />;
     } else if (scheme.name === "ContributionReward") {
-      createSchemeComponent = <CreateContributionRewardProposal {...props} />;
+      createSchemeComponent = <CreateContributionRewardProposal {...props}/>;
     } else if (scheme.name === "SchemeRegistrar") {
       createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
     } else if (scheme.name === "GenericScheme") {

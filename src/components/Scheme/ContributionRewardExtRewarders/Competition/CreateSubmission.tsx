@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState } from "@daostack/arc.js";
+import { IDAOState, IProposalState, Address } from "@daostack/arc.js";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { isValidUrl } from "lib/util";
 import * as React from "react";
@@ -20,8 +20,10 @@ interface IDispatchProps {
 const mapDispatchToProps = {
   showNotification,
 };
+import HelpButton from "components/Shared/HelpButton";
 
 interface IExternalProps {
+  currentAccountAddress: Address;
   daoState: IDAOState;
   proposalState: IProposalState;
   handleCancel: () => any;
@@ -86,7 +88,7 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
     return (
       <div className={css.createSubmissionForm}>
         <h2 className={css.header}>
-          <div className={css.content}>+ New Submission<div className={css.proposalTitle}>{proposalState.title ? <span> | {proposalState.title}</span> : "" }</div></div>
+          <div className={css.content}>+ New Submission <div className={css.proposalTitle}>{proposalState.title ? <span> | {proposalState.title}</span> : "" }</div></div>
         </h2>
 
         <Formik
@@ -152,8 +154,10 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
 
               <TrainingTooltip overlay={this.fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
-                  <div className={css.requiredMarker}>*</div>
-                Description
+                  <div className={css.proposalDescriptionLabelText}>
+                    <div className={css.requiredMarker}>*</div>
+                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                  </div>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>
@@ -204,6 +208,7 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
                   onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                   onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
                   defaultValue={this.initialFormValues.beneficiary}
+                  placeholder={this.props.currentAccountAddress}
                 />
               </div>
 

@@ -590,6 +590,7 @@ a.blueButton {
     }
 
     .proposalTitle {
+      overflow-y: hidden;
       position: relative;
       top: 3px;
       display: inline-block;
@@ -599,11 +600,21 @@ a.blueButton {
       overflow-x: hidden;
       text-overflow: ellipsis;
       max-width: 318px;
+      padding-left: 4px;
     }
   }
 
   form {
     padding: 20px 30px 30px 30px;
+
+    .proposalDescriptionLabelText {
+      display: flex;
+      padding-bottom: 4px;
+
+      .body {
+        margin-right: 6px;
+      }
+    }
 
     input {
       margin-top: 3px;
