@@ -41,7 +41,6 @@ class PluginInfo extends React.Component<IProps, null> {
   private handleEditPlugin = async (e: any) => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    // TODO @jordan use the plugin manager, instead of the registrar
     this.props.history.push(`/dao/${this.props.daoState.id}/plugin/${this.props.pluginManager.id}/proposals/create/?currentTab=editPlugin`);
     e.preventDefault();
   }

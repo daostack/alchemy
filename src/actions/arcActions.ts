@@ -112,7 +112,7 @@ export function executeProposal(avatarAddress: string, proposalId: string, accou
       return await proposalObj.execute().subscribe(...observer);
     };
 
-    await tryRedeemProposal(proposalId, accountAddress, observer);
+    return tryRedeemProposal(proposalId, accountAddress, observer);
   };
 }
 
@@ -182,7 +182,7 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
 export function redeemProposal(proposalId: string, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const observer = operationNotifierObserver(dispatch, "Reward");
-    await tryRedeemProposal(proposalId, accountAddress, observer);
+    return tryRedeemProposal(proposalId, accountAddress, observer);
   };
 }
 
