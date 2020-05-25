@@ -1,0 +1,11 @@
+.container {
+  display: inline-block;
+  color: rgba(49, 120, 202, 1);
+
+  .reward {
+    display: inline-block;
+    .separator {
+      font-weight: 600;
+    }
+  }
+}
