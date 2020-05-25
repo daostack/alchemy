@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState } from "@daostack/arc.js";
+import { IDAOState, IProposalState, Address } from "@daostack/arc.js";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { isValidUrl } from "lib/util";
 import * as React from "react";
@@ -12,6 +12,7 @@ import * as css from "./Competitions.scss";
 import HelpButton from "components/Shared/HelpButton";
 
 interface IExternalProps {
+  currentAccountAddress: Address;
   daoState: IDAOState;
   proposalState: IProposalState;
   handleCancel: () => any;
@@ -184,6 +185,7 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
                   onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                   onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
                   defaultValue={undefined}
+                  placeholder={this.props.currentAccountAddress}
                 />
               </div>
 
