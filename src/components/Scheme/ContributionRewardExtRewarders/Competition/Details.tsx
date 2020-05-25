@@ -29,8 +29,7 @@ import SubmissionDetails from "./SubmissionDetails";
 import StatusBlob from "./StatusBlob";
 import * as css from "./Competitions.scss";
 import * as CompetitionActions from "./utils";
-
-const ReactMarkdown = require("react-markdown");
+import ProposalDescription from "components/Shared/ProposalDescription";
 
 type ISubscriptionState = [Array<ICompetitionSuggestionState>, Set<string>];
 
@@ -309,11 +308,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             </div> : "" }
 
             <div className={classNames({[css.description]: true, [css.hasSubmissions]: hasSubmissions })}>
-              <ReactMarkdown source={proposalState.description}
-                renderers={{link: (props: { href: string; children: React.ReactNode }) => {
-                  return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
-                }}}
-              />
+              <ProposalDescription description={proposalState.description} />
             </div>
           </div>
           <div className={css.rightSection}>
