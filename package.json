@@ -118,7 +118,7 @@
     "react-dom": "^16.7.0",
     "react-ga": "^2.6.0",
     "react-helmet": "^5.2.1",
-    "react-infinite-scroll-component": "^4.5.2",
+    "react-infinite-scroll-component": "^5.0.4",
     "react-linkify": "^0.2.2",
     "react-markdown": "^4.0.8",
     "react-mde": "^8.1.0",
