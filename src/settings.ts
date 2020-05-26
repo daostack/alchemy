@@ -185,6 +185,8 @@ export const settings = {
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("rinkeby"),
+    // graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.http_signal,
+    // graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || SubgraphEndpoints.ws_signal,
   },
   kovan: {
     graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.http_kovan,

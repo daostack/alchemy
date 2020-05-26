@@ -8,5 +8,7 @@
   "http_xdai": "https://api.thegraph.com/subgraphs-daostack/name/daostack/v39_4_xdai",
   "ws_xdai": "wss://api.thegraph.com/subgraphs-daostack/name/daostack/v39_4_xdai",
   "http_ganache": "http://127.0.0.1:8000/subgraphs/name/daostack",
-  "ws_ganache": "ws://127.0.0.1:8001/subgraphs/name/daostack"
+  "ws_ganache": "ws://127.0.0.1:8001/subgraphs/name/daostack",
+  "http_signal": "https://api.thegraph.com/subgraphs/name/apeunit/daostack-alchemy-signalscheme",
+  "ws_signal": "wss://api.thegraph.com/subgraphs/name/apeunit/daostack-alchemy-signalscheme"
 }
