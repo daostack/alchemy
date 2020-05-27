@@ -4,7 +4,7 @@ import { IDAOState, Scheme, Token } from "@daostack/arc.js";
 import { getArc } from "arc";
 import { first } from "rxjs/operators";
 
-import { formatTokens, supportedTokens, fromWei, baseTokenName, ethErrorHandler, genName  } from "lib/util";
+import { formatTokens, supportedTokens, fromWei, baseTokenName, ethErrorHandler, genName } from "lib/util";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import AccountImage from "components/Account/AccountImage";
 import ModalPopup from "components/Shared/ModalPopup";
@@ -12,11 +12,11 @@ import ModalPopup from "components/Shared/ModalPopup";
 import BN = require("bn.js");
 import * as css from "./DaoHeader.scss";
 
-const styles = { 
+const styles = {
   circularSquare: {
     borderRadius: "50%",
     borderColor: "white",
-    borderStyle: "solid",  
+    borderStyle: "solid",
   },
 };
 
@@ -54,14 +54,14 @@ const DAOHeaderBackground = (props: { backgroundImage: string }) => (
 );
 
 class DaoHeaderComponent extends React.Component<IProps, IStateProps> {
-  
+
   constructor(props: IProps){
     super(props);
     this.state = {
       showingEditPagePopup: false,
     };
   }
-  
+
   private showLandingPageContent = () => {
     this.setState({ showingEditPagePopup: true });
   }
@@ -103,71 +103,71 @@ class DaoHeaderComponent extends React.Component<IProps, IStateProps> {
 
     return (
       <>
-      { signal && backgroundImage && <DAOHeaderBackground backgroundImage={backgroundImage} /> }
-      <div className={css.headerWrap}>
-        <div className={css.daoImg}>
-          {/* Logo will go here instead of AccountImage this is just a placeholder */}
-          <AccountImage
-            accountAddress={address}
-            width={106}
-            style={styles.circularSquare}
-          />
-        </div>
-        <div className={css.daoInfo}>
-          <b className={css.daoName}>
-            { signal.name ? signal.name : name }
-          </b>
-          <b className={css.reputationHolders}>
-            { data.reputationHolders } Reputation Holders
-          </b>
-        </div>
-
-        <div className={css.holdings}>
-          <span>Holdings</span>
-          <ul className={css.holdingsList}>
-            <li className={css.holdingsAmount}>
-              <span>{ REP } REP</span>
-            </li>    
-            <SubscribedEthBalance dao={daoState} />
-            <SupportedTokens />
-          </ul>
-        </div>
-
-        <div className={css.daoHeadingGroup}>
-          <div className="header">
-            This is the { name } Header
+        { signal && backgroundImage && <DAOHeaderBackground backgroundImage={backgroundImage} /> }
+        <div className={css.headerWrap}>
+          <div className={css.daoImg}>
+            {/* Logo will go here instead of AccountImage this is just a placeholder */}
+            <AccountImage
+              accountAddress={address}
+              width={106}
+              style={styles.circularSquare}
+            />
           </div>
-          <p className={css.daoDescription}>
-            { data.description }
-          </p>
-          <p className={css.daoDescription}>
-            Visit the <Link to={`/dao/${daoState.id}/schemes/`}>Proposals page</Link> to make a proposal to the DAO or vote on existing proposals.
-          </p>
-          <div className={css.editButton}>
-            <button onClick={this.showLandingPageContent}>Edit Home Page</button>
+          <div className={css.daoInfo}>
+            <b className={css.daoName}>
+              { signal.name ? signal.name : name }
+            </b>
+            <b className={css.reputationHolders}>
+              { data.reputationHolders } Reputation Holders
+            </b>
+          </div>
+
+          <div className={css.holdings}>
+            <span>Holdings</span>
+            <ul className={css.holdingsList}>
+              <li className={css.holdingsAmount}>
+                <span>{ REP } REP</span>
+              </li>
+              <SubscribedEthBalance dao={daoState} />
+              <SupportedTokens />
+            </ul>
+          </div>
+
+          <div className={css.daoHeadingGroup}>
+            <div className="header">
+              This is the { name } Header
+            </div>
+            <p className={css.daoDescription}>
+              { data.description }
+            </p>
+            <p className={css.daoDescription}>
+              Visit the <Link to={`/dao/${daoState.id}/schemes/`}>Proposals page</Link> to make a proposal to the DAO or vote on existing proposals.
+            </p>
+            <div className={css.editButton}>
+              <button onClick={this.showLandingPageContent}>Edit Home Page</button>
+            </div>
           </div>
         </div>
-      </div>
-      { this.state.showingEditPagePopup ?
-        <ModalPopup
-          closeHandler={this.hideLandingPageContent}
-          width="60%"
-          header={
-            <div className={css.modalHeader}>
-              <div className={css.title}>Edit Home Page</div>
-              <div className={css.closeButton} onClick={this.hideLandingPageContent}><img src={" /assets/images/Icon/close-grey.svg"} />
+        { this.state.showingEditPagePopup ?
+          <ModalPopup
+            closeHandler={this.hideLandingPageContent}
+            width="60%"
+            header={
+              <div className={css.modalHeader}>
+                <div className={css.title}>Edit Home Page</div>
+                <div className={css.closeButton} onClick={this.hideLandingPageContent}><img src={" /assets/images/Icon/close-grey.svg"} />
+                </div>
               </div>
-            </div>
-          }
-          body={
-            <div className={css.modalBody}>
-              <div>Editing the content on this DAO’s home page will soon be possible via proposal. Stay tuned!</div>
-              <div>For now, if you need a change made to a DAO’s home page content, please contact us at <a href="https://support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a></div>
-            </div>
-          }
-        />
-        : ""
-      }
+            }
+            body={
+              <div className={css.modalBody}>
+                <div>Editing the content on this DAO’s home page will soon be possible via proposal. Stay tuned!</div>
+                <div>For now, if you need a change made to a DAO’s home page content, please contact us at <a href="https://support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a></div>
+              </div>
+            }
+          />
+          : ""
+        }
       </>
     );
   }
