@@ -7,11 +7,14 @@
     - allow "Recipient address" in proposal form to be empty (and be populated with proposer address)
     - enable Redemptions dropdown menu to automatically update with blockchain changes
     - show Redemptions tooltip on Redeem button when the button is disabled
+    - add new ENSPublicResolver GenericScheme target contract
+    - page the fetching of preboosted proposals at 100 per page
     
   - Bugs Fixed
     - fix erroneous reputation and GEN redemption sums in Redemption dropdown menu cards
     - enable voter 3Box profiles to always all show in proposal Voters popup
     - fix GEN label position in staking popup
+    - fix proposal status countdown when the number of days exceeds 30
 
 ## 0.10.8
   - Features Added
