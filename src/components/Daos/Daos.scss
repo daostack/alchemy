@@ -190,14 +190,11 @@
 @media only screen and (max-width: 710px) {
   .wrapper {
     .topRow {
-      flex-wrap: wrap;
-
       .searchBox {
-        margin-bottom: 10px;
-      }
-
-      .createDaoButton {
-        margin-bottom: 20px;
+        padding-right: 16px;
+        input {
+          width: 100%;
+        }
       }
     }
   }
