@@ -1,3 +1,18 @@
+## 0.10.9
+  - Features Added
+    - extend Scheme URL Params => Proposal Templates to Competition proposal & competition submission
+    - top three boosted proposals shown on plugin cards are now sorted by when they were boosted, descending
+    - custom DAO landing page data for the SOS Hackathon
+    - enable Competition proposals and Competition Submissions to have embedded videos in their description
+    - allow "Recipient address" in proposal form to be empty (and be populated with proposer address)
+    - enable Redemptions dropdown menu to automatically update with blockchain changes
+    - show Redemptions tooltip on Redeem button when the button is disabled
+    
+  - Bugs Fixed
+    - fix erroneous reputation and GEN redemption sums in Redemption dropdown menu cards
+    - enable voter 3Box profiles to always all show in proposal Voters popup
+    - fix GEN label position in staking popup
+
 ## 0.10.8
   - Features Added
     -- nicer formatting of embedded videos in proposal descriptions
