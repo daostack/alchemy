@@ -10,6 +10,23 @@ import { ThunkAction } from "redux-thunk";
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
+// Signal Scheme actions
+export function saveSignalDescription(signalDescription: any): ThunkAction<any, IRootState, null> {
+  return async (_getState: () => IRootState) => {
+    const arc = getArc();
+    let ipfsDataToSave: object = {};
+    if (signalDescription.key && signalDescription.value !== undefined) {
+      if (!arc.ipfsProvider) {
+        throw Error("No ipfsProvider set on Arc instance - cannot save data on IPFS");
+      }
+      ipfsDataToSave = {
+        key: signalDescription.key,
+        value: signalDescription.value,
+      };
+    }
+    return await arc.ipfs.addAndPinString(Buffer.from(JSON.stringify(ipfsDataToSave)));
+  };
+}
 /** use like this (unfortunately you need the @ts-ignore)
  * // @ts-ignore
  * transaction.send().observer(...operationNotifierObserver(dispatch, "Whatever"))

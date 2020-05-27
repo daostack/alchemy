@@ -13,7 +13,7 @@ const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
 const registryLookupInfo = require("./schemes/RegistryLookup.json");
 const co2kenInfo = require("./schemes/CO2ken.json");
 const dXTokenRegistry = require("./schemes/dXTokenRegistry.json");
-const signals = require("./schemes/dxTokenRegistry.json");
+const signals = require("./schemes/Signals.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,

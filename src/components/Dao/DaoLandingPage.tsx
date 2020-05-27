@@ -62,7 +62,6 @@ class DaoLandingPage extends React.Component<IProps, IStateProps> {
   // }
 
   public render() {
-    console.log('this.props', this.props)
     const daoState = this.props.daoState;
 
     this.disqusConfig.url = `${process.env.BASE_URL}/dao/${this.props.daoState.address}/discussion`;

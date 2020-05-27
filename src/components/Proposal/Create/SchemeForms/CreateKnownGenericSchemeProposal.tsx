@@ -40,11 +40,13 @@ const mapStateToProps = (state: IRootState, ownProps: IStateProps) => {
 interface IDispatchProps {
   createProposal: typeof arcActions.createProposal;
   showNotification: typeof showNotification;
+  saveSignalData: typeof arcActions.saveSignalDescription;
 }
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
   showNotification,
+  saveSignalData: arcActions.saveSignalDescription
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -97,7 +99,6 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
 
   private handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
-
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const currentAction = this.state.currentAction;
@@ -112,6 +113,20 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     let callData = "";
     try {
       callData = this.props.genericSchemeInfo.encodeABI(currentAction, callValues);
+      if(values.key) {
+        const ipfsValue = {
+          key: values.key,
+          value: "",
+        };
+        if(currentAction.id !== "deleteSignalType") {
+          ipfsValue.value = values.value;
+          currentAction.abi.inputs.pop();
+        }
+        const ipfsData = await this.props.saveSignalData(ipfsValue);
+        callData = this.props.genericSchemeInfo.encodeABI(currentAction, [ipfsData]);
+      } else {
+        callData = this.props.genericSchemeInfo.encodeABI(currentAction, callValues);
+      }
     } catch (err) {
       showNotification(NotificationStatus.Failure, err.message);
       setSubmitting(false);
@@ -286,7 +301,6 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
     const actions = this.state.actions;
     const currentAction = this.state.currentAction;
-
     return (
       <div className={css.containerWithSidebar}>
         <div className={css.sidebar}>
