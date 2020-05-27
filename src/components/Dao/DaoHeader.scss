@@ -1,0 +1,154 @@
+.daoHeaderBackground {
+  width: 100vw;
+  position: fixed;
+  display: flex;
+  height: 30%;
+  top:0;
+  right: 0;
+  z-index: 9999999;
+}
+
+.headerWrap {
+  background: white;
+  // margin: 8rem 2.5% 0 0;
+  margin: 0 2.5% 0 0;
+  padding: 25px;
+  padding-top: 94px;
+  position: relative;
+  border-radius: 20px 20px 0 0;
+  z-index: 9999999999;
+}
+
+.reputationHolders {
+  display: block;
+  position: absolute;
+  font-size: 10px;
+  font-weight: normal;
+  color: $gray-1;
+  white-space: nowrap;
+}
+
+.daoName {
+  font-size: 24px;
+  color: #689bd6;
+}
+
+.daoInfo {
+  margin-left: 100px;
+  top: 15px;
+  position: absolute;
+}
+
+.daoDescription {
+  font-family: $body-font;
+  color: $black;
+  font-weight: 500;
+  font-size: 13px;
+  width: 75%;
+}
+
+.circularSquare {
+  border-radius: 50%;
+  border-color: white;
+  border-style: solid
+}
+
+.daoImg {
+  top: -40px !important;
+  left: 5px !important;
+  position: absolute;
+}
+
+.daoHeadingGroup {
+  .header {
+    margin: unset;
+  }
+  p {
+    margin-top: unset;
+  }
+}
+
+
+.holdings {
+  padding: 15px;
+  border: 1px solid #dbd7d7;
+  border-radius: 7px;
+  float: right;
+  position: relative;
+  top: -75px;
+}
+
+.holdings .holdingsAmount {
+  margin-top: 5px;
+  color: #565a5d;
+  font-size: 12px
+}
+
+.holdings .holdingsAmount .holdingsName {
+  float: right;
+  margin-left: 25px;
+}  
+
+.holdingsNumber {
+  margin-right: 10px;
+}
+
+.holdingsList {
+  list-style: none;
+  padding-inline-start: 0px;
+}  
+
+.modalHeader {
+  display: flex;
+
+  .title {
+    flex-grow: 2;
+  }
+
+  .closeButton {
+    img {
+      position: relative;
+      width: 13px;
+      height: 13px;
+    }
+  }
+}
+
+.modalBody {
+  div {
+    margin-bottom: 1rem;
+  }
+}
+
+div.editButton {
+  padding-right: 8px;
+  button {
+    height: 30px;
+    border-radius: 30px;
+    border-width: 1px;
+    background-color: #0071ff;
+    padding: 0 15px;
+    border-color: #0376ff;
+    color: white;
+    font-weight: bold;
+    font-size: 11px;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    white-space: nowrap;
+  }
+}
+
+@media only screen and (max-width: 650px) { 
+  .daoImg {
+    top: -75px;
+    left: 75px;
+    position: absolute;
+  }
+}
+
+@media only screen and (max-width: 768px) {  
+  .holdings {
+    top: unset;
+  }
+}

@@ -6,19 +6,30 @@ import Analytics from "lib/analytics";
 import { Link } from "react-router-dom";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { DiscussionEmbed } from "disqus-react";
-import ModalPopup from "components/Shared/ModalPopup";
+import gql from "graphql-tag";
+import { combineLatest } from "rxjs";
+import { getArc } from "arc";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import Loading from "components/Shared/Loading";
+import DaoHeader from "./DaoHeader";
 
 type IExternalProps = {
   daoState: IDAOState;
+  signal?: ISignal | any;
 };
 
 interface IStateProps {
   showingEditPagePopup: boolean;
 }
 
-type IProps = IExternalProps;
+interface ISignal {
+  id: string;
+  data: any | string;
+}
 
-export default class DaoLandingPage extends React.Component<IProps, IStateProps> {
+type IProps = IExternalProps & ISubscriptionProps<any & ISignal[]>;
+
+class DaoLandingPage extends React.Component<IProps, IStateProps> {
 
   private disqusConfig = {
     url: "",
@@ -42,15 +53,16 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
     });
   }
 
-  private showLandingPageContent = () => {
-    this.setState({ showingEditPagePopup: true });
-  }
-
-  private hideLandingPageContent = () => {
-    this.setState({ showingEditPagePopup: false });
-  }
+  // private showLandingPageContent = () => {
+  //   this.setState({ showingEditPagePopup: true });
+  // }
+  // 
+  // private hideLandingPageContent = () => {
+  //   this.setState({ showingEditPagePopup: false });
+  // }
 
   public render() {
+    console.log('this.props', this.props)
     const daoState = this.props.daoState;
 
     this.disqusConfig.url = `${process.env.BASE_URL}/dao/${this.props.daoState.address}/discussion`;
@@ -61,17 +73,8 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
       <div className={css.landingPage}>
 
         <BreadcrumbsItem to={"/dao/" + daoState.address}>{daoState.name}</BreadcrumbsItem>
-
+        <DaoHeader {...this.props} signal={{}} />        
         <div className={css.infoContainer}>
-          <div className={css.titleContainer}>
-            <div className={css.row}>
-              <div className={css.headerText}>{daoState.name}</div>
-              <div className={css.editButton}>
-                <button onClick={this.showLandingPageContent}>Edit Home Page</button>
-              </div>
-            </div>
-          </div>
-
           { (daoState.address === "0xfaf05fedf06cac499b899d6a2052f23ae239b29d") ? // SoS Collective on xDAI
             <>
               <div className={css.welcome}>Welcome to the {daoState.name} digital co-op.</div>
@@ -84,10 +87,16 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
             </>
             :
             <>
-              <div className={css.welcome}>Welcome to {daoState.name}, a decentralized organization built on DAOstack.</div>
-
-              <div className={css.visitProposals}>Visit the <Link to={`/dao/${daoState.id}/schemes/`}>Proposals page</Link> to
-                make a proposal to the DAO or vote on existing proposals.</div>
+              {/* 
+                This was requested to be moved to DaoHeaderComponent above.
+                <div className={css.welcome}>
+                  Welcome to {daoState.name}, a decentralized organization built on DAOstack.
+                </div>
+                <div className={css.visitProposals}>
+                  Visit the <Link to={`/dao/${daoState.id}/schemes/`}>Proposals page</Link> to
+                  make a proposal to the DAO or vote on existing proposals.
+                </div>
+              */}
             </>
           }
 
@@ -96,28 +105,44 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
           <div className={css.headerText}>Discuss {daoState.name}</div>
           <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
         </div>
-
-        { this.state.showingEditPagePopup ?
-          <ModalPopup
-            closeHandler={this.hideLandingPageContent}
-            width="60%"
-            header={
-              <div className={css.modalHeader}>
-                <div className={css.title}>Edit Home Page</div>
-                <div className={css.closeButton} onClick={this.hideLandingPageContent}><img src={" /assets/images/Icon/close-grey.svg"} />
-                </div>
-              </div>
-            }
-            body={
-              <div className={css.modalBody}>
-                <div>Editing the content on this DAO’s home page will soon be possible via proposal. Stay tuned!</div>
-                <div>For now, if you need a change made to a DAO’s home page content, please contact us at <a href="https://support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a></div>
-              </div>
-            }
-          />
-          : ""
-        }
       </div>
     );
   }
 }
+
+const SubscribedDaoLandingPage = withSubscription({
+  wrappedComponent: DaoLandingPage,
+  loadingComponent: <Loading/>,
+  errorComponent: (props) => <span>{props.error.message}</span>,
+  checkForUpdate: [],
+  createObservable: (props: IExternalProps) => {
+    const arc = getArc();
+    const dao = props.daoState.dao;
+    const schemes = dao.schemes({});
+    // Once Backend is fixed will uncomment this back.
+    const DAOAddress = dao.id;
+    // const signalQuery = gql`
+    // {
+    //   signals(where: { id: "${DAOAddress}" } ) {
+    //     id
+    //     data
+    //   }
+    // }
+    // `;
+    // const signalSchemeData = arc.getObservable(signalQuery);
+    const signalQuery = gql`
+      { 
+        avatarContracts(where: { id: "${DAOAddress}"}) {
+          id
+          address
+          name
+          nativeToken
+        }
+      }
+    `
+    const signalSchemeData = arc.getObservable(signalQuery);
+    return combineLatest(schemes, signalSchemeData);
+  },
+});
+
+export default SubscribedDaoLandingPage;
