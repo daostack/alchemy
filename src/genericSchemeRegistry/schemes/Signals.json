@@ -19,6 +19,8 @@
       "notes": "docs/link",
       "fields": [
         {
+          "type": "options",
+          "options": ["HeaderImage", "Icon", "Name", "Headline", "Description"],
           "name": "key",
           "label": "Attribute to add",
           "placeholder": "Attribute type to add e.g. Header, Icon"
@@ -58,6 +60,8 @@
       "notes": "docs/link",
       "fields": [
         {
+          "type": "options",
+          "options": ["HeaderImage", "Icon", "Name", "Headline", "Description"],  
           "name": "key",
           "label": "Attribute to update",
           "placeholder": "Attribute type to add e.g. Header, Icon"
@@ -97,6 +101,8 @@
       "notes": "docs/link",
       "fields": [
         {
+          "type": "options",
+          "options": ["HeaderImage", "Icon", "Name", "Headline", "Description"],
           "name": "key",
           "label": "Attribute to delete",
           "placeholder": "Attribute type to add e.g. Header, Icon"

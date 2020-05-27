@@ -24,6 +24,8 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 
+const Select = React.lazy(() => import("react-select"));
+
 const BN = require("bn.js");
 
 interface IStateProps {
@@ -46,7 +48,7 @@ interface IDispatchProps {
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
   showNotification,
-  saveSignalData: arcActions.saveSignalDescription
+  saveSignalData: arcActions.saveSignalDescription,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -63,6 +65,35 @@ interface IState {
   currentAction: Action;
   tags: Array<string>;
 }
+
+const customStyles = {
+  indicatorSeparator: () => ({
+    display: "none",
+  }),
+  menu: (provided: any) => ({
+    ... provided,
+    borderTop: "none",
+    borderRadius: "0 0 5px 5px",
+    marginTop: 1,
+    backgroundColor: "rgba(255,255,255,1)",
+  }),
+};
+
+export const SelectField: React.SFC<any> = ({options, field, form }) => (
+  <React.Suspense fallback={<div>Loading...</div>}>
+    <Select
+      options={options}
+      name={field.name}
+      value={options ? options.find((option: any) => option.value === field.value) : ""}
+      maxMenuHeight={100}
+      onChange={(option: any) => form.setFieldValue(field.name, option.value)}
+      onBlur={field.onBlur}
+      className="react-select-container"
+      classNamePrefix="react-select"
+      styles={customStyles}
+    />
+  </React.Suspense>
+);
 
 class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
@@ -113,13 +144,14 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     let callData = "";
     try {
       callData = this.props.genericSchemeInfo.encodeABI(currentAction, callValues);
-      if(values.key) {
+      if (values.key) {
         const ipfsValue = {
           key: values.key,
           value: "",
         };
-        if(currentAction.id !== "deleteSignalType") {
+        if (currentAction.id !== "deleteSignalType") {
           ipfsValue.value = values.value;
+          // No idea why shubhendu added the below line. i think we can remove it
           currentAction.abi.inputs.pop();
         }
         const ipfsData = await this.props.saveSignalData(ipfsValue);
@@ -232,7 +264,19 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
         }
         break;
     }
-
+    // Need to find a why to make a selection of types of SignalAttributes that can be changed.
+    // if(field.type === "options") {
+    //   return <Field
+    //     id="signalAttributes"
+    //     name="signalAttributes"
+    //     component={SelectField}
+    //     options={field.options.map((option) =>  {
+    //       return { value: option, label: option }
+    //     })}
+    //   />
+    // }
+    // else {
+    // console.log('no options');
     return <Field
       id={field.name}
       data-test-id={field.name}
@@ -241,6 +285,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       type={type}
       className={touched[field.name] && errors[field.name] ? css.error : null}
     />;
+    // }
   }
 
   private onTagsChange = (tags: any[]): void => {

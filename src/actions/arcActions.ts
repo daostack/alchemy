@@ -10,7 +10,7 @@ import { ThunkAction } from "redux-thunk";
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
-// Signal Scheme actions
+// Signal Scheme action
 export function saveSignalDescription(signalDescription: any): ThunkAction<any, IRootState, null> {
   return async (_getState: () => IRootState) => {
     const arc = getArc();

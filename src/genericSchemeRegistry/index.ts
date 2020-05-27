@@ -81,7 +81,7 @@ export class ActionField {
   public optional?: boolean;
   public placeholder?: string;
   public transformation?: string;
-
+  public options?: string[];
   constructor(options: IActionFieldOptions) {
     this.decimals = options.decimals;
     this.defaultValue = options.defaultValue;
