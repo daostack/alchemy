@@ -14,7 +14,6 @@ interface IProps {
 }
 
 interface IState {
-  years: number;
   days: number;
   hours: number;
   min: number;
@@ -50,7 +49,7 @@ export default class ProposalCountdown extends React.Component<IProps, IState> {
     this.stop();
   }
 
-  public calculateCountdown(endDate: Date | moment.Moment) {
+  private calculateCountdown(endDate: Date | moment.Moment) {
     const endDateMoment = moment(endDate);
     const now = new Date();
 
@@ -59,7 +58,6 @@ export default class ProposalCountdown extends React.Component<IProps, IState> {
     // clear countdown when date is reached
     if (diff <= 0) {
       return {
-        years: 0,
         days: 0,
         hours: 0,
         min: 0,
@@ -70,8 +68,7 @@ export default class ProposalCountdown extends React.Component<IProps, IState> {
 
     const duration = moment.duration(diff);
     const timeLeft = {
-      years: duration.years(),
-      days: duration.days(),
+      days: Math.floor(duration.asDays()),
       hours: duration.hours(),
       min: duration.minutes(),
       seconds: duration.seconds(),

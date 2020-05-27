@@ -10,7 +10,6 @@ interface IProps {
 }
 
 interface IState {
-  years: number;
   days: number;
   hours: number;
   min: number;
@@ -24,7 +23,6 @@ export default class Countdown extends React.Component<IProps, IState> {
     super(props);
 
     this.state = this.calculateCountdown(this.props.toDate) || {
-      years: 0,
       days: 0,
       hours: 0,
       min: 0,
@@ -58,7 +56,7 @@ export default class Countdown extends React.Component<IProps, IState> {
     this.stop();
   }
 
-  public calculateCountdown(endDate: Date | moment.Moment): IState {
+  private calculateCountdown(endDate: Date | moment.Moment): IState {
     const endDateMoment = moment(endDate); const now = new Date();
 
     const diff = endDateMoment.diff(now);
@@ -70,8 +68,7 @@ export default class Countdown extends React.Component<IProps, IState> {
 
     const duration = moment.duration(diff);
     const timeLeft = {
-      years: duration.years(),
-      days: duration.days(),
+      days: Math.floor(duration.asDays()),
       hours: duration.hours(),
       min: duration.minutes(),
       seconds: duration.seconds(),
