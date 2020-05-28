@@ -1,10 +1,10 @@
 import { IProposalOutcome, IProposalStage, IProposalState } from "@daostack/arc.js";
 import * as classNames from "classnames";
-import * as moment from "moment";
 import * as React from "react";
 import { closingTime } from "lib/proposalHelpers";
 
 import * as css from "./Countdown.scss";
+import { ICountdown, calculateCountdown } from "lib/util";
 
 interface IProps {
   detailView?: boolean;
@@ -13,13 +13,7 @@ interface IProps {
   onEnd?(): any;
 }
 
-interface IState {
-  years: number;
-  days: number;
-  hours: number;
-  min: number;
-  seconds: number;
-  complete: boolean;
+interface IState extends ICountdown {
 }
 
 export default class ProposalCountdown extends React.Component<IProps, IState> {
@@ -28,13 +22,13 @@ export default class ProposalCountdown extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    this.state = this.calculateCountdown(closingTime(this.props.proposal));
+    this.state = calculateCountdown(closingTime(this.props.proposal));
   }
 
   public componentDidMount() {
     // update every five seconds
     this.interval = setInterval(() => {
-      const countdownState = this.calculateCountdown(closingTime(this.props.proposal));
+      const countdownState = calculateCountdown(closingTime(this.props.proposal));
       this.setState(countdownState);
 
       if (countdownState.complete) {
@@ -48,37 +42,6 @@ export default class ProposalCountdown extends React.Component<IProps, IState> {
 
   public componentWillUnmount() {
     this.stop();
-  }
-
-  public calculateCountdown(endDate: Date | moment.Moment) {
-    const endDateMoment = moment(endDate);
-    const now = new Date();
-
-    const diff = endDateMoment.diff(now);
-
-    // clear countdown when date is reached
-    if (diff <= 0) {
-      return {
-        years: 0,
-        days: 0,
-        hours: 0,
-        min: 0,
-        seconds: 0,
-        complete: true,
-      };
-    }
-
-    const duration = moment.duration(diff);
-    const timeLeft = {
-      years: duration.years(),
-      days: duration.days(),
-      hours: duration.hours(),
-      min: duration.minutes(),
-      seconds: duration.seconds(),
-      complete: false,
-    };
-
-    return timeLeft;
   }
 
   public stop() {

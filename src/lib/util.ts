@@ -529,3 +529,39 @@ export function inTesting(): boolean {
 export function isAddress(address: Address, allowNulls = false): boolean {
   return getArc().web3.utils.isAddress(address) && (allowNulls || (Number(address) > 0));
 }
+
+export interface ICountdown {
+  days: number;
+  hours: number;
+  min: number;
+  seconds: number;
+  complete: boolean;
+}
+
+export function calculateCountdown(endDate: Date | moment.Moment): ICountdown {
+  const endDateMoment = moment(endDate);
+  const now = new Date();
+
+  const diff = endDateMoment.diff(now);
+
+  if (diff <= 0) {
+    return {
+      days: 0,
+      hours: 0,
+      min: 0,
+      seconds: 0,
+      complete: true,
+    };
+  }
+
+  const duration = moment.duration(diff);
+  const timeLeft = {
+    days: Math.floor(duration.asDays()),
+    hours: duration.hours(),
+    min: duration.minutes(),
+    seconds: duration.seconds(),
+    complete: false,
+  };
+
+  return timeLeft;
+}
