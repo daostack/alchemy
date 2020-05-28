@@ -177,8 +177,8 @@ export const settings = {
     web3ConnectProviderOptions: {},
   },
   rinkeby: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.http_rinkeby,
-    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || SubgraphEndpoints.ws_rinkeby,
+    // graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.http_rinkeby,
+    // graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || SubgraphEndpoints.ws_rinkeby,
     graphqlSubscribeToQueries: false,
     web3Provider:  process.env.ARC_WEB3PROVIDER || `wss://rinkeby.infura.io/ws/v3/${process.env.INFURA_ID}`,
     web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || `wss://rinkeby.infura.io/ws/v3/${process.env.INFURA_ID}`,
@@ -187,6 +187,8 @@ export const settings = {
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("rinkeby"),
     // graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.http_signal,
     // graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || SubgraphEndpoints.ws_signal,
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.http_hg,
+    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || SubgraphEndpoints.ws_hg,
   },
   kovan: {
     graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.http_kovan,

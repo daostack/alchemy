@@ -10,5 +10,7 @@
   "http_ganache": "http://127.0.0.1:8000/subgraphs/name/daostack",
   "ws_ganache": "ws://127.0.0.1:8001/subgraphs/name/daostack",
   "http_signal": "https://api.thegraph.com/subgraphs/name/apeunit/daostack-alchemy-signalscheme",
-  "ws_signal": "wss://api.thegraph.com/subgraphs/name/apeunit/daostack-alchemy-signalscheme"
+  "ws_signal": "wss://api.thegraph.com/subgraphs/name/apeunit/daostack-alchemy-signalscheme",
+  "http_hg": "https://api.thegraph.com/subgraphs/name/mrrobot16/signalschemes",
+  "ws_hg": "wss://api.thegraph.com/subgraphs/name/mrrobot16/signalschemes"
 }
