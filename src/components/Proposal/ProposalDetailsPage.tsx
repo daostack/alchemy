@@ -21,7 +21,7 @@ import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
 import StakeButtons from "./Staking/StakeButtons";
 import StakeGraph from "./Staking/StakeGraph";
-import { default as ProposalData, IInjectedProposalProps} from "./ProposalData";
+import { default as ProposalData, IInjectedProposalProps } from "./ProposalData";
 import ProposalStatus from "./ProposalStatus";
 import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
@@ -124,6 +124,10 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       stakes,
     } = this.props;
 
+    if (daoState.id !== proposal.dao.id) {
+      return <div>The given propasal does not belong to this DAO. Please check the browser url.</div>;
+    }
+
     const tags = proposal.tags;
 
     const url = ensureHttps(proposal.url);
@@ -207,9 +211,9 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView />
             </div>
 
-            { tags && tags.length ? <div className={css.tagsContainer}>
+            {tags && tags.length ? <div className={css.tagsContainer}>
               <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
-            </div> : "" }
+            </div> : ""}
 
             <div className={css.buttonBar}>
               <div className={css.voteButtonsBottom}>
@@ -312,7 +316,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
         <h3 className={css.discussionTitle}>Discussion</h3>
         <div className={css.disqus}>
-          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
+          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
         </div>
 
         {this.state.showVotersModal ?
@@ -339,6 +343,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 export default function ProposalDetailsPageData(props: IExternalProps) {
   const { currentAccountAddress, daoState, proposalId } = props;
   return <ProposalData currentAccountAddress={currentAccountAddress} daoState={daoState} proposalId={proposalId} subscribeToProposalDetails>
-    { proposalData => <ProposalDetailsPage {...props} {...proposalData} /> }
+    {proposalData => <ProposalDetailsPage {...props} {...proposalData} />}
   </ProposalData>;
 }
