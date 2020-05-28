@@ -248,7 +248,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               <li><Link to="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link></li>
               <li className={css.daoStack}>
                 <a className="externalLink" href="http://daostack.io" target="_blank" rel="noopener noreferrer">
-                  <img src={this.props.daoAvatarAddress ? "/assets/images/Icon/dao-logo.svg" : "/assets/images/Icon/dao-logo-gray.svg"} /> DAOstack
+                  <img src="/assets/images/Icon/dao-logo.svg" /> DAOstack
                 </a>
               </li>
             </ul>
