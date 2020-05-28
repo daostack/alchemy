@@ -689,7 +689,7 @@ const SubscribedCreatePluginManagerProposal = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
-    return arc.dao(props.daoAvatarAddress).plugins();
+    return arc.dao(props.daoAvatarAddress).plugins({ where: { isRegistered: true } });
   },
 });
 
