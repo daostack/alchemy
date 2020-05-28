@@ -26,6 +26,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import Loading from "components/Shared/Loading";
 import * as css from "./Account.scss";
+import Tooltip from "rc-tooltip";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -235,7 +236,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                             />
                             {touched.name && errors.name && <span className={css.errorMessage}>{errors.name}</span>}
                           </div>
-                          : <div>{accountProfile.name}</div>
+                          : <div>{accountProfile.name ?? "[Unknown]"}</div>
                         }
                         <br />
                         <label htmlFor="descriptionInput">
@@ -263,7 +264,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                             </div>
                           </div>
 
-                          : <div>{accountProfile.description}</div>
+                          : <div>{accountProfile.description ?? "[Unknown]"}</div>
                         }
                       </div>
                     </div>
@@ -294,12 +295,14 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                           ? <div><strong>Rep. Score</strong><br /><Reputation reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /> </div>
                           : ""}
                         <div><strong>{genName()}:</strong><br /><span>{formatTokens(genBalance)}</span></div>
-                        - <div><strong>{baseTokenName()}:</strong><br /><span>{formatTokens(ethBalance)}</span></div>
+                        <div><strong>{baseTokenName()}:</strong><br /><span>{formatTokens(ethBalance)}</span></div>
                       </div>
                       <div>
                         <strong>ETH Address:</strong><br />
                         <span>{accountAddress.substr(0, 20)}...</span>
-                        <button className={css.copyButton} onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg" /></button>
+                        <Tooltip overlay="Copy link" placement="right">
+                          <button className={css.copyButton} onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg" /></button>
+                        </Tooltip>
                       </div>
                     </div>
                   </div>

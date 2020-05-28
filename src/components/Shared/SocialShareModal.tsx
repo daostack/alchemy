@@ -83,7 +83,7 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
           <Tooltip overlay={this.props.url} placement="bottom">
             <div className={css.url}>{this.props.url}</div>
           </Tooltip>
-          <Tooltip overlay="Copy Link" placement="right">
+          <Tooltip overlay="Copy link" placement="right">
             <div onClick={this.copyUrl} className={css.copyButton}><img src={"/assets/images/Icon/Copy-blue.svg"}/></div>
           </Tooltip>
         </div>}
