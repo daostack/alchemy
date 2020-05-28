@@ -310,7 +310,9 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
       proposalOptions.remove = {
         plugin: values.pluginToRemove,
       };
-    } else if (currentTab === "addPlugin" || currentTab === "replacePlugin") {
+    }
+
+    if (currentTab === "addPlugin" || currentTab === "replacePlugin") {
       (proposalOptions.add as any) = {
         pluginName: values.pluginToAdd,
       };

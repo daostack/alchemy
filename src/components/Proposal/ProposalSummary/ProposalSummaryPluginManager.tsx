@@ -61,11 +61,11 @@ class ProposalSummary extends React.Component<IProps, IState> {
     });
 
     const permissions = parseInt(proposalState.pluginToRegisterPermission, 16);
-    const isReplace = proposalState.pluginToRemove !== NULL_ADDRESS && proposalState.pluginToRegisterName;
+    const isReplace = proposalState.pluginToRemove !== NULL_ADDRESS && proposalState.pluginToRegisterName ? true : false;
 
     return (
       <div className={proposalSummaryClass}>
-        { proposalState.pluginToRemove !== NULL_ADDRESS ?
+        { proposalState.pluginToRemove !== NULL_ADDRESS && !isReplace ?
           <div>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/delete.svg"/>&nbsp;
@@ -94,12 +94,24 @@ class ProposalSummary extends React.Component<IProps, IState> {
               <span className={css.summaryTitle}>
                 <b className={css.pluginRegisterIcon}>{isReplace ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
                 {isReplace ? "Replace" : "Add"} Plugin&nbsp;
-                {proposalState.pluginToRegisterName}
+                {isReplace ? pluginNameAndAddress(proposalState.pluginToRemove) : proposalState.pluginToRegisterName}
+                {isReplace ? " With " + proposalState.pluginToRegisterName : ""}
               </span>
               { detailView ?
                 <div className={css.summaryDetails}>
                   <table>
                     <tbody>
+                      {isReplace ? 
+                        <tr>
+                          <th>
+                                Address:
+                            <a href={linkToEtherScan(proposalState.pluginToRemove)} target="_blank" rel="noopener noreferrer">
+                              <img src="/assets/images/Icon/Link-blue.svg"/>
+                            </a>
+                          </th>
+                          <td>{proposalState.pluginToRemove}</td>
+                        </tr>
+                      : <></>}
                       <tr>
                         <th>Name:</th>
                         <td>{proposalState.pluginToRegisterName}</td>
