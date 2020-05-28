@@ -93,7 +93,7 @@ const GenericSchemeFields: React.FC<IProps> = ({ values }) => {
             </option>
           ))}
         </Field>
-        {isCustom && 
+        {isCustom &&
           fieldView("GenericScheme", "Custom Contract To Call", "contractToCall")}
         <a href={linkToEtherScan(contractToCall)} target="_blank" rel="noopener noreferrer">{ contractToCall }</a>
       </div>
