@@ -8,6 +8,7 @@ import * as css from "./ProposalSummary.scss";
 import ProposalSummaryDutchX from "./ProposalSummaryDutchX";
 import ProposalSummaryStandardBounties from "./ProposalSummaryStandardBounties";
 import ProposalSummaryCO2ken from "./ProposalSummaryCO2ken";
+import ProposalSummaryNFTManager from "./ProposalSummaryNFTManager";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;
@@ -36,6 +37,8 @@ export default class ProposalSummary extends React.Component<IProps> {
       return <ProposalSummaryStandardBounties {...this.props} />;
     } else if (genericPluginInfo.specs.name === "CO2ken") {
       return <ProposalSummaryCO2ken {...this.props} />;
+    } else if (genericPluginInfo.specs.name === "NFTManager") {
+      return <ProposalSummaryNFTManager {...this.props} />;
     }
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
