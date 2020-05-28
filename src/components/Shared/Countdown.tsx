@@ -2,6 +2,7 @@ import * as moment from "moment";
 import * as React from "react";
 
 import * as css from "./Countdown.scss";
+import { calculateCountdown } from "lib/util";
 
 interface IProps {
   toDate: Date | moment.Moment;
@@ -22,12 +23,7 @@ export default class Countdown extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    this.state = this.calculateCountdown(this.props.toDate) || {
-      days: 0,
-      hours: 0,
-      min: 0,
-      seconds: 0,
-    };
+    this.state = calculateCountdown(this.props.toDate);
   }
 
   public componentDidMount() {
@@ -39,9 +35,9 @@ export default class Countdown extends React.Component<IProps, IState> {
 
       // update every five seconds
       this.interval = setInterval(() => {
-        const date = this.calculateCountdown(this.props.toDate);
-        if (date) {
-          this.setState(date);
+        const countdown = calculateCountdown(this.props.toDate);
+        if (!countdown.complete) {
+          this.setState(countdown);
         } else {
           this.stop();
           if (this.props.onEnd) {
@@ -54,27 +50,6 @@ export default class Countdown extends React.Component<IProps, IState> {
 
   public componentWillUnmount() {
     this.stop();
-  }
-
-  private calculateCountdown(endDate: Date | moment.Moment): IState {
-    const endDateMoment = moment(endDate); const now = new Date();
-
-    const diff = endDateMoment.diff(now);
-
-    // clear countdown when date is reached
-    if (diff <= 0) {
-      return null;
-    }
-
-    const duration = moment.duration(diff);
-    const timeLeft = {
-      days: Math.floor(duration.asDays()),
-      hours: duration.hours(),
-      min: duration.minutes(),
-      seconds: duration.seconds(),
-    };
-
-    return timeLeft;
   }
 
   public stop() {
