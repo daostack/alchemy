@@ -125,7 +125,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     } = this.props;
 
     if (daoState.id !== proposal.dao.id) {
-      return <div>The given propasal does not belong to this DAO. Please check the browser url.</div>;
+      return <div>`The given proposal does not belong to ${daoState.name}. Please check the browser url.`</div>;
     }
 
     const tags = proposal.tags;

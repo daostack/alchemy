@@ -43,7 +43,7 @@ class DetailsPageRouter extends React.Component<IProps, IStateProps>
     const proposalState = this.props.data;
 
     if (this.props.daoState.id !== proposalState.dao.id) {
-      return <div>The given propasal does not belong to this DAO.  Please check the browser url.</div>;
+      return <div>The given proposal does not belong to ${this.props.daoState.name}.  Please check the browser url.</div>;
     }
 
     /**
