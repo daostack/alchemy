@@ -1,0 +1,54 @@
+{
+    "name": "NFTManager",
+    "addresses": {
+      "main":  ["0x478D17C854446a8718Dc42A8199444f26Ddfe1Ad"],
+      "rinkeby": ["0x478D17C854446a8718Dc42A8199444f26Ddfe1Ad"],
+      "private": ["0x478D17C854446a8718Dc42A8199444f26Ddfe1Ad"]
+    },
+    "actions": [
+      {
+        "id": "sendNFT",
+        "label": "Send ERC-721 token to address",
+        "description": "Send an ERC-721 token, referenced by contract address and tokenId, to specified address",
+        "notes": "https://github.com/dOrgTech/NFTManager/blob/master/contracts/NFTManager.sol",
+        "fields": [
+          {
+            "label": "Recipient",
+            "name": "recipient",
+            "placeholder": "Address (0x0000…)"
+          },
+          {
+            "label": "NFT Contract Address",
+            "name": "nftContract",
+            "placeholder": "Address (0x0000…)"
+          },
+          {
+            "label": "NFT Token Id",
+            "name": "tokenId",
+            "placeholder": "Address (0x0000…)"
+          }
+        ],
+        "abi": {
+          "inputs": [
+            {
+              "name": "recipient",
+              "type": "address"
+            },
+            {
+              "name": "nftContract",
+              "type": "address"
+            },
+            {
+              "name": "tokenId",
+              "type": "uint256"
+            }
+          ],
+          "name": "sendNFT",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      }
+    ]
+  }
+  
