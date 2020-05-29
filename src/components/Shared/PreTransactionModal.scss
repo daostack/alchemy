@@ -396,7 +396,8 @@ input[type="number"] {
   }
 
   .modalWindow {
-    width: 500px;
+    max-width: 500px;
+    width: 90vw;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -530,6 +531,8 @@ input[type="number"] {
           display: inline;
           color: $gray-1;
           opacity: 0.7;
+          position: relative;
+          bottom: 1px;
 
           strong {
             font-weight: normal;
@@ -538,6 +541,7 @@ input[type="number"] {
 
         .transactionType {
           font-size: 21px;
+          margin-right: 6px;
 
           .passVote {
             color: $accent-3;
@@ -585,7 +589,7 @@ input[type="number"] {
 
     .stakingForm {
       position: relative;
-      padding: 40px;
+      padding: 30px 40px;
 
       .formGroup {
         line-height: 24px;
@@ -610,7 +614,7 @@ input[type="number"] {
           align-items: center;
 
           .predictionAmount {
-            margin-right: 16px;
+            padding-right: 16px;
 
             input {
               background-color: transparent;
@@ -628,6 +632,7 @@ input[type="number"] {
 
             .genLabel {
               display: inline-block;
+              margin-bottom: 10px;
 
               &.genSymbol {
                 opacity: 0.5;
@@ -640,6 +645,12 @@ input[type="number"] {
             font-size: 11px;
             line-height: 1.2em;
             text-align: left;
+
+            .balance {
+              display: inline-block;
+              margin-right: 6px;
+              margin-bottom: 4px;
+            }
 
             .exchangeList {
               color: rgba(5, 113, 255, 1);
@@ -766,29 +777,6 @@ input[type="number"] {
       a {
         color: $accent-1;
       }
-    }
-  }
-}
-
-.tipContainer {
-  padding-top: 8px;
-
-  .message {
-    padding-bottom: 6px;
-    border-bottom: $gray-border;
-    margin-bottom: 6px;
-
-    .icon {
-      display: inline-block;
-      margin-right: 6px;
-      position: relative;
-      top: 2px;
-    }
-
-    .text {
-      display: inline-block;
-      width: 300px;
-      vertical-align: top;
     }
   }
 }
