@@ -1,4 +1,4 @@
-import { IGenericPluginProposalState } from "@dorgtech/arc.js";
+import { IGenericPluginProposalState, IDAOState } from "@dorgtech/arc.js";
 import * as classNames from "classnames";
 import { GenericPluginInfo } from "genericPluginRegistry";
 import { linkToEtherScan, fromWeiToString } from "lib/util";
@@ -11,13 +11,14 @@ interface IProps {
   detailView?: boolean;
   proposalState: IGenericPluginProposalState;
   transactionModal?: boolean;
+  daoState: IDAOState;
 }
 
 export default class ProposalSummaryNFTManager extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
 
-    const { proposalState, detailView, genericPluginInfo, transactionModal } = this.props;
+    const { proposalState, detailView, genericPluginInfo, transactionModal } = this.props; 
     let decodedCallData: any;
     let decodedParams: any;
 
@@ -48,19 +49,26 @@ export default class ProposalSummaryNFTManager extends React.Component<IProps, n
       case "sendNFT":
         return (
           <div className={proposalSummaryClass}>
-            <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding}/> {action.label}
-            </span>
+            {!detailView && 
+              <span className={css.summaryTitle}>
+                <strong>Send NFT </strong>
+                <img className={css.iconPadding} src="/assets/images/Icon/Transfer.svg" />
+                {decodedCallData.values[0]}
+              </span>
+            }
             { detailView &&
               <div className={css.summaryDetails}>
                 <div>
-                  Recipient: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                  <strong>Send NFT </strong>
+                  <img className={css.iconPadding} src="/assets/images/Icon/Transfer.svg" />
+                  <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                </div>
+                <br/>
+                <div>
+                  <strong>NFT Contract:</strong> <a href={linkToEtherScan(decodedCallData.values[1])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[1]}</a>
                 </div>
                 <div>
-                  NFT Contract: <a href={linkToEtherScan(decodedCallData.values[1])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[1]}</a>
-                </div>
-                <div>
-                  TokenID: {fromWeiToString(decodedCallData.values[2])}
+                  <strong>TokenID:</strong> {fromWeiToString(decodedCallData.values[2])}
                 </div>
               </div>
             }
