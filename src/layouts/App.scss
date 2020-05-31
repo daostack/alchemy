@@ -44,8 +44,9 @@ body {
 
 .contentWrapper {
   position: relative;
-  max-width: $max-width;
-  margin: 0 auto;
+  // max-width: $max-width;
+  // margin: 0 auto;
+  margin: 0 0 0 250px;
 }
 
 .background {

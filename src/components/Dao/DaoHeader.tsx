@@ -46,11 +46,15 @@ interface IEthProps extends ISubscriptionProps<BN|null> {
 type IProps = IExternalProps & ISubscriptionProps<[Scheme[], ISignal, IDAOState | any]>;
 
 const DAOHeaderBackground = (props: { backgroundImage: string }) => (
-  <img
+  // <img
+  //   className={css.daoHeaderBackground}
+  //   src={props.backgroundImage}
+  //   alt="daoHeaderBackground"
+  // />
+  <div
     className={css.daoHeaderBackground}
-    src={props.backgroundImage}
-    alt="daoHeaderBackground"
-  />
+    style={{ backgroundImage: `url${props.backgroundImage}`}}>
+  </div>
 );
 
 class DaoHeaderComponent extends React.Component<IProps, IStateProps> {
