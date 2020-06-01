@@ -582,3 +582,12 @@ interface IInitializeOptions {
 export function initializeUtils(options: IInitializeOptions) {
   showSimpleMessage = options.showSimpleMessage;
 }
+/**
+  * Add spaces before capital letters to approximate a human-readable title.
+  * Note if the name already contains spaces, they will be left alone.
+  * If there are adjacent uppercase characters, they will not be split, which
+  * sometimes will be correct (like "ID") and sometimes not (like "AScheme").
+  * (The previous version of this, `/([A-Z])/g, ' $1'`, would split adjacent uppercase characters,
+  * which when wrong would be more wrong than not splitting (like "I D").)
+  **/
+export const splitCamelCase = (str: string): string => `${str[0].toUpperCase()}${str.slice(1).replace(/([a-z])([A-Z])/g, "$1 $2")}`;
