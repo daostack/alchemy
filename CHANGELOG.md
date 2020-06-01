@@ -9,12 +9,16 @@
     - show Redemptions tooltip on Redeem button when the button is disabled
     - add new ENSPublicResolver GenericScheme target contract
     - page the fetching of preboosted proposals at 100 per page
+    - remove redundant New Proposal button on the Plugin Proposals page
     
   - Bugs Fixed
     - fix erroneous reputation and GEN redemption sums in Redemption dropdown menu cards
     - enable voter 3Box profiles to always all show in proposal Voters popup
     - fix GEN label position in staking popup
     - fix proposal status countdown when the number of days exceeds 30
+    - improvments to the All DAOs layout, the DAO sidebar on mobile, the mobile dropdown with no DAO selected, Proposal Details page, DAO Landing page on mobile
+    - fixed bug on proposal History page when displaying voting results and YES got 100%
+    - reject displaying proposal in the context of a DAO that wasn't responsible for creating it
 
 ## 0.10.8
   - Features Added
