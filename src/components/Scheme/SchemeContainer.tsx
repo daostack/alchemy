@@ -75,8 +75,6 @@ class SchemeContainer extends React.Component<IProps, IState> {
        * Warning: since `props` is declared here as `any`, any missing attributes on `SchemeProposalsPage`
        * will not be caught by the compiler.
        */
-      handleNewProposal={this.handleNewProposal}
-      isActive={isActive}
       daoState={this.props.daoState}
       currentAccountAddress={this.props.currentAccountAddress}
       scheme={this.props.data[0]}crxRewarderProps={crxRewarderProps} />;

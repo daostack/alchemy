@@ -15,7 +15,6 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Observable, combineLatest } from "rxjs";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
-import classNames from "classnames";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./SchemeProposals.scss";
@@ -41,11 +40,9 @@ const Fade = ({ children, ...props }: any): any => (
 interface IExternalProps {
   currentAccountAddress: Address;
   history: History;
-  isActive: boolean;
   scheme: ISchemeState;
   daoState: IDAOState;
   crxRewarderProps: any;
-  handleNewProposal: (e: any) => void;
 }
 
 interface IDispatchProps {
@@ -75,7 +72,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
     const { data } = this.props;
 
     const [proposalsQueued, proposalsPreBoosted, proposalsBoosted ] = data;
-    const { currentAccountAddress, daoState, fetchMore, isActive, scheme } = this.props;
+    const { currentAccountAddress, daoState, fetchMore, scheme } = this.props;
     let proposalCount=0;
 
     const queuedProposalsHTML = (
@@ -131,14 +128,6 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
               <Link to={"/dao/" + daoState.address}>
                 <img className={css.relax} src="/assets/images/lt.svg"/> Back to plugins
               </Link>
-              <a className={classNames({
-                [css.blueButton]: true,
-                [css.disabled]: !isActive,
-              })}
-              href="#!"
-              onClick={isActive ? this.props.handleNewProposal : null}
-              data-test-id="createProposal"
-              >+ New Proposal</a>
             </div>
           </div>
           :
