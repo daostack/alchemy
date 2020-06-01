@@ -10,6 +10,7 @@
     - add new ENSPublicResolver GenericScheme target contract
     - page the fetching of preboosted proposals at 100 per page
     - remove redundant New Proposal button on the Plugin Proposals page
+    - improve description of plugin permission Mint and Burn
     
   - Bugs Fixed
     - fix erroneous reputation and GEN redemption sums in Redemption dropdown menu cards
