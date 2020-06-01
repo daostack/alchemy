@@ -1,15 +1,16 @@
 import { ISchemeState } from "@daostack/arc.js";
 import { getArc } from "arc";
+import { splitCamelCase } from "lib/util";
 
 export const hasRewarderContract = (schemeState: ISchemeState): boolean => {
   return !!schemeState.contributionRewardExtParams && !!schemeState.contributionRewardExtParams.rewarder;
 };
 
-export const rewarderContractName = (schemeState: ISchemeState): string => {
+export const rewarderContractName = (schemeState: ISchemeState, useAlias = true): string => {
   if (hasRewarderContract(schemeState)) {
     const contractInfo = getArc().getContractInfo(schemeState.contributionRewardExtParams.rewarder);
     if (contractInfo) {
-      return contractInfo.name;
+      return useAlias ? splitCamelCase(contractInfo.alias ?? contractInfo.name) : contractInfo.name;
     } else {
       // eslint-disable-next-line no-console
       console.error(`rewarder contract not found: ${schemeState.contributionRewardExtParams.rewarder}`);
@@ -31,7 +32,7 @@ export interface ICrxRewarderProps
  * @param scheme
  */
 export const getCrxRewarderProps = (scheme: ISchemeState): Promise<ICrxRewarderProps> | null => {
-  const contractName = rewarderContractName(scheme);
+  const contractName = rewarderContractName(scheme, false);
   // dynamic imports are enabled and optimized by @babel/plugin-syntax-dynamic-import
   return contractName ? import(`./${contractName}/props.json`) : null;
 };
@@ -46,7 +47,7 @@ export enum CrxRewarderComponentType {
  * with the given CrExt scheme.
  */
 export const getCrxRewarderComponent = (schemeState: ISchemeState, type: CrxRewarderComponentType): Promise<any> => {
-  const contractName = rewarderContractName(schemeState);
+  const contractName = rewarderContractName(schemeState, false);
   if (contractName) {
     return import(`components/Scheme/ContributionRewardExtRewarders/${contractName}/${CrxRewarderComponentType[type]}`)
       .then(module => module.default);
