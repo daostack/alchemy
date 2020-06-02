@@ -7,16 +7,18 @@ import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isVali
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
-import { showNotification } from "reducers/notifications";
+import { showNotification, NotificationStatus } from "reducers/notifications";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 import { checkTotalPercent } from "lib/util";
 import * as Datetime from "react-datetime";
+import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
 import moment = require("moment");
 import BN = require("bn.js");
+import HelpButton from "components/Shared/HelpButton";
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -110,11 +112,42 @@ export const SelectField: React.SFC<any> = ({options, field, form, _value }) => 
 
 class CreateProposal extends React.Component<IProps, IStateProps> {
 
+  private initialFormValues: IFormValues;
+
   constructor(props: IProps) {
     super(props);
+
+    const arc = getArc();
+    const now = moment();
+
+    this.initialFormValues = importUrlValues<IFormValues>({
+      rewardSplit: "",
+      description: "",
+      ethReward: 0,
+      externalTokenAddress: arc.GENToken().address,
+      externalTokenReward: 0,
+      nativeTokenReward: 0,
+      numWinners: 0,
+      numberOfVotesPerVoter: 0,
+      proposerIsAdmin: false,
+      reputationReward: 0,
+      compStartTimeInput: now, // testing ? undefined : now,
+      suggestionEndTimeInput: now, // testing ? undefined : now,
+      votingStartTimeInput: now, // testing ? undefined : now,
+      compEndTimeInput: now, // testing ? undefined : now,
+      title: "",
+      url: "",
+      tags: [],
+    });
     this.state = {
-      tags: new Array<string>(),
+      tags: this.initialFormValues.tags,
     };
+  }
+
+  // Exports data from form to a shareable url.
+  public exportFormValues(values: IFormValues) {
+    exportUrl({ ...values, ...this.state });
+    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
   }
 
   public handleSubmit = async (values: IFormValues, { _setSubmitting }: any ): Promise<void> => {
@@ -187,32 +220,13 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       return null;
     }
     const dao = data;
-    const arc = getArc();
     const localTimezone = getLocalTimezone();
-    const now = moment();
 
     return (
       <div className={css.containerNoSidebar}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={{
-            rewardSplit: "",
-            description: "",
-            ethReward: 0,
-            externalTokenAddress: arc.GENToken().address,
-            externalTokenReward: 0,
-            nativeTokenReward: 0,
-            numWinners: 0,
-            numberOfVotesPerVoter: 0,
-            proposerIsAdmin: false,
-            reputationReward: 0,
-            compStartTimeInput: now, // testing ? undefined : now,
-            suggestionEndTimeInput: now, // testing ? undefined : now,
-            votingStartTimeInput: now, // testing ? undefined : now,
-            compEndTimeInput: now, // testing ? undefined : now,
-            title: "",
-            url: "",
-          } as IFormValues}
+          initialValues={this.initialFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
@@ -338,6 +352,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             setFieldTouched,
             setFieldValue,
+            values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <label className={css.description}>What to Expect</label>
@@ -363,9 +378,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
               <TrainingTooltip overlay={this.fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
-                  <div className={css.requiredMarker}>*</div>
-                  Description
-                  <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                  <div className={css.proposalDescriptionLabelText}>
+                    <div className={css.requiredMarker}>*</div>
+                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                  </div>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>
@@ -384,7 +400,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
 
               <div className={css.tagSelectorContainer}>
-                <TagsSelector onChange={this.onTagsChange}></TagsSelector>
+                <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
               </div>
 
               <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
@@ -612,6 +628,11 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
               }
               <div className={css.createProposalActions}>
+                <TrainingTooltip overlay="Export proposal" placement="top">
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                    <img src="/assets/images/Icon/share-blue.svg" />
+                  </button>
+                </TrainingTooltip>
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
                 </button>

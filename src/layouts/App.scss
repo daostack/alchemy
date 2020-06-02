@@ -108,7 +108,7 @@ body {
   vertical-align: middle;
   background-color: $navy;
   height: 50px;
-  z-index: 10000000000;
+  z-index: 10;
   top: 0;
   color: rgba(255, 255, 255, 1);
   display: flex;
@@ -248,7 +248,6 @@ body {
       transition: transform 0.25s ease;
       right: 12px;
       font-size: 12px;
-      z-index: 100;
       color: rgba(78, 97, 118, 1);
       background-color: rgba(252, 253, 255, 1);
       border-radius: 0 0 8px 8px;
@@ -486,7 +485,6 @@ body {
   }
 
   .openTour {
-    display: none;
     position: relative;
     top: 2px;
     padding: 0 10px;

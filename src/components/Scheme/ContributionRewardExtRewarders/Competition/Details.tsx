@@ -29,8 +29,7 @@ import SubmissionDetails from "./SubmissionDetails";
 import StatusBlob from "./StatusBlob";
 import * as css from "./Competitions.scss";
 import * as CompetitionActions from "./utils";
-
-const ReactMarkdown = require("react-markdown");
+import ProposalDescription from "components/Shared/ProposalDescription";
 
 type ISubscriptionState = [Array<ICompetitionSuggestionState>, Set<string>];
 
@@ -91,7 +90,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     return competitionStatus(competition);
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     /**
      * use `window` because a route with these params isn't configured
      * externally to the Competition code in Alchemy, and thus the params
@@ -115,6 +114,10 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       if (this.state.showingSubmissionDetails !== urlSubmission) {
         this.setState({ showingSubmissionDetails: urlSubmission });
       }
+    } else if ((parts.length === 7) && (parts[6] === "createSubmission")) {
+      if (!this.state.showingCreateSubmission) {
+        await this.openNewSubmissionModal();
+      }
     }
   }
 
@@ -130,16 +133,20 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     if (!await enableWalletProvider({ showNotification })) { return; }
 
     this.setState({ showingCreateSubmission: true });
+
+    this.props.history.replace(`/dao/${this.props.daoState.address}/crx/proposal/${this.props.proposalState.id}/createSubmission`);
   }
 
   private submitNewSubmissionModal = async (options: ICreateSubmissionOptions): Promise<void> => {
     await this.props.createCompetitionSubmission(this.props.proposalState.id, options);
 
     this.setState({ showingCreateSubmission: false });
+    this.props.history.replace(`/dao/${this.props.daoState.address}/crx/proposal/${this.props.proposalState.id}`);
   }
 
   private cancelNewSubmissionModal = async (): Promise<void> => {
     this.setState({ showingCreateSubmission: false });
+    this.props.history.replace(`/dao/${this.props.daoState.address}/crx/proposal/${this.props.proposalState.id}`);
   }
 
   private openSubmissionDetailsModal = (suggestion: ICompetitionSuggestionState) => async (): Promise<void> => {
@@ -309,11 +316,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             </div> : "" }
 
             <div className={classNames({[css.description]: true, [css.hasSubmissions]: hasSubmissions })}>
-              <ReactMarkdown source={proposalState.description}
-                renderers={{link: (props: { href: string; children: React.ReactNode }) => {
-                  return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
-                }}}
-              />
+              <ProposalDescription description={proposalState.description} />
             </div>
           </div>
           <div className={css.rightSection}>
@@ -380,7 +383,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             proposalState={proposalState}
             daoState={daoState}
             handleCancel={this.cancelNewSubmissionModal}
-            handleSubmit={this.submitNewSubmissionModal}></CreateSubmission>
+            handleSubmit={this.submitNewSubmissionModal}
+            currentAccountAddress={this.props.currentAccountAddress}></CreateSubmission>
         </Modal> : ""
       }
 

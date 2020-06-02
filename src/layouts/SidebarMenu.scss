@@ -353,10 +353,15 @@
 
   .menuContent {
     background-color: transparent;
+
+    .daoContentWrapper {
+      display: none;
+    }
   }
 
   .siteLinksWrapper {
     border-top: none;
+    padding-top: 60px;
 
     ul {
       li {
@@ -432,7 +437,7 @@
     transition: width 0s 0s, height 0.25s ease;
 
     .menuContent {
-      height: 520px;
+      height: 100vh;
     }
   }
 
@@ -446,7 +451,16 @@
 
   .siteLinksWrapper {
     position: relative;
-    min-height: 220px;
+    height: 220px;
+
+    li.daoStack {
+      position: relative;
+      left: -4px;
+
+      img {
+        margin-right: 3px;
+      }
+    }
 
     ul li {
       height: auto;
@@ -468,6 +482,20 @@
 
     ul li ul {
       position: absolute;
+    }
+  }
+
+  .sidebarWrapper.noDAO {
+    .menuContent {
+      text-align: center;
+
+      .siteLinksWrapper {
+        ul li {
+          a {
+            padding: 3px 0 3px 0;
+          }
+        }
+      }
     }
   }
 } /* EO @media only screen and (max-width: 425px) */

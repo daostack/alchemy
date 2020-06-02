@@ -1,3 +1,41 @@
+## 0.10.9
+  - Features Added
+    - extend Scheme URL Params => Proposal Templates to Competition proposal & competition submission
+    - top three boosted proposals shown on plugin cards are now sorted by when they were boosted, descending
+    - custom DAO landing page data for the SOS Hackathon
+    - enable Competition proposals and Competition Submissions to have embedded videos in their description
+    - allow "Recipient address" in proposal form to be empty (and be populated with proposer address)
+    - enable Redemptions dropdown menu to automatically update with blockchain changes
+    - show Redemptions tooltip on Redeem button when the button is disabled
+    - add new ENSPublicResolver GenericScheme target contract
+    - page the fetching of preboosted proposals at 100 per page
+    - remove redundant New Proposal button on the Plugin Proposals page
+    - improve description of plugin permission Mint and Burn
+    
+  - Bugs Fixed
+    - fix erroneous reputation and GEN redemption sums in Redemption dropdown menu cards
+    - enable voter 3Box profiles to always all show in proposal Voters popup
+    - fix GEN label position in staking popup
+    - fix proposal status countdown when the number of days exceeds 30
+    - improvments to the All DAOs layout, the DAO sidebar on mobile, the mobile dropdown with no DAO selected, Proposal Details page, DAO Landing page on mobile
+    - fixed bug on proposal History page when displaying voting results and YES got 100%
+    - reject displaying proposal in the context of a DAO that wasn't responsible for creating it
+
+## 0.10.8
+  - Features Added
+    -- nicer formatting of embedded videos in proposal descriptions
+    -- added help text for proposal descriptions
+    -- in the Plugin Manager, Edit Plugin Proposal details, make the copy-to-clipboard button issue a notification when complete
+    
+  - Bugs Fixed
+    -- reenabled the "+ New Proposal" button at the bottom of plugin pages when there are currently no proposals
+    -- fixed Disqus conversations that were leaking between proposals and DAOs
+    -- fixed required permissions when editing a Plugin Manager scheme
+    -- correct the ABI on the ensPublicResolver GenericScheme which caused execution of proposals to fail while seeming to succeed
+    -- prevent embedded videos that are playing from stopping when an app notification appears
+    -- remove the "+ New Proposal" button on non-supported schemes
+    -- fix the Edit Scheme button to bring up the Edit Scheme popup isnteadl of the New Proposal popup
+    
 ## 0.10.7
   - Features Added
     - Added "Stake for Reputation Plugin" to the list of known plugins that can be registered to a DAO
@@ -17,7 +55,6 @@
 
   - Bugs Fixed
     - Make sure proposer name doesn't overlap avatar on proposal history rows
-
 
 ## 0.10.5
   - Features Added

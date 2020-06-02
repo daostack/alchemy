@@ -93,9 +93,11 @@ class AccountProfilePage extends React.Component<IProps, IState> {
   }
 
   public async componentDidMount(): Promise<void> {
-    const { accountAddress, getProfile } = this.props;
+    const { accountAddress, getProfile, accountProfile} = this.props;
 
-    getProfile(accountAddress);
+    if (!accountProfile) {
+      getProfile(accountAddress);
+    }
 
     const dao = this.props.data[0];
 

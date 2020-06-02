@@ -3,7 +3,7 @@
   display: inline-block;
 
   button {
-    background-color: rgba(0, 118, 255, 1.000);
+    background-color: rgba(0, 118, 255, 1);
     border-radius: 10px;
     height: 20px;
     line-height: 20px;
@@ -11,7 +11,7 @@
     padding: 0 6px;
     color: $white;
     border: none;
-    transition: all .25s ease;
+    transition: all 0.25s ease;
     margin: 0;
     display: inline-block;
     overflow: hidden;
@@ -47,7 +47,10 @@
   }
 }
 
-.preboostButton, .unboostButton, .boostButton, .executeButton {
+.preboostButton,
+.unboostButton,
+.boostButton,
+.executeButton {
   position: relative;
 }
 
@@ -57,11 +60,22 @@
   }
 }
 
+/**
+ * Container for Tooltip child for when you need the child to show a tooltip even when disabled.
+ * Better would be to create a Tooltip component (like we did with TrainingTooltip) that
+ * does this automatically for all Tooltips.
+*/
+div.tooltipWhenDisabledContainer {
+  display: "inline-block";
+  cursor: "not-allowed";
+}
+
 .redeemButton {
+  white-space: nowrap;
 
   &:disabled {
-    background-color: rgba(200,200,200,.5);
-    color: rgba(75,75,75,1);
+    background-color: rgba(200, 200, 200, 0.5);
+    color: rgba(75, 75, 75, 1);
   }
 
   img {
