@@ -96,7 +96,9 @@ export default withSubscription({
         scheme:  props.scheme.id,
         // eslint-disable-next-line @typescript-eslint/camelcase
         stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
-      }}, {
+      },
+      orderBy: "boostedAt",
+      }, {
         fetchAllData: true,
         subscribe: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
       }) // the list of boosted proposals

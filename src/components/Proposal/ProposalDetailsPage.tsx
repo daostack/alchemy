@@ -21,7 +21,7 @@ import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
 import StakeButtons from "./Staking/StakeButtons";
 import StakeGraph from "./Staking/StakeGraph";
-import { default as ProposalData, IInjectedProposalProps} from "./ProposalData";
+import { default as ProposalData, IInjectedProposalProps } from "./ProposalData";
 import ProposalStatus from "./ProposalStatus";
 import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
@@ -29,8 +29,7 @@ import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
 import VotersModal from "./Voting/VotersModal";
 import * as css from "./ProposalDetails.scss";
-
-const ReactMarkdown = require("react-markdown");
+import ProposalDescription from "components/Shared/ProposalDescription";
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
@@ -109,54 +108,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     this.setState({ showVotersModal: false });
   }
 
-  private parseYouTubeVideoIdFromUri = (url: string): string => {
-    const match = url.match(/(\/|%3D|v=)([0-9A-z-_]{11})([%#?&]|$)/);
-    if (match) {
-      if (match.length >= 3) {
-        return match[2];
-      } else {
-        // eslint-disable-next-line no-console
-        console.error("The outube url is not valid.");
-      }
-    }
-    return null;
-  }
-
-  private getVimeoIdFromUrl = (url: string): string => {
-    const match = url.match(/^.*(?:vimeo.com)\/(?:channels\/|channels\/\w+\/|groups\/[^/]*\/videos\/|album\/\d+\/video\/|video\/|)(\d+)(?:$|\/|\?)/);
-    if (match) {
-      if (match.length >= 2) {
-        return match[1];
-      } else {
-      // eslint-disable-next-line no-console
-        console.error("The vimeo url is not valid.");
-      }
-    }
-    return null;
-  }
-
-  private renderDescription = (props: { href: string; children: React.ReactNode }) => {
-    if (props.href) {
-      const url = new URL(props.href);
-      const videoId = this.parseYouTubeVideoIdFromUri(props.href);
-      if (videoId) {
-        const start = url.searchParams.get("t") || "0";
-
-        return <iframe className={css.embeddedVideo} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen
-          src={`${url.protocol}//www.youtube-nocookie.com/embed/${videoId}?start=${start}`}>
-        </iframe>;
-      } else {
-        const videoId = this.getVimeoIdFromUrl(props.href);
-        if (videoId) {
-          return <iframe className={css.embeddedVideo} frameBorder="0" allow="autoplay; fullscreen" allowFullScreen
-            src={`${url.protocol}//player.vimeo.com/video/${videoId}`}>
-          </iframe>;
-        }
-      }
-    }
-    return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
-  }
-
   public render(): RenderOutput {
     const {
       beneficiaryProfile,
@@ -172,6 +123,10 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       rewards,
       stakes,
     } = this.props;
+
+    if (daoState.id !== proposal.dao.id) {
+      return <div>`The given proposal does not belong to ${daoState.name}. Please check the browser url.`</div>;
+    }
 
     const tags = proposal.tags;
 
@@ -238,7 +193,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.description}>
-              <ReactMarkdown source={proposal.description} renderers={{ link: this.renderDescription}} />
+              <ProposalDescription description={proposal.description} />
             </div>
 
             {url ?
@@ -256,9 +211,9 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView />
             </div>
 
-            { tags && tags.length ? <div className={css.tagsContainer}>
+            {tags && tags.length ? <div className={css.tagsContainer}>
               <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
-            </div> : "" }
+            </div> : ""}
 
             <div className={css.buttonBar}>
               <div className={css.voteButtonsBottom}>
@@ -361,7 +316,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
         <h3 className={css.discussionTitle}>Discussion</h3>
         <div className={css.disqus}>
-          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
+          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
         </div>
 
         {this.state.showVotersModal ?
@@ -388,6 +343,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 export default function ProposalDetailsPageData(props: IExternalProps) {
   const { currentAccountAddress, daoState, proposalId } = props;
   return <ProposalData currentAccountAddress={currentAccountAddress} daoState={daoState} proposalId={proposalId} subscribeToProposalDetails>
-    { proposalData => <ProposalDetailsPage {...props} {...proposalData} /> }
+    {proposalData => <ProposalDetailsPage {...props} {...proposalData} />}
   </ProposalData>;
 }

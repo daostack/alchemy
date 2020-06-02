@@ -201,7 +201,7 @@ class SchemeInfo extends React.Component<IProps, null> {
               </td>
             </tr>
             <tr>
-              <th>Can Mint or Burn Reputation?</th>
+              <th>Mint and burn reputation, send ETH and external &amp; native tokens?</th>
               <td>Yes</td>
               <td>
               </td>

@@ -161,7 +161,7 @@ button.disabled {
 
 .voteButtons {
   float: right;
-  top: 10px;
+  top: 15px;
   right: 10px;
   position: relative;
 }
@@ -308,10 +308,6 @@ button.disabled {
     margin-left: 7px;
     display: inline-block;
   }
-}
-
-iframe.embeddedVideo {
-  margin-top: 10px;
 }
 
 @media only screen and (max-width: 425px) {
