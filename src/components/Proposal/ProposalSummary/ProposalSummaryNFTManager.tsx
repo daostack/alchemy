@@ -1,7 +1,7 @@
 import { IGenericPluginProposalState, IDAOState } from "@dorgtech/arc.js";
 import * as classNames from "classnames";
 import { GenericPluginInfo } from "genericPluginRegistry";
-import { linkToEtherScan, fromWeiToString } from "lib/util";
+import { linkToEtherScan } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
 const Web3 = require('web3');
@@ -18,7 +18,7 @@ export default class ProposalSummaryNFTManager extends React.Component<IProps, n
 
   public render(): RenderOutput {
 
-    const { proposalState, detailView, genericPluginInfo, transactionModal } = this.props; 
+    const { proposalState, detailView, genericPluginInfo, transactionModal } = this.props;
     let decodedCallData: any;
     let decodedParams: any;
 
@@ -68,7 +68,7 @@ export default class ProposalSummaryNFTManager extends React.Component<IProps, n
                   <strong>NFT Contract:</strong> <a href={linkToEtherScan(decodedCallData.values[1])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[1]}</a>
                 </div>
                 <div>
-                  <strong>TokenID:</strong> {fromWeiToString(decodedCallData.values[2])}
+                  <strong>TokenID:</strong> {decodedCallData.values[2]}
                 </div>
               </div>
             }
