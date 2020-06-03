@@ -310,7 +310,9 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
       proposalOptions.remove = {
         plugin: values.pluginToRemove,
       };
-    } else if (currentTab === "addPlugin" || currentTab === "replacePlugin") {
+    }
+
+    if (currentTab === "addPlugin" || currentTab === "replacePlugin") {
       (proposalOptions.add as any) = {
         pluginName: values.pluginToAdd,
       };
@@ -689,7 +691,7 @@ const SubscribedCreatePluginManagerProposal = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
-    return arc.dao(props.daoAvatarAddress).plugins();
+    return arc.dao(props.daoAvatarAddress).plugins({ where: { isRegistered: true } });
   },
 });
 

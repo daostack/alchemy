@@ -68,6 +68,9 @@ const GenericSchemeFields: React.FC<IProps> = ({ values }) => {
     });
 
   const contractToCall = values.GenericScheme.contractToCall;
+  const isCustom = templates.findIndex(
+    (item) => item.address === contractToCall
+  ) === -1;
 
   return (
     <div>
@@ -83,13 +86,15 @@ const GenericSchemeFields: React.FC<IProps> = ({ values }) => {
           component="select"
           className={css.pluginSelect}
         >
-          <option value="">Select a contract...</option>
+          <option value="">Custom...</option>
           {templates.map((template) => (
             <option key={`generic_action_${template.name}_${template.address}`} value={template.address}>
               {template.name}
             </option>
           ))}
         </Field>
+        {isCustom &&
+          fieldView("GenericScheme", "Custom Contract To Call", "contractToCall")}
         <a href={linkToEtherScan(contractToCall)} target="_blank" rel="noopener noreferrer">{ contractToCall }</a>
       </div>
       {GenesisProtocolFields("GenericScheme.votingParams")}

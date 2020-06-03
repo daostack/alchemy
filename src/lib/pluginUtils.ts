@@ -118,6 +118,10 @@ export function pluginName(plugin: IPluginState|IContractInfo, fallback?: string
   } else if (plugin.name) {
     if (plugin.name === "ContributionRewardExt") {
       name = rewarderContractName(plugin as IContributionRewardExtState);
+
+      if (!name) {
+        name = "ContributionRewardExt";
+      }
     } else {
       // add spaces before capital letters to approximate a human-readable title
       name = `${plugin.name[0]}${plugin.name.slice(1).replace(/([A-Z])/g, " $1")}`;
