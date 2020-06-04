@@ -1,15 +1,25 @@
 import { IDAOState, IProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
-import { linkToEtherScan, formatTokens } from "lib/util";
+import { linkToEtherScan, formatTokens, truncateWithEllipses, copyToClipboard } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
 import ProposalSummaryDutchX from "./ProposalSummaryDutchX";
 import ProposalSummaryStandardBounties from "./ProposalSummaryStandardBounties";
 import ProposalSummaryCO2ken from "./ProposalSummaryCO2ken";
+import { NotificationStatus, showNotification } from "reducers/notifications";
+import { connect } from "react-redux";
 
-interface IProps {
+interface IDispatchProps {
+  showNotification: typeof showNotification;
+}
+
+const mapDispatchToProps = {
+  showNotification,
+};
+
+interface IExternalProps {
   beneficiaryProfile?: IProfileState;
   detailView?: boolean;
   dao: IDAOState;
@@ -18,15 +28,35 @@ interface IProps {
   genericSchemeInfo: GenericSchemeInfo;
 }
 
-export default class ProposalSummary extends React.Component<IProps> {
+type IProps = IExternalProps & IDispatchProps;
+
+class ProposalSummary extends React.Component<IProps> {
+
+  private copyToClipboard = (str: string) => (e: any): void => {
+    const { showNotification } = this.props;
+    copyToClipboard(str);
+    showNotification(NotificationStatus.Success, "Copied to clipboard!");
+    e.preventDefault();
+  }
 
   constructor(props: IProps) {
     super(props);
   }
 
   private inputHtml = (x: any) => <span key={x.name}>{x.name} {x.type}, </span>;
-  private callDataHtml = (value: any) => <div key={value}>{value}</div>;
-
+  private callDataHtml = (value: any, isArrayItem = false) => {
+    if (value?.length > 66) {
+      value = truncateWithEllipses(value, 66);
+      return <div className={isArrayItem ? css.arrayItem : ""} key={value}>{value}
+        <img className={css.copyToClipboard}
+          onClick={this.copyToClipboard(value)}
+          src="/assets/images/Icon/Copy-blue.svg" />
+        {isArrayItem ? ", " : ""}
+      </div>;
+    } else {
+      return <div className={isArrayItem ? css.arrayItem : ""} key={value}>{value}{isArrayItem ? ", " : ""}</div>;
+    }
+  }
 
   public render(): RenderOutput {
     const { proposal, detailView, transactionModal, genericSchemeInfo } = this.props;
@@ -85,7 +115,19 @@ export default class ProposalSummary extends React.Component<IProps> {
           <pre>{ decodedCallData.action.abi.name}
         ({ decodedCallData.action.abi.inputs.map(this.inputHtml) })
           </pre>
-          with values: <pre>{ decodedCallData.values.map(this.callDataHtml)}</pre>
+          with values: <pre>{
+            decodedCallData.values.map((value: string | Array<string>) =>
+            {
+              if (value instanceof Array) {
+                return <><span>[</span>
+                  { value.map((value: string) => this.callDataHtml(value, true))
+                  }
+                  <span>]</span></>;
+              } else {
+                return this.callDataHtml(value);
+              }
+            })}
+          </pre>
           on contract at:
           <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
           sending to contract:
@@ -96,3 +138,5 @@ export default class ProposalSummary extends React.Component<IProps> {
     </div>;
   }
 }
+
+export default connect(null, mapDispatchToProps)(ProposalSummary);
