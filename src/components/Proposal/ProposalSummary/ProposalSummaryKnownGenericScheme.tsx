@@ -54,11 +54,11 @@ class ProposalSummary extends React.Component<IProps> {
         key={value}
       >{value}<img className={css.copyToClipboard}
           onClick={this.copyToClipboard(value)}
-          src="/assets/images/Icon/Copy-blue.svg" />{isArrayItem ? ", " : ""}
+          src="/assets/images/Icon/Copy-blue.svg" />{isArrayItem ? "," : ""}
       </div>;
 
     } else {
-      return <div className={isArrayItem ? css.arrayItem : ""} key={value}>{value}{isArrayItem ? ", " : ""}</div>;
+      return <div className={isArrayItem ? css.arrayItem : ""} key={value}>{value}{isArrayItem ? "," : ""}</div>;
     }
   }
 
