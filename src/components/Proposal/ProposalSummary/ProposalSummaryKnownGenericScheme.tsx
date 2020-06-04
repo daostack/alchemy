@@ -119,10 +119,11 @@ class ProposalSummary extends React.Component<IProps> {
             decodedCallData.values.map((value: string | Array<string>) =>
             {
               if (value instanceof Array) {
-                return <><span>[</span>
-                  { value.map((value: string) => this.callDataHtml(value, true))
-                  }
-                  <span>]</span></>;
+                return <>
+                  <span>[</span>
+                  { value.map((value: string) => this.callDataHtml(value, true)) }
+                  <span>]</span>
+                </>;
               } else {
                 return this.callDataHtml(value);
               }
