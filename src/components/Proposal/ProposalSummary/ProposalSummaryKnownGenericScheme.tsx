@@ -46,16 +46,17 @@ class ProposalSummary extends React.Component<IProps> {
   private inputHtml = (x: any) => <span key={x.name}>{x.name} {x.type}, </span>;
   private callDataHtml = (value: any, isArrayItem = false) => {
     if (value?.length > 66) {
+
       value = truncateWithEllipses(value, 66);
+
       return <div
         className={isArrayItem ? css.arrayItem : ""}
         key={value}
-      >{value}
-        <img className={css.copyToClipboard}
+      >{value}<img className={css.copyToClipboard}
           onClick={this.copyToClipboard(value)}
-          src="/assets/images/Icon/Copy-blue.svg" />
-        {isArrayItem ? ", " : ""}
+          src="/assets/images/Icon/Copy-blue.svg" />{isArrayItem ? ", " : ""}
       </div>;
+
     } else {
       return <div className={isArrayItem ? css.arrayItem : ""} key={value}>{value}{isArrayItem ? ", " : ""}</div>;
     }
