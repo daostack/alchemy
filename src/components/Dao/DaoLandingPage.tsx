@@ -16,10 +16,9 @@ type IProps = IExternalProps;
 
 export default class DaoLandingPage extends React.Component<IProps, null> {
 
-  private disqusConfig: any;
+  private disqusConfig = { url: "", identifier: "", title: "" };
 
   public componentDidMount() {
-
     Analytics.track("Page View", {
       "Page Name": Page.DAOLanding,
       "DAO Address": this.props.daoState.id,
