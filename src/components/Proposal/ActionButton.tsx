@@ -32,6 +32,7 @@ interface IExternalProps {
    */
   rewards: IRewardState;
   expired: boolean;
+  onClick?: () => void;
 }
 
 interface IStateProps {
@@ -92,12 +93,16 @@ class ActionButton extends React.Component<IProps, IState> {
       "Scheme Name": proposalState.scheme.name,
       "Type": type,
     });
+
+    this.props.onClick?.();
   }
 
   private handleClickRedeem = async (e: any): Promise<void> => {
     e.preventDefault();
 
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    this.props.onClick?.();
 
     this.setState({ preRedeemModalOpen: true });
   }
