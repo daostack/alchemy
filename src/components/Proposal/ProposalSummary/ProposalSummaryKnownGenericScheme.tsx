@@ -1,23 +1,14 @@
 import { IDAOState, IProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
-import { linkToEtherScan, formatTokens, truncateWithEllipses, copyToClipboard } from "lib/util";
+import { linkToEtherScan, formatTokens, truncateWithEllipses } from "lib/util";
+import CopyToClipboard from "components/Shared/CopyToClipboard";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
 import ProposalSummaryDutchX from "./ProposalSummaryDutchX";
 import ProposalSummaryStandardBounties from "./ProposalSummaryStandardBounties";
 import ProposalSummaryCO2ken from "./ProposalSummaryCO2ken";
-import { NotificationStatus, showNotification } from "reducers/notifications";
-import { connect } from "react-redux";
-
-interface IDispatchProps {
-  showNotification: typeof showNotification;
-}
-
-const mapDispatchToProps = {
-  showNotification,
-};
 
 interface IExternalProps {
   beneficiaryProfile?: IProfileState;
@@ -28,20 +19,9 @@ interface IExternalProps {
   genericSchemeInfo: GenericSchemeInfo;
 }
 
-type IProps = IExternalProps & IDispatchProps;
+type IProps = IExternalProps;
 
-class ProposalSummary extends React.Component<IProps> {
-
-  private copyToClipboard = (str: string) => (e: any): void => {
-    const { showNotification } = this.props;
-    copyToClipboard(str);
-    showNotification(NotificationStatus.Success, "Copied to clipboard!");
-    e.preventDefault();
-  }
-
-  constructor(props: IProps) {
-    super(props);
-  }
+export default class ProposalSummary extends React.Component<IProps> {
 
   private inputHtml = (x: any) => <span key={x.name}>{x.name} {x.type}, </span>;
   private callDataHtml = (value: any, isArrayItem = false) => {
@@ -52,9 +32,10 @@ class ProposalSummary extends React.Component<IProps> {
       return <div
         className={isArrayItem ? css.arrayItem : ""}
         key={value}
-      >{value}<img className={css.copyToClipboard}
-          onClick={this.copyToClipboard(value)}
-          src="/assets/images/Icon/Copy-blue.svg" />{isArrayItem ? "," : ""}
+      >{value}<CopyToClipboard
+          value={value}
+
+        />{isArrayItem ? "," : ""}
       </div>;
 
     } else {
@@ -104,8 +85,8 @@ class ProposalSummary extends React.Component<IProps> {
 
     return <div className={proposalSummaryClass}>
       <span className={css.summaryTitle}>
-        <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-        { decodedCallData.action.label }
+        <img src="/assets/images/Icon/edit-sm.svg" />&nbsp;
+        {decodedCallData.action.label}
 
         {sendsETH ?
           <div className={css.warning}>&gt; Sending {formatTokens(proposal.genericScheme.value)} ETH &lt;</div>
@@ -116,16 +97,15 @@ class ProposalSummary extends React.Component<IProps> {
       {detailView ?
         <div className={css.summaryDetails}>
           Executing this proposal will call the function:
-          <pre>{ decodedCallData.action.abi.name}
-        ({ decodedCallData.action.abi.inputs.map(this.inputHtml) })
+          <pre>{decodedCallData.action.abi.name}
+        ({decodedCallData.action.abi.inputs.map(this.inputHtml)})
           </pre>
           with values: <pre>{
-            decodedCallData.values.map((value: string | Array<string>) =>
-            {
+            decodedCallData.values.map((value: string | Array<string>) => {
               if (value instanceof Array) {
                 return <>
                   <span>[</span>
-                  { value.map((value: string) => this.callDataHtml(value, true)) }
+                  {value.map((value: string) => this.callDataHtml(value, true))}
                   <span>]</span>
                 </>;
               } else {
@@ -143,5 +123,3 @@ class ProposalSummary extends React.Component<IProps> {
     </div>;
   }
 }
-
-export default connect(null, mapDispatchToProps)(ProposalSummary);
