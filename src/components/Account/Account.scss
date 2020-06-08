@@ -196,11 +196,14 @@ a.accountName {
 
     .followButton {
       margin-top: 10px;
+      margin-bottom: 16px;
     }
   }
 
   .userAvatarContainer {
-    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    margin-bottom: 16px;
   }
 
   .saveProfile {
@@ -248,6 +251,7 @@ a.accountName {
     .copyButton {
       border: none;
       vertical-align: middle;
+      background-color: transparent;
     }
 
     p {
