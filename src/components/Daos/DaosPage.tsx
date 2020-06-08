@@ -193,11 +193,7 @@ class DaosPage extends React.Component<IProps, IState> {
                 next={fetchMore}
                 hasMore
                 loader=""
-                endMessage={
-                  <p style={{ textAlign: "center" }}>
-                    <b>&mdash;</b>
-                  </p>
-                }
+                endMessage={null}
               >
                 {otherDaoNodes}
               </InfiniteScroll> : "None"}
