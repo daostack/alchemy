@@ -54,6 +54,10 @@ export default class ProposalDescription extends React.Component<IExternalProps>
           }
         }
       } catch (err) {
+        /**
+          * This is particularly to trap an exception thrown by `new URL`
+          * when an href is not a valid URL, for example, an email address"
+          */
         console.error(err);
       }
     }
