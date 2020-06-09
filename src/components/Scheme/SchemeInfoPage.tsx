@@ -4,17 +4,12 @@ import { History } from "history";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState, IGenesisProtocolParams, IDAOState } from "@daostack/arc.js";
-import { copyToClipboard, fromWei, linkToEtherScan, roundUp } from "lib/util";
+import { fromWei, linkToEtherScan, roundUp } from "lib/util";
+import CopyToClipboard from "components/Shared/CopyToClipboard";
 import { schemeName } from "lib/schemeUtils";
 import * as moment from "moment";
-import { NotificationStatus, showNotification } from "reducers/notifications";
-import { connect } from "react-redux";
 import Tooltip from "rc-tooltip";
 import * as css from "./SchemeInfo.scss";
-
-interface IDispatchProps {
-  showNotification: typeof showNotification;
-}
 
 interface IExternalProps {
   daoState: IDAOState;
@@ -23,18 +18,9 @@ interface IExternalProps {
   schemeManager: ISchemeState;
 }
 
-type IProps = IExternalProps & IDispatchProps;
+type IProps = IExternalProps;
 
-const mapDispatchToProps = {
-  showNotification,
-};
-
-class SchemeInfo extends React.Component<IProps, null> {
-
-  private copyToClipboardHandler = (str: string) => (_event: any) => {
-    copyToClipboard(str);
-    this.props.showNotification(NotificationStatus.Success, "Copied to clipboard!");
-  };
+export default class SchemeInfo extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
     const { daoState, scheme } = this.props;
@@ -130,14 +116,14 @@ class SchemeInfo extends React.Component<IProps, null> {
             <div>Address of plugin: <a href={linkToEtherScan(scheme.address)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></div>
             <div>
               <div className={css.addressHash}>{scheme.address}</div>
-              <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.address)} />
+              <CopyToClipboard value={scheme.address} />
             </div>
             { scheme.genericSchemeParams ?
               <>
                 <div>will call this contract: <a href={linkToEtherScan(scheme.genericSchemeParams.contractToCall)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></div>
                 <div>
                   <div className={css.addressHash}>{scheme.genericSchemeParams.contractToCall}</div>
-                  <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.genericSchemeParams.contractToCall)} />
+                  <CopyToClipboard value={scheme.genericSchemeParams.contractToCall} />
                 </div>
               </> : undefined
             }
@@ -146,7 +132,7 @@ class SchemeInfo extends React.Component<IProps, null> {
                 <div>will call this contract: <a href={linkToEtherScan(scheme.uGenericSchemeParams.contractToCall)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></div>
                 <div>
                   <div className={css.addressHash}>{scheme.uGenericSchemeParams.contractToCall}</div>
-                  <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.uGenericSchemeParams.contractToCall)} />
+                  <CopyToClipboard value={scheme.uGenericSchemeParams.contractToCall} />
                 </div>
               </> : undefined
             }
@@ -154,7 +140,7 @@ class SchemeInfo extends React.Component<IProps, null> {
             <div>Param Hash:</div>
             <div>
               <div className={css.addressHash}>{scheme.paramsHash}</div>
-              <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.paramsHash)} />
+              <CopyToClipboard value={scheme.paramsHash} />
             </div>
             <div>Can Register Plugins?</div>
             <div>
@@ -232,4 +218,3 @@ class SchemeInfo extends React.Component<IProps, null> {
   }
 }
 
-export default connect(null, mapDispatchToProps)(SchemeInfo);

@@ -353,27 +353,19 @@ body {
       }
 
       .copyAddress {
-        padding: 2px 0 0 15px;
+        margin: 2px 0 0 15px;
         position: relative;
         overflow: hidden;
+        text-align: right;
 
-        span {
-          position: relative;
-          display: block;
+        .accountAddress {
+          display: inline-block;
+          max-width: 136px;
           overflow: hidden;
           text-overflow: ellipsis;
-          padding-right: 20px;
           color: rgba(78, 97, 118, 1);
           font-family: "Open Sans";
           font-size: 11px;
-          left: -3px;
-        }
-
-        img {
-          position: absolute;
-          right: 0;
-          z-index: 5;
-          top: 2px;
         }
       }
 

@@ -12,7 +12,8 @@ import ThreeboxModal from "components/Shared/ThreeboxModal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { Field, Formik, FormikProps } from "formik";
 import Analytics from "lib/analytics";
-import { baseTokenName, copyToClipboard, ethErrorHandler, genName, formatTokens } from "lib/util";
+import { baseTokenName, ethErrorHandler, genName, formatTokens } from "lib/util";
+import CopyToClipboard, { IconColor } from "components/Shared/CopyToClipboard";
 import { Page } from "pages";
 import { parse } from "query-string";
 import * as React from "react";
@@ -21,12 +22,11 @@ import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
-import { NotificationStatus, showNotification } from "reducers/notifications";
+import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import Loading from "components/Shared/Loading";
 import * as css from "./Account.scss";
-import Tooltip from "rc-tooltip";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -108,13 +108,6 @@ class AccountProfilePage extends React.Component<IProps, IState> {
       "DAO Name": dao ? dao.name : "",
       "Profile Address": this.props.accountAddress,
     });
-  }
-
-  public copyAddress = (e: any): void => {
-    const { showNotification, accountAddress } = this.props;
-    copyToClipboard(accountAddress);
-    showNotification(NotificationStatus.Success, "Copied to clipboard!");
-    e.preventDefault();
   }
 
   public doUpdateProfile = async() => {
@@ -300,9 +293,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                       <div>
                         <strong>ETH Address:</strong><br />
                         <span>{accountAddress.substr(0, 20)}...</span>
-                        <Tooltip overlay="Copy link" placement="right">
-                          <button className={css.copyButton} onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg" /></button>
-                        </Tooltip>
+                        <CopyToClipboard value={accountAddress} color={IconColor.Black}/>
                       </div>
                     </div>
                   </div>
