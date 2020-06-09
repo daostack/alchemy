@@ -27,7 +27,6 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import Loading from "components/Shared/Loading";
 import * as css from "./Account.scss";
-import Tooltip from "rc-tooltip";
 
 type IExternalProps = RouteComponentProps<any>;
 
