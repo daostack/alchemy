@@ -525,10 +525,6 @@ export function ensureHttps(url: string) {
   return url;
 }
 
-export function inTesting(): boolean {
-  return (process.env.NODE_ENV === "development" && navigator.webdriver);
-}
-
 export function isAddress(address: Address, allowNulls = false): boolean {
   return getArc().web3.utils.isAddress(address) && (allowNulls || (Number(address) > 0));
 }

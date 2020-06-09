@@ -280,7 +280,7 @@ export interface IEnableWalletProviderParams {
 }
 
 function inTesting(): boolean {
-  if (process.env.NODE_ENV === "development" && navigator.webdriver) {
+  if (process.env.NODE_ENV === "development" && (global as any).inAlchemyTests) {
     // in test mode, we have an unlocked ganache and we are not using any wallet
     // eslint-disable-next-line no-console
     console.log("not using any wallet, because we are in automated test");
