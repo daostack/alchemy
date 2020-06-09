@@ -26,14 +26,14 @@ import HelpButton from "components/Shared/HelpButton";
 
 const BN = require("bn.js");
 
-interface IStateProps {
+interface IExternalProps {
   daoAvatarAddress: string;
   genericSchemeInfo: GenericSchemeInfo;
   handleClose: () => any;
   scheme: ISchemeState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IStateProps) => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps) => {
   return ownProps;
 };
 
@@ -47,7 +47,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type IProps = IStateProps & IDispatchProps;
+type IProps = IExternalProps & IDispatchProps;
 
 interface IFormValues {
   description: string;
