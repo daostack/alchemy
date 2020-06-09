@@ -19,7 +19,7 @@ describe("Proposals", () => {
   it("Create a DutchX Generic Scheme proposal, vote for it, stake on it", async () => {
     await gotoDaoSchemes(daoAddress);
 
-    const schemeTitle = await $("h2=DutchX");
+    const schemeTitle = await $("h2=Generic Scheme Dutch X");
     await schemeTitle.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
@@ -57,7 +57,7 @@ describe("Proposals", () => {
   it("Export a DutchX Generic Scheme proposal", async () => {
     await gotoDaoSchemes(daoAddress);
 
-    const schemeTitle = await $("h2=DutchX");
+    const schemeTitle = await $("h2=Generic Scheme Dutch X");
     await schemeTitle.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");

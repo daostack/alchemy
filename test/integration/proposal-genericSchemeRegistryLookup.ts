@@ -10,7 +10,7 @@ describe("Proposals Registry Lookup", () => {
 
     await hideCookieAcceptWindow();
 
-    const ensTitle = await $("h2=RegistryLookup");
+    const ensTitle = await $("h2=Generic Scheme Registry Lookup");
     await ensTitle.waitForExist();
     await ensTitle.click();
 

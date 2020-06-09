@@ -16,7 +16,7 @@ describe("Proposals ENS Resolver", () => {
   it("Create a Generic Scheme ENS Public Resolver proposal and check that the data is submitted correctly", async () => {
     await gotoDaoSchemes(daoAddress);
 
-    const ensTitle = await $("h2=EnsPublicResolver");
+    const ensTitle = await $("h2=Generic Scheme ENSPublic Resolver");
     await ensTitle.waitForExist();
     await ensTitle.click();
 
