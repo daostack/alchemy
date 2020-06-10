@@ -127,11 +127,7 @@ class FeedPage extends React.Component<IProps, null> {
           next={this.props.fetchMore}
           hasMore
           loader=""
-          endMessage={
-            <p style={{textAlign: "center"}}>
-              <b>&mdash;</b>
-            </p>
-          }
+          endMessage={null}
         >
           {eventsHTML}
         </InfiniteScroll>

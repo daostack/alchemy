@@ -187,10 +187,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
                   next={fetchMore}
                   hasMore={proposalsQueued.length < scheme.numberOfQueuedProposals}
                   loader={<h4>Fetching more proposals...</h4>}
-                  endMessage={
-                    <p style={{textAlign: "center"}}>
-                    </p>
-                  }
+                  endMessage={null}
                 >
                   {queuedProposalsHTML}
                 </InfiniteScroll>

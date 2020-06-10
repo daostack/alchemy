@@ -59,11 +59,7 @@ class DaoHistoryPage extends React.Component<IProps, null> {
           hasMore={hasMoreToLoad}
           loader=""
           style={{overflow: "visible"}}
-          endMessage={
-            <p style={{textAlign: "center"}}>
-              <b>&mdash;</b>
-            </p>
-          }
+          endMessage={null}
         >
           { proposals.length === 0 ?
             <span>This DAO hasn&apos;t passed any proposals yet. Checkout the <Link to={"/dao/" + daoState.id + "/proposal/"}>DAO&apos;s installed schemes</Link> for any open proposals.</span> :
