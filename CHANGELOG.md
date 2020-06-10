@@ -1,3 +1,19 @@
+## 0.10.10
+  - Several code refactorings
+
+  - Features Added
+    - add OK button to the modal prompt that appears on the DAO landing page when clicking the Edit Home Page button
+
+  - Bugs Fixed
+    - in the DAO side bar menu, improve appearance and behavior of the scrollbar that appears when more than three ETH/token balances are listed
+    - in the DAO side bar menu, the DAO Holdings link now opens in a new browser tab instead of replacing the current page
+    - in the DAO side bar menu, fix DAOstack icon color when not in the context of a DAO
+    - when clicking "Redeem" in the Redemptions menu, the menu now disappears to avoid obscuring the Redeem popup.
+    - copy-to-clipboard buttons now all show an explanative tooltip
+    - improved plugin Information tab layout on mobile platforms
+    - improve layout of the account profile page when there is no account profile
+    - remove spurious dash at the bottom of the DAO Members and other pages
+
 ## 0.10.9
   - Features Added
     - extend Scheme URL Params => Proposal Templates to Competition proposal & competition submission
