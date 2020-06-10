@@ -90,11 +90,10 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
   const contractInfo = (scheme as IContractInfo).alias ? scheme as IContractInfo : getArc().getContractInfo(scheme.address);
 
   const alias = contractInfo?.alias;
-  const aliasPretty = alias ? splitCamelCase(alias) : null;
 
   if (scheme.name === "GenericScheme" || scheme.name === "UGenericScheme") {
     if (alias && ((alias !== "GenericScheme") && (alias !== "UGenericScheme"))) {
-      name = aliasPretty;
+      name = alias;
     } else if ((scheme as any).genericSchemeParams || ((scheme as any).uGenericSchemeParams)) {
       const genericSchemeRegistry = new GenericSchemeRegistry();
       let contractToCall;
@@ -118,13 +117,13 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
     }
   } else if (scheme.name === "ContributionReward") {
     if (alias && (alias !== "ContributionReward")) {
-      name = aliasPretty;
+      name = alias;
     } else {
       name = "Funding and Voting Power";
     }
   } else if (scheme.name === "SchemeRegistrar") {
     if (alias && (alias !== "SchemeRegistrar")) {
-      name = aliasPretty;
+      name = alias;
     } else {
       name = "Plugin Manager";
     }
@@ -135,10 +134,10 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
        */
       name = rewarderContractName(scheme as ISchemeState);
     } else {
-      name = aliasPretty ?? splitCamelCase(scheme.name);
+      name = alias ?? splitCamelCase(scheme.name);
     }
   } else {
-    name = aliasPretty ?? fallback;
+    name = alias ?? fallback;
   }
   return name;
 }
