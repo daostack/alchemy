@@ -56,7 +56,6 @@ type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<SubscriptionD
 type PreboostedProposalsSubscriptionData = Proposal[];
 type IPropsPreBoosted = {
   currentAccountAddress: Address;
-  isActive: boolean;
   scheme: ISchemeState;
   daoState: IDAOState;
 } & ISubscriptionProps<Proposal[]>;
@@ -64,7 +63,6 @@ type IPropsPreBoosted = {
 type RegularProposalsSubscriptionData = Proposal[];
 type IPropsQueued = {
   currentAccountAddress: Address;
-  isActive: boolean;
   scheme: ISchemeState;
   daoState: IDAOState;
 } & ISubscriptionProps<Proposal[]>;
@@ -151,7 +149,7 @@ const SubscribedProposalsPreBoosted = withSubscription<IPropsPreBoosted, Preboos
     }, { subscribe: true });
   },
 
-  getFetchMoreObservable: (props: IExternalProps, data: PreboostedProposalsSubscriptionData) => {
+  getFetchMoreObservable: (props: IPropsPreBoosted, data: PreboostedProposalsSubscriptionData) => {
     const dao = props.daoState.dao;
 
     return dao.proposals({
@@ -220,7 +218,7 @@ const SubscribedProposalsQueued = withSubscription<IPropsQueued, RegularProposal
     return oldProps.scheme.id !== newProps.scheme.id;
   },
 
-  createObservable: async (props: IExternalProps) => {
+  createObservable: async (props: IPropsQueued) => {
     const dao = props.daoState.dao;
     const schemeId = props.scheme.id;
 
@@ -267,8 +265,6 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
     const [proposalsBoosted, allProposals ] = data;
     const { currentAccountAddress, daoState, scheme } = this.props;
     let proposalCount=0;
-
-    proposalCount=0;
 
     const boostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
@@ -321,9 +317,9 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
               </div>
             </div>
 
-            <SubscribedProposalsPreBoosted currentAccountAddress={currentAccountAddress} daoState={daoState} isActive={isActive} scheme={scheme}></SubscribedProposalsPreBoosted>
+            <SubscribedProposalsPreBoosted currentAccountAddress={currentAccountAddress} daoState={daoState} scheme={scheme}></SubscribedProposalsPreBoosted>
 
-            <SubscribedProposalsQueued currentAccountAddress={currentAccountAddress} daoState={daoState} isActive={isActive} scheme={scheme}></SubscribedProposalsQueued>
+            <SubscribedProposalsQueued currentAccountAddress={currentAccountAddress} daoState={daoState} scheme={scheme}></SubscribedProposalsQueued>
 
           </div>
         }
