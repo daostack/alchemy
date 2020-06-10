@@ -17,7 +17,7 @@ describe("Proposals ENS Registry", () => {
   it("Create a Generic Scheme ENS Registry proposal and check that the data is submitted correctly", async () => {
     await gotoDaoSchemes(daoAddress);
 
-    const ensTitle = await $("h2=Generic Scheme ENSRegistry");
+    const ensTitle = await $("h2=GenericSchemeENSRegistry");
     await ensTitle.waitForExist();
     await ensTitle.click();
 
