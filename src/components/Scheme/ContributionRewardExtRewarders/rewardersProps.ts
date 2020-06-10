@@ -10,7 +10,7 @@ export const rewarderContractName = (schemeState: ISchemeState, useAlias = true)
   if (hasRewarderContract(schemeState)) {
     const contractInfo = getArc().getContractInfo(schemeState.contributionRewardExtParams.rewarder);
     if (contractInfo) {
-      return useAlias ? splitCamelCase(contractInfo.alias ?? contractInfo.name) : contractInfo.name;
+      return (useAlias && !!contractInfo.alias) ? contractInfo.alias : splitCamelCase(contractInfo.name);
     } else {
       // eslint-disable-next-line no-console
       console.error(`rewarder contract not found: ${schemeState.contributionRewardExtParams.rewarder}`);
