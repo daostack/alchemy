@@ -13,6 +13,7 @@ import "moment";
 import * as moment from "moment-timezone";
 
 import { getArc } from "../arc";
+import { splitCamelCase } from "lib/util";
 
 export enum SchemePermissions {
   None = 0,
@@ -86,8 +87,14 @@ export function isKnownScheme(address: Address) {
 
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   let name: string;
+  const contractInfo = (scheme as IContractInfo).alias ? scheme as IContractInfo : getArc().getContractInfo(scheme.address);
+
+  const alias = contractInfo?.alias;
+
   if (scheme.name === "GenericScheme" || scheme.name === "UGenericScheme") {
-    if ((scheme as any).genericSchemeParams || ((scheme as any).uGenericSchemeParams)) {
+    if (alias && ((alias !== "GenericScheme") && (alias !== "UGenericScheme"))) {
+      name = alias;
+    } else if ((scheme as any).genericSchemeParams || ((scheme as any).uGenericSchemeParams)) {
       const genericSchemeRegistry = new GenericSchemeRegistry();
       let contractToCall;
       const schemeState = scheme as ISchemeState;
@@ -98,7 +105,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       }
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
       if (genericSchemeInfo) {
-        name = genericSchemeInfo.specs.name;
+        name = splitCamelCase(genericSchemeInfo.specs.name);
       } else {
         // Adding the address is a bit long for a title
         // name = `Blockchain Interaction (${contractToCall})`;
@@ -109,18 +116,28 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       name = "Blockchain Interaction";
     }
   } else if (scheme.name === "ContributionReward") {
-    name ="Funding and Voting Power";
+    if (alias && (alias !== "ContributionReward")) {
+      name = alias;
+    } else {
+      name = "Funding and Voting Power";
+    }
   } else if (scheme.name === "SchemeRegistrar") {
-    name ="Plugin Manager";
+    if (alias && (alias !== "SchemeRegistrar")) {
+      name = alias;
+    } else {
+      name = "Plugin Manager";
+    }
   } else if (scheme.name) {
     if (scheme.name === "ContributionRewardExt") {
+      /**
+       * this will be "pretty"
+       */
       name = rewarderContractName(scheme as ISchemeState);
     } else {
-      // add spaces before capital letters to approximate a human-readable title
-      name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;
+      name = alias ?? splitCamelCase(scheme.name);
     }
   } else {
-    name = fallback;
+    name = alias ?? fallback;
   }
   return name;
 }
