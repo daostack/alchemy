@@ -5,7 +5,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import gql from "graphql-tag";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import * as InfiniteScroll from "react-infinite-scroll-component";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
@@ -59,7 +59,7 @@ class FeedPage extends React.Component<IProps, null> {
       <img className={css.birds} src="/assets/images/birds.svg" />
       <h1>Looks like you&apos;re not following anything</h1>
       <h3>Follow DAOs, people and proposals to stay up to date with new proposals and their statuses</h3>
-      <div><img src="/assets/images/Icon/down-gray.svg"/></div>
+      <div><img src="/assets/images/Icon/down-gray.svg" /></div>
       <DaosPage />
     </div>;
   }
@@ -79,13 +79,13 @@ class FeedPage extends React.Component<IProps, null> {
           <img src="/assets/images/Icon/login-white.svg" />
         </button>
         <div className={css.scrollDown}>Or scroll down to browse all our DAOs</div>
-        <div><img src="/assets/images/Icon/down-gray.svg"/></div>
+        <div><img src="/assets/images/Icon/down-gray.svg" /></div>
         <DaosPage />
       </div>;
     }
 
     if (!data) {
-      return <Loading/>;
+      return <Loading />;
     }
 
     // Create the feed
@@ -226,8 +226,8 @@ const getFeedObservable = (props: IStateProps, existingData?: SubscriptionData) 
 
 const SubscribedFeedPage = withSubscription({
   wrappedComponent: FeedPage,
-  loadingComponent: <Loading/>,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
+  loadingComponent: <Loading />,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: ["currentAccountAddress", "currentAccountProfile"],
 

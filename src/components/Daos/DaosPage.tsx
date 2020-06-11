@@ -8,7 +8,7 @@ import { createDaoStateFromQuery } from "lib/daoHelpers";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import * as InfiniteScroll from "react-infinite-scroll-component";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
@@ -123,8 +123,8 @@ class DaosPage extends React.Component<IProps, IState> {
       // Otherwise show registered DAOs
       otherDAOs = otherDAOs.filter((d: DAO) => {
         return !yourDAOAddresses.includes(d.id) &&
-               d.staticState.name.toLowerCase().includes(search) &&
-               d.staticState.register === "registered";
+          d.staticState.name.toLowerCase().includes(search) &&
+          d.staticState.register === "registered";
       });
     }
 
@@ -229,10 +229,10 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
   `;
   const memberOfDAOs = currentAccountAddress ? arc.getObservableList(memberDAOsquery, (r: any) => createDaoStateFromQuery(r.dao).dao, { subscribe: true }) : of([]);
   // eslint-disable-next-line @typescript-eslint/camelcase
-  const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc"}, { fetchAllData: true, subscribe: true }) : of([]);
+  const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc" }, { fetchAllData: true, subscribe: true }) : of([]);
 
   return combineLatest(
-    arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0}, { fetchAllData: true, subscribe: true }),
+    arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0 }, { fetchAllData: true, subscribe: true }),
     followDAOs,
     memberOfDAOs
   );
@@ -240,8 +240,8 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
 
 const SubscribedDaosPage = withSubscription({
   wrappedComponent: DaosPage,
-  loadingComponent: <div className={css.wrapper}><Loading/></div>,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
+  loadingComponent: <div className={css.wrapper}><Loading /></div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   // Don't ever update the subscription
   checkForUpdate: ["currentAccountAddress", "followingDAOs"],

@@ -6,7 +6,7 @@ import Analytics from "lib/analytics";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import * as InfiniteScroll from "react-infinite-scroll-component";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
