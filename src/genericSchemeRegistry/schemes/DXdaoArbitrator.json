@@ -1,0 +1,330 @@
+{
+  "name": "Omen Dispute Resolution",
+  "addresses": {
+    "main": [
+      ""
+    ],
+    "rinkeby": [
+      ""
+    ],
+    "private": [
+      ""
+    ]
+  },
+  "actions": [
+    {
+      "id": "submitAnswerByArbitrator",
+      "label": "Propose final Answer to Question",
+      "description": "Propose the final Answer to a paused realit.io question that requested <a href=\"https://realitio.github.io/docs/html/arbitrators.html\" target=\"_blank\">Dispute Resolution.</a> The answer will be submitted as Abitrator and instantly close the question.",
+      "notes": "https://github.com/nicoelzer/Omen-Arbitrator",
+      "fields": [
+        {
+          "label": "QuestionId",
+          "name": "questionId",
+          "placeholder":"QuestionId (0x755...)"
+        },
+        {
+          "label": "Answer",
+          "name": "answer",
+          "placeholder":"Answer Hash (0x755...)"
+
+        },
+        {
+          "label": "Answerer",
+          "name": "answerer",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "questionId",
+            "type": "bytes32"
+          },
+          {
+            "name": "answer",
+            "type": "bytes32"
+          },
+          {
+            "name": "answerer",
+            "type": "address"
+          }
+        ],
+        "name": "submitAnswerByArbitrator",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "setRealitio",
+      "label": "Set Realitio Contract Address",
+      "description": "Set or update the address of the realit.io contract this proposals interact with.",
+      "notes": "https://github.com/nicoelzer/Omen-Arbitrator",
+      "fields": [
+        {
+          "label": "New Contract Address",
+          "name": "_address",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "name": "setRealitio",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "setRealitioProxy",
+      "label": "Set Realitio Proxy Contract Address",
+      "description": "Set or update the address of the realitio proxy contract this proposals interact with.",
+      "notes": "https://github.com/nicoelzer/Omen-Arbitrator",
+      "fields": [
+        {
+          "label": "New Contract Address",
+          "name": "_address",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "name": "setRealitioProxy",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "setMetaData",
+      "label": "Set MetaData",
+      "description": "Set or update Abitrator MetaData according the <a href=\"https://realitio.github.io/docs/html/arbitrators.html?highlight=metadata#getting-information-about-the-arbitrator\" target=\"_blank\">documentation.</a>",
+      "notes": "https://github.com/nicoelzer/Omen-Arbitrator",
+      "fields": [
+        {
+          "label": "New MetaData",
+          "name": "_metadata"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_metadata",
+            "type": "string"
+          }
+        ],
+        "name": "setMetaData",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "setDisputeFee",
+      "label": "Set Dispute Fee",
+      "description": "Set or update the fee to be charged to provide Dispute Resolution as Abitrator.",
+      "notes": "https://github.com/nicoelzer/Omen-Arbitrator",
+      "fields": [
+        {
+          "label": "New DisputeFee (in WEI)",
+          "name": "_fee",
+          "placeholder":"1000000000000000000"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_fee",
+            "type": "uint256"
+          }
+        ],
+        "name": "setDisputeFee",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "setFeeRecipient",
+      "label": "Set Fee Recipient",
+      "description": "Set or update the address of the recipient who will recieve charged fees.",
+      "notes": "https://github.com/nicoelzer/Omen-Arbitrator",
+      "fields": [
+        {
+          "label": "New FeeRecipient Address",
+          "name": "_recipient",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_recipient",
+            "type": "address"
+          }
+        ],
+        "name": "setFeeRecipient",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "setDAOstackPlugin",
+      "label": "Set DAOstack Plugin",
+      "description": "Set or update the address of the DAOstack Plugin",
+      "notes": "https://github.com/nicoelzer/Omen-Arbitrator",
+      "fields": [
+        {
+          "label": "New address",
+          "name": "_address",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "name": "setDAOstackPlugin",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "setDAOstackAvatar",
+      "label": "Set DAOstack Avatar",
+      "description": "Set or update the address of the DAOstack Avatar",
+      "notes": "https://github.com/nicoelzer/Omen-Arbitrator",
+      "fields": [
+        {
+          "label": "New address",
+          "name": "_DAOstackAvatar",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_DAOstackAvatar",
+            "type": "address"
+          }
+        ],
+        "name": "setDAOstackAvatar",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "setDAOstackProposalDescriptionHash",
+      "label": "Set DAOstack Proposal Description Hash",
+      "description": "Set or update the address of the DAOstack Proposal Description Hash",
+      "notes": "https://github.com/nicoelzer/Omen-Arbitrator",
+      "fields": [
+        {
+          "label": "New Hash",
+          "name": "_descriptionHash",
+          "placeholder": "(0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_descriptionHash",
+            "type": "string"
+          }
+        ],
+        "name": "setDAOstackProposalDescriptionHash",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "transferOwnership",
+      "label": "Transfer Ownership",
+      "description": "Transfer ownership  of the arbitrtor contract",
+      "notes": "https://github.com/nicoelzer/Omen-Arbitrator",
+      "fields": [
+        {
+          "label": "New owner",
+          "name": "newOwner",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "disputeRequestNotification",
+      "label": "Dispute Request Notification",
+      "description": "No need for manual use. This action will be called from external contract.",
+      "notes": "https://github.com/nicoelzer/Omen-Arbitrator",
+      "fields": [
+        {
+          "label": "QuestionId",
+          "name": "questionId"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "questionId",
+            "type": "bytes32"
+          }
+        ],
+        "name": "disputeRequestNotification",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }
+  ]
+} 
