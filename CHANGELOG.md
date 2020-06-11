@@ -3,6 +3,8 @@
 
   - Features Added
     - add OK button to the modal prompt that appears on the DAO landing page when clicking the Edit Home Page button
+    - page the fetching of preboosted proposals on the Plugin Proposals page, 100 proposals at a time
+    - display the scheme "alias" instead of contract name, when available
 
   - Bugs Fixed
     - in the DAO side bar menu, improve appearance and behavior of the scrollbar that appears when more than three ETH/token balances are listed
