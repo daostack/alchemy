@@ -66,7 +66,6 @@ a.detailView {
     width: 190px;
     font-size: $caption;
     color: $black;
-    z-index: 0;
     transform: translateX(-50%) scale(0);
     background-color: $white;
     border-radius: 3px;
@@ -80,30 +79,21 @@ a.detailView {
 
     .beneficiaryAddress {
       overflow: hidden;
-      width: 140px;
+      width: 100%;
+      height: 42px; // for the copy icon
       padding: 10px 30px 5px 10px;
       position: relative;
       text-align: left;
       border-radius: 3px;
       border: 1px solid rgba(255, 255, 255, 0.5);
 
-      span {
+      .accountAddress {
         display: inline-block;
         width: 115px;
         padding-left: 10px;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
-      }
-
-      button {
-        position: absolute;
-        top: 0;
-        right: 0;
-        border: none;
-        outline: none;
-        background-color: transparent;
-        cursor: pointer;
       }
     }
 
@@ -196,11 +186,14 @@ a.accountName {
 
     .followButton {
       margin-top: 10px;
+      margin-bottom: 16px;
     }
   }
 
   .userAvatarContainer {
-    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    margin-bottom: 16px;
   }
 
   .saveProfile {
@@ -243,11 +236,6 @@ a.accountName {
 
     div {
       margin-bottom: 20px;
-    }
-
-    .copyButton {
-      border: none;
-      vertical-align: middle;
     }
 
     p {

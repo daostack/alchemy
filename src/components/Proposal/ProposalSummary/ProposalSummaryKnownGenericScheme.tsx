@@ -1,7 +1,8 @@
 import { IDAOState, IProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
-import { linkToEtherScan, formatTokens } from "lib/util";
+import { linkToEtherScan, formatTokens, truncateWithEllipses } from "lib/util";
+import CopyToClipboard from "components/Shared/CopyToClipboard";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
@@ -9,7 +10,7 @@ import ProposalSummaryDutchX from "./ProposalSummaryDutchX";
 import ProposalSummaryStandardBounties from "./ProposalSummaryStandardBounties";
 import ProposalSummaryCO2ken from "./ProposalSummaryCO2ken";
 
-interface IProps {
+interface IExternalProps {
   beneficiaryProfile?: IProfileState;
   detailView?: boolean;
   dao: IDAOState;
@@ -18,15 +19,29 @@ interface IProps {
   genericSchemeInfo: GenericSchemeInfo;
 }
 
+type IProps = IExternalProps;
+
 export default class ProposalSummary extends React.Component<IProps> {
 
-  constructor(props: IProps) {
-    super(props);
-  }
-
   private inputHtml = (x: any) => <span key={x.name}>{x.name} {x.type}, </span>;
-  private callDataHtml = (value: any) => <div key={value}>{value}</div>;
+  private callDataHtml = (value: any, isArrayItem = false) => {
+    if (value?.length > 66) {
 
+      value = truncateWithEllipses(value, 66);
+
+      return <div
+        className={isArrayItem ? css.arrayItem : ""}
+        key={value}
+      >{value}<CopyToClipboard
+          value={value}
+
+        />{isArrayItem ? "," : ""}
+      </div>;
+
+    } else {
+      return <div className={isArrayItem ? css.arrayItem : ""} key={value}>{value}{isArrayItem ? "," : ""}</div>;
+    }
+  }
 
   public render(): RenderOutput {
     const { proposal, detailView, transactionModal, genericSchemeInfo } = this.props;
@@ -70,8 +85,8 @@ export default class ProposalSummary extends React.Component<IProps> {
 
     return <div className={proposalSummaryClass}>
       <span className={css.summaryTitle}>
-        <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-        { decodedCallData.action.label }
+        <img src="/assets/images/Icon/edit-sm.svg" />&nbsp;
+        {decodedCallData.action.label}
 
         {sendsETH ?
           <div className={css.warning}>&gt; Sending {formatTokens(proposal.genericScheme.value)} ETH &lt;</div>
@@ -82,10 +97,22 @@ export default class ProposalSummary extends React.Component<IProps> {
       {detailView ?
         <div className={css.summaryDetails}>
           Executing this proposal will call the function:
-          <pre>{ decodedCallData.action.abi.name}
-        ({ decodedCallData.action.abi.inputs.map(this.inputHtml) })
+          <pre>{decodedCallData.action.abi.name}
+        ({decodedCallData.action.abi.inputs.map(this.inputHtml)})
           </pre>
-          with values: <pre>{ decodedCallData.values.map(this.callDataHtml)}</pre>
+          with values: <pre>{
+            decodedCallData.values.map((value: string | Array<string>) => {
+              if (value instanceof Array) {
+                return <>
+                  <span>[</span>
+                  {value.map((value: string) => this.callDataHtml(value, true))}
+                  <span>]</span>
+                </>;
+              } else {
+                return this.callDataHtml(value);
+              }
+            })}
+          </pre>
           on contract at:
           <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
           sending to contract:
