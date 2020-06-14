@@ -1,4 +1,4 @@
-import { Member } from "@daostack/client";
+import { Member } from "@dorgtech/arc.js";
 import * as React from "react";
 import * as Autosuggest from "react-autosuggest";
 import { connect } from "react-redux";

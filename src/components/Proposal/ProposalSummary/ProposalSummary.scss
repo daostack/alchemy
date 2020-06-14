@@ -18,6 +18,10 @@
   }
 }
 
+.copyButton {
+  cursor: pointer;
+}
+
 .proposalSummary.detailView em {
   text-decoration: none;
   font-style: normal;
@@ -25,7 +29,7 @@
   word-break: break-word;
 }
 
-.schemeRegisterIcon {
+.PluginRegisterIcon {
   color: rgba(0, 118, 255, 1.000);
   font-weight: bold;
 }

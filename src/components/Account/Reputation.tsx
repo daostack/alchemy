@@ -1,5 +1,5 @@
 import BN = require("bn.js");
-import { fromWei } from "lib/util";
+import { fromWeiToString } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 
@@ -43,13 +43,8 @@ export default class Reputation extends React.Component<IExternalProps, null> {
       }
     }
 
-    const totalRepFormatted = fromWei(totalReputation).toLocaleString(
-      undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}
-    );
-
-    const repFormatted = fromWei(reputation).toLocaleString(
-      undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}
-    );
+    const totalRepFormatted = fromWeiToString(totalReputation);
+    const repFormatted = fromWeiToString(reputation);
 
     return (
       <Tooltip

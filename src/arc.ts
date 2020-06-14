@@ -1,18 +1,20 @@
 import { NotificationStatus } from "reducers/notifications";
 import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
-import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
+import { settings, Settings, USE_CONTRACTINFOS_CACHE } from "./settings";
+import { IProviderInfo, getProviderInfo } from "web3modal";
 import { RetryLink } from "apollo-link-retry";
-import { Address, Arc } from "@daostack/client";
-import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
+import { Address, Arc, Web3Client, Web3Provider } from "@dorgtech/arc.js";
+import Web3Modal from "web3modal";
 import { Observable } from "rxjs";
-
-const Web3 = require("web3");
+import { first } from "rxjs/operators";
+import { AsyncSendable, Block } from "ethers/providers";
 
 /**
  * This is only set after the user has selected a provider and enabled an account.
  * It is like window.ethereum, but has not necessarily been injected as such.
  */
-let selectedProvider: any;
+let selectedProvider: Web3Provider | undefined;
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 let web3Modal: Web3Modal;
@@ -21,51 +23,41 @@ let initializedAccount: Address;
 /**
  * return the default Arc configuration given the execution environment
  */
-export function getArcSettings(): any {
+export function getArcSettings(): Settings {
   const network = targetedNetwork();
   const arcSettings = settings[network];
   return arcSettings;
 }
 
 /**
- * Return the web3 in current use by Arc.
- */
-function getWeb3(): any {
-  const arc = (window as any).arc;
-  const web3 = arc ? arc.web3 : null;
-  return web3;
-}
-
-/**
  * Return the default account in current use by Arc.
  */
-async function _getCurrentAccountFromProvider(web3?: any): Promise<string> {
-  web3 = web3 || getWeb3();
-  if (!web3) {
+async function _getCurrentAccountFromArc(arc?: Arc): Promise<string> {
+  arc = arc ?? (window as any).arc as Arc;
+  if (!arc) {
     return null;
   }
-  const accounts = await web3.eth.getAccounts();
-  return accounts[0] ? accounts[0].toLowerCase() : null;
+  return await arc.getAccount().pipe(first()).toPromise();
 }
 
 /**
  * Return the most recently synced block from web3, or null with no web3 or error
  */
-export async function getCurrentBlock(web3?: any): Promise<any> {
-  web3 = web3 || getWeb3();
+export async function getCurrentBlock(web3?: Web3Client): Promise<Block> {
+  web3 = web3 || (window as any).arc?.web3;
   if (!web3) {
     return null;
   }
   try {
     // need the `await` so exceptions will be caught here
-    return await web3.eth.getBlock("latest");
+    return await web3.getBlock("latest");
   } catch (ex) {
     /**
      * This often happens with the error:  "connection not open on send()".
      * See: https://github.com/ethereum/web3.js/issues/1354
      */
     // eslint-disable-next-line no-console
-    console.log(`getCurrentBlock: web3.eth.getBlock failed: ${ex.message}`);
+    console.log(`getCurrentBlock: web3.getBlock failed: ${ex.message}`);
     return null;
   }
 }
@@ -75,7 +67,7 @@ export async function getCurrentBlock(web3?: any): Promise<any> {
  * Throws an exception when Arc hasn't yet been initialized!
  */
 export function getArc(): Arc {
-  const arc = (window as any).arc;
+  const arc = (window as any).arc as Arc;
   if (!arc) {
     throw Error("window.arc is not defined - please call initializeArc first");
   }
@@ -85,48 +77,51 @@ export function getArc(): Arc {
 /**
  * Return currently-selected and fully-enabled web3Provider (an account can be presumed to exist).
  */
-export function getWeb3Provider(): any | undefined {
+export function getWeb3Provider(): Web3Provider | undefined {
   return selectedProvider;
 }
 
-async function getProviderNetworkName(provider?: any): Promise<string> {
+async function getProviderNetworkName(provider?: Web3Provider): Promise<string> {
   provider = provider || selectedProvider;
   if (!provider) { return null; }
   const networkId = await getNetworkId(provider);
   return getNetworkName(networkId);
 }
 
-
 /**
  * Returns a IWeb3ProviderInfo when a provider has been selected and is fully available.
  * Does not know about the default read-only providers.
  */
-export function getWeb3ProviderInfo(provider?: any): IWeb3ProviderInfo {
+export function getWeb3ProviderInfo(provider?: Web3Provider): IWeb3ProviderInfo {
   provider = provider || selectedProvider;
-  return provider ? getProviderInfo(provider) : null;
+  return provider ? getProviderInfo(provider) : {
+    name: "unknown",
+    id: "unknown",
+    type: "unknown",
+    check: "unknown",
+    logo: "unknown",
+  };
 }
 
-export function providerHasConfigUi(provider?: any): any | undefined {
+export function providerHasConfigUi(provider?: Web3Provider): boolean | undefined {
   provider = provider || selectedProvider;
-  return provider && provider.isTorus;
+  return provider && (provider as any).isTorus;
 }
 
 /**
  * initialize Arc.  Does not throw exceptions, returns boolean success.
  * @param provider Optional web3Provider
  */
-export async function initializeArc(provider?: any): Promise<boolean> {
+export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
 
   let success = false;
-  let arc: any;
+  let arc = (window as any).arc as Arc;
 
   try {
 
     const arcSettings = getArcSettings();
 
-    if (provider) {
-      arcSettings.web3Provider = provider;
-    } else {
+    if (!provider) {
       provider = arcSettings.web3Provider;
     }
 
@@ -155,9 +150,8 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     arcSettings.retryLink = retryLink;
 
     // if there is no existing arc, we create a new one
-    if ((window as any).arc) {
-      arc = (window as any).arc;
-      arc.web3 = new Web3(provider);
+    if (arc) {
+      arc.setWeb3(provider);
     } else {
       arc = new Arc(arcSettings);
     }
@@ -177,9 +171,9 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     success = !!contractInfos;
 
     if (success) {
-      initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
+      initializedAccount = await _getCurrentAccountFromArc(arc);
 
-      if (!initializedAccount) {
+      if (!initializedAccount || initializedAccount === "0x0000000000000000000000000000000000000000") {
       // then something went wrong
       // eslint-disable-next-line no-console
         console.error("Unable to obtain an account from the provider");
@@ -189,16 +183,14 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     }
 
     if (success) {
-      provider = arc.web3.currentProvider; // won't be a string, but the actual provider
-      // save for future reference
-      // eslint-disable-next-line require-atomic-updates
-      provider.__networkId = await getNetworkId(provider);
       if ((window as any).ethereum) {
         // if this is metamask this should prevent a browser refresh when the network changes
         (window as any).ethereum.autoRefreshOnNetworkChange = false;
       }
+      const network = await arc.web3.getNetwork();
+      const networkName = await getNetworkName(network.chainId.toString());
       // eslint-disable-next-line no-console
-      console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
+      console.log(`Connected Arc to ${networkName}${readonly ? " (readonly)" : ""} `);
     }
   } catch (reason) {
     // eslint-disable-next-line no-console
@@ -210,7 +202,6 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   return success;
 }
 
-
 /**
  * Checks if the web3 provider is set to the required network.
  * Does not ensure we have access to the user's account.
@@ -218,7 +209,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
  * @param provider web3Provider
  * @return the expected network nameif not correct
 */
-async function ensureCorrectNetwork(provider: any): Promise<void> {
+async function ensureCorrectNetwork(provider: Web3Provider): Promise<void> {
 
   /**
    * It is required that the provider be the correct one for the current platform
@@ -265,8 +256,8 @@ export function uncacheWeb3Info(accountToo = true): void {
      * But clearing its cache will ensure that
      * the user can rescan a qrcode when changing WalletConnect provider.
      */
-  if (selectedProvider && selectedProvider.close) {
-    selectedProvider.close(); // no need to await
+  if (selectedProvider && (selectedProvider as any).close) {
+    (selectedProvider as any).close(); // no need to await
   }
 }
 
@@ -284,7 +275,7 @@ function inTesting(): boolean {
     // in test mode, we have an unlocked ganache and we are not using any wallet
     // eslint-disable-next-line no-console
     console.log("not using any wallet, because we are in automated test");
-    selectedProvider = new Web3(settings.ganache.web3Provider);
+    selectedProvider = settings.ganache.web3Provider;
     return true;
   }
   return false;
@@ -302,7 +293,7 @@ async function enableWeb3Provider(): Promise<void> {
     return;
   }
 
-  let provider: any;
+  let provider: Web3Provider;
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
   let _web3Modal: Web3ConnectModal;
@@ -345,7 +336,7 @@ async function enableWeb3Provider(): Promise<void> {
     return rejectOnClosePromise(error);
   });
 
-  _web3Modal.on("connect", (newProvider: any): any => {
+  _web3Modal.on("connect", (newProvider: AsyncSendable): any => {
     provider = newProvider;
     /**
      * Because we won't receive the "close" event in this case, even though
@@ -383,12 +374,15 @@ async function enableWeb3Provider(): Promise<void> {
  * whatever the provider requires....
  */
   try {
-  // brings up the provider UI as needed
-    await provider.enable();
+    // brings up the provider UI as needed
+    if ((provider as any).enable) {
+      await (provider as any).enable();
+    }
+
     // eslint-disable-next-line no-console
     console.log(`Connected to network provider ${getWeb3ProviderInfo(provider).name}`);
   } catch (ex) {
-  // eslint-disable-next-line no-console
+    // eslint-disable-next-line no-console
     console.error(`Unable to enable provider: ${ex.message ? ex : "unknown error"}`);
     throw new Error("Unable to enable provider");
   }
@@ -416,7 +410,7 @@ async function getCurrentAccountFromProvider(): Promise<Address | null> {
      */
     return null;
   }
-  return _getCurrentAccountFromProvider();
+  return _getCurrentAccountFromArc();
 }
 
 /**
@@ -473,13 +467,9 @@ export function getAccountIsEnabled(): boolean {
 export async function enableWalletProvider(options: IEnableWalletProviderParams): Promise<boolean> {
   try {
 
-    if (inTesting()) {
-      return true;
-    }
-
     // If not MetaMask or other injected web3 and on ganache then try to connect to local ganache directly
-    if (targetedNetwork() === "ganache" && !(window as any).web3 && !(window as any).ethereum) {
-      selectedProvider = new Web3(settings.ganache.web3Provider);
+    if (inTesting() || (targetedNetwork() === "ganache" && !(window as any).web3 && !(window as any).ethereum)) {
+      selectedProvider = settings.ganache.web3Provider;
       return true;
     }
 

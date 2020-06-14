@@ -1,8 +1,8 @@
-import { DAO, IDAOState, Reputation, Token } from "@daostack/client";
+import { IDAOState, Reputation, Token } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import BN = require("bn.js");
 
-// TODO: all this should really be in the client library, after new client is done i will move it there if its not already
+// TODO: all this should really be in the arc.js library, after new arc.js is done i will move it there if its not already
 
 export interface IDAOData {
   id: string;
@@ -22,34 +22,48 @@ export interface IDAOData {
   numberOfBoostedProposals: number;
   register: "na"|"proposed"|"registered"|"unRegistered";
   reputationHoldersCount: number;
+  metadata: string;
+  metadataHash: string;
 }
 
 export function createDaoStateFromQuery(queryData: IDAOData): IDAOState {
   const arc = getArc();
-  const reputation = new Reputation(queryData.nativeReputation.id, arc);
-  const token = new Token(queryData.nativeToken.id, arc);
-  const daoSpec = {
+  const reputation = new Reputation(arc, queryData.nativeReputation.id);
+  const token = new Token(arc, queryData.nativeToken.id);
+  const daoSpec: IDAOState & IDAOData = {
     ...queryData,
     address: queryData.id,
-    reputation,
-    token,
+    reputation: {
+      id: reputation.id,
+      entity: reputation,
+    },
+    token: {
+      id: token.id,
+      entity: token,
+    },
     tokenName: queryData.nativeToken.name,
     tokenSymbol: queryData.nativeToken.symbol,
+    memberCount: Number(queryData.reputationHoldersCount),
+    tokenTotalSupply: queryData.nativeToken.totalSupply,
+    reputationTotalSupply: new BN(queryData.nativeReputation.totalSupply),
+    metadata: queryData.metadata,
+    metadataHash: queryData.metadataHash,
   };
-  const dao = new DAO(daoSpec, arc);
 
   return {
     ...daoSpec,
-    dao,
-    memberCount: Number(daoSpec.reputationHoldersCount),
     numberOfBoostedProposals: Number(daoSpec.numberOfBoostedProposals),
     numberOfPreBoostedProposals: Number(daoSpec.numberOfPreBoostedProposals),
     numberOfQueuedProposals: Number(daoSpec.numberOfQueuedProposals),
-    reputation,
-    reputationTotalSupply: new BN(daoSpec.nativeReputation.totalSupply),
-    token,
+    reputation: {
+      id: reputation.id,
+      entity: reputation,
+    },
+    token: {
+      id: token.id,
+      entity: token,
+    },
     tokenName: daoSpec.nativeToken.name,
     tokenSymbol: daoSpec.nativeToken.symbol,
-    tokenTotalSupply: daoSpec.nativeToken.totalSupply,
   };
 }

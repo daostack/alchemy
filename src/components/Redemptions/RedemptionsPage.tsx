@@ -1,4 +1,4 @@
-import { Address, DAOFieldsFragment, IContributionReward, IDAOState, IRewardState, Proposal } from "@daostack/client";
+import { Address, IContributionRewardProposalState, IDAOState, IRewardState, Proposal, DAO, AnyProposal } from "@dorgtech/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -17,7 +17,7 @@ import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { of } from "rxjs";
-import { map } from "rxjs/operators";
+import { map, first } from "rxjs/operators";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./RedemptionsPage.scss";
 
@@ -47,7 +47,8 @@ interface IProposalData {
   id: string;
   dao: IDAOData;
   gpRewards: IRewardState[];
-  contributionReward: IContributionReward;
+  contributionRewardState: IContributionRewardProposalState;
+  proposal: AnyProposal;
 }
 
 class RedemptionsPage extends React.Component<IProps, null> {
@@ -60,15 +61,13 @@ class RedemptionsPage extends React.Component<IProps, null> {
   }
 
   public render(): RenderOutput {
-    const { data } = this.props;
+    const { data: proposals } = this.props;
 
-    if (data === null) {
+    if (proposals === null) {
       return <div className={css.wrapper}>
         <h3 className={css.pleaseLogin}>Please log in to see your rewards.</h3>
       </div>;
     }
-
-    const proposals = data;
 
     return (
       <div className={css.wrapper}>
@@ -122,14 +121,12 @@ class RedemptionsPage extends React.Component<IProps, null> {
     if (!await enableWalletProvider({ showNotification })) { return; }
 
     proposals.forEach(proposal => {
-      redeemProposal(proposal.dao.id, proposal.id, currentAccountAddress);
+      redeemProposal(proposal.id, currentAccountAddress);
     });
   }
 
   private renderProposalsPerDAO(): RenderOutput[] {
     const { currentAccountAddress, data: proposals } = this.props;
-
-    const arc = getArc();
 
     const daoStatePerAddress = new Map<Address, IDAOState>();
     const proposalsPerDao = new Map<Address, IProposalData[]>();
@@ -153,7 +150,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
               key={"proposal_" + proposal.id}
               currentAccountAddress={currentAccountAddress}
               daoState={daoState}
-              proposal={new Proposal(proposal.id, arc)}
+              proposal={proposal.proposal}
             />;
           })}
         </div>
@@ -187,7 +184,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
       });
 
       // Add ContributionReward redemptions
-      const contributionReward = proposal.contributionReward;
+      const contributionReward = proposal.contributionRewardState;
       if (contributionReward && contributionReward.beneficiary === currentAccountAddress) {
         ethReward.iadd(new BN(contributionReward.ethReward));
 
@@ -233,7 +230,7 @@ const SubscribedRedemptionsPage = withSubscription({
   loadingComponent: <Loading/>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["currentAccountAddress"],
-  createObservable: (props: IStateProps) => {
+  createObservable: async (props: IStateProps) => {
     const { currentAccountAddress } = props;
 
     if (!currentAccountAddress) {
@@ -274,11 +271,21 @@ const SubscribedRedemptionsPage = withSubscription({
           }
         }
       }
-      ${DAOFieldsFragment}
+      ${DAO.fragments.DAOFields}
     `;
-    const proposals = arc.getObservable(query, { subscribe: true })
-      .pipe(map((result: any) => result.data.proposals));
-    return proposals;
+    const proposals = await arc.getObservable(query, { subscribe: true })
+      .pipe(map(async (result: any) => {
+        const proposals: IProposalData[] = result.data.proposals;
+
+        return Promise.all(proposals.map(async (proposal) => {
+          return {
+            ...proposal,
+            proposal: await Proposal.create(arc, proposal.id),
+          };
+        }));
+      })).pipe(first()).toPromise();
+
+    return of(proposals);
   },
 });
 

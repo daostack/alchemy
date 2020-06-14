@@ -1,4 +1,4 @@
-import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/client";
+import { Address, DAO, IProposalOutcome, IProposalBaseCreateOptions, ITransactionState, ITransactionUpdate, ReputationFromTokenPlugin, Proposal, ContributionRewardProposal, GenericPluginProposal, CompetitionProposal, ContributionRewardExtProposal, FundingRequestProposal, JoinAndQuitProposal } from "@dorgtech/arc.js";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import { toWei } from "lib/util";
@@ -7,6 +7,7 @@ import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
+import { Wallet } from "ethers";
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
@@ -38,15 +39,15 @@ export const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, tx
   ];
 };
 
-export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAction<any, IRootState, null> {
+export function createProposal(proposalOptions: IProposalBaseCreateOptions): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const arc = getArc();
 
-      const dao = new DAO(proposalOptions.dao, arc);
+      const dao = new DAO(arc, proposalOptions.dao);
 
       const observer = operationNotifierObserver(dispatch, "Create proposal");
-      await dao.createProposal(proposalOptions).subscribe(...observer);
+      await (await dao.createProposal(proposalOptions)).subscribe(...observer);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err);
@@ -55,20 +56,63 @@ export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAc
   };
 }
 
-export function executeProposal(avatarAddress: string, proposalId: string, _accountAddress: string) {
+async function tryRedeemProposal(proposalId: string, accountAddress: string, observer: any) {
+  const arc = getArc();
+  const proposal = await Proposal.create(arc, proposalId);
+
+  switch (proposal.coreState.name) {
+    case "GenericScheme":
+      await (proposal as GenericPluginProposal).redeemRewards(
+        accountAddress
+      ).subscribe(...observer);
+      break;
+    case "ContributionReward":
+      await (proposal as ContributionRewardProposal).redeemRewards(
+        accountAddress
+      ).subscribe(...observer);
+      break;
+    case "Competition":
+      await (proposal as CompetitionProposal).redeemRewards(
+        accountAddress
+      ).subscribe(...observer);
+      break;
+    case "ContributionRewardExt":
+      await (proposal as ContributionRewardExtProposal).redeemRewards(
+        accountAddress
+      ).subscribe(...observer);
+      break;
+    case "FundingRequest":
+      await (proposal as FundingRequestProposal).redeem().subscribe(...observer);
+      break;
+    case "JoinAndQuit":
+      await (proposal as JoinAndQuitProposal).redeem().subscribe(...observer);
+      break;
+    case "SchemeRegistrarRemove":
+    case "SchemeRegistrarAdd":
+    case "SchemeRegistrar":
+    case "SchemeFactory":
+    case "Unknown":
+      break; // no redemption
+  }
+
+  return Promise.resolve();
+}
+
+export function executeProposal(avatarAddress: string, proposalId: string, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
-    const proposalObj = await arc.dao(avatarAddress).proposal(proposalId);
+    const proposalObj = await arc.dao(avatarAddress).proposal({ where: { id: proposalId } });
 
-    // Call claimRewards to both execute the proposal and redeem the ContributionReward rewards,
+    // Call redeemRewards to both execute the proposal and redeem the ContributionReward rewards,
     //   pass in null to not redeem any GenesisProtocol rewards
     const originalErrorHandler = observer[1];
     observer[1] = async (_error: any): Promise<any> => {
       observer[1] = originalErrorHandler;
       return await proposalObj.execute().subscribe(...observer);
     };
-    await proposalObj.claimRewards(null).subscribe(...observer);
+
+    return tryRedeemProposal(proposalId, accountAddress, observer);
   };
 }
 
@@ -87,7 +131,7 @@ export type VoteAction = IAsyncAction<"ARC_VOTE", {
 export function voteOnProposal(daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     const arc = getArc();
-    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
+    const proposalObj = await arc.dao(daoAvatarAddress).proposal({ where: { id: proposalId } });
     const observer = operationNotifierObserver(dispatch, "Vote");
     await proposalObj.vote(voteOption).subscribe(...observer);
   };
@@ -107,7 +151,7 @@ export type StakeAction = IAsyncAction<"ARC_STAKE", {
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
   return async (dispatch: Redux.Dispatch<any, any>, ) => {
     const arc = getArc();
-    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
+    const proposalObj = await arc.dao(daoAvatarAddress).proposal({ where: { id: proposalId } });
     const observer = operationNotifierObserver(dispatch, "Stake");
     await proposalObj.stake(prediction, toWei(stakeAmount)).subscribe(...observer);
   };
@@ -135,51 +179,45 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
   currentAccountRedemptions: IRedemptionState;
 }>;
 
-export function redeemProposal(daoAvatarAddress: string, proposalId: string, accountAddress: string) {
+export function redeemProposal(proposalId: string, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    const arc = getArc();
-    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Reward");
-    await proposalObj.claimRewards(accountAddress).subscribe(...observer);
+    return tryRedeemProposal(proposalId, accountAddress, observer);
   };
 }
 
-export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string, privateKey: string|undefined, redeemerAddress: Address|undefined, redemptionSucceededCallback: () => void) {
+export function redeemReputationFromToken(reputationFromTokenPlugin: ReputationFromTokenPlugin, addressToRedeem: string, privateKey: string|undefined, redeemerAddress: Address|undefined, redemptionSucceededCallback: () => void) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
 
-    // ensure that scheme.ReputationFromToken is set
-    await scheme.fetchStaticState();
+    const state = await reputationFromTokenPlugin.fetchState();
 
     if (privateKey) {
-      const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
-      const agreementHash = await reputationFromTokenScheme.getAgreementHash();
-      const state = await reputationFromTokenScheme.scheme.fetchStaticState();
       const contract = arc.getContract(state.address);
-      const block = await arc.web3.eth.getBlock("latest");
-      const gas = block.gasLimit - 100000;
-      const redeemMethod = contract.methods.redeem(addressToRedeem, agreementHash);
-      let gasPrice = await arc.web3.eth.getGasPrice();
+      const block = await arc.web3.getBlock("latest");
+      const gas = block.gasLimit.toNumber() - 100000;
+      const redeemMethod = contract.interface.functions["redeem"].encode([addressToRedeem]);
+      let gasPrice = (await arc.web3.getGasPrice()).toNumber();
       gasPrice = gasPrice * 1.2;
       const txToSign = {
         gas,
         gasPrice,
-        data: redeemMethod.encodeABI(),
+        data: redeemMethod,
         to: state.address,
         value: "0",
       };
-      const gasEstimate = await arc.web3.eth.estimateGas(txToSign);
+      const gasEstimate = (await arc.web3.estimateGas(txToSign)).toNumber();
       txToSign.gas = gasEstimate;
       // if the gas cost is higher then the users balance, we lower it to fit
-      const userBalance = await arc.web3.eth.getBalance(redeemerAddress);
+      const userBalance = (await arc.web3.getBalance(redeemerAddress)).toNumber();
       if (userBalance < gasEstimate * gasPrice) {
         txToSign.gasPrice = Math.floor(userBalance/gasEstimate);
       }
-      const signedTransaction = await arc.web3.eth.accounts.signTransaction(txToSign, privateKey);
+      const wallet = new Wallet(privateKey);
+      const signedTransaction = await wallet.sign(txToSign);
       dispatch(showNotification(NotificationStatus.Success, "Sending redeem transaction, please wait for it to be mined"));
-      // const txHash = await arc.web3.utils.sha3(signedTransaction.rawTransaction);
       try {
-        await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        await arc.web3.sendTransaction(signedTransaction);
         dispatch(showNotification(NotificationStatus.Success, "Transaction was succesful!"));
         redemptionSucceededCallback();
       } catch (err) {
@@ -187,12 +225,10 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       }
     } else {
       const observer = operationNotifierObserver(dispatch, "Redeem reputation");
-      const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
 
       // send the transaction and get notifications
-      if (reputationFromTokenScheme) {
-        const agreementHash = await reputationFromTokenScheme.getAgreementHash();
-        reputationFromTokenScheme.redeem(addressToRedeem, agreementHash).subscribe(observer[0], observer[1], redemptionSucceededCallback);
+      if (reputationFromTokenPlugin) {
+        reputationFromTokenPlugin.redeem(addressToRedeem).subscribe(observer[0], observer[1], redemptionSucceededCallback);
       }
     }
   };

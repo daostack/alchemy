@@ -391,7 +391,7 @@
     padding-top: 30px;
     z-index: 900;
 
-    .addSchemeButton {
+    .addPluginButton {
       display: block;
     }
 
@@ -488,33 +488,39 @@
     }
   }
 
-  .addEditSchemeFields,
-  .removeSchemeFields,
-  .addSchemeSelectContainer,
-  .editSchemeSelectContainer {
+  .addEditPluginFields,
+  .removePluginFields,
+  .replacePluginFields,
+  .addPluginSelectContainer,
+  .editPluginSelectContainer {
     display: none;
     position: relative;
   }
 
-  .editSchemeSelectContainer {
+  .editPluginSelectContainer {
     height: 63px;
   }
 
-  .addScheme .addEditSchemeFields,
-  .removeScheme .removeSchemeFields,
-  .editScheme .addEditSchemeFields {
+  .addPlugin .addEditPluginFields,
+  .removePlugin .removePluginFields,
+  .replacePlugin .replacePluginFields,
+  .editPlugin .addEditPluginFields {
     display: block;
   }
 
-  .addScheme .addSchemeSelectContainer {
+  .addPlugin .addPluginSelectContainer {
     display: block;
   }
 
-  .editScheme .editSchemeSelectContainer {
+  .replacePlugin .replacePluginSelectContainer {
     display: block;
   }
 
-  .removeSchemeSelectContainer {
+  .editPlugin .editPluginSelectContainer {
+    display: block;
+  }
+
+  .removePluginSelectContainer {
     position: relative;
   }
 
@@ -522,11 +528,11 @@
     z-index: 100;
   }
 
-  .otherScheme {
+  .otherPlugin {
     width: 445px;
   }
 
-  .schemeSelect {
+  .pluginSelect {
     display: block;
     font-size: 13px;
     margin: 3px 0 5px 0;
@@ -544,7 +550,7 @@
     width: 477px;
   }
 
-  .parametersHash {
+  .parametersHash, .parameters {
     input {
       font-size: 12px;
     }
@@ -697,20 +703,20 @@ div.description {
       overflow: visible;
     }
 
-    .schemeSelect {
+    .pluginSelect {
       width: 90%;
     }
   }
 
-  .schemeRegistrar {
+  .pluginRegistrar {
     width: auto;
 
-    .schemeRegistrarForm {
+    .pluginRegistrarForm {
       width: auto;
     }
   }
 
-  .schemeRegistrar .schemeRegistrarSidebar {
+  .pluginRegistrar .pluginRegistrarSidebar {
     width: auto;
     float: none;
 
@@ -721,7 +727,7 @@ div.description {
       width: auto;
     }
 
-    .addSchemeButton {
+    .addPluginButton {
       display: inline-block;
       margin: 0 0 0 0;
     }

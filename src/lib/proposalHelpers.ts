@@ -1,6 +1,6 @@
 import * as moment from "moment";
 
-import { IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
+import { IProposalOutcome, IProposalStage, IProposalState } from "@dorgtech/arc.js";
 
 export interface IRedemptionState {
   accountAddress: string;
@@ -22,7 +22,7 @@ export const closingTime = (proposal: IProposalState) => {
   switch (proposal.stage) {
     case IProposalStage.ExpiredInQueue:
     case IProposalStage.Queued:
-      return moment((proposal.createdAt + proposal.genesisProtocolParams.queuedVotePeriodLimit) * 1000);
+      return moment((Number(proposal.createdAt.toString()) + proposal.genesisProtocolParams.queuedVotePeriodLimit) * 1000);
     case IProposalStage.PreBoosted:
       return moment((proposal.preBoostedAt + proposal.genesisProtocolParams.preBoostedVotePeriodLimit) * 1000);
     case IProposalStage.Boosted:

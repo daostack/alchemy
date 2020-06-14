@@ -1,25 +1,25 @@
 import * as uuid from "uuid";
-import { getContractAddresses, hideCookieAcceptWindow, hideTrainingTooltips, gotoDaoSchemes } from "./utils";
+import { getTestAddresses, hideCookieAcceptWindow, hideTrainingTooltips, gotoDaoPlugins } from "./utils";
 
 describe("Proposals", () => {
   let daoAddress: string;
   let addresses;
 
   before(() => {
-    addresses = getContractAddresses();
+    addresses = getTestAddresses();
     daoAddress = addresses.dao.Avatar.toLowerCase();
     hideTrainingTooltips();
   });
 
   it("Create a proposal, vote for it, stake on it", async () => {
-    await gotoDaoSchemes(daoAddress);
+    await gotoDaoPlugins(daoAddress);
+    await hideCookieAcceptWindow();
 
     const loginButton = await $("*[data-test-id=\"loginButton\"]");
     await loginButton.click();
 
-    await hideCookieAcceptWindow();
-    const schemeCard = await $("[data-test-id=\"schemeCard-ContributionReward\"]");
-    await schemeCard.click();
+    const pluginCard = await $("[data-test-id=\"pluginCard-ContributionReward\"]");
+    await pluginCard.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();
@@ -58,13 +58,13 @@ describe("Proposals", () => {
 
     // locate the new proposal element
     const proposal = await titleElement.$("./../../..");
+    await proposal.scrollIntoView();
 
     // await proposal.scrollIntoView(true);
 
     // Vote for the proposal
     // Click on context menu so voting controls appear
     const contextMenu = await proposal.$("[data-test-id=\"proposalContextMenu\"]");
-    await contextMenu.waitForDisplayed();
     await contextMenu.click();
 
     const voteButton = await proposal.$("[data-test-id=\"voteFor\"]");
@@ -104,11 +104,10 @@ describe("Proposals", () => {
   });
 
   it("Fill out a proposal form and export it", async () => {
-    await gotoDaoSchemes(daoAddress);
+    await gotoDaoPlugins(daoAddress);
 
-    await hideCookieAcceptWindow();
-    const schemeCard = await $("[data-test-id=\"schemeCard-ContributionReward\"]");
-    await schemeCard.click();
+    const pluginCard = await $("[data-test-id=\"pluginCard-ContributionReward\"]");
+    await pluginCard.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();

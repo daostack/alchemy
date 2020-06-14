@@ -1,5 +1,5 @@
 import * as chai from "chai";
-import { getContractAddresses, hideCookieAcceptWindow } from "./utils";
+import { getTestAddresses, ITestAddresses } from "./utils";
 
 chai.should();
 
@@ -12,7 +12,7 @@ describe("Header redemptions button", () => {
   });
 
   it("should show a quick menu on desktop devices", async () => {
-
+    await browser.url("http://127.0.0.1:3000");
     const loginButton = await $("[data-test-id=\"loginButton\"]");
     await loginButton.click();
 
@@ -26,19 +26,14 @@ describe("Header redemptions button", () => {
   });
 
   it("should redirect us to the redemptions page on mobile devices", async () => {
-    await browser.setWindowSize(320, 640);
-    const actualWindowSize = await browser.getWindowSize();
+    await browser.url("http://127.0.0.1:3000");
+    await browser.setWindowSize(600, 600);
+    const windowSize = await browser.getWindowSize();
 
     // Skip test if the OS doesn't allow window to be resized
-    if (actualWindowSize.width === 320) {
-      await browser.url("http://127.0.0.1:3000");
-      // For some reason, the connect button shows up after refreshing, even
-      // though we're already logged in.
-      const connectButton = await $("[data-test-id=\"connectButton\"]");
-      await connectButton.click();
-      await connectButton.waitForDisplayed(undefined, true);
-
+    if (windowSize.width <= 640) {
       const redemptionsButton = await $("[data-test-id=\"redemptionsButton\"]");
+      await redemptionsButton.waitForDisplayed();
       await redemptionsButton.click();
 
       (await browser.getUrl()).should.equal("http://127.0.0.1:3000/redemptions");
@@ -49,10 +44,10 @@ describe("Header redemptions button", () => {
 });
 
 describe("Redemptions page", () => {
-  let testAddresses;
+  let testAddresses: ITestAddresses;
 
   before(() => {
-    testAddresses = getContractAddresses();
+    testAddresses = getTestAddresses();
   });
 
   it("should exist", async () => {
@@ -63,14 +58,9 @@ describe("Redemptions page", () => {
   });
 
   it("should redeem a reward", async () => {
-    await hideCookieAcceptWindow();
-
     await browser.url("http://127.0.0.1:3000/redemptions");
-    const connectButton = await $("*[data-test-id=\"connectButton\"]");
-    await connectButton.waitForDisplayed();
-    await connectButton.click();
 
-    const proposalId = testAddresses.test.executedProposalId;
+    const proposalId = testAddresses.executedProposalId;
     const proposalCard = await $(`[data-test-id="proposal-${proposalId}"]`);
     await proposalCard.waitForExist();
 

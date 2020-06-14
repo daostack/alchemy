@@ -1,4 +1,4 @@
-import { IDAOState } from "@daostack/client";
+import { IDAOState } from "@dorgtech/arc.js";
 import * as React from "react";
 import * as css from "./DaoLandingPage.scss";
 import { Page } from "pages";
@@ -27,15 +27,14 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
     this.state = {
       showingEditPagePopup: false,
     };
-  }
-
-  public componentDidMount() {
     this.disqusConfig = {
       url: process.env.BASE_URL + "/dao/" + this.props.daoState.address + "/discussion",
       identifier: this.props.daoState.address,
       title: "Discuss " + this.props.daoState.name,
     };
+  }
 
+  public componentDidMount() {
     Analytics.track("Page View", {
       "Page Name": Page.DAOLanding,
       "DAO Address": this.props.daoState.id,
@@ -71,7 +70,7 @@ export default class DaoLandingPage extends React.Component<IProps, IStateProps>
 
           <div className={css.welcome}>Welcome to {daoState.name}, a decentralized organization built on DAOstack.</div>
 
-          <div className={css.visitProposals}>Visit the <Link to={`/dao/${daoState.id}/schemes/`}>Proposals page</Link> to
+          <div className={css.visitProposals}>Visit the <Link to={`/dao/${daoState.id}/plugins/`}>Proposals page</Link> to
           make a proposal to the DAO or vote on existing proposals.</div>
         </div>
 

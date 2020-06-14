@@ -1,4 +1,5 @@
-import { IDAOState, Member } from "@daostack/client";
+import { DAO, IDAOState, Member } from "@dorgtech/arc.js";
+import { getArc } from "arc";
 import { getProfile } from "actions/profilesActions";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -10,6 +11,7 @@ import * as InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
+import { combineLatest, from } from "rxjs";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
 
@@ -39,35 +41,36 @@ const mapDispatchToProps = {
   getProfile,
 };
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]> & IDispatchProps;
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<[Member[], IDAOState]> & IDispatchProps;
 
 const PAGE_SIZE = 100;
 
 class DaoMembersPage extends React.Component<IProps, null> {
 
   public componentDidMount() {
-    this.props.data.forEach((member) => {
-      if (!this.props.profiles[member.staticState.address]) {
-        this.props.getProfile(member.staticState.address);
+    const [members, daoState] = this.props.data;
+    members.forEach((member) => {
+      if (!this.props.profiles[member.coreState.address]) {
+        this.props.getProfile(member.coreState.address);
       }
     });
 
     Analytics.track("Page View", {
       "Page Name": Page.DAOMembers,
-      "DAO Address": this.props.daoState.address,
-      "DAO Name": this.props.daoState.name,
+      "DAO Address": daoState.address,
+      "DAO Name": daoState.name,
     });
   }
 
   public render(): RenderOutput {
     const { data } = this.props;
+    const [members, daoState] = data;
 
-    const members = data;
-    const daoTotalReputation = this.props.daoState.reputationTotalSupply;
-    const { daoState, profiles } = this.props;
+    const daoTotalReputation = daoState.reputationTotalSupply;
+    const { profiles } = this.props;
 
     const membersHTML = members.map((member) =>
-      <DaoMember key={member.staticState.address} dao={daoState} daoTotalReputation={daoTotalReputation} member={member} profile={profiles[member.staticState.address]} />);
+      <DaoMember key={member.coreState.address} daoState={daoState} daoTotalReputation={daoTotalReputation} member={member} profile={profiles[member.coreState.address]} />);
 
     return (
       <div className={css.membersContainer}>
@@ -89,7 +92,7 @@ class DaoMembersPage extends React.Component<IProps, null> {
         <InfiniteScroll
           dataLength={members.length} //This is important field to render the next data
           next={this.props.fetchMore}
-          hasMore={members.length < this.props.daoState.memberCount}
+          hasMore={members.length < daoState.memberCount}
           loader={<h4>Loading...</h4>}
           endMessage={
             <p style={{textAlign: "center"}}>
@@ -112,27 +115,32 @@ const SubscribedDaoMembersPage = withSubscription({
   checkForUpdate: [], // (oldProps, newProps) => { return oldProps.daoState.address !== newProps.daoState.address; },
 
   createObservable: async (props: IExternalProps) => {
-    const dao = props.daoState.dao;
-
-    return dao.members({
-      orderBy: "balance",
-      orderDirection: "desc",
-      first: PAGE_SIZE,
-      skip: 0,
-    });
+    const dao = new DAO(getArc(), props.daoState);
+    return combineLatest(
+      dao.members({
+        orderBy: "balance",
+        orderDirection: "desc",
+        first: PAGE_SIZE,
+        skip: 0,
+      }),
+      from(dao.fetchState())
+    );
   },
 
   // used for hacky pagination tracking
   pageSize: PAGE_SIZE,
 
-  getFetchMoreObservable: (props: IExternalProps, data: Member[]) => {
-    const dao = props.daoState.dao;
-    return dao.members({
-      orderBy: "balance",
-      orderDirection: "desc",
-      first: PAGE_SIZE,
-      skip: data.length,
-    });
+  getFetchMoreObservable: (props: IExternalProps, data: [Member[], IDAOState]) => {
+    const dao = new DAO(getArc(), props.daoState);
+    return combineLatest(
+      dao.members({
+        orderBy: "balance",
+        orderDirection: "desc",
+        first: PAGE_SIZE,
+        skip: data[0].length,
+      }),
+      from(dao.fetchState())
+    );
   },
 });
 

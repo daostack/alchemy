@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Reward, Stake, Vote } from "@daostack/client";
+import { Address, AnyProposal, DAO, IProposalState, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, Member, IContributionRewardProposalState } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import { ethErrorHandler } from "lib/util";
 
@@ -31,7 +31,7 @@ interface IStateProps {
   creatorProfile?: IProfileState;
 }
 
-type SubscriptionData = [IProposalState, Vote[], Stake[], IRewardState, IMemberState, BN, BN, BN];
+type SubscriptionData = [AnyProposal, IProposalState, Vote[], Stake[], IRewardState, IMemberState|null, BN, BN, BN];
 type IPreProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
@@ -43,18 +43,20 @@ export interface IInjectedProposalProps {
   daoEthBalance: BN;
   expired: boolean;
   member: IMemberState;
-  proposal: IProposalState;
+  proposal: AnyProposal;
   rewards: IRewardState;
   stakes: Stake[];
   votes: Vote[];
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IPreProps => {
-  const proposalState = ownProps.data ? ownProps.data[0] : null;
+  const proposal = ownProps.data[0];
+  const proposalState = proposal ? proposal.coreState : null;
+  const crState = proposal ? proposal.coreState as IContributionRewardProposalState : null;
 
   return {
     ...ownProps,
-    beneficiaryProfile: proposalState && proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
+    beneficiaryProfile: proposalState && proposalState.name === "ContributionReward" ? state.profiles[crState.beneficiary] : null,
     creatorProfile: proposalState ? state.profiles[proposalState.proposer] : null,
   };
 };
@@ -69,16 +71,27 @@ class ProposalData extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    this.state = {
-      expired: props.data ? closingTime(props.data[0]).isSameOrBefore(moment()) : false,
-    };
+    if (props.data && props.data[0]) {
+      const proposal = props.data[0];
+
+      this.state = {
+        expired: proposal.coreState ? closingTime(proposal.coreState).isSameOrBefore(moment()) : false,
+      };
+    } else {
+      this.state = {
+        expired: false,
+      };
+    }
   }
 
-  componentDidMount() {
-    // Expire proposal in real time
+  async componentDidMount() {
+    if (!this.props.data || !this.props.data[0]) {
+      return;
+    }
 
+    // Expire proposal in real time
     // Don't schedule timeout if its too long to wait, because browser will fail and trigger the timeout immediately
-    const millisecondsUntilExpires = closingTime(this.props.data[0]).diff(moment());
+    const millisecondsUntilExpires = closingTime(this.props.data[0].coreState).diff(moment());
     if (!this.state.expired && millisecondsUntilExpires < 2147483647) {
       this.expireTimeout = setTimeout(() => { this.setState({ expired: true });}, millisecondsUntilExpires);
     }
@@ -89,7 +102,11 @@ class ProposalData extends React.Component<IProps, IState> {
   }
 
   render(): RenderOutput {
-    const [proposal, votes, stakes, rewards, member, daoEthBalance, currentAccountGenBalance, currentAccountGenAllowance] = this.props.data;
+    if (!this.props.data || !this.props.data[0]) {
+      return <></>;
+    }
+
+    const [proposal,, votes, stakes, rewards, member, daoEthBalance, currentAccountGenBalance, currentAccountGenAllowance] = this.props.data;
     const { beneficiaryProfile, creatorProfile } = this.props;
 
     return this.props.children({
@@ -122,13 +139,20 @@ export default withSubscription({
   createObservable: async (props) => {
     const arc = getArc();
     const { currentAccountAddress, daoState, proposalId } = props;
-    const arcDao = daoState.dao;
-    const proposal = arc.proposal(proposalId);
-    await proposal.fetchStaticState();
-    const spender = proposal.staticState.votingMachine;
+    const arcDao = new DAO(arc, daoState);
+    const proposal = await Proposal.create(arc, proposalId);
+    await proposal.fetchState();
+    const spender = proposal ? proposal.coreState.votingMachine : "0x0000000000000000000000000000000000000000";
 
     if (currentAccountAddress) {
+      const member = new Member(arc, Member.calculateId({
+        address: currentAccountAddress,
+        contract: daoState.reputation.id,
+      }));
+      const memberState = await member.fetchState().catch(() => ({ reputation: new BN(0) }));
+
       return combineLatest(
+        of(proposal),
         proposal.state({ subscribe: props.subscribeToProposalDetails }), // state of the current proposal
         proposal.votes({where: { voter: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
         proposal.stakes({where: { staker: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
@@ -136,13 +160,11 @@ export default withSubscription({
           .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
           .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
 
-        // we set 'fetchPolicy' to 'cache-only' so as to not send queries for addresses that are not members. The cache is filled higher up.
-        // arcDao.member(currentAccountAddress).state({ fetchPolicy: "cache-only"}),
-        arcDao.member(currentAccountAddress).state(),
+        of(memberState),
         // TODO: also need the member state for the proposal proposer and beneficiary
         //      but since we need the proposal state first to get those addresses we will need to
         //      update the client query to load them inline
-        concat(of(new BN("0")), arcDao.ethBalance())
+        concat(of(new BN("0")), await arcDao.ethBalance())
           .pipe(ethErrorHandler()),
         arc.GENToken().balanceOf(currentAccountAddress)
           .pipe(ethErrorHandler()),
@@ -151,12 +173,13 @@ export default withSubscription({
       );
     } else {
       return combineLatest(
-        proposal.state(), // state of the current proposal
+        of(proposal),
+        proposal.state({ subscribe: props.subscribeToProposalDetails }), // state of the current proposal
         of([]), // votes
         of([]), // stakes
         of(null), // rewards
         of(null), // current account member state
-        concat(of(new BN(0)), arcDao.ethBalance()) // dao eth balance
+        concat(of(new BN(0)), await arcDao.ethBalance()) // dao eth balance
           .pipe(ethErrorHandler()),
         of(new BN(0)), // current account gen balance
         of(null), // current account GEN allowance

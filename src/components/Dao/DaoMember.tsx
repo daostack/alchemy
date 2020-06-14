@@ -1,18 +1,18 @@
 import BN = require("bn.js");
-import { IDAOState, IMemberState, Member } from "@daostack/client";
+import { IDAOState, IMemberState, Member } from "@dorgtech/arc.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { fromWei } from "lib/util";
+import { fromWeiToString, ethErrorHandler } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./Dao.scss";
 
 interface IProps extends ISubscriptionProps<IMemberState> {
-  dao: IDAOState;
+  daoState: IDAOState;
   member: Member;
   daoTotalReputation: BN;
   profile: IProfileState;
@@ -26,14 +26,14 @@ class DaoMember extends React.Component<IProps, null> {
   }
 
   public render(): RenderOutput {
-    const { dao, daoTotalReputation, profile } = this.props;
+    const { daoState, daoTotalReputation, profile } = this.props;
     const memberState = this.props.data;
 
     return (
       <div className={css.member + " clearfix"}
         key={"member_" + memberState.address}
         data-test-id={"member_" + memberState.address}>
-        <Link to={"/profile/" + memberState.address + (dao ? "?daoAvatarAddress=" + dao.address : "")}>
+        <Link to={"/profile/" + memberState.address + (daoState ? "?daoAvatarAddress=" + daoState.address : "")}>
           <table className={css.memberTable}>
             <tbody>
               <tr>
@@ -47,7 +47,7 @@ class DaoMember extends React.Component<IProps, null> {
                 <td className={css.memberName}>
                   { profile ?
                     <div>
-                      <AccountProfileName accountAddress={memberState.address} accountProfile={profile} daoAvatarAddress={dao.address} />
+                      <AccountProfileName accountAddress={memberState.address} accountProfile={profile} daoAvatarAddress={daoState.address} />
                       <br/>
                     </div>
                     : <div className={css.noProfile}>No Profile</div>
@@ -57,9 +57,9 @@ class DaoMember extends React.Component<IProps, null> {
                   {memberState.address}
                 </td>
                 <td className={css.memberReputation}>
-                  <span className={css.reputationAmount}>{fromWei(memberState.reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
+                  <span className={css.reputationAmount}>{fromWeiToString(memberState.reputation)}</span>
                   <div className={css.reputationAmounts}>
-                    (<Reputation daoName={dao.name} totalReputation={daoTotalReputation} reputation={memberState.reputation}/>)
+                    (<Reputation daoName={daoState.name} totalReputation={daoTotalReputation} reputation={memberState.reputation}/>)
                   </div>
                 </td>
                 <td className={css.memberSocial}>
@@ -91,5 +91,5 @@ export default withSubscription({
   loadingComponent: <div>Loading...</div>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: (oldProps, newProps) => { return oldProps.member.id !== newProps.member.id; },
-  createObservable: (props: IProps) => props.member.state(),
+  createObservable: (props: IProps) => props.member.state().pipe(ethErrorHandler()),
 });

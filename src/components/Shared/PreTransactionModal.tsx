@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, IProposalState, IProposalStage } from "@daostack/client";
+import { IDAOState, IMemberState, IProposalStage, IProposalState } from "@dorgtech/arc.js";
 import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
@@ -33,10 +33,10 @@ interface IProps {
   closeAction: any;
   currentAccount?: IMemberState;
   currentAccountGens?: BN;
-  dao: IDAOState;
+  daoState: IDAOState;
   effectText?: string | JSX.Element;
   parentPage: Page;
-  proposal: IProposalState;
+  proposalState: IProposalState;
   secondaryHeader?: string;
   showNotification: typeof showNotification;
   multiLineMsg?: boolean;
@@ -129,7 +129,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
   };
 
   public render(): RenderOutput {
-    const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, dao, effectText, multiLineMsg, parentPage, proposal, secondaryHeader } = this.props;
+    const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, daoState, effectText, multiLineMsg, parentPage, proposalState, secondaryHeader } = this.props;
     const { stakeAmount } = this.state;
 
     let icon; let transactionType; let rulesHeader; let rules; let actionTypeClass;
@@ -141,17 +141,17 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     });
 
     if (actionType === ActionTypes.VoteDown || actionType === ActionTypes.VoteUp) {
-      reputationFor = proposal.votesFor.add(actionType === ActionTypes.VoteUp ? currentAccount.reputation : new BN(0));
-      reputationAgainst = proposal.votesAgainst.add(actionType === ActionTypes.VoteDown ? currentAccount.reputation : new BN(0));
+      reputationFor = proposalState.votesFor.add(actionType === ActionTypes.VoteUp ? currentAccount.reputation : new BN(0));
+      reputationAgainst = proposalState.votesAgainst.add(actionType === ActionTypes.VoteDown ? currentAccount.reputation : new BN(0));
 
       Analytics.track("Open Vote Popup", {
         "Origin": parentPage,
-        "DAO Address": dao.address,
-        "DAO Name": dao.name,
-        "Proposal Hash": proposal.id,
-        "Proposal Title": proposal.title,
-        "Scheme Address": proposal.scheme.address,
-        "Scheme Name": proposal.scheme.name,
+        "DAO Address": daoState.address,
+        "DAO Name": daoState.name,
+        "Proposal Hash": proposalState.id,
+        "Proposal Title": proposalState.title,
+        "Plugin Address": proposalState.plugin.entity.coreState.address,
+        "Plugin Name": proposalState.plugin.entity.coreState.name,
       });
     }
 
@@ -165,12 +165,12 @@ class PreTransactionModal extends React.Component<IProps, IState> {
 
       Analytics.track("Open Stake Popup", {
         "Origin": parentPage,
-        "DAO Address": dao.address,
-        "DAO Name": dao.name,
-        "Proposal Hash": proposal.id,
-        "Proposal Title": proposal.title,
-        "Scheme Address": proposal.scheme.address,
-        "Scheme Name": proposal.scheme.name,
+        "DAO Address": daoState.address,
+        "DAO Name": daoState.name,
+        "Proposal Hash": proposalState.id,
+        "Proposal Title": proposalState.title,
+        "Plugin Address": proposalState.plugin.entity.coreState.address,
+        "Plugin Name": proposalState.plugin.entity.coreState.name,
       });
     }
 
@@ -280,12 +280,12 @@ class PreTransactionModal extends React.Component<IProps, IState> {
 
         Analytics.track("Open Redeem Popup", {
           "Origin": parentPage,
-          "DAO Address": dao.address,
-          "DAO Name": dao.name,
-          "Proposal Hash": proposal.id,
-          "Proposal Title": proposal.title,
-          "Scheme Address": proposal.scheme.address,
-          "Scheme Name": proposal.scheme.name,
+          "DAO Address": daoState.address,
+          "DAO Name": daoState.name,
+          "Proposal Hash": proposalState.id,
+          "Proposal Title": proposalState.title,
+          "Plugin Address": proposalState.plugin.entity.coreState.address,
+          "Plugin Name": proposalState.plugin.entity.coreState.name,
         });
         break;
       case ActionTypes.Execute:
@@ -334,9 +334,9 @@ class PreTransactionModal extends React.Component<IProps, IState> {
 
               <div className={css.proposalInfo}>
                 <div className={css.proposalTitle}>
-                  <strong>{humanProposalTitle(proposal)}</strong>
+                  <strong>{humanProposalTitle(proposalState)}</strong>
                 </div>
-                <ProposalSummary beneficiaryProfile={beneficiaryProfile} proposal={proposal} dao={dao} transactionModal/>
+                <ProposalSummary beneficiaryProfile={beneficiaryProfile} proposalState={proposalState} daoState={daoState} transactionModal/>
               </div>
               { /******* Staking form ******  **/
                 actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass ?
@@ -371,11 +371,11 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                               }
                             </ul>
                           </div>
-                          { (proposal.stage === IProposalStage.Queued && actionType === ActionTypes.StakePass && proposal.upstakeNeededToPreBoost.gten(0)) ?
-                            <div className={css.xToBoost}>&gt; {formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " needed to boost this proposal"}</div>
+                          { (proposalState.stage === IProposalStage.Queued && actionType === ActionTypes.StakePass && proposalState.upstakeNeededToPreBoost.gten(0)) ?
+                            <div className={css.xToBoost}>&gt; {formatTokens(proposalState.upstakeNeededToPreBoost, "GEN") + " needed to boost this proposal"}</div>
                             :
-                            (proposal.stage === IProposalStage.PreBoosted && actionType === ActionTypes.StakeFail && proposal.downStakeNeededToQueue.gtn(0)) ?
-                              <div className={css.xToBoost}>&gt;= {formatTokens(proposal.downStakeNeededToQueue, "GEN") + " needed to unboost this proposal"}</div>
+                            (proposalState.stage === IProposalStage.PreBoosted && actionType === ActionTypes.StakeFail && proposalState.downStakeNeededToQueue.gtn(0)) ?
+                              <div className={css.xToBoost}>&gt;= {formatTokens(proposalState.downStakeNeededToQueue, "GEN") + " needed to unboost this proposal"}</div>
                               : ""
                           }
                         </div>
@@ -391,18 +391,18 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                       <VoteGraph
                         newVotesAgainst={actionType === ActionTypes.VoteDown ? currentAccount.reputation : new BN(0)}
                         newVotesFor={actionType === ActionTypes.VoteUp ? currentAccount.reputation : new BN(0)}
-                        proposal={proposal}
+                        proposalState={proposalState}
                         size={90}
                       />
                     </div>
                     <div className={css.graphInfo}>
                       <div>
                         <img src="/assets/images/Icon/vote/for.svg"/>
-                         For <Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={reputationFor} />
+                         For <Reputation daoName={daoState.name} totalReputation={proposalState.totalRepWhenCreated} reputation={reputationFor} />
                       </div>
                       <div>
                         <img src="/assets/images/Icon/vote/against.svg"/>
-                         Against <Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={reputationAgainst} />
+                         Against <Reputation daoName={daoState.name} totalReputation={proposalState.totalRepWhenCreated} reputation={reputationAgainst} />
                       </div>
                     </div>
                   </div>

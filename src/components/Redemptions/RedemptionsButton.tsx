@@ -1,12 +1,10 @@
-import { Address } from "@daostack/client";
+import { Address, AnyProposal, Proposal } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import gql from "graphql-tag";
 import * as React from "react";
 import Tooltip from "rc-tooltip";
 import { Link } from "react-router-dom";
 import { of } from "rxjs";
-import { map } from "rxjs/operators";
 import RedemptionsMenu from "./RedemptionsMenu";
 import * as css from "./RedemptionsButton.scss";
 
@@ -14,7 +12,7 @@ interface IExternalProps {
   currentAccountAddress?: Address;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<any[]>;
+type IProps = IExternalProps & ISubscriptionProps<AnyProposal[]>;
 
 class RedemptionsButton extends React.Component<IProps, null> {
   private menu = React.createRef<Tooltip>()
@@ -88,15 +86,10 @@ export default withSubscription({
     }
 
     const arc = getArc();
-    const redeemableProposalsQuery = gql`query proposalsWithUnclaimedRewards
-      {
-        proposals(where: {
-          accountsWithUnclaimedRewards_contains: ["${currentAccountAddress}"]
-        }) {
-          id
-        }
-      }`;
-    return arc.getObservable(redeemableProposalsQuery)
-      .pipe(map((result: any) => result.data.proposals));
+    return Proposal.search(arc, {
+      where: {
+        "accountsWithUnclaimedRewards_contains": [currentAccountAddress],
+      },
+    });
   },
 });

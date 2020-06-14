@@ -1,9 +1,9 @@
-import { IDAOState, IMemberState, DAO } from "@daostack/client";
+import { IDAOState, IMemberState, DAO, Member } from "@dorgtech/arc.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import BN = require("bn.js");
 import { getProfile, updateProfile } from "actions/profilesActions";
-import { getArc, enableWalletProvider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import Reputation from "components/Account/Reputation";
@@ -12,7 +12,7 @@ import ThreeboxModal from "components/Shared/ThreeboxModal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { Field, Formik, FormikProps } from "formik";
 import Analytics from "lib/analytics";
-import { baseTokenName, copyToClipboard, ethErrorHandler, genName, formatTokens } from "lib/util";
+import { baseTokenName, copyToClipboard, genName, ethErrorHandler, formatTokens } from "lib/util";
 import { Page } from "pages";
 import { parse } from "query-string";
 import * as React from "react";
@@ -320,21 +320,35 @@ const SubscribedAccountProfilePage = withSubscription({
     return oldProps.daoAvatarAddress !== newProps.daoAvatarAddress || oldProps.accountAddress !== newProps.accountAddress;
   },
 
-  createObservable: (props: IProps) => {
+  createObservable: async (props: IProps) => {
     const arc = getArc();
 
     const queryValues = parse(props.location.search);
     const daoAvatarAddress = queryValues.daoAvatarAddress as string;
-    const accountAddress = props.match.params.accountAddress;
+    let accountAddress = props.match.params.accountAddress;
+
+    if (accountAddress) {
+      accountAddress = accountAddress.toLowerCase();
+    }
+
     let dao: DAO;
+    let memberState = null;
     if (daoAvatarAddress) {
       dao = arc.dao(daoAvatarAddress);
+      const daoState = await dao.fetchState();
+      const member = new Member(arc, Member.calculateId({
+        contract: daoState.reputation.id,
+        address: accountAddress,
+      }));
+      memberState = await member.fetchState().catch(() => ({
+        reputation: new BN(0),
+      }));
     }
 
     return combineLatest(
       // subscribe if only to to get DAO reputation supply updates
-      daoAvatarAddress ? dao.state( {subscribe: true}) : of(null),
-      daoAvatarAddress ? dao.member(accountAddress).state() : of(null),
+      daoAvatarAddress ? dao.state({subscribe: true}) : of(null),
+      of(memberState),
       arc.ethBalance(accountAddress)
         .pipe(ethErrorHandler()),
       arc.GENToken().balanceOf(accountAddress)

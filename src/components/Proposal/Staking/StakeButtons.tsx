@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, Stake } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, Stake } from "@dorgtech/arc.js";
 import { approveStakingGens, stakeProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 
@@ -24,13 +24,13 @@ interface IState {
 }
 
 interface IExternalProps {
-  proposal: IProposalState;
+  proposalState: IProposalState;
   beneficiaryProfile?: IProfileState;
   contextMenu?: boolean;
   currentAccountAddress?: Address;
   currentAccountGens: BN|null;
   currentAccountGenStakingAllowance: BN;
-  dao: IDAOState;
+  daoState: IDAOState;
   expired?: boolean;
   parentPage: Page;
   stakes: Stake[];
@@ -62,6 +62,10 @@ class StakeButtons extends React.Component<IProps, IState> {
     };
   }
 
+  public async componentDidMount() {
+    await this.props.proposalState.plugin.entity.fetchState();
+  }
+
   public showApprovalModal = async (_event: any): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
@@ -89,25 +93,25 @@ class StakeButtons extends React.Component<IProps, IState> {
     if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
 
     const { approveStakingGens } = this.props;
-    approveStakingGens(this.props.proposal.votingMachine);
+    approveStakingGens(this.props.proposalState.votingMachine);
 
     Analytics.track("Enable predictions");
 
     this.setState({ showApproveModal: false });
   }
 
-  private getStakeProposalAction = (proposal: IProposalState, dao: IDAOState, pendingPrediction: number) =>
+  private getStakeProposalAction = (proposalState: IProposalState, daoState: IDAOState, pendingPrediction: number) =>
     (amount: number) => {
-      this.props.stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount);
+      this.props.stakeProposal(daoState.id, proposalState.id, pendingPrediction, amount);
 
       Analytics.track("Stake", {
-        "DAO Address": proposal.dao.id,
-        "DAO Name": dao.name,
+        "DAO Address": daoState.id,
+        "DAO Name": daoState.name,
         "GEN Staked": amount,
-        "Proposal Hash": proposal.id,
-        "Proposal TItle": proposal.title,
-        "Scheme Address": proposal.scheme.address,
-        "Scheme Name": proposal.scheme.name,
+        "Proposal Hash": proposalState.id,
+        "Proposal TItle": proposalState.title,
+        "Plugin Address": proposalState.plugin.entity.coreState.address,
+        "Plugin Name": proposalState.plugin.entity.coreState.name,
         "Stake Type": pendingPrediction === IProposalOutcome.Fail ? "Fail" : pendingPrediction === IProposalOutcome.Pass ? "Pass" : "None",
       });
     };
@@ -119,10 +123,10 @@ class StakeButtons extends React.Component<IProps, IState> {
       currentAccountAddress,
       currentAccountGens,
       currentAccountGenStakingAllowance,
-      dao,
+      daoState,
       expired,
       parentPage,
-      proposal,
+      proposalState,
       stakes,
     } = this.props;
 
@@ -138,7 +142,7 @@ class StakeButtons extends React.Component<IProps, IState> {
       currentStake = stakes[0];
     }
     if (currentStake) {
-      currentAccountPrediction = currentStake.staticState.outcome;
+      currentAccountPrediction = currentStake.coreState.outcome;
     }
 
     const isPredicting = pendingPrediction !== null;
@@ -173,13 +177,13 @@ class StakeButtons extends React.Component<IProps, IState> {
       [css.unconfirmedPrediction]: isPredicting,
     });
 
-    const stakingEnabled = (proposal.stage === IProposalStage.Queued && !expired) ||
-      (proposal.stage === IProposalStage.PreBoosted);
+    const stakingEnabled = (proposalState.stage === IProposalStage.Queued && !expired) ||
+      (proposalState.stage === IProposalStage.PreBoosted);
 
     const disabledMessage =
-      (proposal.stage === IProposalStage.Queued && expired) || proposal.stage === IProposalStage.ExpiredInQueue ? "Can't predict on expired proposals" :
-        (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) ? "Can't predict on boosted proposals" :
-          (proposal.stage === IProposalStage.Executed) ? `Can't predict on ${proposal.winningOutcome === IProposalOutcome.Pass ? "passed" : "failed"} proposals` : "";
+      (proposalState.stage === IProposalStage.Queued && expired) || proposalState.stage === IProposalStage.ExpiredInQueue ? "Can't predict on expired proposals" :
+        (proposalState.stage === IProposalStage.Boosted || proposalState.stage === IProposalStage.QuietEndingPeriod) ? "Can't predict on boosted proposals" :
+          (proposalState.stage === IProposalStage.Executed) ? `Can't predict on ${proposalState.winningOutcome === IProposalOutcome.Pass ? "passed" : "failed"} proposals` : "";
 
     const hasGens = currentAccountGens && currentAccountGens.gt(new BN(0));
 
@@ -245,13 +249,13 @@ class StakeButtons extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction === IProposalOutcome.Pass ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={this.getStakeProposalAction(proposal, dao, pendingPrediction)}
+            action={this.getStakeProposalAction(proposalState, daoState, pendingPrediction)}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreStakeModal}
             currentAccountGens={currentAccountGens}
-            dao={dao}
+            daoState={daoState}
             parentPage={parentPage}
-            proposal={proposal}
+            proposalState={proposalState}
 
           /> : ""
         }
@@ -277,8 +281,8 @@ class StakeButtons extends React.Component<IProps, IState> {
                   </Tooltip> :
                   passButton
               }
-              {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.Queued && !expired && proposal.upstakeNeededToPreBoost.gten(0) ?
-                <div className={css.toBoostMessage}>&gt; {formatTokens(proposal.upstakeNeededToPreBoost, "GEN to boost")}</div>
+              {parentPage !== Page.ProposalDetails && proposalState.stage === IProposalStage.Queued && !expired && proposalState.upstakeNeededToPreBoost.gten(0) ?
+                <div className={css.toBoostMessage}>&gt; {formatTokens(proposalState.upstakeNeededToPreBoost, "GEN to boost")}</div>
                 : ""}
               {
                 (currentAccountAddress && tip(IProposalOutcome.Pass) !== "") ?
@@ -287,8 +291,8 @@ class StakeButtons extends React.Component<IProps, IState> {
                   </Tooltip> :
                   failButton
               }
-              {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.PreBoosted && !expired && proposal.downStakeNeededToQueue.gtn(0) ?
-                <div className={css.toBoostMessage}>&gt;= {formatTokens(proposal.downStakeNeededToQueue, " GEN to un-boost")}</div>
+              {parentPage !== Page.ProposalDetails && proposalState.stage === IProposalStage.PreBoosted && !expired && proposalState.downStakeNeededToQueue.gtn(0) ?
+                <div className={css.toBoostMessage}>&gt;= {formatTokens(proposalState.downStakeNeededToQueue, " GEN to un-boost")}</div>
                 : ""}
             </div>
             : <span className={css.disabledPredictions}>

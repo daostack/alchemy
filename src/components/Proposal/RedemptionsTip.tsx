@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalState, IProposalOutcome } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, AnyProposal, IContributionRewardProposalState } from "@dorgtech/arc.js";
 import Reputation from "components/Account/Reputation";
 import { baseTokenName, formatTokens, fromWei, genName, tokenDecimals, tokenSymbol, AccountClaimableRewardsType } from "lib/util";
 import * as React from "react";
@@ -9,20 +9,21 @@ interface IProps {
   canRewardOnlySome: boolean;
   contributionRewards: AccountClaimableRewardsType;
   currentAccountAddress: Address;
-  dao: IDAOState;
+  daoState: IDAOState;
   // non-zero GP rewards of current user, payable or not
   gpRewards: AccountClaimableRewardsType;
   id: string;
-  proposal: IProposalState;
+  proposal: AnyProposal;
 }
 
 export default (props: IProps) => {
-  const { canRewardNone, canRewardOnlySome, currentAccountAddress, contributionRewards, dao, gpRewards, id, proposal } = props;
+  const { canRewardNone, canRewardOnlySome, currentAccountAddress, contributionRewards, daoState, gpRewards, id, proposal } = props;
+  const proposalState = proposal.coreState;
 
   const messageDiv = (canRewardNone || canRewardOnlySome) ? <div className={css.message}>
     <img className={css.icon} src="/assets/images/Icon/Alert-yellow-b.svg" />
-    {canRewardNone ? <div className={css.text}>At this time, none of these rewards can be redeemed -- {dao.name} does not hold all the necessary assets.</div> : ""}
-    {canRewardOnlySome ? <div className={css.text}>At this time, only some of these rewards can be redeemed -- {dao.name} does not hold all the necessary assets.</div> : ""}
+    {canRewardNone ? <div className={css.text}>At this time, none of these rewards can be redeemed -- {daoState.name} does not hold all the necessary assets.</div> : ""}
+    {canRewardOnlySome ? <div className={css.text}>At this time, only some of these rewards can be redeemed -- {daoState.name} does not hold all the necessary assets.</div> : ""}
   </div> : <span></span>;
 
   const rewardComponents = [];
@@ -31,7 +32,7 @@ export default (props: IProps) => {
     c = <div key={id + "_proposer"}>
       <strong>For creating the proposal you are due to receive:</strong>
       <ul>
-        <li><Reputation reputation={gpRewards.reputationForProposer} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
+        <li><Reputation reputation={gpRewards.reputationForProposer} totalReputation={daoState.reputationTotalSupply} daoName={daoState.name} /></li>
       </ul>
     </div>;
     rewardComponents.push(c);
@@ -40,7 +41,7 @@ export default (props: IProps) => {
     c = <div key={id + "_voter"}>
       <strong>For voting on the proposal you are due to receive:</strong>
       <ul>
-        <li><Reputation reputation={gpRewards.reputationForVoter} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
+        <li><Reputation reputation={gpRewards.reputationForVoter} totalReputation={daoState.reputationTotalSupply} daoName={daoState.name} /></li>
       </ul>
     </div>;
     rewardComponents.push(c);
@@ -58,7 +59,7 @@ export default (props: IProps) => {
     c = <div key={id + "_staker_bounty"}>
       <strong>For staking on the proposal you are due to receive:</strong>
       <ul>
-        <li>{fromWei(gpRewards.daoBountyForStaker)} {genName()} as bounty from {dao.name}
+        <li>{fromWei(gpRewards.daoBountyForStaker)} {genName()} as bounty from {daoState.name}
         </li>
       </ul>
     </div >;
@@ -67,9 +68,9 @@ export default (props: IProps) => {
 
   let ContributionRewardDiv = <div />;
   if (contributionRewards) {
-    const contributionReward = proposal.contributionReward;
-    if (proposal.winningOutcome === IProposalOutcome.Pass && proposal.contributionReward) {
+    if (proposalState.winningOutcome === IProposalOutcome.Pass && proposalState.name === "ContributionReward") {
       if (Object.keys(contributionRewards).length > 0) {
+        const contributionReward = proposal.coreState as IContributionRewardProposalState;
         ContributionRewardDiv = <div>
           <strong>
             {(currentAccountAddress && currentAccountAddress === contributionReward.beneficiary.toLowerCase()) ?
@@ -87,11 +88,11 @@ export default (props: IProps) => {
                 {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken), tokenDecimals(contributionReward.externalToken))}
               </li> : ""
             }
-            {contributionRewards["rep"] ? <li><Reputation reputation={contributionRewards["rep"]} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
+            {contributionRewards["rep"] ? <li><Reputation reputation={contributionRewards["rep"]} totalReputation={daoState.reputationTotalSupply} daoName={daoState.name} /></li> : ""}
 
             {contributionRewards["nativeToken"] ?
               <li>
-                {formatTokens(contributionRewards["nativeToken"], dao.tokenSymbol)}
+                {formatTokens(contributionRewards["nativeToken"], daoState.tokenSymbol)}
               </li> : ""
             }
 

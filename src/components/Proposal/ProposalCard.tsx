@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Vote, Proposal } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, Vote, AnyProposal } from "@dorgtech/arc.js";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -10,7 +10,7 @@ import * as React from "react";
 import TrackVisibility from "react-on-screen";
 import { Link } from "react-router-dom";
 import { closingTime } from "lib/proposalHelpers";
-import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
@@ -27,7 +27,7 @@ import * as css from "./ProposalCard.scss";
 interface IExternalProps {
   currentAccountAddress: Address;
   daoState: IDAOState;
-  proposal: Proposal;
+  proposal: AnyProposal;
   suppressTrainingTooltips?: boolean;
 }
 
@@ -65,7 +65,8 @@ export default class ProposalCard extends React.Component<IProps, null> {
           votes,
         } = props;
 
-        const tags = proposal.tags;
+        const proposalState = proposal.coreState;
+        const tags = proposalState.tags;
 
         let currentAccountVote = 0;
 
@@ -73,10 +74,10 @@ export default class ProposalCard extends React.Component<IProps, null> {
 
         // TODO: the next line, is a hotfix for a  which filters the votes, should not be necessary
         // https://daostack.tpondemand.com/RestUI/Board.aspx#page=board/5209716961861964288&appConfig=eyJhY2lkIjoiQjgzMTMzNDczNzlCMUI5QUE0RUE1NUVEOUQyQzdFNkIifQ==&boardPopup=bug/1766
-        const currentAccountVotes = votes.filter((v: Vote) => v.staticState.voter === currentAccountAddress);
+        const currentAccountVotes = votes.filter((v: Vote) => v.coreState.voter === currentAccountAddress);
         if (currentAccountVotes.length > 0) {
           currentVote = currentAccountVotes[0];
-          currentAccountVote = currentVote.staticState.outcome;
+          currentAccountVote = currentVote.coreState.outcome;
         }
 
         const proposalClass = classNames({
@@ -95,7 +96,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
         const votingHtml = <div className={voteWrapperClass}>
           <div className={voteControls + " clearfix"}>
             <div className={css.voteDivider}>
-              <VoteGraph size={40} proposal={proposal} />
+              <VoteGraph size={40} proposalState={proposalState} />
             </div>
 
             <VoteBreakdown
@@ -103,7 +104,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
               currentAccountState={member}
               currentVote={currentAccountVote}
               daoState={daoState}
-              proposal={proposal}
+              proposalState={proposalState}
               detailView={false} />
           </div>
 
@@ -112,19 +113,19 @@ export default class ProposalCard extends React.Component<IProps, null> {
               currentAccountAddress={currentAccountAddress}
               currentAccountState={member}
               currentVote={currentAccountVote}
-              dao={daoState}
+              daoState={daoState}
               expired={expired}
-              proposal={proposal}
-              parentPage={Page.SchemeProposals}
+              proposalState={proposalState}
+              parentPage={Page.PluginProposals}
             />
           </div>
         </div>;
 
         const stakingHtml = <div className={css.predictions}>
           <StakeGraph
-            proposal={proposal}
+            proposalState={proposalState}
           />
-          <BoostAmount proposal={proposal} />
+          <BoostAmount proposalState={proposalState} />
 
           <div className={css.predictionButtons}>
             <StakeButtons
@@ -132,11 +133,11 @@ export default class ProposalCard extends React.Component<IProps, null> {
               currentAccountAddress={currentAccountAddress}
               currentAccountGens={currentAccountGenBalance}
               currentAccountGenStakingAllowance={currentAccountGenAllowance}
-              dao={daoState}
+              daoState={daoState}
               expired={expired}
-              proposal={proposal}
+              proposalState={proposalState}
               stakes={stakes}
-              parentPage={Page.SchemeProposals}
+              parentPage={Page.PluginProposals}
             />
           </div>
         </div>;
@@ -148,12 +149,12 @@ export default class ProposalCard extends React.Component<IProps, null> {
                 <div className={css.timer}>
                   <span className={css.content}>
                     {!expired
-                      ? <ProposalCountdown proposal={proposal} detailView={false} />
+                      ? <ProposalCountdown proposalState={proposalState} detailView={false} />
                       : <span className={css.closedTime}>
-                        {proposal.stage === IProposalStage.Queued ? "Expired" :
-                          proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
+                        {proposalState.stage === IProposalStage.Queued ? "Expired" :
+                          proposalState.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
                             "Closed"}&nbsp;
-                        {closingTime(proposal).format("MMM D, YYYY")}
+                        {closingTime(proposalState).format("MMM D, YYYY")}
                       </span>
                     }
                   </span>
@@ -165,10 +166,10 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   currentAccountAddress={currentAccountAddress}
                   daoState={daoState}
                   daoEthBalance={daoEthBalance}
-                  proposalState={proposal}
+                  proposal={proposal}
                   rewards={rewards}
                   expired={expired}
-                  parentPage={Page.SchemeProposals}
+                  parentPage={Page.PluginProposals}
                 />
 
                 <div onClick={this.stopClick} className={css.contextMenu} data-test-id="proposalContextMenu">
@@ -185,11 +186,11 @@ export default class ProposalCard extends React.Component<IProps, null> {
                         currentAccountAddress={currentAccountAddress}
                         currentAccountState={member}
                         currentVote={currentAccountVote}
-                        dao={daoState}
+                        daoState={daoState}
                         expired={expired}
-                        proposal={proposal}
+                        proposalState={proposalState}
                         contextMenu
-                        parentPage={Page.SchemeProposals}
+                        parentPage={Page.PluginProposals}
                       />
 
                       <StakeButtons
@@ -198,11 +199,11 @@ export default class ProposalCard extends React.Component<IProps, null> {
                         currentAccountAddress={currentAccountAddress}
                         currentAccountGens={currentAccountGenBalance}
                         currentAccountGenStakingAllowance={currentAccountGenAllowance}
-                        dao={daoState}
+                        daoState={daoState}
                         expired={expired}
-                        proposal={proposal}
+                        proposalState={proposalState}
                         stakes={stakes}
-                        parentPage={Page.SchemeProposals}
+                        parentPage={Page.PluginProposals}
                       />
                     </div>
                   }
@@ -211,17 +212,17 @@ export default class ProposalCard extends React.Component<IProps, null> {
               </div>
             </div>
             <div className={css.createdBy}>
-              <AccountPopup accountAddress={proposal.proposer} daoState={daoState} width={12} />
-              <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
+              <AccountPopup accountAddress={proposalState.proposer} daoState={daoState} width={12} />
+              <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
             </div>
 
             <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id}>
               <div className={css.description}>
-                {proposal.description}
+                {proposalState.description}
               </div>
 
               <h3 className={css.detailLink} data-test-id="proposal-title">
-                <span>{humanProposalTitle(proposal)}</span>
+                <span>{humanProposalTitle(proposalState)}</span>
               </h3>
 
               { tags && tags.length ? <div className={css.tagsContainer}>
@@ -230,7 +231,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
             </Link>
 
             <div className={css.summary}>
-              <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView={false} />
+              <ProposalSummary proposalState={proposalState} daoState={daoState} beneficiaryProfile={beneficiaryProfile} detailView={false} />
             </div>
 
           </div>

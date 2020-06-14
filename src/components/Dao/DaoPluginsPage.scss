@@ -1,0 +1,64 @@
+.wrapper {
+  width: 100%;
+
+  h1 {
+    color: rgba(104, 155, 214, 1);
+    border-bottom: 1px solid rgba(195, 212, 231, 1);
+    width: 100%;
+    padding-top: 30px;
+    background-color: rgba(229, 235, 242, 1);
+    margin: 0;
+  }
+}
+
+.fadeEnter {
+  opacity: 0.01;
+}
+
+.fadeEnter.fadeEnterActive {
+  opacity: 1;
+  transition: opacity 1000ms ease-in;
+}
+
+.fadeExit {
+  opacity: 1;
+}
+
+.fadeExit.fadeExitActive {
+  opacity: 0.01;
+  transition: opacity 1000ms ease-in;
+}
+
+.allPlugins {
+  padding-top: 30px;
+}
+
+a.addPluginButton {
+  position: fixed;
+  right: 0;
+  top: 33px;
+  padding: 8px 15px;
+  color: $white;
+  background-color: rgba(3, 118, 255, 1);
+  border-radius: 15px;
+  font-size: 13px;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: $accent-1;
+    color: $white;
+  }
+
+  &.disabled,
+  &.disabled:hover {
+    background-color: rgba(200, 200, 200, 0.5);
+    border: 1px solid rgba(200, 200, 200, 1);
+    cursor: not-allowed;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .wrapper h1 {
+    padding-left: 10px;
+  }
+}

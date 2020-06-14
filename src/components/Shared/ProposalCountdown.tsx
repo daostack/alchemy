@@ -1,4 +1,4 @@
-import { IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
+import { IProposalOutcome, IProposalStage, IProposalState } from "@dorgtech/arc.js";
 import * as classNames from "classnames";
 import * as moment from "moment";
 import * as React from "react";
@@ -8,8 +8,8 @@ import * as css from "./Countdown.scss";
 
 interface IProps {
   detailView?: boolean;
-  proposal: IProposalState;
-  schemeView?: boolean;
+  proposalState: IProposalState;
+  pluginView?: boolean;
   onEnd?(): any;
 }
 
@@ -28,13 +28,13 @@ export default class ProposalCountdown extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    this.state = this.calculateCountdown(closingTime(this.props.proposal));
+    this.state = this.calculateCountdown(closingTime(this.props.proposalState));
   }
 
   public componentDidMount() {
     // update every five seconds
     this.interval = setInterval(() => {
-      const countdownState = this.calculateCountdown(closingTime(this.props.proposal));
+      const countdownState = this.calculateCountdown(closingTime(this.props.proposalState));
       this.setState(countdownState);
 
       if (countdownState.complete) {
@@ -95,7 +95,7 @@ export default class ProposalCountdown extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
     const countDown = this.state;
-    const { proposal } = this.props;
+    const { proposalState } = this.props;
 
     const percentageComplete = 0;
     // TODO: do we want to show the percentage complete bar? We have not been so far
@@ -116,7 +116,7 @@ export default class ProposalCountdown extends React.Component<IProps, IState> {
     const containerClass = classNames({
       [css.detailView]: this.props.detailView,
       [css.container]: true,
-      [css.schemeView]: this.props.schemeView,
+      [css.pluginView]: this.props.pluginView,
     });
 
     return (
@@ -126,11 +126,11 @@ export default class ProposalCountdown extends React.Component<IProps, IState> {
         </div>
         {this.props.detailView ?
           <span className={css.label}>
-            { proposal.stage === IProposalStage.Queued ? "Proposal will expire in" :
-              proposal.stage === IProposalStage.PreBoosted && proposal.downStakeNeededToQueue.lten(0) ? "Proposal will un-boost in" :
-                proposal.stage === IProposalStage.PreBoosted ? "Proposal will boost in" :
-                  (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) && proposal.winningOutcome === IProposalOutcome.Pass ? "Proposal will pass in" :
-                    (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) ? "Proposal will fail in" :
+            { proposalState.stage === IProposalStage.Queued ? "Proposal will expire in" :
+              proposalState.stage === IProposalStage.PreBoosted && proposalState.downStakeNeededToQueue.lten(0) ? "Proposal will un-boost in" :
+                proposalState.stage === IProposalStage.PreBoosted ? "Proposal will boost in" :
+                  (proposalState.stage === IProposalStage.Boosted || proposalState.stage === IProposalStage.QuietEndingPeriod) && proposalState.winningOutcome === IProposalOutcome.Pass ? "Proposal will pass in" :
+                    (proposalState.stage === IProposalStage.Boosted || proposalState.stage === IProposalStage.QuietEndingPeriod) ? "Proposal will fail in" :
                       ""
             }
           </span>
@@ -144,7 +144,7 @@ export default class ProposalCountdown extends React.Component<IProps, IState> {
         {
           countDown.days ? "" : <span className={css.timeSection}><span className={css.colon}>:</span><strong>{this.addLeadingZeros(countDown.seconds)}s</strong></span>
         }
-        {proposal.stage === IProposalStage.QuietEndingPeriod && !countDown.complete ?
+        {proposalState.stage === IProposalStage.QuietEndingPeriod && !countDown.complete ?
           <strong className={css.overTime}>
             <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME
           </strong>

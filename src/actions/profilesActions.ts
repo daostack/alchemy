@@ -47,7 +47,7 @@ export function getProfile(accountAddress: string, currentAccount = false) {
           profile.follows = {
             daos: [],
             proposals: [],
-            schemes: [],
+            plugins: [],
             users: [],
           };
         }

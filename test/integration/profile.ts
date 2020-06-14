@@ -1,14 +1,14 @@
 import * as chai from "chai";
-import { getContractAddresses, userAddresses } from "./utils";
+import { getTestAddresses, userAddresses, ITestAddresses } from "./utils";
 
 describe("Profile page", () => {
-  let addresses;
-  let daoAddress;
+  let addresses: ITestAddresses;
+  let daoAddress: string;
   const userAddress = userAddresses[0];
 
   before(async () => {
     chai.Should();
-    addresses = getContractAddresses();
+    addresses = getTestAddresses();
     daoAddress = addresses.dao.Avatar.toLowerCase();
   });
 

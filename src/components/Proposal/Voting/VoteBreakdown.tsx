@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalState } from "@daostack/client";
+import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalState } from "@dorgtech/arc.js";
 import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
@@ -14,8 +14,8 @@ interface IExternalProps {
   currentVote: number;
   daoState: IDAOState;
   detailView?: boolean;
-  currentAccountState: IMemberState;
-  proposal: IProposalState;
+  currentAccountState: IMemberState | null;
+  proposalState: IProposalState;
   historyView?: boolean;
 }
 
@@ -48,7 +48,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
   public async handleClickVote(vote: number, _event: any): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    if (this.props.currentAccountState.reputation.gt(new BN(0))) {
+    if (this.props.currentAccountAddress && this.props.currentAccountState.reputation.gt(new BN(0))) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
     }
   }
@@ -62,7 +62,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
       currentVote,
       detailView,
       historyView,
-      proposal,
+      proposalState,
       daoState,
     } = this.props;
 
@@ -92,7 +92,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
           <span className={css.reputation}>
             <span className={css.label}>For</span>
             <br className={css.label}/>
-            <Reputation daoName={daoState.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesFor} hideSymbol hideTooltip={!detailView} />
+            <Reputation daoName={daoState.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesFor} hideSymbol hideTooltip={!detailView} />
             <b className={css.label}> Rep</b>
           </span>
         </div>
@@ -102,7 +102,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
           <span className={css.reputation}>
             <span className={css.label}>Against</span>
             <br className={css.label}/>
-            <Reputation daoName={daoState.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesAgainst} hideSymbol hideTooltip={!detailView} />
+            <Reputation daoName={daoState.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesAgainst} hideSymbol hideTooltip={!detailView} />
             <b className={css.label}> Rep</b>
           </span>
         </div>

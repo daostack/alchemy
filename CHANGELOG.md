@@ -1,3 +1,9 @@
+## 1.0.0
+  - Features Added
+    - Arc stack 2.0 support
+    - SchemeFactory aka Plugin Manager support
+      - Easily add, edit, and remove plugins from your DAO all within Alchemy
+
 ## 0.10.6
   - Features Added
     - new DAO landing page

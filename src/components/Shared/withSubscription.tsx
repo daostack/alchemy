@@ -118,10 +118,12 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
           // this will go to the error page
           this.setState(() => { throw error; });
         },
-        () => { this.setState({
-          complete: true,
-          isLoading: false,
-        }); }
+        () => {
+          this.setState({
+            complete: true,
+            isLoading: false,
+          });
+        }
       );
     }
 

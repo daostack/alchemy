@@ -1,4 +1,4 @@
-import { DAO, DAOFieldsFragment } from "@daostack/client";
+import { Arc, DAO } from "@dorgtech/arc.js";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -102,7 +102,7 @@ class DaosPage extends React.Component<IProps, IState> {
     const search = this.state.search.length > 2 ? this.state.search.toLowerCase() : "";
 
     // Always show DAOs that the current user is a member of or follows first
-    const yourDAOs = data[1].concat(data[2]).filter(d => d.staticState.name.toLowerCase().includes(search)).sort((a, b) => a.staticState.name.localeCompare(b.staticState.name));
+    const yourDAOs = data[1].concat(data[2]).filter(d => d.coreState.name.toLowerCase().includes(search)).sort((a, b) => a.coreState.name.localeCompare(b.coreState.name));
     const yourDAOAddresses = yourDAOs.map(dao => dao.id);
 
     // Then all the rest of the DAOs
@@ -119,13 +119,13 @@ class DaosPage extends React.Component<IProps, IState> {
     // eslint-disable-next-line no-extra-boolean-cast
     if (process.env.SHOW_ALL_DAOS === "true") {
       // on staging we show all daos (registered or not)
-      otherDAOs = otherDAOs.filter((d: DAO) => !yourDAOAddresses.includes(d.id) && d.staticState.name.toLowerCase().includes(search));
+      otherDAOs = otherDAOs.filter((d: DAO) => !yourDAOAddresses.includes(d.id) && d.coreState.name.toLowerCase().includes(search));
     } else {
       // Otherwise show registered DAOs
       otherDAOs = otherDAOs.filter((d: DAO) => {
         return !yourDAOAddresses.includes(d.id) &&
-               d.staticState.name.toLowerCase().includes(search) &&
-               d.staticState.register === "registered";
+               d.coreState.name.toLowerCase().includes(search) &&
+               d.coreState.register === "registered";
       });
     }
 
@@ -224,9 +224,15 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
         }
       }
     }
-    ${DAOFieldsFragment}
+    ${DAO.fragments.DAOFields}
   `;
-  const memberOfDAOs = currentAccountAddress ? arc.getObservableList(memberDAOsquery, (r: any) => createDaoStateFromQuery(r.dao).dao, { subscribe: true }) : of([]);
+  const memberOfDAOs = currentAccountAddress ? arc.getObservableList(
+    arc,
+    memberDAOsquery,
+    (arc: Arc, r: any) => new DAO(arc, createDaoStateFromQuery(r.dao)),
+    undefined,
+    { subscribe: true }
+  ) : of([]);
   // eslint-disable-next-line @typescript-eslint/camelcase
   const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc"}, { fetchAllData: true, subscribe: true }) : of([]);
 
