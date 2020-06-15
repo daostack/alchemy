@@ -105,7 +105,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       }
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
       if (genericSchemeInfo) {
-        name = splitCamelCase(genericSchemeInfo.specs.name);
+        name = genericSchemeInfo.specs.name;
       } else {
         // Adding the address is a bit long for a title
         // name = `Blockchain Interaction (${contractToCall})`;
