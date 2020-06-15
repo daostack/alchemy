@@ -8,7 +8,7 @@ import { KNOWNPLUGINS } from "genericPluginRegistry";
 import { IFormValues } from "./CreatePluginManagerProposal";
 import * as css from "../CreateProposal.scss";
 import { Form, ErrorMessage, Field } from "formik";
-import * as validators from './Validators';
+import * as validators from "./Validators";
 
 interface IProps {
   pluginName: keyof typeof PLUGIN_NAMES | "";
@@ -34,17 +34,17 @@ const fieldView = (plugin: string, title: string, field: string, validate?: (val
 const GenesisProtocolFields = (paramsProp: string) => (
   <Form>
     <div className={css.parameters}>
-      {fieldView(paramsProp, "Queued Vote Required Percentage", "queuedVoteRequiredPercentage", validators.validPercentage)}
+      {fieldView(paramsProp, "Queued Vote Required Percentage", "queuedVoteRequiredPercentage", value => validators.vaildRange(value, 50, 100))}
       {fieldView(paramsProp, "Queued Vote Period Limit", "queuedVotePeriodLimit", validators.validNumber)}
-      {fieldView(paramsProp, "Boosted Vote Period Limit", "boostedVotePeriodLimit", validators.validNumber)}
+      {fieldView(paramsProp, "Boosted Vote Period Limit", "boostedVotePeriodLimit", validators.boostedVotePeriodLimit)}
       {fieldView(paramsProp, "Pre-Boosted Vote Period Limit", "preBoostedVotePeriodLimit", validators.validNumber)}
       {fieldView(paramsProp, "Threshold Const", "thresholdConst", validators.thresholdConst)}
-      {fieldView(paramsProp, "Quiet Ending Period", "quietEndingPeriod", validators.validNumber)}
+      {fieldView(paramsProp, "Quiet Ending Period", "quietEndingPeriod", validators.validQuietEndingPeriod)}
       {fieldView(paramsProp, "Proposing Reputation Reward", "proposingRepReward", validators.validNumber)}
       {fieldView(paramsProp, "Voters Reputation Loss Ratio", "votersReputationLossRatio", validators.validPercentage)}
       {fieldView(paramsProp, "Minimum DAO Bounty", "minimumDaoBounty", value => validators.greaterThanOrEqualTo(value, 0))}
       {fieldView(paramsProp, "DAO Bounty Const", "daoBountyConst", value => validators.greaterThanOrEqualTo(value, 1))}
-      {fieldView(paramsProp, "Activation Time", "activationTime", validators.futureTime, 'date')}
+      {fieldView(paramsProp, "Activation Time", "activationTime", validators.futureTime, "date")}
       {fieldView(paramsProp, "Vote on behalf", "voteOnBehalf", validators.address)}
     </div>
   </Form>
