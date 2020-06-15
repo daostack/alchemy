@@ -7,7 +7,7 @@ interface IProps {
   body: any;
   footer?: any;
   header: any;
-  width: number | string;
+  width?: number | string;
 }
 
 export default class ModalPopup extends React.Component<IProps, null> {
@@ -32,7 +32,7 @@ export default class ModalPopup extends React.Component<IProps, null> {
 
     return (
       <Modal onBackdropClick={closeHandler}>
-        <div className={css.modalWindow} style={{ width }} >
+        <div className={css.modalWindow} style={{ width: width ?? "60%" }} >
           <div className={css.header}>{header}</div>
           <div className={css.body}>{body}</div>
           {footer ? <div className={css.footer}>{footer}</div> : ""}

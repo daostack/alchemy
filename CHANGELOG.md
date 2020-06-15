@@ -1,3 +1,44 @@
+## 0.10.10
+  - Several code refactorings
+
+  - Features Added
+    - add OK button to the modal prompt that appears on the DAO landing page when clicking the Edit Home Page button
+    - page the fetching of preboosted proposals on the Plugin Proposals page, 100 proposals at a time
+    - display the scheme "alias" instead of contract name, when available
+
+  - Bugs Fixed
+    - in the DAO side bar menu, improve appearance and behavior of the scrollbar that appears when more than three ETH/token balances are listed
+    - in the DAO side bar menu, the DAO Holdings link now opens in a new browser tab instead of replacing the current page
+    - in the DAO side bar menu, fix DAOstack icon color when not in the context of a DAO
+    - when clicking "Redeem" in the Redemptions menu, the menu now disappears to avoid obscuring the Redeem popup.
+    - copy-to-clipboard buttons now all show an explanative tooltip
+    - improved plugin Information tab layout on mobile platforms
+    - improve layout of the account profile page when there is no account profile
+    - remove spurious dash at the bottom of the DAO Members and other pages
+
+## 0.10.9
+  - Features Added
+    - extend Scheme URL Params => Proposal Templates to Competition proposal & competition submission
+    - top three boosted proposals shown on plugin cards are now sorted by when they were boosted, descending
+    - custom DAO landing page data for the SOS Hackathon
+    - enable Competition proposals and Competition Submissions to have embedded videos in their description
+    - allow "Recipient address" in proposal form to be empty (and be populated with proposer address)
+    - enable Redemptions dropdown menu to automatically update with blockchain changes
+    - show Redemptions tooltip on Redeem button when the button is disabled
+    - add new ENSPublicResolver GenericScheme target contract
+    - page the fetching of preboosted proposals at 100 per page
+    - remove redundant New Proposal button on the Plugin Proposals page
+    - improve description of plugin permission Mint and Burn
+    
+  - Bugs Fixed
+    - fix erroneous reputation and GEN redemption sums in Redemption dropdown menu cards
+    - enable voter 3Box profiles to always all show in proposal Voters popup
+    - fix GEN label position in staking popup
+    - fix proposal status countdown when the number of days exceeds 30
+    - improvments to the All DAOs layout, the DAO sidebar on mobile, the mobile dropdown with no DAO selected, Proposal Details page, DAO Landing page on mobile
+    - fixed bug on proposal History page when displaying voting results and YES got 100%
+    - reject displaying proposal in the context of a DAO that wasn't responsible for creating it
+
 ## 0.10.8
   - Features Added
     -- nicer formatting of embedded videos in proposal descriptions

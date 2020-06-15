@@ -73,29 +73,6 @@
     }
   }
 }
-
-.modalHeader {
-  display: flex;
-
-  .title {
-    flex-grow: 2;
-  }
-
-  .closeButton {
-    img {
-      position: relative;
-      width: 13px;
-      height: 13px;
-    }
-  }
-}
-
-.modalBody {
-  div {
-    margin-bottom: 1rem;
-  }
-}
-
 .discussionWarning {
   color: red;
   margin-top: -20px;

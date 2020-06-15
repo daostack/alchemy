@@ -8,9 +8,8 @@ import { createDaoStateFromQuery } from "lib/daoHelpers";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import * as InfiniteScroll from "react-infinite-scroll-component";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
-import * as Sticky from "react-stickynode";
 import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { combineLatest, of } from "rxjs";
@@ -124,8 +123,8 @@ class DaosPage extends React.Component<IProps, IState> {
       // Otherwise show registered DAOs
       otherDAOs = otherDAOs.filter((d: DAO) => {
         return !yourDAOAddresses.includes(d.id) &&
-               d.staticState.name.toLowerCase().includes(search) &&
-               d.staticState.register === "registered";
+          d.staticState.name.toLowerCase().includes(search) &&
+          d.staticState.register === "registered";
       });
     }
 
@@ -151,52 +150,54 @@ class DaosPage extends React.Component<IProps, IState> {
       <div className={css.wrapper}>
         <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
 
-        <div className={css.searchBox}>
-          <input type="text" name="search" placeholder="Search DAOs" onChange={this.onSearchChange} value={this.state.search} />
+        <div className={css.paddingTop}>&nbsp;</div>
+
+        <div className={css.topRow}>
+          <div className={css.searchBox}>
+            <input type="text" name="search" placeholder="Search DAOs" onChange={this.onSearchChange} value={this.state.search} />
+          </div>
+
+          <div className={css.createDaoButton}>
+            <Link to={"/daos/create"}>
+              Create A DAO
+            </Link>
+          </div>
         </div>
 
-        <Link to={"/daos/create"} className={css.createDaoButton}>
-          Create A DAO
-        </Link>
-
-        {yourDAOs.length ? <React.Fragment>
-          <Sticky enabled top={this.state.isMobile ? 75 : 50} innerZ={10000}>
+        <div className={css.yourDaos}>
+          {yourDAOs.length ? <React.Fragment>
             <div className={css.headerWrapper}>
-              <div className={css.headerTitle + " clearfix"}>
+              <div className={css.headerTitle}>
                 <h2 data-test-id="header-all-daos">Your DAOs</h2>
               </div>
             </div>
-          </Sticky>
 
-          <div className={css.daoList}>
-            {yourDaoNodes}
-          </div>
-        </React.Fragment>
-          : ""
-        }
+            <div className={css.daoList}>
+              {yourDaoNodes}
+            </div>
+          </React.Fragment>
+            : ""
+          }
+        </div>
 
-        <Sticky enabled top={this.state.isMobile ? 75 : 50} innerZ={10000}>
+        <div className={css.otherDaos}>
           <div className={css.headerWrapper}>
-            <div className={css.headerTitle + " clearfix"}>
+            <div className={css.headerTitle}>
               <h2 data-test-id="header-all-daos">Other DAOs</h2>
             </div>
           </div>
-        </Sticky>
-        <div className={css.daoList}>
-          {otherDaoNodes ?
-            <InfiniteScroll
-              dataLength={otherDaoNodes.length} // This is important field to render the next data
-              next={fetchMore}
-              hasMore
-              loader=""
-              endMessage={
-                <p style={{textAlign: "center"}}>
-                  <b>&mdash;</b>
-                </p>
-              }
-            >
-              {otherDaoNodes}
-            </InfiniteScroll> : "None"}
+          <div className={css.daoList}>
+            {otherDaoNodes ?
+              <InfiniteScroll
+                dataLength={otherDaoNodes.length} // This is important field to render the next data
+                next={fetchMore}
+                hasMore
+                loader=""
+                endMessage={null}
+              >
+                {otherDaoNodes}
+              </InfiniteScroll> : "None"}
+          </div>
         </div>
       </div>
     );
@@ -228,10 +229,10 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
   `;
   const memberOfDAOs = currentAccountAddress ? arc.getObservableList(memberDAOsquery, (r: any) => createDaoStateFromQuery(r.dao).dao, { subscribe: true }) : of([]);
   // eslint-disable-next-line @typescript-eslint/camelcase
-  const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc"}, { fetchAllData: true, subscribe: true }) : of([]);
+  const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc" }, { fetchAllData: true, subscribe: true }) : of([]);
 
   return combineLatest(
-    arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0}, { fetchAllData: true, subscribe: true }),
+    arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0 }, { fetchAllData: true, subscribe: true }),
     followDAOs,
     memberOfDAOs
   );
@@ -239,8 +240,8 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
 
 const SubscribedDaosPage = withSubscription({
   wrappedComponent: DaosPage,
-  loadingComponent: <div className={css.wrapper}><Loading/></div>,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
+  loadingComponent: <div className={css.wrapper}><Loading /></div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   // Don't ever update the subscription
   checkForUpdate: ["currentAccountAddress", "followingDAOs"],

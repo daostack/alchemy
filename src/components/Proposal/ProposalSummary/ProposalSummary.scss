@@ -115,12 +115,16 @@
       color: rgba(78, 97, 118, 1);
       font-weight: normal;
       vertical-align: top;
+    }
 
-      img {
-        margin-left: 5px;
-        position: relative;
-        top: 1px;
-      }
+    th img {
+      margin-left: 5px;
+      position: relative;
+      top: 1px;
+    }
+
+    pre .arrayItem {
+      margin-left: 8px;
     }
 
     td {

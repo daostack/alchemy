@@ -142,6 +142,10 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     await this.props.threeboxLogin(this.props.currentAccountAddress);
   }
 
+  private getUserAddress(address: string): string {
+    return `${process.env.BASE_URL}/profile/${address}`;
+  }
+
   public render(): RenderOutput {
     const {
       beneficiaryProfile,
@@ -159,6 +163,10 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       stakes,
       threeBox,
     } = this.props;
+
+    if (daoState.id !== proposal.dao.id) {
+      return <div>`The given proposal does not belong to ${daoState.name}. Please check the browser url.`</div>;
+    }
 
     const tags = proposal.tags;
 
@@ -361,7 +369,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
             ethereum={arc.web3 ? arc.web3.eth : null}
             showCommentCount={10}
             useHovers
-            userProfileURL={address => `${process.env.BASE_URL}/profile/${address}`}
+            userProfileURL={this.getUserAddress}
           />
 
           <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />

@@ -530,7 +530,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         <div className={css.permissionCheckbox}>
                           <Field id="mintBurnReputation" type="checkbox" name="mintBurnReputation" disabled="disabled" checked="checked" />
                           <label htmlFor="mintBurnReputation">
-                            Mint or burn reputation
+                            Mint and burn reputation, send ETH and external &amp; native tokens
                           </label>
                         </div>
                       </div>
