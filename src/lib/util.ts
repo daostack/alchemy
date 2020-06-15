@@ -3,7 +3,8 @@ import {
   Address,
   IProposalStage,
   IProposalState,
-  IRewardState} from "@daostack/arc.js";
+  IRewardState,
+} from "@daostack/arc.js";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
@@ -14,6 +15,7 @@ import BN = require("bn.js");
 import "moment";
 import * as moment from "moment-timezone";
 import { getArc } from "../arc";
+import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
 
 
 const tokens = require("data/tokens.json");
@@ -61,10 +63,10 @@ export const truncateWithEllipses = (str: string, length: number): string => {
   }
 };
 
-export function humanProposalTitle(proposal: IProposalState, truncateToLength=0) {
+export function humanProposalTitle(proposal: IProposalState, truncateToLength = 0) {
   const title = proposal.title ||
     "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
-  return truncateToLength ? truncateWithEllipses(title, truncateToLength): title;
+  return truncateToLength ? truncateWithEllipses(title, truncateToLength) : title;
 }
 
 // Convert a value to its base unit based on the number of decimals passed in (i.e. WEI if 18 decimals)
@@ -81,7 +83,7 @@ export function toBaseUnit(value: string, decimals: number) {
   if (value === ".") {
     throw new Error(
       `Invalid value ${value} cannot be converted to`
-    + ` base unit with ${decimals} decimals.`);
+      + ` base unit with ${decimals} decimals.`);
   }
 
   // Split it into a whole and fractional part
@@ -129,7 +131,7 @@ export function toWei(amount: number): BN {
   return new BN(getArc().web3.utils.toWei(amount.toFixed(18).toString(), "ether"));
 }
 
-export type Networks = "main"|"rinkeby"|"ganache"|"xdai"|"kovan";
+export type Networks = "main" | "rinkeby" | "ganache" | "xdai" | "kovan";
 
 /**
  * Get the network id to which the current build expects connect.
@@ -142,15 +144,15 @@ export function targetedNetwork(): Networks {
     case "private": {
       return "ganache";
     }
-    case "rinkeby" : {
+    case "rinkeby": {
       return "rinkeby";
     }
-    case "kovan" : {
+    case "kovan": {
       return "kovan";
     }
     case "main":
     case "mainnet":
-    case undefined : {
+    case undefined: {
       return "main";
     }
     case "xdai":
@@ -170,17 +172,19 @@ export function genName() {
 }
 
 export function supportedTokens() {
-  return { [getArc().GENToken().address]:  {
-    decimals: 18,
-    name: "DAOstack GEN",
-    symbol: genName(),
-  }, ...tokens[targetedNetwork()]["tokens"]};
+  return {
+    [getArc().GENToken().address]: {
+      decimals: 18,
+      name: "DAOstack GEN",
+      symbol: genName(),
+    }, ...tokens[targetedNetwork()]["tokens"],
+  };
 }
 
-export function formatTokens(amountWei: BN|null, symbol?: string, decimals = 18): string {
+export function formatTokens(amountWei: BN | null, symbol?: string, decimals = 18): string {
 
   if (amountWei === null) {
-    return `N/A ${symbol ? symbol: ""}`;
+    return `N/A ${symbol ? symbol : ""}`;
   }
 
   const negative = amountWei.lt(new BN(0));
@@ -192,8 +196,7 @@ export function formatTokens(amountWei: BN|null, symbol?: string, decimals = 18)
 
   const PRECISION = 2; // number of digits "behind the dot"
   const PRECISIONPOWER = 10 ** PRECISION;
-  const toLocaleString = (amount: number): string =>
-  {
+  const toLocaleString = (amount: number): string => {
     return amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: PRECISION });
   };
 
@@ -388,7 +391,7 @@ export function hasGpRewards(reward: IRewardState) {
  * @param  reward unredeemed CR rewards
  * @param daoBalances
  */
-export function getCRRewards(proposalState: IProposalState, daoBalances: { [key: string]: BN|null } = {}): AccountClaimableRewardsType {
+export function getCRRewards(proposalState: IProposalState, daoBalances: { [key: string]: BN | null } = {}): AccountClaimableRewardsType {
   const result: AccountClaimableRewardsType = {};
 
   if (proposalState.stage === IProposalStage.ExpiredInQueue) {
@@ -399,7 +402,7 @@ export function getCRRewards(proposalState: IProposalState, daoBalances: { [key:
   if (
     reward.ethReward &&
     !reward.ethReward.isZero()
-    && (daoBalances["eth"] === undefined || daoBalances["eth"]=== null|| daoBalances["eth"].gte(reward.ethReward))
+    && (daoBalances["eth"] === undefined || daoBalances["eth"] === null || daoBalances["eth"].gte(reward.ethReward))
     && reward.alreadyRedeemedEthPeriods < reward.periods
   ) {
     result["eth"] = reward.ethReward;
@@ -482,14 +485,14 @@ export function ethErrorHandler() {
  * @param value The value to remove
  */
 export function arrayRemove(arr: any[], value: any) {
-  return arr.filter(function(ele){
+  return arr.filter(function (ele) {
     return ele !== value;
   });
 }
 
 const localTimezone = moment.tz.guess();
 
-export function getDateWithTimezone(date: Date|moment.Moment): moment.Moment {
+export function getDateWithTimezone(date: Date | moment.Moment): moment.Moment {
   return moment.tz(date.toISOString(), localTimezone);
 }
 
@@ -499,7 +502,7 @@ const dateFormat = `MMM DD, YYYY HH:mm ${tzFormat}`;
  * looks like: "17:30 EST (-05:00) Dec 31, 2019"
  * @param date
  */
-export function formatFriendlyDateForLocalTimezone(date: Date|moment.Moment): string {
+export function formatFriendlyDateForLocalTimezone(date: Date | moment.Moment): string {
   return getDateWithTimezone(date).format(dateFormat);
 }
 /**
@@ -565,3 +568,26 @@ export function calculateCountdown(endDate: Date | moment.Moment): ICountdown {
 
   return timeLeft;
 }
+
+export let showSimpleMessage: (options: ISimpleMessagePopupProps) => void;
+
+interface IInitializeOptions {
+  showSimpleMessage: (options: ISimpleMessagePopupProps) => void;
+}
+
+/**
+ * initialize this service
+ * @param options
+ */
+export function initializeUtils(options: IInitializeOptions) {
+  showSimpleMessage = options.showSimpleMessage;
+}
+/**
+  * Add spaces before capital letters to approximate a human-readable title.
+  * Note if the name already contains spaces, they will be left alone.
+  * If there are adjacent uppercase characters, they will not be split, which
+  * sometimes will be correct (like "ID") and sometimes not (like "AScheme").
+  * (The previous version of this, `/([A-Z])/g, ' $1'`, would split adjacent uppercase characters,
+  * which when wrong would be more wrong than not splitting (like "I D").)
+  **/
+export const splitCamelCase = (str: string): string => `${str[0].toUpperCase()}${str.slice(1).replace(/([a-z])([A-Z])/g, "$1 $2")}`;
