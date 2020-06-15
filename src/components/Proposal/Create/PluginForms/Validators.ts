@@ -10,7 +10,8 @@ const constants = {
   VAILD_RANGE: "Must be a number between",
   VALID_PERCENTAGE: "Percentage must be a number between",
   VALID_THRESHOLD: "Threshold must be a number between",
-  GREAT_OR_EQUAL: "Must be a number greater than or equal to",
+  GREATER_THAN: "Must be a number greater than",
+  GREATER_OR_EQUAL: "Must be a number greater than or equal to",
   SMALLER_OR_EQUAL: "Must be a number smaller than or equal to",
   VALID_DATE: "Must be a future date",
   VALID_ADDRESS: "Must be a valid address",
@@ -62,12 +63,12 @@ export const thresholdConst = (value: any) => {
   return error;
 };
 
-export const greaterThanOrEqualTo = (value: any, limit: number) => {
+export const greaterThan = (value: any, limit: number) => {
   let error;
   if (!value) {
     error = constants.REQUIRED;
-  } else if (!positiveNumber(value) || value < limit) {
-    error = `${constants.GREAT_OR_EQUAL} ${limit}`;
+  } else if (!positiveNumber(value) || value < limit || Number(value) === 0) {
+    error = `${constants.GREATER_THAN} ${limit}`;
   }
   return error;
 };
@@ -79,7 +80,7 @@ export const boostedVotePeriodLimit = (value: any) => {
   } else if (!positiveNumber(value)) {
     error = `${constants.VALID_NUM}`;
   } else if (Number(value) < Number((document.getElementById("quietEndingPeriod") as HTMLInputElement).value)) {
-    error = `${constants.GREAT_OR_EQUAL} Quiet Ending Period value`;
+    error = `${constants.GREATER_OR_EQUAL} Quiet Ending Period value`;
   }
   return error;
 };

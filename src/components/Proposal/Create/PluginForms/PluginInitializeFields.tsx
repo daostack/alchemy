@@ -42,9 +42,9 @@ const GenesisProtocolFields = (paramsProp: string) => (
       {fieldView(paramsProp, "Quiet Ending Period", "quietEndingPeriod", validators.validQuietEndingPeriod)}
       {fieldView(paramsProp, "Proposing Reputation Reward", "proposingRepReward", validators.validNumber)}
       {fieldView(paramsProp, "Voters Reputation Loss Ratio", "votersReputationLossRatio", validators.validPercentage)}
-      {fieldView(paramsProp, "Minimum DAO Bounty", "minimumDaoBounty", value => validators.greaterThanOrEqualTo(value, 0))}
-      {fieldView(paramsProp, "DAO Bounty Const", "daoBountyConst", value => validators.greaterThanOrEqualTo(value, 1))}
-      {fieldView(paramsProp, "Activation Time", "activationTime", validators.futureTime, "date")}
+      {fieldView(paramsProp, "Minimum DAO Bounty", "minimumDaoBounty", value => validators.greaterThan(value, 0))}
+      {fieldView(paramsProp, "DAO Bounty Const", "daoBountyConst", value => validators.greaterThan(value, 0))}
+      {fieldView(paramsProp, "Activation Time", "activationTime", validators.futureTime, "datetime-local")}
       {fieldView(paramsProp, "Vote on behalf", "voteOnBehalf", validators.address)}
     </div>
   </Form>
