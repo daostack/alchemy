@@ -129,7 +129,7 @@ class DaoLandingPage extends React.Component<IProps, IStateProps> {
           <ThreeBoxComments
             spaceName="DAOstack"
             threadName={daoState.id}
-            adminEthAddr={"0x0084FB1d84F2359Cafd00f92B901C121521d6809"}
+            adminEthAddr={process.env["3BOX_COMMENTS_ADMIN"]}
             box={threeBox}
             currentUserAddr={currentAccountAddress}
             currentUser3BoxProfile={currentAccountProfile}

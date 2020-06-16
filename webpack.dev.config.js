@@ -103,6 +103,7 @@ module.exports = merge(baseConfig, {
       ARC_IPFSPROVIDER_PROTOCOL : "",
       ARC_IPFSPROVIDER_API_PATH : "",
       INFURA_ID : "",
+      "3BOX_COMMENTS_ADMIN" : "",
       MIXPANEL_TOKEN: "eac39430f2d26472411099a0407ad610",
     })
   ]
