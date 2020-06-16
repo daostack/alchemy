@@ -15,6 +15,7 @@ const mapDispatchToProps = {
 
 export enum EnumButtonSpec {
   Ok = 1,
+  HIDE = 2
   // eventually will turn this into a confirmation modal, adding OkCancel, Yes/No and stuff
 }
 
@@ -47,8 +48,10 @@ class SimpleMessagePopup extends React.Component<IDispatchProps & IStateProps, n
   }
 
   private renderButtons = (): JSX.Element => {
+
     const okButton = (<button className={css.closeButton} onClick={this.closeHandler}>OK</button>);
     switch (this.props.options.buttonSpec) {
+      case EnumButtonSpec.HIDE: return null
       case EnumButtonSpec.Ok:
       default:
         return okButton;
@@ -65,6 +68,11 @@ class SimpleMessagePopup extends React.Component<IDispatchProps & IStateProps, n
       throw new Error("message body is required");
     }
 
+    let footer = null;
+    if(!this.props.options.buttonSpec || this.props.options.buttonSpec !== EnumButtonSpec.HIDE) {
+      footer = (<div className={css.modalFooter}>{this.renderButtons()}</div>)
+    }
+
     return (
       <div className={css.modalContainer}>
         <ModalPopup
@@ -79,9 +87,7 @@ class SimpleMessagePopup extends React.Component<IDispatchProps & IStateProps, n
           body={
             <div className={css.modalBody}>{this.props.options.body}</div>
           }
-          footer={
-            <div className={css.modalFooter}>{this.renderButtons()}</div>
-          }
+          footer={footer}
         />
       </div>
     );
