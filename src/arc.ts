@@ -3,7 +3,7 @@ import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
 import { settings, Settings, USE_CONTRACTINFOS_CACHE } from "./settings";
 import { IProviderInfo, getProviderInfo } from "web3modal";
 import { RetryLink } from "apollo-link-retry";
-import { Address, Arc, Web3Client, Web3Provider } from "@dorgtech/arc.js";
+import { Address, Arc, Web3Client, Web3Provider } from "@daostack/arc.js";
 import Web3Modal from "web3modal";
 import { Observable } from "rxjs";
 import { first } from "rxjs/operators";

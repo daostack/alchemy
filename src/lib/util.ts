@@ -6,8 +6,8 @@ import {
   IProposalState,
   IRewardState,
   Web3Provider,
-} from "@dorgtech/arc.js";
-import * as utils from "@dorgtech/arc.js";
+} from "@daostack/arc.js";
+import * as utils from "@daostack/arc.js";
 import { JsonRpcProvider } from "ethers/providers";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
