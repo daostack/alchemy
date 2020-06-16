@@ -1,4 +1,4 @@
-import { IDAOState, AnyProposal, IContributionRewardProposalState, IGenericPluginProposalState, IPluginRegistrarProposalState, IProposalState, Proposal, IPluginManagerProposalState } from "@dorgtech/arc.js";
+import { IDAOState, AnyProposal, IContributionRewardProposalState, IGenericPluginProposalState, IPluginRegistrarProposalState, IProposalState, Proposal, IPluginManagerProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
 import { GenericPluginRegistry } from "genericPluginRegistry";
 import * as React from "react";

@@ -1,4 +1,4 @@
-import { IDAOState, IProposalCreateOptionsComp, CompetitionPlugin } from "@dorgtech/arc.js";
+import { IDAOState, IProposalCreateOptionsComp, CompetitionPlugin } from "@daostack/arc.js";
 import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";

@@ -1,4 +1,4 @@
-import { Address, IPluginState, ReputationFromTokenPlugin, Token } from "@dorgtech/arc.js";
+import { Address, IPluginState, ReputationFromTokenPlugin, Token } from "@daostack/arc.js";
 import axios from "axios";
 import { getArcSettings } from "arc";
 import { SigningKey } from "ethers/utils";

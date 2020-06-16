@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, IProposalStage, IProposalState } from "@dorgtech/arc.js";
+import { IDAOState, IMemberState, IProposalStage, IProposalState } from "@daostack/arc.js";
 import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");

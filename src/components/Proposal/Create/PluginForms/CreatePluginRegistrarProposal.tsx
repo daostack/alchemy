@@ -14,7 +14,7 @@ import { GetPluginIsActiveActions, getPluginIsActive, REQUIRED_PLUGIN_PERMISSION
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
-import { ProposalName, IPluginState, AnyPlugin } from "@dorgtech/arc.js";
+import { ProposalName, IPluginState, AnyPlugin } from "@daostack/arc.js";
 import { connect } from "react-redux";
 import * as React from "react";
 import * as css from "../CreateProposal.scss";
