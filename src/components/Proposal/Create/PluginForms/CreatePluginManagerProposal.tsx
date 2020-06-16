@@ -5,7 +5,7 @@ import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-
+import { convertDateToPosix } from "../../../../lib/util";
 import { createProposal } from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
@@ -59,10 +59,11 @@ interface IGenesisProtocolFormValues {
   votersReputationLossRatio: number;
   minimumDaoBounty: number;
   daoBountyConst: number;
-  activationTime: number;
+  activationTime: Date;
   voteOnBehalf: string;
   voteParamsHash: string;
 }
+
 
 const gpFormValuesToVotingParams = (genesisProtocolParams: IGenesisProtocolFormValues) => [
   genesisProtocolParams.queuedVoteRequiredPercentage,
@@ -75,7 +76,7 @@ const gpFormValuesToVotingParams = (genesisProtocolParams: IGenesisProtocolFormV
   genesisProtocolParams.votersReputationLossRatio,
   genesisProtocolParams.minimumDaoBounty,
   genesisProtocolParams.daoBountyConst,
-  genesisProtocolParams.activationTime,
+  convertDateToPosix(new Date(genesisProtocolParams.activationTime)),
 ];
 
 export interface IFormValues {
@@ -161,7 +162,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
       votersReputationLossRatio: 4,
       minimumDaoBounty: 150,
       daoBountyConst: 10,
-      activationTime: 0,
+      activationTime: new Date(),
       voteOnBehalf: "0x0000000000000000000000000000000000000000",
       voteParamsHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
     };
