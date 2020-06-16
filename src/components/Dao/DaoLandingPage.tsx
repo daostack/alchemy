@@ -125,7 +125,7 @@ class DaoLandingPage extends React.Component<IProps, IStateProps> {
         </div>
         <div className={css.wallContainer}>
           <div className={css.headerText}>Discuss {daoState.name}</div>
-          <p className={css.discussionWarning}>We are moving from Disqus to 3Box for commenting! Both are available here for a short time so important comments can be copied from Disqus to 3Box.</p>
+          <div className={css.discussionWarning}>IMPORTANT! We are moving from Disqus to 3Box for commenting! Before long, all the Disqus comments will disappear. So for a short time we are making both systems available here so that you may copy important comments from Disqus into 3Box, before the Disqus comments all disappear.</div>
           <ThreeBoxComments
             spaceName="DAOstack"
             threadName={daoState.id}

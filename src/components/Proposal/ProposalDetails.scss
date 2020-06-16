@@ -311,15 +311,13 @@ button.disabled {
 }
 
 .discussionWarning {
-  color: red;
+  font-weight: 600;
+  font-style: italic;
+  background-color: lightcoral;
+  padding: 10px;
+  font-size: 14px;
   margin-top: -20px;
-  margin-bottom: 20px;
-}
-
-.discussionWarning {
-  color: red;
-  margin-top: -20px;
-  margin-bottom: 20px;
+  margin-bottom: 36px;
 }
 
 @media only screen and (max-width: 425px) {
