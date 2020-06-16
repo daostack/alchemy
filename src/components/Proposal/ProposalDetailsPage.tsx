@@ -361,7 +361,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
           <ThreeBoxComments
             spaceName="DAOstack"
             threadName={proposal.id}
-            adminEthAddr={process.env["3BOX_COMMENTS_ADMIN"]}
+            adminEthAddr={"0x0084FB1d84F2359Cafd00f92B901C121521d6809"}
             box={threeBox}
             currentUserAddr={currentAccountAddress}
             currentUser3BoxProfile={currentAccountProfile}

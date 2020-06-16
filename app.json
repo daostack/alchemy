@@ -18,10 +18,6 @@
     "DISQUS_SITE": {
       "required": true,
       "value": "daostack-alchemy-staging"
-    },
-    "3BOX_COMMENTS_ADMIN": {
-      "required": true,
-      "value": ""
     }
   },
   "formation": {
