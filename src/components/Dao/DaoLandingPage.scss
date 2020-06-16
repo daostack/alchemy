@@ -1,3 +1,19 @@
+:global {
+  /**
+   * hack to fix 3box footer being horizontally misaligned
+   */
+  .threebox-comments-react .comments_footer {
+    span.footer_text {
+      white-space: nowrap;
+
+      a .footer_text_image {
+        margin-left: 10px;
+        width: 50px;
+      }
+    }
+  }
+}
+
 .landingPage {
   padding-top: 18px;
 
