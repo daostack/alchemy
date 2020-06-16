@@ -25,6 +25,11 @@ import { promisify } from "util";
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
 
+
+export const convertDateToPosix = (date: Date): number => {
+  return date.getTime() / 1000;
+};
+
 export function getExchangesList() {
   return exchangesList;
 }
