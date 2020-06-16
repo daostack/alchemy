@@ -166,6 +166,7 @@ function getWeb3ConnectProviderOptions(network: string) {
 }
 
 export const settings = {
+  "3BoxCommentsAdmin": "0x0084FB1d84F2359Cafd00f92B901C121521d6809",
   ganache: {
     graphqlHttpProvider: SubgraphEndpoints.http_ganache,
     graphqlWsProvider: SubgraphEndpoints.ws_ganache,

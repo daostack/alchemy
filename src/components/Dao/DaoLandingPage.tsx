@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { DiscussionEmbed } from "disqus-react";
 import { showSimpleMessage } from "lib/util";
+import { settings } from "../../settings";
 
 type IExternalProps = {
   daoState: IDAOState;
@@ -129,7 +130,7 @@ class DaoLandingPage extends React.Component<IProps, IStateProps> {
           <ThreeBoxComments
             spaceName="DAOstack"
             threadName={daoState.id}
-            adminEthAddr={"0x0084FB1d84F2359Cafd00f92B901C121521d6809"}
+            adminEthAddr={settings["3BoxCommentsAdmin"]}
             box={threeBox}
             currentUserAddr={currentAccountAddress}
             currentUser3BoxProfile={currentAccountProfile}

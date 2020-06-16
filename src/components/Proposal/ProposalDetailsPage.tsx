@@ -36,6 +36,7 @@ import VoteGraph from "./Voting/VoteGraph";
 import VotersModal from "./Voting/VotersModal";
 import * as css from "./ProposalDetails.scss";
 import ProposalDescription from "components/Shared/ProposalDescription";
+import { settings } from "../../settings";
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
@@ -361,7 +362,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
           <ThreeBoxComments
             spaceName="DAOstack"
             threadName={proposal.id}
-            adminEthAddr={"0x0084FB1d84F2359Cafd00f92B901C121521d6809"}
+            adminEthAddr={settings["3BoxCommentsAdmin"]}
             box={threeBox}
             currentUserAddr={currentAccountAddress}
             currentUser3BoxProfile={currentAccountProfile}
