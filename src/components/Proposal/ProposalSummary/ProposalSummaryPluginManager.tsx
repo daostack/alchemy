@@ -101,7 +101,7 @@ class ProposalSummary extends React.Component<IProps, IState> {
                 <div className={css.summaryDetails}>
                   <table>
                     <tbody>
-                      {isReplace ? 
+                      {isReplace ?
                         <tr>
                           <th>
                                 Address:
@@ -111,7 +111,7 @@ class ProposalSummary extends React.Component<IProps, IState> {
                           </th>
                           <td>{proposalState.pluginToRemove}</td>
                         </tr>
-                      : <></>}
+                        : <></>}
                       <tr>
                         <th>Name:</th>
                         <td>{proposalState.pluginToRegisterName}</td>

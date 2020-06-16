@@ -7,14 +7,15 @@ import { PLUGIN_NAMES } from "lib/pluginUtils";
 import { KNOWNPLUGINS } from "genericPluginRegistry";
 import { IFormValues } from "./CreatePluginManagerProposal";
 import * as css from "../CreateProposal.scss";
-import { ErrorMessage, Field } from "formik";
+import { Form, ErrorMessage, Field } from "formik";
+import * as validators from "./Validators";
 
 interface IProps {
   pluginName: keyof typeof PLUGIN_NAMES | "";
   values: IFormValues;
 }
 
-const fieldView = (plugin: string, title: string, field: string) => (
+const fieldView = (plugin: string, title: string, field: string, validate?: (value: any) => void, type?: string) => (
   <div>
     <label htmlFor={field}>
       <div className={css.requiredMarker}>*</div>
@@ -24,25 +25,29 @@ const fieldView = (plugin: string, title: string, field: string) => (
     <Field
       id={field}
       name={`${plugin}.${field}`}
+      validate={validate}
+      type={type}
     />
   </div>
 );
 
 const GenesisProtocolFields = (paramsProp: string) => (
-  <div className={css.parameters}>
-    {fieldView(paramsProp, "Queued Vote Required Percentage", "queuedVoteRequiredPercentage")}
-    {fieldView(paramsProp, "Queued Vote Period Limit", "queuedVotePeriodLimit")}
-    {fieldView(paramsProp, "Boosted Vote Period Limit", "boostedVotePeriodLimit")}
-    {fieldView(paramsProp, "Pre-Boosted Vote Period Limit", "preBoostedVotePeriodLimit")}
-    {fieldView(paramsProp, "Threshold Const", "thresholdConst")}
-    {fieldView(paramsProp, "Quiet Ending Period", "quietEndingPeriod")}
-    {fieldView(paramsProp, "Proposing Reputation Reward", "proposingRepReward")}
-    {fieldView(paramsProp, "Voters Reputation Loss Ratio", "votersReputationLossRatio")}
-    {fieldView(paramsProp, "Minimum DAO Bounty", "minimumDaoBounty")}
-    {fieldView(paramsProp, "DAO Bounty Const", "daoBountyConst")}
-    {fieldView(paramsProp, "Activation Time", "activationTime")}
-    {fieldView(paramsProp, "Vote on behalf", "voteOnBehalf")}
-  </div>
+  <Form>
+    <div className={css.parameters}>
+      {fieldView(paramsProp, "Queued Vote Required Percentage", "queuedVoteRequiredPercentage", value => validators.vaildRange(value, 50, 100))}
+      {fieldView(paramsProp, "Queued Vote Period Limit", "queuedVotePeriodLimit", validators.validNumber)}
+      {fieldView(paramsProp, "Boosted Vote Period Limit", "boostedVotePeriodLimit", validators.boostedVotePeriodLimit)}
+      {fieldView(paramsProp, "Pre-Boosted Vote Period Limit", "preBoostedVotePeriodLimit", validators.validNumber)}
+      {fieldView(paramsProp, "Threshold Const", "thresholdConst", validators.thresholdConst)}
+      {fieldView(paramsProp, "Quiet Ending Period", "quietEndingPeriod", validators.validQuietEndingPeriod)}
+      {fieldView(paramsProp, "Proposing Reputation Reward", "proposingRepReward", validators.validNumber)}
+      {fieldView(paramsProp, "Voters Reputation Loss Ratio", "votersReputationLossRatio", validators.validPercentage)}
+      {fieldView(paramsProp, "Minimum DAO Bounty", "minimumDaoBounty", value => validators.greaterThan(value, 0))}
+      {fieldView(paramsProp, "DAO Bounty Const", "daoBountyConst", value => validators.greaterThan(value, 0))}
+      {fieldView(paramsProp, "Activation Time", "activationTime", validators.futureTime, "datetime-local")}
+      {fieldView(paramsProp, "Vote on behalf", "voteOnBehalf", validators.address)}
+    </div>
+  </Form>
 );
 
 const GenericSchemeFields: React.FC<IProps> = ({ values }) => {
@@ -95,7 +100,7 @@ const GenericSchemeFields: React.FC<IProps> = ({ values }) => {
         </Field>
         {isCustom &&
           fieldView("GenericScheme", "Custom Contract To Call", "contractToCall")}
-        <a href={linkToEtherScan(contractToCall)} target="_blank" rel="noopener noreferrer">{ contractToCall }</a>
+        <a href={linkToEtherScan(contractToCall)} target="_blank" rel="noopener noreferrer">{contractToCall}</a>
       </div>
       {GenesisProtocolFields("GenericScheme.votingParams")}
     </div>
@@ -178,5 +183,5 @@ const fieldsMap = {
 };
 
 export const PluginInitializeFields: React.FC<IProps> = ({ pluginName, values }) => {
-  return pluginName && fieldsMap[pluginName]? fieldsMap[pluginName]({ pluginName, values }): null;
+  return pluginName && fieldsMap[pluginName] ? fieldsMap[pluginName]({ pluginName, values }) : null;
 };
