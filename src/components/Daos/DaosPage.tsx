@@ -14,11 +14,11 @@ import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { combineLatest, of } from "rxjs";
 import { first } from "rxjs/operators";
-import cn from 'classnames';
+import cn from "classnames";
 import { showSimpleMessage } from "lib/util";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
-import BHubReg from '../Buidlhub/Registration';
+import BHubReg from "../Buidlhub/Registration";
 
 type SubscriptionData = [DAO[], DAO[], DAO[]];
 
@@ -81,7 +81,7 @@ class DaosPage extends React.Component<IProps, IState> {
       {
         title: "BUIDLHub Proposal Monitoring",
         body: <BHubReg />,
-        buttonSpec: 2 //hide
+        hideFooter: true,
       }
     );
   }
@@ -182,7 +182,7 @@ class DaosPage extends React.Component<IProps, IState> {
             <div className={css.headerWrapper}>
               <div className={css.headerTitle}>
                 <h2 data-test-id="header-all-daos">
-                  Your DAOs 
+                  Your DAOs
                   <i className={cn("fa fa-envelope", css.emailIcon)} onClick={this.registerForMonitoring}/>
                 </h2>
               </div>
