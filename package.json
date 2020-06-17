@@ -77,8 +77,8 @@
     "test:unit": "jest"
   },
   "dependencies": {
-    "3box": "1.19.0",
-    "3box-comments-react": "^3.0.1",
+    "3box": "^1.20.0",
+    "3box-comments-react": "^3.0.4",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
     "@daostack/arc.js": "^0.2.70",
     "@dorgtech/daocreator-ui": "^1.0.10",
