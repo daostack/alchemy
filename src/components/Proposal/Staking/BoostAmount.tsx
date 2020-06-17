@@ -1,5 +1,5 @@
 import { formatTokens } from "lib/util";
-import { IProposalStage, IProposalState } from "@dorgtech/arc.js";
+import { IProposalStage, IProposalState } from "@daostack/arc.js";
 
 import classNames from "classnames";
 import * as React from "react";

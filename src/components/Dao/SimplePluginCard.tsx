@@ -1,4 +1,4 @@
-import { IPluginState, IDAOState } from "@dorgtech/arc.js";
+import { IPluginState, IDAOState } from "@daostack/arc.js";
 import { pluginName } from "lib/pluginUtils";
 import * as React from "react";
 import { Link } from "react-router-dom";

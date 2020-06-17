@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalOutcome, AnyProposal, IContributionRewardProposalState } from "@dorgtech/arc.js";
+import { Address, IDAOState, IProposalOutcome, AnyProposal, IContributionRewardProposalState } from "@daostack/arc.js";
 import Reputation from "components/Account/Reputation";
 import { baseTokenName, formatTokens, fromWei, genName, tokenDecimals, tokenSymbol, AccountClaimableRewardsType } from "lib/util";
 import * as React from "react";

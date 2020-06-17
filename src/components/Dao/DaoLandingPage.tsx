@@ -1,4 +1,4 @@
-import { IDAOState } from "@dorgtech/arc.js";
+import { IDAOState } from "@daostack/arc.js";
 import * as React from "react";
 import * as css from "./DaoLandingPage.scss";
 import { Page } from "pages";

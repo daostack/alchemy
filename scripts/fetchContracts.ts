@@ -1,4 +1,4 @@
-import { Arc } from '@dorgtech/arc.js';
+import { Arc } from '@daostack/arc.js';
 const fs = require("fs");
 import { settings } from "../src/settings";
 
