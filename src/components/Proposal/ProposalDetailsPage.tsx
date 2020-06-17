@@ -139,8 +139,11 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
   }
 
   private handleThreeBoxLogin = async () => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
-    await this.props.threeboxLogin(this.props.currentAccountAddress);
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) {
+      return;
+    } else {
+      this.props.threeboxLogin(this.props.currentAccountAddress);
+    }
   }
 
   private getUserAddress(address: string): string {

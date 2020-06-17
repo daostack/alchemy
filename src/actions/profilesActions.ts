@@ -7,6 +7,8 @@ import Analytics from "lib/analytics";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { ActionTypes, FollowType, newProfile } from "reducers/profilesReducer";
 import { arrayRemove } from "lib/util";
+import { Address } from "@daostack/arc.js";
+import { settings } from "../settings";
 
 // Load account profile data from our database for all the "members" of the DAO
 // TODO: use this once 3box fixes getProfiles
@@ -27,6 +29,75 @@ export function getProfilesForAddresses(addresses: string[]) {
       });
     }
   };
+}
+
+interface IThreeBoxInfo {
+  threeBox: any;
+  threeBoxSpace: any;
+}
+
+export async function createAdminSpace() {
+  const web3Provider = getWeb3Provider();
+  const box = await Box.openBox(settings["3BoxCommentsAdmin"], web3Provider);
+  await box.syncDone;
+  const space = await box.openSpace("DAOstack");
+  await space.syncDone;
+}
+
+/**
+ * Returns an authorized 3Box instance and 3BoxSpace, ensures that the
+ * account's 3Box space exists, and all account-specific data has
+ * been fetched.  Updates state if needed.
+ *
+ * Caller is expected to handle exceptions.
+ *
+ * @param accountAddress
+ */
+async function get3Box(accountAddress: Address, dispatch: any, state: any): Promise<IThreeBoxInfo> {
+  let box;
+  let space;
+  let updateState = false;
+  const spaceName = "DAOstack";
+
+  if (state.profiles.threeBox) {
+    box = state.profiles.threeBox;
+  } else {
+    const web3Provider = getWeb3Provider();
+
+    box = await Box.create(web3Provider);
+    await box.auth([spaceName], { accountAddress });
+    await box.syncDone;
+    updateState = true;
+  }
+  /**
+   * this ensures that a space for the account exists
+   */
+  if (state.profiles.threeBoxSpace) {
+    space = state.profiles.threeBoxSpace;
+  }
+  else {
+    /**
+     * It is assumed here that the 3box admin space has already been created
+     */
+    space = await box.openSpace(spaceName);
+    await space.syncDone;
+    updateState = true;
+  }
+
+  const result = {
+    threeBox: box,
+    threeBoxSpace: space,
+  };
+
+  if (updateState) {
+    dispatch({
+      type: ActionTypes.SAVE_THREEBOX,
+      sequence: AsyncActionSequence.Success,
+      payload: result,
+    });
+  }
+
+  return result;
 }
 
 export function getProfile(accountAddress: string, currentAccount = false) {
@@ -85,19 +156,16 @@ export function getProfile(accountAddress: string, currentAccount = false) {
   };
 }
 
-export function threeboxLogin(accountAddress: string) {
+export function threeboxLogin(accountAddress: string): (dispatch: any, _getState: any) => Promise<boolean> {
   return async (dispatch: any, _getState: any) => {
     const state = _getState();
-    let threeBox;
 
     try {
       if (state.profiles.threeBox) {
-        return;
+        return true;
       } else {
-        const web3Provider = await getWeb3Provider();
-        threeBox = await Box.openBox(accountAddress, web3Provider);
+        await get3Box(accountAddress, dispatch, state);
       }
-      await threeBox.syncDone;
     } catch (e) {
       const errorMsg = e.message;
 
@@ -108,18 +176,12 @@ export function threeboxLogin(accountAddress: string) {
       return false;
     }
 
-    dispatch({
-      type: ActionTypes.SAVE_THREEBOX,
-      sequence: AsyncActionSequence.Success,
-      payload: { threeBox },
-    });
-
     dispatch(showNotification(NotificationStatus.Success, "Logged in to 3box"));
     return true;
   };
 }
 
-export function threeBoxLogout() {
+export function threeBoxLogout(): (dispatch: any, _getState: any) => Promise<void> {
   return async (dispatch: any, _getState: any) => {
     const state = _getState();
     if (state.profiles.threeBox) {
@@ -135,7 +197,7 @@ export function threeBoxLogout() {
 
 export type UpdateProfileAction = IAsyncAction<"UPDATE_PROFILE", { accountAddress: string }, { description: string; name: string; socialURLs?: any }>;
 
-export function updateProfile(accountAddress: string, name: string, description: string) {
+export function updateProfile(accountAddress: string, name: string, description: string): (dispatch: any, _getState: any) => Promise<boolean> {
   return async (dispatch: any, _getState: any) => {
     dispatch({
       type: ActionTypes.UPDATE_PROFILE,
@@ -143,17 +205,10 @@ export function updateProfile(accountAddress: string, name: string, description:
       meta: { accountAddress },
     } as UpdateProfileAction);
 
-    const state = _getState();
     let threeBox;
 
     try {
-      if (state.profiles.threeBox) {
-        threeBox = state.profiles.threeBox;
-      } else {
-        const web3Provider = await getWeb3Provider();
-        threeBox = await Box.openBox(accountAddress, web3Provider);
-      }
-      await threeBox.syncDone;
+      threeBox = (await get3Box(accountAddress, dispatch, _getState())).threeBox;
       await threeBox.public.setMultiple(["name", "description"], [name, description]);
     } catch (e) {
       const errorMsg = e.message;
@@ -202,21 +257,9 @@ export function toggleFollow(accountAddress: string, type: FollowType, id: strin
     let threeBoxSpace;
 
     try {
-      if (state.profiles.threeBox) {
-        threeBox = state.profiles.threeBox;
-      } else {
-        const web3Provider = await getWeb3Provider();
-        threeBox = await Box.openBox(accountAddress, web3Provider);
-      }
-
-      await threeBox.syncDone;
-
-      if (state.profiles.threeBoxSpace) {
-        threeBoxSpace = state.profiles.threeBoxSpace;
-      } else {
-        threeBoxSpace = await threeBox.openSpace("DAOstack");
-      }
-      await threeBoxSpace.syncDone;
+      const threeBoxInfo = await get3Box(accountAddress, dispatch, state);
+      threeBox = threeBoxInfo.threeBox;
+      threeBoxSpace = threeBoxInfo.threeBoxSpace;
     } catch (e) {
       dispatch(showNotification(NotificationStatus.Failure, `Failed to connect to 3box: ${e.message}`));
       return false;
