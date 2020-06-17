@@ -17,7 +17,6 @@ import { first } from "rxjs/operators";
 
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
-import { createAdminSpace } from "actions/profilesActions";
 
 type SubscriptionData = [DAO[], DAO[], DAO[]];
 
@@ -61,8 +60,6 @@ class DaosPage extends React.Component<IProps, IState> {
     Analytics.track("Page View", {
       "Page Name": Page.AllDAOs,
     });
-
-    await createAdminSpace();
   }
 
   componentWillUnmount() {

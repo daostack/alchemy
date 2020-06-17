@@ -36,12 +36,14 @@ interface IThreeBoxInfo {
   threeBoxSpace: any;
 }
 
-export async function createAdminSpace() {
-  const web3Provider = getWeb3Provider();
-  const box = await Box.openBox(settings["3BoxCommentsAdmin"], web3Provider);
-  await box.syncDone;
-  const space = await box.openSpace("DAOstack");
-  await space.syncDone;
+export async function createAdminSpace(currentAccount: Address) {
+  if (currentAccount === settings["3BoxCommentsAdmin"]) {
+    const web3Provider = getWeb3Provider();
+    const box = await Box.openBox(settings["3BoxCommentsAdmin"], web3Provider);
+    await box.syncDone;
+    const space = await box.openSpace("DAOstack");
+    await space.syncDone;
+  }
 }
 
 /**

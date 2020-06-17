@@ -2,7 +2,7 @@ import { IDAOState, IMemberState, DAO } from "@daostack/arc.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import BN = require("bn.js");
-import { getProfile, updateProfile } from "actions/profilesActions";
+import { getProfile, updateProfile, createAdminSpace } from "actions/profilesActions";
 import { getArc, enableWalletProvider } from "arc";
 import classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
@@ -108,6 +108,8 @@ class AccountProfilePage extends React.Component<IProps, IState> {
       "DAO Name": dao ? dao.name : "",
       "Profile Address": this.props.accountAddress,
     });
+
+    await createAdminSpace(accountAddress);
   }
 
   public doUpdateProfile = async() => {
