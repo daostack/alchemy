@@ -4,7 +4,7 @@ import { GenericPluginInfo } from "genericPluginRegistry";
 import { linkToEtherScan } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
-const Web3 = require('web3');
+const Web3 = require("web3");
 
 interface IProps {
   genericPluginInfo: GenericPluginInfo;
@@ -37,7 +37,6 @@ export default class ProposalSummaryNFTManager extends React.Component<IProps, n
     }
 
     const action = decodedCallData.action;
-    
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
       [css.transactionModal]: transactionModal,
@@ -49,7 +48,7 @@ export default class ProposalSummaryNFTManager extends React.Component<IProps, n
       case "sendNFT":
         return (
           <div className={proposalSummaryClass}>
-            {!detailView && 
+            {!detailView &&
               <span className={css.summaryTitle}>
                 <strong>Send NFT </strong>
                 <img className={css.iconPadding} src="/assets/images/Icon/Transfer.svg" />
