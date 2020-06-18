@@ -8,7 +8,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
 import { DiscussionEmbed } from "disqus-react";
-import { humanProposalTitle, ensureHttps } from "lib/util";
+import { humanProposalTitle, ensureHttps, waitUntilTrue } from "lib/util";
 import { schemeName } from "lib/schemeUtils";
 import Analytics from "lib/analytics";
 import { Page } from "pages";
@@ -142,7 +142,11 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) {
       return;
     } else {
-      this.props.threeboxLogin(this.props.currentAccountAddress);
+      /**
+       * Note that if currentAccountAddress exists but changes as a result of logging in, this could be a problem
+       */
+      await waitUntilTrue(() => !!this.props.currentAccountAddress);
+      await this.props.threeboxLogin(this.props.currentAccountAddress);
     }
   }
 

@@ -13,7 +13,7 @@ import Analytics from "lib/analytics";
 import { Link } from "react-router-dom";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { DiscussionEmbed } from "disqus-react";
-import { showSimpleMessage } from "lib/util";
+import { showSimpleMessage, waitUntilTrue } from "lib/util";
 import { settings } from "../../settings";
 
 type IExternalProps = {
@@ -63,6 +63,10 @@ class DaoLandingPage extends React.Component<IProps, IStateProps> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) {
       return;
     } else {
+      /**
+       * Note that if currentAccountAddress exists but changes as a result of logging in, this could be a problem
+       */
+      await waitUntilTrue(() => !!this.props.currentAccountAddress);
       await this.props.threeboxLogin(this.props.currentAccountAddress);
     }
   }
