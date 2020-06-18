@@ -1,4 +1,4 @@
-import { Arc, IArcOptions } from "@dorgtech/arc.js";
+import { Arc, IArcOptions } from "@daostack/arc.js";
 
 const settings: IArcOptions & { txSenderServiceUrl: string } = {
   graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
@@ -14,7 +14,7 @@ const chai = require("chai");
 global.expect = chai.expect;
 chai.Should();
 
-export const LATEST_ARC_VERSION = "0.1.1-rc.20";
+export const LATEST_ARC_VERSION = "0.1.1-rc.21";
 
 export const userAddresses = [
   "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
