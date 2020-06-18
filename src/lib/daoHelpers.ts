@@ -1,4 +1,4 @@
-import { IDAOState, Reputation, Token } from "@dorgtech/arc.js";
+import { IDAOState, Reputation, Token } from "@daostack/arc.js";
 import { getArc } from "arc";
 import BN = require("bn.js");
 

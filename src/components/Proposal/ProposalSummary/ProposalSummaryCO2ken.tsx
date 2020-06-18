@@ -1,4 +1,4 @@
-import { IGenericPluginProposalState } from "@dorgtech/arc.js";
+import { IGenericPluginProposalState } from "@daostack/arc.js";
 
 import BN = require("bn.js");
 import classNames from "classnames";

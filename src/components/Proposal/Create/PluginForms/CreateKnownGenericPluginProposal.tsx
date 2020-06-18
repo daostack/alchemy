@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { connect } from "react-redux";
-import { IPluginState, IProposalCreateOptionsGS } from "@dorgtech/arc.js";
+import { IPluginState, IProposalCreateOptionsGS } from "@daostack/arc.js";
 import { enableWalletProvider } from "arc";
 import { isHexString } from "ethers/utils";
 

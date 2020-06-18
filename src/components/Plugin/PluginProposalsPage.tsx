@@ -1,5 +1,5 @@
 import { History } from "history";
-import { Address, DAO, IDAOState, IProposalStage, IPluginState, AnyProposal, Vote, Reward, Stake, Proposal, Plugin, Proposals } from "@dorgtech/arc.js";
+import { Address, DAO, IDAOState, IProposalStage, IPluginState, AnyProposal, Vote, Reward, Stake, Proposal, Plugin, Proposals } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";

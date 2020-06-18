@@ -2,7 +2,7 @@ import { RouteComponentProps } from "react-router";
 import * as React from "react";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { getArc } from "arc";
-import { IDAOState, IContributionRewardExtState, IContributionRewardExtProposalState, ContributionRewardExtProposal, Address } from "@dorgtech/arc.js";
+import { IDAOState, IContributionRewardExtState, IContributionRewardExtProposalState, ContributionRewardExtProposal, Address } from "@daostack/arc.js";
 import Loading from "components/Shared/Loading";
 import { getCrxRewarderComponent, CrxRewarderComponentType } from "components/Plugin/ContributionRewardExtRewarders/rewardersProps";
 

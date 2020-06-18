@@ -1,12 +1,12 @@
 import * as React from "react";
 import { WithContext as ReactTags, Tag } from "react-tag-input";
 import classNames from "classnames";
-import { Tag as TagEntity } from "@dorgtech/arc.js";
+import { Tag as TagEntity } from "@daostack/arc.js";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { getArc } from "arc";
 import { RefObject } from "react";
 import { map } from "rxjs/operators";
-import { ITagState } from "@dorgtech/arc.js/dist/types/tag";
+import { ITagState } from "@daostack/arc.js/dist/types/tag";
 import * as css from "./TagsSelector.scss";
 
 interface IExternalProps {

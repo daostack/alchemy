@@ -1,4 +1,4 @@
-import { IDAOState, ICompetitionProposalState } from "@dorgtech/arc.js";
+import { IDAOState, ICompetitionProposalState } from "@daostack/arc.js";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { isValidUrl, isAddress } from "lib/util";
 import * as React from "react";

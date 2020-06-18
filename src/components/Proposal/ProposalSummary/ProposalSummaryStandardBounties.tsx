@@ -1,4 +1,4 @@
-import { IGenericPluginProposalState } from "@dorgtech/arc.js";
+import { IGenericPluginProposalState } from "@daostack/arc.js";
 import * as classNames from "classnames";
 import { GenericPluginInfo } from "genericPluginRegistry";
 import { linkToEtherScan, fromWeiToString } from "lib/util";
