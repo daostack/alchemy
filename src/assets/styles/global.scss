@@ -42,3 +42,27 @@
 :global div#walletconnect-qrcode-modal {
   z-index: 10000001 !important;
 }
+
+:global {
+  .threebox-comments-react {
+    /**
+     * hack to fix misaligned 3box label while spinning
+     */
+    // .input_postLoading_text {
+    //   display: none;
+    // }
+    /**
+     * hack to fix 3box footer being horizontally misaligned
+     */
+    .comments_footer {
+      span.footer_text {
+        white-space: nowrap;
+
+        a .footer_text_image {
+          margin-left: 10px;
+          width: 50px;
+        }
+      }
+    }
+  }
+}

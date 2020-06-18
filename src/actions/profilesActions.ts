@@ -1,14 +1,11 @@
 import Box = require("3box");
-
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
 import { getWeb3Provider } from "arc";
 import Analytics from "lib/analytics";
-
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { ActionTypes, FollowType, newProfile } from "reducers/profilesReducer";
 import { arrayRemove } from "lib/util";
 import { Address } from "@daostack/arc.js";
-import { settings } from "../settings";
 
 // Load account profile data from our database for all the "members" of the DAO
 // TODO: use this once 3box fixes getProfiles
@@ -36,15 +33,7 @@ interface IThreeBoxInfo {
   threeBoxSpace: any;
 }
 
-export async function createAdminSpace(currentAccount: Address) {
-  if (currentAccount === settings["3BoxCommentsAdmin"]) {
-    const web3Provider = getWeb3Provider();
-    const box = await Box.openBox(settings["3BoxCommentsAdmin"], web3Provider);
-    await box.syncDone;
-    const space = await box.openSpace("DAOstack");
-    await space.syncDone;
-  }
-}
+const spaceName = "DAOstack";
 
 /**
  * Returns an authorized 3Box instance and 3BoxSpace, ensures that the
@@ -59,16 +48,16 @@ async function get3Box(accountAddress: Address, dispatch: any, state: any): Prom
   let box;
   let space;
   let updateState = false;
-  const spaceName = "DAOstack";
 
   if (state.profiles.threeBox) {
     box = state.profiles.threeBox;
   } else {
     const web3Provider = getWeb3Provider();
 
-    box = await Box.create(web3Provider);
-    await box.auth([spaceName], { accountAddress });
+    console.time("openBox");
+    box = await Box.openBox(accountAddress, web3Provider);
     await box.syncDone;
+    console.timeEnd("openBox");
     updateState = true;
   }
   /**
@@ -81,8 +70,10 @@ async function get3Box(accountAddress: Address, dispatch: any, state: any): Prom
     /**
      * It is assumed here that the 3box admin space has already been created
      */
+    console.time("openSpace");
     space = await box.openSpace(spaceName);
     await space.syncDone;
+    console.timeEnd("openSpace");
     updateState = true;
   }
 
@@ -92,10 +83,14 @@ async function get3Box(accountAddress: Address, dispatch: any, state: any): Prom
   };
 
   if (updateState) {
+    /**
+     * This is synchronous.
+     * Has the annoying side-effect of deleting the threeBox and threeBoxSpace properties in the payload.
+     */
     dispatch({
       type: ActionTypes.SAVE_THREEBOX,
       sequence: AsyncActionSequence.Success,
-      payload: result,
+      payload: {...result},
     });
   }
 
@@ -111,7 +106,7 @@ export function getProfile(accountAddress: string, currentAccount = false) {
       if (profile) {
         profile.ethereumAccountAddress = accountAddress;
         profile.socialURLs = await Box.getVerifiedAccounts(profile);
-        const space = await Box.getSpace(accountAddress, "DAOstack");
+        const space = await Box.getSpace(accountAddress, spaceName);
         await space.syncDone;
 
         if (space.follows) {
