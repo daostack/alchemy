@@ -13,7 +13,7 @@ const ensPublicResolverInfo = require("./plugins/ENSPublicResolver.json");
 const registryLookupInfo = require("./plugins/RegistryLookup.json");
 const co2kenInfo = require("./plugins/CO2ken.json");
 const dXTokenRegistry = require("./plugins/dXTokenRegistry.json");
-const nftManager = require("./plugins/nftManager.json");
+const nftManager = require("./plugins/NFTManager.json");
 
 export const KNOWNPLUGINS = [
   dutchXInfo,
