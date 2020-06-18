@@ -54,10 +54,23 @@ async function get3Box(accountAddress: Address, dispatch: any, state: any): Prom
   } else {
     const web3Provider = getWeb3Provider();
 
-    console.time("openBox");
-    box = await Box.openBox(accountAddress, web3Provider);
+    console.log("Box.create...");
+    console.time("Box.create");
+    box = await Box.create(web3Provider);
+    console.timeEnd("Box.create");
+    //box = await Box.openBox(accountAddress, web3Provider);
+
+    console.log(`accountAddress for auth: ${accountAddress}`);
+
+    console.log("box.auth...");
+    console.time("box.auth");
+    await box.auth([spaceName], { address: accountAddress });
+    console.timeEnd("box.auth");
+
+    console.log("box.syncDone...");
+    console.time("box.syncDone");
     await box.syncDone;
-    console.timeEnd("openBox");
+    console.timeEnd("box.syncDone");
     updateState = true;
   }
   /**
@@ -70,10 +83,15 @@ async function get3Box(accountAddress: Address, dispatch: any, state: any): Prom
     /**
      * It is assumed here that the 3box admin space has already been created
      */
-    console.time("openSpace");
+    console.log("box.openSpace");
+    console.time("box.openSpace");
     space = await box.openSpace(spaceName);
+    console.timeEnd("box.openSpace");
+
+    console.log("space.syncDone");
+    console.time("space.syncDone");
     await space.syncDone;
-    console.timeEnd("openSpace");
+    console.timeEnd("space.syncDone");
     updateState = true;
   }
 
@@ -158,7 +176,7 @@ export function threeboxLogin(accountAddress: string): (dispatch: any, _getState
     const state = _getState();
 
     try {
-      if (state.profiles.threeBox) {
+      if (state.profiles.threeBox && state.profiles.threeBoxSpace) {
         return true;
       } else {
         await get3Box(accountAddress, dispatch, state);
@@ -249,14 +267,10 @@ export type FollowItemAction = IAsyncAction<"FOLLOW_ITEM", { accountAddress: str
 
 export function toggleFollow(accountAddress: string, type: FollowType, id: string) {
   return async (dispatch: any, _getState: any) => {
-    const state = _getState();
-    let threeBox;
     let threeBoxSpace;
 
     try {
-      const threeBoxInfo = await get3Box(accountAddress, dispatch, state);
-      threeBox = threeBoxInfo.threeBox;
-      threeBoxSpace = threeBoxInfo.threeBoxSpace;
+      threeBoxSpace = (await get3Box(accountAddress, dispatch, _getState())).threeBoxSpace;
     } catch (e) {
       dispatch(showNotification(NotificationStatus.Failure, `Failed to connect to 3box: ${e.message}`));
       return false;
@@ -290,7 +304,7 @@ export function toggleFollow(accountAddress: string, type: FollowType, id: strin
       type: ActionTypes.FOLLOW_ITEM,
       sequence: AsyncActionSequence.Success,
       meta: { accountAddress },
-      payload: { type, id, isFollowing, threeBox, threeBoxSpace },
+      payload: { type, id, isFollowing },
     } as FollowItemAction);
 
     dispatch(showNotification(NotificationStatus.Success, (isFollowing ? "Now following" : "No longer following") + ` ${type.slice(0, -1)} ${id.slice(0, 8)}...`));
