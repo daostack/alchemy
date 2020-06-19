@@ -32,10 +32,7 @@ export default class ProposalSummary extends React.Component<IProps> {
       return <div
         className={isArrayItem ? css.arrayItem : ""}
         key={value}
-      >{value}<CopyToClipboard
-          value={value}
-
-        />{isArrayItem ? "," : ""}
+      >{value}<CopyToClipboard value={value}/>{isArrayItem ? "," : ""}
       </div>;
 
     } else {
@@ -74,8 +71,8 @@ export default class ProposalSummary extends React.Component<IProps> {
           </span>
           {detailView ?
             <div className={css.summaryDetails}>
-              to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
-              with callData: <pre>{proposal.genericScheme.callData}</pre>
+              To contract at: <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)} target="_blank" rel="noopener noreferrer">{proposal.genericScheme.contractToCall}</a></pre>
+              With callData: <pre>{truncateWithEllipses(proposal.genericScheme.callData, 42)}<CopyToClipboard value={proposal.genericScheme.callData} /></pre>
             </div>
             : ""
           }
