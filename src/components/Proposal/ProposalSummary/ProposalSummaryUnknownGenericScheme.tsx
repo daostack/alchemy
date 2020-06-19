@@ -45,7 +45,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
           <div className={css.summaryDetails}>
             To contract at:
             <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)} target="_blank" rel="noopener noreferrer">{proposal.genericScheme.contractToCall}</a></pre>
-            Sending to contract:
+            sending to contract:
             <pre className={sendsETH ? css.warning : ""}>{formatTokens(proposal.genericScheme.value)} ETH</pre>
           </div>
           : ""

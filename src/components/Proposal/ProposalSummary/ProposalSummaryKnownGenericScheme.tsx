@@ -72,7 +72,7 @@ export default class ProposalSummary extends React.Component<IProps> {
           {detailView ?
             <div className={css.summaryDetails}>
               To contract at: <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)} target="_blank" rel="noopener noreferrer">{proposal.genericScheme.contractToCall}</a></pre>
-              With callData: <pre>{truncateWithEllipses(proposal.genericScheme.callData, 42)}<CopyToClipboard value={proposal.genericScheme.callData} /></pre>
+              with callData: <pre>{truncateWithEllipses(proposal.genericScheme.callData, 42)}<CopyToClipboard value={proposal.genericScheme.callData} /></pre>
             </div>
             : ""
           }
