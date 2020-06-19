@@ -44,7 +44,7 @@ const spaceName = "DAOstack";
  *
  * @param accountAddress
  */
-async function get3Box(accountAddress: Address, dispatch: any, state: any): Promise<IThreeBoxInfo> {
+async function get3Box(accountAddress: Address, dispatch: any, state: any, withSpace = false): Promise<IThreeBoxInfo> {
   let box;
   let space;
   let updateState = false;
@@ -79,7 +79,7 @@ async function get3Box(accountAddress: Address, dispatch: any, state: any): Prom
   if (state.profiles.threeBoxSpace) {
     space = state.profiles.threeBoxSpace;
   }
-  else {
+  else if (withSpace) {
     /**
      * It is assumed here that the 3box admin space has already been created
      */
@@ -179,7 +179,7 @@ export function threeboxLogin(accountAddress: string): (dispatch: any, _getState
       if (state.profiles.threeBox && state.profiles.threeBoxSpace) {
         return true;
       } else {
-        await get3Box(accountAddress, dispatch, state);
+        await get3Box(accountAddress, dispatch, state, true);
       }
     } catch (e) {
       const errorMsg = e.message;
