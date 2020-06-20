@@ -20,6 +20,7 @@ import * as React from "react";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import { PluginInitializeFields } from "./PluginInitializeFields";
+import * as moment from "moment";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -59,7 +60,7 @@ interface IGenesisProtocolFormValues {
   votersReputationLossRatio: number;
   minimumDaoBounty: number;
   daoBountyConst: number;
-  activationTime: Date;
+  activationTime: string;
   voteOnBehalf: string;
   voteParamsHash: string;
 }
@@ -162,7 +163,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
       votersReputationLossRatio: 4,
       minimumDaoBounty: 150,
       daoBountyConst: 10,
-      activationTime: new Date(),
+      activationTime: moment().add(1,'day').format('YYYY-MM-DDTHH:mm'), // defualt date for next day
       voteOnBehalf: "0x0000000000000000000000000000000000000000",
       voteParamsHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
     };
@@ -652,7 +653,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                       >
                         <option value="">Select a plugin...</option>
                         {Object.values(PLUGIN_NAMES).map((name, _i) => {
-                          return <option key={`add_plugin_${name}`} value={name}>{name}</option>;
+                          return <option id={`test-${name}`} key={`add_plugin_${name}`} value={name}>{name}</option>;
                         })}
                       </Field>
                     </div>
