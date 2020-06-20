@@ -16,7 +16,7 @@ const chai = require("chai");
 global.expect = chai.expect;
 chai.Should();
 
-export const LATEST_ARC_VERSION = require("@daostack/test-env-experimental/package.json")["dependencies"]["@daostack/migration-experimental"];
+export const LATEST_ARC_VERSION = require("@daostack/migration-experimental/package.json")["dependencies"]["@daostack/arc-experimental"];
 
 export const userAddresses = [
   "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
