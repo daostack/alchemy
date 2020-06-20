@@ -1,8 +1,10 @@
 import { Arc, IArcOptions } from "@daostack/arc.js";
 
+const subGraphEndpoints = require("../../src/subgraph_endpoints.json");
+
 const settings: IArcOptions & { txSenderServiceUrl: string } = {
-  graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
-  graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
+  graphqlHttpProvider: subGraphEndpoints.http_ganache,
+  graphqlWsProvider: subGraphEndpoints.ws_ganache,
   graphqlSubscribeToQueries: false,
   web3Provider: "http://127.0.0.1:8545",
   ipfsProvider: "http://127.0.0.1:5001/api/v0",
@@ -14,7 +16,7 @@ const chai = require("chai");
 global.expect = chai.expect;
 chai.Should();
 
-export const LATEST_ARC_VERSION = "0.1.1-rc.21";
+export const LATEST_ARC_VERSION = require("@daostack/migration-experimental/package.json")["dependencies"]["@daostack/arc-experimental"];
 
 export const userAddresses = [
   "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
