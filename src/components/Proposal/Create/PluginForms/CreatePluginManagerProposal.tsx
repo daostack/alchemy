@@ -163,7 +163,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
       votersReputationLossRatio: 4,
       minimumDaoBounty: 150,
       daoBountyConst: 10,
-      activationTime: moment().add(1,'day').format('YYYY-MM-DDTHH:mm'), // defualt date for next day
+      activationTime: moment().add(1, "day").format("YYYY-MM-DDTHH:mm"), //default date for the next day
       voteOnBehalf: "0x0000000000000000000000000000000000000000",
       voteParamsHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
     };
