@@ -16,10 +16,10 @@ import "moment";
 import * as moment from "moment-timezone";
 
 import { getArc } from "../arc";
-const WEB3 = require("web3");
-const web3 = new WEB3();
 
 export const getRewarderName = (pluginToRegisterData: string): string => {
+  const WEB3 = require("web3");
+  const web3 = new WEB3();
   const encodedDataForWeb3 = "0x" + pluginToRegisterData.substring(10);
   const decodedData = web3.eth.abi.decodeParameters(["address", "address", "uint256[11]", "address", "bytes32", "address", "uint64[3]", "string"], encodedDataForWeb3);
   return decodedData[7];
