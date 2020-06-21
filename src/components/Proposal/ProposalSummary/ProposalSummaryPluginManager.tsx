@@ -1,7 +1,7 @@
 import { IDAOState, IPluginManagerProposalState, NULL_ADDRESS } from "@daostack/arc.js";
 import classNames from "classnames";
 import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
-import { pluginNameAndAddress } from "lib/pluginUtils";
+import { pluginNameAndAddress, getRewarderName } from "lib/pluginUtils";
 import * as React from "react";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
@@ -52,6 +52,7 @@ class ProposalSummary extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
     const { proposalState, detailView, transactionModal } = this.props;
+    const pluginName = proposalState.pluginToRegisterName === "ContributionRewardExt" ? getRewarderName(proposalState.pluginToRegisterData) : proposalState.pluginToRegisterName;
 
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
@@ -61,7 +62,7 @@ class ProposalSummary extends React.Component<IProps, IState> {
     });
 
     const permissions = parseInt(proposalState.pluginToRegisterPermission, 16);
-    const isReplace = proposalState.pluginToRemove !== NULL_ADDRESS && proposalState.pluginToRegisterName ? true : false;
+    const isReplace = proposalState.pluginToRemove !== NULL_ADDRESS && pluginName ? true : false;
 
     return (
       <div className={proposalSummaryClass}>
@@ -89,13 +90,13 @@ class ProposalSummary extends React.Component<IProps, IState> {
               : ""
             }
           </div>
-          : proposalState.pluginToRegisterName ?
+          : pluginName ?
             <div>
               <span className={css.summaryTitle}>
                 <b className={css.pluginRegisterIcon}>{isReplace ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
                 {isReplace ? "Replace" : "Add"} Plugin&nbsp;
-                {isReplace ? pluginNameAndAddress(proposalState.pluginToRemove) : proposalState.pluginToRegisterName}
-                {isReplace ? " With " + proposalState.pluginToRegisterName : ""}
+                {isReplace ? pluginNameAndAddress(proposalState.pluginToRemove) : pluginName}
+                {isReplace ? " With " + pluginName : ""}
               </span>
               { detailView ?
                 <div className={css.summaryDetails}>
@@ -114,7 +115,7 @@ class ProposalSummary extends React.Component<IProps, IState> {
                         : <></>}
                       <tr>
                         <th>Name:</th>
-                        <td>{proposalState.pluginToRegisterName}</td>
+                        <td>{pluginName}</td>
                       </tr>
                       <tr>
                         <th>Version:</th>
