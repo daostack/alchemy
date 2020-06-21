@@ -85,3 +85,27 @@ export const setCalendarDate = async (element: any, date: string): Promise<void>
 export async function gotoDaoPlugins(daoAddress: string): Promise<any> {
   return browser.url(`/dao/${daoAddress}/plugins`);
 }
+
+/**
+ * Accept cookies if the cookies window appears.
+ * @param void
+ * @returns Promise<void>
+ */
+export const acceptCookies = async(): Promise<void> => {
+  const acceptCookiesButton = await $("*[data-test-id=\"acceptCookiesButton\"]");
+  if (acceptCookiesButton.isExisting()) {
+    acceptCookiesButton.click();
+  }
+};
+
+/**
+ * Searches for a submit button and clicks it.
+ * @param void
+ * @return Promise<void>
+ */
+export const submit = async(): Promise<void> => {
+  const submitButton = await $("*[type=\"submit\"]");
+  await submitButton.waitForExist();
+  await submitButton.scrollIntoView();
+  await submitButton.click();
+};
