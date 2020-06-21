@@ -41,14 +41,14 @@ script:
   # unit tests
   - npm run test:unit -- --forceExit
 
-  - docker-compose logs alchemy
+  - docker-compose logs alchemy || true
   # run integration tests
   - npm run test:integration:headless
 
   # get some diagnostic info fo debugging travis
   - echo 'Debug info:' && echo -en 'travis_fold:start:script.3\\r'
   - npm run service-status
-  - docker-compose logs alchemy
+  - docker-compose logs alchemy || true
   - echo -en 'travis_fold:end:script.3\\r'
 
   - ./scripts/checkDaos.sh
