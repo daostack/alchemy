@@ -42,7 +42,7 @@ describe("Plugin Manager", () => {
     const pluginSelect = await $("*[id=\"pluginToAdd\"]");
     await pluginSelect.waitForExist();
     await pluginSelect.click();
-    const selectOption = await $("*[id=\"test-ContributionReward\"]");
+    const selectOption = await $("*[id=\"option-ContributionReward\"]");
     await selectOption.waitForExist();
     await selectOption.click();
 
@@ -77,7 +77,7 @@ describe("Plugin Manager", () => {
     const pluginSelect = await $("*[id=\"pluginToRemove\"]");
     await pluginSelect.waitForExist();
     await pluginSelect.click();
-    const selectOption = await $("*[id=\"test-0\"]");
+    const selectOption = await $("*[id=\"option-0\"]");
     await selectOption.waitForExist();
     await selectOption.click();
 
@@ -111,14 +111,14 @@ describe("Plugin Manager", () => {
     const addPluginSelect = await $("*[id=\"pluginToAdd\"]");
     await addPluginSelect.waitForExist();
     await addPluginSelect.click();
-    const addPluginOption = await $("*[id=\"test-ContributionReward\"]");
+    const addPluginOption = await $("*[id=\"option-ContributionReward\"]");
     await addPluginOption.waitForExist();
     await addPluginOption.click();
 
     const removePluginSelect = await $("*[id=\"pluginToRemove\"]");
     await removePluginSelect.waitForExist();
     await removePluginSelect.click();
-    const removePluginOption = await $("*[id=\"test-0\"]");
+    const removePluginOption = await $("*[id=\"option-0\"]");
     await removePluginOption.waitForExist();
     await removePluginOption.click();
 
