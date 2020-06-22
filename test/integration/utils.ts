@@ -1,4 +1,4 @@
-import { Arc } from "@daostack/client";
+import { Arc } from "@daostack/arc.js";
 
 const settings = {
   graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",

@@ -1,4 +1,4 @@
-import { DAO, IDAOState } from "@daostack/client";
+import { DAO, IDAOState } from "@daostack/arc.js";
 import classNames from "classnames";
 import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";

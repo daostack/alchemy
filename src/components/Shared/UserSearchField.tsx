@@ -1,4 +1,4 @@
-import { Member } from "@daostack/client";
+import { Member } from "@daostack/arc.js";
 import * as React from "react";
 import * as Autosuggest from "react-autosuggest";
 import { connect } from "react-redux";
@@ -18,6 +18,7 @@ interface IExternalProps {
   onBlur?: (touched: boolean) => any;
   onChange?: (newValue: string) => any;
   defaultValue: string;
+  placeholder?: string;
 }
 
 interface IStateProps {
@@ -120,7 +121,7 @@ class UserSearchField extends React.Component<IProps, IState> {
       "name": this.props.name,
       "onBlur": this.handleBlur,
       "onChange": this.handleChange,
-      "placeholder": "Name or public key",
+      "placeholder": this.props.placeholder || "Name or public key",
       value,
     };
 

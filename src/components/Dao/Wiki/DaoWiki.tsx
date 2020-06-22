@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IDAOState, ISchemeState, Scheme, IProposalType, Proposal, IProposalStage, IProposalState } from "@daostack/client";
+import { IDAOState, ISchemeState, Scheme, IProposalType, Proposal, IProposalStage, IProposalState } from "@daostack/arc.js";
 import { WikiContainer, actualHash, ReactiveWiki } from "@dorgtech/daosmind";
 import classNames from "classnames";
 import { enableWalletProvider, getWeb3Provider } from "arc";
@@ -12,7 +12,7 @@ import { schemeName, getSchemeIsActive } from "lib/schemeUtils";
 import { connect } from "react-redux";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import Loading from "components/Shared/Loading";
-import { IGenericSchemeParams } from "@daostack/client/dist/types/schemes/base";
+import { IGenericSchemeParams } from "@daostack/arc.js/dist/types/schemes/base";
 import * as proposalStyle from "../../Scheme/SchemeProposals.scss";
 import * as daoStyle from "../Dao.scss";
 import { CustomDispatcher } from "./CustomDispatcher";
@@ -66,7 +66,7 @@ function DaoWiki(props: IProps) {
     const getSchemeState = () => {
       return new Promise((resolve, reject) => {
         try {
-          genericSchemes.map((scheme: Scheme) => scheme.state().subscribe(state => states.push(state)));
+          genericSchemes.map((scheme: Scheme) => scheme.state().subscribe((state: any) => states.push(state)));
           resolve();
         } catch (e) {
           reject(e);
@@ -75,7 +75,7 @@ function DaoWiki(props: IProps) {
     };
     await getSchemeState();
     const hasWikiScheme = (schemeState: ISchemeState) => {
-      return "WikiUpdate" === schemeName(schemeState, "[Unknown]");
+      return "underscore protocol" === schemeName(schemeState, "[Unknown]");
     };
     const wikiSchemeExists = states.some(hasWikiScheme);
     setHasWikiScheme(wikiSchemeExists);

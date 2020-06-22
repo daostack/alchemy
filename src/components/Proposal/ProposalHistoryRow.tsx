@@ -1,4 +1,4 @@
-import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/client";
+import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/arc.js";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -106,7 +106,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     if (stakesOfCurrentUser.length > 0) {
       currentAccountStakeAmount = stakesOfCurrentUser
         .map((stake): BN => stake.staticState.amount)
-        .reduce((prev: BN, current: BN)  => { return prev.add(current); });
+        .reduce((prev: BN, current: BN) => { return prev.add(current); });
       currentAccountPrediction = stakesOfCurrentUser[0].staticState.outcome;
     }
 

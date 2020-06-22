@@ -8,85 +8,85 @@
   color: #689ad6;
   padding: 0;
   margin: 0;
-  padding-bottom: 15px;
+  margin-bottom: 30px;
   background-color: #e5ebf2;
   padding-top: 10px;
-}
-
-.createProposal {
-  z-index: 100;
-  width: 100%;
-  text-align: right;
-
-  a {
-    padding: 8px 15px;
-    color: $white;
-    background-color: rgba(3, 118, 255, 1);
-    border-radius: 15px;
-    height: 30px;
-    line-height: 30px;
-    font-size: 13px;
-    white-space: nowrap;
-
-    &:hover {
-      background-color: $accent-1;
-      color: $white;
-    }
-
-    &.disabled,
-    &.disabled:hover {
-      background-color: rgba(200, 200, 200, 0.5);
-      border: 1px solid rgba(200, 200, 200, 1);
-      cursor: not-allowed;
-    }
-  }
 }
 
 .schemeMenu {
   width: 100%;
   background-color: rgba(229, 235, 242, 1);
   border-bottom: 1px solid rgba(212, 220, 228, 1);
-  padding-top: 15px;
-  position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 
-  a {
-    color: rgba(0, 29, 53, 1);
-    display: inline-block;
-    font-size: 16px;
-    transition: all 0.25s ease;
-  }
+  .row {
+    display: flex;
 
-  a:visited {
-    color: rgba(0, 29, 53, 1);
-  }
+    .tabs {
+      flex-grow: 2;
+      white-space: nowrap;
 
-  .createProposal a:visited,
-  a.createProposal {
-    color: white;
-  }
+      a {
+        color: rgba(0, 29, 53, 1);
+        display: inline-block;
+        font-size: 16px;
+        transition: all 0.25s ease;
+      }
 
-  .proposals,
-  .info,
-  .crx,
-  .openbounty {
-    border-bottom: 2px solid rgba(34, 128, 254, 0);
-    /* TODO: for .crx this left/right padding may not be appropriate for all CrX rewarder contracts. */
-    padding: 10px 24px;
-  }
+      a:visited {
+        color: rgba(0, 29, 53, 1);
+      }
 
-  .proposals.active,
-  .info.active,
-  .crx.active,
-  .openbounty.active {
-    border-bottom: 2px solid rgba(34, 128, 254, 1);
-  }
+      .proposals,
+      .info,
+      .crx,
+      .openbounty {
+        border-bottom: 2px solid rgba(34, 128, 254, 0);
+        /* TODO: for .crx this left/right padding may not be appropriate for all CrX rewarder contracts. */
+        padding: 10px 24px 10px 24px;
+      }
 
-  .proposals:hover,
-  .info:hover,
-  .crx:hover,
-  .openbounty:hover {
-    border-bottom: 2px solid rgba(34, 128, 254, 0.5);
+      .proposals.active,
+      .info.active,
+      .crx.active,
+      .openbounty.active {
+        border-bottom: 2px solid rgba(34, 128, 254, 1);
+      }
+
+      .proposals:hover,
+      .info:hover,
+      .crx:hover,
+      .openbounty:hover {
+        border-bottom: 2px solid rgba(34, 128, 254, 0.5);
+      }
+    }
+
+    .editPlugin,
+    .createProposal {
+      align-self: center;
+
+      a {
+        padding: 8px 15px;
+        color: $white;
+        background-color: rgba(3, 118, 255, 1);
+        border-radius: 15px;
+        font-size: 13px;
+        white-space: nowrap;
+        display: inline-block;
+
+        &:hover {
+          background-color: $accent-1;
+          color: $white;
+        }
+
+        .disabled,
+        .disabled:hover {
+          background-color: rgba(200, 200, 200, 0.5);
+          border: 1px solid rgba(200, 200, 200, 1);
+          cursor: not-allowed;
+        }
+      }
+    }
   }
 }
 
@@ -181,10 +181,6 @@
 }
 
 @media only screen and (max-width: 425px) {
-  .createProposal {
-    text-align: center;
-  }
-
   .schemeName {
     font-size: 18px;
     padding-left: 15px;
@@ -197,8 +193,18 @@
   }
 
   .schemeMenu {
-    a {
-      font-size: 12px;
+    text-align: center;
+    .row {
+      display: inline-block;
+      margin-bottom: 8px;
+
+      .tabs {
+        display: block;
+        margin-bottom: 1rem;
+        a {
+          font-size: 12px;
+        }
+      }
     }
   }
 }

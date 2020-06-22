@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { connect } from "react-redux";
-import { IProposalType, ISchemeState } from "@daostack/client";
+import { IProposalType, ISchemeState } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
@@ -22,17 +22,18 @@ import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+import HelpButton from "components/Shared/HelpButton";
 
 const BN = require("bn.js");
 
-interface IStateProps {
+interface IExternalProps {
   daoAvatarAddress: string;
   genericSchemeInfo: GenericSchemeInfo;
   handleClose: () => any;
   scheme: ISchemeState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IStateProps) => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps) => {
   return ownProps;
 };
 
@@ -46,7 +47,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type IProps = IStateProps & IDispatchProps;
+type IProps = IExternalProps & IDispatchProps;
 
 interface IFormValues {
   description: string;
@@ -122,7 +123,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
     if (this.props.genericSchemeInfo.specs.name === "Standard Bounties") {
       const calcBountEth = await this.getBountyEth(values);
-      ethValue =  ethValue.add(calcBountEth);
+      ethValue = ethValue.add(calcBountEth);
     }
 
     const proposalValues = {
@@ -287,7 +288,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     const currentAction = this.state.currentAction;
 
     return (
-      <div className={css.createWrapperWithSidebar}>
+      <div className={css.containerWithSidebar}>
         <div className={css.sidebar}>
           { actions.map((action) =>
             <button
@@ -304,7 +305,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
           )}
         </div>
 
-        <div className={css.formWrapper}>
+        <div className={css.contentWrapper}>
           <Formik
             initialValues={this.initialFormValues}
             // eslint-disable-next-line react/jsx-no-bind
@@ -409,9 +410,10 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   />
 
                   <label htmlFor="descriptionInput">
-                    <div className={css.requiredMarker}>*</div>
-                      Description
-                    <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                    <div className={css.proposalDescriptionLabelText}>
+                      <div className={css.requiredMarker}>*</div>
+                      <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                    </div>
                     <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field

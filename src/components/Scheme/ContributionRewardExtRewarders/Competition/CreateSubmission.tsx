@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState } from "@daostack/client";
+import { IDAOState, IProposalState, Address } from "@daostack/arc.js";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { isValidUrl } from "lib/util";
 import * as React from "react";
@@ -9,8 +9,21 @@ import { getArc } from "arc";
 import UserSearchField from "components/Shared/UserSearchField";
 import { ICreateSubmissionOptions } from "./utils";
 import * as css from "./Competitions.scss";
+import { exportUrl, importUrlValues } from "lib/proposalUtils";
+import { showNotification, NotificationStatus } from "reducers/notifications";
+import { connect } from "react-redux";
+
+interface IDispatchProps {
+  showNotification: typeof showNotification;
+}
+
+const mapDispatchToProps = {
+  showNotification,
+};
+import HelpButton from "components/Shared/HelpButton";
 
 interface IExternalProps {
+  currentAccountAddress: Address;
   daoState: IDAOState;
   proposalState: IProposalState;
   handleCancel: () => any;
@@ -21,19 +34,35 @@ interface IStateProps {
   tags: Array<string>;
 }
 
-type IProps = IExternalProps;
+type IProps = IExternalProps & IDispatchProps;
 
 interface IFormValues extends ICreateSubmissionOptions {
   [key: string]: any;
 }
 
-export default class CreateSubmission extends React.Component<IProps, IStateProps> {
+class CreateSubmission extends React.Component<IProps, IStateProps> {
+
+  private initialFormValues: IFormValues;
 
   constructor(props: IProps) {
     super(props);
+
+    this.initialFormValues = importUrlValues<IFormValues>({
+      beneficiary: "",
+      description: "",
+      title: "",
+      url: "",
+      tags: [],
+    });
     this.state = {
-      tags: new Array<string>(),
+      tags: this.initialFormValues.tags,
     };
+  }
+
+  // Exports data from form to a shareable url.
+  public exportFormValues(values: IFormValues) {
+    exportUrl({ ...values, ...this.state });
+    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
   }
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
@@ -59,17 +88,12 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
     return (
       <div className={css.createSubmissionForm}>
         <h2 className={css.header}>
-          <div className={css.content}>+ New Submission<div className={css.proposalTitle}>{proposalState.title ? <span> | {proposalState.title}</span> : "" }</div></div>
+          <div className={css.content}>+ New Submission <div className={css.proposalTitle}>{proposalState.title ? <span> | {proposalState.title}</span> : "" }</div></div>
         </h2>
 
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={{
-            beneficiary: "",
-            description: "",
-            title: "",
-            url: "",
-          } as IFormValues}
+          initialValues={this.initialFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
@@ -108,6 +132,7 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             setFieldTouched,
             setFieldValue,
+            values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <TrainingTooltip overlay="The title is the header of the submission and will be the first visible information about your suggestion" placement="right">
@@ -129,9 +154,10 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
 
               <TrainingTooltip overlay={this.fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
-                  <div className={css.requiredMarker}>*</div>
-                Description
-                  <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                  <div className={css.proposalDescriptionLabelText}>
+                    <div className={css.requiredMarker}>*</div>
+                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                  </div>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>
@@ -151,7 +177,7 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
               </TrainingTooltip>
 
               <div className={css.tagSelectorContainer}>
-                <TagsSelector onChange={this.onTagsChange}></TagsSelector>
+                <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
               </div>
 
               <TrainingTooltip overlay="Link to the fully detailed description of your submission" placement="right">
@@ -181,11 +207,17 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
                   name="beneficiary"
                   onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                   onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                  defaultValue={undefined}
+                  defaultValue={this.initialFormValues.beneficiary}
+                  placeholder={this.props.currentAccountAddress}
                 />
               </div>
 
               <div className={css.createProposalActions}>
+                <TrainingTooltip overlay="Export proposal" placement="top">
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                    <img src="/assets/images/Icon/share-blue.svg" />
+                  </button>
+                </TrainingTooltip>
                 <button className={css.exitProposalCreation} type="button" onClick={handleCancel}>
                   Cancel
                 </button>
@@ -202,3 +234,5 @@ export default class CreateSubmission extends React.Component<IProps, IStateProp
     );
   }
 }
+
+export default connect(null, mapDispatchToProps)(CreateSubmission);

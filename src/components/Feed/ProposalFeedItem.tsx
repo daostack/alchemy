@@ -1,4 +1,4 @@
-import { IDAOState } from "@daostack/client";
+import { IDAOState } from "@daostack/arc.js";
 import { getArc } from "arc";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -13,9 +13,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 
 import * as css from "./Feed.scss";
-
-const ReactMarkdown = require("react-markdown");
-
+import ProposalDescription from "components/Shared/ProposalDescription";
 
 // type SubscriptionData = [IDAOState, IProposalState];
 type SubscriptionData = IDAOState;
@@ -60,11 +58,7 @@ const ProposalFeedItem = (props: IProps) => {
 
       <div className={css.proposalDescription}>
         { event.proposal.description ?
-          <ReactMarkdown source={event.proposal.description}
-            renderers={{link: (props: { href: string; children: React.ReactNode }) => {
-              return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
-            }}}
-          />
+          <ProposalDescription description={event.proposal.description} />
           : "" }
       </div>
 

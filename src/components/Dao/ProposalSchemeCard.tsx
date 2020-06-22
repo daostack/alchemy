@@ -1,4 +1,4 @@
-import { IDAOState, IProposalStage, IProposalState, ISchemeState, Proposal, Scheme } from "@daostack/client";
+import { IDAOState, IProposalStage, IProposalState, ISchemeState, Proposal, Scheme } from "@daostack/arc.js";
 import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
@@ -25,7 +25,7 @@ const ProposalSchemeCard = (props: IProps) => {
 
   const [schemeState, boostedProposals] = data;
 
-  const numProposals =  schemeState.numberOfQueuedProposals + schemeState.numberOfBoostedProposals + schemeState.numberOfQueuedProposals;
+  const numProposals = schemeState.numberOfPreBoostedProposals + schemeState.numberOfBoostedProposals + schemeState.numberOfQueuedProposals;
   const proposals = boostedProposals.slice(0, 3);
 
   const proposalsHTML = proposals.map((proposal: Proposal) => <SubscribedProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
@@ -96,7 +96,9 @@ export default withSubscription({
         scheme:  props.scheme.id,
         // eslint-disable-next-line @typescript-eslint/camelcase
         stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
-      }}, {
+      },
+      orderBy: "boostedAt",
+      }, {
         fetchAllData: true,
         subscribe: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
       }) // the list of boosted proposals

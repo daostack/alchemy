@@ -2,7 +2,7 @@
 import {
   Address,
   IContractInfo,
-  ISchemeState} from "@daostack/client";
+  ISchemeState} from "@daostack/arc.js";
 import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 
@@ -13,6 +13,7 @@ import "moment";
 import * as moment from "moment-timezone";
 
 import { getArc } from "../arc";
+import { splitCamelCase } from "lib/util";
 
 export enum SchemePermissions {
   None = 0,
@@ -86,8 +87,14 @@ export function isKnownScheme(address: Address) {
 
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   let name: string;
+  const contractInfo = (scheme as IContractInfo).alias ? scheme as IContractInfo : getArc().getContractInfo(scheme.address);
+
+  const alias = contractInfo?.alias;
+
   if (scheme.name === "GenericScheme" || scheme.name === "UGenericScheme") {
-    if ((scheme as any).genericSchemeParams || ((scheme as any).uGenericSchemeParams)) {
+    if (alias && ((alias !== "GenericScheme") && (alias !== "UGenericScheme"))) {
+      name = alias;
+    } else if ((scheme as any).genericSchemeParams || ((scheme as any).uGenericSchemeParams)) {
       const genericSchemeRegistry = new GenericSchemeRegistry();
       let contractToCall;
       const schemeState = scheme as ISchemeState;
@@ -109,20 +116,48 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       name = "Blockchain Interaction";
     }
   } else if (scheme.name === "ContributionReward") {
-    name ="Funding and Voting Power";
+    if (alias && (alias !== "ContributionReward")) {
+      name = alias;
+    } else {
+      name = "Funding and Voting Power";
+    }
   } else if (scheme.name === "SchemeRegistrar") {
-    name ="Scheme Manager";
+    if (alias && (alias !== "SchemeRegistrar")) {
+      name = alias;
+    } else {
+      name = "Plugin Manager";
+    }
   } else if (scheme.name) {
     if (scheme.name === "ContributionRewardExt") {
+      /**
+       * this will be "pretty"
+       */
       name = rewarderContractName(scheme as ISchemeState);
     } else {
-      // add spaces before capital letters to approximate a human-readable title
-      name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;
+      name = alias ?? splitCamelCase(scheme.name);
     }
   } else {
-    name = fallback;
+    name = alias ?? fallback;
   }
   return name;
+}
+
+/**
+ * given the address (of a scheme), return scheme's name
+ * @param  address [description]
+ * @return         [description]
+ */
+export function schemeNameFromAddress(address: string) {
+  const arc = getArc();
+  try {
+    const contractInfo = arc.getContractInfo(address);
+    const name = schemeName(contractInfo);
+    return name;
+  } catch (err) {
+    if (err.message.match(/No contract/)) {
+      return "";
+    }
+  }
 }
 
 /**
@@ -131,12 +166,9 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
  * @return         [description]
  */
 export function schemeNameAndAddress(address: string) {
-  const arc = getArc();
   try {
-    const contractInfo = arc.getContractInfo(address);
-    const name = schemeName(contractInfo);
-
-    if (name) {
+    const name = schemeNameFromAddress(address);
+    if (name !== "") {
       return `${address.slice(0, 4)}...${address.slice(-4)} (${name})`;
     } else {
       return `${address.slice(0, 4)}...${address.slice(-4)}`;
@@ -210,6 +242,11 @@ export function getSchemeIsActive(scheme: ISchemeState, action?: GetSchemeIsActi
     console.warn(` getSchemeIsActive: voting machine appears not to be GenesisProtocol: ${scheme.name}`);
     return true;
   } else {
-    return moment(votingMachineParams.activationTime*1000).isSameOrBefore(moment());
+    if (moment(votingMachineParams.activationTime*1000).isSameOrBefore(moment())) {
+      return true;
+    }
+    // eslint-disable-next-line no-console
+    console.warn(` getSchemeIsActive: future activation time: ${scheme.name}`);
+    return false;
   }
 }

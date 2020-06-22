@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, IProposalState, IProposalStage  } from "@daostack/client";
+import { IDAOState, IMemberState, IProposalState, IProposalStage } from "@daostack/arc.js";
 import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
@@ -310,7 +310,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               </div>
               {actionType !== ActionTypes.Redeem && actionType !== ActionTypes.Execute ?
                 <div className={classNames({[css.helpButton]: true, [css.open]: this.state.instructionsOpen})}>
-                  <button className={css.hover}  onClick={this.toggleInstructions}>
+                  <button className={css.hover} onClick={this.toggleInstructions}>
                     <b> &lt; Got it</b>
                     <span>x</span>
                     <span>?</span>
@@ -348,24 +348,24 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                         You do not have enough GEN
                         </h4>
                       </div>
-                      <div className={css.formGroup + " clearfix"}>
-                        <input
-                          autoFocus
-                          type="number"
-                          min="1"
-                          ref={this.ref}
-                          className={css.predictionAmount}
-                          onChange={this.stakeOnChange}
-                          placeholder="0"
-                          data-test-id="stake-input"
-                        />
-                        <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
+                      <div className={`${css.formGroup} ${css.stakeInputGroup}`}>
+                        <div className={css.predictionAmount}>
+                          <input
+                            autoFocus
+                            type="number"
+                            min="1"
+                            ref={this.ref}
+                            onChange={this.stakeOnChange}
+                            placeholder="0"
+                            data-test-id="stake-input"
+                          />
+                          <div className={css.genLabel + " " + css.genSymbol}>GEN</div>
+                        </div>
                         <div className={css.yourBalance}>
                           <div>Your balance: {formatTokens(currentAccountGens)} GEN</div>
                           <div className={css.exchangeList}>
-                          Buy GEN &gt;
+                            Buy GEN &gt;
                             <ul>
-                              <div className={css.diamond}></div>
                               {
                                 getExchangesList().map(this.exchangeHtml)
                               }

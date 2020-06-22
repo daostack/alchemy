@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState, IProposalType } from "@daostack/client";
+import { IDAOState, IProposalState, IProposalType } from "@daostack/arc.js";
 import classNames from "classnames";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import * as React from "react";
@@ -37,7 +37,7 @@ export default class ProposalSummary extends React.Component<IProps> {
       const genericSchemeRegistry = new GenericSchemeRegistry();
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(proposal.genericScheme.contractToCall);
       if (genericSchemeInfo) {
-        return <ProposalSummaryKnownGenericScheme  {...this.props} genericSchemeInfo={genericSchemeInfo} />;
+        return <ProposalSummaryKnownGenericScheme {...this.props} genericSchemeInfo={genericSchemeInfo} />;
       } else {
         return <ProposalSummaryUnknownGenericScheme {...this.props} />;
       }

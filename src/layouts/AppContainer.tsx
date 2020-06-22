@@ -1,3 +1,4 @@
+import * as uiActions from "actions/uiActions";
 import { threeBoxLogout } from "actions/profilesActions";
 import { setCurrentAccount } from "actions/web3Actions";
 import AccountProfilePage from "components/Account/AccountProfilePage";
@@ -13,7 +14,6 @@ import SidebarMenu from "layouts/SidebarMenu";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification, INotification } from "reducers/notifications";
 import { getCachedAccount, cacheWeb3Info, logout, pollForAccountChanges } from "arc";
-import { pollSubgraphUpdating } from "lib/subgraphHelpers";
 import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { parse } from "query-string";
 import * as React from "react";
@@ -24,9 +24,11 @@ import { ModalContainer } from "react-router-modal";
 import { History } from "history";
 import classNames from "classnames";
 import { captureException, withScope } from "@sentry/browser";
-import { Address } from "@daostack/client";
+import { Address } from "@daostack/arc.js";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
+import SimpleMessagePopup, { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
+import { initializeUtils } from "lib/util";
 
 interface IExternalProps extends RouteComponentProps<any> {
   history: History;
@@ -35,6 +37,7 @@ interface IExternalProps extends RouteComponentProps<any> {
 interface IStateProps {
   currentAccountAddress: string;
   daoAvatarAddress: string;
+  simpleMessageOpen: boolean;
   sortedNotifications: INotificationsState;
   threeBox: any;
 }
@@ -50,6 +53,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IStatePro
     ...ownProps,
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
+    simpleMessageOpen: state.ui.simpleMessageOpen,
     sortedNotifications: sortedNotifications()(state),
     threeBox: state.profiles.threeBox,
   };
@@ -60,6 +64,7 @@ interface IDispatchProps {
   setCurrentAccount: typeof setCurrentAccount;
   showNotification: typeof showNotification;
   threeBoxLogout: typeof threeBoxLogout;
+  showSimpleMessage: typeof uiActions.showSimpleMessage;
 }
 
 const mapDispatchToProps = {
@@ -67,6 +72,7 @@ const mapDispatchToProps = {
   setCurrentAccount,
   showNotification,
   threeBoxLogout,
+  showSimpleMessage: uiActions.showSimpleMessage,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps;
@@ -89,6 +95,10 @@ class AppContainer extends React.Component<IProps, IState> {
     };
   }
 
+  private showSimpleMessage = (options: ISimpleMessagePopupProps): void => {
+    this.props.showSimpleMessage(options);
+  }
+
   public componentDidCatch(error: Error, errorInfo: any): void {
     this.setState({ error });
 
@@ -101,7 +111,7 @@ class AppContainer extends React.Component<IProps, IState> {
     }
   }
 
-  public async componentDidMount (): Promise<void> {
+  public async componentDidMount(): Promise<void> {
     this.unlisten = this.props.history.listen((location) => {
       Analytics.register({
         URL: process.env.BASE_URL + location.pathname,
@@ -122,6 +132,9 @@ class AppContainer extends React.Component<IProps, IState> {
     }
 
     this.props.setCurrentAccount(currentAddress);
+
+    initializeUtils({ showSimpleMessage: this.showSimpleMessage });
+
     /**
      * Only supply currentAddress if it was obtained from a provider.  The poll
      * is only comparing changes with respect to the provider state.  Passing it a cached state
@@ -142,11 +155,14 @@ class AppContainer extends React.Component<IProps, IState> {
         }
       });
 
+    /**
+     * display checking the subgraph.  It is falsely reporting that the subgraph is down.
     pollSubgraphUpdating().subscribe(async (subgraphRunning: boolean) => {
       if (!subgraphRunning) {
         this.props.showNotification(NotificationStatus.Failure, "The subgraph is no longer updating, please refresh the page to see the latest data");
       }
     });
+     */
   }
 
   private clearError = () => {
@@ -154,8 +170,8 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   private dismissNotif = (id: string) => () => this.props.dismissNotification(id);
-  private headerHtml = ( props: any ): any => <Header {...props} />;
-  private sidebarHtml = ( props: any ): any => <SidebarMenu {...props} />;
+  private headerHtml = (props: any): any => <Header {...props} />;
+  private sidebarHtml = (props: any): any => <SidebarMenu {...props} />;
 
   private notificationHtml = (notif: INotification): any => {
     return <div key={notif.id}>
@@ -200,7 +216,7 @@ class AppContainer extends React.Component<IProps, IState> {
       const hasAcceptedCookies = !!localStorage.getItem(AppContainer.hasAcceptedCookiesKey);
 
       return (
-        <div className={classNames({[css.outer]: true, [css.withDAO]: !!daoAvatarAddress})}>
+        <div className={classNames({ [css.outer]: true, [css.withDAO]: !!daoAvatarAddress })}>
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
           <div className={css.container}>
@@ -227,13 +243,16 @@ class AppContainer extends React.Component<IProps, IState> {
               containerClassName={css.modalContainer}
               bodyModalClassName={css.modalBody}
             />
+
+            <SimpleMessagePopup />
           </div>
 
           <div className={css.pendingTransactions}>
-            { sortedNotifications.map(this.notificationHtml) }
+            {sortedNotifications.map(this.notificationHtml)}
           </div>
           <div className={css.background}></div>
-          { hasAcceptedCookies ? "" :
+
+          {hasAcceptedCookies ? "" :
             <div className={css.cookieDisclaimerContainer}>
               <div className={css.cookieDisclaimer}>
                 <div className={css.body}>Alchemy stores cookies on your device to enhance platform experience and analyze platform usage. Please read the&nbsp;

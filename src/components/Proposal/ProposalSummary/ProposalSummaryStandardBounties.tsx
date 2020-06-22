@@ -1,4 +1,4 @@
-import { IProposalState } from "@daostack/client";
+import { IProposalState } from "@daostack/arc.js";
 import * as classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
 import { linkToEtherScan } from "lib/util";
@@ -56,7 +56,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   Deadline: {(new Date(parseInt(decodedCallData.values[4], 10)*1000)).toString()}.
                 </div>
                 <div>
-                  Amount funded: {web3.utils.fromWei(decodedCallData.values[7])} {decodedCallData.values[6].toString() === "0" ?  "ETH"  : "tokens"}.
+                  Amount funded: {web3.utils.fromWei(decodedCallData.values[7])} {decodedCallData.values[6].toString() === "0" ? "ETH" : "tokens"}.
                 </div>
                 <div>
                   Token Address: <a href={linkToEtherScan(decodedCallData.values[5])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[5]}</a>

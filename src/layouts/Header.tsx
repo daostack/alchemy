@@ -6,9 +6,9 @@ import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import RedemptionsButton from "components/Redemptions/RedemptionsButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { copyToClipboard } from "lib/util";
+import CopyToClipboard from "components/Shared/CopyToClipboard";
 import { IRootState } from "reducers";
-import { NotificationStatus, showNotification } from "reducers/notifications";
+import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { parse } from "query-string";
@@ -20,7 +20,7 @@ import { of } from "rxjs";
 import Toggle from "react-toggle";
 import { RefObject } from "react";
 import classNames from "classnames";
-import { Address, IDAOState } from "@daostack/client";
+import { Address, IDAOState } from "@daostack/arc.js";
 import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 import ProviderConfigButton from "layouts/ProviderConfigButton";
@@ -70,7 +70,7 @@ interface IDispatchProps {
   toggleTrainingTooltipsOnHover: typeof uiActions.toggleTrainingTooltipsOnHover;
   enableTrainingTooltipsOnHover: typeof uiActions.enableTrainingTooltipsOnHover;
   disableTrainingTooltipsOnHover: typeof uiActions.disableTrainingTooltipsOnHover;
-  enableTrainingTooltipsShowAll: typeof  uiActions.enableTrainingTooltipsShowAll;
+  enableTrainingTooltipsShowAll: typeof uiActions.enableTrainingTooltipsShowAll;
   disableTrainingTooltipsShowAll: typeof uiActions.disableTrainingTooltipsShowAll;
   threeBoxLogout: typeof threeBoxLogout;
 }
@@ -92,7 +92,6 @@ class Header extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
-    this.copyAddress = this.copyAddress.bind(this);
     this.toggleDiv = React.createRef();
     this.initializeTrainingTooltipsToggle();
   }
@@ -107,13 +106,6 @@ class Header extends React.Component<IProps, null> {
     this.toggleDiv.current.onmouseleave = (_ev: MouseEvent) => {
       this.props.disableTrainingTooltipsShowAll();
     };
-  }
-
-  public copyAddress(e: any): void {
-    const { showNotification, currentAccountAddress } = this.props;
-    copyToClipboard(currentAccountAddress);
-    showNotification(NotificationStatus.Success, "Copied to clipboard!");
-    e.preventDefault();
   }
 
   public handleClickLogin = async (_event: any): Promise<void> => {
@@ -143,7 +135,7 @@ class Header extends React.Component<IProps, null> {
     /**
      * maybe making this asynchronous can address reports of the button responding very slowly
      */
-    const checked =  event.target.checked;
+    const checked = event.target.checked;
     setTimeout(() => {
       localStorage.setItem(Header.trainingTooltipsEnabledKey, checked);
       this.props.toggleTrainingTooltipsOnHover();
@@ -239,9 +231,9 @@ class Header extends React.Component<IProps, null> {
                       <AccountProfileName accountAddress={currentAccountAddress}
                         accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
                     </div>
-                    <div className={css.copyAddress} style={{cursor: "pointer"}} onClick={this.copyAddress}>
-                      <span>{currentAccountAddress ? currentAccountAddress.slice(0, 40) : "No account known"}</span>
-                      <img src="/assets/images/Icon/Copy-blue.svg"/>
+                    <div className={css.copyAddress}>
+                      <div className={css.accountAddress}>{currentAccountAddress ? currentAccountAddress.slice(0, 40) : "No account known"}</div>
+                      <CopyToClipboard value={currentAccountAddress} tooltipPlacement="left" />
                     </div>
                     <div className={css.fullProfile}>
                       <Link className={css.profileLink} to={"/profile/" + currentAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
@@ -261,9 +253,9 @@ class Header extends React.Component<IProps, null> {
                           <div className={css.providerconfig}><ProviderConfigButton provider={web3Provider} providerName={web3ProviderInfo.name}></ProviderConfigButton></div>
                           : ""
                         }
-                        <div className={css.web3ProviderLogInOut}  onClick={this.handleClickLogout}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div>
+                        <div className={css.web3ProviderLogInOut} onClick={this.handleClickLogout}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div>
                       </div> :
-                      <div className={css.web3ProviderLogInOut}  onClick={this.handleConnect}><div className={css.text}>Connect</div> <img src="/assets/images/Icon/login.svg"/></div> }
+                      <div className={css.web3ProviderLogInOut} onClick={this.handleConnect}><div className={css.text}>Connect</div> <img src="/assets/images/Icon/login.svg"/></div> }
                   </div>
                 </div>
               </span> : <span></span>

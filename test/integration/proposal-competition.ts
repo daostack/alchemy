@@ -1,6 +1,6 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
-import { DAO, Arc } from "@daostack/client";
+import { DAO, Arc } from "@daostack/arc.js";
 import { getArc, setCalendarDate, hideCookieAcceptWindow, gotoDaoSchemes } from "./utils";
 
 describe("Proposals", () => {
@@ -13,7 +13,7 @@ describe("Proposals", () => {
     arc = getArc();
     await arc.fetchContractInfos();
     const ARC_VERSION = "0.0.1-rc.40";
-    const contributionRewardExtContract  = arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);
+    const contributionRewardExtContract = arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);
 
     // find the corresponding scheme object
     const contributionRewardExts = await arc

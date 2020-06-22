@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Token } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Token } from "@daostack/arc.js";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import classNames from "classnames";
@@ -32,6 +32,7 @@ interface IExternalProps {
    */
   rewards: IRewardState;
   expired: boolean;
+  onClick?: () => void;
 }
 
 interface IStateProps {
@@ -92,12 +93,16 @@ class ActionButton extends React.Component<IProps, IState> {
       "Scheme Name": proposalState.scheme.name,
       "Type": type,
     });
+
+    this.props.onClick?.();
   }
 
   private handleClickRedeem = async (e: any): Promise<void> => {
     e.preventDefault();
 
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    this.props.onClick?.();
 
     this.setState({ preRedeemModalOpen: true });
   }
@@ -255,21 +260,22 @@ class ActionButton extends React.Component<IProps, IState> {
                 : displayRedeemButton ?
                   <div>
                     <Tooltip placement="bottom" trigger={["hover"]} overlay={redemptionsTip}>
-                      <button
-                        style={{ whiteSpace: "nowrap" }}
-                        disabled={canRewardNone}
-                        className={redeemButtonClass}
-                        onClick={this.handleClickRedeem}
-                        data-test-id="button-redeem"
-                      >
-                        <img src="/assets/images/Icon/redeem.svg" />
-                        {
-                          (((beneficiaryNumUnredeemedCrRewards > 0) && (currentAccountAddress !== proposalState.contributionReward.beneficiary)) &&
+                      <div className={css.tooltipWhenDisabledContainer}>
+                        <button
+                          disabled={canRewardNone}
+                          className={redeemButtonClass}
+                          onClick={this.handleClickRedeem}
+                          data-test-id="button-redeem"
+                        >
+                          <img src="/assets/images/Icon/redeem.svg" />
+                          {
+                            (((beneficiaryNumUnredeemedCrRewards > 0) && (currentAccountAddress !== proposalState.contributionReward.beneficiary)) &&
                            (currentAccountNumUnredeemedGpRewards === 0)) ?
                             // note beneficiary can be the current account
-                            " Redeem for beneficiary" : " Redeem"
-                        }
-                      </button>
+                              " Redeem for beneficiary" : " Redeem"
+                          }
+                        </button>
+                      </div>
                     </Tooltip>
                   </div>
                   : ""

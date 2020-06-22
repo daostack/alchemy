@@ -1,6 +1,6 @@
 // this config file is used for testing on travis
 
-const config  = require("./wdio.conf.js").config;
+const config = require("./wdio.conf.js").config;
 
 exports.config = {
   ...config,
@@ -14,6 +14,6 @@ exports.config = {
   waitforTimeout: 900000, // 15 minutes
   mochaOpts: {
     ...config.mochaOpts,
-    timeout: 540000, // 9 mins (travis times out after 10)
+    timeout: 60000, // 1 min (travis times out after 10)
   },
 };

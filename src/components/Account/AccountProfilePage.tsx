@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, DAO } from "@daostack/client";
+import { IDAOState, IMemberState, DAO } from "@daostack/arc.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import BN = require("bn.js");
@@ -12,7 +12,8 @@ import ThreeboxModal from "components/Shared/ThreeboxModal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { Field, Formik, FormikProps } from "formik";
 import Analytics from "lib/analytics";
-import { baseTokenName, copyToClipboard, ethErrorHandler, genName, formatTokens } from "lib/util";
+import { baseTokenName, ethErrorHandler, genName, formatTokens } from "lib/util";
+import CopyToClipboard, { IconColor } from "components/Shared/CopyToClipboard";
 import { Page } from "pages";
 import { parse } from "query-string";
 import * as React from "react";
@@ -21,7 +22,7 @@ import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
-import { NotificationStatus, showNotification } from "reducers/notifications";
+import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import Loading from "components/Shared/Loading";
@@ -93,9 +94,11 @@ class AccountProfilePage extends React.Component<IProps, IState> {
   }
 
   public async componentDidMount(): Promise<void> {
-    const { accountAddress, getProfile } = this.props;
+    const { accountAddress, getProfile, accountProfile} = this.props;
 
-    getProfile(accountAddress);
+    if (!accountProfile) {
+      getProfile(accountAddress);
+    }
 
     const dao = this.props.data[0];
 
@@ -105,13 +108,6 @@ class AccountProfilePage extends React.Component<IProps, IState> {
       "DAO Name": dao ? dao.name : "",
       "Profile Address": this.props.accountAddress,
     });
-  }
-
-  public copyAddress = (e: any): void => {
-    const { showNotification, accountAddress } = this.props;
-    copyToClipboard(accountAddress);
-    showNotification(NotificationStatus.Success, "Copied to clipboard!");
-    e.preventDefault();
   }
 
   public doUpdateProfile = async() => {
@@ -127,7 +123,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
     if (this.props.threeBox || parseInt(localStorage.getItem("dontShowThreeboxModal"))) {
       await updateProfile(currentAccountAddress, values.name, values.description);
     } else {
-      this.setState({ showThreeBoxModal: true,  description: values.description, name: values.name });
+      this.setState({ showThreeBoxModal: true, description: values.description, name: values.name });
     }
 
     setSubmitting(false);
@@ -233,7 +229,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                             />
                             {touched.name && errors.name && <span className={css.errorMessage}>{errors.name}</span>}
                           </div>
-                          : <div>{accountProfile.name}</div>
+                          : <div>{accountProfile.name ?? "[Unknown]"}</div>
                         }
                         <br />
                         <label htmlFor="descriptionInput">
@@ -261,7 +257,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                             </div>
                           </div>
 
-                          : <div>{accountProfile.description}</div>
+                          : <div>{accountProfile.description ?? "[Unknown]"}</div>
                         }
                       </div>
                     </div>
@@ -292,12 +288,12 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                           ? <div><strong>Rep. Score</strong><br /><Reputation reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /> </div>
                           : ""}
                         <div><strong>{genName()}:</strong><br /><span>{formatTokens(genBalance)}</span></div>
-                        - <div><strong>{baseTokenName()}:</strong><br /><span>{formatTokens(ethBalance)}</span></div>
+                        <div><strong>{baseTokenName()}:</strong><br /><span>{formatTokens(ethBalance)}</span></div>
                       </div>
                       <div>
                         <strong>ETH Address:</strong><br />
                         <span>{accountAddress.substr(0, 20)}...</span>
-                        <button className={css.copyButton} onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg" /></button>
+                        <CopyToClipboard value={accountAddress} color={IconColor.Black}/>
                       </div>
                     </div>
                   </div>

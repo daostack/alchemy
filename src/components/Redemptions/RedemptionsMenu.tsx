@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalState, IRewardState, Proposal, Reward } from "@daostack/client";
+import { Address, IDAOState, IProposalState, IRewardState, Proposal, Reward } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -58,6 +58,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
               key={proposal.id}
               proposal={proposal}
               currentAccountAddress={currentAccountAddress}
+              handleClose={handleClose}
             />
           ))
           : <div className={css.empty}>
@@ -86,7 +87,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
     </div>;
   }
 
-  private  redeemAll = async (): Promise<void> => {
+  private redeemAll = async (): Promise<void> => {
     const {
       currentAccountAddress,
       data: redeemableProposals,
@@ -120,6 +121,7 @@ const SubscribedRedemptionsMenu = withSubscription({
 interface IMenuItemProps {
   proposal: IProposalState;
   currentAccountAddress: Address;
+  handleClose: () => void;
 }
 
 class MenuItem extends React.Component<IMenuItemProps, null> {
@@ -153,7 +155,7 @@ type IMenuItemContentProps = IMenuItemProps & IMenuItemContentStateProps & ISubs
 
 class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
   public render(): RenderOutput {
-    const { beneficiaryProfile, currentAccountAddress, data, proposal } = this.props;
+    const { beneficiaryProfile, currentAccountAddress, data, handleClose, proposal } = this.props;
     const [dao, daoEthBalance, rewards] = data;
     return <React.Fragment>
       <ProposalSummary
@@ -180,6 +182,7 @@ class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
           proposalState={proposal}
           rewards={rewards}
           parentPage={Page.RedemptionsMenu}
+          onClick={handleClose}
         />
       </div>
     </React.Fragment>;
@@ -190,7 +193,7 @@ const SubscribedMenuItemContent = withSubscription({
   wrappedComponent: MenuItemContent,
   loadingComponent: <div>Loading...</div>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
-  checkForUpdate: [],  // Parent component will rerender anyway.
+  checkForUpdate: [], // Parent component will rerender anyway.
   createObservable: (props: IMenuItemProps) => {
     const { currentAccountAddress, proposal } = props;
     const arc = getArc();

@@ -2,7 +2,7 @@ import { RouteComponentProps } from "react-router";
 import * as React from "react";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { getArc } from "arc";
-import { IDAOState, IProposalState, Address } from "@daostack/client";
+import { IDAOState, IProposalState, Address } from "@daostack/arc.js";
 import Loading from "components/Shared/Loading";
 import { getCrxRewarderComponent, CrxRewarderComponentType } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 
@@ -39,7 +39,13 @@ class DetailsPageRouter extends React.Component<IProps, IStateProps>
       return null;
     }
 
+
     const proposalState = this.props.data;
+
+    if (this.props.daoState.id !== proposalState.dao.id) {
+      return <div>The given proposal does not belong to ${this.props.daoState.name}.  Please check the browser url.</div>;
+    }
+
     /**
      * can't supply `...this.props` here because it contains a bunch of `withSubscription` properties
      * that will completely hose the crxDetailsComponent

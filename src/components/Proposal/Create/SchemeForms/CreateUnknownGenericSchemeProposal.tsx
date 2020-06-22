@@ -1,4 +1,4 @@
-import { ISchemeState } from "@daostack/client";
+import { ISchemeState } from "@daostack/arc.js";
 import { createProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
@@ -12,6 +12,7 @@ import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+import HelpButton from "components/Shared/HelpButton";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -103,7 +104,7 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
     const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
     return (
-      <div className={css.contributionReward}>
+      <div className={css.containerNoSidebar}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           initialValues={this.initialFormValues}
@@ -185,8 +186,7 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
               <TrainingTooltip overlay={fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
                   <div className={css.requiredMarker}>*</div>
-                Description
-                  <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                  <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>

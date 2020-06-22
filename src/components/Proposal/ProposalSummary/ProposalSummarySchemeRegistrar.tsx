@@ -1,12 +1,13 @@
-import { IDAOState, IProposalState, IProposalType, ISchemeRegistrar } from "@daostack/client";
+import { IDAOState, IProposalState, IProposalType } from "@daostack/arc.js";
 import classNames from "classnames";
-import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
+import { getNetworkName, linkToEtherScan } from "lib/util";
+import CopyToClipboard from "components/Shared/CopyToClipboard";
 import { schemeNameAndAddress } from "lib/schemeUtils";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
 
-interface IProps {
+interface IExternalProps {
   beneficiaryProfile?: IProfileState;
   detailView?: boolean;
   dao: IDAOState;
@@ -16,8 +17,9 @@ interface IProps {
 
 interface IState {
   network: string;
-
 }
+
+type IProps = IExternalProps;
 
 export default class ProposalSummary extends React.Component<IProps, IState> {
 
@@ -29,12 +31,9 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
   }
 
-  public async componentDidMount (): Promise<void> {
+  public async componentDidMount(): Promise<void> {
     this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
-
-  private copySchemeAddressOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void => copyToClipboard(schemeRegistrar.schemeToRegister);
-  private copySchemeParamsHashOnClick = (schemeRegistrar: ISchemeRegistrar) => (): void => copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash);
 
   public render(): RenderOutput {
     const { proposal, detailView, transactionModal } = this.props;
@@ -51,21 +50,21 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
     return (
       <div className={proposalSummaryClass}>
-        { schemeRegistrar.schemeToRemove  ?
+        {schemeRegistrar.schemeToRemove ?
           <div>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/delete.svg"/>&nbsp;
+              <img src="/assets/images/Icon/delete.svg" />&nbsp;
                   Remove Scheme&nbsp;
               <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank" rel="noopener noreferrer">{schemeNameAndAddress(schemeRegistrar.schemeToRemove)}</a>
             </span>
-            { detailView ?
+            {detailView ?
               <div className={css.summaryDetails}>
                 <table><tbody>
                   <tr>
                     <th>
-                          Address:
+                      Address:
                       <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank" rel="noopener noreferrer">
-                        <img src="/assets/images/Icon/Link-blue.svg"/>
+                        <img src="/assets/images/Icon/Link-blue.svg" />
                       </a>
                     </th>
                     <td>{schemeRegistrar.schemeToRemove}</td>
@@ -78,11 +77,11 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
           : schemeRegistrar.schemeToRegister ?
             <div>
               <span className={css.summaryTitle}>
-                <b className={css.schemeRegisterIcon}>{proposal.type === IProposalType.SchemeRegistrarEdit ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
+                <b className={css.schemeRegisterIcon}>{proposal.type === IProposalType.SchemeRegistrarEdit ? <img src="/assets/images/Icon/edit-sm.svg" /> : "+"}</b>&nbsp;
                 {proposal.type === IProposalType.SchemeRegistrarEdit ? "Edit" : "Add"} Scheme&nbsp;
                 <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank" rel="noopener noreferrer">{schemeNameAndAddress(schemeRegistrar.schemeToRegister)}</a>
               </span>
-              { detailView ?
+              {detailView ?
                 <div className={css.summaryDetails}>
                   <table>
                     <tbody>
@@ -90,19 +89,19 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                         <th>
                           Address:
                           <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank" rel="noopener noreferrer">
-                            <img src="/assets/images/Icon/Link-blue.svg"/>
+                            <img src="/assets/images/Icon/Link-blue.svg" />
                           </a>
                         </th>
                         <td>
                           <span>{schemeRegistrar.schemeToRegister}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copySchemeAddressOnClick(schemeRegistrar)} />
+                          <CopyToClipboard value={schemeRegistrar.schemeToRegister} />
                         </td>
                       </tr>
                       <tr>
                         <th>Param Hash:</th>
                         <td>
                           <span>{schemeRegistrar.schemeToRegisterParamsHash.slice(0, 43)}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copySchemeParamsHashOnClick(schemeRegistrar)} />
+                          <CopyToClipboard value={schemeRegistrar.schemeToRegisterParamsHash} />
                         </td>
                       </tr>
                       <tr>
@@ -140,15 +139,5 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
         }
       </div>
     );
-    // } else if (proposal.genericScheme) {
-    //   return (
-    //     <div className={proposalSummaryClass}>Unknown function call
-    //     to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
-    //     with callData: <em>{proposal.genericScheme.callData}</em>
-    //     </div>
-    //   );
-    // } else {
-    //   return <div> Unknown scheme...</div>;
-    // }
   }
 }

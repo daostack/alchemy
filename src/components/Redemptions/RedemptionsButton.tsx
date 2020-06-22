@@ -1,4 +1,4 @@
-import { Address } from "@daostack/client";
+import { Address } from "@daostack/arc.js";
 import { getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
@@ -96,7 +96,7 @@ export default withSubscription({
           id
         }
       }`;
-    return arc.getObservable(redeemableProposalsQuery)
+    return arc.getObservable(redeemableProposalsQuery, { subscribe: true })
       .pipe(map((result: any) => result.data.proposals));
   },
 });

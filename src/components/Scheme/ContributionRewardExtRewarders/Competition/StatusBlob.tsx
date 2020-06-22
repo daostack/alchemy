@@ -1,4 +1,4 @@
-import { ICompetitionProposalState } from "@daostack/client";
+import { ICompetitionProposalState } from "@daostack/arc.js";
 import * as React from "react";
 import classNames from "classnames";
 import { competitionStatus } from "./utils";
@@ -19,6 +19,6 @@ export default class StatusBlob extends React.Component<IExternalProps, null> {
       [css.statusBlob]: true,
       [css.open]: status.open,
       [css.voting]: status.voting,
-      [css.noSubmissions]: hasNoSubmissions  } )}>{status.text}</div>;
+      [css.noSubmissions]: hasNoSubmissions } )}>{status.text}</div>;
   }
 }

@@ -1,4 +1,4 @@
-import { IProposalType } from "@daostack/client";
+import { IProposalType } from "@daostack/arc.js";
 import { GenericSchemeRegistry, Action } from "genericSchemeRegistry";
 import {
   IDispatcherMethods,

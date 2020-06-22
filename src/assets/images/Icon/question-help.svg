@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="40" width="40" version="1.0" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <metadata id="metadata44">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs id="defs4">
+  <linearGradient id="linearGradient3366" y2="51.987" gradientUnits="userSpaceOnUse" x2="22.014" y1="10.469" x1="41.868">
+   <stop id="stop3372" stop-color="#ffc9a1" offset="0"/>
+   <stop id="stop3374" stop-color="#fda557" offset=".5"/>
+   <stop id="stop3376" stop-color="#f88c2c" offset="1"/>
+  </linearGradient>
+  <radialGradient id="radialGradient2577" gradientUnits="userSpaceOnUse" cy="29.5" cx="32.5" r="26.5">
+   <stop id="stop2502" stop-color="#b8b8b8" offset="0"/>
+   <stop id="stop2504" stop-color="#b8b8b8" offset="0.9"/>
+   <stop id="stop2506" stop-color="#b8b8b8" stop-opacity="0" offset="1"/>
+  </radialGradient>
+  <linearGradient id="linearGradient2579" y2="16.249" gradientUnits="userSpaceOnUse" x2="9.5471" y1="42.753" x1="55.454">
+   <stop id="stop2497" stop-color="#b74e08" offset="0"/>
+   <stop id="stop2499" stop-color="#d87b3f" offset="1"/>
+  </linearGradient>
+ </defs>
+ <g id="g2589">
+  <circle id="shadow" transform="matrix(.71938 0 0 .71939 -2.5566 -.43993)" cy="29.5" cx="32.5" r="26.5" fill="url(#radialGradient2577)"/>
+  <circle id="field" stroke-width="2" transform="matrix(.67560 0 0 .67560 -1.1379 -1.1739)" stroke="url(#linearGradient2579)" cy="31" cx="31" r="25.8" fill="url(#linearGradient3366)"/>
+  <path id="text2466" d="m21.919 23.873h-5.323v-0.733c0-0.818 0.162-1.541 0.487-2.169 0.324-0.638 1.007-1.446 2.049-2.423l0.944-0.868c0.56-0.518 0.968-1.007 1.224-1.466 0.265-0.458 0.398-0.917 0.398-1.376 0-0.698-0.236-1.242-0.708-1.631-0.472-0.398-1.13-0.598-1.976-0.598-0.796 0-1.656 0.17-2.58 0.509-0.924 0.329-1.888 0.822-2.891 1.481v-4.6975c1.19-0.4188 2.276-0.7279 3.259-0.9274 0.983-0.1994 1.932-0.2992 2.846-0.2992 2.399 0 4.228 0.4987 5.486 1.4961 1.258 0.987 1.887 2.433 1.887 4.338 0 0.977-0.191 1.855-0.575 2.633-0.383 0.768-1.037 1.595-1.961 2.483l-0.944 0.853c-0.668 0.618-1.106 1.116-1.312 1.495-0.207 0.369-0.31 0.778-0.31 1.227v0.673m-4.989 3.113l4.758-0.059 0.086 4.486h-4.888" fill="#fff"/>
+ </g>
+</svg>
