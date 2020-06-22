@@ -1,5 +1,5 @@
 import * as chai from "chai";
-import { getTestAddresses, ITestAddresses } from "./utils";
+import { getTestAddresses, ITestAddresses, hideCookieAcceptWindow } from "./utils";
 
 chai.should();
 
@@ -12,6 +12,7 @@ describe("Header redemptions button", () => {
   });
 
   it("should show a quick menu on desktop devices", async () => {
+    hideCookieAcceptWindow();
     await browser.url("http://127.0.0.1:3000");
     const loginButton = await $("[data-test-id=\"loginButton\"]");
     await loginButton.click();
@@ -26,8 +27,8 @@ describe("Header redemptions button", () => {
   });
 
   it("should redirect us to the redemptions page on mobile devices", async () => {
-    await browser.url("http://127.0.0.1:3000");
     await browser.setWindowSize(600, 600);
+    await browser.url("http://127.0.0.1:3000");
     const windowSize = await browser.getWindowSize();
 
     // Skip test if the OS doesn't allow window to be resized
@@ -51,6 +52,7 @@ describe("Redemptions page", () => {
   });
 
   it("should exist", async () => {
+    await browser.setWindowSize(1920, 1080);
     await browser.url("http://127.0.0.1:3000/redemptions");
 
     const pageTitle = await browser.getTitle();
