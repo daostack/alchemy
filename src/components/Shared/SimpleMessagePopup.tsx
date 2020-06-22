@@ -22,6 +22,10 @@ export interface ISimpleMessagePopupProps {
   closeHandler?: (event: any) => void;
   body: string | JSX.Element;
   buttonSpec?: EnumButtonSpec;
+  /**
+   * `buttonSpec` is ignored if `hideFooter` is true
+   */
+  hideFooter?: boolean;
   title?: string | JSX.Element;
 }
 
@@ -80,7 +84,8 @@ class SimpleMessagePopup extends React.Component<IDispatchProps & IStateProps, n
             <div className={css.modalBody}>{this.props.options.body}</div>
           }
           footer={
-            <div className={css.modalFooter}>{this.renderButtons()}</div>
+            this.props.options.hideFooter ? undefined :
+              <div className={css.modalFooter}>{this.renderButtons()}</div>
           }
         />
       </div>
