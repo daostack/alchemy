@@ -1,7 +1,7 @@
 import { IDAOState, IPluginManagerProposalState, NULL_ADDRESS } from "@daostack/arc.js";
 import classNames from "classnames";
 import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
-import { pluginNameAndAddress, getRewarderName } from "lib/pluginUtils";
+import { pluginNameAndAddress, decodePluginToRegisterData } from "lib/pluginUtils";
 import * as React from "react";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
@@ -52,7 +52,18 @@ class ProposalSummary extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
     const { proposalState, detailView, transactionModal } = this.props;
-    const pluginName = proposalState.pluginToRegisterName === "ContributionRewardExt" ? getRewarderName(proposalState.pluginToRegisterData) : proposalState.pluginToRegisterName;
+    const decodedData = decodePluginToRegisterData(proposalState.pluginToRegisterName, proposalState.pluginToRegisterData);
+    const pluginName = decodedData.pluginName;
+
+    const votingParams = decodedData.votingParams.map((param: string, index: number) => {
+      const params = ["Boosted Vote Period Limit:", "DAO Bounty Constant:", "Proposal Reputation Reward:", "Minimum DAO Bounty:", "Pre-Boosted Vote Period Limit:", "Queued Vote Period Limit:", "Queued Vote Required:", "Quiet Ending Period:", "Threshold Constant:"];
+      return (
+        <tr key={index}>
+          <th>{params[index]}</th>
+          <td>{param}</td>
+        </tr>
+      );
+    });
 
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
@@ -128,6 +139,13 @@ class ProposalSummary extends React.Component<IProps, IState> {
                           <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(proposalState.pluginToRegisterData)} />
                         </td>
                       </tr>
+                        {votingParams}
+                        {decodedData.pluginType === "GenericScheme" && 
+                        <tr>
+                          <th>Contract to Call:</th>
+                          <td>{decodedData.contractToCall}</td>
+                        </tr>
+                        }
                       <tr>
                         <th>Permissions:</th>
                         <td>
