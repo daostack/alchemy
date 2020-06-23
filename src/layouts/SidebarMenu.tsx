@@ -119,7 +119,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   </p>
                   : dao.name === "dOrg" ?
                     <p>
-                    Visit the <a href="https://dOrg.tech" target="_blank" rel="noopener noreferrer">dOrg handbook</a> to learn more.
+                    Visit <a href="https://dOrg.tech" target="_blank" rel="noopener noreferrer">dOrg.tech</a> to learn more.
                     </p>
                     : <p>New to DAOstack? Visit the <a href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">help center</a> to get started.</p>
           }
