@@ -80,7 +80,7 @@ class DaoSchemesPage extends React.Component<IProps, null> {
     const allKnownSchemes = [...contributionReward, ...knownSchemes];
 
     const schemeManager = data[1];
-    const schemeManagerActive = getSchemeIsActive(schemeManager);
+    const schemeManagerActive = schemeManager ? getSchemeIsActive(schemeManager) : null;
 
     const schemeCardsHTML = (
       <TransitionGroup>
