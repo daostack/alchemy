@@ -27,12 +27,12 @@ export default class ProposalSummary extends React.Component<IProps> {
   private callDataHtml = (value: any, isArrayItem = false) => {
     if (value?.length > 66) {
 
-      value = truncateWithEllipses(value, 66);
+      const truncatedValue = truncateWithEllipses(value, 66);
 
       return <div
         className={isArrayItem ? css.arrayItem : ""}
         key={value}
-      >{value}<CopyToClipboard value={value}/>{isArrayItem ? "," : ""}
+      >{truncatedValue}<CopyToClipboard value={value}/>{isArrayItem ? "," : ""}
       </div>;
 
     } else {
