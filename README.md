@@ -67,4 +67,4 @@ See [working with docker](./docs/docker.md) for details and troubleshooting.
 
 ## Adding custom landing page content for your DAO
 
-Just submit a PR to https://github.com/daostack/alchemy with your desired changes in src/customDaoInfo.tsx.
+Just submit a PR to https://github.com/daostack/alchemy with your desired changes in src/customDaoInfo.tsx.  You may supply plain text or HTML inside of parentheses.  The HTML may contain React.js components, most notably `Link` which will cleanly navigate to pages within Alchemy.
