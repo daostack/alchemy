@@ -1,6 +1,6 @@
 import { first } from "rxjs/operators";
 import { DAO, Arc } from "@daostack/arc.js";
-import { getArc, gotoDaoPlugins, submit, acceptCookies } from "./utils";
+import { getArc, gotoDaoPlugins, submit, hideCookieAcceptWindow } from "./utils";
 
 describe("Plugin Manager", () => {
   let dao: DAO;
@@ -20,7 +20,7 @@ describe("Plugin Manager", () => {
 
   it("Add Plugin", async () => {
     await gotoDaoPlugins(dao.id);
-    await acceptCookies();
+    await hideCookieAcceptWindow();
 
     const createPluginButton = await $("a[data-test-id=\"createProposal\"]");
     await createPluginButton.waitForExist();
@@ -55,7 +55,7 @@ describe("Plugin Manager", () => {
 
   it("Remove Plugin", async () => {
     await gotoDaoPlugins(dao.id);
-    await acceptCookies();
+    await hideCookieAcceptWindow();
 
     const createPluginButton = await $("a[data-test-id=\"createProposal\"]");
     await createPluginButton.waitForExist();
@@ -89,7 +89,7 @@ describe("Plugin Manager", () => {
 
   it("Replace Plugin", async () => {
     await gotoDaoPlugins(dao.id);
-    await acceptCookies();
+    await hideCookieAcceptWindow();
 
     const createPluginButton = await $("a[data-test-id=\"createProposal\"]");
     await createPluginButton.waitForExist();
