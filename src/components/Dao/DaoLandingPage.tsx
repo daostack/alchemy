@@ -42,7 +42,7 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
 
   public render() {
     const daoState = this.props.daoState;
-    const customData = customDaoInfo[daoState.id.toLowerCase()];
+    const customData = customDaoInfo[process.env.NETWORK][daoState.id.toLowerCase()];
 
     this.disqusConfig.url = `${process.env.BASE_URL}/dao/${this.props.daoState.address}/discussion`;
     this.disqusConfig.identifier = this.props.daoState.address;
