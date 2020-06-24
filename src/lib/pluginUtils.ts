@@ -17,13 +17,46 @@ import * as moment from "moment-timezone";
 
 import { getArc } from "../arc";
 
-export const getRewarderName = (pluginToRegisterData: string): string => {
+
+/**
+ * @param {string} pluginName Plugin name
+ * @param {string} pluginToRegisterData Plugin encoded data
+ * @returns {any} An object containing voting params, real plugin name and contract to call if acceptable
+ */
+export const decodePluginToRegisterData = (pluginName: string, pluginToRegisterData: string): any => {
   const WEB3 = require("web3");
   const web3 = new WEB3();
+  const PLUGIN_PARAMS = require("./plugin_params.json");
   const encodedDataForWeb3 = "0x" + pluginToRegisterData.substring(10);
-  const decodedData = web3.eth.abi.decodeParameters(["address", "address", "uint256[11]", "address", "bytes32", "address", "uint64[3]", "string"], encodedDataForWeb3);
-  return decodedData[7];
+  const decodedData = web3.eth.abi.decodeParameters(PLUGIN_PARAMS[pluginName], encodedDataForWeb3);
+  let genericSchemeName = "";
+  if (pluginName === "GenericScheme"){
+    const genericPluginRegistry = new GenericPluginRegistry();
+    const genericPluginInfo = genericPluginRegistry.getPluginInfo(decodedData[5]);
+    if (genericPluginInfo){
+      genericSchemeName = genericPluginInfo.specs.name;
+    } else {
+      genericSchemeName = "Blockchain Interaction";
+    }
+  }
+
+  let showName = pluginName;
+  if (pluginName === "ContributionRewardExt"){
+    showName = decodedData[7];
+  }
+  else if (pluginName === "GenericScheme"){
+    showName = genericSchemeName ? genericSchemeName : pluginName;
+  }
+
+  const data = {
+    votingParams: decodedData[2],
+    pluginName: showName,
+    contractToCall: pluginName === "GenericScheme" ? decodedData[5] : "",
+  };
+
+  return data;
 };
+
 
 export enum PluginPermissions {
   None = 0,
