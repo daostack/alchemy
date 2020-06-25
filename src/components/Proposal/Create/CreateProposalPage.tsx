@@ -62,10 +62,6 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
     history.push("/dao/" + daoAvatarAddress + "/plugin/" + pluginId);
   }
 
-  private preventDefault = (e: any) => {
-    e.preventDefault();
-  }
-
   public async componentDidMount() {
     document.addEventListener("keydown", this.handleKeyPress, false);
     (document.getElementsByTagName("BODY")[0] as HTMLElement).style.overflow = "hidden";
