@@ -16,6 +16,7 @@ import "moment";
 import * as moment from "moment-timezone";
 
 import { getArc } from "../arc";
+const Web3 = require("web3");
 
 
 /**
@@ -24,9 +25,8 @@ import { getArc } from "../arc";
  * @returns {any} An object containing voting params, real plugin name and contract to call if acceptable
  */
 export const decodePluginToRegisterData = (pluginName: string, pluginToRegisterData: string): any => {
-  const WEB3 = require("web3");
-  const web3 = new WEB3();
-  const PLUGIN_PARAMS = require("./plugin_params.json");
+  const web3 = new Web3();
+  const PLUGIN_PARAMS = require("./plugins_initilization_params.json");
   const encodedDataForWeb3 = "0x" + pluginToRegisterData.substring(10);
   const decodedData = web3.eth.abi.decodeParameters(PLUGIN_PARAMS[pluginName], encodedDataForWeb3);
   let genericSchemeName = "";
