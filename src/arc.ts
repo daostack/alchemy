@@ -310,16 +310,7 @@ async function enableWeb3Provider(): Promise<void> {
   if (!web3Modal) {
     _web3Modal = new Web3Modal({
       cacheProvider: true,
-      providerOptions: Object.assign(
-        /**
-         * This will hide the web3connect fallback ("Web3") button which currently
-         * doesn't behave well when there is no available extension.  The fallback is
-         * apparently "for injected providers that haven't been added to the library or
-         * that don't support the normal specification. Opera is an example of it."
-         * [UPDATE:]  Opera has been added to Web3Modal.
-         */
-        { disableInjectedProvider: !(window as any).ethereum },
-        getArcSettings().web3ConnectProviderOptions) as any,
+      providerOptions: getArcSettings().web3ConnectProviderOptions,
     });
 
     // eslint-disable-next-line require-atomic-updates
