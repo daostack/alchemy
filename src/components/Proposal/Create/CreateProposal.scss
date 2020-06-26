@@ -1,6 +1,10 @@
 @import "./react-mde.css";
 :global {
   @import "../../../../node_modules/react-datetime/css/react-datetime";
+
+  body.react-router-modal__modal-open {
+    overflow: hidden;
+  }
 }
 
 .hidden {

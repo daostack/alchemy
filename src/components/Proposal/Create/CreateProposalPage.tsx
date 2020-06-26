@@ -64,7 +64,6 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
 
   public async componentDidMount() {
     document.addEventListener("keydown", this.handleKeyPress, false);
-    (document.getElementsByTagName("BODY")[0] as HTMLElement).style.overflow = "hidden";
 
     Analytics.track("Page View", {
       "Page Name": Page.CreateProposal,
@@ -88,7 +87,6 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
 
   public componentWillUnmount(){
     document.removeEventListener("keydown", this.handleKeyPress, false);
-    (document.getElementsByTagName("BODY")[0] as HTMLElement).style.overflow = "unset";
   }
 
   private handleKeyPress = (e: any) => {
