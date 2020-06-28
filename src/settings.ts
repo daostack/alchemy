@@ -4,7 +4,7 @@ export const ETHDENVER_OPTIMIZATION = true;
 export const USE_CONTRACTINFOS_CACHE = false;
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import Torus from "@toruslabs/torus-embed";
+const Torus = require("@toruslabs/torus-embed");
 import { IArcOptions } from "@daostack/arc.js";
 import { RetryLink } from "apollo-link-retry";
 
@@ -112,6 +112,17 @@ function getWeb3ConnectProviderOptions(network: string) {
     case "xdai":
       return {
         network: "xdai",
+        torus: {
+          package: Torus,
+          options: {
+            networkParams: {
+              host: "https://xdai.poanetwork.dev",
+              chainId: 100,
+              networkName: "xdai",
+              network: "xdai",
+            }
+          }
+        },
         burnerconnect: {
           package: BurnerConnectProvider,
           options: {
