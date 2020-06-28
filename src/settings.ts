@@ -120,8 +120,8 @@ function getWeb3ConnectProviderOptions(network: string) {
               chainId: 100,
               networkName: "xdai",
               network: "xdai",
-            }
-          }
+            },
+          },
         },
         burnerconnect: {
           package: BurnerConnectProvider,
