@@ -1,0 +1,101 @@
+.bhubRegContainer {
+    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+    padding: 10px;
+
+
+    .bhubIcon {
+        width: 100% !important;
+        display: flex;
+        text-align: left;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding: 0 !important;
+        margin-left: -40px !important;
+    }
+
+    .inputWrapper {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: flex-start;
+
+        .emailInput {
+            border-radius: 5px;
+            height: 30px !important;
+            padding: 5px;
+            border: 1px solid #aaa;
+            margin-right: 5px !important;
+        }
+
+
+        .sendButtonWrapper {
+            height: 30px;
+            display: inline-flex;
+            justify-content: center; 
+            align-items: center;
+
+            .sendButton {
+                background-color: rgba(104, 155, 214, 1);
+                border: 1px solid #333;
+                border-radius: 5px;
+                color: white;
+
+                &:hover {
+                    background-color: rgba(3, 118, 255, 1);
+                    cursor: pointer;
+                }
+            }
+
+            .sendButtonDisabled {
+                background-color: #ccc;
+                border: 1px solid #aaa;
+                border-radius: 5px;
+                color: #aaa;
+                &:hover {
+                    cursor: default;
+                }    
+            }
+        }
+    }
+
+    .error {
+        width: 100% !important;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: flex-start;
+        color: red;
+        font-size: 1rem;
+    }
+
+    
+    .success {
+        width: 100% !important;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: flex-start;
+        color: green;
+        font-size: 1.3rem;
+
+        .message {
+            color: #333;
+            font-size: .9rem;
+            font-weight: 100;
+            padding-left: 20px; 
+        }
+    }
+
+    .description {
+        
+        font-size: 1rem !important;
+        font-weight: 100 !important;
+        padding-bottom: 10px;
+    }
+}

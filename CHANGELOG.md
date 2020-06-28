@@ -1,3 +1,14 @@
+## 0.10.11
+  - Features Added
+    - added the ability to receive email notifications, per DAO, when proposals are created
+    - added support for DXSwap governance plugin
+    - added support for creating DAOs on the xDAI network
+
+  - Bugs Fixed
+    - fix proposal count not automatically updating in the Plugin Proposals page, when proposals are created or expired or move between queues
+    - don't add spaces to GenericScheme plugin names in the UI
+    - fix layout in a known-GenericScheme proposal summary UI when the callData is very wide
+
 ## 0.10.10
   - Several code refactorings
 

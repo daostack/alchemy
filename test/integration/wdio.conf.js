@@ -199,6 +199,7 @@ exports.config = {
      * @param {Array.<String>} specs List of spec file paths that are to be run
      */
   before: function (_capabilities, _specs) {
+    global.inAlchemyTests = true;
     require("ts-node/register");
   },
 

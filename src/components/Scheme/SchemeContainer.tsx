@@ -297,7 +297,8 @@ const SubscribedSchemeContainer = withSubscription({
     }
 
     return combineLatest(
-      of(schemeState),
+      // refetch so we can subscribe.  Don't worry, has been cached
+      arc.scheme(props.schemeId).state({ subscribe: true }),
       // Find the SchemeManager scheme if this dao has one
       Scheme.search(arc, {where: { dao: props.daoState.id, name: "SchemeRegistrar" }}).pipe(mergeMap((scheme: Array<Scheme | CompetitionScheme>): Observable<ISchemeState> => scheme[0] ? scheme[0].state() : of(null))),
       approvedProposals
