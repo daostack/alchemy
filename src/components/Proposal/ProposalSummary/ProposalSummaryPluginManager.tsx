@@ -1,12 +1,13 @@
 import { IDAOState, IPluginManagerProposalState, NULL_ADDRESS } from "@daostack/arc.js";
 import classNames from "classnames";
 import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
-import { pluginNameAndAddress, getRewarderName } from "lib/pluginUtils";
+import { pluginNameAndAddress, decodePluginToRegisterData } from "lib/pluginUtils";
 import * as React from "react";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { connect } from "react-redux";
 import * as css from "./ProposalSummary.scss";
+import * as moment from "moment";
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -52,7 +53,15 @@ class ProposalSummary extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
     const { proposalState, detailView, transactionModal } = this.props;
-    const pluginName = proposalState.pluginToRegisterName === "ContributionRewardExt" ? getRewarderName(proposalState.pluginToRegisterData) : proposalState.pluginToRegisterName;
+    let pluginName = proposalState.pluginToRegisterName;
+    let decodedData;
+    let votingParams;
+    if (proposalState.pluginToRemove === NULL_ADDRESS && proposalState.pluginToRegisterName !== "ReputationFromToken"){
+      decodedData = decodePluginToRegisterData(proposalState.pluginToRegisterName, proposalState.pluginToRegisterData);
+      pluginName = decodedData.pluginName;
+      votingParams = decodedData.votingParams;
+    }
+
 
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
@@ -128,6 +137,23 @@ class ProposalSummary extends React.Component<IProps, IState> {
                           <img className={css.copyButton} src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(proposalState.pluginToRegisterData)} />
                         </td>
                       </tr>
+
+                      { votingParams && (
+                        <React.Fragment>
+                          <tr><th>Queued Vote Required:</th><td>{votingParams[0]}%</td></tr>
+                          <tr><th>Queued Vote Period Limit:</th><td>{votingParams[1]}</td></tr>
+                          <tr><th>Boosted Vote Period Limit:</th><td>{votingParams[2]}</td></tr>
+                          <tr><th>Pre-Boosted Vote Period Limit:</th><td>{votingParams[3]}</td></tr>
+                          <tr><th>Threshold Const:</th><td>{votingParams[4]}</td></tr>
+                          <tr><th>Quiet Ending Period:</th><td>{votingParams[5]}</td></tr>
+                          <tr><th>Proposing Reputation Reward:</th><td>{votingParams[6]}</td></tr>
+                          <tr><th>Voters Reputation Loss Ratio:</th><td>{votingParams[7]}%</td></tr>
+                          <tr><th>Minimum DAO Bounty:</th><td>{votingParams[8]}</td></tr>
+                          <tr><th>DAO Bounty Const:</th><td>{votingParams[9]}</td></tr>
+                          <tr><th>Activation Time:</th><td>{ moment.unix(votingParams[10]).format("YYYY-MM-DD HH:mm")}</td></tr>
+                          {decodedData.contractToCall !== "" && <tr><th>Contract to Call:</th><td>{decodedData.contractToCall}</td></tr>}
+                        </React.Fragment>)
+                      }
                       <tr>
                         <th>Permissions:</th>
                         <td>
