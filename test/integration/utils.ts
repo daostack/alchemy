@@ -57,22 +57,6 @@ export function getTestAddresses(version: string = LATEST_ARC_VERSION): ITestAdd
   return require("@daostack/test-env-experimental/daos.json").demo[version];
 }
 
-/**
- * Note this won't work until you've browsed into the app.
- */
-export async function hideCookieAcceptWindow(): Promise<void> {
-  let acceptCookiesButton = await $("*[data-test-id=\"acceptCookiesButton\"]");
-  for (let i = 0; i < 3; ++i) {
-    await acceptCookiesButton.waitForExist({ timeout: 2000 });
-    if (!acceptCookiesButton.error && await acceptCookiesButton.isDisplayedInViewport()) {
-      await acceptCookiesButton.click();
-      return;
-    } else {
-      acceptCookiesButton = await $("*[data-test-id=\"acceptCookiesButton\"]");
-    }
-  }
-}
-
 export async function hideTrainingTooltips() {
   localStorage.setItem("trainingTooltipsEnabled", "false");
 }
@@ -91,7 +75,7 @@ export async function gotoDaoPlugins(daoAddress: string): Promise<any> {
  * @param void
  * @returns Promise<void>
  */
-export const acceptCookies = async(): Promise<void> => {
+export const hideCookieAcceptWindow = async(): Promise<void> => {
   const acceptCookiesButton = await $("*[data-test-id=\"acceptCookiesButton\"]");
   if (acceptCookiesButton.isExisting()) {
     acceptCookiesButton.click();
