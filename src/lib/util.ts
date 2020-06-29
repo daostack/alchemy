@@ -335,6 +335,8 @@ export function linkToEtherScan(address: Address) {
     case "42":
       prefix = "kovan.";
       break;
+    case "100": // xdai
+      return `https://blockscout.com/poa/xdai/${address.length > 42 ? "tx" : "address"}/${address}`;
   }
   return `https://${prefix}etherscan.io/address/${address}`;
 }
