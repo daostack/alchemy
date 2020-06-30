@@ -357,9 +357,9 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                           <div className={css.genLabel + " " + css.genSymbol}>GEN</div>
                         </div>
                         <div className={css.yourBalance}>
-                          <div>Your balance: {formatTokens(currentAccountGens)} GEN</div>
+                          <div className={css.balance}>Your balance: {formatTokens(currentAccountGens)} GEN</div>
                           <div className={css.exchangeList}>
-                            Buy GEN &gt;
+                            [Buy GEN]
                             <ul>
                               {
                                 getExchangesList().map(this.exchangeHtml)
