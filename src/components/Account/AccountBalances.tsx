@@ -8,6 +8,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import * as css from "layouts/App.scss";
 import * as React from "react";
 import { combineLatest, of } from "rxjs";
+import { getArc } from "arc";
 
 interface IExternalProps {
   dao?: IDAOState;
@@ -68,7 +69,8 @@ export default withSubscription({
       return of(null);
     }
     const daoState = dao;
-    const arc = daoState.dao.context;
+    const arc = getArc();
+
     return combineLatest(
       address && daoState.dao.member(address).state( { subscribe: true }) || of(null),
       arc.ethBalance(address).pipe(ethErrorHandler()),
