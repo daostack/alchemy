@@ -1,0 +1,106 @@
+{
+    "name": "NFTManager",
+    "addresses": {
+      "main":  ["0x478D17C854446a8718Dc42A8199444f26Ddfe1Ad"],
+      "rinkeby": ["0x4096DdC71F8ef73F14383dC89b57E1B22a1d48b4"],
+      "private": ["0x478D17C854446a8718Dc42A8199444f26Ddfe1Ad"]
+    },
+    "actions": [
+      {
+        "id": "sendNFT",
+        "label": "Send NFT",
+        "description": "Send an ERC-721 token, referenced by contract address and tokenId, to specified address. Optionally add arbitrary data that can be interpretted by the recipient contract.",
+        "notes": "https://github.com/dOrgTech/NFTManager/blob/master/contracts/NFTManager.sol",
+        "fields": [
+          {
+            "label": "Recipient",
+            "name": "recipient",
+            "placeholder": "Address (0x0000…)"
+          },
+          {
+            "label": "NFT Contract Address",
+            "name": "nftContract",
+            "placeholder": "Address (0x0000…)"
+          },
+          {
+            "label": "NFT Token Id",
+            "name": "tokenId",
+            "placeholder": ""
+          },
+          {
+            "label": "Data",
+            "name": "data",
+            "placeholder": ""
+          }
+        ],
+        "abi": {
+          "inputs": [
+            {
+              "name": "recipient",
+              "type": "address"
+            },
+            {
+              "name": "nftContract",
+              "type": "address"
+            },
+            {
+              "name": "tokenId",
+              "type": "uint256"
+            },
+            {
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "sendNFT",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      },
+      {
+        "id": "sendNFTNoSafeGuards",
+        "label": "Send NFT without Safeguards",
+        "description": "Send an ERC-721 token, referenced by contract address and tokenId, to specified address. This variant uses the native transferFrom(). This should only be used when transferring to smart contracts that do not implement onERC721Received",
+        "notes": "https://github.com/dOrgTech/NFTManager/blob/master/contracts/NFTManager.sol",
+        "fields": [
+          {
+            "label": "Recipient",
+            "name": "recipient",
+            "placeholder": "Address (0x0000…)"
+          },
+          {
+            "label": "NFT Contract Address",
+            "name": "nftContract",
+            "placeholder": "Address (0x0000…)"
+          },
+          {
+            "label": "NFT Token Id",
+            "name": "tokenId",
+            "placeholder": ""
+          }
+        ],
+        "abi": {
+          "inputs": [
+            {
+              "name": "recipient",
+              "type": "address"
+            },
+            {
+              "name": "nftContract",
+              "type": "address"
+            },
+            {
+              "name": "tokenId",
+              "type": "uint256"
+            }
+          ],
+          "name": "sendNFTNoSafeGuards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      }
+    ]
+  }
+  
