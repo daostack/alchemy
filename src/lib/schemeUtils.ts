@@ -200,6 +200,11 @@ const schemeActionPropNames = new Map<string, Map<GetSchemeIsActiveActions, stri
  * @param action For SchemeRegistrar where we are asking specifically about Add and Remove actions.
  */
 export function getSchemeIsActive(scheme: ISchemeState, action?: GetSchemeIsActiveActions): boolean {
+
+  if (!scheme) {
+    throw new Error("getSchemeIsActive: scheme parameter is not set");
+  }
+
   let votingMachineParamsPropertyName: string;
   let schemeName = scheme.name ? `${scheme.name[0].toLowerCase()}${scheme.name.slice(1)}` : "";
   if (schemeName === "genericScheme") {
