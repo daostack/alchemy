@@ -196,7 +196,7 @@ const schemeActionPropNames = new Map<string, Map<GetSchemeIsActiveActions, stri
 
 /**
  * Returns true or false indicating whether the scheme is active and thus can accept new proposals.
- * @param scheme Required parameter that if undefined or null cause this method to throw an exception.
+ * @param scheme Required parameter that if undefined or null will cause this method to throw an exception.
  * @param action For SchemeRegistrar where we are asking specifically about Add and Remove actions.
  */
 export function getSchemeIsActive(scheme: ISchemeState, action?: GetSchemeIsActiveActions): boolean {
