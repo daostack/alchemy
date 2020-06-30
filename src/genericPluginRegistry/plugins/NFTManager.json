@@ -1,9 +1,9 @@
 {
     "name": "NFTManager",
     "addresses": {
-      "main":  ["0x478D17C854446a8718Dc42A8199444f26Ddfe1Ad"],
-      "rinkeby": ["0x4096DdC71F8ef73F14383dC89b57E1B22a1d48b4"],
-      "private": ["0x478D17C854446a8718Dc42A8199444f26Ddfe1Ad"]
+      "main":  [""],
+      "rinkeby": [""],
+      "private": [""]
     },
     "actions": [
       {
