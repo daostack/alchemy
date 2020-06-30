@@ -725,28 +725,13 @@ input[type="number"] {
       }
 
       .genError {
-        position: absolute;
-        width: 300px;
-        text-align: center;
-        color: rgba(80, 97, 118, 1);
-        left: 41px;
-        top: 81px;
+        color: $accent-2;
+        font-size: 14px;
+        font-family: $body-font;
+        font-weight: normal;
 
-        h4 {
-          color: $accent-2;
-          font-size: 14px;
-          font-family: $body-font;
-          text-align: left;
-          font-weight: normal;
-          margin: 0;
-          padding-top: 8px;
-        }
-
-        span {
-          display: block;
-          font-size: 10px;
-          font-weight: normal;
-          color: rgba(80, 97, 118, 1);
+        &.hidden {
+          display: none;
         }
       }
     }
