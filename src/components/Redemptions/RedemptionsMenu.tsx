@@ -7,7 +7,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import ActionButton from "components/Proposal/ActionButton";
 import RedemptionsString from "components/Proposal/RedemptionsString";
 import ProposalSummary from "components/Proposal/ProposalSummary";
-import { ethErrorHandler, humanProposalTitle } from "lib/util";
+import { ethErrorHandler, humanProposalTitle, ethBalance } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -198,12 +198,12 @@ const SubscribedMenuItemContent = withSubscription({
     const { currentAccountAddress, proposal } = props;
     const arc = getArc();
     const dao = arc.dao(proposal.dao.id);
-    const ethBalance = concat(of(new BN("0")), dao.ethBalance()).pipe(ethErrorHandler());
+    const daoEthBalance = concat(of(new BN("0")), ethBalance(proposal.dao.id)).pipe(ethErrorHandler());
     const rewards = proposal.proposal.rewards({ where: { beneficiary: currentAccountAddress }})
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
     // subscribe to dao to get DAO reputation supply updates
-    return combineLatest(dao.state( { subscribe: true }), ethBalance, rewards);
+    return combineLatest(dao.state( { subscribe: true }), daoEthBalance, rewards);
   },
 });
 
