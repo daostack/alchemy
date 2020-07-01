@@ -171,8 +171,12 @@
 }
 
 .votingDisabled {
+  position: relative;
+  bottom: 2px;
   font-size: 11px;
   color: $gray-1;
+  line-height: normal;
+  padding-right: 2px;
 }
 
 button.disabled {
