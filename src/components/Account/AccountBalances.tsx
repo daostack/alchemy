@@ -1,5 +1,5 @@
 import { Address, IDAOState, IMemberState } from "@daostack/arc.js";
-import { baseTokenName, ethErrorHandler, genName } from "lib/util";
+import { baseTokenName, ethErrorHandler, genName, ethBalance } from "lib/util";
 
 import BN = require("bn.js");
 import AccountBalance from "components/Account/AccountBalance";
@@ -73,7 +73,7 @@ export default withSubscription({
 
     return combineLatest(
       address && daoState.dao.member(address).state( { subscribe: true }) || of(null),
-      arc.ethBalance(address).pipe(ethErrorHandler()),
+      ethBalance(address).pipe(ethErrorHandler()),
       arc.GENToken().balanceOf(address).pipe(ethErrorHandler()),
     );
   },
