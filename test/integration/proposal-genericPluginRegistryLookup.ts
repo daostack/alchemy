@@ -14,7 +14,7 @@ describe("Proposals Registry Lookup", () => {
       hideCookies = false;
     }
 
-    const ensTitle = await $("h2=RegistryLookup");
+    const ensTitle = await $("h2=GenericSchemeRegistryLookup");
     await ensTitle.waitForExist();
     await ensTitle.click();
 

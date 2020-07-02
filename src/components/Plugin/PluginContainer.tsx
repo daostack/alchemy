@@ -72,7 +72,15 @@ class PluginContainer extends React.Component<IProps, IState> {
     return <PluginInfoPage {...props} daoState={this.props.daoState} plugin={this.props.data[0]} pluginManager={this.props.data[1]} />;
   }
   private pluginProposalsPageHtml = (isActive: boolean, crxRewarderProps: ICrxRewarderProps) => (props: any) => {
-    return <PluginProposalsPage {...props} isActive={isActive} daoState={this.props.daoState} currentAccountAddress={this.props.currentAccountAddress} pluginState={this.props.data[0]} crxRewarderProps={crxRewarderProps} />;
+  /**
+   * Warning: since `props` is declared here as `any`, any missing attributes on `SchemeProposalsPage`
+   * will not be caught by the compiler.
+   */
+    return <PluginProposalsPage {...props}
+      daoState={this.props.daoState}
+      currentAccountAddress={this.props.currentAccountAddress}
+      pluginState={this.props.data[0]}
+      crxRewarderProps={crxRewarderProps} />;
   }
   private contributionsRewardExtTabHtml = () => (props: any) =>
   {
@@ -103,6 +111,22 @@ class PluginContainer extends React.Component<IProps, IState> {
     this.setState(newState);
   }
 
+  private handleNewProposal = async (e: any): Promise<void> => {
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    this.props.history.push(`/dao/${this.props.daoState.address}/scheme/${this.props.schemeId}/proposals/create/`);
+
+    e.preventDefault();
+  };
+
+  private handleEditPlugin = async (e: any) => {
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    this.props.history.push(`/dao/${this.props.daoState.id}/scheme/${this.props.data[1].id}/proposals/create/?currentTab=editScheme`);
+    e.preventDefault();
+  }
+
+
   public render(): RenderOutput {
     const { pluginId, daoState } = this.props;
     const daoAvatarAddress = daoState.address;
@@ -115,14 +139,17 @@ class PluginContainer extends React.Component<IProps, IState> {
 
     const isActive = getPluginIsActive(pluginState);
     const isProposalPlugin = PROPOSAL_PLUGIN_NAMES.includes(pluginState.name);
+    const isBountyPlugin = pluginName(pluginState, pluginState.address) === "Standard Bounties";
+    // checking the special case here where the information tab is the default
+    const inInfoTab = this.props.location.pathname.match(/info\/*$/i) || !(isProposalPlugin || isBountyPlugin || this.state.crxRewarderProps);
 
     const proposalsTabClass = classNames({
       [css.proposals]: true,
-      [css.active]: isProposalPlugin && !this.props.location.pathname.includes("info") && !this.props.location.pathname.includes("crx") && !this.props.location.pathname.includes("open"),
+      [css.active]: isProposalPlugin && !inInfoTab && !this.props.location.pathname.includes("crx") && !this.props.location.pathname.includes("open"),
     });
     const infoTabClass = classNames({
       [css.info]: true,
-      [css.active]: !isProposalPlugin || this.props.location.pathname.includes("info"),
+      [css.active]: !isProposalPlugin || inInfoTab,
     });
     const openBountiesTabClass = classNames({
       [css.openbounty]: true,
@@ -151,25 +178,66 @@ class PluginContainer extends React.Component<IProps, IState> {
           </h2>
 
           <div className={css.pluginMenu}>
-            {isProposalPlugin
-              ? <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/plugin/${pluginId}/proposals/`}>Proposals</Link>
-              : ""}
 
-            { // if Bounties Plugin, create new tab
-              (pluginName(pluginState, pluginState.address) === "Standard Bounties") &&
-              <Link className={openBountiesTabClass} to={`/dao/${daoAvatarAddress}/plugin/${pluginId}/openbounties/`}>Open Bounties</Link>
-            }
+            <div className={css.row}>
+              <div className={css.tabs}>
 
-            <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this plugin"}>
-              <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/plugin/${pluginId}/info/`}>Information</Link>
-            </TrainingTooltip>
-            {
-              this.state.crxRewarderProps ?
-                <TrainingTooltip placement="top" overlay={this.state.crxRewarderProps.shortDescription}>
-                  <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/plugin/${pluginId}/crx/`}>{this.state.crxRewarderProps.friendlyName} ({approvedProposals.length})</Link>
-                </TrainingTooltip>
+                { // Proposals tab
+                  isProposalPlugin ?
+                    <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/plugin/${pluginId}/proposals/`}>Proposals</Link>
+                    : ""}
+
+                { // Information tab
+                  <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
+                    <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/plugin/${pluginId}/info/`}>Information</Link>
+                  </TrainingTooltip>
+                }
+
+                { // Standard Bounties scheme tab
+                  isBountyPlugin ?
+                    <Link className={openBountiesTabClass} to={`/dao/${daoAvatarAddress}/plugin/${pluginId}/openbounties/`}>Open Bounties</Link>
+                    : ""
+                }
+
+                { // Competition scheme tab
+                  this.state.crxRewarderProps ?
+                    <TrainingTooltip placement="top" overlay={this.state.crxRewarderProps.shortDescription}>
+                      <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/plugin/${pluginId}/crx/`}>{this.state.crxRewarderProps.friendlyName} ({approvedProposals.length})</Link>
+                    </TrainingTooltip>
+                    : ""
+                }
+              </div>
+
+              { isProposalPlugin ?
+                inInfoTab ?
+                  <div className={css.editPlugin}>
+                    <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+                      <a
+                        data-test-id="createProposal"
+                        href="#!"
+                        onClick={this.handleEditPlugin}
+                      >
+                    Edit Plugin
+                      </a>
+                    </TrainingTooltip>
+                  </div>
+                  :
+                  <div className={css.createProposal}>
+                    <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+                      <a className={
+                        classNames({
+                          [css.disabled]: !isActive,
+                        })}
+                      data-test-id="createProposal"
+                      href="#!"
+                      onClick={isActive ? this.handleNewProposal : null}
+                      >
+                    + New Proposal</a>
+                    </TrainingTooltip>
+                  </div>
                 : ""
-            }
+              }
+            </div>
           </div>
         </Sticky>
 
@@ -247,7 +315,7 @@ const SubscribedPluginContainer = withSubscription({
     }
 
     return combineLatest(
-      of(pluginState),
+      plugin.fetchState({ subscribe: true }),
       // Find the SchemeRegistrar plugin if this dao has one
       Plugin.search(arc, {where: { dao: props.daoState.id, name: "SchemeFactory" }}).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null))),
       approvedProposals

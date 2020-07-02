@@ -1,19 +1,15 @@
 import ModalPopup from "components/Shared/ModalPopup";
-import { copyToClipboard } from "lib/util";
+import CopyToClipboard from "components/Shared/CopyToClipboard";
 import * as React from "react";
 import Tooltip from "rc-tooltip";
 import * as css from "./SocialShareModal.scss";
-
-interface IState {
-  showCopiedFeedback: boolean;
-}
 
 interface IProps {
   closeHandler: (event: any) => void;
   url: string;
 }
 
-export default class SocialShareModal extends React.Component<IProps, IState> {
+export default class SocialShareModal extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
@@ -22,20 +18,6 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
     this.selectReddit = this.selectReddit.bind(this);
     this.selectFacebook = this.selectFacebook.bind(this);
     this.selectTelegram = this.selectTelegram.bind(this);
-    this.copyUrl = this.copyUrl.bind(this);
-
-    this.state = {
-      showCopiedFeedback: false,
-    };
-  }
-
-  private showCopiedFeedback(): void {
-    this.setState({ showCopiedFeedback: true });
-    setTimeout(() => this.hideCopiedFeedback(), 5000);
-  }
-
-  private hideCopiedFeedback(): void {
-    this.setState({ showCopiedFeedback: false });
   }
 
   private sharingMsgTwitter = "Check%20out%20this%20proposal%20in%20@DAOstack%20Alchemy!";
@@ -57,10 +39,6 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
     const sharingUrl = `https://telegram.me/share/url?text=${this.sharingMsg}&url=${this.props.url}`;
     window.open(sharingUrl, "_blank");
   }
-  private copyUrl(_event: any) {
-    copyToClipboard(this.props.url);
-    this.showCopiedFeedback();
-  }
 
   public render(): RenderOutput {
     return (
@@ -76,22 +54,16 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
         </React.Fragment>}
         body={<div className={css.link}>
           <div className={css.title}>Link</div>
-          { this.state.showCopiedFeedback ?
-            <div className={css.copied}>copied</div>
-            : ""
-          }
           <Tooltip overlay={this.props.url} placement="bottom">
             <div className={css.url}>{this.props.url}</div>
           </Tooltip>
-          <Tooltip overlay="Copy Link" placement="right">
-            <div onClick={this.copyUrl} className={css.copyButton}><img src={"/assets/images/Icon/Copy-blue.svg"}/></div>
-          </Tooltip>
+          <CopyToClipboard value={this.props.url} tooltipPlacement="right" />
         </div>}
         footer={<div className={css.socialSitesList}>
-          <div onClick={this.selectTwitter} className={css.socialSite}><div className={css.icon}><img src={"/assets/images/Icon/social/twitter.svg"}/></div><div className={css.name}>Twitter</div></div>
-          <div onClick={this.selectReddit} className={css.socialSite}><div className={css.icon}><img src={"/assets/images/Icon/social/reddit.svg"}/></div><div className={css.name}>Reddit</div></div>
-          <div onClick={this.selectFacebook} className={css.socialSite}><div className={css.icon}><img src={"/assets/images/Icon/social/facebook.svg"}/></div><div className={css.name}>Facebook</div></div>
-          <div onClick={this.selectTelegram} className={css.socialSite}><div className={css.icon}><img src={"/assets/images/Icon/social/telegram.svg"}/></div><div className={css.name}>Telegram</div></div>
+          <div onClick={this.selectTwitter} className={css.socialSite}><div className={css.icon}><img src={"/assets/images/Icon/social/twitter.svg"} /></div><div className={css.name}>Twitter</div></div>
+          <div onClick={this.selectReddit} className={css.socialSite}><div className={css.icon}><img src={"/assets/images/Icon/social/reddit.svg"} /></div><div className={css.name}>Reddit</div></div>
+          <div onClick={this.selectFacebook} className={css.socialSite}><div className={css.icon}><img src={"/assets/images/Icon/social/facebook.svg"} /></div><div className={css.name}>Facebook</div></div>
+          <div onClick={this.selectTelegram} className={css.socialSite}><div className={css.icon}><img src={"/assets/images/Icon/social/telegram.svg"} /></div><div className={css.name}>Telegram</div></div>
         </div>}
       />
     );

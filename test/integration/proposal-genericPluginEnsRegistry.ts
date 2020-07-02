@@ -18,7 +18,7 @@ describe("Proposals ENS Registry", () => {
     await hideCookieAcceptWindow();
 
     // TODO: label must be hex?
-    const ensTitle = await $("h2=EnsRegistry");
+    const ensTitle = await $("h2=GenericSchemeENSRegistry");
     await ensTitle.waitForExist();
     await ensTitle.click();
 

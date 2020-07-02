@@ -7,13 +7,12 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
 import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { copyToClipboard } from "lib/util";
+import CopyToClipboard, { IconColor } from "components/Shared/CopyToClipboard";
 import * as React from "react";
 import { connect } from "react-redux";
 import { from } from "rxjs";
 import { first } from "rxjs/operators";
 import { IRootState } from "reducers";
-import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 
 import BN = require("bn.js");
@@ -44,12 +43,10 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscrip
 
 interface IDispatchProps {
   getProfile: typeof getProfile;
-  showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
   getProfile,
-  showNotification,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IMemberState>;
@@ -62,13 +59,6 @@ class AccountPopup extends React.Component<IProps, null> {
     if (!profile) {
       getProfile(accountAddress);
     }
-  }
-
-  public copyAddress = (e: any) => {
-    const { showNotification, accountAddress } = this.props;
-    copyToClipboard(accountAddress);
-    showNotification(NotificationStatus.Success, "Copied to clipboard!");
-    e.preventDefault();
   }
 
   public render(): RenderOutput {
@@ -88,11 +78,11 @@ class AccountPopup extends React.Component<IProps, null> {
           <div>
             {!profile || Object.keys(profile.socialURLs).length === 0 ? "No social profiles" :
               <span>
-                { profile.socialURLs.twitter ?
+                {profile.socialURLs.twitter ?
                   <a href={"https://twitter.com/" + profile.socialURLs.twitter.username} className={css.socialButton} target="_blank" rel="noopener noreferrer">
                     <FontAwesomeIcon icon={["fab", "twitter"]} className={css.icon} />
                   </a> : ""}
-                { profile.socialURLs.github ?
+                {profile.socialURLs.github ?
                   <a href={"https://github.com/" + profile.socialURLs.github.username} className={css.socialButton} target="_blank" rel="noopener noreferrer">
                     <FontAwesomeIcon icon={["fab", "github"]} className={css.icon} />
                   </a> : ""}
@@ -100,8 +90,8 @@ class AccountPopup extends React.Component<IProps, null> {
             }
           </div>
           <div className={css.beneficiaryAddress}>
-            <span>{accountAddress}</span>
-            <button onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
+            <div className={css.accountAddress}>{accountAddress}</div>
+            <CopyToClipboard value={accountAddress} color={IconColor.Black}/>
           </div>
 
           <div>
@@ -110,7 +100,7 @@ class AccountPopup extends React.Component<IProps, null> {
 
           <div className={css.holdings}>
             <span>HOLDINGS</span>
-            <div><Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={reputation}/></div>
+            <div><Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={reputation} /></div>
           </div>
         </div>
       </div>

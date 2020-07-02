@@ -1,6 +1,6 @@
 import { Address, AnyProposal, DAO, IProposalState, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, Member, IContributionRewardProposalState } from "@daostack/arc.js";
 import { getArc } from "arc";
-import { ethErrorHandler } from "lib/util";
+import { ethErrorHandler, ethBalance } from "lib/util";
 
 import BN = require("bn.js");
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -164,8 +164,8 @@ export default withSubscription({
         // TODO: also need the member state for the proposal proposer and beneficiary
         //      but since we need the proposal state first to get those addresses we will need to
         //      update the client query to load them inline
-        concat(of(new BN("0")), await arcDao.ethBalance())
-          .pipe(ethErrorHandler()),
+        concat(of(new BN("0")), await ethBalance(daoState.address)
+          .pipe(ethErrorHandler())),
         arc.GENToken().balanceOf(currentAccountAddress)
           .pipe(ethErrorHandler()),
         arc.allowance(currentAccountAddress, spender)
@@ -179,7 +179,7 @@ export default withSubscription({
         of([]), // stakes
         of(null), // rewards
         of(null), // current account member state
-        concat(of(new BN(0)), await arcDao.ethBalance()) // dao eth balance
+        concat(of(new BN(0)), await ethBalance(daoState.address)) // dao eth balance
           .pipe(ethErrorHandler()),
         of(new BN(0)), // current account gen balance
         of(null), // current account GEN allowance

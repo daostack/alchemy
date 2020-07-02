@@ -3,14 +3,93 @@
     - Arc stack 2.0 support
     - SchemeFactory aka Plugin Manager support
       - Easily add, edit, and remove plugins from your DAO all within Alchemy
+      
+## 0.10.11
+  - Features Added
+    - added the ability to receive email notifications, per DAO, when proposals are created
+    - added support for DXSwap governance plugin
+    - added support for creating DAOs on the xDAI network
+
+  - Bugs Fixed
+    - fix proposal count not automatically updating in the Plugin Proposals page, when proposals are created or expired or move between queues
+    - don't add spaces to GenericScheme plugin names in the UI
+    - fix layout in a known-GenericScheme proposal summary UI when the callData is very wide
+
+## 0.10.10
+  - Several code refactorings
+
+  - Features Added
+    - add OK button to the modal prompt that appears on the DAO landing page when clicking the Edit Home Page button
+    - page the fetching of preboosted proposals on the Plugin Proposals page, 100 proposals at a time
+    - display the scheme "alias" instead of contract name, when available
+
+  - Bugs Fixed
+    - in the DAO side bar menu, improve appearance and behavior of the scrollbar that appears when more than three ETH/token balances are listed
+    - in the DAO side bar menu, the DAO Holdings link now opens in a new browser tab instead of replacing the current page
+    - in the DAO side bar menu, fix DAOstack icon color when not in the context of a DAO
+    - when clicking "Redeem" in the Redemptions menu, the menu now disappears to avoid obscuring the Redeem popup.
+    - copy-to-clipboard buttons now all show an explanative tooltip
+    - improved plugin Information tab layout on mobile platforms
+    - improve layout of the account profile page when there is no account profile
+    - remove spurious dash at the bottom of the DAO Members and other pages
+
+## 0.10.9
+  - Features Added
+    - extend Scheme URL Params => Proposal Templates to Competition proposal & competition submission
+    - top three boosted proposals shown on plugin cards are now sorted by when they were boosted, descending
+    - custom DAO landing page data for the SOS Hackathon
+    - enable Competition proposals and Competition Submissions to have embedded videos in their description
+    - allow "Recipient address" in proposal form to be empty (and be populated with proposer address)
+    - enable Redemptions dropdown menu to automatically update with blockchain changes
+    - show Redemptions tooltip on Redeem button when the button is disabled
+    - add new ENSPublicResolver GenericScheme target contract
+    - page the fetching of preboosted proposals at 100 per page
+    - remove redundant New Proposal button on the Plugin Proposals page
+    - improve description of plugin permission Mint and Burn
+    
+  - Bugs Fixed
+    - fix erroneous reputation and GEN redemption sums in Redemption dropdown menu cards
+    - enable voter 3Box profiles to always all show in proposal Voters popup
+    - fix GEN label position in staking popup
+    - fix proposal status countdown when the number of days exceeds 30
+    - improvments to the All DAOs layout, the DAO sidebar on mobile, the mobile dropdown with no DAO selected, Proposal Details page, DAO Landing page on mobile
+    - fixed bug on proposal History page when displaying voting results and YES got 100%
+    - reject displaying proposal in the context of a DAO that wasn't responsible for creating it
+
+## 0.10.8
+  - Features Added
+    -- nicer formatting of embedded videos in proposal descriptions
+    -- added help text for proposal descriptions
+    -- in the Plugin Manager, Edit Plugin Proposal details, make the copy-to-clipboard button issue a notification when complete
+    
+  - Bugs Fixed
+    -- reenabled the "+ New Proposal" button at the bottom of plugin pages when there are currently no proposals
+    -- fixed Disqus conversations that were leaking between proposals and DAOs
+    -- fixed required permissions when editing a Plugin Manager scheme
+    -- correct the ABI on the ensPublicResolver GenericScheme which caused execution of proposals to fail while seeming to succeed
+    -- prevent embedded videos that are playing from stopping when an app notification appears
+    -- remove the "+ New Proposal" button on non-supported schemes
+    -- fix the Edit Scheme button to bring up the Edit Scheme popup isnteadl of the New Proposal popup
+    
+## 0.10.7
+  - Features Added
+    - Added "Stake for Reputation Plugin" to the list of known plugins that can be registered to a DAO
+    - Use Tor.us and Metamask providers when running against xDAI network (removes Burner Connect)
+
+  - Bugs Fixed
+    - Display a proper msg for daos members with no reputation at the moment of a proposal creation
+    - Fix summing up the number of schemes open proposals
+    - Cosmetic improvement to the New Proposal button
+    - Fix to breadcrumbs relating to the new DAO landing page
+    - Don't display unregistered schemes in the Plugin Manager plugins dropdown
 
 ## 0.10.6
   - Features Added
     - new DAO landing page
     - added help text in the Plugin Editor popup
 
-    - Bugs Fixed
-      - Make sure proposer name doesn't overlap avatar on proposal history rows
+  - Bugs Fixed
+    - Make sure proposer name doesn't overlap avatar on proposal history rows
 
 ## 0.10.5
   - Features Added
@@ -18,8 +97,8 @@
     - added support for embedded youtube and vimeo videos in proposal descriptions
     - recommended node.js version to build Alchemy is set to 12.16.2
     - upgrade to use subgraph v39_3
-    - add subgraph_endpoints.json so it could be read externaly
-    - add CENNZ ERC20 token to be showen as dao owned tokens/balance
+    - add subgraph_endpoints.json so it could be read externally
+    - add CENNZ ERC20 token to be shown as dao owned tokens/balance
 
   - Bugs Fixed
     - fix Torus not connecting on first try

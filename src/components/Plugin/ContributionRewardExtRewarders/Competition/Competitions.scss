@@ -590,6 +590,7 @@ a.blueButton {
     }
 
     .proposalTitle {
+      overflow-y: hidden;
       position: relative;
       top: 3px;
       display: inline-block;
@@ -599,11 +600,21 @@ a.blueButton {
       overflow-x: hidden;
       text-overflow: ellipsis;
       max-width: 318px;
+      padding-left: 4px;
     }
   }
 
   form {
     padding: 20px 30px 30px 30px;
+
+    .proposalDescriptionLabelText {
+      display: flex;
+      padding-bottom: 4px;
+
+      .body {
+        margin-right: 6px;
+      }
+    }
 
     input {
       margin-top: 3px;
@@ -648,13 +659,6 @@ a.blueButton {
         font-weight: bold;
         margin-right: 4px;
       }
-
-      .infoTooltip {
-        position: absolute;
-        right: 0;
-        display: none;
-        right: -17px;
-      }
     }
 
     .errorMessage {
@@ -673,6 +677,15 @@ a.blueButton {
       font-size: $small;
       z-index: -10;
       font-weight: 300;
+    }
+
+    .exportProposal {
+      cursor: pointer;
+      height: 30px;
+      float: left;
+      transition: all 0.25s ease;
+      border: none;
+      background-color: rgba(0, 0, 0, 0);
     }
   }
 

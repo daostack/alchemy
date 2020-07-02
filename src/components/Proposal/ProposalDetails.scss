@@ -40,7 +40,6 @@ button.disabled {
   margin-bottom: 0px;
   display: flex;
   position: relative;
-  overflow: hidden;
   transition: all 0.25s ease;
   vertical-align: top;
   height: auto;
@@ -124,64 +123,25 @@ button.disabled {
   }
 }
 
-.statusTitle {
-  position: absolute;
-  top: 12px;
-  padding-bottom: 12px;
-  border-bottom: $gray-border-2;
-  width: 100%;
-  height: 20px;
-  line-height: 20px;
-
-  h3 {
-    margin: 0;
-    padding: 0;
-    margin-left: 17px;
-    display: inline;
-    color: rgba(104, 155, 214, 1);
-  }
-
-  span {
-    display: inline-block;
-    padding-left: 10px;
-    color: rgba(0, 113, 255, 1);
-    font-size: 11px;
-    margin-left: 10px;
-    border-left: 1px solid rgba(233, 238, 244, 1);
-  }
-}
-
-.voteBox {
+.votes {
   position: relative;
   background-color: $white;
   border-right: 1px solid rgba(215, 225, 237, 1);
   border-radius: 0 15px 15px 15px;
   margin: 0 0 20px 20px;
-}
 
-.voteButtons {
-  float: right;
-  top: 10px;
-  right: 10px;
-  position: relative;
-}
+  .voteStatus {
+    height: 140px;
+    padding-top: 22px;
 
-.altVoteButtons {
-  display: inline-block;
-  margin-bottom: 8px;
-}
-
-.voteStatus {
-  height: 140px;
-  padding-top: 70px;
-
-  .voteGraph {
-    float: right;
-    text-align: left;
-    display: inline-block;
-    right: 40px;
-    top: 12px;
-    position: relative;
+    .voteGraph {
+      float: right;
+      text-align: left;
+      display: inline-block;
+      right: 40px;
+      top: 12px;
+      position: relative;
+    }
   }
 }
 
@@ -195,15 +155,46 @@ button.disabled {
   margin: 0 0 20px 20px;
 
   .predictionStatus {
-    padding-top: 45px;
+    padding-top: 8px;
   }
 }
 
-.stakeButtons {
-  float: right;
-  top: 9px;
-  right: 10px;
-  position: relative;
+.votes,
+.predictions {
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: $gray-border-2;
+    padding-top: 12px;
+    padding-bottom: 8px;
+    line-height: 20px;
+
+    .title {
+      font-weight: 300;
+      font-size: 1.17em;
+      // margin: 0;
+      // padding: 0;
+      padding-left: 17px;
+      color: rgba(104, 155, 214, 1);
+    }
+
+    .voters {
+      padding-left: 10px;
+      color: rgba(0, 113, 255, 1);
+      font-size: 11px;
+      margin-left: 10px;
+      border-left: 1px solid rgba(233, 238, 244, 1);
+      white-space: nowrap;
+    }
+
+    .voteButtons,
+    .stakeButtons {
+      flex-grow: 2;
+      text-align: right;
+      padding-right: 13px;
+    }
+  }
 }
 
 .timer {
@@ -281,6 +272,11 @@ button.disabled {
       font-size: 16px;
       font-weight: bold;
     }
+
+    .altVoteButtons {
+      display: inline-block;
+      margin-bottom: 8px;
+    }
   }
 
   button.shareButton {
@@ -310,11 +306,6 @@ button.disabled {
   }
 }
 
-iframe.embeddedVideo {
-  margin-top: 10px;
-  width: 100%;
-}
-
 @media only screen and (max-width: 425px) {
   .proposal {
     display: block;
@@ -329,7 +320,7 @@ iframe.embeddedVideo {
     }
   }
 
-  .voteBox {
+  .votes {
     margin: 0 0 0 0;
     border-radius: 0;
   }

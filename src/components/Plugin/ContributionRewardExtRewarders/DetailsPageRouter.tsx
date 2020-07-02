@@ -42,7 +42,13 @@ class DetailsPageRouter extends React.Component<IProps, IStateProps>
       return null;
     }
 
+
     const proposalState = this.props.data;
+
+    if (this.props.daoState.id !== proposalState.dao.id) {
+      return <div>The given proposal does not belong to ${this.props.daoState.name}.  Please check the browser url.</div>;
+    }
+
     /**
      * can't supply `...this.props` here because it contains a bunch of `withSubscription` properties
      * that will completely hose the crxDetailsComponent

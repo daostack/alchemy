@@ -8,99 +8,99 @@
     .rc-trainingtooltip-zoom-appear {
       opacity: 0;
       -webkit-animation-duration: 0.3s;
-              animation-duration: 0.3s;
+      animation-duration: 0.3s;
       -webkit-animation-fill-mode: both;
-              animation-fill-mode: both;
+      animation-fill-mode: both;
       -webkit-animation-timing-function: cubic-bezier(0.18, 0.89, 0.32, 1.28);
-              animation-timing-function: cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      animation-timing-function: cubic-bezier(0.18, 0.89, 0.32, 1.28);
       -webkit-animation-play-state: paused;
-              animation-play-state: paused;
+      animation-play-state: paused;
     }
     .rc-trainingtooltip-zoom-leave {
       -webkit-animation-duration: 0.3s;
-              animation-duration: 0.3s;
+      animation-duration: 0.3s;
       -webkit-animation-fill-mode: both;
-              animation-fill-mode: both;
+      animation-fill-mode: both;
       -webkit-animation-timing-function: cubic-bezier(0.6, -0.3, 0.74, 0.05);
-              animation-timing-function: cubic-bezier(0.6, -0.3, 0.74, 0.05);
+      animation-timing-function: cubic-bezier(0.6, -0.3, 0.74, 0.05);
       -webkit-animation-play-state: paused;
-              animation-play-state: paused;
+      animation-play-state: paused;
     }
     .rc-trainingtooltip-zoom-enter.rc-trainingtooltip-zoom-enter-active,
     .rc-trainingtooltip-zoom-appear.rc-trainingtooltip-zoom-appear-active {
       -webkit-animation-name: rcToolTipZoomIn;
-              animation-name: rcToolTipZoomIn;
+      animation-name: rcToolTipZoomIn;
       -webkit-animation-play-state: running;
-              animation-play-state: running;
+      animation-play-state: running;
     }
     .rc-trainingtooltip-zoom-leave.rc-trainingtooltip-zoom-leave-active {
       -webkit-animation-name: rcToolTipZoomOut;
-              animation-name: rcToolTipZoomOut;
+      animation-name: rcToolTipZoomOut;
       -webkit-animation-play-state: running;
-              animation-play-state: running;
+      animation-play-state: running;
     }
     @-webkit-keyframes rcToolTipZoomIn {
       0% {
         opacity: 0;
         -webkit-transform-origin: 50% 50%;
-                transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
         -webkit-transform: scale(0, 0);
-                transform: scale(0, 0);
+        transform: scale(0, 0);
       }
       100% {
         opacity: 1;
         -webkit-transform-origin: 50% 50%;
-                transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
         -webkit-transform: scale(1, 1);
-                transform: scale(1, 1);
+        transform: scale(1, 1);
       }
     }
     @keyframes rcToolTipZoomIn {
       0% {
         opacity: 0;
         -webkit-transform-origin: 50% 50%;
-                transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
         -webkit-transform: scale(0, 0);
-                transform: scale(0, 0);
+        transform: scale(0, 0);
       }
       100% {
         opacity: 1;
         -webkit-transform-origin: 50% 50%;
-                transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
         -webkit-transform: scale(1, 1);
-                transform: scale(1, 1);
+        transform: scale(1, 1);
       }
     }
     @-webkit-keyframes rcToolTipZoomOut {
       0% {
         opacity: 1;
         -webkit-transform-origin: 50% 50%;
-                transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
         -webkit-transform: scale(1, 1);
-                transform: scale(1, 1);
+        transform: scale(1, 1);
       }
       100% {
         opacity: 0;
         -webkit-transform-origin: 50% 50%;
-                transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
         -webkit-transform: scale(0, 0);
-                transform: scale(0, 0);
+        transform: scale(0, 0);
       }
     }
     @keyframes rcToolTipZoomOut {
       0% {
         opacity: 1;
         -webkit-transform-origin: 50% 50%;
-                transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
         -webkit-transform: scale(1, 1);
-                transform: scale(1, 1);
+        transform: scale(1, 1);
       }
       100% {
         opacity: 0;
         -webkit-transform-origin: 50% 50%;
-                transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
         -webkit-transform: scale(0, 0);
-                transform: scale(0, 0);
+        transform: scale(0, 0);
       }
     }
     .rc-trainingtooltip {
@@ -131,7 +131,7 @@
       max-width: 400px;
 
       ul {
-        margin-left: 0;
+        margin: 0;
         position: relative;
         left: -15px;
       }
@@ -158,7 +158,7 @@
       bottom: 1px;
       margin-left: -6px;
       border-width: 6px 6px 0;
-      border-top-color:  #001d35;
+      border-top-color: #001d35;
     }
     .rc-trainingtooltip-placement-top .rc-trainingtooltip-arrow {
       left: 50%;
@@ -183,7 +183,7 @@
       left: 1px;
       margin-top: -6px;
       border-width: 6px 6px 6px 0;
-      border-right-color:  #001d35;
+      border-right-color: #001d35;
     }
     .rc-trainingtooltip-placement-right .rc-trainingtooltip-arrow {
       top: 50%;

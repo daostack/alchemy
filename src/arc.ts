@@ -1,10 +1,11 @@
+import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
 import { NotificationStatus } from "reducers/notifications";
 import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
 import { settings, Settings, USE_CONTRACTINFOS_CACHE } from "./settings";
 import { IProviderInfo, getProviderInfo } from "web3modal";
 import { RetryLink } from "apollo-link-retry";
 import { Address, Arc, Web3Client, Web3Provider } from "@daostack/arc.js";
-import Web3Modal from "web3modal";
+import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
 import { Observable } from "rxjs";
 import { first } from "rxjs/operators";
 import { AsyncSendable, Block } from "ethers/providers";
@@ -271,7 +272,7 @@ export interface IEnableWalletProviderParams {
 }
 
 function inTesting(): boolean {
-  if (process.env.NODE_ENV === "development" && navigator.webdriver) {
+  if (process.env.NODE_ENV === "development" && (global as any).inAlchemyTests) {
     // in test mode, we have an unlocked ganache and we are not using any wallet
     // eslint-disable-next-line no-console
     console.log("not using any wallet, because we are in automated test");

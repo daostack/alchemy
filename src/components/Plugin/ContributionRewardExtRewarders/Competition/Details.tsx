@@ -18,8 +18,10 @@ import classNames from "classnames";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { DiscussionEmbed } from "disqus-react";
 import { connect } from "react-redux";
-import { IDAOState, ICompetitionSuggestionState, Address, CompetitionVote, IProposalOutcome,
-  CompetitionSuggestion, Proposal, ICompetitionProposalState, Plugin } from "@daostack/arc.js";
+import {
+  IDAOState, ICompetitionSuggestionState, Address, CompetitionVote, IProposalOutcome,
+  CompetitionSuggestion, Proposal, ICompetitionProposalState, Plugin
+} from "@daostack/arc.js";
 import gql from "graphql-tag";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as React from "react";
@@ -29,8 +31,7 @@ import SubmissionDetails from "./SubmissionDetails";
 import StatusBlob from "./StatusBlob";
 import * as css from "./Competitions.scss";
 import * as CompetitionActions from "./utils";
-
-const ReactMarkdown = require("react-markdown");
+import ProposalDescription from "components/Shared/ProposalDescription";
 
 type ISubscriptionState = [Array<ICompetitionSuggestionState>, Set<string>];
 
@@ -115,6 +116,10 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       if (this.state.showingSubmissionDetails !== urlSubmission) {
         this.setState({ showingSubmissionDetails: urlSubmission });
       }
+    } else if ((parts.length === 7) && (parts[6] === "createSubmission")) {
+      if (!this.state.showingCreateSubmission) {
+        await this.openNewSubmissionModal();
+      }
     }
   }
 
@@ -130,16 +135,20 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     if (!await enableWalletProvider({ showNotification })) { return; }
 
     this.setState({ showingCreateSubmission: true });
+
+    this.props.history.replace(`/dao/${this.props.daoState.address}/crx/proposal/${this.props.proposalState.id}/createSubmission`);
   }
 
   private submitNewSubmissionModal = async (options: ICreateSubmissionOptions): Promise<void> => {
     await this.props.createCompetitionSubmission(this.props.proposalState.id, options);
 
     this.setState({ showingCreateSubmission: false });
+    this.props.history.replace(`/dao/${this.props.daoState.address}/crx/proposal/${this.props.proposalState.id}`);
   }
 
   private cancelNewSubmissionModal = async (): Promise<void> => {
     this.setState({ showingCreateSubmission: false });
+    this.props.history.replace(`/dao/${this.props.daoState.address}/crx/proposal/${this.props.proposalState.id}`);
   }
 
   private openSubmissionDetailsModal = (suggestion: ICompetitionSuggestionState) => async (): Promise<void> => {
@@ -173,7 +182,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   private distributionsHtml() {
     return this.props.proposalState.rewardSplit.map((split: number, index: number) => {
       return (<div key={index} className={css.winner}>
-        <div className={css.position}>{index+1}</div>
+        <div className={css.position}>{index + 1}</div>
         <div className={css.proportion}>{split}%</div>
       </div>);
     });
@@ -204,27 +213,28 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
       const voted = votesMap.has(submission.id);
       return (
         <React.Fragment key={index}>
-          { status.overWithWinners ?
+          {status.overWithWinners ?
             <div className={classNames({
               [css.cell]: true,
               [css.selected]: isSelected(),
-              [css.winnerIcon]: true })}
-            onClick={this.openSubmissionDetailsModal(submission)}>
+              [css.winnerIcon]: true
+            })}
+              onClick={this.openSubmissionDetailsModal(submission)}>
               {submission.isWinner ? <img src="/assets/images/Icon/winner.svg"></img> : ""}
-            </div> : "" }
-          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.title]: true})}
+            </div> : ""}
+          <div className={classNames({ [css.cell]: true, [css.selected]: isSelected(), [css.title]: true })}
             onClick={this.openSubmissionDetailsModal(submission)}>
-            { submission.title || "[No title is available]" }
+            {submission.title || "[No title is available]"}
           </div>
-          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.creator]: true})}
+          <div className={classNames({ [css.cell]: true, [css.selected]: isSelected(), [css.creator]: true })}
             onClick={this.openSubmissionDetailsModal(submission)}>
-            <AccountPopup accountAddress={submission.beneficiary} daoState={daoState}/>
+            <AccountPopup accountAddress={submission.beneficiary} daoState={daoState} />
             <AccountProfileName accountAddress={submission.beneficiary} accountProfile={this.props.profiles[submission.beneficiary]} daoAvatarAddress={daoState.address} detailView={false} />
           </div>
-          <div className={classNames({[css.cell]: true, [css.selected]: isSelected(), [css.votingSection]: true})}>
+          <div className={classNames({ [css.cell]: true, [css.selected]: isSelected(), [css.votingSection]: true })}>
             <div className={css.votes}
               onClick={this.openSubmissionDetailsModal(submission)}>
-              { formatTokens(submission.totalVotes) } Rep{/*<Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol/>*/ }
+              {formatTokens(submission.totalVotes)} Rep{/*<Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={submission.totalVotes} hideSymbol/>*/}
             </div>
             <div className={css.votedUp}
               onClick={this.openSubmissionDetailsModal(submission)}>
@@ -256,10 +266,10 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     const hasSubmissions = !!numSubmissions;
 
     const submissionsAreDisabled = notStarted ||
-          // note that winningOutcome is the *current* state, not necessarily the *final* outcome
-          (!proposalState.executedAt || (proposalState.winningOutcome !== IProposalOutcome.Pass))
-          || (isAddress(competition.admin) && (this.props.currentAccountAddress !== competition.admin))
-          ;
+      // note that winningOutcome is the *current* state, not necessarily the *final* outcome
+      (!proposalState.executedAt || (proposalState.winningOutcome !== IProposalOutcome.Pass))
+      || (isAddress(competition.admin) && (this.props.currentAccountAddress !== competition.admin))
+      ;
 
     this.disqusConfig.title = proposalState.title;
     this.disqusConfig.url = process.env.BASE_URL + this.props.history.location.pathname;
@@ -275,7 +285,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           <div className={css.header}>
             <StatusBlob competition={competition}></StatusBlob>
             <div className={css.gotoProposal}><Link to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>Go to Proposal&nbsp;&gt;</Link></div>
-            { status.now.isBefore(status.competition.suggestionsEndTime) ?
+            {status.now.isBefore(status.competition.suggestionsEndTime) ?
               <div className={css.newSubmission}>
                 {
                   <Tooltip overlay={
@@ -285,7 +295,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
                           "Create a submission"
                   }
                   >
-                    <a className={classNames({[css.blueButton]: true, [css.disabled]: submissionsAreDisabled})}
+                    <a className={classNames({ [css.blueButton]: true, [css.disabled]: submissionsAreDisabled })}
                       href="#!"
                       onClick={submissionsAreDisabled ? undefined : this.openNewSubmissionModal}
                       data-test-id="createSuggestion"
@@ -304,16 +314,12 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         </div>
         <div className={css.middleSection}>
           <div className={css.leftSection}>
-            { tags && tags.length ? <div className={css.tagsContainer}>
+            {tags && tags.length ? <div className={css.tagsContainer}>
               <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
-            </div> : "" }
+            </div> : ""}
 
-            <div className={classNames({[css.description]: true, [css.hasSubmissions]: hasSubmissions })}>
-              <ReactMarkdown source={proposalState.description}
-                renderers={{link: (props: { href: string; children: React.ReactNode }) => {
-                  return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
-                }}}
-              />
+            <div className={classNames({ [css.description]: true, [css.hasSubmissions]: hasSubmissions })}>
+              <ProposalDescription description={proposalState.description} />
             </div>
           </div>
           <div className={css.rightSection}>
@@ -326,7 +332,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
               </div>
             </div>
             <div className={css.distribution}>
-              { this.distributionsHtml() }
+              {this.distributionsHtml()}
             </div>
             <div className={css.allowedVote}>Up to {competition.numberOfVotesPerVoter} vote(s) allowed per account</div>
             <div className={css.periods}>
@@ -354,21 +360,21 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
           </div>
         </div>
 
-        { hasSubmissions ?
+        {hasSubmissions ?
           <div className={css.submissions}>
             <div className={css.heading}>{numSubmissions}&nbsp;Submissions</div>
-            <div className={classNames({[css.list]: true, [css.overWithWinners]: status.overWithWinners})}>
+            <div className={classNames({ [css.list]: true, [css.overWithWinners]: status.overWithWinners })}>
               {this.submissionsHtml()}
             </div>
           </div> : ""
         }
 
-        { ((inVoting && !voting) || (isOver && !overWithWinners)) ? this.noWinnersHtml() : "" }
+        {((inVoting && !voting) || (isOver && !overWithWinners)) ? this.noWinnersHtml() : ""}
 
         <div className={css.discussionContainer}>
           <div className={css.title}>Discussion</div>
           <div className={css.disqus}>
-            <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
+            <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
           </div>
         </div>
 
@@ -380,7 +386,8 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             proposalState={proposalState}
             daoState={daoState}
             handleCancel={this.cancelNewSubmissionModal}
-            handleSubmit={this.submitNewSubmissionModal}></CreateSubmission>
+            handleSubmit={this.submitNewSubmissionModal}
+            currentAccountAddress={this.props.currentAccountAddress}></CreateSubmission>
         </Modal> : ""
       }
 
@@ -388,12 +395,12 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         <Modal onBackdropClick={this.closeSubmissionDetailsModal}
           backdropClassName={css.submissionsModalBackdrop}>
           <SubmissionDetails
-            match= {this.props.match}
-            history= {this.props.history}
-            location = {this.props.location}
-            staticContext = {this.props.staticContext}
+            match={this.props.match}
+            history={this.props.history}
+            location={this.props.location}
+            staticContext={this.props.staticContext}
             currentAccountAddress={this.props.currentAccountAddress}
-            status= {this.state.status}
+            status={this.state.status}
             suggestionId={this.state.showingSubmissionDetails.id}
             proposalState={proposalState}
             daoState={daoState}
@@ -412,9 +419,9 @@ const CompetitionDetailsConnected = connect(mapStateToProps, mapDispatchToProps)
 export default withSubscription({
   wrappedComponent: CompetitionDetailsConnected,
   loadingComponent: null,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["currentAccountAddress"],
-  createObservable: async (props: IExternalProps & IExternalStateProps ) => {
+  createObservable: async (props: IExternalProps & IExternalStateProps) => {
 
     // Ensure the plugin's state is hydrated
     await props.proposalState.plugin.entity.fetchState();

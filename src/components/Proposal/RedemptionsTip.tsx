@@ -2,7 +2,7 @@ import { Address, IDAOState, IProposalOutcome, AnyProposal, IContributionRewardP
 import Reputation from "components/Account/Reputation";
 import { baseTokenName, formatTokens, fromWei, genName, tokenDecimals, tokenSymbol, AccountClaimableRewardsType } from "lib/util";
 import * as React from "react";
-import * as css from "components/Shared/PreTransactionModal.scss";
+import * as css from "./RedemptionsTip.scss";
 
 interface IProps {
   canRewardNone: boolean;

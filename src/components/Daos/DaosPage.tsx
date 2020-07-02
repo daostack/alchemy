@@ -8,16 +8,17 @@ import { createDaoStateFromQuery } from "lib/daoHelpers";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import * as InfiniteScroll from "react-infinite-scroll-component";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
-import * as Sticky from "react-stickynode";
 import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { combineLatest, of } from "rxjs";
 import { first } from "rxjs/operators";
-
+import cn from "classnames";
+import { showSimpleMessage } from "lib/util";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
+import BHubReg from "../Buidlhub/Registration";
 
 type SubscriptionData = [DAO[], DAO[], DAO[]];
 
@@ -67,11 +68,22 @@ class DaosPage extends React.Component<IProps, IState> {
     window.removeEventListener("resize", this.updateWindowDimensions);
   }
 
+
   private updateWindowDimensions = (_e: any) => {
     const nowMobile = window.innerWidth <= 550;
     if (nowMobile !== this.state.isMobile) {
       this.setState({ isMobile: nowMobile });
     }
+  }
+
+  private registerForMonitoring = () => {
+    showSimpleMessage(
+      {
+        title: "BUIDLHub Proposal Monitoring",
+        body: <BHubReg />,
+        hideFooter: true,
+      }
+    );
   }
 
   onSearchChange = async (e: any) => {
@@ -151,52 +163,57 @@ class DaosPage extends React.Component<IProps, IState> {
       <div className={css.wrapper}>
         <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
 
-        <div className={css.searchBox}>
-          <input type="text" name="search" placeholder="Search DAOs" onChange={this.onSearchChange} value={this.state.search} />
+        <div className={css.paddingTop}>&nbsp;</div>
+
+        <div className={css.topRow}>
+          <div className={css.searchBox}>
+            <input type="text" name="search" placeholder="Search DAOs" onChange={this.onSearchChange} value={this.state.search} />
+          </div>
+
+          <div className={css.createDaoButton}>
+            <Link to={"/daos/create"}>
+              Create A DAO
+            </Link>
+          </div>
         </div>
 
-        <Link to={"/daos/create"} className={css.createDaoButton}>
-          Create A DAO
-        </Link>
-
-        {yourDAOs.length ? <React.Fragment>
-          <Sticky enabled top={this.state.isMobile ? 75 : 50} innerZ={10000}>
+        <div className={css.yourDaos}>
+          {yourDAOs.length ? <React.Fragment>
             <div className={css.headerWrapper}>
-              <div className={css.headerTitle + " clearfix"}>
-                <h2 data-test-id="header-all-daos">Your DAOs</h2>
+              <div className={css.headerTitle}>
+                <h2 data-test-id="header-all-daos">
+                  Your DAOs
+                  <i className={cn("fa fa-envelope", css.emailIcon)} onClick={this.registerForMonitoring}/>
+                </h2>
               </div>
             </div>
-          </Sticky>
 
-          <div className={css.daoList}>
-            {yourDaoNodes}
-          </div>
-        </React.Fragment>
-          : ""
-        }
+            <div className={css.daoList}>
+              {yourDaoNodes}
+            </div>
+          </React.Fragment>
+            : ""
+          }
+        </div>
 
-        <Sticky enabled top={this.state.isMobile ? 75 : 50} innerZ={10000}>
+        <div className={css.otherDaos}>
           <div className={css.headerWrapper}>
-            <div className={css.headerTitle + " clearfix"}>
+            <div className={css.headerTitle}>
               <h2 data-test-id="header-all-daos">Other DAOs</h2>
             </div>
           </div>
-        </Sticky>
-        <div className={css.daoList}>
-          {otherDaoNodes ?
-            <InfiniteScroll
-              dataLength={otherDaoNodes.length} // This is important field to render the next data
-              next={fetchMore}
-              hasMore
-              loader=""
-              endMessage={
-                <p style={{textAlign: "center"}}>
-                  <b>&mdash;</b>
-                </p>
-              }
-            >
-              {otherDaoNodes}
-            </InfiniteScroll> : "None"}
+          <div className={css.daoList}>
+            {otherDaoNodes ?
+              <InfiniteScroll
+                dataLength={otherDaoNodes.length} // This is important field to render the next data
+                next={fetchMore}
+                hasMore
+                loader=""
+                endMessage={null}
+              >
+                {otherDaoNodes}
+              </InfiniteScroll> : "None"}
+          </div>
         </div>
       </div>
     );

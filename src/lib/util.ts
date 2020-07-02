@@ -9,8 +9,8 @@ import {
 } from "@daostack/arc.js";
 import * as utils from "@daostack/arc.js";
 import { JsonRpcProvider } from "ethers/providers";
-import { of } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { of, Observable, Observer } from "rxjs";
+import { catchError, map } from "rxjs/operators";
 
 import BN = require("bn.js");
 /**
@@ -21,6 +21,7 @@ import * as moment from "moment-timezone";
 import { getArc } from "../arc";
 import { Signer } from "ethers";
 import { promisify } from "util";
+import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
 
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
@@ -71,10 +72,10 @@ export const truncateWithEllipses = (str: string, length: number): string => {
   }
 };
 
-export function humanProposalTitle(proposal: IProposalState, truncateToLength=0) {
+export function humanProposalTitle(proposal: IProposalState, truncateToLength = 0) {
   const title = proposal.title ||
     "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
-  return truncateToLength ? truncateWithEllipses(title, truncateToLength): title;
+  return truncateToLength ? truncateWithEllipses(title, truncateToLength) : title;
 }
 
 // Convert a value to its base unit based on the number of decimals passed in (i.e. WEI if 18 decimals)
@@ -91,7 +92,7 @@ export function toBaseUnit(value: string, decimals: number) {
   if (value === ".") {
     throw new Error(
       `Invalid value ${value} cannot be converted to`
-    + ` base unit with ${decimals} decimals.`);
+      + ` base unit with ${decimals} decimals.`);
   }
 
   // Split it into a whole and fractional part
@@ -145,7 +146,7 @@ export function toWei(amount: number): BN {
   return utils.toWei(amount.toFixed(18).toString());
 }
 
-export type Networks = "main"|"rinkeby"|"ganache"|"xdai"|"kovan";
+export type Networks = "main" | "rinkeby" | "ganache" | "xdai" | "kovan";
 
 /**
  * Get the network id to which the current build expects connect.
@@ -158,15 +159,15 @@ export function targetedNetwork(): Networks {
     case "private": {
       return "ganache";
     }
-    case "rinkeby" : {
+    case "rinkeby": {
       return "rinkeby";
     }
-    case "kovan" : {
+    case "kovan": {
       return "kovan";
     }
     case "main":
     case "mainnet":
-    case undefined : {
+    case undefined: {
       return "main";
     }
     case "xdai":
@@ -186,17 +187,19 @@ export function genName() {
 }
 
 export function supportedTokens() {
-  return { [getArc().GENToken().address]:  {
-    decimals: 18,
-    name: "DAOstack GEN",
-    symbol: genName(),
-  }, ...tokens[targetedNetwork()]["tokens"]};
+  return {
+    [getArc().GENToken().address]: {
+      decimals: 18,
+      name: "DAOstack GEN",
+      symbol: genName(),
+    }, ...tokens[targetedNetwork()]["tokens"],
+  };
 }
 
-export function formatTokens(amountWei: BN|null, symbol?: string, decimals = 18): string {
+export function formatTokens(amountWei: BN | null, symbol?: string, decimals = 18): string {
 
   if (amountWei === null) {
-    return `N/A ${symbol ? symbol: ""}`;
+    return `N/A ${symbol ? symbol : ""}`;
   }
 
   const negative = amountWei.lt(new BN(0));
@@ -208,8 +211,7 @@ export function formatTokens(amountWei: BN|null, symbol?: string, decimals = 18)
 
   const PRECISION = 2; // number of digits "behind the dot"
   const PRECISIONPOWER = 10 ** PRECISION;
-  const toLocaleString = (amount: number): string =>
-  {
+  const toLocaleString = (amount: number): string => {
     return amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: PRECISION });
   };
 
@@ -360,6 +362,8 @@ export function linkToEtherScan(address: Address) {
     case "42":
       prefix = "kovan.";
       break;
+    case "100": // xdai
+      return `https://blockscout.com/poa/xdai/${address.length > 42 ? "tx" : "address"}/${address}`;
   }
   return `https://${prefix}etherscan.io/address/${address}`;
 }
@@ -426,7 +430,7 @@ export function getCRRewards(reward: IContributionRewardProposalState, daoBalanc
   if (
     reward.ethReward &&
     !reward.ethReward.isZero()
-    && (daoBalances["eth"] === undefined || daoBalances["eth"]=== null|| daoBalances["eth"].gte(reward.ethReward))
+    && (daoBalances["eth"] === undefined || daoBalances["eth"] === null || daoBalances["eth"].gte(reward.ethReward))
     && reward.alreadyRedeemedEthPeriods < reward.periods
   ) {
     result["eth"] = reward.ethReward;
@@ -509,14 +513,14 @@ export function ethErrorHandler() {
  * @param value The value to remove
  */
 export function arrayRemove(arr: any[], value: any) {
-  return arr.filter(function(ele){
+  return arr.filter(function (ele) {
     return ele !== value;
   });
 }
 
 const localTimezone = moment.tz.guess();
 
-export function getDateWithTimezone(date: Date|moment.Moment): moment.Moment {
+export function getDateWithTimezone(date: Date | moment.Moment): moment.Moment {
   return moment.tz(date.toISOString(), localTimezone);
 }
 
@@ -526,7 +530,7 @@ const dateFormat = `MMM DD, YYYY HH:mm ${tzFormat}`;
  * looks like: "17:30 EST (-05:00) Dec 31, 2019"
  * @param date
  */
-export function formatFriendlyDateForLocalTimezone(date: Date|moment.Moment): string {
+export function formatFriendlyDateForLocalTimezone(date: Date | moment.Moment): string {
   return getDateWithTimezone(date).format(dateFormat);
 }
 /**
@@ -549,18 +553,173 @@ export function ensureHttps(url: string) {
   return url;
 }
 
-export function inTesting(): boolean {
-  return (process.env.NODE_ENV === "development" && navigator.webdriver);
-}
-
-export function isAddress(address: Address): boolean {
+/**
+ * Must be an address and may or may not be 0x0 depending on allowNulls
+ * @param address
+ * @param allowNulls allow addresses like 0x0 or 0x00000....
+ */
+export function isAddress(address: Address, allowNulls = false): boolean {
   let result = false;
+
   try {
     utils.isAddress(address);
-    result = true;
-  } catch (e) {
-    console.log(e);
-  }
+    result = (allowNulls || (Number(address) > 0));
+  // eslint-disable-next-line no-empty
+  } catch { }
 
   return result;
+}
+
+export interface ICountdown {
+  days: number;
+  hours: number;
+  min: number;
+  seconds: number;
+  complete: boolean;
+}
+
+export function calculateCountdown(endDate: Date | moment.Moment): ICountdown {
+  const endDateMoment = moment(endDate);
+  const now = new Date();
+
+  const diff = endDateMoment.diff(now);
+
+  if (diff <= 0) {
+    return {
+      days: 0,
+      hours: 0,
+      min: 0,
+      seconds: 0,
+      complete: true,
+    };
+  }
+
+  const duration = moment.duration(diff);
+  const timeLeft = {
+    days: Math.floor(duration.asDays()),
+    hours: duration.hours(),
+    min: duration.minutes(),
+    seconds: duration.seconds(),
+    complete: false,
+  };
+
+  return timeLeft;
+}
+
+export let showSimpleMessage: (options: ISimpleMessagePopupProps) => void;
+
+interface IInitializeOptions {
+  showSimpleMessage: (options: ISimpleMessagePopupProps) => void;
+}
+
+/**
+ * initialize this service
+ * @param options
+ */
+export function initializeUtils(options: IInitializeOptions) {
+  showSimpleMessage = options.showSimpleMessage;
+}
+/**
+  * Add spaces before capital letters to approximate a human-readable title.
+  * Note if the name already contains spaces, they will be left alone.
+  * If there are adjacent uppercase characters, they will not be split, which
+  * sometimes will be correct (like "ID") and sometimes not (like "AScheme").
+  * (The previous version of this, `/([A-Z])/g, ' $1'`, would split adjacent uppercase characters,
+  * which when wrong would be more wrong than not splitting (like "I D").)
+  **/
+export const splitCamelCase = (str: string): string => `${str[0].toUpperCase()}${str.slice(1).replace(/([a-z])([A-Z])/g, "$1 $2")}`;
+
+interface IObservedAccounts {
+  [address: string]: {
+    observable?: Observable <BN>;
+    observer?: Observer<BN>;
+    lastBalance?: string;
+    subscriptionsCount: number;
+  };
+}
+
+const ethBalanceObservedAccounts: IObservedAccounts = {};
+let ethBalancePollingInterval: any | undefined = undefined;
+
+export function ethBalance(address: Address): Observable<BN> {
+
+  const arc = getArc();
+
+  if (targetedNetwork() !== "xdai") {
+    return arc.ethBalance(address);
+  }
+
+  /**
+   * In xdai we do not yet have the ability to create web3 subscriptions,
+   * ie, there is no support for secure websockets (wss), so instead we poll
+   * here.
+   *
+   * With a few minor enhancements, this code is virtually the same logic
+   * as arc.js uses when it creates a wss subscription to efficiently watch
+   * for changes in eth balances.
+   */
+  if (!ethBalanceObservedAccounts[address]) {
+    ethBalanceObservedAccounts[address] = {
+      subscriptionsCount: 1,
+    };
+  }
+  /**
+   * don't poll more than once for any given address
+   */
+  if (ethBalanceObservedAccounts[address].observable) {
+    ++ethBalanceObservedAccounts[address].subscriptionsCount;
+    return ethBalanceObservedAccounts[address].observable as Observable<BN>;
+  }
+
+  const observable = Observable.create(async (observer: Observer<BN>) => {
+
+    ethBalanceObservedAccounts[address].observer = observer;
+
+    await arc.web3.eth.getBalance(address)
+      .then((currentBalance: string) => {
+        const accInfo = ethBalanceObservedAccounts[address];
+        (accInfo.observer as Observer<BN>).next(new BN(currentBalance));
+        accInfo.lastBalance = currentBalance;
+      })
+      .catch((err: Error) => observer.error(err));
+
+    if (!ethBalancePollingInterval) {
+      ethBalancePollingInterval = setInterval(async () => {
+        Object.keys(ethBalanceObservedAccounts).forEach(async (addr) => {
+          const accInfo = ethBalanceObservedAccounts[addr];
+          try {
+            const balance = await arc.web3.eth.getBalance(addr);
+            if (balance !== accInfo.lastBalance) {
+              (accInfo.observer as Observer<BN>).next(new BN(balance));
+              accInfo.lastBalance = balance;
+            }
+          } catch (err) {
+            observer.error(err);
+          }
+        });
+      }, 15000); // poll every 15 seconds
+    }
+    // unsubscribe
+    return () => {
+      /**
+       * What I find is that `unsubscribe` is never called on the observable.
+       * This might be a flaw in `withSubscription` which was designed to guarantee
+       * that `unsubscribe` would always be called on its observables.
+       * Or it may be a flaw in how we are using `combineLatest`.
+       * Either way, it is a memory/resource leak.
+       */
+      --ethBalanceObservedAccounts[address].subscriptionsCount;
+      if (ethBalanceObservedAccounts[address].subscriptionsCount <= 0) {
+        delete ethBalanceObservedAccounts[address];
+      }
+      if (Object.keys(ethBalanceObservedAccounts).length === 0 && ethBalancePollingInterval) {
+        clearTimeout(ethBalancePollingInterval);
+        ethBalancePollingInterval = undefined;
+      }
+    };
+  });
+
+  ethBalanceObservedAccounts[address].observable = observable;
+
+  return observable.pipe(map((item: any) => new BN(item)));
 }

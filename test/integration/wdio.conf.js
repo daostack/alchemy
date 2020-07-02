@@ -124,7 +124,7 @@ exports.config = {
       chrome: {
         // check for more recent versions of chrome driver here:
         // https://chromedriver.storage.googleapis.com/index.html
-        version: "80.0.3987.16",
+        version: "83.0.4103.39",
         arch: process.arch,
         baseURL: "https://chromedriver.storage.googleapis.com",
       },
@@ -139,7 +139,7 @@ exports.config = {
       chrome: {
         // check for more recent versions of chrome driver here:
         // https://chromedriver.storage.googleapis.com/index.html
-        version: "80.0.3987.16",
+        version: "83.0.4103.39",
         arch: process.arch,
         baseURL: "https://chromedriver.storage.googleapis.com",
       },
@@ -199,6 +199,7 @@ exports.config = {
      * @param {Array.<String>} specs List of spec file paths that are to be run
      */
   before: function (_capabilities, _specs) {
+    global.inAlchemyTests = true;
     require("ts-node/register");
   },
 

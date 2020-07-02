@@ -21,8 +21,7 @@ While anyone can propose and predict, only people who hold reputation (voting po
 
 ## Dependencies:
 * [NVM](https://github.com/creationix/nvm#installation) can be helpful to manage different versions of node
-* [NodeJS 9.4 or greater + NPM](https://github.com/creationix/nvm#usage)
-* You will  need [alchemy-server](https://github.com/daostack/alchemy-server) running locally for the app to function
+* [NodeJS 12.6.2 or greater + NPM](https://github.com/creationix/nvm#usage)
 
 ## Installation
 
@@ -44,7 +43,7 @@ you can recreate the docker environment by installing an starting all [services 
 The easiest way to start developing is to work with docker.
 Here is a quick setup; there are more detailed instructions in [here](./docs/development.md).
 
-After you have installed docker, run the following command to spin up ganache (with the migrated contracts), the caching server and the alchemy server:
+After you have installed docker, run the following command to spin up ganache (with the migrated contracts), the graph-node server:
 ```sh
 docker-compose up graph-node
 ```
@@ -68,3 +67,7 @@ See [working with docker](./docs/docker.md) for details and troubleshooting.
 1. If you need more than one test account you can also import these private keys: `0x6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1`, `0x6370fd033278c143179d81c5526140625662b8daa446c22ee2d73db3707e620c` and `0x646f1ce2fdad0e6deeeb5c7e8e5543bdde65e86029e2fd9fc169899c440a7913`. Make sure to give them all differnent names.
 1. Make sure that Metamask is connected to `127.0.0.1:8545` (choose from the "Networks" picklist in Metamask)
 1. Go to http://127.0.0.1:3000 to load Alchemy
+
+## Adding custom landing page content for your DAO
+
+Just submit a PR to https://github.com/daostack/alchemy with your desired changes in src/customDaoInfo.tsx.  You may supply plain text or HTML inside of parentheses.  The HTML may contain React.js components, most notably `Link` which will cleanly navigate to pages within Alchemy.

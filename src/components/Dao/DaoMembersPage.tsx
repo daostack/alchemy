@@ -7,7 +7,7 @@ import Analytics from "lib/analytics";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import * as InfiniteScroll from "react-infinite-scroll-component";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
@@ -94,11 +94,7 @@ class DaoMembersPage extends React.Component<IProps, null> {
           next={this.props.fetchMore}
           hasMore={members.length < daoState.memberCount}
           loader={<h4>Loading...</h4>}
-          endMessage={
-            <p style={{textAlign: "center"}}>
-              <b>&mdash;</b>
-            </p>
-          }
+          endMessage={null}
         >
           {membersHTML}
         </InfiniteScroll>

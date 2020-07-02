@@ -24,7 +24,7 @@ const ProposalPluginCard = (props: IProps) => {
 
   const boostedProposals = data;
 
-  const numProposals = pluginState.numberOfQueuedProposals + pluginState.numberOfBoostedProposals + pluginState.numberOfPreBoostedProposals;
+  const numProposals = pluginState.numberOfPreBoostedProposals + pluginState.numberOfBoostedProposals + pluginState.numberOfQueuedProposals;
   const proposals = boostedProposals.slice(0, 3);
 
   const proposalsHTML = proposals.map((proposal: AnyProposal) => <SubscribedProposalDetail key={proposal.id} proposal={proposal} daoState={daoState} />);

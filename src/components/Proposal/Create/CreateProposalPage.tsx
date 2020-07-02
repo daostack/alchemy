@@ -24,6 +24,7 @@ import { of } from "rxjs";
 type IExternalProps = RouteComponentProps<any>;
 
 interface IExternalStateProps {
+  currentAccountAddress: Address;
   daoAvatarAddress: string;
   history: History;
   pluginId: string;
@@ -38,6 +39,7 @@ type IProps = IExternalProps & IExternalStateProps & ISubscriptionProps<AnyPlugi
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
   return {
     ...ownProps,
+    currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
     pluginId: ownProps.match.params.pluginId,
   };
@@ -97,12 +99,13 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
   }
 
   public render(): RenderOutput {
-    const { daoAvatarAddress } = this.props;
+    const { daoAvatarAddress, currentAccountAddress } = this.props;
     const plugin = this.props.data;
     const pluginState = plugin.coreState;
 
     let createPluginComponent = <div />;
     const props = {
+      currentAccountAddress,
       daoAvatarAddress,
       handleClose: this.doClose,
       plugin,
