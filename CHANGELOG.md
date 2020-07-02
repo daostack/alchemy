@@ -4,6 +4,18 @@
     - SchemeFactory aka Plugin Manager support
       - Easily add, edit, and remove plugins from your DAO all within Alchemy
       
+## 0.10.12
+  - Features Added
+    - added custom landing page data for Venus Project
+    - made it easier for anyone to submit a PR to create their own DAO custom landing page
+    - added support for awarding the GEM token
+
+  - Bugs Fixed
+    - DAO and account balances are now computed correctly on xDAI
+    - contract and account etherscan links now direct to blockscout, for xDAI
+    - enabling predictions now works on xDAI
+    - fixed several visual bugs
+
 ## 0.10.11
   - Features Added
     - added the ability to receive email notifications, per DAO, when proposals are created
