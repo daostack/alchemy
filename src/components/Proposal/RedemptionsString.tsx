@@ -46,7 +46,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
     const contributionReward = proposal.coreState as IContributionRewardProposalState;
 
     if ((proposalState.name === "ContributionReward") && contributionReward && currentAccountAddress === contributionReward.beneficiary) {
-      const rewards = getCRRewards(proposal);
+      const rewards = getCRRewards(contributionReward);
       if (rewards.ethReward && rewards.ethReward.gt(zero)) {
         rewardComponents.push(formatTokens(rewards.ethReward, baseTokenName()));
       }

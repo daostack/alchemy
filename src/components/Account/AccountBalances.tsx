@@ -1,7 +1,5 @@
 import { Address, IMemberState, IDAOState, Member } from "@daostack/arc.js";
 import { baseTokenName, ethErrorHandler, genName, ethBalance } from "lib/util";
-import { getArc } from "arc";
-
 import BN = require("bn.js");
 import AccountBalance from "components/Account/AccountBalance";
 import Reputation from "components/Account/Reputation";

@@ -1,4 +1,4 @@
-import { Address, AnyProposal, DAO, IProposalState, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, Member, IContributionRewardProposalState } from "@daostack/arc.js";
+import { Address, AnyProposal, IProposalState, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, Member, IContributionRewardProposalState } from "@daostack/arc.js";
 import { getArc } from "arc";
 import { ethErrorHandler, ethBalance } from "lib/util";
 
@@ -139,7 +139,6 @@ export default withSubscription({
   createObservable: async (props) => {
     const arc = getArc();
     const { currentAccountAddress, daoState, proposalId } = props;
-    const arcDao = new DAO(arc, daoState);
     const proposal = await Proposal.create(arc, proposalId);
     await proposal.fetchState();
     const spender = proposal ? proposal.coreState.votingMachine : "0x0000000000000000000000000000000000000000";

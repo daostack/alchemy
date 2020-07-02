@@ -124,17 +124,17 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       stakes,
     } = this.props;
 
-    if (daoState.id !== proposal.dao.id) {
+    const proposalState = proposal.coreState;
+
+    if (daoState.id !== proposalState.dao.id) {
       return <div>`The given proposal does not belong to ${daoState.name}. Please check the browser url.`</div>;
     }
-
-    const proposalState = proposal.coreState;
 
     const tags = proposalState.tags;
 
     const url = ensureHttps(proposal.coreState.url);
 
-    this.disqusConfig.title = this.props.proposal.title;
+    this.disqusConfig.title = proposalState.title;
     this.disqusConfig.url = process.env.BASE_URL + this.props.location.pathname;
     this.disqusConfig.identifier = this.props.proposalId;
 
@@ -195,7 +195,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.description}>
-              <ProposalDescription description={proposal.description} />
+              <ProposalDescription description={proposalState.description} />
             </div>
 
             {url ?

@@ -128,7 +128,7 @@ export default class PluginInfo extends React.Component<IProps, null> {
 
             <div>Can Register Plugins?</div>
             <div>
-              {plugin.canRegisterSchemes ? "Yes" : "No"}
+              {plugin.canRegisterPlugins ? "Yes" : "No"}
             </div>
             <div>Can Upgrade Controller?</div>
             <div>

@@ -89,7 +89,7 @@ class VotersModal extends React.Component<IProps, null> {
      * See: https://github.com/3box/3box-js/issues/649
      */
     for (const vote of votes) {
-      const voterAddress = vote.staticState.voter;
+      const voterAddress = vote.coreState.voter;
       if (!profiles[voterAddress])
       /**
        * intentionally not awaiting this because it takes too long when there are a lot of profiles to download

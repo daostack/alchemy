@@ -105,7 +105,7 @@ class VoteButtons extends React.Component<IProps, IState> {
                             (proposalState.stage === IProposalStage.Boosted && expired) ||
                             (proposalState.stage === IProposalStage.QuietEndingPeriod && expired) ||
                             (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ||
-                            (currentAccountState && (proposal.createdAt < currentAccountState.createdAt) &&
+                            (currentAccountState && (proposalState.createdAt < currentAccountState.createdAt) &&
                             //this is a workaround till https://github.com/daostack/subgraph/issues/548
                             (targetedNetwork() !== "ganache")) ||
                             currentVote === IProposalOutcome.Pass ||

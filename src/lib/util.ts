@@ -11,7 +11,6 @@ import * as utils from "@daostack/arc.js";
 import { JsonRpcProvider } from "ethers/providers";
 import { of, Observable, Observer } from "rxjs";
 import { catchError, map } from "rxjs/operators";
-
 import BN = require("bn.js");
 /**
  * gotta load moment in order to use moment-timezone directly
@@ -20,6 +19,7 @@ import "moment";
 import * as moment from "moment-timezone";
 import { getArc } from "../arc";
 import { Signer } from "ethers";
+import { BigNumber } from "ethers/utils";
 import { promisify } from "util";
 import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
 
@@ -631,9 +631,9 @@ export const splitCamelCase = (str: string): string => `${str[0].toUpperCase()}$
 
 interface IObservedAccounts {
   [address: string]: {
-    observable?: Observable <BN>;
+    observable?: Observable<BN>;
     observer?: Observer<BN>;
-    lastBalance?: string;
+    lastBalance?: BigNumber;
     subscriptionsCount: number;
   };
 }
@@ -675,10 +675,10 @@ export function ethBalance(address: Address): Observable<BN> {
 
     ethBalanceObservedAccounts[address].observer = observer;
 
-    await arc.web3.eth.getBalance(address)
-      .then((currentBalance: string) => {
+    await arc.web3.getBalance(address)
+      .then((currentBalance: BigNumber) => {
         const accInfo = ethBalanceObservedAccounts[address];
-        (accInfo.observer as Observer<BN>).next(new BN(currentBalance));
+        (accInfo.observer as Observer<BN>).next(new BN(currentBalance.toString()));
         accInfo.lastBalance = currentBalance;
       })
       .catch((err: Error) => observer.error(err));
@@ -688,9 +688,9 @@ export function ethBalance(address: Address): Observable<BN> {
         Object.keys(ethBalanceObservedAccounts).forEach(async (addr) => {
           const accInfo = ethBalanceObservedAccounts[addr];
           try {
-            const balance = await arc.web3.eth.getBalance(addr);
-            if (balance !== accInfo.lastBalance) {
-              (accInfo.observer as Observer<BN>).next(new BN(balance));
+            const balance = await arc.web3.getBalance(addr);
+            if (!balance.eq(accInfo.lastBalance)) {
+              (accInfo.observer as Observer<BN>).next(new BN(balance.toString()));
               accInfo.lastBalance = balance;
             }
           } catch (err) {

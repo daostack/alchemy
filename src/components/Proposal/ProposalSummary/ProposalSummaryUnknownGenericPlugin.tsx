@@ -24,7 +24,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
     const { proposalState, detailView, transactionModal } = this.props;
-    const sendsETH = proposal.genericScheme.value.gtn(0);
+    const sendsETH = proposalState.value.gtn(0);
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
       [css.transactionModal]: transactionModal,

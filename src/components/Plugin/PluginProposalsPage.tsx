@@ -1,6 +1,6 @@
 import { History } from "history";
 import { Address, DAO, IDAOState, IProposalStage, IPluginState, AnyProposal, Vote, Reward, Stake, Proposal, Plugin, Proposals } from "@daostack/arc.js";
-import { enableWalletProvider, getArc } from "arc";
+import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
@@ -50,22 +50,22 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type SubscriptionData = [Proposal[], Proposal[]];
+type SubscriptionData = [AnyProposal[], AnyProposal[]];
 type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
 
-type PreboostedProposalsSubscriptionData = Proposal[];
+type PreboostedProposalsSubscriptionData = AnyProposal[];
 type IPropsPreBoosted = {
   currentAccountAddress: Address;
   pluginState: IPluginState;
   daoState: IDAOState;
-} & ISubscriptionProps<Proposal[]>;
+} & ISubscriptionProps<AnyProposal[]>;
 
-type RegularProposalsSubscriptionData = Proposal[];
+type RegularProposalsSubscriptionData = AnyProposal[];
 type IPropsQueued = {
   currentAccountAddress: Address;
   pluginState: IPluginState;
   daoState: IDAOState;
-} & ISubscriptionProps<Proposal[]>;
+} & ISubscriptionProps<AnyProposal[]>;
 
 
 const mapDispatchToProps = {
@@ -76,12 +76,12 @@ class PluginProposalsPreboosted extends React.Component<IPropsPreBoosted, null> 
 
   public render(): RenderOutput {
     const proposalsPreBoosted = this.props.data;
-    const { currentAccountAddress, daoState, fetchMore, scheme: pluginState } = this.props;
+    const { currentAccountAddress, daoState, fetchMore, pluginState } = this.props;
     let proposalCount = 0;
 
     const preBoostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
-        {proposalsPreBoosted.map((proposal: Proposal): any => (
+        {proposalsPreBoosted.map((proposal: AnyProposal): any => (
           <Fade key={"proposal_" + proposal.id}>
             <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
           </Fade>
@@ -137,7 +137,7 @@ const SubscribedProposalsPreBoosted = withSubscription<IPropsPreBoosted, Preboos
   },
 
   createObservable: async (props: IPropsPreBoosted) => {
-    const dao = props.daoState.dao;
+    const dao = new DAO(getArc(), props.daoState.id);
     const pluginId = props.pluginState.id;
 
     // the list of preboosted proposals
@@ -150,7 +150,7 @@ const SubscribedProposalsPreBoosted = withSubscription<IPropsPreBoosted, Preboos
   },
 
   getFetchMoreObservable: (props: IPropsPreBoosted, data: PreboostedProposalsSubscriptionData) => {
-    const dao = props.daoState.dao;
+    const dao = new DAO(getArc(), props.daoState.id);
     const pluginId = props.pluginState.id;
 
     return dao.proposals({
@@ -171,7 +171,7 @@ class PluginProposalsQueued extends React.Component<IPropsQueued, null> {
 
     const queuedProposalsHTML = (
       <TransitionGroup className="queued-proposals-list">
-        {proposalsQueued.map((proposal: Proposal): any => (
+        {proposalsQueued.map((proposal: AnyProposal): any => (
           <Fade key={"proposal_" + proposal.id}>
             <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
           </Fade>
@@ -220,7 +220,7 @@ const SubscribedProposalsQueued = withSubscription<IPropsQueued, RegularProposal
   },
 
   createObservable: async (props: IPropsQueued) => {
-    const dao = props.daoState.dao;
+    const dao = new DAO(getArc(), props.daoState.id);
     const pluginId = props.pluginState.id;
 
     // the list of queued proposals
@@ -235,7 +235,7 @@ const SubscribedProposalsQueued = withSubscription<IPropsQueued, RegularProposal
   },
 
   getFetchMoreObservable: (props: IPropsQueued, data: RegularProposalsSubscriptionData) => {
-    const dao = props.daoState.dao;
+    const dao = new DAO(getArc(), props.daoState.id);
     const pluginId = props.pluginState.id;
 
     return dao.proposals({
@@ -319,9 +319,9 @@ class PluginProposalsPage extends React.Component<IProps, null> {
               </div>
             </div>
 
-            <SubscribedProposalsPreBoosted currentAccountAddress={currentAccountAddress} daoState={daoState} plugin={pluginState}></SubscribedProposalsPreBoosted>
+            <SubscribedProposalsPreBoosted currentAccountAddress={currentAccountAddress} daoState={daoState} pluginState={pluginState}></SubscribedProposalsPreBoosted>
 
-            <SubscribedProposalsQueued currentAccountAddress={currentAccountAddress} daoState={daoState} plugin={pluginState}></SubscribedProposalsQueued>
+            <SubscribedProposalsQueued currentAccountAddress={currentAccountAddress} daoState={daoState} pluginState={pluginState}></SubscribedProposalsQueued>
 
           </div>
         }
@@ -474,7 +474,7 @@ const SubscribedPluginProposalsPage = withSubscription<IProps, SubscriptionData>
         orderBy: "boostedAt",
       }, { subscribe: true }),
       // big subscription query to make all other subscription queries obsolete
-      arc.getObservable(bigProposalQuery, { subscribe: true }) as Observable<Proposal[]>,
+      arc.getObservable(bigProposalQuery, { subscribe: true }) as Observable<AnyProposal[]>,
     );
   },
 });

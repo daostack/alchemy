@@ -9,7 +9,7 @@ export const hasRewarderContract = (pluginState: IContributionRewardExtState): b
 export const rewarderContractName = (pluginState: IContributionRewardExtState, useAlias = true): string => {
   try {
     if (hasRewarderContract(pluginState)) {
-      const contractInfo = getArc().getContractInfo(pluginState.contributionRewardExtParams.rewarder);
+      const contractInfo = getArc().getContractInfo(pluginState.pluginParams.rewarder);
       if (contractInfo) {
         return (useAlias && !!contractInfo.alias) ? contractInfo.alias : splitCamelCase(contractInfo.name);
       } else {

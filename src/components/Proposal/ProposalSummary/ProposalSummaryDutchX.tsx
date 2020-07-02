@@ -19,11 +19,11 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
   public render(): RenderOutput {
     const { proposalState, detailView, genericPluginInfo, transactionModal } = this.props;
     let decodedCallData: any;
-    const sendsETH = proposal.genericScheme.value.gtn(0);
+    const sendsETH = proposalState.value.gtn(0);
     const renderValueHtml = () => {
       return sendsETH ?
         <div className={sendsETH ? css.warning : ""}>
-          &gt; Send to contract: {formatTokens(proposal.genericScheme.value)} ETH &lt;
+          &gt; Send to contract: {formatTokens(proposalState.value)} ETH &lt;
         </div>
         : "";
     };

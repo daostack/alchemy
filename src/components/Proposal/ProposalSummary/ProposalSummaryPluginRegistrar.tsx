@@ -54,7 +54,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/delete.svg" />&nbsp;
                   Remove Scheme&nbsp;
-              <a href={linkToEtherScan(proposalState.pluginToRemove)} target="_blank" rel="noopener noreferrer">{pluginNameAndAddress(proposalState.schemeToRemove)}</a>
+              <a href={linkToEtherScan(proposalState.pluginToRemove)} target="_blank" rel="noopener noreferrer">{pluginNameAndAddress(proposalState.pluginToRemove)}</a>
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
