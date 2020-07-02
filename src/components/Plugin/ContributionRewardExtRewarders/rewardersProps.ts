@@ -18,7 +18,10 @@ export const rewarderContractName = (pluginState: IContributionRewardExtState, u
       }
     }
   }
-  catch (e) { console.error(e); }
+  catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e);
+  }
 
   return null;
 };
