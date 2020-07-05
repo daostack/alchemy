@@ -149,7 +149,7 @@
   },
   "devDependencies": {
     "@babel/plugin-syntax-dynamic-import": "^7.7.4",
-    "@daostack/test-env-experimental": "4.0.12",
+    "@daostack/test-env-experimental": "4.0.14",
     "@storybook/addon-info": "^5.0.10",
     "@storybook/react": "^5.0.10",
     "@types/chai": "^4.1.7",
