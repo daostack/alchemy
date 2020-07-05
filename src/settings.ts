@@ -219,7 +219,7 @@ export const settings: NetworkSettings = {
     graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || SubgraphEndpoints.http_xdai,
     graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || SubgraphEndpoints.ws_xdai,
     graphqlSubscribeToQueries: false,
-    web3Provider:  process.env.ARC_WEB3PROVIDER || "https://dai.poa.network",
+    web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://xdai.poanetwork.dev/wss",
     ipfsProvider: process.env.ARC_IPFSPROVIDER || "https://api.thegraph.com:443/ipfs-daostack/api/v0",
     txSenderServiceUrl: "",
     web3ConnectProviderOptions: getWeb3ConnectProviderOptions("xdai"),
