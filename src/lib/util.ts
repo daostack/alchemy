@@ -6,7 +6,7 @@ import {
   IRewardState,
 } from "@daostack/arc.js";
 import { of, Observable, Observer } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { catchError } from "rxjs/operators";
 
 import BN = require("bn.js");
 /**
@@ -597,9 +597,6 @@ interface IObservedAccounts {
     subscriptionsCount: number;
   };
 }
-
-const ethBalanceObservedAccounts: IObservedAccounts = {};
-let ethBalancePollingInterval: any | undefined = undefined;
 
 export function ethBalance(address: Address): Observable<BN> {
 
