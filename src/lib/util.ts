@@ -601,6 +601,5 @@ interface IObservedAccounts {
 export function ethBalance(address: Address): Observable<BN> {
 
   const arc = getArc();
-  
   return arc.ethBalance(address);
 }
