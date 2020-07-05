@@ -116,7 +116,7 @@ function getWeb3ConnectProviderOptions(network: string) {
           package: Torus,
           options: {
             networkParams: {
-              host: "https://xdai.poanetwork.dev",
+              host: "wss://xdai.poanetwork.dev/wss",
               chainId: 100,
               networkName: "xdai",
               network: "xdai",
