@@ -10,7 +10,7 @@ import { createProposal } from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
 import { isValidUrl } from "lib/util";
-import { GetPluginIsActiveActions, getPluginIsActive, REQUIRED_PLUGIN_PERMISSIONS, pluginNameAndAddress, PLUGIN_NAMES } from "lib/pluginUtils";
+import { GetPluginIsActiveActions, getPluginIsActive, REQUIRED_PLUGIN_PERMISSIONS, pluginNameAndAddress, PLUGIN_NAMES, PLUGINS_UI_NAMES } from "lib/pluginUtils";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
@@ -652,8 +652,8 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                         }}
                       >
                         <option value="">Select a plugin...</option>
-                        {Object.values(PLUGIN_NAMES).map((name, _i) => {
-                          return <option id={`option-${name}`} key={`add_plugin_${name}`} value={name}>{name}</option>;
+                        {Object.values(PLUGIN_NAMES).map((name: keyof typeof PLUGIN_NAMES, _i) => {
+                          return <option id={`option-${name}`} key={`add_plugin_${name}`} value={name}>{PLUGINS_UI_NAMES[name]}</option>;
                         })}
                       </Field>
                     </div>

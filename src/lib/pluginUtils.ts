@@ -66,6 +66,16 @@ export const PROPOSAL_PLUGIN_NAMES = [
   "ContributionRewardExt",
 ];
 
+export const PLUGINS_UI_NAMES = {
+  ContributionReward: "Funding and Voting Power",
+  GenericScheme: "GenericScheme",
+  ReputationFromToken: "ReputationFromToken",
+  SchemeRegistrar: "SchemeRegistrar",
+  SchemeFactory: "Plugin Manager",
+  Competition: "Competition",
+  ContributionRewardExt: "ContributionRewardExt",
+};
+
 /**
  * return true if the address is the address of a known plugin (which we know how to represent)
  * @param  address [description]
