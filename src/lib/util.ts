@@ -324,7 +324,7 @@ export async function getNetworkName(id?: string): Promise<Networks> {
   }
 }
 
-export function linkToEtherScan(address: Address) {
+export function linkToEtherScan(address: Address, tokenHoldings = false) {
   let prefix = "";
   const arc = getArc();
   switch (arc.web3.currentProvider.__networkId) {
@@ -335,9 +335,13 @@ export function linkToEtherScan(address: Address) {
       prefix = "kovan.";
       break;
     case "100": // xdai
-      return `https://blockscout.com/poa/xdai/${address.length > 42 ? "tx" : "address"}/${address}`;
+      return tokenHoldings ?
+        `https://blockscout.com/poa/xdai/address/${address}/tokens` :
+        `https://blockscout.com/poa/xdai/${address.length > 42 ? "tx" : "address"}/${address}`;
   }
-  return `https://${prefix}etherscan.io/address/${address}`;
+  return tokenHoldings ?
+    `https://${prefix}etherscan.io/tokenholdings?a=${address}` :
+    `https://${prefix}etherscan.io/address/${address}`;
 }
 
 export type AccountClaimableRewardsType = { [key: string]: BN };
