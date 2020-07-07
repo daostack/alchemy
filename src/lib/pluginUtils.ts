@@ -46,34 +46,13 @@ export const REQUIRED_PLUGIN_PERMISSIONS: any = {
 
 /** plugins that we know how to interpret  */
 export const PLUGIN_NAMES = {
-  ContributionReward: "ContributionReward",
-  GenericScheme: "GenericScheme",
-  ReputationFromToken: "ReputationFromToken",
-  SchemeRegistrar: "SchemeRegistrar",
-  SchemeFactory: "SchemeFactory",
-  Competition: "Competition",
-  ContributionRewardExt: "ContributionRewardExt",
-};
-
-export const KNOWN_PLUGIN_NAMES = Object.values(PLUGIN_NAMES);
-
-export const PROPOSAL_PLUGIN_NAMES = [
-  "ContributionReward",
-  "GenericScheme",
-  "SchemeRegistrar",
-  "Competition",
-  "SchemeFactory",
-  "ContributionRewardExt",
-];
-
-export const PLUGINS_UI_NAMES = {
   ContributionReward: "Funding and Voting Power",
-  GenericScheme: "GenericScheme",
-  ReputationFromToken: "ReputationFromToken",
-  SchemeRegistrar: "SchemeRegistrar",
+  GenericScheme: "Generic Plugin",
+  ReputationFromToken: "Reputation from Token",
+  SchemeRegistrar: "Plugin Registrar",
   SchemeFactory: "Plugin Manager",
   Competition: "Competition",
-  ContributionRewardExt: "ContributionRewardExt",
+  ContributionRewardExt: "Contribution Reward Ext",
 };
 
 /**
@@ -93,7 +72,7 @@ export function isKnownPlugin(address: Address) {
     throw err;
   }
 
-  if (KNOWN_PLUGIN_NAMES.includes(contractInfo.name)) {
+  if (Object.keys(PLUGIN_NAMES).includes(contractInfo.name)) {
     return true;
   } else {
     return false;
@@ -119,25 +98,20 @@ export function pluginName(plugin: IPluginState|IContractInfo, fallback?: string
       // this should never happen...
       name = "Blockchain Interaction";
     }
-  } else if (plugin.name === "ContributionReward") {
-    name ="Funding and Voting Power";
-  } else if (plugin.name === "SchemeRegistrar") {
-    name ="Plugin Registrar";
-  } else if (plugin.name === "SchemeFactory") {
-    name ="Plugin Manager";
-  } else if (plugin.name) {
-    if (plugin.name === "ContributionRewardExt") {
-      name = rewarderContractName(plugin as IContributionRewardExtState);
+  } else if (plugin.name === "ContributionRewardExt") {
+    name = rewarderContractName(plugin as IContributionRewardExtState);
 
-      if (!name) {
-        name = "ContributionRewardExt";
-      }
+    if (!name) {
+      name = "ContributionRewardExt";
     } else {
       // add spaces before capital letters to approximate a human-readable title
       name = `${plugin.name[0]}${plugin.name.slice(1).replace(/([A-Z])/g, " $1")}`;
     }
   } else {
-    name = fallback;
+    name = PLUGIN_NAMES[plugin.name as keyof typeof PLUGIN_NAMES];
+    if (name === undefined){
+      name = fallback;
+    }
   }
   return name;
 }
