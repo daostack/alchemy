@@ -26,12 +26,12 @@
  - Cheap and fast DAO creation increase UX.
 
 ## PluginManager / SchemeFactory
- - Brings the easiness of register a new scheme to the DAO.
+ - Brings the easiness of register a new plugin to the DAO.
  - All plugin parameters are passed via the proposal. A plugin instance is created and deployed upon execution.
  - No longer a need to deploy and initialize a plugin in two separate steps.
  - Easy and friendly UX.
 
-## GenesisProtocol parameters are set upon scheme initialization 
+## GenesisProtocol parameters are set upon plugin initialization 
  - As Genesis protocol (and other voting machines)l parameters are set upon plugin initialization,
    there is no need to preset governance parameters.
 
@@ -42,7 +42,7 @@
  - All ArcHive plugins/DAOs are automatically indexed by subgraph (no need to manually index).
 
 ## Misc 
- - NFT management scheme - send/mint/list 
+ - NFT management plugin - send/mint/list 
  - Arc.react  - enable easy custom React UI components on top of subgraph and arc.js 
  - 2 new Common plugins - JoinAndQuit and Funding Request.
  - Key value on chain DAO DB (implemented for Common) though can be used by other DAOs.

@@ -33,7 +33,7 @@
   - Features Added
     - add OK button to the modal prompt that appears on the DAO landing page when clicking the Edit Home Page button
     - page the fetching of preboosted proposals on the Plugin Proposals page, 100 proposals at a time
-    - display the scheme "alias" instead of contract name, when available
+    - display the plugin "alias" instead of contract name, when available
 
   - Bugs Fixed
     - in the DAO side bar menu, improve appearance and behavior of the scrollbar that appears when more than three ETH/token balances are listed
@@ -47,7 +47,7 @@
 
 ## 0.10.9
   - Features Added
-    - extend Scheme URL Params => Proposal Templates to Competition proposal & competition submission
+    - extend Plugin URL Params => Proposal Templates to Competition proposal & competition submission
     - top three boosted proposals shown on plugin cards are now sorted by when they were boosted, descending
     - custom DAO landing page data for the SOS Hackathon
     - enable Competition proposals and Competition Submissions to have embedded videos in their description
@@ -77,11 +77,11 @@
   - Bugs Fixed
     -- reenabled the "+ New Proposal" button at the bottom of plugin pages when there are currently no proposals
     -- fixed Disqus conversations that were leaking between proposals and DAOs
-    -- fixed required permissions when editing a Plugin Manager scheme
+    -- fixed required permissions when editing a Plugin Manager plugin
     -- correct the ABI on the ensPublicResolver GenericScheme which caused execution of proposals to fail while seeming to succeed
     -- prevent embedded videos that are playing from stopping when an app notification appears
     -- remove the "+ New Proposal" button on non-supported plugins
-    -- fix the Edit Scheme button to bring up the Edit Scheme popup isnteadl of the New Proposal popup
+    -- fix the Edit Plugin button to bring up the Edit Plugin popup instead of the New Proposal popup
     
 ## 0.10.7
   - Features Added
@@ -121,7 +121,7 @@
     - Add Torus configuration button
     - Recommended node.js version to build Alchemy is set to 12.16.1
     - Only show registered plugins in DAOs
-    - Added support for the CO2ken generic scheme
+    - Added support for the CO2ken generic plugin
     - Enable Alchemy to run against kovan
 
   - Bugs Fixed
@@ -149,7 +149,7 @@
 
   - Features Added
     - improved some display of staking/preboosting amounts feedback
-    - Unknown plugins now link to Scheme page and show permissions
+    - Unknown plugins now link to Plugin page and show permissions
 
   - Bugs Fixed
     - hide trailing slash in PreTransaction modal header
@@ -331,9 +331,9 @@
     - prevent attempting redemptions unless there exist sufficient resources to pay out at least one reward
     - added informative tooltips for application training
     - Gasless ReputationFromTokens using the tx-sender service
-    - improved paging on scheme page
+    - improved paging on plugin page
   - Bugs Fixed
-    - fixed display of scheme activation time
+    - fixed display of plugin activation time
     - fixed empty proposal page when not logged in
     - application behaves better whne the ethereum connection goes down or is unavailable
 
@@ -349,7 +349,7 @@
 ### 2019-10-25
 
   - Features Added
-    - More detailed information on scheme page
+    - More detailed information on plugin page
     - Performance improvements
     - New proposal button not available on inactive plugins
     - ENS public resolver interface
@@ -358,7 +358,7 @@
     - Improved layout of cookie disclaimer on mobile devices
     - fix "nervous" account menu, now drops down instead of across
     - fix hang on malformed dao address
-    - In scheme properties, round thresholdConst up
+    - In plugin properties, round thresholdConst up
     - Added cancel button to staking preapproval prompt
     - Names on vote popup are correct now
 
@@ -386,7 +386,7 @@
     - Align headers of table in proposal history
     - Re-add redeem for beneficiary button to proposal details page
     - Fix error on initializing arc
-    - Fix infinite scroll loading of queued scheme proposals
+    - Fix infinite scroll loading of queued plugin proposals
     - handle Metamask account changing
 
 
@@ -402,7 +402,7 @@
     - fix handling of very large amounts when displaying proposals
     - fix crash in display of proposals' redeemables when account is readonly
     - show proposals as failing when the vote is tied
-    - improvements, bug fixes on the Scheme Information page
+    - improvements, bug fixes on the Plugin Information page
     - DAO Discussion page
     - Add link to help center
     - Reduce number of subscriptions from DAO history page
@@ -411,7 +411,7 @@
     - add static mint and burn permission
   - Bugs Fixed
     - Fix number formatting
-    - Fix crashing of scheme page
+    - Fix crashing of plugin page
     - Hide notifications after 10 seconds
     - Add dao address as default value for Cross-DAO redemptions
     - Fix redemptions count
