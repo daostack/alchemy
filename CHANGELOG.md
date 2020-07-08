@@ -80,7 +80,7 @@
     -- fixed required permissions when editing a Plugin Manager scheme
     -- correct the ABI on the ensPublicResolver GenericScheme which caused execution of proposals to fail while seeming to succeed
     -- prevent embedded videos that are playing from stopping when an app notification appears
-    -- remove the "+ New Proposal" button on non-supported schemes
+    -- remove the "+ New Proposal" button on non-supported plugins
     -- fix the Edit Scheme button to bring up the Edit Scheme popup isnteadl of the New Proposal popup
     
 ## 0.10.7
@@ -90,10 +90,10 @@
 
   - Bugs Fixed
     - Display a proper msg for daos members with no reputation at the moment of a proposal creation
-    - Fix summing up the number of schemes open proposals
+    - Fix summing up the number of plugins' open proposals
     - Cosmetic improvement to the New Proposal button
     - Fix to breadcrumbs relating to the new DAO landing page
-    - Don't display unregistered schemes in the Plugin Manager plugins dropdown
+    - Don't display unregistered plugins in the Plugin Manager plugins dropdown
 
 ## 0.10.6
   - Features Added
@@ -120,7 +120,7 @@
   - Features Added
     - Add Torus configuration button
     - Recommended node.js version to build Alchemy is set to 12.16.1
-    - Only show registered schemes in DAOs
+    - Only show registered plugins in DAOs
     - Added support for the CO2ken generic scheme
     - Enable Alchemy to run against kovan
 
@@ -149,7 +149,7 @@
 
   - Features Added
     - improved some display of staking/preboosting amounts feedback
-    - Unknown schemes now link to Scheme page and show permissions
+    - Unknown plugins now link to Scheme page and show permissions
 
   - Bugs Fixed
     - hide trailing slash in PreTransaction modal header
@@ -351,7 +351,7 @@
   - Features Added
     - More detailed information on scheme page
     - Performance improvements
-    - New proposal button not available on inactive schemes
+    - New proposal button not available on inactive plugins
     - ENS public resolver interface
 
   - Bugs fixed
@@ -377,7 +377,7 @@
     - Don't allow connecting to wrong networks
     - Issue a notification when the user connects to a wrong network
     - Optimization of queries and subscriptions
-    - ENS interface for generic schemes
+    - ENS interface for generic plugins
     - Feedback when there are unread messages on DAO wall
     - Added Error and 404 pages
     - Proposals now can have tags
