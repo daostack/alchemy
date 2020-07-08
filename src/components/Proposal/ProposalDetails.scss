@@ -155,7 +155,7 @@ button.disabled {
   position: relative;
   background-color: $white;
   border-right: 1px solid rgba(215, 225, 237, 1);
-  border-radius: 0 15px 15px 15px;
+  border-radius: 15px;
   margin: 0 0 20px 20px;
 }
 
@@ -191,7 +191,7 @@ button.disabled {
   position: relative;
   background-color: white;
   border-right: 1px solid #d7e1ed;
-  border-radius: 0 15px 15px 15px;
+  border-radius: 15px;
   margin: 0 0 20px 20px;
 
   .predictionStatus {
@@ -269,6 +269,7 @@ button.disabled {
 .buttonBar {
   position: relative;
   top: 20px;
+  display: flex;
 
   .voteButtonsBottom {
     display: inline-block;
@@ -295,6 +296,7 @@ button.disabled {
     font-weight: bold;
     font-size: 13px;
     color: white;
+    border: none;
 
     img {
       margin-right: 6px;

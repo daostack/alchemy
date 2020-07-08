@@ -30,8 +30,9 @@
   font-size: 11px;
   font-family: "Open Sans";
   font-weight: normal;
-  border-radius: 0 14px 14px 14px;
+  border-radius: 20px;
   min-width: 340px;
+  margin-bottom: 15px;
 
   h3 {
     margin: 0;
@@ -95,7 +96,7 @@
 .editPlugin {
   z-index: 1000000;
   position: fixed;
-  right: 0;
+  right: 25%;
   top: 155px;
   text-align: right;
 

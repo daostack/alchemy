@@ -1,5 +1,4 @@
 .followButton {
-  font-family: LucidaGrande;
   font-size: 11px;
   text-align: center;
   color: #0076ff;
@@ -49,6 +48,7 @@
 .followButton.white {
   color: white;
   border: solid 1px white;
+  padding: 5px 10px;
 
   .spinner {
     border-top: 2px solid white;

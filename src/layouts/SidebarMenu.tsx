@@ -224,7 +224,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                 </TrainingTooltip>
               </li>
               <li>
-                <a>$ Buy GEN</a>
+                <a>Buy GEN</a>
                 <ul>
                   <div className={css.diamond}></div>
                   {
