@@ -1,8 +1,0 @@
-{
-    "ContributionReward": ["address", "address", "uint256[11]","address", "bytes32"],
-    "GenericScheme": ["address", "address", "uint256[11]","address", "bytes32", "address"],
-    "ReputationFromToken": ["address","address","address"],
-    "ContributionRewardExt": ["address", "address", "uint256[11]", "address", "bytes32", "address", "uint64[3]", "string"],
-    "SchemeRegistrar": ["address", "address", "uint256[11]", "address", "bytes32", "uint256[11]", "address", "bytes32"],
-    "SchemeFactory": ["address", "address", "uint256[11]", "address", "bytes32", "address"]
-}

@@ -6,7 +6,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UnknownPluginCard from "components/Dao/UnknownPluginCard";
 import Analytics from "lib/analytics";
-import { getPluginIsActive, KNOWN_PLUGIN_NAMES, PROPOSAL_PLUGIN_NAMES } from "lib/pluginUtils";
+import { getPluginIsActive, PLUGIN_NAMES } from "lib/pluginUtils";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -76,8 +76,8 @@ class DaoPluginsPage extends React.Component<IProps, null> {
     const allPlugins = data[0];
 
     const contributionReward = allPlugins.filter((plugin: AnyPlugin) => plugin.coreState.name === "ContributionReward");
-    const knownPlugins = allPlugins.filter((plugin: AnyPlugin) => plugin.coreState.name !== "ContributionReward" && KNOWN_PLUGIN_NAMES.indexOf(plugin.coreState.name) >= 0);
-    const unknownPlugins = allPlugins.filter((plugin: AnyPlugin) => KNOWN_PLUGIN_NAMES.indexOf(plugin.coreState.name) === -1 );
+    const knownPlugins = allPlugins.filter((plugin: AnyPlugin) => plugin.coreState.name !== "ContributionReward" && Object.keys(PLUGIN_NAMES).indexOf(plugin.coreState.name) >= 0);
+    const unknownPlugins = allPlugins.filter((plugin: AnyPlugin) => Object.keys(PLUGIN_NAMES).indexOf(plugin.coreState.name) === -1 );
     const allKnownPlugins = [...contributionReward, ...knownPlugins];
 
     const pluginManager = data[1];
@@ -87,7 +87,7 @@ class DaoPluginsPage extends React.Component<IProps, null> {
       <TransitionGroup>
         { allKnownPlugins.map((plugin: AnyPlugin) => (
           <Fade key={"plugin " + plugin.id}>
-            {PROPOSAL_PLUGIN_NAMES.includes(plugin.coreState.name)
+            {Object.keys(PLUGIN_NAMES).includes(plugin.coreState.name)
               ?
               <ProposalPluginCard daoState={daoState} pluginState={plugin.coreState} />
               : <SimplePluginCard daoState={daoState} pluginState={plugin.coreState} />

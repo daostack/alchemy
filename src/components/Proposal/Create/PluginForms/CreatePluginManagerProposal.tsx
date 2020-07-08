@@ -652,8 +652,8 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                         }}
                       >
                         <option value="">Select a plugin...</option>
-                        {Object.values(PLUGIN_NAMES).map((name, _i) => {
-                          return <option id={`option-${name}`} key={`add_plugin_${name}`} value={name}>{name}</option>;
+                        {Object.entries(PLUGIN_NAMES).map(([name, uiName]) => {
+                          return <option id={`option-${name}`} key={`add_plugin_${name}`} value={name}>{uiName}</option>;
                         })}
                       </Field>
                     </div>

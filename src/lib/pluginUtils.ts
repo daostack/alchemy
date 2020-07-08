@@ -16,47 +16,6 @@ import "moment";
 import * as moment from "moment-timezone";
 
 import { getArc } from "../arc";
-const Web3 = require("web3");
-
-
-/**
- * @param {string} pluginName Plugin name
- * @param {string} pluginToRegisterData Plugin encoded data
- * @returns {any} An object containing voting params, real plugin name and contract to call if acceptable
- */
-export const decodePluginToRegisterData = (pluginName: string, pluginToRegisterData: string): any => {
-  const web3 = new Web3();
-  const PLUGIN_PARAMS = require("./plugins_initilization_params.json");
-  const encodedDataForWeb3 = "0x" + pluginToRegisterData.substring(10);
-  const decodedData = web3.eth.abi.decodeParameters(PLUGIN_PARAMS[pluginName], encodedDataForWeb3);
-  let genericSchemeName = "";
-  if (pluginName === "GenericScheme"){
-    const genericPluginRegistry = new GenericPluginRegistry();
-    const genericPluginInfo = genericPluginRegistry.getPluginInfo(decodedData[5]);
-    if (genericPluginInfo){
-      genericSchemeName = genericPluginInfo.specs.name;
-    } else {
-      genericSchemeName = "Blockchain Interaction";
-    }
-  }
-
-  let showName = pluginName;
-  if (pluginName === "ContributionRewardExt"){
-    showName = decodedData[7];
-  }
-  else if (pluginName === "GenericScheme"){
-    showName = genericSchemeName ? genericSchemeName : pluginName;
-  }
-
-  const data = {
-    votingParams: decodedData[2],
-    pluginName: showName,
-    contractToCall: pluginName === "GenericScheme" ? decodedData[5] : "",
-  };
-
-  return data;
-};
-
 
 export enum PluginPermissions {
   None = 0,
@@ -87,25 +46,14 @@ export const REQUIRED_PLUGIN_PERMISSIONS: any = {
 
 /** plugins that we know how to interpret  */
 export const PLUGIN_NAMES = {
-  ContributionReward: "ContributionReward",
-  GenericScheme: "GenericScheme",
-  ReputationFromToken: "ReputationFromToken",
-  SchemeRegistrar: "SchemeRegistrar",
-  SchemeFactory: "SchemeFactory",
+  ContributionReward: "Funding and Voting Power",
+  GenericScheme: "Generic Plugin",
+  ReputationFromToken: "Reputation from Token",
+  SchemeRegistrar: "Plugin Registrar",
+  SchemeFactory: "Plugin Manager",
   Competition: "Competition",
-  ContributionRewardExt: "ContributionRewardExt",
+  ContributionRewardExt: "Contribution Reward Ext",
 };
-
-export const KNOWN_PLUGIN_NAMES = Object.values(PLUGIN_NAMES);
-
-export const PROPOSAL_PLUGIN_NAMES = [
-  "ContributionReward",
-  "GenericScheme",
-  "SchemeRegistrar",
-  "Competition",
-  "SchemeFactory",
-  "ContributionRewardExt",
-];
 
 /**
  * return true if the address is the address of a known plugin (which we know how to represent)
@@ -124,7 +72,7 @@ export function isKnownPlugin(address: Address) {
     throw err;
   }
 
-  if (KNOWN_PLUGIN_NAMES.includes(contractInfo.name)) {
+  if (Object.keys(PLUGIN_NAMES).includes(contractInfo.name)) {
     return true;
   } else {
     return false;
@@ -150,25 +98,20 @@ export function pluginName(plugin: IPluginState|IContractInfo, fallback?: string
       // this should never happen...
       name = "Blockchain Interaction";
     }
-  } else if (plugin.name === "ContributionReward") {
-    name ="Funding and Voting Power";
-  } else if (plugin.name === "SchemeRegistrar") {
-    name ="Plugin Registrar";
-  } else if (plugin.name === "SchemeFactory") {
-    name ="Plugin Manager";
-  } else if (plugin.name) {
-    if (plugin.name === "ContributionRewardExt") {
-      name = rewarderContractName(plugin as IContributionRewardExtState);
+  } else if (plugin.name === "ContributionRewardExt") {
+    name = rewarderContractName(plugin as IContributionRewardExtState);
 
-      if (!name) {
-        name = "ContributionRewardExt";
-      }
+    if (!name) {
+      name = "ContributionRewardExt";
     } else {
       // add spaces before capital letters to approximate a human-readable title
       name = `${plugin.name[0]}${plugin.name.slice(1).replace(/([A-Z])/g, " $1")}`;
     }
   } else {
-    name = fallback;
+    name = PLUGIN_NAMES[plugin.name as keyof typeof PLUGIN_NAMES];
+    if (name === undefined){
+      name = fallback;
+    }
   }
   return name;
 }
