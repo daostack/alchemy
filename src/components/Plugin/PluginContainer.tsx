@@ -5,7 +5,7 @@ import { getArc } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { pluginName, getPluginIsActive, PROPOSAL_PLUGIN_NAMES } from "lib/pluginUtils";
+import { pluginName, getPluginIsActive, PLUGIN_NAMES } from "lib/pluginUtils";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Helmet } from "react-helmet";
@@ -114,7 +114,7 @@ class PluginContainer extends React.Component<IProps, IState> {
     }
 
     const isActive = getPluginIsActive(pluginState);
-    const isProposalPlugin = PROPOSAL_PLUGIN_NAMES.includes(pluginState.name);
+    const isProposalPlugin = Object.keys(PLUGIN_NAMES).includes(pluginState.name);
 
     const proposalsTabClass = classNames({
       [css.proposals]: true,
