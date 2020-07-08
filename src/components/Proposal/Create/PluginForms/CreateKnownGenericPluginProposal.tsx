@@ -287,6 +287,8 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
     const actions = this.state.actions;
     const currentAction = this.state.currentAction;
 
+    const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
+
     return (
       <div className={css.containerWithSidebar}>
         <div className={css.sidebar}>
@@ -409,13 +411,15 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                     className={touched.title && errors.title ? css.error : null}
                   />
 
-                  <label htmlFor="descriptionInput">
-                    <div className={css.proposalDescriptionLabelText}>
-                      <div className={css.requiredMarker}>*</div>
-                      <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
-                    </div>
-                    <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  </label>
+                  <TrainingTooltip overlay={fnDescription} placement="right">
+                    <label htmlFor="descriptionInput">
+                      <div className={css.proposalDescriptionLabelText}>
+                        <div className={css.requiredMarker}>*</div>
+                        <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                      </div>
+                      <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    </label>
+                  </TrainingTooltip>
                   <Field
                     component={MarkdownField}
                     onChange={(value: any) => { setFieldValue("description", value); }}
