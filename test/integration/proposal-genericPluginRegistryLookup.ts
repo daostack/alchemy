@@ -8,7 +8,7 @@ describe("Proposals Registry Lookup", () => {
   beforeEach(async () => {
     await gotoDaoPlugins(daoAddress);
     await hideCookieAcceptWindow();
-    4;
+
     const ensTitle = await $("h2=RegistryLookup");
     await ensTitle.waitForExist();
     await ensTitle.click();
