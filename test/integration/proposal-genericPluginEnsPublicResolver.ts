@@ -17,7 +17,7 @@ describe("Proposals ENS Resolver", () => {
     await gotoDaoPlugins(daoAddress);
 
     // TODO: can't find
-    const ensTitle = await $("h2=GenericSchemeENSPublicResolver");
+    const ensTitle = await $("h2=ENSPublicResolver");
     await ensTitle.waitForExist();
     await ensTitle.click();
 

@@ -19,7 +19,7 @@ describe("Proposals", () => {
   it("Create a DutchX Generic Plugin proposal, vote for it, stake on it", async () => {
     await gotoDaoPlugins(daoAddress);
 
-    const pluginTitle = await $("h2=GenericSchemeDutchX");
+    const pluginTitle = await $("h2=DutchX");
     await pluginTitle.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
@@ -57,7 +57,7 @@ describe("Proposals", () => {
   it("Export a DutchX Generic Plugin proposal", async () => {
     await gotoDaoPlugins(daoAddress);
 
-    const pluginTitle = await $("h2=GenericSchemeDutchX");
+    const pluginTitle = await $("h2=DutchX");
     await pluginTitle.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");

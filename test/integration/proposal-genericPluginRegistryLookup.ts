@@ -4,17 +4,12 @@ import { getArc, hideCookieAcceptWindow, gotoDaoPlugins } from "./utils";
 
 describe("Proposals Registry Lookup", () => {
   let daoAddress: string;
-  let hideCookies = true;
 
   beforeEach(async () => {
     await gotoDaoPlugins(daoAddress);
-
-    if (hideCookies) {
-      await hideCookieAcceptWindow();
-      hideCookies = false;
-    }
-
-    const ensTitle = await $("h2=GenericSchemeRegistryLookup");
+    await hideCookieAcceptWindow();
+    4;
+    const ensTitle = await $("h2=RegistryLookup");
     await ensTitle.waitForExist();
     await ensTitle.click();
 

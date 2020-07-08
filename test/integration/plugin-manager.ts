@@ -16,12 +16,11 @@ describe("Plugin Manager", () => {
     const contributionRewardExt = contributionRewardExts[0];
     const contributionRewardExtState = await contributionRewardExt.state().pipe(first()).toPromise();
     dao = new DAO(arc, contributionRewardExtState.dao.id);
+    await gotoDaoPlugins(dao.id);
+    await hideCookieAcceptWindow();
   });
 
   it("Add Plugin", async () => {
-    await gotoDaoPlugins(dao.id);
-    await hideCookieAcceptWindow();
-
     const createPluginButton = await $("a[data-test-id=\"createProposal\"]");
     await createPluginButton.waitForExist();
     await createPluginButton.click();
@@ -54,9 +53,6 @@ describe("Plugin Manager", () => {
   });
 
   it("Remove Plugin", async () => {
-    await gotoDaoPlugins(dao.id);
-    await hideCookieAcceptWindow();
-
     const createPluginButton = await $("a[data-test-id=\"createProposal\"]");
     await createPluginButton.waitForExist();
     await createPluginButton.click();
@@ -88,9 +84,6 @@ describe("Plugin Manager", () => {
   });
 
   it("Replace Plugin", async () => {
-    await gotoDaoPlugins(dao.id);
-    await hideCookieAcceptWindow();
-
     const createPluginButton = await $("a[data-test-id=\"createProposal\"]");
     await createPluginButton.waitForExist();
     await createPluginButton.click();

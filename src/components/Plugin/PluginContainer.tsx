@@ -114,7 +114,7 @@ class PluginContainer extends React.Component<IProps, IState> {
   private handleNewProposal = async (e: any): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    this.props.history.push(`/dao/${this.props.daoState.address}/scheme/${this.props.pluginId}/proposals/create/`);
+    this.props.history.push(`/dao/${this.props.daoState.address}/plugin/${this.props.pluginId}/proposals/create/`);
 
     e.preventDefault();
   };
@@ -122,7 +122,7 @@ class PluginContainer extends React.Component<IProps, IState> {
   private handleEditPlugin = async (e: any) => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    this.props.history.push(`/dao/${this.props.daoState.id}/scheme/${this.props.data[1].id}/proposals/create/?currentTab=editScheme`);
+    this.props.history.push(`/dao/${this.props.daoState.id}/plugin/${this.props.data[1].id}/proposals/create/?currentTab=editScheme`);
     e.preventDefault();
   }
 

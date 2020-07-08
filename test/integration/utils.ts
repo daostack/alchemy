@@ -77,8 +77,8 @@ export async function gotoDaoPlugins(daoAddress: string): Promise<any> {
  */
 export const hideCookieAcceptWindow = async(): Promise<void> => {
   const acceptCookiesButton = await $("*[data-test-id=\"acceptCookiesButton\"]");
-  if (acceptCookiesButton.isExisting()) {
-    acceptCookiesButton.click();
+  if (!acceptCookiesButton.error && await acceptCookiesButton.isExisting()) {
+    await acceptCookiesButton.click();
   }
 };
 

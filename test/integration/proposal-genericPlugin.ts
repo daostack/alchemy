@@ -5,16 +5,15 @@ describe("Proposals", () => {
   let daoAddress: string;
   let addresses: ITestAddresses;
 
-  before(() => {
+  before(async () => {
     addresses = getTestAddresses();
     daoAddress = addresses.dao.Avatar.toLowerCase();
+    await hideCookieAcceptWindow();
   });
 
   it("Create a Generic Plugin proposal, vote for it, stake on it", async () => {
 
     await gotoDaoPlugins(daoAddress);
-
-    await hideCookieAcceptWindow();
 
     const pluginCard = await $("[data-test-id=\"pluginCard-GenericScheme\"]");
 
