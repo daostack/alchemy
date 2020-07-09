@@ -2,13 +2,15 @@
   - Features Added
     - added custom landing page data for Venus Project
     - made it easier for anyone to submit a PR to create their own DAO custom landing page
-    - added support for awarding the GEM token
+    - added support for awarding the GEM and DXD tokens
 
   - Bugs Fixed
     - DAO and account balances are now computed correctly on xDAI
     - contract and account etherscan links now direct to blockscout, for xDAI
     - enabling predictions now works on xDAI
     - fixed several visual bugs
+    - fixed layout of description label on Blockchain interaction proposal create modal
+    - fixed crash when clicking on a DAO on the DAO Langing page.
 
 ## 0.10.11
   - Features Added
