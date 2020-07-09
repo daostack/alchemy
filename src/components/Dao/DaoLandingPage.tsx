@@ -6,7 +6,7 @@ import Analytics from "lib/analytics";
 import { Link } from "react-router-dom";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { DiscussionEmbed } from "disqus-react";
-import { showSimpleMessage } from "lib/util";
+import { showSimpleMessage, targetedNetwork } from "lib/util";
 import customDaoInfo from "../../customDaoInfo";
 
 type IExternalProps = {
@@ -42,7 +42,7 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
 
   public render() {
     const daoState = this.props.daoState;
-    const customData = customDaoInfo[process.env.NETWORK]?.[daoState.id.toLowerCase()];
+    const customData = customDaoInfo[targetedNetwork()]?.[daoState.id.toLowerCase()];
 
     this.disqusConfig.url = `${process.env.BASE_URL}/dao/${this.props.daoState.address}/discussion`;
     this.disqusConfig.identifier = this.props.daoState.address;
