@@ -5,7 +5,7 @@ import {
   IProposalState,
   IRewardState,
 } from "@daostack/arc.js";
-import { of } from "rxjs";
+import { of, Observable } from "rxjs";
 import { catchError } from "rxjs/operators";
 
 import BN = require("bn.js");
@@ -16,7 +16,6 @@ import "moment";
 import * as moment from "moment-timezone";
 import { getArc } from "../arc";
 import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
-
 
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
@@ -325,7 +324,7 @@ export async function getNetworkName(id?: string): Promise<Networks> {
   }
 }
 
-export function linkToEtherScan(address: Address) {
+export function linkToEtherScan(address: Address, tokenHoldings = false) {
   let prefix = "";
   const arc = getArc();
   switch (arc.web3.currentProvider.__networkId) {
@@ -335,8 +334,14 @@ export function linkToEtherScan(address: Address) {
     case "42":
       prefix = "kovan.";
       break;
+    case "100": // xdai
+      return tokenHoldings ?
+        `https://blockscout.com/poa/xdai/address/${address}/tokens` :
+        `https://blockscout.com/poa/xdai/${address.length > 42 ? "tx" : "address"}/${address}`;
   }
-  return `https://${prefix}etherscan.io/address/${address}`;
+  return tokenHoldings ?
+    `https://${prefix}etherscan.io/tokenholdings?a=${address}` :
+    `https://${prefix}etherscan.io/address/${address}`;
 }
 
 export type AccountClaimableRewardsType = { [key: string]: BN };
@@ -587,3 +592,8 @@ export function initializeUtils(options: IInitializeOptions) {
   * which when wrong would be more wrong than not splitting (like "I D").)
   **/
 export const splitCamelCase = (str: string): string => `${str[0].toUpperCase()}${str.slice(1).replace(/([a-z])([A-Z])/g, "$1 $2")}`;
+
+export function ethBalance(address: Address): Observable<BN> {
+  const arc = getArc();
+  return arc.ethBalance(address);
+}

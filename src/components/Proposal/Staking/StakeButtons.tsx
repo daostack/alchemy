@@ -267,9 +267,9 @@ class StakeButtons extends React.Component<IProps, IState> {
           : ""
         }
 
-        <div className={contextMenu ? css.contextContent : css.stakeControls}>
+        <div className={contextMenu ? css.contextContent : ""}>
           {stakingEnabled ?
-            <div>
+            <>
               {
                 (currentAccountAddress && tip(IProposalOutcome.Fail) !== "") ?
                   <Tooltip placement="left" trigger={["hover"]} overlay={tip(IProposalOutcome.Fail)}>
@@ -290,7 +290,7 @@ class StakeButtons extends React.Component<IProps, IState> {
               {parentPage !== Page.ProposalDetails && proposal.stage === IProposalStage.PreBoosted && !expired && proposal.downStakeNeededToQueue.gtn(0) ?
                 <div className={css.toBoostMessage}>&gt;= {formatTokens(proposal.downStakeNeededToQueue, " GEN to un-boost")}</div>
                 : ""}
-            </div>
+            </>
             : <span className={css.disabledPredictions}>
               {disabledMessage}
             </span>
