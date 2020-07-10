@@ -96,10 +96,10 @@ class DaosPage extends React.Component<IProps, IState> {
       const arc = getArc();
       const firstChar = searchString.charAt(0);
       const foundDaos = await combineLatest(
-        // eslint-disable-next-line @typescript-eslint/camelcase
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: searchString } }, { fetchAllData: true }),
         // If string is all lower case also search for string with first character uppercased so "gen" matches "Gen" too
-        // eslint-disable-next-line @typescript-eslint/camelcase
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         firstChar.toLowerCase() === firstChar ? arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: firstChar.toUpperCase() + searchString.slice(1) } }, { fetchAllData: true }) : of([]),
         (data1, data2) => data1.concat(data2),
       ).pipe(first()).toPromise();
@@ -136,8 +136,8 @@ class DaosPage extends React.Component<IProps, IState> {
       // Otherwise show registered DAOs
       otherDAOs = otherDAOs.filter((d: DAO) => {
         return !yourDAOAddresses.includes(d.id) &&
-               d.coreState.name.toLowerCase().includes(search) &&
-               d.coreState.register === "registered";
+          d.coreState.name.toLowerCase().includes(search) &&
+          d.coreState.register === "registered";
       });
     }
 
@@ -253,11 +253,11 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
     undefined,
     { subscribe: true }
   ) : of([]);
-  // eslint-disable-next-line @typescript-eslint/camelcase
-  const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc"}, { fetchAllData: true, subscribe: true }) : of([]);
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc" }, { fetchAllData: true, subscribe: true }) : of([]);
 
   return combineLatest(
-    arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0}, { fetchAllData: true, subscribe: true }),
+    arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0 }, { fetchAllData: true, subscribe: true }),
     followDAOs,
     memberOfDAOs
   );
@@ -265,8 +265,8 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
 
 const SubscribedDaosPage = withSubscription({
   wrappedComponent: DaosPage,
-  loadingComponent: <div className={css.wrapper}><Loading/></div>,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
+  loadingComponent: <div className={css.wrapper}><Loading /></div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   // Don't ever update the subscription
   checkForUpdate: ["currentAccountAddress", "followingDAOs"],

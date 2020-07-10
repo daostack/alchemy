@@ -16,7 +16,7 @@ export default class BuidlhubClient implements IBuidlhubClient {
 
   }
 
-  async register(props: any = {}) {
+  async register(props: any = {}): Promise<any> {
     this._validatePropsExist(props, ["email", "walletAddress"]);
 
     const { email, walletAddress } = props;
@@ -60,7 +60,7 @@ export default class BuidlhubClient implements IBuidlhubClient {
     return {data};
   }
 
-  async _fetchWithRetry(url: string, options: any, maxAttempts = 3) {
+  async _fetchWithRetry(url: string, options: unknown, maxAttempts = 3): Promise<any> {
     let lastError = null;
     for (let i = 0; i < maxAttempts; i++) {
       try {

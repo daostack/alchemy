@@ -14,7 +14,7 @@ import { AsyncSendable, Block } from "ethers/providers";
  */
 let selectedProvider: Web3Provider | undefined;
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 let web3Modal: Web3Modal;
 let initializedAccount: Address;
@@ -294,7 +294,7 @@ async function enableWeb3Provider(): Promise<void> {
   }
 
   let provider: Web3Provider;
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   let _web3Modal: Web3ConnectModal;
 

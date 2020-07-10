@@ -13,12 +13,12 @@ import { ThroughProvider } from "react-through";
 import * as css from "./layouts/App.scss";
 import { history, default as store } from "./configureStore";
 
-export class App extends React.Component<{}, {
+export class App extends React.Component<unknown, {
   arcIsInitialized: boolean;
   retryingArc: boolean;
   error?: string;
 }> {
-  constructor(props: {}) {
+  constructor(props: unknown) {
     super(props);
     this.state = {
       arcIsInitialized: false,
