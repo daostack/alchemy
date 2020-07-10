@@ -36,7 +36,7 @@
         background-size: 20px;
         font-family: "AccordBold", sans-serif;
       }
-      
+
       input:focus {
         outline: none;
       }
@@ -102,20 +102,37 @@
       padding-top: 30px;
     }
 
-  .daoTitle {
-    border-radius: 15px 15px 0 0;
-    color: $white;
-    padding: 10px 10px 10px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    // ****** DAO Card **** //
+    a.daoLink {
+      text-decoration: none;
+      color: $white;
+      text-align: left;
 
-    .daoName {
-      font-size: 28px;
-      font-weight: bold;
-      display: inline-block;
-      overflow-x: hidden;
-    }
+      .daoInactive {
+        opacity: 0.65;
+
+        .daoName {
+          opacity: 0.8;
+        }
+        &:hover {
+          cursor: not-allowed;
+        }
+      }
+
+      .daoTitle {
+        border-radius: 15px 15px 0 0;
+        padding: 10px 10px 10px 30px;
+        color: $white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .daoName {
+          font-size: 28px;
+          font-weight: bold;
+          display: inline-block;
+          overflow-x: hidden;
+        }
 
         .inactiveFeedback {
           float: right;
