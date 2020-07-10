@@ -1,4 +1,5 @@
 import { Address, IDAOState, IProposalOutcome, IProposalState, Vote } from "@daostack/arc.js";
+import { getProfile } from "actions/profilesActions";
 import { getArc } from "arc";
 import classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
@@ -58,6 +59,11 @@ interface IStateProps {
   profiles: IProfilesState;
 }
 
+interface IDispatchProps {
+  getProfile: typeof getProfile;
+}
+
+
 const mapStateToProps = (state: IRootState, _ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
     ..._ownProps,
@@ -65,10 +71,33 @@ const mapStateToProps = (state: IRootState, _ownProps: IExternalProps): IExterna
   };
 };
 
+const mapDispatchToProps = {
+  getProfile,
+};
+
 type SubscriptionData = Vote[];
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<SubscriptionData>;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
 
 class VotersModal extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    const votes = this.props.data;
+    const { getProfile, profiles } = this.props;
+
+    /**
+     * Would be better if we could use `getProfilesForAddresses`, but it is busted
+     * See: https://github.com/3box/3box-js/issues/649
+     */
+    for (const vote of votes) {
+      const voterAddress = vote.coreState.voter;
+      if (!profiles[voterAddress])
+      /**
+       * intentionally not awaiting this because it takes too long when there are a lot of profiles to download
+       * but they show up pretty quickly when not running serially.
+       */
+        getProfile(voterAddress);
+    }
+  }
 
   public async handleClickDone() {
     this.props.closeAction();
@@ -164,4 +193,4 @@ const voterModalWithSubscriptions = withSubscription({
   },
 });
 
-export default connect(mapStateToProps)(voterModalWithSubscriptions);
+export default connect(mapStateToProps, mapDispatchToProps)(voterModalWithSubscriptions);

@@ -22,7 +22,7 @@ const positiveNumber = (value: any) => {
   return reg.test(value);
 };
 
-export const vaildRange = (value: any, min: number, max: number) => {
+export const validRange = (value: any, min: number, max: number) => {
   let error;
   if (!value) {
     error = constants.REQUIRED;
@@ -107,11 +107,11 @@ export const futureTime = (value: any) => {
   return error;
 };
 
-export const address = (value: any) => {
+export const address = (value: any, allowNulls = false) => {
   let error;
   if (!value) {
     error = constants.REQUIRED;
-  } else if (!isAddress(value)) {
+  } else if (!isAddress(value, allowNulls)) {
     error = constants.VALID_ADDRESS;
   }
   return error;

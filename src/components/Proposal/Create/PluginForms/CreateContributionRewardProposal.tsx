@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { IDAOState, IContributionRewardState } from "@daostack/arc.js";
+import { IDAOState, IContributionRewardState, Address } from "@daostack/arc.js";
 import { createProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
@@ -14,10 +14,12 @@ import { showNotification, NotificationStatus } from "reducers/notifications";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+import HelpButton from "components/Shared/HelpButton";
 
 const Select = React.lazy(() => import("react-select"));
 
 interface IExternalProps {
+  currentAccountAddress: Address;
   pluginState: IContributionRewardState;
   daoAvatarAddress: string;
   handleClose: () => any;
@@ -88,7 +90,6 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.initialFormValues = importUrlValues<IFormValues>({
       beneficiary: "",
       description: "",
@@ -110,6 +111,10 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    if (!values.beneficiary) {
+      values.beneficiary = this.props.currentAccountAddress;
+    }
 
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
 
@@ -195,7 +200,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               errors.title = "Title is too long (max 120 characters)";
             }
 
-            if (!isAddress(values.beneficiary)) {
+            if (values.beneficiary && !isAddress(values.beneficiary)) {
               errors.beneficiary = "Invalid address";
             }
 
@@ -209,7 +214,6 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
             require("description");
             require("title");
-            require("beneficiary");
 
             if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
               errors.rewards = "Please select at least some reward";
@@ -249,9 +253,10 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
               <TrainingTooltip overlay={this.fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
-                  <div className={css.requiredMarker}>*</div>
-                Description
-                  <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                  <div className={css.proposalDescriptionLabelText}>
+                    <div className={css.requiredMarker}>*</div>
+                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                  </div>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>
@@ -290,10 +295,9 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               />
 
               <div>
-                <TrainingTooltip overlay="Ethereum Address or Alchemy Username to receive rewards" placement="right">
+                <TrainingTooltip overlay="Ethereum Address or Alchemy Username to receive rewards, if not you" placement="right">
                   <label htmlFor="beneficiary">
-                    <div className={css.requiredMarker}>*</div>
-                    Recipient
+                    Recipient, if not you
                     <ErrorMessage name="beneficiary">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                 </TrainingTooltip>
@@ -303,6 +307,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                   onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                   onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
                   defaultValue={this.initialFormValues.beneficiary}
+                  placeholder={this.props.currentAccountAddress}
                 />
               </div>
 

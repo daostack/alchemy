@@ -9,7 +9,7 @@ import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { generate } from "geopattern";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWeiToString } from "lib/util";
+import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWeiToString, ethBalance } from "lib/util";
 import { parse } from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
@@ -78,6 +78,10 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
     this.props.hideMenu();
   }
 
+  private drawNavHeadingLine = () => {
+    return <svg viewBox="0 0 1 2" preserveAspectRatio="none"><line x1="0" y1="0" x2="1" y2="0"/></svg>;
+  }
+
   public daoMenu() {
     const dao = this.props.data;
 
@@ -85,7 +89,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
     const bgPattern = generate(dao.address + dao.name);
 
     return (
-      <div>
+      <>
         <div className={css.daoName}>
           <Link to={"/dao/" + dao.address} onClick={this.handleCloseMenu}>
             <b className={css.daoIcon} style={{ backgroundImage: bgPattern.toDataUrl() }}></b>
@@ -115,8 +119,8 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
           }
         </div>
         <div className={css.followButton}><FollowButton id={dao.address} type="daos" style="white" /></div>
+        <div className={css.daoNavHeading}><div>DAO Menu</div>{this.drawNavHeadingLine()}</div>
         <div className={css.daoNavigation}>
-          <span className={css.daoNavHeading}><b>DAO Menu</b></span>
           <ul>
             <li>
               <Link to={`/dao/${dao.address}`} onClick={this.handleCloseMenu} data-test-id="daohome">
@@ -174,13 +178,14 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
             </li>
           </ul>
         </div>
+        <div className={css.daoNavHeading}>
+          <div>DAO Holdings</div>
+          <a target="_blank" rel="noopener noreferrer" className="externalLink" href={daoHoldingsAddress}>
+            <img src="/assets/images/Icon/link-white.svg" />
+          </a>
+          {this.drawNavHeadingLine()}
+        </div>
         <div className={css.daoHoldings}>
-          <span className={css.daoNavHeading}>
-            <b>DAO Holdings</b>
-            <a className="externalLink" href={daoHoldingsAddress}>
-              <img src="/assets/images/Icon/link-white.svg" />
-            </a>
-          </span>
           <ul>
             <li key={"0x0"}>
               <Tooltip overlay={`${
@@ -196,7 +201,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
             })}
           </ul>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -211,9 +216,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
     return (
       <div className={sidebarClass}>
         <div className={css.menuContent}>
-          <div className={css.daoContentWrapper}>
-            { this.props.daoAvatarAddress && this.props.data ? this.daoMenu() : ""}
-          </div>
+          { this.props.daoAvatarAddress && this.props.data ? this.daoMenu() : ""}
 
           <div className={css.siteLinksWrapper}>
             <ul>
@@ -247,7 +250,8 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               <li><Link to="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link></li>
               <li className={css.daoStack}>
                 <a className="externalLink" href="http://daostack.io" target="_blank" rel="noopener noreferrer">
-                  <img src={this.props.daoAvatarAddress ? "/assets/images/Icon/dao-logo.svg" : "/assets/images/Icon/dao-logo-gray.svg"} /> DAOstack
+                  <img src={(this.props.menuOpen || (this.props.daoAvatarAddress && this.props.data)) ?
+                    "/assets/images/Icon/dao-logo.svg" : "/assets/images/Icon/dao-logo-gray.svg"} /> DAOstack
                 </a>
               </li>
             </ul>
@@ -276,8 +280,7 @@ const SubscribedEthBalance = withSubscription({
     return oldProps.dao.address !== newProps.dao.address;
   },
   createObservable: async (props: IEthProps) => {
-    const arc = getArc();
-    return (await arc.dao(props.dao.address).ethBalance()).pipe(ethErrorHandler());
+    return (await ethBalance(props.dao.address)).pipe(ethErrorHandler());
   },
 });
 

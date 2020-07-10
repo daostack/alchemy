@@ -7,7 +7,7 @@ import classNames from "classnames";
 import Reputation from "components/Account/Reputation";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Analytics from "lib/analytics";
-import { fromWei } from "lib/util";
+import { fromWei, targetedNetwork } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -105,6 +105,9 @@ class VoteButtons extends React.Component<IProps, IState> {
                             (proposalState.stage === IProposalStage.Boosted && expired) ||
                             (proposalState.stage === IProposalStage.QuietEndingPeriod && expired) ||
                             (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ||
+                            (currentAccountState && (proposalState.createdAt < currentAccountState.createdAt) &&
+                            //this is a workaround till https://github.com/daostack/subgraph/issues/548
+                            (targetedNetwork() !== "ganache")) ||
                             currentVote === IProposalOutcome.Pass ||
                             currentVote === IProposalOutcome.Fail
                             ;
@@ -117,13 +120,28 @@ class VoteButtons extends React.Component<IProps, IState> {
         "Can't change your vote" :
         (currentAccountState && currentAccountState?.reputation.eq(new BN(0))) ?
           "Requires reputation in this DAO" :
-          proposalState.stage === IProposalStage.ExpiredInQueue ||
-              (proposalState.stage === IProposalStage.Boosted && expired) ||
-              (proposalState.stage === IProposalStage.QuietEndingPeriod && expired) ||
-              (proposalState.stage === IProposalStage.Queued && expired) ?
-            "Can't vote on expired proposals" :
-            proposalState.stage === IProposalStage.Executed ?
-              `Can't vote on ${proposalState.winningOutcome === IProposalOutcome.Pass ? "passed" : "failed"} proposals` : "";
+          /**
+           * The following condition deduces that the user could not have had rep when the
+           * proposal was created because of the following behavior in the subgraph:
+           *
+           * 1) `currentAccountState` (`ReputationHolder` in the subgraph) represents an entity that associates
+           * a single DAO with an ethereum account
+           * 2) currentAccountState can only exist in the subgraph when the account has > 0 rep in the DAO
+           * 3) `currentAccountState.createdAt` is set only once:  When currentAccountState is being instantiated
+           * for the first time, in response to a Mint event that brings the rep > 0
+           * 4) when a Burn event brings the rep <= 0, then the entity is removed from the subgraph
+           * 5) when `currentAccount` is not found in the subgraph, then a fake `currentAccountState` is created with
+           * rep == 0
+           */
+          (currentAccountState && (proposalState.createdAt < currentAccountState.createdAt)) ?
+            "Must have had reputation in this DAO when the proposal was created" :
+            proposalState.stage === IProposalStage.ExpiredInQueue ||
+                (proposalState.stage === IProposalStage.Boosted && expired) ||
+                (proposalState.stage === IProposalStage.QuietEndingPeriod && expired) ||
+                (proposalState.stage === IProposalStage.Queued && expired) ?
+              "Can't vote on expired proposals" :
+              proposalState.stage === IProposalStage.Executed ?
+                `Can't vote on ${proposalState.winningOutcome === IProposalOutcome.Pass ? "passed" : "failed"} proposals` : "";
 
     const voteUpButtonClass = classNames({
       [css.votedFor]: currentVote === IProposalOutcome.Pass,
@@ -159,7 +177,7 @@ class VoteButtons extends React.Component<IProps, IState> {
           /> : ""
         }
         {contextMenu ?
-          <div>
+          <>
             <div className={css.contextTitle}>
               <div>
                 <span className={css.hasVoted}>
@@ -201,14 +219,14 @@ class VoteButtons extends React.Component<IProps, IState> {
                   </div>
                   :
                   <div className={css.votingDisabled}>
-                    <span><img src="/assets/images/Icon/Alert-yellow-b.svg"/> {disabledMessage}</span>
+                    <img src="/assets/images/Icon/Alert-yellow-b.svg"/> {disabledMessage}
                   </div>
                 }
               </div>
             </div>
-          </div>
+          </>
           :
-          <div>
+          <>
             <div className={css.castVote}>
               {!votingDisabled ?
                 <div>
@@ -225,7 +243,7 @@ class VoteButtons extends React.Component<IProps, IState> {
                 </div>
                 :
                 <div className={css.votingDisabled}>
-                  <span>{disabledMessage}</span>
+                  {disabledMessage}
                 </div>
               }
             </div>
@@ -239,7 +257,7 @@ class VoteButtons extends React.Component<IProps, IState> {
               - Against
               </span>
             </div>
-          </div>
+          </>
         }
       </div>
     );

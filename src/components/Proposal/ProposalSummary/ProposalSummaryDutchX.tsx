@@ -19,6 +19,14 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
   public render(): RenderOutput {
     const { proposalState, detailView, genericPluginInfo, transactionModal } = this.props;
     let decodedCallData: any;
+    const sendsETH = proposalState.value.gtn(0);
+    const renderValueHtml = () => {
+      return sendsETH ?
+        <div className={sendsETH ? css.warning : ""}>
+          &gt; Send to contract: {formatTokens(proposalState.value)} ETH &lt;
+        </div>
+        : "";
+    };
     try {
       decodedCallData = genericPluginInfo.decodeCallData(proposalState.callData);
     } catch (err) {
@@ -44,10 +52,11 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
               {action.label}
+              {renderValueHtml()}
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
-                { action.fields[0].label}: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                <div>{ action.fields[0].label}: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a></div>
               </div>
               : ""
             }
@@ -59,6 +68,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
               {action.label}
+              {renderValueHtml()}
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
@@ -74,6 +84,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
               {action.label}
+              {renderValueHtml()}
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
@@ -89,11 +100,14 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             <span className={css.summaryTitle}>
               {decodedCallData.values[1] ? "+" : "-"}&nbsp;
               {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+              {renderValueHtml()}
             </span>
             { detailView ?
-              <ul className={css.summaryDetails}>
-                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
-              </ul>
+              <div className={css.summaryDetails}>
+                <ul>
+                  {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
+                </ul>
+              </div>
               : ""
             }
           </div>
@@ -108,7 +122,13 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
               { field.label }: {formatTokens(new BN(value), field.unit, field.decimals)}
+              {renderValueHtml()}
             </span>
+            {detailView ?
+              <div className={css.summaryDetails}>
+              </div>
+              : ""
+            }
           </div>
         );
       }

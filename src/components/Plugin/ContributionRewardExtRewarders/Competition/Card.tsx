@@ -84,7 +84,7 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
       <StatusBlob competition={competition}></StatusBlob>
       <div className={css.createByContainer}>
         <div className={css.createdBy}>
-          <AccountPopup accountAddress={proposalState.proposer} daoState={daoState}/>
+          <AccountPopup accountAddress={proposalState.proposer} daoState={daoState} />
           <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
         </div>
         <div className={css.countdown}>
@@ -98,11 +98,11 @@ class CompetitionCard extends React.Component<IProps, IStateProps> {
       </div>
       <div className={css.rewards}>
         <div className={css.winnerIcon}>
-          { overWithWinners ? <img src="/assets/images/Icon/winner.svg"></img> : "" }
+          {overWithWinners ? <img src="/assets/images/Icon/winner.svg"></img> : ""}
         </div>
         <div className={css.transferType}><RewardsString proposalState={proposalState} daoState={daoState} /></div>
         <img src="/assets/images/Icon/Transfer.svg" />
-        { overWithWinners ?
+        {overWithWinners ?
           <div className={css.winners}>{numWinningSubmissions} winners</div> :
           <div className={css.winners}>{competition.numberOfWinners} anticipated winners</div>
         }

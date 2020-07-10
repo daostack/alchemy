@@ -7,7 +7,7 @@ import Analytics from "lib/analytics";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import * as InfiniteScroll from "react-infinite-scroll-component";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { combineLatest, from } from "rxjs";
@@ -62,11 +62,7 @@ class DaoHistoryPage extends React.Component<IProps, null> {
           hasMore={hasMoreToLoad}
           loader=""
           style={{overflow: "visible"}}
-          endMessage={
-            <p style={{textAlign: "center"}}>
-              <b>&mdash;</b>
-            </p>
-          }
+          endMessage={null}
         >
           { proposals.length === 0 ?
             <span>This DAO hasn&apos;t passed any proposals yet. Checkout the <Link to={"/dao/" + daoState.id + "/proposal/"}>DAO&apos;s installed pluginss</Link> for any open proposals.</span> :
@@ -97,8 +93,8 @@ class DaoHistoryPage extends React.Component<IProps, null> {
 
 export default withSubscription({
   wrappedComponent: DaoHistoryPage,
-  loadingComponent: <Loading/>,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
+  loadingComponent: <Loading />,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: [],
 

@@ -343,29 +343,24 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                   <div className={css.stakingInfo + " clearfix"}>
                     <div className={css.stakingForm}>
                       <span className={css.yourStakeTitle}>Your stake</span>
-                      <div className={buyGensClass}>
-                        <h4>
-                        You do not have enough GEN
-                        </h4>
-                      </div>
-                      <div className={css.formGroup + " clearfix"}>
-                        <input
-                          autoFocus
-                          type="number"
-                          min="1"
-                          ref={this.ref}
-                          className={css.predictionAmount}
-                          onChange={this.stakeOnChange}
-                          placeholder="0"
-                          data-test-id="stake-input"
-                        />
-                        <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
+                      <div className={`${css.formGroup} ${css.stakeInputGroup}`}>
+                        <div className={css.predictionAmount}>
+                          <input
+                            autoFocus
+                            type="number"
+                            min="1"
+                            ref={this.ref}
+                            onChange={this.stakeOnChange}
+                            placeholder="0"
+                            data-test-id="stake-input"
+                          />
+                          <div className={css.genLabel + " " + css.genSymbol}>GEN</div>
+                        </div>
                         <div className={css.yourBalance}>
-                          <div>Your balance: {formatTokens(currentAccountGens)} GEN</div>
+                          <div className={css.balance}>Your balance: {formatTokens(currentAccountGens)} GEN</div>
                           <div className={css.exchangeList}>
-                          Buy GEN &gt;
+                            [Buy GEN]
                             <ul>
-                              <div className={css.diamond}></div>
                               {
                                 getExchangesList().map(this.exchangeHtml)
                               }
@@ -380,6 +375,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                           }
                         </div>
                       </div>
+                      <div className={buyGensClass}>You do not have enough GEN</div>
                     </div>
                   </div> : ""
               }

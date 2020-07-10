@@ -19,6 +19,7 @@ import { connect } from "react-redux";
 import * as React from "react";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+import HelpButton from "components/Shared/HelpButton";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -132,6 +133,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
     } else {
       type = "SchemeRegistrarAdd";
     }
+
     const proposalValues = {
       ...values,
       dao: this.props.daoAvatarAddress,
@@ -146,7 +148,6 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
     };
     setSubmitting(false);
     await this.props.createProposal(proposalValues);
-
     Analytics.track("Submit Proposal", {
       "DAO Address": this.props.daoAvatarAddress,
       "Proposal Title": values.title,
@@ -241,6 +242,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                       <p><b>Competition Plugin</b> &mdash; Create competitions with prizes split between any number of winners. Competitions accept submissions from anyone, and Reputation-holders vote to decide the winners.</p>
                       <p><b>ENS Plugins</b> &mdash; A set of plugins that enables the DAO to control Ethereum Name Service addresses via proposals.</p>
                       <p><b>Reputation from Token</b> &mdash; Allow anyone to redeem Reputation using a token of your choice.</p>
+                      <p><b>Stake for Reputation Plugin</b> &mdash; Allow anyone to stake a token of your choice to earn voting power in your DAO.</p>
                       <p><b>Bounties Plugins</b> &mdash; Via proposal, create DAO-administered bounties on Bounties Network.</p>
                       <p><b>Join and Quit Plugins</b> &mdash; Allow anyone to join the DAO via a donation and quit anytime, reclaiming at least part of their original funds (“rage quit”). Coming soon.</p>
                       <p><b>NFT Plugins</b> &mdash; Allow the DAO to hold, send, mint, and sell NFTs (non-fungible tokens). Coming soon.</p>
@@ -339,9 +341,10 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
 
                     <TrainingTooltip overlay={fnDescription} placement="right">
                       <label htmlFor="descriptionInput">
-                        <div className={css.requiredMarker}>*</div>
-                      Description
-                        <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg" />
+                        <div className={css.proposalDescriptionLabelText}>
+                          <div className={css.requiredMarker}>*</div>
+                          <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                        </div>
                         <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
                     </TrainingTooltip>
@@ -457,7 +460,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                         <div className={css.permissionCheckbox}>
                           <Field id="mintBurnReputation" type="checkbox" name="mintBurnReputation" disabled="disabled" checked="checked" />
                           <label htmlFor="mintBurnReputation">
-                            Mint or burn reputation
+                            Mint and burn reputation, send ETH and external &amp; native tokens
                           </label>
                         </div>
                       </div>
@@ -517,7 +520,7 @@ const SubscribedCreatePluginRegistrarProposal = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
-    return arc.dao(props.daoAvatarAddress).plugins();
+    return arc.dao(props.daoAvatarAddress).plugins({ where: { isRegistered: true } });
   },
 });
 

@@ -63,7 +63,7 @@
         "no-bitwise": "error",
         "@typescript-eslint/interface-name-prefix": ["error", "always"],
         "prefer-const": "error",
-        "no-unused-expressions": "error",
+        "@typescript-eslint/no-unused-expressions": "error",
         "no-unused-vars": "off", // to not interfere with @typescript just below
         "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "[_].*" }],
         "quotes": ["error", "double"],

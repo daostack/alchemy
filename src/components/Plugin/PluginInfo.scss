@@ -30,10 +30,10 @@
   font-size: 11px;
   font-family: "Open Sans";
   font-weight: normal;
-  border-radius: 20px;
+  border-radius: 14px 14px 14px 14px;
   min-width: 340px;
-  margin-bottom: 15px;
-
+  margin-bottom: 10px;
+  
   h3 {
     margin: 0;
     font-size: 16px;
@@ -47,9 +47,39 @@
     width: 100%;
   }
 
-  th {
-    text-align: left;
-    min-width: 75px;
+  .infoRowsContainer,
+  .gpRowsContainer {
+    display: grid;
+    column-gap: 16px;
+    row-gap: 4px;
+    // > div {
+    //   white-space: nowrap;
+    // }
+
+    > div:nth-child(odd) {
+      font-weight: bold;
+    }
+  }
+
+  .infoRowsContainer {
+    grid-template-columns: 1fr 2fr;
+
+    .addressHash {
+      display: inline-block;
+      margin-right: 6px;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      // width of address, so we'll only truncate hashes
+      max-width: 250px;
+    }
+
+    img {
+      height: 11px;
+    }
+  }
+
+  .gpRowsContainer {
+    grid-template-columns: 1fr 2fr;
   }
 }
 
@@ -89,40 +119,29 @@
   }
 }
 
-.copyButton {
-  cursor: pointer;
-}
+@media only screen and (max-width: 820px) {
+  .schemeInfoContainer {
+    min-width: unset;
+    width: 100%;
+    margin-left: 10px;
+    margin-right: 10px;
 
-.editPlugin {
-  z-index: 1000000;
-  position: fixed;
-  right: 0;
-  top: 155px;
-  text-align: right;
+    .infoRowsContainer,
+    .gpRowsContainer {
+      grid-template-columns: 1fr;
 
-  a {
-    padding: 8px 15px;
-    color: $white;
-    background-color: rgba(3, 118, 255, 1);
-    border-radius: 15px;
-    font-size: 13px;
-    white-space: nowrap;
-
-    &:hover {
-      background-color: $accent-1;
-      color: $white;
-    }
-
-    &.disabled,
-    &.disabled:hover {
-      background-color: rgba(200, 200, 200, 0.5);
-      border: 1px solid rgba(200, 200, 200, 1);
-      cursor: not-allowed;
+      > div:nth-child(even) {
+        margin-bottom: 8px;
+      }
     }
   }
 }
 
 @media only screen and (max-width: 425px) {
+  .schemeInfoContainer {
+    width: calc(100vw - 20px);
+  }
+
   .ellipsis {
     position: relative;
     width: 35%;

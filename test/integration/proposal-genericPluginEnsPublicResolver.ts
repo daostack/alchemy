@@ -13,7 +13,7 @@ describe("Proposals ENS Resolver", () => {
     daoAddress = dao.id;
   });
 
-  it("Create a Generic Plugin ENS Public Resolver proposal and check that the data is submitted correctly", async () => {
+  it("Create a ENSPublicResolver proposal and check that the data is submitted correctly", async () => {
     await gotoDaoPlugins(daoAddress);
 
     // TODO: can't find
