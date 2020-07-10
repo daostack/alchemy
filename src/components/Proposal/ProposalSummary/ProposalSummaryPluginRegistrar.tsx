@@ -1,12 +1,13 @@
 import { IDAOState, IPluginRegistrarProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
-import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
+import { getNetworkName, linkToEtherScan } from "lib/util";
 import { pluginNameAndAddress } from "lib/pluginUtils";
+import CopyToClipboard from "components/Shared/CopyToClipboard";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
 
-interface IProps {
+interface IExternalProps {
   beneficiaryProfile?: IProfileState;
   detailView?: boolean;
   daoState: IDAOState;
@@ -16,8 +17,9 @@ interface IProps {
 
 interface IState {
   network: string;
-
 }
+
+type IProps = IExternalProps;
 
 export default class ProposalSummary extends React.Component<IProps, IState> {
 
@@ -29,11 +31,9 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
   }
 
-  public async componentDidMount (): Promise<void> {
+  public async componentDidMount(): Promise<void> {
     this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
-
-  private copyPluginAddressOnClick = (proposalState: IPluginRegistrarProposalState) => (): void => copyToClipboard(proposalState.pluginToRegister);
 
   public render(): RenderOutput {
     const { proposalState, detailView, transactionModal } = this.props;
@@ -49,21 +49,21 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
     return (
       <div className={proposalSummaryClass}>
-        { proposalState.pluginToRemove ?
+        {proposalState.pluginToRemove ?
           <div>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/delete.svg"/>&nbsp;
-                  Remove Plugin&nbsp;
+              <img src="/assets/images/Icon/delete.svg" />&nbsp;
+                  Remove Scheme&nbsp;
               <a href={linkToEtherScan(proposalState.pluginToRemove)} target="_blank" rel="noopener noreferrer">{pluginNameAndAddress(proposalState.pluginToRemove)}</a>
             </span>
-            { detailView ?
+            {detailView ?
               <div className={css.summaryDetails}>
                 <table><tbody>
                   <tr>
                     <th>
-                          Address:
+                      Address:
                       <a href={linkToEtherScan(proposalState.pluginToRemove)} target="_blank" rel="noopener noreferrer">
-                        <img src="/assets/images/Icon/Link-blue.svg"/>
+                        <img src="/assets/images/Icon/Link-blue.svg" />
                       </a>
                     </th>
                     <td>{proposalState.pluginToRemove}</td>
@@ -80,7 +80,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                 Add Plugin&nbsp;
                 <a href={linkToEtherScan(proposalState.pluginToRegister)} target="_blank" rel="noopener noreferrer">{pluginNameAndAddress(proposalState.pluginToRegister)}</a>
               </span>
-              { detailView ?
+              {detailView ?
                 <div className={css.summaryDetails}>
                   <table>
                     <tbody>
@@ -88,12 +88,12 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                         <th>
                           Address:
                           <a href={linkToEtherScan(proposalState.pluginToRegister)} target="_blank" rel="noopener noreferrer">
-                            <img src="/assets/images/Icon/Link-blue.svg"/>
+                            <img src="/assets/images/Icon/Link-blue.svg" />
                           </a>
                         </th>
                         <td>
                           <span>{proposalState.pluginToRegister}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyPluginAddressOnClick(proposalState)} />
+                          <CopyToClipboard value={proposalState.pluginToRegister} />
                         </td>
                       </tr>
                       <tr>

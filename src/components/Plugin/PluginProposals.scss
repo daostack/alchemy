@@ -120,32 +120,3 @@
     margin-top: 8px;
   }
 }
-
-.createProposal {
-  z-index: 1000000;
-  position: fixed;
-  right: 0;
-  top: 155px;
-  text-align: right;
-
-  a {
-    padding: 8px 15px;
-    color: $white;
-    background-color: rgba(3, 118, 255, 1);
-    border-radius: 15px;
-    font-size: 13px;
-    white-space: nowrap;
-
-    &:hover {
-      background-color: $accent-1;
-      color: $white;
-    }
-
-    &.disabled,
-    &.disabled:hover {
-      background-color: rgba(200, 200, 200, 0.5);
-      border: 1px solid rgba(200, 200, 200, 1);
-      cursor: not-allowed;
-    }
-  }
-}

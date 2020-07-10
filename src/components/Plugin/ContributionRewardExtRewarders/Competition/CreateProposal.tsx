@@ -7,16 +7,18 @@ import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isVali
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
-import { showNotification } from "reducers/notifications";
+import { showNotification, NotificationStatus } from "reducers/notifications";
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/PluginForms/MarkdownField";
 import { checkTotalPercent } from "lib/util";
 import * as Datetime from "react-datetime";
+import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
 import moment = require("moment");
 import BN = require("bn.js");
+import HelpButton from "components/Shared/HelpButton";
 
 interface IExternalProps {
   plugin: CompetitionPlugin;
@@ -33,7 +35,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-const MAX_NUMBER_OF_WINNERS=100;
+const MAX_NUMBER_OF_WINNERS = 100;
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
@@ -68,7 +70,7 @@ const customStyles = {
     display: "none",
   }),
   menu: (provided: any) => ({
-    ... provided,
+    ...provided,
     borderTop: "none",
     borderRadius: "0 0 5px 5px",
     marginTop: 1,
@@ -93,7 +95,7 @@ const CustomDateInput: React.SFC<any> = ({ field, form }) => {
   />;
 };
 
-export const SelectField: React.SFC<any> = ({options, field, form, _value }) => {
+export const SelectField: React.SFC<any> = ({ options, field, form, _value }) => {
   // value={options ? options.find((option: any) => option.value === field.value) : ""}
   return <Select
     options={options}
@@ -110,14 +112,45 @@ export const SelectField: React.SFC<any> = ({options, field, form, _value }) => 
 
 class CreateProposal extends React.Component<IProps, IStateProps> {
 
+  private initialFormValues: IFormValues;
+
   constructor(props: IProps) {
     super(props);
+
+    const arc = getArc();
+    const now = moment();
+
+    this.initialFormValues = importUrlValues<IFormValues>({
+      rewardSplit: "",
+      description: "",
+      ethReward: 0,
+      externalTokenAddress: arc.GENToken().address,
+      externalTokenReward: 0,
+      nativeTokenReward: 0,
+      numWinners: 0,
+      numberOfVotesPerVoter: 0,
+      proposerIsAdmin: false,
+      reputationReward: 0,
+      compStartTimeInput: now, // testing ? undefined : now,
+      suggestionEndTimeInput: now, // testing ? undefined : now,
+      votingStartTimeInput: now, // testing ? undefined : now,
+      compEndTimeInput: now, // testing ? undefined : now,
+      title: "",
+      url: "",
+      tags: [],
+    });
     this.state = {
-      tags: new Array<string>(),
+      tags: this.initialFormValues.tags,
     };
   }
 
-  public handleSubmit = async (values: IFormValues, { _setSubmitting }: any ): Promise<void> => {
+  // Exports data from form to a shareable url.
+  public exportFormValues(values: IFormValues) {
+    exportUrl({ ...values, ...this.state });
+    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
+  }
+
+  public handleSubmit = async (values: IFormValues, { _setSubmitting }: any): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) {
       return;
     }
@@ -128,7 +161,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     // If we know the decimals for the token then multiply by that
     if (externalTokenDetails) {
       externalTokenReward = toBaseUnit(values.externalTokenReward.toString(), externalTokenDetails.decimals);
-    // Otherwise just convert to Wei and hope for the best
+      // Otherwise just convert to Wei and hope for the best
     } else {
       externalTokenReward = toWei(Number(values.externalTokenReward));
     }
@@ -157,7 +190,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       ethReward: toWei(Number(values.ethReward)),
       externalTokenReward,
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
-      numberOfVotesPerVoter:  Number(values.numberOfVotesPerVoter),
+      numberOfVotesPerVoter: Number(values.numberOfVotesPerVoter),
       proposerIsAdmin: values.proposerIsAdmin,
       reputationReward,
       rewardSplit,
@@ -174,7 +207,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
   }
 
   private onTagsChange = (tags: string[]): void => {
-    this.setState({tags});
+    this.setState({ tags });
   }
 
   private fnDescription = (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
@@ -186,32 +219,13 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       return null;
     }
     const dao = data;
-    const arc = getArc();
     const localTimezone = getLocalTimezone();
-    const now = moment();
 
     return (
       <div className={css.containerNoSidebar}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={{
-            rewardSplit: "",
-            description: "",
-            ethReward: 0,
-            externalTokenAddress: arc.GENToken().address,
-            externalTokenReward: 0,
-            nativeTokenReward: 0,
-            numWinners: 0,
-            numberOfVotesPerVoter: 0,
-            proposerIsAdmin: false,
-            reputationReward: 0,
-            compStartTimeInput: now, // testing ? undefined : now,
-            suggestionEndTimeInput: now, // testing ? undefined : now,
-            votingStartTimeInput: now, // testing ? undefined : now,
-            compEndTimeInput: now, // testing ? undefined : now,
-            title: "",
-            url: "",
-          } as IFormValues}
+          initialValues={this.initialFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
@@ -255,7 +269,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             }
 
             // Number of winners less than MAX_NUMBER_OF_WINNERS
-            if ( values.numWinners > MAX_NUMBER_OF_WINNERS) {
+            if (values.numWinners > MAX_NUMBER_OF_WINNERS) {
               errors.numWinners = "Number of winners should be max 100";
             }
 
@@ -337,6 +351,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             setFieldTouched,
             setFieldValue,
+            values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <label className={css.description}>What to Expect</label>
@@ -362,9 +377,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
               <TrainingTooltip overlay={this.fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
-                  <div className={css.requiredMarker}>*</div>
-                  Description
-                  <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                  <div className={css.proposalDescriptionLabelText}>
+                    <div className={css.requiredMarker}>*</div>
+                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                  </div>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>
@@ -378,17 +394,17 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
               <TrainingTooltip overlay="Add some tags to give context about your proposal e.g. idea, signal, bounty, research, etc" placement="right">
                 <label className={css.tagSelectorLabel}>
-                Tags
+                  Tags
                 </label>
               </TrainingTooltip>
 
               <div className={css.tagSelectorContainer}>
-                <TagsSelector onChange={this.onTagsChange}></TagsSelector>
+                <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
               </div>
 
               <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
                 <label htmlFor="urlInput">
-                URL
+                  URL
                   <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>
@@ -423,7 +439,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               <div>
                 <TrainingTooltip overlay="Percentage distribution of rewards to beneficiaries" placement="right">
                   <label htmlFor="rewardSplitInput">
-                  Winner reward distribution (%)
+                    Winner reward distribution (%)
                     <ErrorMessage name="rewardSplit">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                 </TrainingTooltip>
@@ -507,7 +523,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
 
                 <div className={css.reward}>
                   <label htmlFor="externalRewardInput">
-                        External Token Reward to split
+                    External Token Reward to split
                     <ErrorMessage name="externalTokenReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <div className={css.externalTokenInput}>
@@ -607,16 +623,21 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               </div>
 
               {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
-                    && touched.reputationReward && errors.rewards &&
-                <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
+                && touched.reputationReward && errors.rewards &&
+                <span className={css.errorMessage + " " + css.someReward}><br /> {errors.rewards}</span>
               }
               <div className={css.createProposalActions}>
+                <TrainingTooltip overlay="Export proposal" placement="top">
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                    <img src="/assets/images/Icon/share-blue.svg" />
+                  </button>
+                </TrainingTooltip>
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
                 </button>
                 <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                  Submit proposal
+                    Submit proposal
                   </button>
                 </TrainingTooltip>
               </div>

@@ -45,34 +45,13 @@
     }
   }
 
-  .welcome,
-  .visitProposals {
-    margin-bottom: 16px;
+  .infoContainer {
+    div {
+      margin-bottom: 16px;
+    }
   }
 
   .wallContainer {
     padding-bottom: 5px;
-  }
-}
-
-.modalHeader {
-  display: flex;
-
-  .title {
-    flex-grow: 2;
-  }
-
-  .closeButton {
-    img {
-      position: relative;
-      width: 13px;
-      height: 13px;
-    }
-  }
-}
-
-.modalBody {
-  div {
-    margin-bottom: 1rem;
   }
 }

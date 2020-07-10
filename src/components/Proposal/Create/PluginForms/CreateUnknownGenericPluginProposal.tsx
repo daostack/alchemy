@@ -12,6 +12,7 @@ import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+import HelpButton from "components/Shared/HelpButton";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -184,9 +185,10 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
 
               <TrainingTooltip overlay={fnDescription} placement="right">
                 <label htmlFor="descriptionInput">
-                  <div className={css.requiredMarker}>*</div>
-                Description
-                  <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                  <div className={css.proposalDescriptionLabelText}>
+                    <div className={css.requiredMarker}>*</div>
+                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                  </div>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>

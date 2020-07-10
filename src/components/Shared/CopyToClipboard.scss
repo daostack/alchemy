@@ -1,0 +1,25 @@
+img.copyToClipboard {
+  cursor: pointer;
+  margin-left: 5px;
+  position: relative;
+
+  &.blue {
+    top: -1px;
+  }
+
+  &.black {
+    top: 9px;
+  }
+}
+
+table td img.copyToClipboard {
+  &.blue {
+    top: 1px;
+  }
+}
+
+pre img.copyToClipboard {
+  &.blue {
+    top: 2px;
+  }
+}

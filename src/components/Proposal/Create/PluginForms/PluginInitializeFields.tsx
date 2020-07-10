@@ -34,7 +34,7 @@ const fieldView = (plugin: string, title: string, field: string, validate?: (val
 const GenesisProtocolFields = (paramsProp: string) => (
   <Form>
     <div className={css.parameters}>
-      {fieldView(paramsProp, "Queued Vote Required Percentage", "queuedVoteRequiredPercentage", value => validators.vaildRange(value, 50, 100))}
+      {fieldView(paramsProp, "Queued Vote Required Percentage", "queuedVoteRequiredPercentage", value => validators.validRange(value, 50, 100))}
       {fieldView(paramsProp, "Queued Vote Period Limit", "queuedVotePeriodLimit", validators.validNumber)}
       {fieldView(paramsProp, "Boosted Vote Period Limit", "boostedVotePeriodLimit", validators.boostedVotePeriodLimit)}
       {fieldView(paramsProp, "Pre-Boosted Vote Period Limit", "preBoostedVotePeriodLimit", validators.validNumber)}
@@ -45,7 +45,7 @@ const GenesisProtocolFields = (paramsProp: string) => (
       {fieldView(paramsProp, "Minimum DAO Bounty", "minimumDaoBounty", value => validators.greaterThan(value, 0))}
       {fieldView(paramsProp, "DAO Bounty Const", "daoBountyConst", value => validators.greaterThan(value, 0))}
       {fieldView(paramsProp, "Activation Time", "activationTime", validators.futureTime, "datetime-local")}
-      {fieldView(paramsProp, "Vote on behalf", "voteOnBehalf", validators.address)}
+      {fieldView(paramsProp, "Vote on behalf", "voteOnBehalf", (address: string) => validators.address(address, true))}
     </div>
   </Form>
 );

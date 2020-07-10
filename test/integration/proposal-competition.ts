@@ -20,11 +20,11 @@ describe("Proposals", () => {
     const contributionRewardExt = contributionRewardExts[0];
     const contributionRewardExtState = await contributionRewardExt.state().pipe(first()).toPromise();
     dao = new DAO(arc, contributionRewardExtState.dao.id);
+
+    await gotoDaoPlugins(dao.id);
   });
 
   it("Create a Competition Plugin proposal, vote for it, stake on it", async () => {
-
-    await gotoDaoPlugins(dao.id);
 
     const pluginTitle = await $("h2=Competition");
     await pluginTitle.click();

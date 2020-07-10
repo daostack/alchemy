@@ -4,7 +4,10 @@
   z-index: 0;
 }
 
-.voteRecord, .castVote, .castVoteFor, .castVoteAgainst {
+.voteRecord,
+.castVote,
+.castVoteFor,
+.castVoteAgainst {
   display: none;
 }
 
@@ -47,11 +50,12 @@
   width: 62px;
   margin: 15px auto;
   position: relative;
-  border: 1px solid rgba(233, 238, 244, 1.000);
+  border: 1px solid rgba(233, 238, 244, 1);
   border-radius: 0;
 
-  .castVoteFor, .castVoteAgainst {
-    color: rgba(78, 97, 118, 1.000);
+  .castVoteFor,
+  .castVoteAgainst {
+    color: rgba(78, 97, 118, 1);
     font-size: 12px;
     font-weight: normal;
 
@@ -75,45 +79,47 @@
 }
 
 .contextContent .hasNotVoted button {
-    display: block;
-    text-align: left;
-    width: 100%;
-    border: none;
-    background-color: rgba(240, 245, 251, 0);
-    transition: all .25s ease;
-    padding: 0 0 5px 0;
-
-    img {
-      margin-left: 15px;
-      position: relative;
-      top: 3px;
-      margin-right: 10px;
-    }
-
-    span {
-      display: inline-block;
-      position: relative;
-      top: -2px;
-      left: 2px;
-      color: rgba(78, 97, 118, 1.000);
-    }
-
-    &:hover {
-      background-color: rgba(240, 245, 251, 1.000);
-    }
-}
-
-.contextContent .hasNotVoted .buttton.disabled, .contextContent .hasNotVoted .buttton.votedFor, .contextContent .hasNotVoted .buttton.votedAgainst {
-  color: rgba(78, 97, 118, .3);
+  display: block;
+  text-align: left;
+  width: 100%;
+  border: none;
+  background-color: rgba(240, 245, 251, 0);
+  transition: all 0.25s ease;
+  padding: 0 0 5px 0;
 
   img {
-    opacity: .3;
+    margin-left: 15px;
+    position: relative;
+    top: 3px;
+    margin-right: 10px;
+  }
+
+  span {
+    display: inline-block;
+    position: relative;
+    top: -2px;
+    left: 2px;
+    color: rgba(78, 97, 118, 1);
+  }
+
+  &:hover {
+    background-color: rgba(240, 245, 251, 1);
+  }
+}
+
+.contextContent .hasNotVoted .buttton.disabled,
+.contextContent .hasNotVoted .buttton.votedFor,
+.contextContent .hasNotVoted .buttton.votedAgainst {
+  color: rgba(78, 97, 118, 0.3);
+
+  img {
+    opacity: 0.3;
   }
 }
 
 .contextTitle {
   width: 100%;
-  border-bottom: 1px solid rgba(233, 238, 244, 1.000);
+  border-bottom: 1px solid rgba(233, 238, 244, 1);
   text-align: left;
   position: relative;
   top: -5px;
@@ -121,7 +127,7 @@
   span {
     font-size: 11px;
     font-family: "Open Sans";
-    color: rgba(154, 169, 181, 1.000);
+    color: rgba(154, 169, 181, 1);
     padding: 3px;
     background-color: white;
     position: relative;
@@ -129,14 +135,15 @@
     top: 10px;
   }
 
-  .hasVoted, .hasNotVoted {
+  .hasVoted,
+  .hasNotVoted {
     display: none;
   }
 }
 .hasVoted .contextTitle {
-    .hasVoted {
-      display: inline-block;
-    }
+  .hasVoted {
+    display: inline-block;
+  }
 }
 .contextContent {
   width: 100%;
@@ -144,11 +151,11 @@
 }
 
 .contextMenu .hasVoted .hasVoted {
-    display: inline-block;
+  display: inline-block;
 }
 
 .contextMenu .hasNotVoted .hasNotVoted {
-    display: inline-block;
+  display: inline-block;
 }
 
 .hasNotVoted {
@@ -158,21 +165,18 @@
   }
 }
 
-.votedFor .castVoteFor, .votedAgainst .castVoteAgainst {
+.votedFor .castVoteFor,
+.votedAgainst .castVoteAgainst {
   display: inline;
 }
 
 .votingDisabled {
+  position: relative;
+  bottom: 2px;
   font-size: 11px;
   color: $gray-1;
-  padding-top: 0px;
-  position: relative;
-  text-align: center;
-}
-
-.detailView .votingDisabled {
-  top: 0;
-  padding-top: 7px;
+  line-height: normal;
+  padding-right: 2px;
 }
 
 button.disabled {
@@ -186,11 +190,11 @@ button.disabled {
 
 .castVote button {
   font-weight: $bold;
-  color: rgba(3, 118, 255, 1.000);
-  background-color: rgba(225, 235, 247, 1.000);
+  color: rgba(3, 118, 255, 1);
+  background-color: rgba(225, 235, 247, 1);
   height: 25px;
   line-height: 25px;
-  transition: all .25s ease;
+  transition: all 0.25s ease;
   position: relative;
   border: 0;
   margin: 0 1px;

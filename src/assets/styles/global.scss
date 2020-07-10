@@ -30,15 +30,15 @@
 }
 
 /**
+ * torus popup
+ */
+:global iframe#torusIframe {
+  z-index: 1000000;
+}
+
+/**
  * the Wallet Connect QR code popup
  */
 :global div#walletconnect-qrcode-modal {
   z-index: 10000001 !important;
-}
-
-/**
- * torus popup
- */
- :global iframe#torusIframe {
-  z-index: 1000000;
 }

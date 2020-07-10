@@ -1,0 +1,135 @@
+{
+  "name": "DXswap Governance",
+  "addresses": {
+    "main": [
+      ""
+    ],
+    "rinkeby": [
+      "0x54d8ed1b8217d9c8208bb22aa55f9ee382259ac3"
+    ],
+    "kovan": [
+      ""
+    ],
+    "private": [
+      ""
+    ]
+  },
+  "actions": [
+    {
+      "id": "feeTo",
+      "label": "Set feeTo",
+      "description": "Updates the feeTo address which is the address that will receive fees",
+      "notes": "",
+      "fields": [
+        {
+          "label": "feeTo",
+          "name": "_feeTo",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_feeTo",
+            "type": "address"
+          }
+        ],
+        "name": "setFeeTo",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "feeToSetter",
+      "label": "Set feeToSetter",
+      "description": "Updates the feeToSetter address that will be privileged with admin functions.",
+      "notes": "",
+      "fields": [
+        {
+          "label": "feeToSetter",
+          "name": "_feeToSetter",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_feeToSetter",
+            "type": "address"
+          }
+        ],
+        "name": "setFeeToSetter",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "setProtocolFee",
+      "label": "Set Protocol Fee",
+      "description": "Updates the protocolFeeDenominator. For example a value of 5 uses 0.05% (1/~6 of 0.30%)",
+      "notes": "",
+      "fields": [
+        {
+          "label": "protocolFeeDenominator",
+          "name": "_protocolFeeDenominator"
+        }
+      ],
+      "abi": {
+        "inputs": [
+          {
+            "internalType": "uint8",
+            "name": "_protocolFeeDenominator",
+            "type": "uint8"
+          }
+        ],
+        "name": "setProtocolFee",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "setSwapFee",
+      "label": "Set Swap Fee",
+      "description": "Updates the Swap Fee for a given pair. Swap Fee is multiplied by 1000 – for a value of 0.3% set the SwapFee to 30",
+      "notes": "",
+      "fields": [
+        {
+          "label": "Pair",
+          "name": "_pair",
+          "placeholder": "Bytes32 (0x0000…)"
+        },
+        {
+          "label": "SwapFee",
+          "name": "_swapFee"
+        }
+      ],
+      "abi": {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_pair",
+            "type": "address"
+          },
+          {
+            "internalType": "uint8",
+            "name": "_swapFee",
+            "type": "uint8"
+          }
+        ],
+        "name": "setSwapFee",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }
+  ]
+}
