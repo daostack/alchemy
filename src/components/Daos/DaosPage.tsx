@@ -183,8 +183,11 @@ class DaosPage extends React.Component<IProps, IState> {
               <div className={css.headerTitle}>
                 <h2 data-test-id="header-all-daos">
                   Your DAOs
-                  <i className={cn("fa fa-envelope", css.emailIcon)} onClick={this.registerForMonitoring}/>
                 </h2>
+                <div className={css.emailAlertsWrapper} onClick={this.registerForMonitoring} >
+                  <div className={cn("fa fa-envelope", css.emailIcon)} />
+                  email alerts
+                </div>
               </div>
             </div>
 

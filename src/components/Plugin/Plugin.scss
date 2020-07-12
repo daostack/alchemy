@@ -68,15 +68,14 @@
       a {
         padding: 8px 15px;
         color: $white;
-        background-color: rgba(3, 118, 255, 1);
+        background-color: $strong-green;
         border-radius: 15px;
         font-size: 13px;
         white-space: nowrap;
         display: inline-block;
 
         &:hover {
-          background-color: $accent-1;
-          color: $white;
+          opacity: 0.8;
         }
 
         .disabled,
