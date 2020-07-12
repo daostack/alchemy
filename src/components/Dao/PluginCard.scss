@@ -21,7 +21,7 @@
   margin: 0 2.5% 40px 0;
   position: relative;
   float: left;
-  border-radius: 20px 20px 0 0;
+  border-radius: 20px;
 
   h1 {
     border-bottom: 1px solid rgba(45, 109, 181, 0.2);
@@ -34,7 +34,7 @@
     display: block;
     color: rgba(0, 29, 52, 1);
     border: 1px solid $white;
-    border-radius: 20px 20px 0 0;
+    border-radius: 20px;
     transition: all 0.25s ease;
 
     div {
@@ -91,15 +91,9 @@ a.proposalTitle {
     padding-bottom: 10px;
     display: flex;
     align-items: center;
-    border: 1px solid $white;
     border-top: 1px solid rgba(224, 232, 241, 1);
     font-size: 11px;
     color: rgba(80, 97, 118, 1);
-    transition: all 0.25s ease;
-
-    &:hover {
-      border: 1px solid rgba(172, 199, 230, 1);
-    }
 
     .miniGraph {
       vertical-align: middle;

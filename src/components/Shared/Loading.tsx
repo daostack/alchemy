@@ -13,5 +13,5 @@ export default (props: IExternalProps) => {
    */
   return <img
     className={classNames({ [css.loading]: true, [css.global]: !props.inline })}
-    src="/assets/images/spinnyBusyIcon.gif"></img>;
+    src="/assets/images/loading.gif"></img>;
 };

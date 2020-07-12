@@ -15,7 +15,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   box-shadow: $shadow-3;
-  height: calc(100% - 100px);
+  height: calc(80%);
 
   .header {
     background-color: $navy;
@@ -28,6 +28,8 @@
     opacity: 1;
     font-family: $body-font;
     font-weight: $normal;
+    display: flex;
+    align-items: center;
 
     span {
       position: relative;
@@ -49,6 +51,10 @@
       right: 10px;
       color: white;
       font-size: 28px;
+    }
+
+    .closeButton:hover {
+      opacity: 0.8;
     }
 
     .editIcon {
@@ -364,7 +370,7 @@
 
   .createProposalActions {
     text-align: right;
-    margin-top: 20px;
+    margin: 20px 0px;
   }
 }
 
@@ -409,26 +415,15 @@
       padding: 15px 30px;
       width: 100%;
       text-align: left;
-
-      span {
-        display: none;
-      }
     }
 
-    button:hover,
+    button:hover {
+      opacity: 0.8;
+    }
+
     button.selected {
       background-color: rgba(233, 238, 244, 1);
-
-      span {
-        width: 25px;
-        height: 19px;
-        position: absolute;
-        right: -8px;
-        transform: rotate(63deg) skew(35deg) translateY(-50%);
-        display: block;
-        top: 50%;
-        background-color: #e9eef4;
-      }
+      border-left: 5px solid;
     }
   }
 
@@ -549,7 +544,7 @@
     left: 0;
     z-index: 0;
     border: 1px solid #bfcbd5;
-    width: 477px;
+    width: 100%;
   }
 
   .parametersHash, .parameters {
@@ -732,16 +727,6 @@ div.description {
     .addPluginButton {
       display: inline-block;
       margin: 0 0 0 0;
-    }
-
-    button.selected span {
-      width: 24px;
-      left: 50%;
-      right: auto;
-      transform: rotate(153deg) skew(35deg);
-      top: 25px;
-      background-color: #e9eef4;
-      margin-left: -12px;
     }
   }
 

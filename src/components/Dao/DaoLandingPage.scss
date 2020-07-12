@@ -33,15 +33,18 @@
         border-width: 1px;
         background-color: #0071ff;
         padding: 0 15px;
-        border-color: #0376ff;
-        color: white;
+        color:$white;
         font-weight: bold;
         font-size: 11px;
         text-align: center;
         cursor: pointer;
-        outline: none;
         white-space: nowrap;
+        border: none;
       }
+    }
+
+    div.editButton:hover {
+      opacity: 0.8;
     }
   }
 
