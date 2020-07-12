@@ -375,7 +375,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                   </div>
                 </div>
 
-                <div className={css.reward}>
+                <div className={daoAvatarAddress === '0x519b70055af55a007110b4ff99b0ea33071c720a' ? css.hidden : css.reward}>
                   <label htmlFor="nativeTokenRewardInput">
                     DAO token ({dao.tokenSymbol}) Reward
                     <ErrorMessage name="nativeTokenReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
