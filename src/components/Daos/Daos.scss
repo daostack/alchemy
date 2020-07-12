@@ -74,6 +74,8 @@
     .headerTitle {
       width: 100%;
       background-color: rgba(229, 235, 242, 1);
+      display: flex;
+      justify-content: space-between;
 
       h2 {
         color: rgba(104, 155, 214, 1);
@@ -85,19 +87,24 @@
         margin: 0;
       }
 
-      .emailIcon {
-        color: rgb(104, 155, 214);
-        padding-left: 25px;
-        font-size: 25px;
-       
+      .emailAlertsWrapper {
+        display: flex;
+        align-items: center;
+        margin-right: 30px;
+
+        .emailIcon {
+          color: rgb(104, 155, 214);
+          font-size: 25px;
+          margin-right: 5px;
+        }
 
         &:hover {
           cursor: pointer;
           color: rgba(3, 118, 255, 1);
         }
       }
-
     }
+
     .daoList {
       padding-top: 30px;
     }
