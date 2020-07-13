@@ -73,9 +73,6 @@ const GenericSchemeFields: React.FC<IProps> = ({ values }) => {
     });
 
   const contractToCall = values.GenericScheme.contractToCall;
-  const isCustom = templates.findIndex(
-    (item) => item.address === contractToCall
-  ) === -1;
 
   return (
     <div>
@@ -98,7 +95,7 @@ const GenericSchemeFields: React.FC<IProps> = ({ values }) => {
             </option>
           ))}
         </Field>
-        {isCustom &&
+        {(document.getElementById("contractToCall") as HTMLInputElement)?.value === "" &&
           fieldView("GenericScheme", "Custom Contract To Call", "contractToCall", validators.address)}
         <a href={linkToEtherScan(contractToCall)} target="_blank" rel="noopener noreferrer">{contractToCall}</a>
       </div>
