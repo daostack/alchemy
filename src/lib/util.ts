@@ -268,7 +268,7 @@ export async function getNetworkId(web3Provider?: any): Promise<string> {
 
   try {
     arc = getArc();
-  } catch (ex) {
+  } catch {
     // Do nothing
   }
 
