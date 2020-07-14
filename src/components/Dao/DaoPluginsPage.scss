@@ -1,13 +1,64 @@
 .wrapper {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: -30px; // compensate for containers padding, so position:sticky will work right
 
-  h1 {
-    color: rgba(104, 155, 214, 1);
-    border-bottom: 1px solid rgba(195, 212, 231, 1);
-    width: 100%;
-    padding-top: 30px;
-    background-color: rgba(229, 235, 242, 1);
-    margin: 0;
+  .paddingTop {
+    position: sticky;
+    top: 50px;
+    height: 62px;
+    z-index: 2;
+    background-color: #e5ebf2;
+  }
+
+  .headerContainer {
+    position: sticky;
+    top: 112px;
+    background-color: #e5ebf2;
+    margin-bottom: 10px;
+    padding-bottom: 16px;
+    z-index: 2;
+
+    .header {
+      display: flex;
+      border-bottom: 1px solid rgba(195, 212, 231, 1);
+
+      .title {
+        color: rgba(104, 155, 214, 1);
+        font-size: 2em;
+        flex-grow: 2;
+      }
+
+      .addPlugin {
+        align-self: center;
+        padding-bottom: 4px;
+
+        a {
+          padding: 8px 15px;
+          color: $white;
+          background-color: $strong-green;
+          border-radius: 15px;
+          font-size: 13px;
+          white-space: nowrap;
+
+          &:hover {
+            opacity: 0.8;
+          }
+
+          &.disabled,
+          &.disabled:hover {
+            background-color: rgba(200, 200, 200, 0.5);
+            border: 1px solid rgba(200, 200, 200, 1);
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }
+
+  .allPlugins {
+    padding-top: 36px;
   }
 }
 
@@ -27,33 +78,6 @@
 .fadeExit.fadeExitActive {
   opacity: 0.01;
   transition: opacity 1000ms ease-in;
-}
-
-.allPlugins {
-  padding-top: 30px;
-}
-
-a.addPluginButton {
-  position: fixed;
-  right: 0;
-  top: 33px;
-  padding: 8px 15px;
-  color: $white;
-  background-color: $strong-green;
-  border-radius: 15px;
-  font-size: 13px;
-  white-space: nowrap;
-
-  &:hover {
-    opacity: 0.8;
-  }
-
-  &.disabled,
-  &.disabled:hover {
-    background-color: rgba(200, 200, 200, 0.5);
-    border: 1px solid rgba(200, 200, 200, 1);
-    cursor: not-allowed;
-  }
 }
 
 @media only screen and (max-width: 425px) {

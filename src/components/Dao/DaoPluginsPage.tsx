@@ -1,6 +1,5 @@
 import { DAO, IDAOState, AnyPlugin, IPluginState, Plugin } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
-import classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -11,7 +10,6 @@ import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
-import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { showNotification } from "reducers/notifications";
 import { connect } from "react-redux";
@@ -77,7 +75,7 @@ class DaoPluginsPage extends React.Component<IProps, null> {
 
     const contributionReward = allPlugins.filter((plugin: AnyPlugin) => plugin.coreState.name === "ContributionReward");
     const knownPlugins = allPlugins.filter((plugin: AnyPlugin) => plugin.coreState.name !== "ContributionReward" && Object.keys(PLUGIN_NAMES).indexOf(plugin.coreState.name) >= 0);
-    const unknownPlugins = allPlugins.filter((plugin: AnyPlugin) => Object.keys(PLUGIN_NAMES).indexOf(plugin.coreState.name) === -1 );
+    const unknownPlugins = allPlugins.filter((plugin: AnyPlugin) => Object.keys(PLUGIN_NAMES).indexOf(plugin.coreState.name) === -1);
     const allKnownPlugins = [...contributionReward, ...knownPlugins];
 
     const pluginManager = data[1];
@@ -85,7 +83,7 @@ class DaoPluginsPage extends React.Component<IProps, null> {
 
     const pluginCardsHTML = (
       <TransitionGroup>
-        { allKnownPlugins.map((plugin: AnyPlugin) => (
+        {allKnownPlugins.map((plugin: AnyPlugin) => (
           <Fade key={"plugin " + plugin.id}>
             {Object.keys(PLUGIN_NAMES).includes(plugin.coreState.name)
               ?
@@ -108,24 +106,26 @@ class DaoPluginsPage extends React.Component<IProps, null> {
       <div className={css.wrapper}>
         <BreadcrumbsItem to={`/dao/${daoState.address}/plugins`}>Proposal Plugins</BreadcrumbsItem>
 
-        <Sticky enabled top={50} innerZ={10000}>
-          <h1>Proposal Plugins</h1>
-          { pluginManager ?
-            <TrainingTooltip placement="topLeft" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
-              <a className={
-                classNames({
-                  [css.addPluginButton]: true,
-                  [css.disabled]: !pluginManagerActive,
-                })}
-              data-test-id="createProposal"
-              href="#!"
-              onClick={pluginManagerActive ? this.handleNewProposal(pluginManager.id) : null}
-              >
-                Add a Plugin
-              </a>
-            </TrainingTooltip>
-            : ""}
-        </Sticky>
+        <div className={css.paddingTop}>&nbsp;</div>
+
+        <div className={css.headerContainer}>
+          <div className={css.header}>
+            <div className={css.title}>Proposal Plugins</div>
+            {pluginManager ?
+              <div className={css.addPlugin}>
+                <TrainingTooltip placement="topLeft" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+                  <a className={pluginManagerActive ? "" : css.disabled}
+                    data-test-id="createProposal"
+                    href="#!"
+                    onClick={pluginManagerActive ? this.handleNewProposal(pluginManager.id) : null}
+                  >
+                    Add a Plugin
+                  </a>
+                </TrainingTooltip>
+              </div>
+              : ""}
+          </div>
+        </div>
         {(allKnownPlugins.length + unknownPlugins.length) === 0
           ? <div>
             <img src="/assets/images/meditate.svg" />
@@ -143,7 +143,7 @@ class DaoPluginsPage extends React.Component<IProps, null> {
 
 const SubscribedDaoPluginsPage = withSubscription({
   wrappedComponent: DaoPluginsPage,
-  loadingComponent: <Loading/>,
+  loadingComponent: <Loading />,
   errorComponent: (props) => <span>{props.error.message}</span>,
   checkForUpdate: [],
   createObservable: (props: IExternalProps) => {
@@ -153,7 +153,7 @@ const SubscribedDaoPluginsPage = withSubscription({
     return combineLatest(
       dao.plugins({ where: { isRegistered: true } }, { fetchAllData: true, subscribe: true }),
       // Find the SchemeFactory plugin if this dao has one
-      Plugin.search(arc, {where: { dao: dao.id, name: "SchemeFactory" }}).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null)))
+      Plugin.search(arc, { where: { dao: dao.id, name: "SchemeFactory" } }).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null)))
     );
   },
 });
