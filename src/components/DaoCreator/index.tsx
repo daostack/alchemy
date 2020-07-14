@@ -48,7 +48,7 @@ class DaoCreator extends React.Component<IProps> {
             return await getWeb3Provider();
           }}
           noDAOstackLogo
-          redirectURL="https://alchemy-xdai.daostack.io"
+          redirectURL={process.env.BASE_URL}
         />
       </React.Suspense>
     );
