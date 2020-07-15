@@ -280,7 +280,8 @@ const SubscribedEthBalance = withSubscription({
     return oldProps.dao.address !== newProps.dao.address;
   },
   createObservable: async (props: IEthProps) => {
-    return (await ethBalance(props.dao.address)).pipe(ethErrorHandler());
+    const arc = getArc();
+    return (await arc.dao(props.dao.address).ethBalance()).pipe(ethErrorHandler());
   },
 });
 
