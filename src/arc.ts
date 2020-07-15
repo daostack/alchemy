@@ -154,6 +154,7 @@ export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
     } else {
       arc = new Arc(arcSettings);
     }
+    arc.web3.pollingInterval = 60000;
 
     let contractInfos;
     if (USE_CONTRACTINFOS_CACHE) {

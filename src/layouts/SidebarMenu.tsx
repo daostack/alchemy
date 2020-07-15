@@ -9,7 +9,7 @@ import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { generate } from "geopattern";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWeiToString, ethBalance } from "lib/util";
+import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWeiToString } from "lib/util";
 import { parse } from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
@@ -280,7 +280,8 @@ const SubscribedEthBalance = withSubscription({
     return oldProps.dao.address !== newProps.dao.address;
   },
   createObservable: async (props: IEthProps) => {
-    return (await ethBalance(props.dao.address)).pipe(ethErrorHandler());
+    const arc = getArc();
+    return (await arc.dao(props.dao.address).ethBalance()).pipe(ethErrorHandler());
   },
 });
 

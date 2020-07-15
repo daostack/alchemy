@@ -9,8 +9,8 @@ import {
 } from "@daostack/arc.js";
 import * as utils from "@daostack/arc.js";
 import { JsonRpcProvider } from "ethers/providers";
-import { of, Observable, Observer } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { of, Observable } from "rxjs";
+import { catchError } from "rxjs/operators";
 import BN = require("bn.js");
 /**
  * gotta load moment in order to use moment-timezone directly
@@ -19,7 +19,6 @@ import "moment";
 import * as moment from "moment-timezone";
 import { getArc } from "../arc";
 import { Signer } from "ethers";
-import { BigNumber } from "ethers/utils";
 import { promisify } from "util";
 import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
 
@@ -629,97 +628,8 @@ export function initializeUtils(options: IInitializeOptions) {
   **/
 export const splitCamelCase = (str: string): string => `${str[0].toUpperCase()}${str.slice(1).replace(/([a-z])([A-Z])/g, "$1 $2")}`;
 
-interface IObservedAccounts {
-  [address: string]: {
-    observable?: Observable<BN>;
-    observer?: Observer<BN>;
-    lastBalance?: BigNumber;
-    subscriptionsCount: number;
-  };
-}
-
-const ethBalanceObservedAccounts: IObservedAccounts = {};
-let ethBalancePollingInterval: any | undefined = undefined;
-
 export function ethBalance(address: Address): Observable<BN> {
 
   const arc = getArc();
-
-  if (targetedNetwork() !== "xdai") {
-    return arc.ethBalance(address);
-  }
-
-  /**
-   * In xdai we do not yet have the ability to create web3 subscriptions,
-   * ie, there is no support for secure websockets (wss), so instead we poll
-   * here.
-   *
-   * With a few minor enhancements, this code is virtually the same logic
-   * as arc.js uses when it creates a wss subscription to efficiently watch
-   * for changes in eth balances.
-   */
-  if (!ethBalanceObservedAccounts[address]) {
-    ethBalanceObservedAccounts[address] = {
-      subscriptionsCount: 1,
-    };
-  }
-  /**
-   * don't poll more than once for any given address
-   */
-  if (ethBalanceObservedAccounts[address].observable) {
-    ++ethBalanceObservedAccounts[address].subscriptionsCount;
-    return ethBalanceObservedAccounts[address].observable as Observable<BN>;
-  }
-
-  const observable = Observable.create(async (observer: Observer<BN>) => {
-
-    ethBalanceObservedAccounts[address].observer = observer;
-
-    await arc.web3.getBalance(address)
-      .then((currentBalance: BigNumber) => {
-        const accInfo = ethBalanceObservedAccounts[address];
-        (accInfo.observer as Observer<BN>).next(new BN(currentBalance.toString()));
-        accInfo.lastBalance = currentBalance;
-      })
-      .catch((err: Error) => observer.error(err));
-
-    if (!ethBalancePollingInterval) {
-      ethBalancePollingInterval = setInterval(async () => {
-        Object.keys(ethBalanceObservedAccounts).forEach(async (addr) => {
-          const accInfo = ethBalanceObservedAccounts[addr];
-          try {
-            const balance = await arc.web3.getBalance(addr);
-            if (!balance.eq(accInfo.lastBalance)) {
-              (accInfo.observer as Observer<BN>).next(new BN(balance.toString()));
-              accInfo.lastBalance = balance;
-            }
-          } catch (err) {
-            observer.error(err);
-          }
-        });
-      }, 15000); // poll every 15 seconds
-    }
-    // unsubscribe
-    return () => {
-      /**
-       * What I find is that `unsubscribe` is never called on the observable.
-       * This might be a flaw in `withSubscription` which was designed to guarantee
-       * that `unsubscribe` would always be called on its observables.
-       * Or it may be a flaw in how we are using `combineLatest`.
-       * Either way, it is a memory/resource leak.
-       */
-      --ethBalanceObservedAccounts[address].subscriptionsCount;
-      if (ethBalanceObservedAccounts[address].subscriptionsCount <= 0) {
-        delete ethBalanceObservedAccounts[address];
-      }
-      if (Object.keys(ethBalanceObservedAccounts).length === 0 && ethBalancePollingInterval) {
-        clearTimeout(ethBalancePollingInterval);
-        ethBalancePollingInterval = undefined;
-      }
-    };
-  });
-
-  ethBalanceObservedAccounts[address].observable = observable;
-
-  return observable.pipe(map((item: any) => new BN(item)));
+  return arc.ethBalance(address);
 }
