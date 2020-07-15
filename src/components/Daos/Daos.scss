@@ -9,7 +9,7 @@
     top: 50px;
     height: 35px;
     z-index: 2;
-    background-color: #e5ebf2;
+    background-color: $accent-6;
   }
 
   .topRow {
@@ -78,11 +78,11 @@
       justify-content: space-between;
 
       h2 {
-        color: rgba(104, 155, 214, 1);
+        color: $title-color;
         display: inline-block;
         font-size: 28px;
         font-weight: bold;
-        border-bottom: 1px solid rgba(195, 212, 231, 1);
+        border-bottom: $gray-border-3;
         padding: 0;
         margin: 0;
       }

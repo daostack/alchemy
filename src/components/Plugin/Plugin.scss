@@ -9,7 +9,7 @@
   padding: 0;
   margin: 0;
   margin-bottom: 30px;
-  background-color: #e5ebf2;
+  background-color: $accent-6;
   padding-top: 10px;
 }
 
@@ -68,7 +68,7 @@
       a {
         padding: 8px 15px;
         color: $white;
-        background-color: $strong-green;
+        background-color: $green-button-color;
         border-radius: 15px;
         font-size: 13px;
         white-space: nowrap;
@@ -80,8 +80,8 @@
 
         .disabled,
         .disabled:hover {
-          background-color: rgba(200, 200, 200, 0.5);
-          border: 1px solid rgba(200, 200, 200, 1);
+          background-color: $disabled-button-color;
+          border: $disabled-button-border;
           cursor: not-allowed;
         }
       }
@@ -154,8 +154,8 @@
     }
 
     button:disabled {
-      background-color: rgba(200, 200, 200, 0.5);
-      border: 1px solid rgba(200, 200, 200, 1);
+      background-color: $disabled-button-color;
+      border: $disabled-button-border;
       color: rgba(75, 75, 75, 1);
       cursor: not-allowed;
     }
@@ -213,6 +213,6 @@
 }
 
 :global .sticky-inner-wrapper {
-  background-color: #e5ebf2 !important;
+  background-color: $accent-6 !important;
   padding-bottom: 16px;
 }

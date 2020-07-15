@@ -359,8 +359,8 @@
   }
 
   .submitProposal:disabled {
-    background-color: rgba(200, 200, 200, 0.5);
-    border: 1px solid rgba(200, 200, 200, 1);
+    background-color: $disabled-button-color;
+    border: $disabled-button-border;
     color: rgba(75, 75, 75, 1);
   }
 
@@ -478,7 +478,7 @@
         margin-right: 8px;
         border-radius: 3px;
         outline: none;
-        color: rgba(104, 155, 214, 1);
+        color: $title-color;
         font-weight: bold;
         text-align: center;
       }
@@ -547,7 +547,8 @@
     width: 100%;
   }
 
-  .parametersHash, .parameters {
+  .parametersHash,
+  .parameters {
     input {
       font-size: 12px;
     }

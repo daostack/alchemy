@@ -1,31 +1,31 @@
-.wrapper {
+npm ci.wrapper {
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-top: -30px; // compensate for containers padding, so position:sticky will work right
+  margin-top: -30px; // hack to compensate for DAOContainer's padding, so position:sticky will work right
 
   .paddingTop {
     position: sticky;
     top: 50px;
     height: 62px;
     z-index: 2;
-    background-color: #e5ebf2;
+    background-color: $accent-6;
   }
 
   .headerContainer {
     position: sticky;
     top: 112px;
-    background-color: #e5ebf2;
+    background-color: $accent-6;
     margin-bottom: 10px;
     padding-bottom: 16px;
     z-index: 2;
 
     .header {
       display: flex;
-      border-bottom: 1px solid rgba(195, 212, 231, 1);
+      border-bottom: $gray-border-3;
 
       .title {
-        color: rgba(104, 155, 214, 1);
+        color: $title-color;
         font-size: 2em;
         flex-grow: 2;
       }
@@ -37,7 +37,7 @@
         a {
           padding: 8px 15px;
           color: $white;
-          background-color: $strong-green;
+          background-color: $green-button-color;
           border-radius: 15px;
           font-size: 13px;
           white-space: nowrap;
@@ -48,8 +48,8 @@
 
           &.disabled,
           &.disabled:hover {
-            background-color: rgba(200, 200, 200, 0.5);
-            border: 1px solid rgba(200, 200, 200, 1);
+            background-color: $disabled-button-color;
+            border: $disabled-button-border;
             cursor: not-allowed;
           }
         }
