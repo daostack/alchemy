@@ -631,6 +631,5 @@ export const splitCamelCase = (str: string): string => `${str[0].toUpperCase()}$
 export function ethBalance(address: Address): Observable<BN> {
 
   const arc = getArc();
-  
   return arc.ethBalance(address);
 }
