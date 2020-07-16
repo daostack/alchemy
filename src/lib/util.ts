@@ -629,7 +629,11 @@ export function initializeUtils(options: IInitializeOptions) {
 export const splitCamelCase = (str: string): string => `${str[0].toUpperCase()}${str.slice(1).replace(/([a-z])([A-Z])/g, "$1 $2")}`;
 
 export function ethBalance(address: Address): Observable<BN> {
-
   const arc = getArc();
   return arc.ethBalance(address);
+}
+
+export function ethBalanceDao(id: string): Promise<Observable<BN>> {
+  const arc = getArc();
+  return arc.dao(id).ethBalance();
 }
