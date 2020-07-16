@@ -71,7 +71,7 @@ export function createProposal(proposalOptions: IProposalBaseCreateOptions): Thu
   };
 }
 
-async function tryRedeemProposal(proposalId: string, accountAddress: string, observer: any) {
+async function tryRedeemProposal(proposalId: string, accountAddress: string, observer: any, atLeastExecute = false) {
   const arc = getArc();
   const proposal = await Proposal.create(arc, proposalId);
 
@@ -107,7 +107,11 @@ async function tryRedeemProposal(proposalId: string, accountAddress: string, obs
     case "SchemeRegistrar":
     case "SchemeFactory":
     case "Unknown":
-      break; // no redemption
+      // no redemption.  Just execute if requested.
+      if (atLeastExecute) {
+        await proposal.execute().subscribe(...observer);
+      }
+      break;
   }
 
   return Promise.resolve();
@@ -127,7 +131,7 @@ export function executeProposal(avatarAddress: string, proposalId: string, accou
       return await proposalObj.execute().subscribe(...observer);
     };
 
-    return tryRedeemProposal(proposalId, accountAddress, observer);
+    return tryRedeemProposal(proposalId, accountAddress, observer, true);
   };
 }
 
