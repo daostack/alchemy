@@ -125,7 +125,7 @@ export function pluginNameAndAddress(address: string) {
   const arc = getArc();
   try {
     const contractInfo = arc.getContractInfo(address);
-    const name = pluginName(contractInfo);
+    const name = pluginName(contractInfo, contractInfo.name);
 
     if (name) {
       return `${address.slice(0, 4)}...${address.slice(-4)} (${name})`;
