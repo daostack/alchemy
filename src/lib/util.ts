@@ -609,15 +609,7 @@ export function ethBalance(address: Address): Observable<BN> {
 
   const arc = getArc();
 
-  if (targetedNetwork() !== "xdai") {
-    return arc.ethBalance(address);
-  }
-
   /**
-   * In xdai we do not yet have the ability to create web3 subscriptions,
-   * ie, there is no support for secure websockets (wss), so instead we poll
-   * here.
-   *
    * With a few minor enhancements, this code is virtually the same logic
    * as arc.js uses when it creates a wss subscription to efficiently watch
    * for changes in eth balances.
