@@ -7,14 +7,6 @@ assignees: ''
 
 ---
 
-**Include the Alchemy Version Number**
-Please include the Alchemy version number, which you may obtain as follows:
-
-1. hover your mouse over the Alchemy logo image in the upper left corner of any page in Alchemy. A tooltip will appear below the icon which will contain the Alchemy version number.
-2. in the tooltip, select the version number, copy it to your clipboard and paste it into this bug report.
-
-Thanks!
-
 **Describe the bug**
 A clear and concise description of the bug.
 
@@ -27,6 +19,12 @@ Steps to reproduce the behavior:
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
+
+**Alchemy Version Number**
+You may obtain the Alchemy version number as follows:
+
+1. hover your mouse over the Alchemy logo image in the upper left corner of any page in Alchemy. A tooltip will appear below the icon which will contain the Alchemy version number.
+2. in the tooltip, select the version number, copy it to your clipboard and paste it into this bug report.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
