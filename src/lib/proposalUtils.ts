@@ -68,13 +68,13 @@ function formValuesKey(name: string): string { return `formValues_${name}`; }
 
 export function saveModalFormEntries(name: string, values: object): void {
   const json = JSON.stringify(values);
-  localStorage.setItem(formValuesKey(name), json);
+  sessionStorage.setItem(formValuesKey(name), json);
 }
 
 export function restoreModalFormEntries(name: string): object {
-  const values = localStorage.getItem(formValuesKey(name));
+  const values = sessionStorage.getItem(formValuesKey(name));
   if (values) {
-    localStorage.removeItem(formValuesKey(name));
+    sessionStorage.removeItem(formValuesKey(name));
     return JSON.parse(values);
   }
   else {

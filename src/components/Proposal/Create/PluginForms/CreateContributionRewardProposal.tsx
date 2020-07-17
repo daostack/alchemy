@@ -185,7 +185,6 @@ class CreateContributionReward extends PersistentModalBase<IProps, IStateProps> 
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
 
-            // update currentFormValues whenever values changes
             this.currentFormValues = values;
 
             const errors: any = {};
