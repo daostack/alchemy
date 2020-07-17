@@ -11,11 +11,12 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Analytics from "lib/analytics";
 import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress } from "lib/util";
 import { showNotification, NotificationStatus } from "reducers/notifications";
-import { exportUrl, importUrlValues } from "lib/proposalUtils";
+import { exportUrl } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
+import { PersistentModalBase } from "../../../Shared/PersistentModalBase";
 
 const Select = React.lazy(() => import("react-select"));
 
@@ -86,13 +87,14 @@ export const SelectField: React.SFC<any> = ({options, field, form }) => (
   </React.Suspense>
 );
 
-class CreateContributionReward extends React.Component<IProps, IStateProps> {
+class CreateContributionReward extends PersistentModalBase<IProps, IStateProps> {
 
-  initialFormValues: IFormValues;
+  currentFormValues: IFormValues;
+  get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
 
   constructor(props: IProps) {
-    super(props);
-    this.initialFormValues = importUrlValues<IFormValues>({
+    super(props, "CreateContributionReward");
+    this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
       beneficiary: "",
       description: "",
       ethReward: 0,
@@ -105,7 +107,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       tags: [],
     });
     this.state = {
-      tags: this.initialFormValues.tags,
+      tags: this.currentFormValues.tags,
     };
   }
 
@@ -168,7 +170,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
   }
 
   public render(): RenderOutput {
-    const { data, daoAvatarAddress, handleClose } = this.props;
+    const { data, daoAvatarAddress } = this.props;
 
     if (!data) {
       return null;
@@ -179,9 +181,13 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       <div className={css.containerNoSidebar}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={this.initialFormValues}
+          initialValues={this.currentFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
+
+            // update currentFormValues whenever values changes
+            this.currentFormValues = values;
+
             const errors: any = {};
 
             const require = (name: string): void => {
@@ -308,7 +314,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                   onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                   // eslint-disable-next-line react/jsx-no-bind
                   onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                  defaultValue={this.initialFormValues.beneficiary}
+                  defaultValue={this.currentFormValues.beneficiary}
                   placeholder={this.props.currentAccountAddress}
                 />
               </div>
@@ -403,7 +409,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
                 </TrainingTooltip>
-                <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
+                <button className={css.exitProposalCreation} type="button" onClick={this.props.handleClose}>
                   Cancel
                 </button>
                 <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">

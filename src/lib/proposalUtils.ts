@@ -3,7 +3,7 @@ import moment = require("moment-timezone");
 
 const cloneDeep = require("clone-deep");
 
-export function importUrlValues<Values>(defaultValues: Values): any {
+export function importUrlValues<TValues>(defaultValues: TValues): TValues {
   const { search } = window.location;
   const params = new URLSearchParams(search);
   const initialFormValues: any = cloneDeep([defaultValues])[0];
@@ -63,3 +63,21 @@ export const exportUrl = (values: unknown): void => {
   const url = `${origin}${pathname}?${queryString}`;
   copyToClipboard(url);
 };
+
+function formValuesKey(name: string): string { return `formValues_${name}`; }
+
+export function saveModalFormEntries(name: string, values: object): void {
+  const json = JSON.stringify(values);
+  localStorage.setItem(formValuesKey(name), json);
+}
+
+export function restoreModalFormEntries(name: string): object {
+  const values = localStorage.getItem(formValuesKey(name));
+  if (values) {
+    localStorage.removeItem(formValuesKey(name));
+    return JSON.parse(values);
+  }
+  else {
+    return {};
+  }
+}
