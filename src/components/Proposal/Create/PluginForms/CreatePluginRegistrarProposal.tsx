@@ -11,7 +11,7 @@ import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
 import { isValidUrl, isAddress } from "lib/util";
 import { GetPluginIsActiveActions, getPluginIsActive, REQUIRED_PLUGIN_PERMISSIONS, pluginNameAndAddress, PluginPermissions } from "lib/pluginUtils";
-import { exportUrl, importUrlValues } from "lib/proposalUtils";
+import { exportUrl } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
 import { ProposalName, IPluginState, AnyPlugin } from "@daostack/arc.js";
@@ -21,6 +21,7 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
+import { PersistentModalBase } from "components/Shared/PersistentModalBase";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -67,15 +68,16 @@ interface IState {
   tags: Array<string>;
 }
 
-class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
+class CreatePluginRegistrarProposal extends PersistentModalBase<IProps, IState> {
 
-  initialFormValues: IFormValues;
+  currentFormValues: IFormValues;
+  get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
 
   constructor(props: IProps) {
-    super(props);
+    super(props, "PluginRegistrar");
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.initialFormValues = importUrlValues<IFormValues>({
+    this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
       description: "",
       otherPlugin: "",
       pluginToAdd: "",
@@ -93,10 +95,10 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
       tags: [],
     });
     this.state = {
-      currentTab: this.initialFormValues.currentTab,
+      currentTab: this.currentFormValues.currentTab,
       requiredPermissions: 0,
       showForm: false,
-      tags: this.initialFormValues.tags,
+      tags: this.currentFormValues.tags,
     };
   }
 
@@ -266,9 +268,12 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
           <div className={formContentClass}>
             <Formik
               // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-              initialValues={this.initialFormValues}
+              initialValues={this.currentFormValues}
               // eslint-disable-next-line react/jsx-no-bind
               validate={(values: IFormValues) => {
+
+                this.currentFormValues = values;
+
                 const errors: any = {};
 
                 const require = (name: string) => {
