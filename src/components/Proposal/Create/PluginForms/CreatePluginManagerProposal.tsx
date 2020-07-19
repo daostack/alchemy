@@ -629,7 +629,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                       >
                         <option value="">Select a plugin...</option>
                         {plugins.map((plugin, _i) => {
-                          return <option id={`option-${_i}`} key={`remove_plugin_${plugin.coreState.address}`} value={plugin.coreState.address}>{pluginNameAndAddress(plugin.coreState.address)}</option>;
+                          return <option id={`option-${_i}`} key={`remove_plugin_${plugin.coreState.address}`} value={plugin.coreState.address}>{pluginNameAndAddress(plugin.coreState)}</option>;
                         })}
                       </Field>
                     </div>

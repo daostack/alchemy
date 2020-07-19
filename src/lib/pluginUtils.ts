@@ -117,25 +117,41 @@ export function pluginName(plugin: IPluginState|IContractInfo, fallback?: string
 }
 
 /**
- * given the address (of a plugin), return  a friendly string representing the plugin's address and it's name
- * @param  address [description]
- * @return         [description]
+ * Given plugin name and address, returns a friendly string representing the plugin's address and it's name
+ * @param name
+ * @param address
  */
-export function pluginNameAndAddress(address: string) {
-  const arc = getArc();
-  try {
-    const contractInfo = arc.getContractInfo(address);
-    const name = pluginName(contractInfo, contractInfo.name);
+function getNameAndAddressString(address: string, name?: string) {
+  if (name) {
+    return `${address.slice(0, 4)}...${address.slice(-4)} (${name})`;
+  }
+  return `${address.slice(0, 4)}...${address.slice(-4)}`;
+}
 
-    if (name) {
-      return `${address.slice(0, 4)}...${address.slice(-4)} (${name})`;
-    } else {
-      return `${address.slice(0, 4)}...${address.slice(-4)}`;
+/**
+ * Given a plugin or a plugin address, returns a friendly string representing the plugin's address and it's name
+ * @param plugin plugin or plugin address
+ */
+export function pluginNameAndAddress(plugin: string|IPluginState) {
+  let name;
+  if (typeof plugin === "string"){ // Plugin address
+    const arc = getArc();
+    try {
+      const contractInfo = arc.getContractInfo(plugin);
+      name = pluginName(contractInfo);
+      if (name) {
+        return getNameAndAddressString(plugin, name);
+      }
+      return getNameAndAddressString(plugin);
+    } catch (err) {
+      if (err.message.match(/No contract/)) {
+        return getNameAndAddressString(plugin);
+      }
     }
-  } catch (err) {
-    if (err.message.match(/No contract/)) {
-      return `${address.slice(0, 4)}...${address.slice(-4)}`;
-    }
+  }
+  else { // Plugin
+    name = pluginName(plugin);
+    return getNameAndAddressString(plugin.address, name);
   }
 }
 
