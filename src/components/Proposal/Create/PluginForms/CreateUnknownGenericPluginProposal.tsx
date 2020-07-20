@@ -5,15 +5,15 @@ import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { showNotification } from "reducers/notifications";
 import { baseTokenName, isValidUrl } from "lib/util";
-import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
+import { FormModalBase } from "components/Shared/FormModalBase";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -46,15 +46,16 @@ interface IFormValues {
   [key: string]: any;
 }
 
-class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
+class CreateGenericPlugin extends FormModalBase<IProps, IStateProps> {
 
-  initialFormValues: IFormValues;
+  currentFormValues: IFormValues;
+  get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
 
   constructor(props: IProps) {
-    super(props);
+    super(props, "CreateGenericPlugin", props.showNotification);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.initialFormValues = importUrlValues<IFormValues>({
+    this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
       description: "",
       callData: "",
       title: "",
@@ -63,7 +64,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
       tags: [],
     });
     this.state = {
-      tags: this.initialFormValues.tags,
+      tags: this.currentFormValues.tags,
     };
   }
 
@@ -89,12 +90,6 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
     this.props.handleClose();
   }
 
-  // Exports data from form to a shareable url.
-  public exportFormValues(values: IFormValues) {
-    exportUrl({ ...values, ...this.state });
-    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
-  }
-
   private onTagsChange = (tags: any[]): void => {
     this.setState({tags});
   }
@@ -106,10 +101,12 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
       <div className={css.containerNoSidebar}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={this.initialFormValues}
+          initialValues={this.currentFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
+
+            this.currentFormValues = values;
 
             const require = (name: string) => {
               if (!(values as any)[name]) {
@@ -262,8 +259,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
 
               <div className={css.createProposalActions}>
                 <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                  {/* eslint-disable-next-line react/jsx-no-bind */}
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.sendFormValuesToClipboard}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
                 </TrainingTooltip>

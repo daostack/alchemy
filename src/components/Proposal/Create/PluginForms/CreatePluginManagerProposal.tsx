@@ -7,11 +7,10 @@ import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { convertDateToPosix } from "../../../../lib/util";
 import { createProposal } from "actions/arcActions";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { showNotification } from "reducers/notifications";
 import Analytics from "lib/analytics";
 import { isValidUrl } from "lib/util";
 import { GetPluginIsActiveActions, getPluginIsActive, REQUIRED_PLUGIN_PERMISSIONS, pluginNameAndAddress, PLUGIN_NAMES } from "lib/pluginUtils";
-import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
 import { IPluginState, AnyPlugin, IProposalCreateOptionsPM, LATEST_ARC_VERSION } from "@daostack/arc.js";
@@ -23,6 +22,7 @@ import { PluginInitializeFields } from "./PluginInitializeFields";
 import * as moment from "moment";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
+import { FormModalBase } from "components/Shared/FormModalBase";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -146,12 +146,13 @@ interface IState {
   requiredPermissions: number;
 }
 
-class CreatePluginManagerProposal extends React.Component<IProps, IState> {
+class CreatePluginManagerProposal extends FormModalBase<IProps, IState> {
 
-  initialFormValues: IFormValues;
+  currentFormValues: IFormValues;
+  get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
 
   constructor(props: IProps) {
-    super(props);
+    super(props, "CreatePluginManagerProposal", props.showNotification);
 
     this.handleSubmit = this.handleSubmit.bind(this);
     const votingParams: IGenesisProtocolFormValues = {
@@ -170,7 +171,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
       voteParamsHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
     };
 
-    this.initialFormValues = importUrlValues<IFormValues>({
+    this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
       description: "",
       pluginToAdd: "",
       pluginToRemove: "",
@@ -273,8 +274,8 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
     });
 
     this.state = {
-      currentTab: this.initialFormValues.currentTab,
-      tags: this.initialFormValues.tags,
+      currentTab: this.currentFormValues.currentTab,
+      tags: this.currentFormValues.tags,
       requiredPermissions: 0,
     };
   }
@@ -438,15 +439,6 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
     this.setState({tags});
   }
 
-  public exportFormValues(values: IFormValues) {
-    values = {
-      ...values,
-      ...this.state,
-    };
-    exportUrl(values);
-    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
-  }
-
   public render(): RenderOutput {
     // "plugins" are the plugins registered in this DAO
     const plugins = this.props.data;
@@ -501,10 +493,12 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
         <div className={pluginManagerFormClass}>
           <Formik
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            initialValues={this.initialFormValues}
+            initialValues={this.currentFormValues}
             // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues) => {
               const errors: any = {};
+
+              this.currentFormValues = values;
 
               const require = (name: string) => {
                 if (!(values as any)[name]) {
@@ -667,8 +661,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
 
                   <div className={css.createProposalActions}>
                     <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                      {/* eslint-disable-next-line react/jsx-no-bind */}
-                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.sendFormValuesToClipboard}>
                         <img src="/assets/images/Icon/share-blue.svg" />
                       </button>
                     </TrainingTooltip>
