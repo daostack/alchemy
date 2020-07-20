@@ -17,7 +17,6 @@ import * as arcActions from "actions/arcActions";
 
 import Analytics from "lib/analytics";
 import { isValidUrl, isAddress } from "lib/util";
-import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -25,6 +24,7 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
+import { FormModalBase } from "components/Shared/FormModalBase";
 
 const BN = require("bn.js");
 
@@ -64,23 +64,28 @@ interface IState {
   tags: Array<string>;
 }
 
-class CreateKnownPluginProposal extends React.Component<IProps, IState> {
+class CreateKnownPluginProposal extends FormModalBase<IProps, IState> {
 
-  initialFormValues: IFormValues;
+  currentFormValues: IFormValues;
+  get valuesToPersist() { return {
+    ...this.currentFormValues,
+    currentActionId: this.state.currentAction.id,
+    ...this.state,
+  }; }
 
   constructor(props: IProps) {
-    super(props);
+    super(props, "CreateKnownGenericPluginProposal", props.showNotification);
 
     if (!props.genericPluginInfo) {
       throw Error("GenericPluginInfo should be provided");
     }
     this.setInititialFormValues();
     const actions = props.genericPluginInfo.actions();
-    const initialActionId = this.initialFormValues.currentActionId;
+    const initialActionId = this.currentFormValues.currentActionId;
     this.state = {
       actions: props.genericPluginInfo.actions(),
       currentAction: initialActionId ? actions.find(action => action.id === initialActionId) : actions[0],
-      tags: this.initialFormValues.tags,
+      tags: this.currentFormValues.tags,
     };
   }
 
@@ -237,7 +242,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
   }
 
   private setInititialFormValues(){
-    this.initialFormValues = {
+    this.currentFormValues = {
       description: "",
       title: "",
       url: "",
@@ -249,9 +254,9 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
     actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
       if (typeof(field.defaultValue) !== "undefined") {
         if (field.defaultValue === "_avatar") {
-          this.initialFormValues[field.name] = daoAvatarAddress;
+          this.currentFormValues[field.name] = daoAvatarAddress;
         } else {
-          this.initialFormValues[field.name] = field.defaultValue;
+          this.currentFormValues[field.name] = field.defaultValue;
         }
       } else {
         switch (field.type) {
@@ -261,27 +266,18 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
           case "bytes":
           case "address":
           case "string":
-            this.initialFormValues[field.name] = "";
+            this.currentFormValues[field.name] = "";
             break;
           case "bool":
-            this.initialFormValues[field.name] = 0;
+            this.currentFormValues[field.name] = 0;
             break;
           case "address[]":
-            this.initialFormValues[field.name] = [""];
+            this.currentFormValues[field.name] = [""];
             break;
         }
       }
     }));
-    this.initialFormValues = importUrlValues<IFormValues>(this.initialFormValues);
-  }
-  public exportFormValues(values: IFormValues) {
-    values = {
-      ...values,
-      currentActionId: this.state.currentAction.id,
-      ...this.state,
-    };
-    exportUrl(values);
-    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
+    this.currentFormValues = this.hydrateInitialFormValues<IFormValues>(this.currentFormValues);
   }
 
   public render(): RenderOutput {
@@ -310,10 +306,12 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
 
         <div className={css.contentWrapper}>
           <Formik
-            initialValues={this.initialFormValues}
+            initialValues={this.currentFormValues}
             // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues): void => {
               const errors: any = {};
+
+              this.currentFormValues = values;
 
               const valueIsRequired = (name: string) => {
                 const value = values[name];
@@ -477,8 +475,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
 
                   <div className={css.createProposalActions}>
                     <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                      {/* eslint-disable-next-line react/jsx-no-bind */}
-                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.sendFormValuesToClipboard}>
                         <img src="/assets/images/Icon/share-blue.svg" />
                       </button>
                     </TrainingTooltip>

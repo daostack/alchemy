@@ -92,7 +92,7 @@ class CreateContributionReward extends FormModalBase<IProps, IStateProps> {
   get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
 
   constructor(props: IProps) {
-    super(props, "CreateContributionReward", props.showNotification);
+    super(props, "CreateContributionRewardProposal", props.showNotification);
     this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
       beneficiary: "",
       description: "",

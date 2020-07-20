@@ -73,7 +73,7 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState> {
   get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
 
   constructor(props: IProps) {
-    super(props, "PluginRegistrar", props.showNotification);
+    super(props, "CreatePluginRegistrarProposal", props.showNotification);
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
