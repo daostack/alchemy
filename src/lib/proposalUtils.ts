@@ -67,17 +67,39 @@ export const exportUrl = (values: unknown): void => {
 function formValuesKey(name: string): string { return `formValues_${name}`; }
 
 export function saveModalFormEntries(name: string, values: object): void {
-  const json = JSON.stringify(values);
-  sessionStorage.setItem(formValuesKey(name), json);
+  try {
+    const json = JSON.stringify(values);
+    sessionStorage.setItem(formValuesKey(name), json);
+  }
+  // eslint-disable-next-line no-empty
+  catch {}
 }
 
 export function restoreModalFormEntries(name: string): object {
-  const values = sessionStorage.getItem(formValuesKey(name));
-  if (values) {
+  const valuesString = sessionStorage.getItem(formValuesKey(name));
+  if (valuesString) {
     sessionStorage.removeItem(formValuesKey(name));
-    return JSON.parse(values);
+    try {
+      const values = JSON.parse(valuesString);
+
+      const processValue = (key: string): void => {
+        const value = values[key];
+        if (typeof value === "string") {
+          const date = moment(value);
+          if (date?.isValid()) {
+            values[key] = date;
+          }
+        }
+      };
+      /**
+       * convert ISO date/time strings to Moment object
+       */
+      Object.keys(values).map(processValue);
+      return values;
+    }
+    // eslint-disable-next-line no-empty
+    catch { }
   }
-  else {
-    return {};
-  }
+
+  return {};
 }
