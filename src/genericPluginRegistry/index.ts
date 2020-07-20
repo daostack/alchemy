@@ -14,6 +14,7 @@ const registryLookupInfo = require("./plugins/RegistryLookup.json");
 const co2kenInfo = require("./plugins/CO2ken.json");
 const dXTokenRegistry = require("./plugins/dXTokenRegistry.json");
 const dXswapGovernance = require("./plugins/DXswapGovernance.json");
+const nftManager = require("./plugins/NFTManager.json");
 
 export const KNOWNPLUGINS = [
   dutchXInfo,
@@ -26,6 +27,7 @@ export const KNOWNPLUGINS = [
   registryLookupInfo,
   dXTokenRegistry,
   dXswapGovernance,
+  nftManager,
 ];
 
 const PLUGINADDRESSES: {[network: string]: { [address: string]: any}} = {
