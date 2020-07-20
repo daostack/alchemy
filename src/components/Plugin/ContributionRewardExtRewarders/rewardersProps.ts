@@ -1,4 +1,4 @@
-import { IContributionRewardExtState } from "@daostack/arc.js";
+import { IContributionRewardExtState, CompetitionProposal, Arc } from "@daostack/arc.js";
 import { getArc } from "arc";
 import { splitCamelCase } from "lib/util";
 
@@ -61,3 +61,21 @@ export const getCrxRewarderComponent = (pluginState: IContributionRewardExtState
     return null;
   }
 };
+
+/**
+ * defined but not exported by arc.js
+ */
+export interface IEntityState {
+  id: string;
+}
+
+export const getCrxRewarderProposalClass =
+  (pluginState: IContributionRewardExtState): new (context: Arc, idOrOpts: string | IEntityState) => any => {
+
+    const contractName = rewarderContractName(pluginState, false);
+
+    switch (contractName) {
+      case "Competition":
+        return CompetitionProposal;
+    }
+  };
