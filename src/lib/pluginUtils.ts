@@ -16,6 +16,7 @@ import "moment";
 import * as moment from "moment-timezone";
 
 import { getArc } from "../arc";
+import { splitCamelCase } from "lib/util";
 
 export enum PluginPermissions {
   None = 0,
@@ -105,7 +106,7 @@ export function pluginName(plugin: IPluginState|IContractInfo, fallback?: string
       name = "ContributionRewardExt";
     } else {
       // add spaces before capital letters to approximate a human-readable title
-      name = `${plugin.name[0]}${plugin.name.slice(1).replace(/([A-Z])/g, " $1")}`;
+      name = splitCamelCase(name);
     }
   } else {
     name = PLUGIN_NAMES[plugin.name as keyof typeof PLUGIN_NAMES];
