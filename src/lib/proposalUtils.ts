@@ -84,7 +84,8 @@ export function restoreModalFormEntries(name: string): object {
 
       const processValue = (key: string): void => {
         const value = values[key];
-        if (typeof value === "string") {
+        // Moment interprets something like "100" as a date
+        if (typeof value === "string" && isNaN(value as any)) {
           const date = moment(value);
           if (date?.isValid()) {
             values[key] = date;
