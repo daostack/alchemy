@@ -7,7 +7,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import ActionButton from "components/Proposal/ActionButton";
 import RedemptionsString from "components/Proposal/RedemptionsString";
 import ProposalSummary from "components/Proposal/ProposalSummary";
-import { ethErrorHandler, humanProposalTitle, ethBalance } from "lib/util";
+import { humanProposalTitle } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, concat, Observable, of } from "rxjs";
+import { combineLatest, Observable, of } from "rxjs";
 import { defaultIfEmpty, map, mergeMap } from "rxjs/operators";
 import * as css from "./RedemptionsMenu.scss";
 
@@ -151,12 +151,12 @@ const mapStateToItemContentProps = (state: IRootState, ownProps: IMenuItemProps)
   };
 };
 
-type IMenuItemContentProps = IMenuItemProps & IMenuItemContentStateProps & ISubscriptionProps<[IDAOState, BN|null, IRewardState|null]>;
+type IMenuItemContentProps = IMenuItemProps & IMenuItemContentStateProps & ISubscriptionProps<[IDAOState, IRewardState|null]>;
 
 class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
   public render(): RenderOutput {
     const { beneficiaryProfile, currentAccountAddress, data, handleClose, proposal } = this.props;
-    const [daoState, daoEthBalance, rewards] = data;
+    const [daoState, rewards] = data;
     return <React.Fragment>
       <ProposalSummary
         proposalState={proposal.coreState}
@@ -176,7 +176,7 @@ class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
         <ActionButton
           currentAccountAddress={currentAccountAddress}
           daoState={daoState}
-          daoEthBalance={daoEthBalance}
+          daoEthBalance={new BN(daoState.ethBalance)}
           expanded
           expired
           proposal={proposal}
@@ -198,12 +198,11 @@ const SubscribedMenuItemContent = withSubscription({
     const { currentAccountAddress, proposal } = props;
     const arc = getArc();
     const dao = arc.dao(proposal.coreState.dao.id);
-    const daoEthBalance = concat(of(new BN("0")), await ethBalance(proposal.coreState.dao.id)).pipe(ethErrorHandler());
     const rewards = proposal.rewards({ where: { beneficiary: currentAccountAddress }})
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
     // subscribe to dao to get DAO reputation supply updates
-    return combineLatest(dao.state({ subscribe: true }), daoEthBalance, rewards);
+    return combineLatest(dao.state({ subscribe: true }), rewards);
   },
 });
 
