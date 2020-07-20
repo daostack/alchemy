@@ -1,7 +1,6 @@
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
 import { humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens, isAddress } from "lib/util";
-import { pluginName } from "lib/pluginUtils";
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
 import { showNotification } from "reducers/notifications";
@@ -276,7 +275,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     this.disqusConfig.identifier = `competition-${proposalState.id}`;
 
     return <React.Fragment>
-      <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/plugin/${proposalState.plugin.id}/crx`}>{pluginName(proposalState.plugin.entity.coreState, proposalState.plugin.entity.coreState.address)}</BreadcrumbsItem>
+      <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/plugin/${proposalState.plugin.id}/crx`}>Competition</BreadcrumbsItem>
       <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/crx/proposal/${proposalState.id}`}>{humanProposalTitle(proposalState, 40)}</BreadcrumbsItem>
 
       <div className={css.competitionDetailsContainer}>
