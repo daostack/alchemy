@@ -32,6 +32,8 @@ interface IStateProps {
   showRedemptionsButton: boolean;
   currentAccountProfile: IProfileState;
   currentAccountAddress: string | null;
+  currentAccountIsEnabled: boolean;
+
   daoAvatarAddress: Address;
   menuOpen: boolean;
   threeBox: any;
@@ -59,6 +61,7 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
+    currentAccountIsEnabled: getAccountIsEnabled(),
     menuOpen: state.ui.menuOpen,
     threeBox: state.profiles.threeBox,
   };
@@ -122,7 +125,6 @@ class Header extends React.Component<IProps, null> {
       suppressNotifyOnSuccess: true,
       showNotification: this.props.showNotification,
     });
-    this.forceUpdate();
   }
 
   public handleClickLogout = async (_event: any): Promise<void> => {
@@ -165,11 +167,11 @@ class Header extends React.Component<IProps, null> {
     const {
       currentAccountProfile,
       currentAccountAddress,
+      currentAccountIsEnabled,
     } = this.props;
     const daoState = this.props.data;
 
     const daoAvatarAddress = daoState ? daoState.address : null;
-    const accountIsEnabled = getAccountIsEnabled();
     const web3ProviderInfo = getWeb3ProviderInfo();
     const web3Provider = getWeb3Provider();
     const trainingTooltipsOn = this.getTrainingTooltipsEnabled();
@@ -215,10 +217,10 @@ class Header extends React.Component<IProps, null> {
               <span>
                 <div className={css.accountInfoContainer}>
                   <div className={css.accountImage}>
-                    <div className={classNames({ [css.profileLink]: true, [css.noAccount]: !accountIsEnabled })}>
+                    <div className={classNames({ [css.profileLink]: true, [css.noAccount]: !currentAccountIsEnabled })}>
                       <AccountProfileName accountAddress={currentAccountAddress}
                         accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
-                      <span className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
+                      <span className={classNames({ [css.walletImage]: true, [css.greyscale]: !currentAccountIsEnabled })}>
                         <AccountImage accountAddress={currentAccountAddress} profile={currentAccountProfile} width={50} />
                       </span>
                     </div>
@@ -227,7 +229,7 @@ class Header extends React.Component<IProps, null> {
                 <div className={css.wallet}>
                   <div className={css.pointer}></div>
                   <div className={css.walletDetails}>
-                    <div className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
+                    <div className={classNames({ [css.walletImage]: true, [css.greyscale]: !currentAccountIsEnabled })}>
                       <AccountImage accountAddress={currentAccountAddress} profile={currentAccountProfile} width={50} />
                     </div>
                     <div className={css.profileName}>
@@ -246,7 +248,7 @@ class Header extends React.Component<IProps, null> {
                   </div>
                   <AccountBalances daoState={daoState} accountAddress={currentAccountAddress} />
                   <div className={css.logoutButtonContainer}>
-                    { accountIsEnabled ?
+                    { currentAccountIsEnabled ?
                       <div className={css.web3ProviderLogoutSection}>
                         <div className={css.provider}>
                           <div className={css.title}>Provider</div>
@@ -271,7 +273,7 @@ class Header extends React.Component<IProps, null> {
                   </button>
                 </TrainingTooltip>
               </div>
-              : (!accountIsEnabled) ?
+              : (!currentAccountIsEnabled) ?
                 <div className={css.web3ProviderLogin}>
                   <TrainingTooltip placement="bottomLeft" overlay={"Click here to connect your wallet provider"}>
                     <button onClick={this.handleConnect} data-test-id="connectButton">
