@@ -159,7 +159,6 @@ class CreateGenericPlugin extends FormModalBase<IProps, IStateProps> {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             setFieldTouched,
             setFieldValue,
-            values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <TrainingTooltip overlay={i18next.t("Title Tooltip")} placement="right">
