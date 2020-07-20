@@ -7,19 +7,19 @@ import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isVali
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { showNotification } from "reducers/notifications";
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/PluginForms/MarkdownField";
 import { checkTotalPercent } from "lib/util";
 import * as Datetime from "react-datetime";
-import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import i18next from "i18next";
 
 import moment = require("moment");
 import BN = require("bn.js");
 import HelpButton from "components/Shared/HelpButton";
+import { FormModalBase } from "components/Shared/FormModalBase";
 
 interface IExternalProps {
   plugin: CompetitionPlugin;
@@ -113,17 +113,18 @@ export const SelectField: React.SFC<any> = ({ options, field, form, _value }) =>
   />;
 };
 
-class CreateProposal extends React.Component<IProps, IStateProps> {
+class CreateProposal extends FormModalBase<IProps, IStateProps> {
 
-  private initialFormValues: IFormValues;
+  private currentFormValues: IFormValues;
+  get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
 
   constructor(props: IProps) {
-    super(props);
+    super(props, "CreateCompetitionProposal", props.showNotification);
 
     const arc = getArc();
     const now = moment();
 
-    this.initialFormValues = importUrlValues<IFormValues>({
+    this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
       rewardSplit: "",
       description: "",
       ethReward: 0,
@@ -143,14 +144,8 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       tags: [],
     });
     this.state = {
-      tags: this.initialFormValues.tags,
+      tags: this.currentFormValues.tags,
     };
-  }
-
-  // Exports data from form to a shareable url.
-  public exportFormValues(values: IFormValues) {
-    exportUrl({ ...values, ...this.state });
-    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
   }
 
   public handleSubmit = async (values: IFormValues, { _setSubmitting }: any): Promise<void> => {
@@ -226,10 +221,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       <div className={css.containerNoSidebar}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={this.initialFormValues}
+          initialValues={this.currentFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
+
+            this.currentFormValues = values;
 
             const require = (name: string): void => {
               if (!(values as any)[name]) {
@@ -630,8 +627,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               }
               <div className={css.createProposalActions}>
                 <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                  {/* eslint-disable-next-line react/jsx-no-bind */}
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.sendFormValuesToClipboard}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
                 </TrainingTooltip>
