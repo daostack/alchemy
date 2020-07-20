@@ -1,10 +1,10 @@
 import * as React from "react";
-import { saveModalFormEntries, importUrlValues, restoreModalFormEntries } from "lib/proposalUtils";
+import { saveModalFormEntries, importUrlValues, restoreModalFormEntries, exportUrl } from "lib/proposalUtils";
 /**
  * base class for modals that want to persist their values to localStorage and support loading from
  * querystring params in a url.
  */
-export abstract class PersistentModalBase<TProps, TState> extends React.Component<TProps, TState> {
+export abstract class FormModalBase<TProps, TState> extends React.Component<TProps, TState> {
   /**
    * subclass must implement this and keep it up-to-date with the values that it wants to be persisted
    */
@@ -24,6 +24,10 @@ export abstract class PersistentModalBase<TProps, TState> extends React.Componen
      */
     const values = importUrlValues<TDefaults>(defaults);
     return Object.assign(values, restoreModalFormEntries(this.formName));
+  }
+
+  protected sendFormValuesToClipboard = (): void => {
+    exportUrl(this.valuesToPersist);
   }
 
   public componentWillUnmount(): void {

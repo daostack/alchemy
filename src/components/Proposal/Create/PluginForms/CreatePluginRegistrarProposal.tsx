@@ -11,7 +11,6 @@ import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
 import { isValidUrl, isAddress } from "lib/util";
 import { GetPluginIsActiveActions, getPluginIsActive, REQUIRED_PLUGIN_PERMISSIONS, pluginNameAndAddress, PluginPermissions } from "lib/pluginUtils";
-import { exportUrl } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
 import { ProposalName, IPluginState, AnyPlugin } from "@daostack/arc.js";
@@ -21,7 +20,7 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
-import { PersistentModalBase } from "components/Shared/PersistentModalBase";
+import { FormModalBase } from "components/Shared/FormModalBase";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -68,7 +67,7 @@ interface IState {
   tags: Array<string>;
 }
 
-class CreatePluginRegistrarProposal extends PersistentModalBase<IProps, IState> {
+class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState> {
 
   currentFormValues: IFormValues;
   get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
@@ -173,12 +172,8 @@ class CreatePluginRegistrarProposal extends PersistentModalBase<IProps, IState> 
     this.setState({ showForm: !this.state.showForm });
   }
 
-  public exportFormValues(values: IFormValues) {
-    values = {
-      ...values,
-      ...this.state,
-    };
-    exportUrl(values);
+  private exportFormValues() {
+    this.sendFormValuesToClipboard();
     this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
   }
 
@@ -495,9 +490,8 @@ class CreatePluginRegistrarProposal extends PersistentModalBase<IProps, IState> 
                     </div>
 
                     <div className={css.createProposalActions}>
-                      <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")}placement="top">
-                        {/* eslint-disable-next-line react/jsx-no-bind */}
-                        <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                      <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
+                        <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.exportFormValues}>
                           <img src="/assets/images/Icon/share-blue.svg" />
                         </button>
                       </TrainingTooltip>

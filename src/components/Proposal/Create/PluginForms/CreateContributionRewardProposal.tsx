@@ -11,12 +11,11 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Analytics from "lib/analytics";
 import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress } from "lib/util";
 import { showNotification, NotificationStatus } from "reducers/notifications";
-import { exportUrl } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
-import { PersistentModalBase } from "../../../Shared/PersistentModalBase";
+import { FormModalBase } from "../../../Shared/FormModalBase";
 
 const Select = React.lazy(() => import("react-select"));
 
@@ -87,7 +86,7 @@ export const SelectField: React.SFC<any> = ({options, field, form }) => (
   </React.Suspense>
 );
 
-class CreateContributionReward extends PersistentModalBase<IProps, IStateProps> {
+class CreateContributionReward extends FormModalBase<IProps, IStateProps> {
 
   currentFormValues: IFormValues;
   get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
@@ -160,8 +159,8 @@ class CreateContributionReward extends PersistentModalBase<IProps, IStateProps> 
   }
 
   // Exports data from form to a shareable url.
-  public exportFormValues(values: IFormValues) {
-    exportUrl({ ...values, ...this.state });
+  private exportFormValues() {
+    this.sendFormValuesToClipboard();
     this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
   }
 
@@ -402,9 +401,8 @@ class CreateContributionReward extends PersistentModalBase<IProps, IStateProps> 
                 }
               </div>
               <div className={css.createProposalActions}>
-                <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                  {/* eslint-disable-next-line react/jsx-no-bind */}
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                <TrainingTooltip {i18next.t("Export Proposal Tooltip")} placement="top">
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.exportFormValues}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
                 </TrainingTooltip>
