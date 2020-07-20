@@ -1,5 +1,6 @@
 import * as React from "react";
 import { saveModalFormEntries, importUrlValues, restoreModalFormEntries, exportUrl } from "lib/proposalUtils";
+import { showNotification as ShowNotification, NotificationStatus } from "reducers/notifications";
 /**
  * base class for modals that want to persist their values to localStorage and support loading from
  * querystring params in a url.
@@ -14,7 +15,7 @@ export abstract class FormModalBase<TProps, TState> extends React.Component<TPro
    * @param props The subclass's props
    * @param formName The unique name of the form to be persisted
    */
-  constructor(props: TProps, private formName: string) {
+  constructor(props: TProps, private formName: string, private showNotification: typeof ShowNotification) {
     super(props);
   }
 
@@ -28,6 +29,7 @@ export abstract class FormModalBase<TProps, TState> extends React.Component<TPro
 
   protected sendFormValuesToClipboard = (): void => {
     exportUrl(this.valuesToPersist);
+    this.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
   }
 
   public componentWillUnmount(): void {

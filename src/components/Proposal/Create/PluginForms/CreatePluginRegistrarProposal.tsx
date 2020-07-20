@@ -7,7 +7,7 @@ import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 
 import { createProposal } from "actions/arcActions";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { showNotification } from "reducers/notifications";
 import Analytics from "lib/analytics";
 import { isValidUrl, isAddress } from "lib/util";
 import { GetPluginIsActiveActions, getPluginIsActive, REQUIRED_PLUGIN_PERMISSIONS, pluginNameAndAddress, PluginPermissions } from "lib/pluginUtils";
@@ -73,7 +73,7 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState> {
   get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
 
   constructor(props: IProps) {
-    super(props, "PluginRegistrar");
+    super(props, "PluginRegistrar", props.showNotification);
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
@@ -170,11 +170,6 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState> {
 
   private toggleShowForm = () => {
     this.setState({ showForm: !this.state.showForm });
-  }
-
-  private exportFormValues() {
-    this.sendFormValuesToClipboard();
-    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
   }
 
   public render(): RenderOutput {
@@ -491,7 +486,7 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState> {
 
                     <div className={css.createProposalActions}>
                       <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                        <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.exportFormValues}>
+                        <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.sendFormValuesToClipboard}>
                           <img src="/assets/images/Icon/share-blue.svg" />
                         </button>
                       </TrainingTooltip>

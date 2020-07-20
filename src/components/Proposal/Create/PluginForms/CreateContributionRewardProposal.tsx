@@ -10,7 +10,7 @@ import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Analytics from "lib/analytics";
 import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress } from "lib/util";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
@@ -92,7 +92,7 @@ class CreateContributionReward extends FormModalBase<IProps, IStateProps> {
   get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
 
   constructor(props: IProps) {
-    super(props, "CreateContributionReward");
+    super(props, "CreateContributionReward", props.showNotification);
     this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
       beneficiary: "",
       description: "",
@@ -156,12 +156,6 @@ class CreateContributionReward extends FormModalBase<IProps, IStateProps> {
     });
 
     this.props.handleClose();
-  }
-
-  // Exports data from form to a shareable url.
-  private exportFormValues() {
-    this.sendFormValuesToClipboard();
-    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
   }
 
   private onTagsChange = () => (tags: string[]): void => {
@@ -401,8 +395,8 @@ class CreateContributionReward extends FormModalBase<IProps, IStateProps> {
                 }
               </div>
               <div className={css.createProposalActions}>
-                <TrainingTooltip {i18next.t("Export Proposal Tooltip")} placement="top">
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.exportFormValues}>
+                <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.sendFormValuesToClipboard}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
                 </TrainingTooltip>
