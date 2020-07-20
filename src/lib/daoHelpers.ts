@@ -24,6 +24,7 @@ export interface IDAOData {
   reputationHoldersCount: number;
   metadata: string;
   metadataHash: string;
+  ethBalance: BN;
 }
 
 export function createDaoStateFromQuery(queryData: IDAOData): IDAOState {
