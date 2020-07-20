@@ -656,3 +656,7 @@ export function safeMoment(dateSpecifier: moment.Moment | Date | number | string
       throw new Error(`safeMoment: unknown type: ${typeof dateSpecifier}`);
   }
 }
+
+export const inTesting = (): boolean => {
+  return (process.env.NODE_ENV === "development" && (global as any).inAlchemyTests);
+};
