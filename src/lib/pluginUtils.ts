@@ -16,7 +16,6 @@ import "moment";
 import * as moment from "moment-timezone";
 
 import { getArc } from "../arc";
-import { splitCamelCase } from "lib/util";
 
 export enum PluginPermissions {
   None = 0,
