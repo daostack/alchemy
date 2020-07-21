@@ -104,10 +104,7 @@ export function pluginName(plugin: IPluginState|IContractInfo, fallback?: string
 
     if (!name) {
       name = "ContributionRewardExt";
-    } else {
-      // add spaces before capital letters to approximate a human-readable title
-      name = splitCamelCase(name);
-    }
+    } // else name is the rewarder contract alias, split by camel case
   } else {
     name = PLUGIN_NAMES[plugin.name as keyof typeof PLUGIN_NAMES];
     if (name === undefined){
