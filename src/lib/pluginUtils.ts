@@ -103,7 +103,7 @@ export function pluginName(plugin: IPluginState|IContractInfo, fallback?: string
     name = rewarderContractName(plugin as IContributionRewardExtState);
 
     if (!name) {
-      name = "ContributionRewardExt";
+      name = PLUGIN_NAMES["ContributionRewardExt"];
     } // else name is the rewarder contract alias, split by camel case
   } else {
     name = PLUGIN_NAMES[plugin.name as keyof typeof PLUGIN_NAMES];
