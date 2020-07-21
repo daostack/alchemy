@@ -367,7 +367,6 @@ export function getGpRewards(reward: IRewardState, daoBalances: { [key: string]:
    * note the following assume that the GenesisProtocol is using GEN for staking
    */
   if (reward.tokensForStaker.gt(new BN(0))
-    && (daoBalances["GEN"] === undefined || daoBalances["GEN"].gte(reward.tokensForStaker))
     && (reward.tokensForStakerRedeemedAt === 0)) {
     result.tokensForStaker = reward.tokensForStaker;
   }
