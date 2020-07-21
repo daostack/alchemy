@@ -9,7 +9,7 @@ import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { generate } from "geopattern";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWei } from "lib/util";
+import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWei, ethBalance, linkToEtherScan } from "lib/util";
 import { parse } from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
@@ -85,7 +85,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
   public daoMenu() {
     const dao = this.props.data;
 
-    const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
+    const daoHoldingsAddress = linkToEtherScan(dao.address, true);
     const bgPattern = generate(dao.address + dao.name);
 
     return (
@@ -281,8 +281,7 @@ const SubscribedEthBalance = withSubscription({
     return oldProps.dao.address !== newProps.dao.address;
   },
   createObservable: (props: IEthProps) => {
-    const arc = getArc();
-    return arc.dao(props.dao.address).ethBalance().pipe(ethErrorHandler());
+    return ethBalance(props.dao.address).pipe(ethErrorHandler());
   },
 });
 

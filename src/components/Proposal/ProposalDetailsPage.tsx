@@ -242,17 +242,11 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
           </div>
 
           <div className={css.proposalActions + " clearfix"}>
-            <div className={classNames({
-              [css.voteBox]: true,
-              clearfix: true,
-            })}>
-
-              <div>
-                <div className={css.statusTitle}>
-                  <h3>Votes</h3>
-                  <span onClick={this.showVotersModal(proposal.votesCount)} className={classNames({ [css.clickable]: proposal.votesCount > 0 })}>
-                    {proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"} &gt;
-                  </span>
+            <div className={css.votes}>
+              <div className={css.header}>
+                <div className={css.title}>Votes</div>
+                <div onClick={this.showVotersModal(proposal.votesCount)} className={classNames({ [css.voters]: true, [css.clickable]: proposal.votesCount > 0 })}>
+                  {proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"} &gt;
                 </div>
 
                 <div className={css.voteButtons}>
@@ -268,7 +262,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 </div>
               </div>
 
-              <div className={css.voteStatus + " clearfix"}>
+              <div className={css.voteStatus}>
                 <div className={css.voteGraph}>
                   <VoteGraph size={90} proposal={proposal} />
                 </div>
@@ -284,22 +278,22 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.predictions}>
-              <div className={css.statusTitle}>
-                <h3>Predictions</h3>
-              </div>
+              <div className={css.header}>
+                <div className={css.title}>Predictions</div>
 
-              <div className={css.stakeButtons}>
-                <StakeButtons
-                  beneficiaryProfile={beneficiaryProfile}
-                  currentAccountAddress={currentAccountAddress}
-                  currentAccountGens={currentAccountGenBalance}
-                  currentAccountGenStakingAllowance={currentAccountGenAllowance}
-                  dao={daoState}
-                  parentPage={Page.ProposalDetails}
-                  expired={expired}
-                  proposal={proposal}
-                  stakes={stakes}
-                />
+                <div className={css.stakeButtons}>
+                  <StakeButtons
+                    beneficiaryProfile={beneficiaryProfile}
+                    currentAccountAddress={currentAccountAddress}
+                    currentAccountGens={currentAccountGenBalance}
+                    currentAccountGenStakingAllowance={currentAccountGenAllowance}
+                    dao={daoState}
+                    parentPage={Page.ProposalDetails}
+                    expired={expired}
+                    proposal={proposal}
+                    stakes={stakes}
+                  />
+                </div>
               </div>
 
               <div className={css.predictionStatus}>

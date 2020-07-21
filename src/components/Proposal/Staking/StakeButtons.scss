@@ -23,8 +23,12 @@
   }
 
   .disabledPredictions {
+    position: relative;
+    bottom: 1px;
     font-size: 11px;
     color: $gray-1;
+    line-height: normal;
+    padding-right: 2px;
   }
 
   button {
@@ -156,33 +160,19 @@
 }
 
 .enablePredictions {
-  display: block;
-  width: 100%;
-  text-align: center;
-  margin-bottom: 10px;
-
   button {
-    width: auto;
-    display: block;
+    width: 100px;
+    text-align: center;
+    height: 44px;
     border-radius: 12.5px;
-    position: relative;
-    top: 3px;
-    height: auto;
     padding-left: 5px;
     padding-right: 6px;
     padding-top: 5px;
     padding-bottom: 7px;
-    margin: 0 auto;
     background-color: #0076ff;
     color: white;
     font-weight: normal;
     font-family: LucidaGrande;
-  }
-
-  span {
-    display: block;
-    margin-top: 25px;
-    margin-bottom: 8px;
   }
 }
 
@@ -217,22 +207,11 @@
     }
   }
 
-  .disabledPredictions {
-    position: relative;
-    top: 3px;
-  }
-
   .enablePredictions {
-    display: block;
-    width: 120px;
-    position: absolute;
-    top: 3px;
-    right: 18px;
-    text-align: right;
-
     button {
-      display: inline-block;
-      top: 0;
+      width: 120px;
+      white-space: nowrap;
+      height: auto;
     }
   }
 }
@@ -244,11 +223,6 @@
     color: $gray-1;
     display: inline-block;
   }
-}
-
-.stakeControls {
-  position: relative;
-  text-align: center;
 }
 
 @keyframes pendingPassPrediction {
@@ -294,7 +268,6 @@
 }
 
 .preapproveWrapper {
-  position: relative;
   background-color: white;
   width: 280px;
   position: absolute;

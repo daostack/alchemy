@@ -5,8 +5,8 @@ import {
   IProposalState,
   IRewardState,
 } from "@daostack/arc.js";
-import { of } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { of, Observable, Observer } from "rxjs";
+import { catchError, map } from "rxjs/operators";
 
 import BN = require("bn.js");
 /**
@@ -16,7 +16,6 @@ import "moment";
 import * as moment from "moment-timezone";
 import { getArc } from "../arc";
 import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
-
 
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
@@ -269,7 +268,7 @@ export async function getNetworkId(web3Provider?: any): Promise<string> {
 
   try {
     arc = getArc();
-  } catch (ex) {
+  } catch {
     // Do nothing
   }
 
@@ -325,7 +324,7 @@ export async function getNetworkName(id?: string): Promise<Networks> {
   }
 }
 
-export function linkToEtherScan(address: Address) {
+export function linkToEtherScan(address: Address, tokenHoldings = false) {
   let prefix = "";
   const arc = getArc();
   switch (arc.web3.currentProvider.__networkId) {
@@ -335,8 +334,14 @@ export function linkToEtherScan(address: Address) {
     case "42":
       prefix = "kovan.";
       break;
+    case "100": // xdai
+      return tokenHoldings ?
+        `https://blockscout.com/poa/xdai/address/${address}/tokens` :
+        `https://blockscout.com/poa/xdai/${address.length > 42 ? "tx" : "address"}/${address}`;
   }
-  return `https://${prefix}etherscan.io/address/${address}`;
+  return tokenHoldings ?
+    `https://${prefix}etherscan.io/tokenholdings?a=${address}` :
+    `https://${prefix}etherscan.io/address/${address}`;
 }
 
 export type AccountClaimableRewardsType = { [key: string]: BN };
@@ -362,7 +367,6 @@ export function getGpRewards(reward: IRewardState, daoBalances: { [key: string]:
    * note the following assume that the GenesisProtocol is using GEN for staking
    */
   if (reward.tokensForStaker.gt(new BN(0))
-    && (daoBalances["GEN"] === undefined || daoBalances["GEN"].gte(reward.tokensForStaker))
     && (reward.tokensForStakerRedeemedAt === 0)) {
     result.tokensForStaker = reward.tokensForStaker;
   }
@@ -587,3 +591,90 @@ export function initializeUtils(options: IInitializeOptions) {
   * which when wrong would be more wrong than not splitting (like "I D").)
   **/
 export const splitCamelCase = (str: string): string => `${str[0].toUpperCase()}${str.slice(1).replace(/([a-z])([A-Z])/g, "$1 $2")}`;
+
+interface IObservedAccounts {
+  [address: string]: {
+    observable?: Observable<BN>;
+    observer?: Observer<BN>;
+    lastBalance?: string;
+    subscriptionsCount: number;
+  };
+}
+
+const ethBalanceObservedAccounts: IObservedAccounts = {};
+let ethBalancePollingInterval: any | undefined = undefined;
+
+export function ethBalance(address: Address): Observable<BN> {
+
+  const arc = getArc();
+
+  /**
+   * With a few minor enhancements, this code is virtually the same logic
+   * as arc.js uses when it creates a wss subscription to efficiently watch
+   * for changes in eth balances.
+   */
+  if (!ethBalanceObservedAccounts[address]) {
+    ethBalanceObservedAccounts[address] = {
+      subscriptionsCount: 1,
+    };
+  }
+  /**
+   * don't poll more than once for any given address
+   */
+  if (ethBalanceObservedAccounts[address].observable) {
+    ++ethBalanceObservedAccounts[address].subscriptionsCount;
+    return ethBalanceObservedAccounts[address].observable as Observable<BN>;
+  }
+
+  const observable = Observable.create(async (observer: Observer<BN>) => {
+
+    ethBalanceObservedAccounts[address].observer = observer;
+
+    await arc.web3.eth.getBalance(address)
+      .then((currentBalance: string) => {
+        const accInfo = ethBalanceObservedAccounts[address];
+        (accInfo.observer as Observer<BN>).next(new BN(currentBalance));
+        accInfo.lastBalance = currentBalance;
+      })
+      .catch((err: Error) => observer.error(err));
+
+    if (!ethBalancePollingInterval) {
+      ethBalancePollingInterval = setInterval(async () => {
+        Object.keys(ethBalanceObservedAccounts).forEach(async (addr) => {
+          const accInfo = ethBalanceObservedAccounts[addr];
+          try {
+            const balance = await arc.web3.eth.getBalance(addr);
+            if (balance !== accInfo.lastBalance) {
+              (accInfo.observer as Observer<BN>).next(new BN(balance));
+              accInfo.lastBalance = balance;
+            }
+          } catch (err) {
+            observer.error(err);
+          }
+        });
+      }, 60000); // poll every 60 seconds
+    }
+    // unsubscribe
+    return () => {
+      /**
+       * What I find is that `unsubscribe` is never called on the observable.
+       * This might be a flaw in `withSubscription` which was designed to guarantee
+       * that `unsubscribe` would always be called on its observables.
+       * Or it may be a flaw in how we are using `combineLatest`.
+       * Either way, it is a memory/resource leak.
+       */
+      --ethBalanceObservedAccounts[address].subscriptionsCount;
+      if (ethBalanceObservedAccounts[address].subscriptionsCount <= 0) {
+        delete ethBalanceObservedAccounts[address];
+      }
+      if (Object.keys(ethBalanceObservedAccounts).length === 0 && ethBalancePollingInterval) {
+        clearTimeout(ethBalancePollingInterval);
+        ethBalancePollingInterval = undefined;
+      }
+    };
+  });
+
+  ethBalanceObservedAccounts[address].observable = observable;
+
+  return observable.pipe(map((item: any) => new BN(item)));
+}

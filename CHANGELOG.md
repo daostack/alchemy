@@ -1,3 +1,28 @@
+## 0.10.12
+  - Features Added
+    - added custom landing page data for Venus Project
+    - made it easier for anyone to submit a PR to create their own DAO custom landing page
+    - added support for awarding the GEM and DXD tokens
+
+  - Bugs Fixed
+    - DAO and account balances are now computed correctly on xDAI
+    - contract and account etherscan links now direct to blockscout, for xDAI
+    - enabling predictions now works on xDAI
+    - fixed several visual bugs
+    - fixed layout of description label on Blockchain interaction proposal create modal
+    - fixed crash when clicking on a DAO on the DAO Langing page.
+
+## 0.10.11
+  - Features Added
+    - added the ability to receive email notifications, per DAO, when proposals are created
+    - added support for DXSwap governance plugin
+    - added support for creating DAOs on the xDAI network
+
+  - Bugs Fixed
+    - fix proposal count not automatically updating in the Plugin Proposals page, when proposals are created or expired or move between queues
+    - don't add spaces to GenericScheme plugin names in the UI
+    - fix layout in a known-GenericScheme proposal summary UI when the callData is very wide
+
 ## 0.10.10
   - Several code refactorings
 
