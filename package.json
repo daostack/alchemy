@@ -80,7 +80,7 @@
     "3box": "1.17.1",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
     "@daostack/arc.js": "^0.2.70",
-    "@dorgtech/daocreator-ui": "^1.0.10",
+    "@dorgtech/daocreator-ui": "^1.0.13",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
     "@fortawesome/react-fontawesome": "^0.1.3",
