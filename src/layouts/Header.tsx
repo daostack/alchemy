@@ -24,7 +24,6 @@ import { Address, IDAOState } from "@daostack/arc.js";
 import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 import ProviderConfigButton from "layouts/ProviderConfigButton";
-import axios from "axios";
 import Tooltip from "rc-tooltip";
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -118,7 +117,7 @@ class Header extends React.Component<IProps, ILocalStateProps> {
       };
     }
 
-    this.setState({ alchemyVersion: (await axios("https://raw.githubusercontent.com/daostack/alchemy/master-2/package.json"))?.data?.version ?? "Not found" });
+    this.setState({ alchemyVersion: PACKAGE_VERSION ?? "Not found" });
   }
 
   public handleClickLogin = async (_event: any): Promise<void> => {
