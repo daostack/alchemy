@@ -29,7 +29,7 @@ import Tooltip from "rc-tooltip";
 interface IExternalProps extends RouteComponentProps<any> {
 }
 
-interface IExternalStateProps {
+interface IStateProps {
   showRedemptionsButton: boolean;
   currentAccountProfile: IProfileState;
   currentAccountAddress: string | null;
@@ -38,11 +38,7 @@ interface IExternalStateProps {
   threeBox: any;
 }
 
-interface ILocalStateProps {
-  alchemyVersion: string;
-}
-
-const mapStateToProps = (state: IRootState & IExternalStateProps, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
+const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const match = matchPath(ownProps.location.pathname, {
     path: "/dao/:daoAvatarAddress",
     strict: false,
@@ -91,23 +87,20 @@ const mapDispatchToProps = {
   threeBoxLogout,
 };
 
-type IProps = IExternalProps & IExternalStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
 
-class Header extends React.Component<IProps, ILocalStateProps> {
+class Header extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
     this.toggleDiv = React.createRef();
     this.initializeTrainingTooltipsToggle();
-    this.state = {
-      alchemyVersion: "",
-    };
   }
 
   private static trainingTooltipsEnabledKey = "trainingTooltipsEnabled";
   private toggleDiv: RefObject<HTMLDivElement>;
 
-  public async componentDidMount() {
+  public componentDidMount() {
     if (this.toggleDiv.current) {
       this.toggleDiv.current.onmouseenter = (_ev: MouseEvent) => {
         this.props.enableTrainingTooltipsShowAll();
@@ -191,7 +184,7 @@ class Header extends React.Component<IProps, ILocalStateProps> {
               <img src="/assets/images/Icon/Close.svg"/> :
               <img src="/assets/images/Icon/Menu.svg"/>}
           </div>
-          <Tooltip overlay={`DAOstack Alchemy version: ${this.state.alchemyVersion}`} placement="bottomRight">
+          <Tooltip overlay={`DAOstack Alchemy version: ${PACKAGE_VERSION ?? "Not found"}`} placement="bottomRight">
             <div className={css.menu}>
               <Link to="/">
                 <img src="/assets/images/alchemy-logo-white.svg"/>
