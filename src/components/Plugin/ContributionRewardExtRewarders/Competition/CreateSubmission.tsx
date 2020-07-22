@@ -127,7 +127,6 @@ class CreateSubmission extends FormModalBase<IProps, IStateProps> {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             setFieldTouched,
             setFieldValue,
-            values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <TrainingTooltip overlay="The title is the header of the submission and will be the first visible information about your suggestion" placement="right">

@@ -349,7 +349,6 @@ class CreateProposal extends FormModalBase<IProps, IStateProps> {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             setFieldTouched,
             setFieldValue,
-            values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <label className={css.description}>What to Expect</label>

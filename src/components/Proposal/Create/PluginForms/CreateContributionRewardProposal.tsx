@@ -227,7 +227,6 @@ class CreateContributionReward extends FormModalBase<IProps, IStateProps> {
             isSubmitting,
             setFieldTouched,
             setFieldValue,
-            values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <div className={css.description}>This proposal can send eth / erc20 token, mint new DAO tokens ({dao.tokenSymbol}) and mint / slash reputation in the DAO. Each proposal can have one of each of these actions. e.g. 100 rep for completing a project + 0.05 ETH for covering expenses.</div>
