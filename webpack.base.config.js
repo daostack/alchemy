@@ -119,7 +119,7 @@ module.exports = {
       template: "src/index.html"
     }),
     new webpack.DefinePlugin({
-      VERSION: JSON.stringify(require("./package.json").version)
+      PACKAGE_VERSION: JSON.stringify(require("./package.json").version)
     }),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     new MiniCssExtractPlugin()
