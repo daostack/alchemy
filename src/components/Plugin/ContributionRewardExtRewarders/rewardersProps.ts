@@ -69,13 +69,19 @@ export interface IEntityState {
   id: string;
 }
 
+/**
+ * Returns the arc.js class representing proposals created by given plugin.
+ * Returns `null` if the plugin has no rewarder or the rewarder contract is not known to
+ * arc.js.
+ * @param pluginState
+ */
 export const getCrxRewarderProposalClass =
   (pluginState: IContributionRewardExtState): new (context: Arc, idOrOpts: string | IEntityState) => any => {
 
-    const contractName = rewarderContractName(pluginState, false);
-
-    switch (contractName) {
+    switch (rewarderContractName(pluginState, false)) {
       case "Competition":
         return CompetitionProposal;
+      default:
+        return null;
     }
   };
