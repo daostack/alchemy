@@ -1,16 +1,19 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
-import { getArc, hideCookieAcceptWindow, gotoDaoPlugins } from "./utils";
+import { getArc, hideCookieAcceptWindow, gotoDaoPlugins, deleteCachedFormValues } from "./utils";
 
 describe("Proposals Registry Lookup", () => {
   let daoAddress: string;
 
   beforeEach(async () => {
     await gotoDaoPlugins(daoAddress);
-    await hideCookieAcceptWindow();
 
     const ensTitle = await $("h2=RegistryLookup");
     await ensTitle.waitForExist();
+
+    await hideCookieAcceptWindow();
+    await deleteCachedFormValues("CreateKnownGenericPluginProposal");
+
     await ensTitle.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");

@@ -1,6 +1,5 @@
 import { copyToClipboard } from "./util";
 import moment = require("moment-timezone");
-import { inTesting } from "./util";
 
 const cloneDeep = require("clone-deep");
 
@@ -68,9 +67,6 @@ export const exportUrl = (values: unknown): void => {
 function formValuesKey(name: string): string { return `formValues_${name}`; }
 
 export function saveModalFormEntries(name: string, values: object): void {
-
-  if (inTesting()) { return; }
-
   try {
     const json = JSON.stringify(values);
     sessionStorage.setItem(formValuesKey(name), json);
@@ -80,9 +76,6 @@ export function saveModalFormEntries(name: string, values: object): void {
 }
 
 export function restoreModalFormEntries(name: string): object {
-
-  if (inTesting()) { return {}; }
-
   const valuesString = sessionStorage.getItem(formValuesKey(name));
   if (valuesString) {
     sessionStorage.removeItem(formValuesKey(name));

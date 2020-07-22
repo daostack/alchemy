@@ -99,3 +99,7 @@ export const goToUrl = async (url: string): Promise<void> => {
   await browser.url(url);
   return browser.execute(() => { (window as any).inAlchemyTests = true; });
 };
+
+export const deleteCachedFormValues = async (formName: string): Promise<void> => {
+  return browser.execute((k: string) => window.sessionStorage.removeItem(k), `formValues_${formName}`);
+};

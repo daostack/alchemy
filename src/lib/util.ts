@@ -657,6 +657,3 @@ export function safeMoment(dateSpecifier: moment.Moment | Date | number | string
   }
 }
 
-export const inTesting = (): boolean => {
-  return (process.env.NODE_ENV === "development" && (global as any).inAlchemyTests);
-};
