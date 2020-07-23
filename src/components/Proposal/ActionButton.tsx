@@ -309,20 +309,22 @@ class ActionButton extends React.Component<IProps, IState> {
     gpRewards.tokensForStaker = gpRewards.tokensForStaker || new BN(0);
     gpRewards.reputationForProposer = gpRewards.reputationForProposer || new BN(0);
 
-    Analytics.track("Redeem", {
+    Analytics.track("Redeem", Object.assign({
       "DAO Address": daoState.address,
       "DAO Name": daoState.name,
       "Proposal Hash": proposal.coreState.id,
       "Proposal Title": proposal.coreState.title,
       "Plugin Address": proposal.coreState.plugin.entity.coreState.address,
       "Plugin Name": proposal.coreState.plugin.entity.coreState.name,
+      "GEN for staking": fromWei((gpRewards.daoBountyForStaker as BN).add(gpRewards.tokensForStaker)),
+      "GP Reputation Flow": fromWei((gpRewards.reputationForVoter as BN).add(gpRewards.reputationForProposer)),
+    }, contributionRewards && {
       "Reputation Requested": fromWei(contributionRewards.rep),
       "ETH Requested": fromWei(contributionRewards.eth),
       "External Token Requested": fromWei(contributionRewards.externalToken),
       "DAO Token Requested": fromWei(contributionRewards.nativeToken),
-      "GEN for staking": fromWei((gpRewards.daoBountyForStaker as BN).add(gpRewards.tokensForStaker)),
-      "GP Reputation Flow": fromWei((gpRewards.reputationForVoter as BN).add(gpRewards.reputationForProposer)),
-    });
+    }
+    ));
   }
 }
 
