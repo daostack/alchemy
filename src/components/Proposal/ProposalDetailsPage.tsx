@@ -43,6 +43,8 @@ type IProps = IExternalProps & IInjectedProposalProps;
 interface IState {
   showVotersModal: boolean;
   showShareModal: boolean;
+  currentAccountVote: number;
+  crxContractName: string;
 }
 
 class ProposalDetailsPage extends React.Component<IProps, IState> {
@@ -50,8 +52,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
    * Define these here rather than in `render` to minimize rerendering, particularly
    * of the disqus component
    **/
-  private currentAccountVote = 0;
-  private crxContractName: string;
   private disqusConfig = { url: "", identifier: "", title: "" };
   private proposalClass = classNames({
     [css.proposal]: true,
@@ -64,10 +64,14 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     this.state = {
       showShareModal: false,
       showVotersModal: false,
+      currentAccountVote: 0,
+      crxContractName: null,
     };
   }
 
   public componentDidMount() {
+    const newState: IState = {} as any;
+
     Analytics.track("Page View", {
       "Page Name": Page.ProposalDetails,
       "DAO Address": this.props.daoState.address,
@@ -84,10 +88,11 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     const currentAccountVotes = this.props.votes.filter((v: Vote) => v.coreState.voter === this.props.currentAccountAddress);
     if (currentAccountVotes.length > 0) {
       const currentVote = currentAccountVotes[0];
-      this.currentAccountVote = currentVote.coreState.outcome;
+      newState.currentAccountVote = currentVote.coreState.outcome;
     }
 
-    this.crxContractName = rewarderContractName(this.props.proposal.coreState.plugin.entity.coreState as IContributionRewardExtState);
+    newState.crxContractName = rewarderContractName(this.props.proposal.coreState.plugin.entity.coreState as IContributionRewardExtState);
+    this.setState(newState);
   }
 
   private showShareModal = (_event: any): void => {
@@ -162,9 +167,9 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 />
               </div>
               {
-                (this.crxContractName) ? <div className={css.gotoCompetition}>
+                (this.state.crxContractName) ? <div className={css.gotoCompetition}>
                   {
-                    <Link to={`/dao/${daoState.address}/crx/proposal/${proposal.id}`}>Go to {this.crxContractName}&nbsp;&gt;</Link>
+                    <Link to={`/dao/${daoState.address}/crx/proposal/${proposal.id}`}>Go to {this.state.crxContractName}&nbsp;&gt;</Link>
                   }
                 </div> : ""
               }
@@ -224,7 +229,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   <VoteButtons
                     altStyle
                     currentAccountAddress={currentAccountAddress}
-                    currentVote={this.currentAccountVote}
+                    currentVote={this.state.currentAccountVote}
                     daoState={daoState}
                     expired={expired}
                     currentAccountState={member}
@@ -255,7 +260,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   <VoteButtons
                     currentAccountAddress={currentAccountAddress}
                     currentAccountState={member}
-                    currentVote={this.currentAccountVote}
+                    currentVote={this.state.currentAccountVote}
                     daoState={daoState}
                     expired={expired}
                     proposalState={proposalState}
@@ -272,7 +277,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 <VoteBreakdown
                   currentAccountAddress={currentAccountAddress}
                   currentAccountState={member}
-                  currentVote={this.currentAccountVote}
+                  currentVote={this.state.currentAccountVote}
                   daoState={daoState}
                   detailView
                   proposalState={proposalState} />
