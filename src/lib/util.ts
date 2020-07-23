@@ -9,7 +9,7 @@ import {
 } from "@daostack/arc.js";
 import * as utils from "@daostack/arc.js";
 import { JsonRpcProvider } from "ethers/providers";
-import { of, Observable } from "rxjs";
+import { of, Observable, OperatorFunction } from "rxjs";
 import { catchError } from "rxjs/operators";
 import BN = require("bn.js");
 /**
@@ -30,11 +30,11 @@ export const convertDateToPosix = (date: Date): number => {
   return date.getTime() / 1000;
 };
 
-export function getExchangesList() {
+export function getExchangesList(): any {
   return exchangesList;
 }
 
-export function checkTotalPercent(split: any) {
+export function checkTotalPercent(split: string[]): boolean {
   let sum = 0;
   for (const p of split) {
     try {
@@ -48,12 +48,12 @@ export function checkTotalPercent(split: any) {
 
 }
 
-export function addSeconds(date: Date, seconds: number) {
+export function addSeconds(date: Date, seconds: number): Date {
   date.setTime(date.getTime() + seconds);
   return date;
 }
 
-export function copyToClipboard(value: any) {
+export function copyToClipboard(value: string): void {
   const el = document.createElement("textarea");
   el.value = value;
   document.body.appendChild(el);
@@ -71,14 +71,14 @@ export const truncateWithEllipses = (str: string, length: number): string => {
   }
 };
 
-export function humanProposalTitle(proposal: IProposalState, truncateToLength = 0) {
+export function humanProposalTitle(proposal: IProposalState, truncateToLength = 0): string {
   const title = proposal.title ||
     "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
   return truncateToLength ? truncateWithEllipses(title, truncateToLength) : title;
 }
 
 // Convert a value to its base unit based on the number of decimals passed in (i.e. WEI if 18 decimals)
-export function toBaseUnit(value: string, decimals: number) {
+export function toBaseUnit(value: string, decimals: number): BN {
   const ten = new BN(10);
   const base = ten.pow(new BN(decimals));
 
@@ -177,15 +177,17 @@ export function targetedNetwork(): Networks {
   }
 }
 
-export function baseTokenName() {
+export function baseTokenName(): string {
   return tokens[targetedNetwork()]["baseTokenName"];
 }
 
-export function genName() {
+export function genName(): string {
   return tokens[targetedNetwork()]["genName"];
 }
 
-export function supportedTokens() {
+interface ITokenSpec { decimals: number; name: string; symbol: string }
+
+export function supportedTokens(): { [index: string]: ITokenSpec} {
   return {
     [getArc().GENToken().address]: {
       decimals: 18,
@@ -246,21 +248,21 @@ export function formatTokens(amountWei: BN | null, symbol?: string, decimals = 1
   return toSignedString(returnString);
 }
 
-export function tokenDetails(tokenAddress: string) {
+export function tokenDetails(tokenAddress: string): ITokenSpec {
   return supportedTokens()[tokenAddress.toLowerCase()];
 }
 
-export function tokenSymbol(tokenAddress: string) {
+export function tokenSymbol(tokenAddress: string): string {
   const token = supportedTokens()[tokenAddress.toLowerCase()];
   return token ? token["symbol"] : "?";
 }
 
-export function tokenDecimals(tokenAddress: string) {
+export function tokenDecimals(tokenAddress: string): number {
   const token = supportedTokens()[tokenAddress.toLowerCase()];
   return token ? token["decimals"] : 18;
 }
 
-export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut = 1000) {
+export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut = 1000): Promise<void> {
   return new Promise((resolve, reject) => {
     const timerId = setInterval(async () => {
       if (await test()) { return resolve(); }
@@ -351,7 +353,7 @@ export async function getNetworkName(id?: string): Promise<Networks> {
   }
 }
 
-export function linkToEtherScan(address: Address) {
+export function linkToEtherScan(address: Address): string {
   let prefix = "";
   const arc = getArc();
   switch (arc.web3.network.chainId.toString()) {
@@ -402,7 +404,7 @@ export function getGpRewards(reward: IRewardState, daoBalances: { [key: string]:
 }
 
 // TOOD: move this function to the arc.js library!
-export function hasGpRewards(reward: IRewardState) {
+export function hasGpRewards(reward: IRewardState): boolean {
   const claimableRewards = getGpRewards(reward);
   for (const key of Object.keys(claimableRewards)) {
     if (claimableRewards[key].gt(new BN(0))) {
@@ -463,7 +465,7 @@ export function getCRRewards(reward: IContributionRewardProposalState, daoBalanc
   return result;
 }
 
-export function hasCrRewards(reward: IContributionRewardProposalState) {
+export function hasCrRewards(reward: IContributionRewardProposalState): boolean {
   const claimableRewards = getCRRewards(reward);
   for (const key of Object.keys(claimableRewards)) {
     if (claimableRewards[key].gt(new BN(0))) {
@@ -473,7 +475,7 @@ export function hasCrRewards(reward: IContributionRewardProposalState) {
   return false;
 }
 
-export function splitByCamelCase(str: string) {
+export function splitByCamelCase(str: string): string {
   return str.replace(/([A-Z])/g, " $1");
 }
 
@@ -491,13 +493,13 @@ export function isValidUrl(str: string, emptyOk = true): boolean {
  * @param num The number to round
  * @param precision The number of decimal places to preserve
  */
-export function roundUp(num: number, precision: number) {
+export function roundUp(num: number, precision: number): number {
   precision = Math.pow(10, precision);
   return Math.ceil(num * precision) / precision;
 }
 
 // error handler for ethereum subscriptions
-export function ethErrorHandler() {
+export function ethErrorHandler(): OperatorFunction<unknown, any> {
   const returnValueOnError: any = null; // return this when there is an error
   return catchError((err: any) => {
     // eslint-disable-next-line no-console
@@ -510,8 +512,8 @@ export function ethErrorHandler() {
  * @param arr The array to search
  * @param value The value to remove
  */
-export function arrayRemove(arr: any[], value: any) {
-  return arr.filter(function (ele) {
+export function arrayRemove(arr: any[], value: unknown): any[] {
+  return arr.filter(function (ele: any): boolean {
     return ele !== value;
   });
 }
@@ -538,7 +540,7 @@ export function getLocalTimezone(): string {
   return getDateWithTimezone(new Date()).format(tzFormat);
 }
 
-export function ensureHttps(url: string) {
+export function ensureHttps(url: string): string {
 
   if (url) {
     const pattern = /^((http|https):\/\/)/;
@@ -614,7 +616,7 @@ interface IInitializeOptions {
  * initialize this service
  * @param options
  */
-export function initializeUtils(options: IInitializeOptions) {
+export function initializeUtils(options: IInitializeOptions): void {
   showSimpleMessage = options.showSimpleMessage;
 }
 /**

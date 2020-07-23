@@ -217,9 +217,9 @@ export default withSubscription({
     return combineLatest(
       dao.proposals({
         where: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed, IProposalStage.Queued],
-          // eslint-disable-next-line @typescript-eslint/camelcase
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           closingAt_lte: Math.floor(new Date().getTime() / 1000),
         },
         orderBy: "closingAt",
@@ -240,9 +240,9 @@ export default withSubscription({
     const dao = new DAO(getArc(), props.daoState);
     return dao.proposals({
       where: {
-        // eslint-disable-next-line @typescript-eslint/camelcase
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed, IProposalStage.Queued],
-        // eslint-disable-next-line @typescript-eslint/camelcase
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         closingAt_lte: Math.floor(new Date().getTime() / 1000),
       },
       orderBy: "closingAt",

@@ -225,7 +225,7 @@ const SubscribedProposalsQueued = withSubscription<IPropsQueued, RegularProposal
 
     // the list of queued proposals
     return dao.proposals({
-      // eslint-disable-next-line @typescript-eslint/camelcase
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       where: { scheme: pluginId, stage: IProposalStage.Queued },
       orderBy: "confidence",
       orderDirection: "desc",
@@ -239,7 +239,7 @@ const SubscribedProposalsQueued = withSubscription<IPropsQueued, RegularProposal
     const pluginId = props.pluginState.id;
 
     return dao.proposals({
-      // eslint-disable-next-line @typescript-eslint/camelcase
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       where: { scheme: pluginId, stage: IProposalStage.Queued },
       orderBy: "confidence",
       orderDirection: "desc",
@@ -264,15 +264,15 @@ class PluginProposalsPage extends React.Component<IProps, null> {
   public render(): RenderOutput {
     const { data } = this.props;
 
-    const [proposalsBoosted, allProposals ] = data;
+    const [proposalsBoosted, allProposals] = data;
     const { currentAccountAddress, daoState, pluginState } = this.props;
-    let proposalCount=0;
+    let proposalCount = 0;
 
     const boostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
-        { proposalsBoosted.map((proposal: AnyProposal): any => (
+        {proposalsBoosted.map((proposal: AnyProposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0}/>
+            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -288,14 +288,14 @@ class PluginProposalsPage extends React.Component<IProps, null> {
         {(allProposals.length === 0)
           ?
           <div className={css.noDecisions}>
-            <img className={css.relax} src="/assets/images/yogaman.svg"/>
+            <img className={css.relax} src="/assets/images/yogaman.svg" />
             <div className={css.proposalsHeader}>
               No upcoming proposals
             </div>
             <p>You can be the first one to create a {pluginFriendlyName} proposal today! :)</p>
             <div className={css.cta}>
               <Link to={"/dao/" + daoState.address}>
-                <img className={css.relax} src="/assets/images/lt.svg"/> Back to plugins
+                <img className={css.relax} src="/assets/images/lt.svg" /> Back to plugins
               </Link>
             </div>
           </div>
@@ -309,7 +309,7 @@ class PluginProposalsPage extends React.Component<IProps, null> {
                 {proposalsBoosted.length === 0
                   ?
                   <div>
-                    <img src="/assets/images/yoga.svg"/>
+                    <img src="/assets/images/yoga.svg" />
                   </div>
                   : " "
                 }
@@ -334,7 +334,7 @@ class PluginProposalsPage extends React.Component<IProps, null> {
 //   is causing it to misinterpret the type of the SubscriptionData, so have to manually specificy here
 const SubscribedPluginProposalsPage = withSubscription<IProps, SubscriptionData>({
   wrappedComponent: PluginProposalsPage,
-  loadingComponent: <Loading/>,
+  loadingComponent: <Loading />,
   errorComponent: null,
 
   checkForUpdate: (oldProps, newProps) => {
@@ -469,7 +469,7 @@ const SubscribedPluginProposalsPage = withSubscription<IProps, SubscriptionData>
     return combineLatest(
       // the list of boosted proposals
       dao.proposals({
-        // eslint-disable-next-line @typescript-eslint/camelcase
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         where: { scheme: pluginId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
         orderBy: "boostedAt",
       }, { subscribe: true }),

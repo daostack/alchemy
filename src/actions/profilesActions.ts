@@ -3,7 +3,7 @@ import Box = require("3box");
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
 import { getWeb3Provider } from "arc";
 import Analytics from "lib/analytics";
-
+import * as Redux from "redux";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { ActionTypes, FollowType, newProfile } from "reducers/profilesReducer";
 import { arrayRemove } from "lib/util";
@@ -11,7 +11,7 @@ import { arrayRemove } from "lib/util";
 // Load account profile data from our database for all the "members" of the DAO
 // TODO: use this once 3box fixes getProfiles
 export function getProfilesForAddresses(addresses: string[]) {
-  return async (dispatch: any) => {
+  return async (dispatch: Redux.Dispatch<any, any>): Promise<void> => {
     try {
       const results = await Box.getProfiles(addresses);
       dispatch({
@@ -30,7 +30,7 @@ export function getProfilesForAddresses(addresses: string[]) {
 }
 
 export function getProfile(accountAddress: string, currentAccount = false) {
-  return async (dispatch: any) => {
+  return async (dispatch: Redux.Dispatch<any, any>): Promise<any> => {
     try {
       // Get profile data for this account
       const profile: any = await Box.getProfile(accountAddress);
