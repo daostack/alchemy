@@ -8,6 +8,7 @@ import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
 import { Observable, of } from "rxjs";
 import { map, mergeMap, toArray, first } from "rxjs/operators";
+import { safeMoment } from "lib/util";
 
 /**
  * Defined in the order that Competition cards should be sorted in the List component.
@@ -72,10 +73,10 @@ export class CompetitionStatus {
 
 export const competitionStatus = (competition: ICompetitionProposalState): CompetitionStatus => {
   const now = moment();
-  const startTime = moment(competition.startTime);
-  const submissionsEndTime = moment(competition.suggestionsEndTime);
-  const votingStartTime = moment(competition.votingStartTime);
-  const endTime = moment(competition.endTime);
+  const startTime = safeMoment(competition.startTime);
+  const submissionsEndTime = safeMoment(competition.suggestionsEndTime);
+  const votingStartTime = safeMoment(competition.votingStartTime);
+  const endTime = safeMoment(competition.endTime);
   const hasSubmissions = !!competition.totalSuggestions;
   const hasWinners = !!competition.numberOfWinningSuggestions;
   let status: CompetitionStatusEnum;
