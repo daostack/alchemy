@@ -638,14 +638,11 @@ export function ethBalance(address: Address): Observable<BN> {
 /**
  * arc.js is inconsistent in how it returns datetimes.
  * Convert all possibilities safely to a `moment`.
- * Is also OK when the dateSpecifier is already a moment
+ * Is OK when the dateSpecifier is already a moment.
+ * If is a string, must be ISO-conformant.
  * @param dateSpecifier
  */
-export function safeMoment(dateSpecifier: moment.Moment | Date | number | string | undefined): moment.Moment | null {
-  if (!dateSpecifier) {
-    return null;
-  }
-
+export function safeMoment(dateSpecifier: moment.Moment | Date | number | string | undefined): moment.Moment {
   switch (typeof dateSpecifier) {
     case "object":
       if (moment.isMoment(dateSpecifier)) {
