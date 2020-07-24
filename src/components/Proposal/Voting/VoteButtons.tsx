@@ -7,7 +7,7 @@ import classNames from "classnames";
 import Reputation from "components/Account/Reputation";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Analytics from "lib/analytics";
-import { fromWei, targetedNetwork } from "lib/util";
+import { fromWei, targetedNetwork, safeMoment } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -105,7 +105,7 @@ class VoteButtons extends React.Component<IProps, IState> {
                             (proposalState.stage === IProposalStage.Boosted && expired) ||
                             (proposalState.stage === IProposalStage.QuietEndingPeriod && expired) ||
                             (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ||
-                            (currentAccountState && (proposalState.createdAt < currentAccountState.createdAt) &&
+                            (currentAccountState && (safeMoment(proposalState.createdAt) < safeMoment(currentAccountState.createdAt)) &&
                             //this is a workaround till https://github.com/daostack/subgraph/issues/548
                             (targetedNetwork() !== "ganache")) ||
                             currentVote === IProposalOutcome.Pass ||
@@ -133,7 +133,7 @@ class VoteButtons extends React.Component<IProps, IState> {
            * 5) when `currentAccount` is not found in the subgraph, then a fake `currentAccountState` is created with
            * rep == 0
            */
-          (currentAccountState && (proposalState.createdAt < currentAccountState.createdAt)) ?
+          (currentAccountState && (safeMoment(proposalState.createdAt) < safeMoment(currentAccountState.createdAt))) ?
             "Must have had reputation in this DAO when the proposal was created" :
             proposalState.stage === IProposalStage.ExpiredInQueue ||
                 (proposalState.stage === IProposalStage.Boosted && expired) ||
