@@ -1,6 +1,6 @@
 import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
 import { NotificationStatus } from "reducers/notifications";
-import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
+import { getNetworkId, getNetworkName, targetedNetwork, isAddress } from "./lib/util";
 import { settings, Settings, USE_CONTRACTINFOS_CACHE } from "./settings";
 import { RetryLink } from "apollo-link-retry";
 import { Address, Arc, Web3Client, Web3Provider } from "@daostack/arc.js";
@@ -236,7 +236,8 @@ async function ensureCorrectNetwork(provider: Web3Provider): Promise<void> {
 const ACCOUNT_STORAGEKEY = "currentAddress";
 
 export function cacheWeb3Info(account: Address): void {
-  if (account) {
+  // do not store 0x000...
+  if (account && isAddress(account)) {
     localStorage.setItem(ACCOUNT_STORAGEKEY, account);
   } else {
     localStorage.removeItem(ACCOUNT_STORAGEKEY);
@@ -365,7 +366,9 @@ async function enableWeb3Provider(): Promise<void> {
   }
 
   /**
-   * bail if provider is not correct for the current platform
+   * Bail if provider is not correct for the current platform.
+   * Note that arc.js has not yet been initialized with the new provider,
+   * so we should not use its provider to determine what network we're on.
    */
   await ensureCorrectNetwork(provider);
 
