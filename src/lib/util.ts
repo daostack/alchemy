@@ -652,6 +652,7 @@ export function safeMoment(dateSpecifier: moment.Moment | Date | number | string
     case "string":
       return moment(dateSpecifier);
     case "number":
+      // then should be a count of seconds in UNIX epoch
       return moment.unix(dateSpecifier);
     default:
       throw new Error(`safeMoment: unknown type: ${typeof dateSpecifier}`);
