@@ -301,7 +301,7 @@ export async function getNetworkId(web3Provider?: Web3Provider): Promise<string>
       return network.chainId.toString();
     } else {
       const promise = new Promise<string>((resolve, reject) => {
-        web3Provider.send("net_version", (error, response) => {
+        web3Provider.send("net_version", (error: any, response: any) => {
           if (error) {
             reject(error);
           } else {
@@ -633,4 +633,30 @@ export function ethBalance(address: Address): Observable<BN> {
 
   const arc = getArc();
   return arc.ethBalance(address);
+}
+
+/**
+ * arc.js is inconsistent in how it returns datetimes.
+ * Convert all possibilities safely to a `moment`.
+ * Is also OK when the dateSpecifier is already a moment
+ * @param dateSpecifier
+ */
+export function safeMoment(dateSpecifier: moment.Moment | Date | number | string | undefined): moment.Moment | null {
+  if (!dateSpecifier) {
+    return null;
+  }
+
+  switch (typeof dateSpecifier) {
+    case "object":
+      if (moment.isMoment(dateSpecifier)) {
+        return dateSpecifier;
+      }
+      // else assume is a Date, fallthrough
+    case "string":
+      return moment(dateSpecifier);
+    case "number":
+      return moment.unix(dateSpecifier);
+    default:
+      throw new Error(`safeMoment: unknown type: ${typeof dateSpecifier}`);
+  }
 }

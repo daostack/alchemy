@@ -1,6 +1,7 @@
 import * as moment from "moment";
 
 import { IProposalOutcome, IProposalStage, IProposalState } from "@daostack/arc.js";
+import { safeMoment } from "lib/util";
 
 export interface IRedemptionState {
   accountAddress: string;
@@ -18,23 +19,23 @@ export interface IRedemptionState {
   voterReputation: number;
 }
 
-export const closingTime = (proposal: IProposalState) => {
+export const closingTime = (proposal: IProposalState): moment.Moment => {
   switch (proposal.stage) {
     case IProposalStage.ExpiredInQueue:
     case IProposalStage.Queued:
-      return moment((Number(proposal.createdAt.toString()) + proposal.genesisProtocolParams.queuedVotePeriodLimit) * 1000);
+      return safeMoment(proposal.createdAt).add(proposal.genesisProtocolParams.queuedVotePeriodLimit, "seconds");
     case IProposalStage.PreBoosted:
-      return moment((proposal.preBoostedAt + proposal.genesisProtocolParams.preBoostedVotePeriodLimit) * 1000);
+      return safeMoment(proposal.preBoostedAt).add(proposal.genesisProtocolParams.preBoostedVotePeriodLimit, "seconds");
     case IProposalStage.Boosted:
-      return moment((proposal.boostedAt + proposal.genesisProtocolParams.boostedVotePeriodLimit) * 1000);
+      return safeMoment(proposal.boostedAt).add(proposal.genesisProtocolParams.boostedVotePeriodLimit, "seconds");
     case IProposalStage.QuietEndingPeriod:
-      return moment((proposal.quietEndingPeriodBeganAt + proposal.genesisProtocolParams.quietEndingPeriod) * 1000);
+      return safeMoment(proposal.quietEndingPeriodBeganAt).add(proposal.genesisProtocolParams.quietEndingPeriod, "seconds");
     case IProposalStage.Executed:
-      return moment(proposal.executedAt * 1000);
+      return safeMoment(proposal.executedAt);
   }
 };
 
-export function proposalExpired(proposal: IProposalState) {
+export function proposalExpired(proposal: IProposalState): boolean {
   const res = (
     (proposal.stage === IProposalStage.ExpiredInQueue) ||
     (proposal.stage === IProposalStage.Queued && closingTime(proposal) <= moment())
@@ -42,20 +43,20 @@ export function proposalExpired(proposal: IProposalState) {
   return res;
 }
 
-export function proposalEnded(proposal: IProposalState) {
+export function proposalEnded(proposal: IProposalState): boolean {
   const res = (
     (proposal.stage === IProposalStage.Executed) || proposalExpired(proposal));
   return res;
 }
 
-export function proposalPassed(proposal: IProposalState) {
+export function proposalPassed(proposal: IProposalState): boolean {
   const res = (
     (proposal.stage === IProposalStage.Executed && proposal.winningOutcome === IProposalOutcome.Pass)
   );
   return res;
 }
 
-export function proposalFailed(proposal: IProposalState) {
+export function proposalFailed(proposal: IProposalState): boolean {
   const res = (
     (proposal.stage === IProposalStage.Executed && proposal.winningOutcome === IProposalOutcome.Fail) ||
     proposalExpired(proposal)
