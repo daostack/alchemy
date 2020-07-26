@@ -74,7 +74,7 @@ div.tooltipWhenDisabledContainer {
   white-space: nowrap;
 
   &:disabled {
-    background-color: rgba(200, 200, 200, 0.5);
+    background-color: $disabled-button-color;
     color: rgba(75, 75, 75, 1);
   }
 

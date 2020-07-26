@@ -180,7 +180,7 @@ button:hover {
     color: rgba(104, 154, 214, 1);
     padding: 0;
     margin: 0;
-    border-bottom: 1px solid rgba(195, 212, 231, 1);
+    border-bottom: $gray-border-3;
     margin-bottom: 15px;
     padding-bottom: 3px;
     background-color: rgba(229, 235, 242, 1);
@@ -265,7 +265,7 @@ a {
 
 .daoHistoryHeader {
   font-size: 28px;
-  color: rgba(104, 155, 214, 1);
+  color: $title-color;
   border-bottom: 1px solid rgba(45, 109, 181, 0.2);
   padding-bottom: 5px;
   font-weight: bold;

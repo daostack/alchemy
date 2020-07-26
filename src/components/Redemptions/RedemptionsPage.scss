@@ -16,10 +16,10 @@
 .header {
   padding-top: 30px;
   padding-bottom: 5px;
-  color: rgba(104, 155, 214, 1);
+  color: $title-color;
   font-weight: bold;
   background-color: rgba(229, 235, 242, 1);
-  border-bottom: 1px solid rgba(195, 212, 231, 1);
+  border-bottom: $gray-border-3;
   display: flex;
   width: 100%;
 
@@ -78,7 +78,7 @@
   h2 {
     line-height: 55px;
     font-size: 45px;
-    color: rgba(104, 155, 214, 1);
+    color: $title-color;
   }
 
   p {

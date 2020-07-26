@@ -15,7 +15,7 @@
   .headerText {
     font-size: 28px;
     font-weight: bold;
-    color: rgba(104, 155, 214, 1);
+    color: $title-color;
   }
 
   .infoContainer .titleContainer .row {
@@ -33,7 +33,7 @@
         border-width: 1px;
         background-color: #0071ff;
         padding: 0 15px;
-        color:$white;
+        color: $white;
         font-weight: bold;
         font-size: 11px;
         text-align: center;
