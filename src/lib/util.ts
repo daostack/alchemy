@@ -280,19 +280,12 @@ export function sleep(milliseconds: number): Promise<void> {
  * @param web3Provider
  */
 export async function getNetworkId(web3Provider?: Web3Provider): Promise<string> {
-  let arc: Arc;
+  if (web3Provider) {
 
-  try {
-    arc = getArc();
-  } catch (ex) {
-    // Do nothing
-  }
-
-  if (arc) {
-    const network = await arc.web3.getNetwork();
-    return network.chainId.toString();
-  } else if (web3Provider) {
-    if (typeof web3Provider === "string") {
+    if ((web3Provider as any).networkVersion) {
+      return (web3Provider as any).networkVersion;
+    }
+    else if (typeof web3Provider === "string") {
       const provider = new JsonRpcProvider(web3Provider);
       const network = await provider.getNetwork();
       return network.chainId.toString();
@@ -312,11 +305,24 @@ export async function getNetworkId(web3Provider?: Web3Provider): Promise<string>
 
       return await promise;
     }
-  } else if ((window as any).web3) {
-    const web3 = (window as any).web3;
-    return (await (web3.eth.net ? web3.eth.net.getId() : promisify(web3.version.getNetwork)())).toString();
   } else {
-    throw new Error("getNetworkId: unable to find web3");
+    let arc: Arc;
+
+    try {
+      arc = getArc();
+    } catch (ex) {
+      // Do nothing
+    }
+
+    if (arc) {
+      const network = await arc.web3.getNetwork();
+      return network.chainId.toString();
+    } else if ((window as any).web3) {
+      const web3 = (window as any).web3;
+      return (await (web3.eth.net ? web3.eth.net.getId() : promisify(web3.version.getNetwork)())).toString();
+    } else {
+      throw new Error("getNetworkId: unable to find web3");
+    }
   }
 }
 
