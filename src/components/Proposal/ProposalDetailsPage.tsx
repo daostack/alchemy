@@ -292,14 +292,14 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                     stakes={stakes}
                   />
                 </div>
+              </div>
 
-                <div className={css.predictionStatus}>
-                  <StakeGraph
-                    proposalState={proposalState}
-                    detailView
-                  />
-                  <BoostAmount detailView expired={expired} proposalState={proposalState} />
-                </div>
+              <div className={css.predictionStatus}>
+                <StakeGraph
+                  proposalState={proposalState}
+                  detailView
+                />
+                <BoostAmount detailView expired={expired} proposalState={proposalState} />
               </div>
 
             </div>
