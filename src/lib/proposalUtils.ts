@@ -3,7 +3,7 @@ import moment = require("moment-timezone");
 
 const cloneDeep = require("clone-deep");
 
-export function importUrlValues<Values>(defaultValues: Values) {
+export function importUrlValues<Values>(defaultValues: Values): any {
   const { search } = window.location;
   const params = new URLSearchParams(search);
   const initialFormValues: any = cloneDeep([defaultValues])[0];
@@ -41,14 +41,14 @@ export function importUrlValues<Values>(defaultValues: Values) {
   return initialFormValues;
 }
 
-export const exportUrl = (values: any) => {
-  const setQueryString = (key: string) => {
+export const exportUrl = (values: unknown): void => {
+  const setQueryString = (key: keyof typeof values): string => {
     if (values[key] === undefined) {
       return "";
     }
     if (typeof values[key] === "object") {
       if (moment.isMoment(values[key])) {
-        return `${key}=${values[key].toString()}`;
+        return `${key}=${(values[key] as moment.Moment).toString()}`;
       } else {
         return `${key}=${JSON.stringify(values[key])}`;
       }
