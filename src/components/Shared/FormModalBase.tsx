@@ -10,7 +10,7 @@ export abstract class FormModalBase<TProps, TState> extends React.Component<TPro
   /**
    * subclass must implement this and keep it up-to-date with the form values
    */
-  protected abstract valuesToPersist: object;
+  protected abstract valuesToPersist: Record<string, unknown>;
 
   /**
    * @param props The subclass's props

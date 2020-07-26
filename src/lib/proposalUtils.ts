@@ -66,7 +66,7 @@ export const exportUrl = (values: unknown): void => {
 
 function formValuesKey(name: string): string { return `formValues_${name}`; }
 
-export function saveModalFormEntries(name: string, values: object): void {
+export function saveModalFormEntries(name: string, values: Record<string, unknown>): void {
   try {
     const json = JSON.stringify(values);
     sessionStorage.setItem(formValuesKey(name), json);
@@ -75,7 +75,7 @@ export function saveModalFormEntries(name: string, values: object): void {
   catch {}
 }
 
-export function restoreModalFormEntries(name: string): object {
+export function restoreModalFormEntries(name: string): Record<string, unknown> {
   const valuesString = sessionStorage.getItem(formValuesKey(name));
   if (valuesString) {
     sessionStorage.removeItem(formValuesKey(name));
