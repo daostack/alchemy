@@ -15,12 +15,12 @@
     },
     "settings": {
       "react": {
-        "version": "detect", // React version. "detect" automatically picks the version you have installed.
+        "version": "detect" // React version. "detect" automatically picks the version you have installed.
       }
     },
     "rules": {
         /**
-         * disable or warn for perpetuity
+         * disable for perpetuity
          */
         "@typescript-eslint/no-var-requires": "off",
         "@typescript-eslint/explicit-member-accessibility": "off",
@@ -33,12 +33,16 @@
          */
         "require-atomic-updates": "warn",
         "no-console": "warn",
-        "@typescript-eslint/ban-ts-ignore": "warn",
-        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/ban-ts-comment": ["warn", { "ts-ignore": false }],
         "react/jsx-no-bind": "warn",
         /**
          * outright errors
         */
+        "@typescript-eslint/no-inferrable-types": ["error",
+          {
+            "ignoreParameters": false,
+            "ignoreProperties": false
+          }],
         "keyword-spacing": "error",
         "arrow-spacing": "error",
         "key-spacing": ["error", { "mode": "minimum" }],
@@ -61,7 +65,7 @@
         "react/jsx-boolean-value": "error",
         "react/jsx-curly-spacing": "error",
         "no-bitwise": "error",
-        "@typescript-eslint/interface-name-prefix": ["error", "always"],
+        "@typescript-eslint/naming-convention": ["error", {"selector": "interface", "format": ["PascalCase"], "prefix": ["I"]}],
         "prefer-const": "error",
         "@typescript-eslint/no-unused-expressions": "error",
         "no-unused-vars": "off", // to not interfere with @typescript just below
@@ -72,7 +76,7 @@
         "comma-dangle": ["error" ,"always-multiline"],
         "semi": ["error", "always"],
         "eol-last": "error",
-        "eqeqeq": "error",
+        "eqeqeq": "error"
     },
     "parser": "@typescript-eslint/parser",
     "plugins": ["@typescript-eslint", "react"],

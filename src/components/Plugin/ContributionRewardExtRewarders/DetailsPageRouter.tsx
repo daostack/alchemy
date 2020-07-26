@@ -4,7 +4,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import { getArc } from "arc";
 import { IDAOState, IContributionRewardExtState, IContributionRewardExtProposalState, ContributionRewardExtProposal, Address } from "@daostack/arc.js";
 import Loading from "components/Shared/Loading";
-import { getCrxRewarderComponent, CrxRewarderComponentType } from "components/Plugin/ContributionRewardExtRewarders/rewardersProps";
+import { getCrxRewarderComponent, CrxRewarderComponentType, getCrxRewarderProposalClass } from "components/Plugin/ContributionRewardExtRewarders/rewardersProps";
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
@@ -69,9 +69,12 @@ export default withSubscription({
   loadingComponent: <Loading/>,
   errorComponent: null,
   checkForUpdate: [],
-  createObservable: (props: IProps) => {
+  createObservable: async (props: IProps) => {
     const arc = getArc();
-    const proposal = new ContributionRewardExtProposal(arc, props.proposalId);
+    const crxProposal = new ContributionRewardExtProposal(arc, props.proposalId);
+    const crxProposalState = await crxProposal.fetchState();
+    const proposalClass = getCrxRewarderProposalClass(await crxProposalState.plugin.entity.fetchState() as IContributionRewardExtState);
+    const proposal = new proposalClass(arc, props.proposalId);
     return proposal.state( { subscribe: true });
   },
 });

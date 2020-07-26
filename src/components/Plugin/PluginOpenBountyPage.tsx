@@ -1,5 +1,4 @@
-/*eslint @typescript-eslint/camelcase: ["error", {properties: "never"}]*/
-/*tslint:disable:max-classes-per-file*/
+// eslint-disable @typescript-eslint/naming-convention
 
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";

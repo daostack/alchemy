@@ -48,7 +48,7 @@ const ProposalPluginCard = (props: IProps) => {
   return (
     <div className={css.wrapper} data-test-id={`pluginCard-${pluginState.name}`}>
       <Link className={css.headerLink} to={`/dao/${daoState.address}/plugin/${pluginState.id}`}>
-        { trainingTooltipMessage ?
+        {trainingTooltipMessage ?
           <TrainingTooltip placement="topLeft" overlay={trainingTooltipMessage}>
             {headerHtml}
           </TrainingTooltip> : headerHtml
@@ -82,8 +82,8 @@ const ProposalPluginCard = (props: IProps) => {
 
 export default withSubscription({
   wrappedComponent: ProposalPluginCard,
-  loadingComponent: <Loading/>,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
+  loadingComponent: <Loading />,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps: IExternalProps, newProps: IExternalProps) => {
     return oldProps.daoState.address !== newProps.daoState.address;
@@ -92,11 +92,13 @@ export default withSubscription({
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
     const dao = arc.dao(props.daoState.address);
-    return dao.proposals({ where: {
-      plugin:  props.pluginState.id,
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
-    }}, {
+    return dao.proposals({
+      where: {
+        plugin: props.pluginState.id,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
+      },
+    }, {
       fetchAllData: true,
       subscribe: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
     }); // the list of boosted proposals

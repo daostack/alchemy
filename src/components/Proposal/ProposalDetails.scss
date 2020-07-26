@@ -176,7 +176,7 @@ button.disabled {
       // margin: 0;
       // padding: 0;
       padding-left: 17px;
-      color: rgba(104, 155, 214, 1);
+      color: $title-color;
     }
 
     .voters {
@@ -207,19 +207,19 @@ button.disabled {
     display: inline-block;
     margin: 6px 0 0 12px;
     opacity: 0.6;
-    color: rgba(104, 155, 214, 1);
+    color: $title-color;
     font-weight: bold;
   }
 }
 
 .proposalTitleTop {
   display: block;
-  color: rgba(104, 155, 214, 1);
+  color: $title-color;
   font-size: 28px;
   margin: 0 0 15px 0;
 
   a {
-    color: rgba(104, 155, 214, 1);
+    color: $title-color;
   }
 }
 
@@ -240,7 +240,7 @@ button.disabled {
 
 .discussionTitle {
   font-size: 28px;
-  color: rgba(104, 155, 214, 1);
+  color: $title-color;
   width: 100%;
   border-bottom: $gray-border-2;
   padding-bottom: 5px;

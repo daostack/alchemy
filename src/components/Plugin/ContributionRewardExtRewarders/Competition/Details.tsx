@@ -1,7 +1,6 @@
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
 import { humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens, isAddress } from "lib/util";
-import { pluginName } from "lib/pluginUtils";
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
 import { showNotification } from "reducers/notifications";
@@ -32,6 +31,7 @@ import StatusBlob from "./StatusBlob";
 import * as css from "./Competitions.scss";
 import * as CompetitionActions from "./utils";
 import ProposalDescription from "components/Shared/ProposalDescription";
+import { pluginName } from "lib/pluginUtils";
 
 type ISubscriptionState = [Array<ICompetitionSuggestionState>, Set<string>];
 

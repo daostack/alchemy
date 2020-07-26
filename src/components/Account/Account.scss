@@ -331,8 +331,8 @@ input {
 }
 
 .submitButton:disabled {
-  background-color: rgba(200, 200, 200, 0.5);
-  border: 1px solid rgba(200, 200, 200, 1);
+  background-color: $disabled-button-color;
+  border: $disabled-button-border;
   color: rgba(75, 75, 75, 1);
 }
 

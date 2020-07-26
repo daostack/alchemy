@@ -1,38 +1,38 @@
 /* global-variables.scss */
 
 $bg-color: gray;
-$black: rgba(0, 0, 0, 1.000);
-$black-septone: rgba(0, 0, 0, .6);
-$black-halftone: rgba(0, 0, 0, .5);
-$black-thirdtone: rgba(0, 0, 0, .3);
-$black-tenthtone: rgba(0, 0, 0, .1);
-$gray-border: 1px solid rgba(151, 151, 151, 1.000);
-$gray-border-halftone: 1px solid rgba(151, 151, 151, .5);
-$proposal-item-border-bottom: 2px solid rgba(234, 234, 234, 1.000);
-$form-field-outline: 1px solid rgba(195, 191, 204, 1.000);
+$black: rgba(0, 0, 0, 1);
+$black-septone: rgba(0, 0, 0, 0.6);
+$black-halftone: rgba(0, 0, 0, 0.5);
+$black-thirdtone: rgba(0, 0, 0, 0.3);
+$black-tenthtone: rgba(0, 0, 0, 0.1);
+$gray-border: 1px solid rgba(151, 151, 151, 1);
+$gray-border-halftone: 1px solid rgba(151, 151, 151, 0.5);
+$proposal-item-border-bottom: 2px solid rgba(234, 234, 234, 1);
+$form-field-outline: 1px solid rgba(195, 191, 204, 1);
 $white: rgba(255, 255, 255, 1);
-$white-halftone: rgba(255, 255, 255, .5);
+$white-halftone: rgba(255, 255, 255, 0.5);
 $white-transparent: rgba(255, 255, 255, 0);
-$accent-1: rgba(58, 180, 208, 1.000);
-$accent-1-halftone: rgba(58, 180, 208, .5);
+$accent-1: rgba(58, 180, 208, 1);
+$accent-1-halftone: rgba(58, 180, 208, 0.5);
 $accent-1-transparent: rgba(58, 180, 208, 0);
-$accent-2: rgba(242, 175, 90, 1.000);
-$accent-2-halftone: rgba(242, 175, 90, .5);
-$accent-3: rgba(255, 0, 72, 1.000);
-$accent-3-halftone: rgba(255, 0, 72, .5);
-$accent-4: rgba(46, 168, 122, 1.000);
-$accent-4-halftone: rgba(46, 168, 122, .5);
+$accent-2: rgba(242, 175, 90, 1);
+$accent-2-halftone: rgba(242, 175, 90, 0.5);
+$accent-3: rgba(255, 0, 72, 1);
+$accent-3-halftone: rgba(255, 0, 72, 0.5);
+$accent-4: rgba(46, 168, 122, 1);
+$accent-4-halftone: rgba(46, 168, 122, 0.5);
 $accent-4-transparent: rgba(46, 168, 122, 0);
 $strong-green: #4abd40;
 
 $body-font: "Open Sans";
 $heading-1-font: "AccordBold";
 
-$shadow-1: 0 2px 4px 0 rgba(12,0,51,0.10);
-$shadow-2: 0 8px 16px 0 rgba(12,0,51,0.10);
-$shadow-3: 0 24px 32px 0 rgba(12,0,51,0.10);
+$shadow-1: 0 2px 4px 0 rgba(12, 0, 51, 0.1);
+$shadow-2: 0 8px 16px 0 rgba(12, 0, 51, 0.1);
+$shadow-3: 0 24px 32px 0 rgba(12, 0, 51, 0.1);
 
-$border-bottom-divider: 1px solid rgba(246, 246, 246, 1.000);
+$border-bottom-divider: 1px solid rgba(246, 246, 246, 1);
 
 $bold: 700;
 $normal: 400;
@@ -53,18 +53,23 @@ $max-width: 1080px;
 
 /* Alchemy Earth styles */
 
-$navy: rgba(18, 46, 91, 1.000);
-$sky: rgba(49, 120, 202, 1.000);
-$accent-1: rgba(3, 118, 255, 1.000); /* Bright blue */
-$accent-2: rgba(246, 80, 80, 1.000); /* Red */
-$accent-3: rgba(0, 190, 144, 1.000); /* Green */
-$accent-4: rgba(242, 192, 0, 1.000); /* Yellow */
-$accent-5: rgba(231, 240, 255, 1.000); /* Powder Blue */
-$accent-6: rgba(229, 235, 242, 1.000); /* Light blue background */
-$black: rgba(0, 29, 53, 1.000);
-$subhead: rgba(155, 170, 182, 1.000);
-$border-accent: rgba(170, 195, 227, 1.000); /* For hovers */
-$body-color: rgba(78, 97, 118, 1.000);
-$gray-1: rgba(154, 169, 181, 1.000);
-$gray-2: rgba(191, 203, 213, 1.000);
+$navy: rgba(18, 46, 91, 1);
+$sky: rgba(49, 120, 202, 1);
+$accent-1: rgba(3, 118, 255, 1); /* Bright blue */
+$accent-2: rgba(246, 80, 80, 1); /* Red */
+$accent-3: rgba(0, 190, 144, 1); /* Green */
+$accent-4: rgba(242, 192, 0, 1); /* Yellow */
+$accent-5: rgba(231, 240, 255, 1); /* Powder Blue */
+$accent-6: rgba(229, 235, 242, 1); /* Light blue background */
+$black: rgba(0, 29, 53, 1);
+$subhead: rgba(155, 170, 182, 1);
+$border-accent: rgba(170, 195, 227, 1); /* For hovers */
+$body-color: rgba(78, 97, 118, 1);
+$gray-1: rgba(154, 169, 181, 1);
+$gray-2: rgba(191, 203, 213, 1);
 $gray-border-2: 1px solid $gray-2;
+$gray-border-3: 1px solid rgba(195, 212, 231, 1);
+$title-color: rgba(104, 155, 214, 1);
+$green-button-color: $strong-green;
+$disabled-button-color: rgba(200, 200, 200, 0.5);
+$disabled-button-border: 1px solid rgba(200, 200, 200, 1);

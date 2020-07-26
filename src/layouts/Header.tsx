@@ -24,6 +24,7 @@ import { Address, IDAOState } from "@daostack/arc.js";
 import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 import ProviderConfigButton from "layouts/ProviderConfigButton";
+import Tooltip from "rc-tooltip";
 
 interface IExternalProps extends RouteComponentProps<any> {
 }
@@ -111,6 +112,8 @@ class Header extends React.Component<IProps, null> {
         this.props.disableTrainingTooltipsShowAll();
       };
     }
+
+    this.setState({ alchemyVersion: PACKAGE_VERSION ?? "Not found" });
   }
 
   public handleClickLogin = async (_event: any): Promise<void> => {
@@ -184,13 +187,13 @@ class Header extends React.Component<IProps, null> {
               <img src="/assets/images/Icon/Close.svg"/> :
               <img src="/assets/images/Icon/Menu.svg"/>}
           </div>
-          <TrainingTooltip overlay="View your personal feed" placement="bottomRight">
+          <Tooltip overlay={`DAOstack Alchemy version: ${PACKAGE_VERSION ?? "Not found"}`} placement="bottomRight">
             <div className={css.menu}>
               <Link to="/">
                 <img src="/assets/images/alchemy-logo-white.svg"/>
               </Link>
             </div>
-          </TrainingTooltip>
+          </Tooltip>
           <div className={css.topInfo}>
             <Breadcrumbs
               separator={<b> &gt;   </b>}

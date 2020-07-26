@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Vote, IContributionRewardExtState } from "@daostack/arc.js";
+import { Address, IDAOState, IProposalStage, IContributionRewardExtState } from "@daostack/arc.js";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -82,12 +82,8 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       "Plugin Name": this.props.proposal.coreState.plugin.entity.coreState.name,
     });
 
-    // TODO: the next line, is a hotfix for a  which filters the votes, should not be necessary,
-    // bc these should be filter in the `proposals.votes({where: {voter...}} query above)`
-    // https://daostack.tpondemand.com/RestUI/Board.aspx#page=board/5209716961861964288&appConfig=eyJhY2lkIjoiQjgzMTMzNDczNzlCMUI5QUE0RUE1NUVEOUQyQzdFNkIifQ==&boardPopup=bug/1766
-    const currentAccountVotes = this.props.votes.filter((v: Vote) => v.coreState.voter === this.props.currentAccountAddress);
-    if (currentAccountVotes.length > 0) {
-      const currentVote = currentAccountVotes[0];
+    if (this.props.votes.length > 0) {
+      const currentVote = this.props.votes[0];
       newState.currentAccountVote = currentVote.coreState.outcome;
     }
 

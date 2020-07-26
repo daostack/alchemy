@@ -7,12 +7,9 @@ import {
   ITransactionUpdate,
   ReputationFromTokenPlugin,
   Proposal,
-  ContributionRewardProposal,
-  GenericPluginProposal,
-  CompetitionProposal,
-  ContributionRewardExtProposal,
   FundingRequestProposal,
   JoinAndQuitProposal,
+  IProposalState,
 } from "@daostack/arc.js";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
@@ -71,28 +68,20 @@ export function createProposal(proposalOptions: IProposalBaseCreateOptions): Thu
   };
 }
 
-async function tryRedeemProposal(proposalId: string, accountAddress: string, observer: any, atLeastExecute = false) {
+async function tryRedeemProposal(proposalId: string, accountAddress: string, observer: any) {
   const arc = getArc();
   const proposal = await Proposal.create(arc, proposalId);
 
   switch (proposal.coreState.name) {
     case "GenericScheme":
-      await (proposal as GenericPluginProposal).redeemRewards(
-        accountAddress
-      ).subscribe(...observer);
-      break;
     case "ContributionReward":
-      await (proposal as ContributionRewardProposal).redeemRewards(
-        accountAddress
-      ).subscribe(...observer);
-      break;
     case "Competition":
-      await (proposal as CompetitionProposal).redeemRewards(
-        accountAddress
-      ).subscribe(...observer);
-      break;
     case "ContributionRewardExt":
-      await (proposal as ContributionRewardExtProposal).redeemRewards(
+    case "SchemeRegistrarRemove":
+    case "SchemeRegistrarAdd":
+    case "SchemeRegistrar":
+    case "SchemeFactory":
+      await (proposal as Proposal<IProposalState>).redeemRewards(
         accountAddress
       ).subscribe(...observer);
       break;
@@ -102,15 +91,7 @@ async function tryRedeemProposal(proposalId: string, accountAddress: string, obs
     case "JoinAndQuit":
       await (proposal as JoinAndQuitProposal).redeem().subscribe(...observer);
       break;
-    case "SchemeRegistrarRemove":
-    case "SchemeRegistrarAdd":
-    case "SchemeRegistrar":
-    case "SchemeFactory":
-    case "Unknown":
-      // no redemption.  Just execute if requested.
-      if (atLeastExecute) {
-        await proposal.execute().subscribe(...observer);
-      }
+    default:
       break;
   }
 
@@ -131,7 +112,7 @@ export function executeProposal(avatarAddress: string, proposalId: string, accou
       return await proposalObj.execute().subscribe(...observer);
     };
 
-    return tryRedeemProposal(proposalId, accountAddress, observer, true);
+    return tryRedeemProposal(proposalId, accountAddress, observer);
   };
 }
 

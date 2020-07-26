@@ -72,18 +72,17 @@ class PluginContainer extends React.Component<IProps, IState> {
     return <PluginInfoPage {...props} daoState={this.props.daoState} plugin={this.props.data[0]} pluginManager={this.props.data[1]} />;
   }
   private pluginProposalsPageHtml = (isActive: boolean, crxRewarderProps: ICrxRewarderProps) => (props: any) => {
-  /**
-   * Warning: since `props` is declared here as `any`, any missing attributes on `SchemeProposalsPage`
-   * will not be caught by the compiler.
-   */
+    /**
+     * Warning: since `props` is declared here as `any`, any missing attributes on `SchemeProposalsPage`
+     * will not be caught by the compiler.
+     */
     return <PluginProposalsPage {...props}
       daoState={this.props.daoState}
       currentAccountAddress={this.props.currentAccountAddress}
       pluginState={this.props.data[0]}
       crxRewarderProps={crxRewarderProps} />;
   }
-  private contributionsRewardExtTabHtml = () => (props: any) =>
-  {
+  private contributionsRewardExtTabHtml = () => (props: any) => {
     if (!this.state.crxListComponent) {
       return null;
     }
@@ -96,7 +95,7 @@ class PluginContainer extends React.Component<IProps, IState> {
     const newState = {};
 
     if (!this.state.crxRewarderProps) {
-      Object.assign(newState, { crxRewarderProps: await getCrxRewarderProps(this.props.data[0] as IContributionRewardExtState) } );
+      Object.assign(newState, { crxRewarderProps: await getCrxRewarderProps(this.props.data[0] as IContributionRewardExtState) });
     }
 
     if (!this.state.crxListComponent) {
@@ -208,7 +207,7 @@ class PluginContainer extends React.Component<IProps, IState> {
                 }
               </div>
 
-              { isProposalPlugin ?
+              {isProposalPlugin ?
                 inInfoTab ?
                   <div className={css.editPlugin}>
                     <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
@@ -217,7 +216,7 @@ class PluginContainer extends React.Component<IProps, IState> {
                         href="#!"
                         onClick={this.handleEditPlugin}
                       >
-                    Edit Plugin
+                        Edit Plugin
                       </a>
                     </TrainingTooltip>
                   </div>
@@ -232,7 +231,7 @@ class PluginContainer extends React.Component<IProps, IState> {
                       href="#!"
                       onClick={isActive ? this.handleNewProposal : null}
                       >
-                    + New Proposal</a>
+                        + New Proposal</a>
                     </TrainingTooltip>
                   </div>
                 : ""
@@ -260,7 +259,7 @@ class PluginContainer extends React.Component<IProps, IState> {
 
 const SubscribedPluginContainer = withSubscription({
   wrappedComponent: PluginContainer,
-  loadingComponent: <Loading/>,
+  loadingComponent: <Loading />,
   errorComponent: null,
   checkForUpdate: ["pluginId"],
   createObservable: async (props: IProps) => {
@@ -277,10 +276,10 @@ const SubscribedPluginContainer = withSubscription({
     // why are we doing this for all plugins and not just the plugin we care about here?
     const dao = new DAO(arc, props.daoState);
     await dao.proposals(
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      {where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted, IProposalStage.Executed ]}},
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      { where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted, IProposalStage.Executed] } },
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      { fetchAllData: true, subscribe: true }).subscribe(() => {});
+      { fetchAllData: true, subscribe: true }).subscribe(() => { });
     // end cache priming
 
     const pluginState = await plugin.fetchState();
@@ -295,8 +294,9 @@ const SubscribedPluginContainer = withSubscription({
     let approvedProposals: Observable<Array<IProposalState>>;
     if (hasRewarderContract(pluginState as IContributionRewardExtState)) {
       approvedProposals = dao.proposals(
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        { where: { plugin: plugin.id, stage_in: [IProposalStage.Executed]},
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        {
+          where: { plugin: plugin.id, stage_in: [IProposalStage.Executed] },
           orderBy: "closingAt",
           orderDirection: "desc",
         },
@@ -306,7 +306,7 @@ const SubscribedPluginContainer = withSubscription({
           mergeMap(proposals => of(proposals).pipe(
             mergeMap(proposals => proposals),
             mergeMap(proposal => proposal.state({}).pipe(first())),
-            filter((proposal: IProposalState) => proposal.winningOutcome === IProposalOutcome.Pass ),
+            filter((proposal: IProposalState) => proposal.winningOutcome === IProposalOutcome.Pass),
             toArray())
           )
         );
@@ -317,7 +317,7 @@ const SubscribedPluginContainer = withSubscription({
     return combineLatest(
       plugin.fetchState({ subscribe: true }),
       // Find the SchemeRegistrar plugin if this dao has one
-      Plugin.search(arc, {where: { dao: props.daoState.id, name: "SchemeFactory" }}).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null))),
+      Plugin.search(arc, { where: { dao: props.daoState.id, name: "SchemeFactory" } }).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null))),
       approvedProposals
     );
   },
