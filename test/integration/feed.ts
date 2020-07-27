@@ -1,4 +1,4 @@
-import { hideCookieAcceptWindow } from "./utils";
+import { hideCookieAcceptWindow, goToUrl } from "./utils";
 
 const chai = require("chai");
 
@@ -11,7 +11,7 @@ describe("Home page feed", () => {
   });
 
   it("Displays message and all DAOs when not logged in ", async () => {
-    await browser.url("http://127.0.0.1:3000/feed");
+    await goToUrl("http://127.0.0.1:3000/feed");
     const title = await browser.getTitle();
     title.should.be.equal("Alchemy | DAOstack");
     await hideCookieAcceptWindow();
