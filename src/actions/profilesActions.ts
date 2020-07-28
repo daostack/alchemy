@@ -7,7 +7,7 @@ import * as Redux from "redux";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { ActionTypes, FollowType, newProfile } from "reducers/profilesReducer";
 import { arrayRemove } from "lib/util";
-import { IRootState } from "reducers/index";
+import { IRootState } from "reducers";
 
 // Load account profile data from our database for all the "members" of the DAO
 // TODO: use this once 3box fixes getProfiles
