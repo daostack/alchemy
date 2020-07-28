@@ -1,7 +1,6 @@
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import * as css from "./HelpButton.scss";
-import i18next from "i18next";
 
 export interface IExternalProps {
   text: string | JSX.Element;
@@ -11,7 +10,6 @@ export interface IExternalProps {
 type IProps = IExternalProps;
 
 export default class HelpButton extends React.Component<IProps, null> {
-  static helpTextProposalDescription = i18next.t("Help Button Tooltip");
 
   public render(): RenderOutput {
     return (

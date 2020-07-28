@@ -414,7 +414,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                     <label htmlFor="descriptionInput">
                       <div className={css.proposalDescriptionLabelText}>
                         <div className={css.requiredMarker}>*</div>
-                        <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                        <div className={css.body}>Description</div><HelpButton text={i18next.t("Help Button Tooltip")} />
                       </div>
                       <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     </label>
