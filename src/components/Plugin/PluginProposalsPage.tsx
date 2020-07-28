@@ -18,6 +18,7 @@ import { showNotification } from "reducers/notifications";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./PluginProposals.scss";
+import i18next from "i18next";
 
 // For infinite scrolling
 const PAGE_SIZE_QUEUED = 100;
@@ -92,7 +93,7 @@ class PluginProposalsPreboosted extends React.Component<IPropsPreBoosted, null> 
     return (
       <div className={css.regularContainer}>
         <div className={css.proposalsHeader}>
-          <TrainingTooltip placement="bottom" overlay={"Pending boosting proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
+          <TrainingTooltip placement="bottom" overlay={i18next.t("Pending Proposal Tooltip")}>
             <span>Pending Boosting Proposals ({pluginState.numberOfPreBoostedProposals})</span>
           </TrainingTooltip>
           {proposalsPreBoosted.length === 0
@@ -182,7 +183,7 @@ class PluginProposalsQueued extends React.Component<IPropsQueued, null> {
     return (
       <div className={css.regularContainer}>
         <div className={css.proposalsHeader}>
-          <TrainingTooltip placement="bottom" overlay={"Regular proposals are passed or failed via absolute majority over a configured voting period. If enough GEN is staked predicting they will pass, they can move to the pending and then boosted queues."}>
+          <TrainingTooltip placement="bottom" overlay={i18next.t("Regular Proposal Tooltip")}>
             <span>Regular Proposals ({pluginState.numberOfQueuedProposals})</span>
           </TrainingTooltip>
           {proposalsQueued.length === 0
@@ -303,7 +304,7 @@ class PluginProposalsPage extends React.Component<IProps, null> {
           <div>
             <div className={css.boostedContainer}>
               <div className={css.proposalsHeader}>
-                <TrainingTooltip placement="bottom" overlay={"Boosted proposals are passed or failed via relative majority over a configured voting period"}>
+                <TrainingTooltip placement="bottom" overlay={i18next.t("Boosted Proposal Tooltip")}>
                   <span>Boosted Proposals ({pluginState.numberOfBoostedProposals})</span>
                 </TrainingTooltip>
                 {proposalsBoosted.length === 0

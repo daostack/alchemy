@@ -20,6 +20,7 @@ import * as React from "react";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
+import i18next from "i18next";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -176,7 +177,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
       ...this.state,
     };
     exportUrl(values);
-    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
+    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
   }
 
   public render(): RenderOutput {
@@ -206,7 +207,6 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
 
     const isAddActive = getPluginIsActive(this.props.pluginState, GetPluginIsActiveActions.Register);
     const isRemoveActive = getPluginIsActive(this.props.pluginState, GetPluginIsActiveActions.Remove);
-    const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
     return (
       <div className={css.containerWithSidebar}>
@@ -322,7 +322,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                       <div className={css.description}>Create a proposal to add a new plugin to the DAO.</div> :
                       <div className={css.description}>Create a proposal to remove a plugin from the DAO.</div>
                     }
-                    <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
+                    <TrainingTooltip overlay={i18next.t("Title Tooltip")}placement="right">
                       <label htmlFor="titleInput">
                         <div className={css.requiredMarker}>*</div>
                       Title
@@ -333,13 +333,13 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                       autoFocus
                       id="titleInput"
                       maxLength={120}
-                      placeholder="Summarize your proposal"
+                      placeholder={i18next.t("Title Placeholder")}
                       name="title"
                       type="text"
                       className={touched.title && errors.title ? css.error : null}
                     />
 
-                    <TrainingTooltip overlay={fnDescription} placement="right">
+                    <TrainingTooltip overlay={i18next.t("Description Tooltip")} placement="right">
                       <label htmlFor="descriptionInput">
                         <div className={css.proposalDescriptionLabelText}>
                           <div className={css.requiredMarker}>*</div>
@@ -352,12 +352,12 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                       component={MarkdownField}
                       onChange={(value: any) => { setFieldValue("description", value); }}
                       id="descriptionInput"
-                      placeholder="Describe your proposal in greater detail"
+                      placeholder={i18next.t("Description Placeholder")}
                       name="description"
                       className={touched.description && errors.description ? css.error : null}
                     />
 
-                    <TrainingTooltip overlay="Add some tags to give context about your proposal e.g. idea, signal, bounty, research, etc" placement="right">
+                    <TrainingTooltip overlay={i18next.t("Tags Tooltip")} placement="right">
                       <label className={css.tagSelectorLabel}>
                         Tags
                       </label>
@@ -367,7 +367,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                       <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
                     </div>
 
-                    <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
+                    <TrainingTooltip overlay={i18next.t("URL Tooltip")} placement="right">
                       <label htmlFor="urlInput">
                         URL
                         <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -376,7 +376,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                     <Field
                       id="urlInput"
                       maxLength={120}
-                      placeholder="Description URL"
+                      placeholder={i18next.t("URL Placeholder")}
                       name="url"
                       type="text"
                       className={touched.url && errors.url ? css.error : null}
@@ -488,7 +488,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                     </div>
 
                     <div className={css.createProposalActions}>
-                      <TrainingTooltip overlay="Export proposal" placement="top">
+                      <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")}placement="top">
                         <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
                           <img src="/assets/images/Icon/share-blue.svg" />
                         </button>
@@ -496,7 +496,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                       <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                         Cancel
                       </button>
-                      <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
+                      <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                         <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                           Submit proposal
                         </button>

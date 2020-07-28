@@ -1,7 +1,7 @@
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import * as css from "./HelpButton.scss";
-
+import i18next from "i18next";
 
 export interface IExternalProps {
   text: string | JSX.Element;
@@ -11,7 +11,7 @@ export interface IExternalProps {
 type IProps = IExternalProps;
 
 export default class HelpButton extends React.Component<IProps, null> {
-  static helpTextProposalDescription = (<ul><li>Paste youtube or vimeo links to embed videos</li><li>Paste image links to embed images</li><li>Type in Markdown if you are feeling nerdish</li></ul>);
+  static helpTextProposalDescription = i18next.t("Help Button Tooltip");
 
   public render(): RenderOutput {
     return (

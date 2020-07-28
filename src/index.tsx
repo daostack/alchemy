@@ -6,6 +6,7 @@ import * as Mixpanel from "mixpanel-browser";
 import * as React from "react";
 import { render } from "react-dom";
 import { AppContainer } from "react-hot-loader";
+import "./i18n";
 
 import { App } from "./App";
 
