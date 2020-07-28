@@ -123,6 +123,10 @@ export interface IFormValues {
     fundingGoalDeadline: number;
     rageQuitEnable: boolean;
   };
+  TokenTrade: {
+    permissions: IPermissions;
+    votingParams: IGenesisProtocolFormValues;
+  }
   SchemeRegistrar: {
     permissions: IPermissions;
     votingParamsRegister: IGenesisProtocolFormValues;
@@ -239,6 +243,15 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
         fundingGoal: 0,
         fundingGoalDeadline: 0,
         rageQuitEnable: true,
+      },
+      TokenTrade: {
+        votingParams: { ...votingParams },
+        permissions: {
+          registerPlugins: false,
+          changeConstraints: false,
+          upgradeController: false,
+          genericCall: false,
+        },
       },
       SchemeRegistrar: {
         votingParamsRegister: { ...votingParams },

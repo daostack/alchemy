@@ -141,6 +141,12 @@ const JoinAndQuit = () => (
   </div>
 );
 
+const TokenTrade = () => (
+  <div>
+    {GenesisProtocolFields("TokenTrade.votingParams")}
+  </div>
+);
+
 const SchemeRegistrarFields = () => (
   <div>
     <title>
@@ -174,6 +180,7 @@ const fieldsMap = {
   ContributionRewardExt: ContributionRewardExtFields,
   FundingRequest: FundingRequest,
   JoinAndQuit: JoinAndQuit,
+  TokenTrade: TokenTrade,
   SchemeRegistrar: SchemeRegistrarFields,
   SchemeFactory: PluginManagerFields,
   ReputationFromToken: ReputationFromTokenFields,

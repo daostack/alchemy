@@ -52,6 +52,7 @@ export const PLUGIN_NAMES = {
   SchemeRegistrar: "Plugin Registrar",
   SchemeFactory: "Plugin Manager",
   Competition: "Competition",
+  TokenTrade: "Token Trade",
   ContributionRewardExt: "Contribution Reward Ext",
 };
 
