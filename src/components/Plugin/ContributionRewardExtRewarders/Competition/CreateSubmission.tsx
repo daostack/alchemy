@@ -11,6 +11,7 @@ import * as css from "./Competitions.scss";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { connect } from "react-redux";
+import i18next from "i18next";
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -61,7 +62,7 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
   // Exports data from form to a shareable url.
   public exportFormValues(values: IFormValues) {
     exportUrl({ ...values, ...this.state });
-    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
+    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
   }
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any): Promise<void> => {
@@ -78,8 +79,6 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
   private onTagsChange = (tags: string[]): void => {
     this.setState({ tags });
   }
-
-  private fnDescription = (<span>Short description of the submission.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
   public render(): RenderOutput {
     const { handleCancel, proposalState } = this.props;
@@ -151,11 +150,11 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
                 className={touched.title && errors.title ? css.error : null}
               />
 
-              <TrainingTooltip overlay={this.fnDescription} placement="right">
+              <TrainingTooltip overlay={i18next.t("Description Tooltip")} placement="right">
                 <label htmlFor="descriptionInput">
                   <div className={css.proposalDescriptionLabelText}>
                     <div className={css.requiredMarker}>*</div>
-                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                    <div className={css.body}>Description</div><HelpButton text={i18next.t("Help Button Tooltip")} />
                   </div>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
@@ -188,7 +187,7 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
               <Field
                 id="urlInput"
                 maxLength={120}
-                placeholder="Description URL"
+                placeholder={i18next.t("URL Placeholder")}
                 name="url"
                 type="text"
                 className={touched.url && errors.url ? css.error : null}
@@ -212,7 +211,7 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
               </div>
 
               <div className={css.createProposalActions}>
-                <TrainingTooltip overlay="Export proposal" placement="top">
+                <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
                   <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>

@@ -15,6 +15,7 @@ import MarkdownField from "components/Proposal/Create/PluginForms/MarkdownField"
 import { checkTotalPercent } from "lib/util";
 import * as Datetime from "react-datetime";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
+import i18next from "i18next";
 
 import moment = require("moment");
 import BN = require("bn.js");
@@ -147,7 +148,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
   // Exports data from form to a shareable url.
   public exportFormValues(values: IFormValues) {
     exportUrl({ ...values, ...this.state });
-    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
+    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
   }
 
   public handleSubmit = async (values: IFormValues, { _setSubmitting }: any): Promise<void> => {
@@ -209,8 +210,6 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
   private onTagsChange = (tags: string[]): void => {
     this.setState({ tags });
   }
-
-  private fnDescription = (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
   public render(): RenderOutput {
     const { data, handleClose } = this.props;
@@ -358,7 +357,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               <div className={css.description}>This competition proposal can distribute funds, mint new DAO tokens, or assign Reputation. Additionally, you may determine how many winners are rewarded, as well as their proportional distribution.
                   Each proposal may specify one of each action, e.g. &quot;3 ETH and 100 Reputation in total rewards, 3 total winners, 50/25/25% reward distribution&quot;.</div>
 
-              <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
+              <TrainingTooltip overlay={i18next.t("Title Tooltip")} placement="right">
                 <label htmlFor="titleInput">
                   <div className={css.requiredMarker}>*</div>
                   Title
@@ -369,17 +368,17 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 autoFocus
                 id="titleInput"
                 maxLength={120}
-                placeholder="Summarize your proposal"
+                placeholder={i18next.t("Title Placeholder")}
                 name="title"
                 type="text"
                 className={touched.title && errors.title ? css.error : null}
               />
 
-              <TrainingTooltip overlay={this.fnDescription} placement="right">
+              <TrainingTooltip overlay={i18next.t("Description Tooltip")} placement="right">
                 <label htmlFor="descriptionInput">
                   <div className={css.proposalDescriptionLabelText}>
                     <div className={css.requiredMarker}>*</div>
-                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                    <div className={css.body}>Description</div><HelpButton text={i18next.t("Help Button Tooltip")} />
                   </div>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
@@ -388,11 +387,11 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 component={MarkdownField}
                 onChange={(value: any) => { setFieldValue("description", value); }}
                 id="descriptionInput"
-                placeholder="Describe your proposal in greater detail"
+                placeholder={i18next.t("Description Placeholder")}
                 name="description"
               />
 
-              <TrainingTooltip overlay="Add some tags to give context about your proposal e.g. idea, signal, bounty, research, etc" placement="right">
+              <TrainingTooltip overlay={i18next.t("Tags Tooltip")} placement="right">
                 <label className={css.tagSelectorLabel}>
                   Tags
                 </label>
@@ -402,7 +401,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
               </div>
 
-              <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
+              <TrainingTooltip overlay={i18next.t("URL Tooltip")} placement="right">
                 <label htmlFor="urlInput">
                   URL
                   <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -411,7 +410,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               <Field
                 id="urlInput"
                 maxLength={120}
-                placeholder="Description URL"
+                placeholder={i18next.t("URL Placeholder")}
                 name="url"
                 type="text"
                 className={touched.url && errors.url ? css.error : null}
@@ -627,7 +626,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 <span className={css.errorMessage + " " + css.someReward}><br /> {errors.rewards}</span>
               }
               <div className={css.createProposalActions}>
-                <TrainingTooltip overlay="Export proposal" placement="top">
+                <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
                   <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
@@ -635,7 +634,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
                 </button>
-                <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
+                <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                     Submit proposal
                   </button>

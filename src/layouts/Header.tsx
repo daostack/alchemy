@@ -25,6 +25,7 @@ import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 import ProviderConfigButton from "layouts/ProviderConfigButton";
 import Tooltip from "rc-tooltip";
+import i18next from "i18next";
 
 interface IExternalProps extends RouteComponentProps<any> {
 }
@@ -202,7 +203,7 @@ class Header extends React.Component<IProps, null> {
               compare={this.breadCrumbCompare}
             />
           </div>
-          <TrainingTooltip placement="left" overlay={"Show / hide tooltips on hover"} alwaysAvailable>
+          <TrainingTooltip placement="left" overlay={i18next.t("Toggle Tooltips Tooltip")} alwaysAvailable>
             <div className={css.toggleButton} ref={this.toggleDiv}>
               <Toggle
                 defaultChecked={trainingTooltipsOn}
@@ -270,7 +271,7 @@ class Header extends React.Component<IProps, null> {
             }
             { !currentAccountAddress || currentAccountAddress === "" ?
               <div className={css.web3ProviderLogin}>
-                <TrainingTooltip placement="bottomLeft" overlay={"Click here to connect your wallet provider"}>
+                <TrainingTooltip placement="bottomLeft" overlay={i18next.t("Connect Tooltip")}>
                   <button onClick={this.handleClickLogin} data-test-id="loginButton">
                     Log in <img src="/assets/images/Icon/login-white.svg"/>
                   </button>
@@ -278,7 +279,7 @@ class Header extends React.Component<IProps, null> {
               </div>
               : (!currentAccountIsEnabled) ?
                 <div className={css.web3ProviderLogin}>
-                  <TrainingTooltip placement="bottomLeft" overlay={"Click here to connect your wallet provider"}>
+                  <TrainingTooltip placement="bottomLeft" overlay={i18next.t("Connect Tooltip")}>
                     <button onClick={this.handleConnect} data-test-id="connectButton">
                       <span className={css.connectButtonText}>Connect</span><img src="/assets/images/Icon/login-white.svg"/>
                     </button>

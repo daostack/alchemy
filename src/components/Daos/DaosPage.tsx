@@ -19,6 +19,7 @@ import { showSimpleMessage } from "lib/util";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 import BHubReg from "../Buidlhub/Registration";
+import i18next from "i18next";
 
 type SubscriptionData = [DAO[], DAO[], DAO[]];
 
@@ -186,7 +187,7 @@ class DaosPage extends React.Component<IProps, IState> {
                 </h2>
                 <div className={css.emailAlertsWrapper} onClick={this.registerForMonitoring} >
                   <div className={cn("fa fa-envelope", css.emailIcon)} />
-                  email alerts
+                  {i18next.t("Email Alerts")}
                 </div>
               </div>
             </div>

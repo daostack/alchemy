@@ -18,6 +18,7 @@ import { mergeMap } from "rxjs/operators";
 import * as css from "./DaoPluginsPage.scss";
 import ProposalPluginCard from "./ProposalPluginCard";
 import SimplePluginCard from "./SimplePluginCard";
+import i18next from "i18next";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -113,7 +114,7 @@ class DaoPluginsPage extends React.Component<IProps, null> {
             <div className={css.title}>Proposal Plugins</div>
             {pluginManager ?
               <div className={css.addPlugin}>
-                <TrainingTooltip placement="topLeft" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+                <TrainingTooltip placement="topLeft" overlay={i18next.t("New Proposal Button Tooltip")}>
                   <a className={pluginManagerActive ? "" : css.disabled}
                     data-test-id="createProposal"
                     href="#!"

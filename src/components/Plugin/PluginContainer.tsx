@@ -22,6 +22,7 @@ import PluginInfoPage from "./PluginInfoPage";
 import PluginProposalsPage from "./PluginProposalsPage";
 import PluginOpenBountyPage from "./PluginOpenBountyPage";
 import * as css from "./Plugin.scss";
+import i18next from "i18next";
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -187,7 +188,7 @@ class PluginContainer extends React.Component<IProps, IState> {
                     : ""}
 
                 { // Information tab
-                  <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
+                  <TrainingTooltip placement="top" overlay={i18next.t("Information Tab Tooltip")}>
                     <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/plugin/${pluginId}/info/`}>Information</Link>
                   </TrainingTooltip>
                 }
@@ -210,7 +211,7 @@ class PluginContainer extends React.Component<IProps, IState> {
               {isProposalPlugin ?
                 inInfoTab ?
                   <div className={css.editPlugin}>
-                    <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+                    <TrainingTooltip placement="topRight" overlay={i18next.t("New Proposal Button Tooltip")}>
                       <a
                         data-test-id="createProposal"
                         href="#!"
@@ -222,7 +223,7 @@ class PluginContainer extends React.Component<IProps, IState> {
                   </div>
                   :
                   <div className={css.createProposal}>
-                    <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+                    <TrainingTooltip placement="topRight" overlay={i18next.t("New Proposal Button Tooltip")}>
                       <a className={
                         classNames({
                           [css.disabled]: !isActive,

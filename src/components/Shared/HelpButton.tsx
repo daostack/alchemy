@@ -2,7 +2,6 @@ import Tooltip from "rc-tooltip";
 import * as React from "react";
 import * as css from "./HelpButton.scss";
 
-
 export interface IExternalProps {
   text: string | JSX.Element;
   placement?: string;
@@ -11,7 +10,6 @@ export interface IExternalProps {
 type IProps = IExternalProps;
 
 export default class HelpButton extends React.Component<IProps, null> {
-  static helpTextProposalDescription = (<ul><li>Paste youtube or vimeo links to embed videos</li><li>Paste image links to embed images</li><li>Type in Markdown if you are feeling nerdish</li></ul>);
 
   public render(): RenderOutput {
     return (
