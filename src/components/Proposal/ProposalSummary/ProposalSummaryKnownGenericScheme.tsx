@@ -115,7 +115,7 @@ export default class ProposalSummary extends React.Component<IProps> {
           sending to contract:
           <pre className={sendsETH ? css.warning : ""}>{formatTokens(proposal.genericScheme.value)} ETH</pre>
 
-          Raw decoded call data:
+          Raw call data:
           <pre>
             {truncateWithEllipses(proposal.genericScheme.callData, 66)}<CopyToClipboard value={proposal.genericScheme.callData} />
           </pre>
