@@ -175,6 +175,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                 description: accountProfile ? accountProfile.description || "" : "",
                 name: accountProfile ? accountProfile.name || "" : "",
               } as IFormValues}
+              // eslint-disable-next-line react/jsx-no-bind
               validate={(values: IFormValues): void => {
                 // const { name } = values;
                 const errors: any = {};
@@ -190,6 +191,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                 return errors;
               }}
               onSubmit={this.handleFormSubmit}
+              // eslint-disable-next-line react/jsx-no-bind
               render={({
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 values,

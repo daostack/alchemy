@@ -87,6 +87,7 @@ const CustomDateInput: React.SFC<any> = ({ field, form }) => {
 
   return <Datetime
     value={field.value}
+    // eslint-disable-next-line react/jsx-no-bind
     onChange={onChange}
     dateFormat="MMMM D, YYYY"
     timeFormat="HH:mm"
@@ -103,6 +104,7 @@ export const SelectField: React.SFC<any> = ({ options, field, form, _value }) =>
     name={field.name}
     defaultValue={options[0]}
     maxMenuHeight={100}
+    // eslint-disable-next-line react/jsx-no-bind
     onChange={(option: any) => form.setFieldValue(field.name, option.value)}
     onBlur={field.onBlur}
     className="react-select-container"
@@ -225,7 +227,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           initialValues={this.initialFormValues}
-
+          // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
 
@@ -340,6 +342,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             return errors;
           }}
           onSubmit={this.handleSubmit}
+          // eslint-disable-next-line react/jsx-no-bind
           render={({
             errors,
             touched,
@@ -384,6 +387,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
               <Field
                 component={MarkdownField}
+                // eslint-disable-next-line react/jsx-no-bind
                 onChange={(value: any) => { setFieldValue("description", value); }}
                 id="descriptionInput"
                 placeholder={i18next.t("Description Placeholder")}
@@ -626,6 +630,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               }
               <div className={css.createProposalActions}>
                 <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
+                  {/* eslint-disable-next-line react/jsx-no-bind */}
                   <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>

@@ -28,15 +28,13 @@
         "max-len": "off",
         "react/display-name" : "off",
         "sort-imports": "off",
-        // Most of the warnings arises from inline arrow functions in Formik.
-        // As long as we use Formik looks like we can't get rid of this warning.
-        "react/jsx-no-bind": "off",
         /**
          * convert to error when all have been manually fixed
          */
         "require-atomic-updates": "warn",
         "no-console": "warn",
         "@typescript-eslint/ban-ts-comment": ["warn", { "ts-ignore": false }],
+        "react/jsx-no-bind": "warn",
         /**
          * outright errors
         */

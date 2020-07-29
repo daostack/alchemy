@@ -283,7 +283,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
               accountAddress: currentAccountAddress,
               useTxSenderService: false,
             } as IFormValues}
-
+            // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues): void => {
               const errors: any = {};
 
@@ -303,7 +303,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             }}
 
             onSubmit={this.handleSubmit}
-
+            // eslint-disable-next-line react/jsx-no-bind
             render={({
               errors,
               touched,

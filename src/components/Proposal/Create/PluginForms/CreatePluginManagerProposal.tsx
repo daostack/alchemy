@@ -502,6 +502,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
           <Formik
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             initialValues={this.initialFormValues}
+            // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues) => {
               const errors: any = {};
 
@@ -534,6 +535,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
               return errors;
             }}
             onSubmit={this.handleSubmit}
+            // eslint-disable-next-line react/jsx-no-bind
             render={({
               errors,
               touched,
@@ -580,6 +582,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                   </TrainingTooltip>
                   <Field
                     component={MarkdownField}
+                    // eslint-disable-next-line react/jsx-no-bind
                     onChange={(value: any) => { setFieldValue("description", value); }}
                     id="descriptionInput"
                     placeholder={i18next.t("Description Placeholder")}
@@ -645,6 +648,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                         name="pluginToAdd"
                         component="select"
                         className={css.pluginSelect}
+                        // eslint-disable-next-line react/jsx-no-bind
                         onChange={(e: any) => {
                           // call the built-in handleChange
                           handleChange(e);
@@ -663,6 +667,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
 
                   <div className={css.createProposalActions}>
                     <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
+                      {/* eslint-disable-next-line react/jsx-no-bind */}
                       <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
                         <img src="/assets/images/Icon/share-blue.svg" />
                       </button>

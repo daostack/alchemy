@@ -48,7 +48,6 @@ export function newProfile(ethereumAccountAddress: string): IProfileState {
 
 const initialState: IProfilesState = { threeBox: null, threeBoxSpace: null };
 
-//eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const profilesReducer = (state = initialState, action: any): IProfilesState => {
   const { payload, meta } = action;
 
