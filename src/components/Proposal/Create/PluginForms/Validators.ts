@@ -107,7 +107,7 @@ export const futureTime = (value: number): string => {
   return error;
 };
 
-export const address = (value: number, allowNulls = false): string => {
+export const address = (value: string, allowNulls = false): string => {
   let error;
   if (!value) {
     error = constants.REQUIRED;
