@@ -1,3 +1,13 @@
+## 0.10.13
+  - Features Added
+    - added support for awarding the DMG token
+
+  - Bugs Fixed
+    - fixed issue with redemption of GEN for staking was gated by DAO GEN balance
+    - fixed that Plugin Proposals page crashed when there is no PluginManager registered to the DAO
+    - fixed Infura request limits being exceeded
+    - fix messaging about DXD token
+
 ## 0.10.12
   - Features Added
     - added custom landing page data for Venus Project
