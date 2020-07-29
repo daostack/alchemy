@@ -121,61 +121,63 @@ export function getProfile(accountAddress: string, currentAccount = false):
 (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => Promise<void> {
 
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState): Promise<void> => {
-    try {
+    if (accountAddress) {
+      try {
       /**
        * Get profile data for this account.
        * Note accountAddress is case insensitive to `Box.getProfile`, but
        * we need to cast to lower because state.currentAccountAddress is cast to lower, thus
        * facilitating address comparisons, and array key matching.
        */
-      accountAddress = accountAddress.toLowerCase();
-      const profile: any = await Box.getProfile(accountAddress);
+        accountAddress = accountAddress.toLowerCase();
+        const profile: any = await Box.getProfile(accountAddress);
 
-      if (profile) {
-        profile.ethereumAccountAddress = accountAddress;
-        profile.socialURLs = await Box.getVerifiedAccounts(profile);
-        const space = await Box.getSpace(accountAddress, spaceName);
-        await space.syncDone;
+        if (profile) {
+          profile.ethereumAccountAddress = accountAddress;
+          profile.socialURLs = await Box.getVerifiedAccounts(profile);
+          const space = await Box.getSpace(accountAddress, spaceName);
+          await space.syncDone;
 
-        if (space.follows) {
-          profile.follows = space.follows;
-        } else {
-          profile.follows = {
-            daos: [],
-            proposals: [],
-            users: [],
-          };
-        }
+          if (space.follows) {
+            profile.follows = space.follows;
+          } else {
+            profile.follows = {
+              daos: [],
+              proposals: [],
+              users: [],
+            };
+          }
 
-        dispatch({
-          type: ActionTypes.GET_PROFILE_DATA,
-          sequence: AsyncActionSequence.Success,
-          payload: { profiles: { [accountAddress]: profile } },
-        });
+          dispatch({
+            type: ActionTypes.GET_PROFILE_DATA,
+            sequence: AsyncActionSequence.Success,
+            payload: { profiles: { [accountAddress]: profile } },
+          });
 
-        if (currentAccount) {
+          if (currentAccount) {
           // If getting profile for the current account then update our analytics services with the profile data
-          Analytics.people.set({
-            Name: profile.name,
-            Description: profile.description,
+            Analytics.people.set({
+              Name: profile.name,
+              Description: profile.description,
+            });
+          }
+        } else {
+        // Setup blank profile for the account
+          dispatch({
+            type: ActionTypes.GET_PROFILE_DATA,
+            sequence: AsyncActionSequence.Success,
+            payload: { profiles: { [accountAddress]: newProfile(accountAddress) } },
           });
         }
-      } else {
-        // Setup blank profile for the account
+      } catch (e) {
+      // eslint-disable-next-line no-console
+        console.error("Error getting profile from 3box", e);
         dispatch({
           type: ActionTypes.GET_PROFILE_DATA,
-          sequence: AsyncActionSequence.Success,
-          payload: { profiles: { [accountAddress]: newProfile(accountAddress) } },
+          sequence: AsyncActionSequence.Failure,
+          payload: e.message,
         });
       }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error("Error getting profile from 3box", e);
-      dispatch({
-        type: ActionTypes.GET_PROFILE_DATA,
-        sequence: AsyncActionSequence.Failure,
-        payload: e.message,
-      });
     }
   };
 }
