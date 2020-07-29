@@ -291,10 +291,12 @@ export function threeboxLogin(accountAddress: string): (dispatch: any, _getState
       }
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.error("Error logging in to 3box: ", e);
-
-      dispatch(showNotification(NotificationStatus.Failure, `Logging in to 3box failed: ${e.message}`));
-      return false;
+      console.error("Error getting profile from 3box", e);
+      dispatch({
+        type: ActionTypes.GET_PROFILE_DATA,
+        sequence: AsyncActionSequence.Failure,
+        payload: e.message,
+      });
     }
 
     dispatch(showNotification(NotificationStatus.Success, i18next.t("3BoxLoginSuccess")));
@@ -313,12 +315,10 @@ export function threeboxLogin(accountAddress: string): (dispatch: any, _getState
         await get3Box(accountAddress, dispatch, state, true);
       }
     } catch (e) {
-      const errorMsg = e.message;
-
       // eslint-disable-next-line no-console
-      console.error("Error logging in to 3box: ", errorMsg);
+      console.error("Error logging in to 3box: ", e);
 
-      dispatch(showNotification(NotificationStatus.Failure, `Logging in to 3box failed: ${errorMsg}`));
+      dispatch(showNotification(NotificationStatus.Failure, `Logging in to 3box failed: ${e.message}`));
       return false;
     }
 
