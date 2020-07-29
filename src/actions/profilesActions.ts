@@ -122,6 +122,102 @@ export function getProfile(accountAddress: string, currentAccount = false):
 (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => Promise<void> {
 
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState): Promise<void> => {
+    try {
+      /**
+       * Get profile data for this account.
+       * Note accountAddress is case insensitive to `Box.getProfile`, but
+       * we need to cast to lower because state.currentAccountAddress is cast to lower, thus
+       * facilitating address comparisons, and array key matching.
+       */
+      accountAddress = accountAddress.toLowerCase();
+      const profile: any = await Box.getProfile(accountAddress);
+
+      if (profile) {
+        profile.ethereumAccountAddress = accountAddress;
+        profile.socialURLs = await Box.getVerifiedAccounts(profile);
+        const space = await Box.getSpace(accountAddress, spaceName);
+        await space.syncDone;
+
+        if (space.follows) {
+          profile.follows = space.follows;
+        } else {
+          profile.follows = {
+            daos: [],
+            proposals: [],
+            users: [],
+          };
+        }
+
+  if (state.profiles.threeBox) {
+    box = state.profiles.threeBox;
+  } else {
+    const web3Provider = getWeb3Provider();
+
+    console.log("Box.create...");
+    console.time("Box.create");
+    box = await Box.create(web3Provider);
+    console.timeEnd("Box.create");
+    //box = await Box.openBox(accountAddress, web3Provider);
+
+    console.log(`accountAddress for auth: ${accountAddress}`);
+
+    console.log("box.auth...");
+    console.time("box.auth");
+    await box.auth([spaceName], { address: accountAddress });
+    console.timeEnd("box.auth");
+
+    console.log("box.syncDone...");
+    console.time("box.syncDone");
+    await box.syncDone;
+    console.timeEnd("box.syncDone");
+    updateState = true;
+  }
+  /**
+   * this ensures that a space for the account exists
+   */
+  if (state.profiles.threeBoxSpace) {
+    space = state.profiles.threeBoxSpace;
+  }
+  else if (withSpace) {
+    /**
+     * It is assumed here that the 3box admin space has already been created
+     */
+    console.log("box.openSpace");
+    console.time("box.openSpace");
+    space = await box.openSpace(spaceName);
+    console.timeEnd("box.openSpace");
+
+    console.log("space.syncDone");
+    console.time("space.syncDone");
+    await space.syncDone;
+    console.timeEnd("space.syncDone");
+    updateState = true;
+  }
+
+  const result = {
+    threeBox: box,
+    threeBoxSpace: space,
+  };
+
+  if (updateState) {
+    /**
+     * This is synchronous.
+     * Has the annoying side-effect of deleting the threeBox and threeBoxSpace properties in the payload.
+     */
+    dispatch({
+      type: ActionTypes.SAVE_THREEBOX,
+      sequence: AsyncActionSequence.Success,
+      payload: { ...result },
+    });
+  }
+
+  return result;
+}
+
+export function getProfile(accountAddress: string, currentAccount = false):
+(dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => Promise<void> {
+
+  return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState): Promise<void> => {
     if (accountAddress) {
       try {
         /**
@@ -202,6 +298,31 @@ export function threeboxLogin(accountAddress: string): (dispatch: any, _getState
     }
 
     dispatch(showNotification(NotificationStatus.Success, i18next.t("3BoxLoginSuccess")));
+    return true;
+  };
+}
+
+export function threeboxLogin(accountAddress: string): (dispatch: any, _getState: any) => Promise<boolean> {
+  return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState): Promise<boolean> => {
+    const state = _getState();
+
+    try {
+      if (state.profiles.threeBox && state.profiles.threeBoxSpace) {
+        return true;
+      } else {
+        await get3Box(accountAddress, dispatch, state, true);
+      }
+    } catch (e) {
+      const errorMsg = e.message;
+
+      // eslint-disable-next-line no-console
+      console.error("Error logging in to 3box: ", errorMsg);
+
+      dispatch(showNotification(NotificationStatus.Failure, `Logging in to 3box failed: ${errorMsg}`));
+      return false;
+    }
+
+    dispatch(showNotification(NotificationStatus.Success, "Logged in to 3box"));
     return true;
   };
 }
