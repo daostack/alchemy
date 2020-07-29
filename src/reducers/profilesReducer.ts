@@ -1,5 +1,4 @@
 import * as update from "immutability-helper";
-
 import { AsyncActionSequence } from "actions/async";
 
 export enum ActionTypes {
@@ -23,18 +22,21 @@ export type IProfileState = {
   image?: any;
   name: string;
   socialURLs: any;
-};
+}
 
-export interface IProfilesState {
-  threeBox: any; // To store the opened 3box box so we dont have to wait to open it every time we want to update data in it
-  threeBoxSpace: any; // To store the opened 3box DAOstack space so we dont have to wait to open it every time we want to update data in it
+export interface I3BoxState {
+  threeBox?: any; // To store the opened 3box box so we dont have to wait to open it every time we want to update data in it
+  threeBoxSpace?: any; // To store the opened 3box DAOstack space so we dont have to wait to open it every time we want to update data in it
+}
+
+export interface IProfilesState extends I3BoxState {
   [accountAddress: string]: IProfileState;
 }
 
 export function newProfile(ethereumAccountAddress: string): IProfileState {
   return {
     description: "",
-    ethereumAccountAddress,
+    ethereumAccountAddress, // assumed already cast to lowercase
     follows: {
       daos: [],
       proposals: [],
@@ -62,6 +64,19 @@ const profilesReducer = (state = initialState, action: { type: ActionTypes, payl
   }
 
   switch (action.type) {
+    case ActionTypes.SAVE_THREEBOX: {
+      const threeBoxPayload = action.payload as I3BoxState;
+      let newState: I3BoxState;
+      if (threeBoxPayload && threeBoxPayload.threeBox) {
+        Object.assign(newState, update(state, { threeBox: { $set: threeBoxPayload.threeBox } }));
+      }
+
+      if (threeBoxPayload && threeBoxPayload.threeBoxSpace) {
+        Object.assign(newState, update(newState, { threeBoxSpace: { $set: threeBoxPayload.threeBoxSpace } }));
+      }
+
+      return newState;
+    }
 
     case ActionTypes.UPDATE_PROFILE: {
       switch (action.sequence) {
