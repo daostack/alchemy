@@ -95,7 +95,7 @@ export default class ProposalSummary extends React.Component<IProps> {
         <div className={css.summaryDetails}>
           Executing this proposal will call the function:
           <pre>{decodedCallData.action.abi.name}
-        ({decodedCallData.action.abi.inputs.map(this.inputHtml)})
+            ({decodedCallData.action.abi.inputs.map(this.inputHtml)})
           </pre>
           with values: <pre>{
             decodedCallData.values.map((value: string | Array<string>) => {
@@ -114,6 +114,11 @@ export default class ProposalSummary extends React.Component<IProps> {
           <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
           sending to contract:
           <pre className={sendsETH ? css.warning : ""}>{formatTokens(proposal.genericScheme.value)} ETH</pre>
+
+          Raw decoded call data:
+          <pre>
+            {truncateWithEllipses(proposal.genericScheme.callData, 66)}<CopyToClipboard value={proposal.genericScheme.callData} />
+          </pre>
         </div>
         : ""
       }
