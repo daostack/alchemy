@@ -37,7 +37,8 @@ export default class BuidlhubClient implements IBuidlhubClient {
     }
   }
 
-  async _post(body: any) {
+  //eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  async _post(body: any): Promise<any> {
     const url: string = this.endpoint;
 
     const options = {

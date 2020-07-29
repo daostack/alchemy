@@ -10,7 +10,7 @@ interface IExternalProps {
   plugins: AnyPlugin[];
 }
 
-export default (props: IExternalProps) => {
+export default (props: IExternalProps): JSX.Element => {
   const { plugins } = props;
 
   return !plugins.length ? <span></span> :

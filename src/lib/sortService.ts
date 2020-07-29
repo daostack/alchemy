@@ -11,7 +11,7 @@ export enum SortOrder {
  */
 export class SortService {
 
-  public static evaluateString(a: string, b: string, sortOrder: SortOrder = SortOrder.ASC) {
+  public static evaluateString(a: string, b: string, sortOrder: SortOrder = SortOrder.ASC): number {
     if (!a && !b) { return 0; }
 
     if (!a) { return -sortOrder; }
@@ -23,7 +23,7 @@ export class SortService {
     return a.localeCompare(b) * sortOrder;
   }
 
-  public static evaluateBigNumber(a: BN, b: BN, sortOrder: SortOrder = SortOrder.ASC) {
+  public static evaluateBigNumber(a: BN, b: BN, sortOrder: SortOrder = SortOrder.ASC): number {
     const isDefinedA = SortService.isDefined(a);
     const isDefinedB = SortService.isDefined(b);
 
@@ -37,7 +37,7 @@ export class SortService {
     return ((diff.gtn(0) ? 1 : (diff.ltn(0) ? -1 : 0))) * sortOrder;
   }
 
-  public static evaluateNumber(a: number, b: number, sortOrder: SortOrder = SortOrder.ASC) {
+  public static evaluateNumber(a: number, b: number, sortOrder: SortOrder = SortOrder.ASC): number {
     const isDefinedA = SortService.isDefined(a);
     const isDefinedB = SortService.isDefined(b);
 
@@ -49,7 +49,7 @@ export class SortService {
     return (a - b) * sortOrder;
   }
 
-  public static evaluateDateTime(valueA: Date|moment.Moment, valueB: Date|moment.Moment, sortOrder: SortOrder = SortOrder.ASC) {
+  public static evaluateDateTime(valueA: Date|moment.Moment, valueB: Date|moment.Moment, sortOrder: SortOrder = SortOrder.ASC): number {
 
     const isDefinedA = SortService.isDefined(valueA);
     const isDefinedB = SortService.isDefined(valueB);
@@ -70,7 +70,7 @@ export class SortService {
     return (a - b) * sortOrder;
   }
 
-  public static evaluateDateTimeString(a: string, b: string, sortOrder: SortOrder = SortOrder.ASC) {
+  public static evaluateDateTimeString(a: string, b: string, sortOrder: SortOrder = SortOrder.ASC): number {
     if (!a && !b) { return 0; }
 
     if (!a) { return -sortOrder; }

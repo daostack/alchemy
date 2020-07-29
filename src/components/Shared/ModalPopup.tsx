@@ -12,11 +12,11 @@ interface IProps {
 
 export default class ModalPopup extends React.Component<IProps, null> {
 
-  public async componentDidMount() {
+  public componentDidMount(): void {
     document.addEventListener("keydown", this.handleKeyPress, false);
   }
 
-  public componentWillUnmount() {
+  public componentWillUnmount(): void {
     document.removeEventListener("keydown", this.handleKeyPress, false);
   }
 

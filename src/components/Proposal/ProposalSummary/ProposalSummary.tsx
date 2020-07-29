@@ -25,7 +25,7 @@ interface IState {
 
 export default class ProposalSummary extends React.Component<IProps, IState> {
 
-  public async componentDidMount() {
+  public async componentDidMount(): Promise<void> {
     this.setState({
       proposal: await Proposal.create(getArc(), this.props.proposalState.id),
     });

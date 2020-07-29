@@ -15,7 +15,8 @@ const initialState: IWeb3State = {
   networkId: 0, // unknown network
 };
 
-const web3Reducer = (state = initialState, action: any) => {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+const web3Reducer = (state = initialState, action: any): any => {
   switch (action.type) {
 
     case ActionTypes.WEB3_SET_ACCOUNT:

@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/explicit-module-boundary-types: 0 */
 import Box = require("3box");
 
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
@@ -86,7 +87,7 @@ export function getProfile(accountAddress: string, currentAccount = false) {
 }
 
 export function threeBoxLogout() {
-  return async (dispatch: any, _getState: any) => {
+  return async (dispatch: any, _getState: any): Promise<void> => {
     const state = _getState();
     if (state.profiles.threeBox) {
       state.profiles.threeBox.logout();
@@ -102,7 +103,7 @@ export function threeBoxLogout() {
 export type UpdateProfileAction = IAsyncAction<"UPDATE_PROFILE", { accountAddress: string }, { description: string; name: string; socialURLs?: any }>;
 
 export function updateProfile(accountAddress: string, name: string, description: string) {
-  return async (dispatch: any, _getState: any) => {
+  return async (dispatch: any, _getState: any): Promise<boolean> => {
     dispatch({
       type: ActionTypes.UPDATE_PROFILE,
       sequence: AsyncActionSequence.Pending,
@@ -162,7 +163,7 @@ export function updateProfile(accountAddress: string, name: string, description:
 export type FollowItemAction = IAsyncAction<"FOLLOW_ITEM", { accountAddress: string }, { type: FollowType; id: string; isFollowing: boolean}>;
 
 export function toggleFollow(accountAddress: string, type: FollowType, id: string) {
-  return async (dispatch: any, _getState: any) => {
+  return async (dispatch: any, _getState: any): Promise<boolean> => {
     const state = _getState();
     let threeBox;
     let threeBoxSpace;

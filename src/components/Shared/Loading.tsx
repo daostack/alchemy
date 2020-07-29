@@ -6,7 +6,7 @@ interface IExternalProps {
   inline?: boolean; // default is false
 }
 
-export default (props: IExternalProps) => {
+export default (props: IExternalProps): JSX.Element => {
   /**
    * when !local then we display centered above the entire page,
    * else we display inline.

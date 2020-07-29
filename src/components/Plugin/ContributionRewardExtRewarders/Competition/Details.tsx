@@ -443,6 +443,7 @@ export default withSubscription({
     ${CompetitionSuggestion.fragments.CompetitionSuggestionFields}
     `;
 
+    // eslint-disable-next-line no-console
     console.log(getArc, cacheQuery);
     // const arc = await getArc();
     // // sending the query before subscribing seems to resolve a weird cache error - this would ideally be handled in the arc.js

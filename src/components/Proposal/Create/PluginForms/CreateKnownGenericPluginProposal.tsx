@@ -188,7 +188,6 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
         </div>;
       default:
         if (field.type.includes("[]")) {
-          // eslint-disable-next-line react/jsx-no-bind
           return <FieldArray name={field.name} render={(arrayHelpers) => (
             <div className={css.arrayFieldContainer}>
               {values[field.name] && values[field.name].length > 0 ? (
@@ -309,7 +308,6 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
         <div className={css.contentWrapper}>
           <Formik
             initialValues={this.initialFormValues}
-            // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues): void => {
               const errors: any = {};
 
@@ -381,7 +379,6 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
               return errors;
             }}
             onSubmit={this.handleSubmit}
-            // eslint-disable-next-line react/jsx-no-bind
             render={({
               errors,
               touched,

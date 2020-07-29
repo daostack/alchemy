@@ -31,7 +31,8 @@ const initialState: IUIState = {
   trainingTooltipsShowAll: false,
 };
 
-const uiReducer = (state = initialState, action: any) => {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+const uiReducer = (state = initialState, action: any): any => {
   switch (action.type) {
 
     case ActionTypes.SHOW_TOUR:

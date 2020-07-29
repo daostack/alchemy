@@ -225,7 +225,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           initialValues={this.initialFormValues}
-          // eslint-disable-next-line react/jsx-no-bind
+
           validate={(values: IFormValues): void => {
             const errors: any = {};
 
@@ -340,7 +340,6 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             return errors;
           }}
           onSubmit={this.handleSubmit}
-          // eslint-disable-next-line react/jsx-no-bind
           render={({
             errors,
             touched,

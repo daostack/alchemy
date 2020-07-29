@@ -421,6 +421,7 @@ async function getCurrentAccountFromProvider(): Promise<Address | null> {
  * Clear caches as every case where we're manually logging out
  * implies that the cache should be cleared
  */
+//eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function logout(showNotification?: any): Promise<boolean> {
   let success = false;
 
