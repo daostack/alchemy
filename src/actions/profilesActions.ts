@@ -170,7 +170,7 @@ export function getProfile(accountAddress: string, currentAccount = false):
       }
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.error(`Error getting profile from 3box (${e.message})`);
+      console.error("Error getting profile from 3box", e);
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Failure,
@@ -191,12 +191,10 @@ export function threeboxLogin(accountAddress: string): (dispatch: any, _getState
         await get3Box(accountAddress, dispatch, state, true);
       }
     } catch (e) {
-      const errorMsg = e.message;
-
       // eslint-disable-next-line no-console
-      console.error("Error logging in to 3box: ", errorMsg);
+      console.error("Error logging in to 3box: ", e);
 
-      dispatch(showNotification(NotificationStatus.Failure, `Logging in to 3box failed: ${errorMsg}`));
+      dispatch(showNotification(NotificationStatus.Failure, `Logging in to 3box failed: ${e.message}`));
       return false;
     }
 
@@ -235,10 +233,8 @@ export function updateProfile(accountAddress: string, name: string, description:
       threeBox = (await get3Box(accountAddress, dispatch, _getState())).threeBox;
       await threeBox.public.setMultiple(["name", "description"], [name, description]);
     } catch (e) {
-      const errorMsg = e.message;
-
       // eslint-disable-next-line no-console
-      console.error("Error saving profile to 3box: ", errorMsg);
+      console.error("Error saving profile to 3box: ", e);
 
       dispatch({
         type: ActionTypes.UPDATE_PROFILE,
@@ -246,7 +242,7 @@ export function updateProfile(accountAddress: string, name: string, description:
         meta: { accountAddress },
       } as UpdateProfileAction);
 
-      dispatch(showNotification(NotificationStatus.Failure, `Saving profile to 3box failed: ${errorMsg}`));
+      dispatch(showNotification(NotificationStatus.Failure, `Saving profile to 3box failed: ${e.message}`));
       return false;
     }
 
