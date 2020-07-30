@@ -68,8 +68,8 @@ interface IWithSubscriptionOptions<Props extends ISubscriptionProps<ObservableTy
  * required by the wrappedComponent and passes along the data observed as it comes in.
  * @oarams options See `IWithSubscriptionOptions`
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const withSubscription = <Props extends ISubscriptionProps<ObservableType>, ObservableType extends Record<string, any>>(options: IWithSubscriptionOptions<Props, ObservableType>) => {
+
+const withSubscription = <Props extends ISubscriptionProps<ObservableType>, ObservableType extends Record<string, any>>(options: IWithSubscriptionOptions<Props, ObservableType>): any => {
 
   // The props that can get passed into the wrapped component, removing the ISubscriptionProps since those get passed down by WithSubscription
   type InputProps = OnlyWrappedComponentProps<Props>;
