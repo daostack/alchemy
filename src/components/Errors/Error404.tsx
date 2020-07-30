@@ -5,8 +5,7 @@ import * as css from "./Errors.scss";
 
 export default class Error404 extends React.PureComponent {
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  constructor(props: any) {
+  constructor(props: unknown) {
     super(props);
     this.state = {
       sentryEventId: null,

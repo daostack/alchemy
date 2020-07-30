@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/explicit-module-boundary-types: 0 */
 import * as Mixpanel from "mixpanel-browser";
 
 // const doTracking = process.env.NODE_ENV === "production";
@@ -27,14 +26,14 @@ const actions = {
   track: (name: string, props = {}): void => {
     if (doTracking) { Mixpanel.track(name, props); }
   },
-  trackLinks: (selector: string, name: string, callback: any): void => {
+  trackLinks: (selector: string, name: string, callback: unknown): void => {
     if (doTracking) { Mixpanel.track_links(selector, name, callback); }
   },
-  register: (props: any): void => {
+  register: (props: unknown): void => {
     if (doTracking) { Mixpanel.register(props); }
   },
   people: {
-    set: (props: any): void => {
+    set: (props: unknown): void => {
       if (doTracking) { Mixpanel.people.set(props); }
     },
   },
