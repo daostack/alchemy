@@ -17,11 +17,13 @@
 
 .wrapper {
   background: white;
-  width: 47.5%;
+  width: 46.5%;
   margin: 0 2.5% 40px 0;
   position: relative;
   float: left;
   border-radius: 20px;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
 
   h1 {
     border-bottom: 1px solid rgba(45, 109, 181, 0.2);
@@ -35,7 +37,6 @@
     color: rgba(0, 29, 52, 1);
     border: 1px solid $white;
     border-radius: 20px;
-    transition: all 0.25s ease;
 
     div {
       padding-top: 10px;
@@ -60,10 +61,6 @@
         color: $gray-1;
       }
     }
-
-    &:hover {
-      border: 1px solid rgba(172, 199, 230, 1);
-    }
   }
 
   h2 {
@@ -71,6 +68,10 @@
     font-weight: bold;
     margin: 0;
     padding: 0;
+  }
+
+  &:hover {
+    border-color: $border-accent;
   }
 }
 
