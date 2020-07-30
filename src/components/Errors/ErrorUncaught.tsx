@@ -11,11 +11,11 @@ interface IExternalProps {
 }
 
 export default class ErrorUncaught extends React.PureComponent<IExternalProps> {
-  handleReport = () => {
+  handleReport = (): void => {
     showReportDialog({ eventId: this.props.sentryEventId });
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className={css.errorContainer}>
         <nav className={appCss.header}>

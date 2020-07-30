@@ -77,7 +77,7 @@ export default class PluginOpenBounty extends React.Component<IProps, IState> {
     }
   }
 
-  public render() {
+  public render(): JSX.Element {
     const { daoAvatarAddress, plugin } = this.props;
     const createCard = () => {
 

@@ -148,6 +148,7 @@ const EmailInput = (props: any) => {
       <input className={css.emailInput}
         type="text"
         placeholder="email"
+        // eslint-disable-next-line react/jsx-no-bind
         onChange={e => props.onChange(e.target.value)}
         value={props.email}
         onKeyUp={props.onKeyUp} />
@@ -156,6 +157,7 @@ const EmailInput = (props: any) => {
 
         <button className={bClass}
           disabled={props.disabled}
+          // eslint-disable-next-line react/jsx-no-bind
           onClick={() => props.sendToBHub(props.email)}>Send</button>
 
       </div>

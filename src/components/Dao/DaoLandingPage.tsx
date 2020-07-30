@@ -20,7 +20,7 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
 
   private disqusConfig = { url: "", identifier: "", title: "" };
 
-  public componentDidMount() {
+  public componentDidMount(): void {
     Analytics.track("Page View", {
       "Page Name": Page.DAOLanding,
       "DAO Address": this.props.daoState.id,
@@ -41,7 +41,7 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
     );
   }
 
-  public render() {
+  public render(): JSX.Element {
     const daoState = this.props.daoState;
     const customData = customDaoInfo[targetedNetwork()]?.[daoState.id.toLowerCase()];
 

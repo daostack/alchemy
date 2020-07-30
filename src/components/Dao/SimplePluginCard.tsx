@@ -9,7 +9,7 @@ export interface IProps {
   pluginState: IPluginState;
 }
 
-const SimplePluginCard = (props: IProps) => {
+const SimplePluginCard = (props: IProps): JSX.Element => {
   const { daoState, pluginState } = props;
 
   return (

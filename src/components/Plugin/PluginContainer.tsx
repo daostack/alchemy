@@ -244,6 +244,7 @@ class PluginContainer extends React.Component<IProps, IState> {
         <Switch>
 
           <Route exact path="/dao/:daoAvatarAddress/plugin/:pluginId/openbounties"
+            // eslint-disable-next-line react/jsx-no-bind
             render={(props) => <PluginOpenBountyPage {...props} daoAvatarAddress={daoAvatarAddress} plugin={pluginState} />} />
           <Route exact path="/dao/:daoAvatarAddress/plugin/:pluginId/info" render={this.pluginInfoPageHtml} />
           {

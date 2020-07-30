@@ -42,7 +42,7 @@ const daoTitle = (event: any, text: string | React.ReactElement = "") => {
   </span>;
 };
 
-const FeedItem = (props: IProps) => {
+const FeedItem = (props: IProps): JSX.Element => {
   const { event, userProfile } = props;
 
   let title;

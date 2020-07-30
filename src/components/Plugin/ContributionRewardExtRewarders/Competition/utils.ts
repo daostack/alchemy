@@ -32,30 +32,30 @@ export class CompetitionStatus {
     public competition: ICompetitionProposalState,
     public hasWinners: boolean) {
   }
-  public get notStarted() { return this.status === CompetitionStatusEnum.NotOpenYet; }
+  public get notStarted(): boolean { return this.status === CompetitionStatusEnum.NotOpenYet; }
   /**
    * open for submissions
    */
-  public get open() { return this.status === CompetitionStatusEnum.OpenForSubmissions; }
+  public get open(): boolean { return this.status === CompetitionStatusEnum.OpenForSubmissions; }
   /**
    * In between submissions and voting period, and there exist submissions.
    */
-  public get paused() { return this.status === CompetitionStatusEnum.Paused; }
+  public get paused(): boolean { return this.status === CompetitionStatusEnum.Paused; }
   /**
    * in voting period, but not implying there are any submissions
    */
-  public get inVotingPeriod() {
+  public get inVotingPeriod(): boolean {
     return this.now.isSameOrAfter(this.competition.votingStartTime) && (this.status !== CompetitionStatusEnum.Ended);
   }
   /**
    * in voting period and there are submissions
    */
-  public get voting() { return this.status === CompetitionStatusEnum.Voting; }
+  public get voting(): boolean { return this.status === CompetitionStatusEnum.Voting; }
   /**
    * Voting can no longer occur. Implies neither thatn any voting has occurred,
    * nor the actual current stage (entire competition may or may not be over).
    */
-  public get votingIsOver() {
+  public get votingIsOver(): boolean {
     return ((this.status === CompetitionStatusEnum.Ended) ||
             (this.status === CompetitionStatusEnum.EndedNoWinners) ||
             (this.status === CompetitionStatusEnum.EndedNoSubmissions));
@@ -63,11 +63,11 @@ export class CompetitionStatus {
   /**
    * competition is over, with or without submissions or winners
    */
-  public get over() { return this.now.isSameOrAfter(this.competition.endTime); }
+  public get over(): boolean { return this.now.isSameOrAfter(this.competition.endTime); }
   /**
    * Competition is over with winners
    */
-  public get overWithWinners() { return this.status === CompetitionStatusEnum.Ended; }
+  public get overWithWinners(): boolean { return this.status === CompetitionStatusEnum.Ended; }
   public get text(): string { return this.status; }
 }
 

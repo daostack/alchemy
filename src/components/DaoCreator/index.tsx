@@ -40,6 +40,7 @@ class DaoCreator extends React.Component<IProps> {
           message={"Are you sure you want to leave?"}
         />
         <DAOcreator
+        // eslint-disable-next-line react/jsx-no-bind
           setWeb3Provider={async (): Promise<any> => {
             if (!await enableWalletProvider({ showNotification: this.props.showNotification })) {
               return undefined;

@@ -31,7 +31,7 @@ const initialState: IUIState = {
   trainingTooltipsShowAll: false,
 };
 
-const uiReducer = (state = initialState, action: any) => {
+const uiReducer = (state = initialState, action: { type: ActionTypes, options: ISimpleMessagePopupProps }): IUIState => {
   switch (action.type) {
 
     case ActionTypes.SHOW_TOUR:

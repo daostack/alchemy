@@ -28,6 +28,7 @@ const DaoCard = (props: IProps) => {
       to={"/dao/" + dao.id}
       key={"dao_" + dao.id}
       data-test-id="dao-link"
+      // eslint-disable-next-line react/jsx-no-bind
       onClick={handleClick}
     >
       <div className={classNames({

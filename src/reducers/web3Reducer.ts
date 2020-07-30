@@ -15,7 +15,7 @@ const initialState: IWeb3State = {
   networkId: 0, // unknown network
 };
 
-const web3Reducer = (state = initialState, action: any) => {
+const web3Reducer = (state = initialState, action: { type: ActionTypes, payload: { currentAccountAddress: string } }): IWeb3State => {
   switch (action.type) {
 
     case ActionTypes.WEB3_SET_ACCOUNT:

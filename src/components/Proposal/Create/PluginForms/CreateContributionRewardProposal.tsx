@@ -76,6 +76,7 @@ export const SelectField: React.SFC<any> = ({options, field, form }) => (
       name={field.name}
       value={options ? options.find((option: any) => option.value === field.value) : ""}
       maxMenuHeight={100}
+      // eslint-disable-next-line react/jsx-no-bind
       onChange={(option: any) => form.setFieldValue(field.name, option.value)}
       onBlur={field.onBlur}
       className="react-select-container"
@@ -225,7 +226,6 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
           render={({
             errors,
             touched,
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             isSubmitting,
             setFieldTouched,
             setFieldValue,
@@ -261,6 +261,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
               <Field
                 component={MarkdownField}
+                // eslint-disable-next-line react/jsx-no-bind
                 onChange={(value: any) => { setFieldValue("description", value); }}
                 id="descriptionInput"
                 placeholder={i18next.t("Description Placeholder")}
@@ -303,7 +304,9 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 <UserSearchField
                   daoAvatarAddress={daoAvatarAddress}
                   name="beneficiary"
+                  // eslint-disable-next-line react/jsx-no-bind
                   onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
+                  // eslint-disable-next-line react/jsx-no-bind
                   onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
                   defaultValue={this.initialFormValues.beneficiary}
                   placeholder={this.props.currentAccountAddress}
@@ -395,6 +398,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               </div>
               <div className={css.createProposalActions}>
                 <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
+                  {/* eslint-disable-next-line react/jsx-no-bind */}
                   <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>

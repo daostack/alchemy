@@ -58,6 +58,7 @@ export default class ProposalDescription extends React.Component<IExternalProps>
           * This is particularly to trap an exception thrown by `new URL`
           * when an href is not a valid URL, for example, an email address"
           */
+        // eslint-disable-next-line no-console
         console.error(err);
       }
     }

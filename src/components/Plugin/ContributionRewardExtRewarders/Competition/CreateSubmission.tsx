@@ -161,6 +161,7 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
               <Field
                 component={MarkdownField}
+                // eslint-disable-next-line react/jsx-no-bind
                 onChange={(value: any) => { setFieldValue("description", value); }}
                 id="descriptionInput"
                 placeholder="Describe your submission in greater detail"
@@ -203,7 +204,9 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
                 <UserSearchField
                   daoAvatarAddress={this.props.daoState.address}
                   name="beneficiary"
+                  // eslint-disable-next-line react/jsx-no-bind
                   onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
+                  // eslint-disable-next-line react/jsx-no-bind
                   onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
                   defaultValue={this.initialFormValues.beneficiary}
                   placeholder={this.props.currentAccountAddress}
@@ -212,6 +215,7 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
 
               <div className={css.createProposalActions}>
                 <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
+                  {/* eslint-disable-next-line react/jsx-no-bind */}
                   <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>

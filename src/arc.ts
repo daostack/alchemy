@@ -7,6 +7,7 @@ import { Address, Arc, Web3Client, Web3Provider } from "@daostack/arc.js";
 import { Observable } from "rxjs";
 import { first } from "rxjs/operators";
 import { AsyncSendable, Block } from "ethers/providers";
+import { showNotification as showNotificationFunction } from "./reducers/notifications";
 
 /**
  * This is only set after the user has selected a provider and enabled an account.
@@ -421,7 +422,8 @@ async function getCurrentAccountFromProvider(): Promise<Address | null> {
  * Clear caches as every case where we're manually logging out
  * implies that the cache should be cleared
  */
-export async function logout(showNotification?: any): Promise<boolean> {
+
+export async function logout(showNotification?: typeof showNotificationFunction): Promise<boolean> {
   let success = false;
 
   uncacheWeb3Info();

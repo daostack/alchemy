@@ -203,6 +203,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                     <button
                       className={css.removeItemButton}
                       type="button"
+                      // eslint-disable-next-line react/jsx-no-bind
                       onClick={() => arrayHelpers.remove(index)} // remove an item from the list
                     >
                       -
@@ -210,6 +211,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                   </div>
                 ))
               ) : ""}
+              {/* eslint-disable-next-line react/jsx-no-bind */}
               <button className={css.addItemButton} data-test-id={field.name + ".add"} type="button" onClick={() => arrayHelpers.push("")}>
                 Add {field.label}
               </button>
@@ -421,6 +423,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                   </TrainingTooltip>
                   <Field
                     component={MarkdownField}
+                    // eslint-disable-next-line react/jsx-no-bind
                     onChange={(value: any) => { setFieldValue("description", value); }}
                     id="descriptionInput"
                     placeholder={i18next.t("Description Placeholder")}
@@ -474,6 +477,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
 
                   <div className={css.createProposalActions}>
                     <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
+                      {/* eslint-disable-next-line react/jsx-no-bind */}
                       <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
                         <img src="/assets/images/Icon/share-blue.svg" />
                       </button>

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Address } from "@daostack/arc.js";
 
 const DEFAULT_ENDPOINT = "https://daostack.buidlhub.com/register";
 
@@ -37,7 +38,10 @@ export default class BuidlhubClient implements IBuidlhubClient {
     }
   }
 
-  async _post(body: any) {
+  async _post(body: {
+    walletAddress: Address,
+    email: string,
+  }): Promise<any> {
     const url: string = this.endpoint;
 
     const options = {

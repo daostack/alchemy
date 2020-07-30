@@ -14,26 +14,26 @@ const doTracking = (
 );
 
 const actions = {
-  identify: (id: string) => {
+  identify: (id: string): void => {
     if (doTracking) { Mixpanel.identify(id); }
   },
-  alias: (id: string) => {
+  alias: (id: string): void => {
     if (doTracking) { Mixpanel.alias(id); }
   },
-  reset: () => {
+  reset: (): void => {
     if (doTracking) { Mixpanel.reset(); }
   },
-  track: (name: string, props = {}) => {
+  track: (name: string, props = {}): void => {
     if (doTracking) { Mixpanel.track(name, props); }
   },
-  trackLinks: (selector: string, name: string, callback: any) => {
+  trackLinks: (selector: string, name: string, callback: unknown): void => {
     if (doTracking) { Mixpanel.track_links(selector, name, callback); }
   },
-  register: (props: any) => {
+  register: (props: unknown): void => {
     if (doTracking) { Mixpanel.register(props); }
   },
   people: {
-    set: (props: any) => {
+    set: (props: unknown): void => {
       if (doTracking) { Mixpanel.people.set(props); }
     },
   },

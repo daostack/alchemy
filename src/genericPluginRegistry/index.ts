@@ -100,7 +100,7 @@ export class ActionField {
    * the value to pass to the contract call (as calculated from the user's input data)
    * @return [description]
    */
-  public callValue(userValue: string|string[]) {
+  public callValue(userValue: string|string[]): any {
     if (Array.isArray(userValue)) {
       userValue = userValue.map((val: string) => Object.prototype.hasOwnProperty.call(val, "trim") ? val.trim() : val);
     } else if (Object.prototype.hasOwnProperty.call(userValue, "trim")) {
@@ -189,10 +189,10 @@ export class GenericPluginInfo {
   constructor(info: IGenericPluginJSON) {
     this.specs = info;
   }
-  public actions() {
+  public actions(): Action[] {
     return this.specs.actions.map((spec) => new Action(spec));
   }
-  public action(id: string) {
+  public action(id: string): Action {
     for (const action of this.specs.actions) {
       if (action.id === id) {
         return new Action(action);
@@ -208,7 +208,7 @@ export class GenericPluginInfo {
     }
     return;
   }
-  public encodeABI(action: IActionSpec, values: any[]) {
+  public encodeABI(action: IActionSpec, values: any[]): string {
     const abi = new Interface([action.abi]);
     return abi.functions[action.abi.name].encode(values);
   }

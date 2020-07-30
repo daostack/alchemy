@@ -350,6 +350,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                     </TrainingTooltip>
                     <Field
                       component={MarkdownField}
+                      // eslint-disable-next-line react/jsx-no-bind
                       onChange={(value: any) => { setFieldValue("description", value); }}
                       id="descriptionInput"
                       placeholder={i18next.t("Description Placeholder")}
@@ -393,6 +394,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                           id="pluginToAddInput"
                           placeholder="Enter plugin address"
                           name="pluginToAdd"
+                          // eslint-disable-next-line react/jsx-no-bind
                           onChange={(e: any) => {
                             // call the built-in handleChange
                             handleChange(e);
@@ -489,6 +491,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
 
                     <div className={css.createProposalActions}>
                       <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")}placement="top">
+                        {/* eslint-disable-next-line react/jsx-no-bind */}
                         <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
                           <img src="/assets/images/Icon/share-blue.svg" />
                         </button>
