@@ -1,11 +1,11 @@
 import * as chai from "chai";
-import { getTestAddresses, ITestAddresses, hideCookieAcceptWindow } from "./utils";
+import { getTestAddresses, ITestAddresses, hideCookieAcceptWindow, goToUrl } from "./utils";
 
 chai.should();
 
 describe("Header redemptions button", () => {
   it("shouldn't be there if the user isn't logged in", async () => {
-    await browser.url("http://127.0.0.1:3000");
+    await goToUrl("http://127.0.0.1:3000");
 
     const redemptionsButton = await $("[data-test-id=\"redemptionsButton\"]");
     (await redemptionsButton.isDisplayed()).should.equal(false);
@@ -13,7 +13,7 @@ describe("Header redemptions button", () => {
 
   it("should show a quick menu on desktop devices", async () => {
     hideCookieAcceptWindow();
-    await browser.url("http://127.0.0.1:3000");
+    await goToUrl("http://127.0.0.1:3000");
     const loginButton = await $("[data-test-id=\"loginButton\"]");
     await loginButton.click();
 
@@ -28,7 +28,7 @@ describe("Header redemptions button", () => {
 
   it("should redirect us to the redemptions page on mobile devices", async () => {
     await browser.setWindowSize(600, 600);
-    await browser.url("http://127.0.0.1:3000");
+    await goToUrl("http://127.0.0.1:3000");
     const windowSize = await browser.getWindowSize();
 
     // Skip test if the OS doesn't allow window to be resized
@@ -53,7 +53,7 @@ describe("Redemptions page", () => {
 
   it("should exist", async () => {
     await browser.setWindowSize(1920, 1080);
-    await browser.url("http://127.0.0.1:3000/redemptions");
+    await goToUrl("http://127.0.0.1:3000/redemptions");
 
     const pageTitle = await browser.getTitle();
     pageTitle.should.be.equal("Alchemy | DAOstack");
@@ -62,7 +62,7 @@ describe("Redemptions page", () => {
   it("should redeem a reward", async () => {
     await hideCookieAcceptWindow();
 
-    await browser.url("http://127.0.0.1:3000/redemptions");
+    await goToUrl("http://127.0.0.1:3000/redemptions");
     const connectButton = await $("*[data-test-id=\"connectButton\"]");
     await connectButton.waitForDisplayed();
     await connectButton.click();

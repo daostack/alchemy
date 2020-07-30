@@ -1,5 +1,5 @@
 import * as chai from "chai";
-import { getTestAddresses, userAddresses, ITestAddresses } from "./utils";
+import { getTestAddresses, userAddresses, ITestAddresses, goToUrl } from "./utils";
 
 describe("Profile page", () => {
   let addresses: ITestAddresses;
@@ -13,7 +13,7 @@ describe("Profile page", () => {
   });
 
   it("should exist and be editable", async () => {
-    await browser.url(`http://127.0.0.1:3000/profile/${userAddress}?daoAvatarAddress=${daoAddress}`);
+    await goToUrl(`http://127.0.0.1:3000/profile/${userAddress}?daoAvatarAddress=${daoAddress}`);
 
     const loginButton = await $("*[data-test-id=\"loginButton\"]");
     await loginButton.click();
@@ -32,7 +32,7 @@ describe("Profile page", () => {
   });
 
   it("should also work without a DAO address", async () => {
-    await browser.url(`http://127.0.0.1:3000/profile/${userAddress}`);
+    await goToUrl(`http://127.0.0.1:3000/profile/${userAddress}`);
     const profileContainer = await $("*[data-test-id=\"profile-container\"]");
     await profileContainer.waitForExist();
   });

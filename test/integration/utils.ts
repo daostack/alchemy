@@ -67,7 +67,7 @@ export const setCalendarDate = async (element: any, date: string): Promise<void>
 };
 
 export async function gotoDaoPlugins(daoAddress: string): Promise<any> {
-  return browser.url(`/dao/${daoAddress}/plugins`);
+  return goToUrl(`/dao/${daoAddress}/plugins`);
 }
 
 /**
@@ -92,4 +92,9 @@ export const submit = async(): Promise<void> => {
   await submitButton.waitForExist();
   await submitButton.scrollIntoView();
   await submitButton.click();
+};
+
+export const goToUrl = async (url: string): Promise<void> => {
+  await browser.url(url);
+  return browser.execute(() => { (window as any).inAlchemyTests = true; });
 };

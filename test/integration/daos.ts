@@ -1,3 +1,5 @@
+import { goToUrl } from "./utils";
+
 const chai = require("chai");
 
 global.expect = chai.expect;
@@ -9,7 +11,7 @@ describe("All DAOs", () => {
   });
 
   it("Works", async () => {
-    await browser.url("http://127.0.0.1:3000/daos");
+    await goToUrl("http://127.0.0.1:3000/daos");
     const title = await browser.getTitle();
     title.should.be.equal("Alchemy | DAOstack");
     const daosHeader = await $("*[data-test-id=\"header-all-daos\"]");

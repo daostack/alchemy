@@ -19,7 +19,7 @@ describe("Proposals", () => {
 
   it("Create a Standard Bounties Generic Plugin proposal, issue and contribute", async () => {
     const url = `/dao/${daoAddress}/`;
-    await browser.url(url);
+    await goToUrl(url);
 
     const pluginTitle = await $("h2=Standard Bounties");
     await pluginTitle.click();
