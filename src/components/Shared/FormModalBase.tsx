@@ -1,5 +1,5 @@
 import * as React from "react";
-import { saveModalFormEntries, importUrlValues, restoreModalFormEntries, exportUrl, clearModalFormEntries } from "lib/proposalUtils";
+import { saveModalFormEntries, importUrlValues, restoreModalFormEntries, exportUrl } from "lib/proposalUtils";
 import { showNotification as ShowNotification, NotificationStatus } from "reducers/notifications";
 /**
  * base class for modals that have a single form and they want to persist the form's values to sessionStorage,
