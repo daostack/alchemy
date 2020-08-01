@@ -23,6 +23,7 @@ import * as moment from "moment";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
 import { FormModalBase } from "components/Shared/FormModalBase";
+import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -146,136 +147,136 @@ interface IState {
   requiredPermissions: number;
 }
 
-class CreatePluginManagerProposal extends FormModalBase<IProps, IState> {
+const votingParams: IGenesisProtocolFormValues = {
+  queuedVoteRequiredPercentage: 50,
+  queuedVotePeriodLimit: 2592000,
+  boostedVotePeriodLimit: 345600,
+  preBoostedVotePeriodLimit: 86400,
+  thresholdConst: 1200,
+  quietEndingPeriod: 172800,
+  proposingRepReward: 50,
+  votersReputationLossRatio: 4,
+  minimumDaoBounty: 150,
+  daoBountyConst: 10,
+  activationTime: moment().add(1, "day").format("YYYY-MM-DDTHH:mm"), //default date for the next day
+  voteOnBehalf: "0x0000000000000000000000000000000000000000",
+  voteParamsHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+};
 
-  currentFormValues: IFormValues;
+const defaultValues: IFormValues = {
+  description: "",
+  pluginToAdd: "",
+  pluginToRemove: "",
+  title: "",
+  url: "",
+  currentTab: "addPlugin",
+  tags: [],
+  GenericScheme: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: true,
+    },
+    contractToCall: "",
+  },
+  ContributionReward: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+  },
+  Competition: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+  },
+  ContributionRewardExt: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+    rewarderName: "",
+  },
+  FundingRequest: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+    fundingToken: "0x0000000000000000000000000000000000000000",
+  },
+  JoinAndQuit: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+    fundingToken: "0x0000000000000000000000000000000000000000",
+    minFeeToJoin: 0,
+    memberReputation: 0,
+    fundingGoal: 0,
+    fundingGoalDeadline: 0,
+    rageQuitEnable: true,
+  },
+  SchemeRegistrar: {
+    votingParamsRegister: { ...votingParams },
+    votingParamsRemove: { ...votingParams },
+    permissions: {
+      registerPlugins: true,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+  },
+  SchemeFactory: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: true,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+  },
+  ReputationFromToken: {
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+    tokenContract: "0x0000000000000000000000000000000000000000",
+    curveInterface: "0x0000000000000000000000000000000000000000",
+  },
+};
+
+class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormValues> {
+
   get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
 
   constructor(props: IProps) {
-    super(props, "CreatePluginManagerProposal", props.showNotification);
+    super(props, "CreatePluginManagerProposal", defaultValues, props.showNotification);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    const votingParams: IGenesisProtocolFormValues = {
-      queuedVoteRequiredPercentage: 50,
-      queuedVotePeriodLimit: 2592000,
-      boostedVotePeriodLimit: 345600,
-      preBoostedVotePeriodLimit: 86400,
-      thresholdConst: 1200,
-      quietEndingPeriod: 172800,
-      proposingRepReward: 50,
-      votersReputationLossRatio: 4,
-      minimumDaoBounty: 150,
-      daoBountyConst: 10,
-      activationTime: moment().add(1, "day").format("YYYY-MM-DDTHH:mm"), //default date for the next day
-      voteOnBehalf: "0x0000000000000000000000000000000000000000",
-      voteParamsHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
-    };
-
-    this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
-      description: "",
-      pluginToAdd: "",
-      pluginToRemove: "",
-      title: "",
-      url: "",
-      currentTab: "addPlugin",
-      tags: [],
-      GenericScheme: {
-        votingParams: { ...votingParams },
-        permissions: {
-          registerPlugins: false,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: true,
-        },
-        contractToCall: "",
-      },
-      ContributionReward: {
-        votingParams: { ...votingParams },
-        permissions: {
-          registerPlugins: false,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-      },
-      Competition: {
-        votingParams: { ...votingParams },
-        permissions: {
-          registerPlugins: false,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-      },
-      ContributionRewardExt: {
-        votingParams: { ...votingParams },
-        permissions: {
-          registerPlugins: false,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-        rewarderName: "",
-      },
-      FundingRequest: {
-        votingParams: { ...votingParams },
-        permissions: {
-          registerPlugins: false,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-        fundingToken: "0x0000000000000000000000000000000000000000",
-      },
-      JoinAndQuit: {
-        votingParams: { ...votingParams },
-        permissions: {
-          registerPlugins: false,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-        fundingToken: "0x0000000000000000000000000000000000000000",
-        minFeeToJoin: 0,
-        memberReputation: 0,
-        fundingGoal: 0,
-        fundingGoalDeadline: 0,
-        rageQuitEnable: true,
-      },
-      SchemeRegistrar: {
-        votingParamsRegister: { ...votingParams },
-        votingParamsRemove: { ...votingParams },
-        permissions: {
-          registerPlugins: true,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-      },
-      SchemeFactory: {
-        votingParams: { ...votingParams },
-        permissions: {
-          registerPlugins: true,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-      },
-      ReputationFromToken: {
-        permissions: {
-          registerPlugins: false,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-        tokenContract: "0x0000000000000000000000000000000000000000",
-        curveInterface: "0x0000000000000000000000000000000000000000",
-      },
-    });
 
     this.state = {
+      ...this.state, // get contribution of super class
       currentTab: this.currentFormValues.currentTab,
-      tags: this.currentFormValues.tags,
       requiredPermissions: 0,
     };
   }
@@ -439,6 +440,11 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState> {
     this.setState({tags});
   }
 
+  protected thisResetToDefaults = (): void => {
+    this.resetToDefaults();
+    this.setState({ requiredPermissions: 0 });
+  }
+
   public render(): RenderOutput {
     // "plugins" are the plugins registered in this DAO
     const plugins = this.props.data;
@@ -535,6 +541,7 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState> {
               touched,
               handleChange,
               isSubmitting,
+              resetForm,
               setFieldValue,
               values,
             }: FormikProps<IFormValues>) => {
@@ -668,6 +675,14 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState> {
                     <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                       Cancel
                     </button>
+
+                    <ResetFormButton
+                      defaultValues={defaultValues}
+                      handleReset={this.thisResetToDefaults}
+                      isSubmitting={isSubmitting}
+                      resetForm={resetForm}
+                    ></ResetFormButton>
+
                     <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                       <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                       Submit proposal

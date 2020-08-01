@@ -20,6 +20,7 @@ import moment = require("moment");
 import BN = require("bn.js");
 import HelpButton from "components/Shared/HelpButton";
 import { FormModalBase } from "components/Shared/FormModalBase";
+import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 interface IExternalProps {
   plugin: CompetitionPlugin;
@@ -113,39 +114,41 @@ export const SelectField: React.SFC<any> = ({ options, field, form, _value }) =>
   />;
 };
 
-class CreateProposal extends FormModalBase<IProps, IStateProps> {
+let defaultValues: IFormValues;
 
-  private currentFormValues: IFormValues;
+const setInitialFormValues = () => {
+  const arc = getArc();
+  const now = moment();
+
+  defaultValues = {
+    rewardSplit: "",
+    description: "",
+    ethReward: 0,
+    externalTokenAddress: arc.GENToken().address,
+    externalTokenReward: 0,
+    nativeTokenReward: 0,
+    numWinners: 0,
+    numberOfVotesPerVoter: 0,
+    proposerIsAdmin: false,
+    reputationReward: 0,
+    compStartTimeInput: now, // testing ? undefined : now,
+    suggestionEndTimeInput: now, // testing ? undefined : now,
+    votingStartTimeInput: now, // testing ? undefined : now,
+    compEndTimeInput: now, // testing ? undefined : now,
+    title: "",
+    url: "",
+    tags: [],
+  };
+
+  return Object.freeze(defaultValues);
+};
+
+class CreateProposal extends FormModalBase<IProps, IStateProps, IFormValues> {
+
   get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
 
   constructor(props: IProps) {
-    super(props, "CreateCompetitionProposal", props.showNotification);
-
-    const arc = getArc();
-    const now = moment();
-
-    this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
-      rewardSplit: "",
-      description: "",
-      ethReward: 0,
-      externalTokenAddress: arc.GENToken().address,
-      externalTokenReward: 0,
-      nativeTokenReward: 0,
-      numWinners: 0,
-      numberOfVotesPerVoter: 0,
-      proposerIsAdmin: false,
-      reputationReward: 0,
-      compStartTimeInput: now, // testing ? undefined : now,
-      suggestionEndTimeInput: now, // testing ? undefined : now,
-      votingStartTimeInput: now, // testing ? undefined : now,
-      compEndTimeInput: now, // testing ? undefined : now,
-      title: "",
-      url: "",
-      tags: [],
-    });
-    this.state = {
-      tags: this.currentFormValues.tags,
-    };
+    super(props, "CreateCompetitionProposal", setInitialFormValues(), props.showNotification);
   }
 
   public handleSubmit = async (values: IFormValues, { _setSubmitting }: any): Promise<void> => {
@@ -346,6 +349,7 @@ class CreateProposal extends FormModalBase<IProps, IStateProps> {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             handleSubmit,
             isSubmitting,
+            resetForm,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             setFieldTouched,
             setFieldValue,
@@ -633,6 +637,14 @@ class CreateProposal extends FormModalBase<IProps, IStateProps> {
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
                 </button>
+
+                <ResetFormButton
+                  defaultValues={defaultValues}
+                  handleReset={this.resetToDefaults}
+                  isSubmitting={isSubmitting}
+                  resetForm={resetForm}
+                ></ResetFormButton>
+
                 <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                     Submit proposal

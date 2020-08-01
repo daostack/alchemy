@@ -16,6 +16,7 @@ import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
 import { FormModalBase } from "../../../Shared/FormModalBase";
+import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 const Select = React.lazy(() => import("react-select"));
 
@@ -52,6 +53,10 @@ interface IFormValues {
   reputationReward: number;
   title: string;
   url: string;
+  /**
+   * not actually used by Formik
+   */
+  tags: Array<string>;
 
   [key: string]: any;
 }
@@ -86,28 +91,29 @@ export const SelectField: React.SFC<any> = ({options, field, form }) => (
   </React.Suspense>
 );
 
-class CreateContributionReward extends FormModalBase<IProps, IStateProps> {
+let defaultValues: IFormValues;
 
-  currentFormValues: IFormValues;
-  get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
+const setInitialFormValues = () => {
+  return defaultValues = Object.freeze({
+    beneficiary: "",
+    description: "",
+    ethReward: 0,
+    externalTokenAddress: getArc().GENToken().address,
+    externalTokenReward: 0,
+    nativeTokenReward: 0,
+    reputationReward: 0,
+    title: "",
+    url: "",
+    tags: new Array<string>(),
+  });
+};
+
+class CreateContributionReward extends FormModalBase<IProps, IStateProps, IFormValues> {
+
+  get valuesToPersist() { return Object.assign(this.currentFormValues, this.state); }
 
   constructor(props: IProps) {
-    super(props, "CreateContributionRewardProposal", props.showNotification);
-    this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
-      beneficiary: "",
-      description: "",
-      ethReward: 0,
-      externalTokenAddress: getArc().GENToken().address,
-      externalTokenReward: 0,
-      nativeTokenReward: 0,
-      reputationReward: 0,
-      title: "",
-      url: "",
-      tags: [],
-    });
-    this.state = {
-      tags: this.currentFormValues.tags,
-    };
+    super(props, "CreateContributionRewardProposal", setInitialFormValues(), props.showNotification);
   }
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
@@ -227,6 +233,7 @@ class CreateContributionReward extends FormModalBase<IProps, IStateProps> {
             isSubmitting,
             setFieldTouched,
             setFieldValue,
+            resetForm,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <div className={css.description}>This proposal can send eth / erc20 token, mint new DAO tokens ({dao.tokenSymbol}) and mint / slash reputation in the DAO. Each proposal can have one of each of these actions. e.g. 100 rep for completing a project + 0.05 ETH for covering expenses.</div>
@@ -305,7 +312,7 @@ class CreateContributionReward extends FormModalBase<IProps, IStateProps> {
                   onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                   // eslint-disable-next-line react/jsx-no-bind
                   onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                  defaultValue={this.currentFormValues.beneficiary}
+                  value={this.currentFormValues.beneficiary}
                   placeholder={this.props.currentAccountAddress}
                 />
               </div>
@@ -402,6 +409,14 @@ class CreateContributionReward extends FormModalBase<IProps, IStateProps> {
                 <button className={css.exitProposalCreation} type="button" onClick={this.props.handleClose}>
                   Cancel
                 </button>
+
+                <ResetFormButton
+                  defaultValues={defaultValues}
+                  handleReset={this.resetToDefaults}
+                  isSubmitting={isSubmitting}
+                  resetForm={resetForm}
+                ></ResetFormButton>
+
                 <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                     Submit proposal

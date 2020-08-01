@@ -1,0 +1,24 @@
+.resetFormButton {
+  height: 30px;
+  border: none;
+  display: inline-block;
+  margin: 0 5px;
+  font-size: 13px;
+  padding: 0 25px 2px 25px;
+  font-family: $body-font;
+  font-weight: bold;
+  transition: all 0.25s ease;
+  background-color: $green-button-color;
+  border-radius: 15px;
+  color: $white;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  :disabled {
+    background-color: $disabled-button-color;
+    border: $disabled-button-border;
+    color: rgba(75, 75, 75, 1);
+  }
+}

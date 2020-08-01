@@ -21,6 +21,7 @@ import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
 import { FormModalBase } from "components/Shared/FormModalBase";
+import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -67,37 +68,38 @@ interface IState {
   tags: Array<string>;
 }
 
-class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState> {
 
-  currentFormValues: IFormValues;
+const defaultValues: IFormValues = Object.freeze({
+  description: "",
+  otherPlugin: "",
+  pluginToAdd: "",
+  pluginToRemove: "",
+  parametersHash: "",
+  permissions: {
+    registerPlugins: false,
+    changeConstraints: false,
+    upgradeController: false,
+    genericCall: false,
+  },
+  title: "",
+  url: "",
+  currentTab: "addPlugin",
+  tags: [],
+});
+
+class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState, IFormValues> {
+
   get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
 
   constructor(props: IProps) {
-    super(props, "CreatePluginRegistrarProposal", props.showNotification);
+    super(props, "CreatePluginRegistrarProposal", defaultValues, props.showNotification);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
-      description: "",
-      otherPlugin: "",
-      pluginToAdd: "",
-      pluginToRemove: "",
-      parametersHash: "",
-      permissions: {
-        registerPlugins: false,
-        changeConstraints: false,
-        upgradeController: false,
-        genericCall: false,
-      },
-      title: "",
-      url: "",
-      currentTab: "addPlugin",
-      tags: [],
-    });
     this.state = {
+      ...this.state,
       currentTab: this.currentFormValues.currentTab,
       requiredPermissions: 0,
       showForm: false,
-      tags: this.currentFormValues.tags,
     };
   }
 
@@ -170,6 +172,11 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState> {
 
   private toggleShowForm = () => {
     this.setState({ showForm: !this.state.showForm });
+  }
+
+  protected thisResetToDefaults = (): void => {
+    this.resetToDefaults();
+    this.setState({ requiredPermissions: 0 });
   }
 
   public render(): RenderOutput {
@@ -306,6 +313,7 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState> {
                 errors,
                 touched,
                 handleChange,
+                resetForm,
                 isSubmitting,
                 setFieldValue,
                 values,
@@ -493,6 +501,14 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState> {
                       <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                         Cancel
                       </button>
+
+                      <ResetFormButton
+                        defaultValues={defaultValues}
+                        handleReset={this.thisResetToDefaults}
+                        isSubmitting={isSubmitting}
+                        resetForm={resetForm}
+                      ></ResetFormButton>
+
                       <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                         <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                           Submit proposal

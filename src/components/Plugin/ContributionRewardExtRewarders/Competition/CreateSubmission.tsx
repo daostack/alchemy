@@ -21,6 +21,7 @@ const mapDispatchToProps = {
 };
 import HelpButton from "components/Shared/HelpButton";
 import { FormModalBase } from "components/Shared/FormModalBase";
+import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 interface IExternalProps {
   currentAccountAddress: Address;
@@ -40,24 +41,20 @@ interface IFormValues extends ICreateSubmissionOptions {
   [key: string]: any;
 }
 
-class CreateSubmission extends FormModalBase<IProps, IStateProps> {
+const defaultValues: IFormValues = Object.freeze({
+  beneficiary: "",
+  description: "",
+  title: "",
+  url: "",
+  tags: [],
+});
 
-  private currentFormValues: IFormValues;
+class CreateSubmission extends FormModalBase<IProps, IStateProps, IFormValues> {
+
   get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
 
   constructor(props: IProps) {
-    super(props, "CreateCompetitionSubmission", props.showNotification);
-
-    this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
-      beneficiary: "",
-      description: "",
-      title: "",
-      url: "",
-      tags: [],
-    });
-    this.state = {
-      tags: this.currentFormValues.tags,
-    };
+    super(props, "CreateCompetitionSubmission", defaultValues, props.showNotification);
   }
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any): Promise<void> => {
@@ -124,6 +121,7 @@ class CreateSubmission extends FormModalBase<IProps, IStateProps> {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             handleSubmit,
             isSubmitting,
+            resetForm,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             setFieldTouched,
             setFieldValue,
@@ -204,7 +202,7 @@ class CreateSubmission extends FormModalBase<IProps, IStateProps> {
                   onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                   // eslint-disable-next-line react/jsx-no-bind
                   onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                  defaultValue={this.currentFormValues.beneficiary}
+                  value={this.currentFormValues.beneficiary}
                   placeholder={this.props.currentAccountAddress}
                 />
               </div>
@@ -218,6 +216,14 @@ class CreateSubmission extends FormModalBase<IProps, IStateProps> {
                 <button className={css.exitProposalCreation} type="button" onClick={handleCancel}>
                   Cancel
                 </button>
+
+                <ResetFormButton
+                  defaultValues={defaultValues}
+                  handleReset={this.resetToDefaults}
+                  isSubmitting={isSubmitting}
+                  resetForm={resetForm}
+                ></ResetFormButton>
+
                 <TrainingTooltip overlay="Once the submission is submitted it cannot be edited or deleted" placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                     Submit submission

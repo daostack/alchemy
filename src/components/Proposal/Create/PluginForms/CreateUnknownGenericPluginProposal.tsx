@@ -14,6 +14,7 @@ import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
 import { FormModalBase } from "components/Shared/FormModalBase";
+import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -46,26 +47,23 @@ interface IFormValues {
   [key: string]: any;
 }
 
-class CreateGenericPlugin extends FormModalBase<IProps, IStateProps> {
+const defaultValues: IFormValues = Object.freeze({
+  description: "",
+  callData: "",
+  title: "",
+  url: "",
+  value: 0,
+  tags: [],
+});
 
-  currentFormValues: IFormValues;
+class CreateGenericPlugin extends FormModalBase<IProps, IStateProps, IFormValues> {
+
   get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
 
   constructor(props: IProps) {
-    super(props, "CreateGenericPlugin", props.showNotification);
+    super(props, "CreateGenericPlugin", defaultValues, props.showNotification);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.currentFormValues = this.hydrateInitialFormValues<IFormValues>({
-      description: "",
-      callData: "",
-      title: "",
-      url: "",
-      value: 0,
-      tags: [],
-    });
-    this.state = {
-      tags: this.currentFormValues.tags,
-    };
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
@@ -156,6 +154,7 @@ class CreateGenericPlugin extends FormModalBase<IProps, IStateProps> {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             handleSubmit,
             isSubmitting,
+            resetForm,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             setFieldTouched,
             setFieldValue,
@@ -265,6 +264,14 @@ class CreateGenericPlugin extends FormModalBase<IProps, IStateProps> {
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
                 </button>
+
+                <ResetFormButton
+                  defaultValues={defaultValues}
+                  handleReset={this.resetToDefaults}
+                  isSubmitting={isSubmitting}
+                  resetForm={resetForm}
+                ></ResetFormButton>
+
                 <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                   Submit proposal

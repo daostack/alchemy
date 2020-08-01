@@ -25,6 +25,7 @@ import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
 import { FormModalBase } from "components/Shared/FormModalBase";
+import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 const BN = require("bn.js");
 
@@ -55,6 +56,8 @@ interface IFormValues {
   description: string;
   title: string;
   url: string;
+  tags: Array<string>;
+
   [key: string]: any;
 }
 
@@ -64,9 +67,51 @@ interface IState {
   tags: Array<string>;
 }
 
-class CreateKnownPluginProposal extends FormModalBase<IProps, IState> {
+let defaultValues: IFormValues;
 
-  currentFormValues: IFormValues;
+const setInitialFormValues = (props: IProps) => {
+
+  defaultValues = {
+    description: "",
+    title: "",
+    url: "",
+    currentActionId: "",
+    tags: [],
+  };
+
+  const actions = props.genericPluginInfo.actions();
+  const daoAvatarAddress = props.daoAvatarAddress;
+  actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
+    if (typeof (field.defaultValue) !== "undefined") {
+      if (field.defaultValue === "_avatar") {
+        defaultValues[field.name] = daoAvatarAddress;
+      } else {
+        defaultValues[field.name] = field.defaultValue;
+      }
+    } else {
+      switch (field.type) {
+        case "uint64":
+        case "uint256":
+        case "bytes32":
+        case "bytes":
+        case "address":
+        case "string":
+          defaultValues[field.name] = "";
+          break;
+        case "bool":
+          defaultValues[field.name] = 0;
+          break;
+        case "address[]":
+          defaultValues[field.name] = [""];
+          break;
+      }
+    }
+  }));
+  return Object.freeze(defaultValues);
+};
+
+class CreateKnownPluginProposal extends FormModalBase<IProps, IState, IFormValues> {
+
   get valuesToPersist() { return {
     ...this.currentFormValues,
     currentActionId: this.state.currentAction.id,
@@ -74,18 +119,18 @@ class CreateKnownPluginProposal extends FormModalBase<IProps, IState> {
   }; }
 
   constructor(props: IProps) {
-    super(props, "CreateKnownGenericPluginProposal", props.showNotification);
+    super(props, "CreateKnownGenericPluginProposal", setInitialFormValues(props), props.showNotification);
 
     if (!props.genericPluginInfo) {
       throw Error("GenericPluginInfo should be provided");
     }
-    this.setInititialFormValues();
+
     const actions = props.genericPluginInfo.actions();
     const initialActionId = this.currentFormValues.currentActionId;
     this.state = {
+      ...this.state, // pull in contribution of super class
       actions: props.genericPluginInfo.actions(),
       currentAction: initialActionId ? actions.find(action => action.id === initialActionId) : actions[0],
-      tags: this.currentFormValues.tags,
     };
   }
 
@@ -241,45 +286,6 @@ class CreateKnownPluginProposal extends FormModalBase<IProps, IState> {
     this.setState({tags});
   }
 
-  private setInititialFormValues(){
-    this.currentFormValues = {
-      description: "",
-      title: "",
-      url: "",
-      currentActionId: "",
-      tags: [],
-    };
-    const actions = this.props.genericPluginInfo.actions();
-    const daoAvatarAddress = this.props.daoAvatarAddress;
-    actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
-      if (typeof(field.defaultValue) !== "undefined") {
-        if (field.defaultValue === "_avatar") {
-          this.currentFormValues[field.name] = daoAvatarAddress;
-        } else {
-          this.currentFormValues[field.name] = field.defaultValue;
-        }
-      } else {
-        switch (field.type) {
-          case "uint64":
-          case "uint256":
-          case "bytes32":
-          case "bytes":
-          case "address":
-          case "string":
-            this.currentFormValues[field.name] = "";
-            break;
-          case "bool":
-            this.currentFormValues[field.name] = 0;
-            break;
-          case "address[]":
-            this.currentFormValues[field.name] = [""];
-            break;
-        }
-      }
-    }));
-    this.currentFormValues = this.hydrateInitialFormValues<IFormValues>(this.currentFormValues);
-  }
-
   public render(): RenderOutput {
     const { handleClose } = this.props;
 
@@ -386,6 +392,7 @@ class CreateKnownPluginProposal extends FormModalBase<IProps, IState> {
               errors,
               touched,
               isSubmitting,
+              resetForm,
               setFieldValue,
               values,
             }: FormikProps<IFormValues>) => {
@@ -482,6 +489,14 @@ class CreateKnownPluginProposal extends FormModalBase<IProps, IState> {
                     <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                       Cancel
                     </button>
+
+                    <ResetFormButton
+                      defaultValues={defaultValues}
+                      handleReset={this.resetToDefaults}
+                      isSubmitting={isSubmitting}
+                      resetForm={resetForm}
+                    ></ResetFormButton>
+
                     <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                       <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                         Submit proposal

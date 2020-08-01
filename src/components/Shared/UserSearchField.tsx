@@ -17,7 +17,7 @@ interface IExternalProps {
   name?: string;
   onBlur?: (touched: boolean) => any;
   onChange?: (newValue: string) => any;
-  defaultValue: string;
+  value: string;
   placeholder?: string;
 }
 
@@ -46,8 +46,14 @@ class UserSearchField extends React.Component<IProps, IState> {
 
     this.state = {
       suggestions: [],
-      value: props.defaultValue ? props.defaultValue : "",
+      value: props.value ? props.value : "",
     };
+  }
+
+  public componentDidUpdate(prevProps: IProps) {
+    if (prevProps.value !== this.props.value) {
+      this.setState({ value: this.props.value });
+    }
   }
 
   public handleBlur = (_event: any): void => {
