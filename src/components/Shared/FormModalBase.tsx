@@ -58,10 +58,6 @@ export abstract class FormModalBase<TProps,
     this.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
   }
 
-  protected clearFormValuesCache = (): void => {
-    clearModalFormEntries(this.formName);
-  }
-
   protected resetToDefaults = (): void => {
     this.currentFormValues = Object.assign({}, this.defaultValues);
     if (this.defaultValues.tags) {
