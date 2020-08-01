@@ -298,78 +298,83 @@
     }
   }
 
-  .exportProposal {
-    cursor: pointer;
-    height: 30px;
-    float: left;
-    transition: all 0.25s ease;
-    border: none;
-    background-color: rgba(0, 0, 0, 0);
-  }
-
-  .exitProposalCreation {
-    cursor: pointer;
-    height: 30px;
-    display: inline-block;
-    margin: 0 5px;
-    font-weight: normal;
-    font-size: 13px;
-    padding: 0 25px 2px 25px;
-    font-family: $body-font;
-    transition: all 0.25s ease;
-    border: none;
-    background-color: rgba(225, 235, 247, 1);
-    border-radius: 15px;
-    color: rgba(0, 113, 255, 1);
-  }
-
-  .submitProposal {
-    height: 30px;
-    border: none;
-    display: inline-block;
-    margin: 0 5px;
-    font-size: 13px;
-    padding: 0 25px 2px 25px;
-    font-family: $body-font;
-    font-weight: bold;
-    transition: all 0.25s ease;
-    background-color: rgba(0, 113, 255, 1);
-    border-radius: 15px;
-    color: $white;
-
-    &:hover {
-      cursor: pointer;
-    }
-
-    img {
-      position: relative;
-      top: 4px;
-      margin-right: 8px;
-    }
-
-    .loading {
-      width: 18px;
-      display: none;
-    }
-  }
-
-  .submitProposal:disabled .loading {
-    display: inline-block;
-  }
-
-  .submitProposal:disabled {
-    background-color: $disabled-button-color;
-    border: $disabled-button-border;
-    color: rgba(75, 75, 75, 1);
-  }
-
-  .submitProposal:disabled .sendIcon {
-    display: none;
-  }
-
   .createProposalActions {
     text-align: right;
-    padding: 20px 0px;
+    margin: 20px 0px;
+
+    .exportProposal {
+      cursor: pointer;
+      height: 30px;
+      float: left;
+      transition: all 0.25s ease;
+      border: none;
+      background-color: rgba(0, 0, 0, 0);
+    }
+
+    .exitProposalCreation {
+      cursor: pointer;
+      height: 30px;
+      display: inline-block;
+      margin: 0 5px;
+      font-weight: normal;
+      font-size: 13px;
+      padding: 0 25px 2px 25px;
+      font-family: $body-font;
+      transition: all 0.25s ease;
+      border: none;
+      background-color: rgba(225, 235, 247, 1);
+      border-radius: 15px;
+      color: rgba(0, 113, 255, 1);
+    }
+
+    .submitProposal {
+      height: 30px;
+      border: none;
+      display: inline-block;
+      margin: 0 5px;
+      font-size: 13px;
+      padding: 0 25px 2px 25px;
+      font-family: $body-font;
+      font-weight: bold;
+      transition: all 0.25s ease;
+      background-color: rgba(0, 113, 255, 1);
+      border-radius: 15px;
+      color: $white;
+
+      &:hover {
+        cursor: pointer;
+      }
+
+      img {
+        position: relative;
+        top: 4px;
+        margin-right: 8px;
+      }
+
+      .loading {
+        width: 18px;
+        display: none;
+      }
+    }
+
+    .createProposalActions {
+      text-align: right;
+      padding: 20px 0px;
+
+      :disabled .loading {
+        display: inline-block;
+      }
+
+      :disabled {
+        background-color: $disabled-button-color;
+        border: $disabled-button-border;
+        color: rgba(75, 75, 75, 1);
+      }
+
+      :disabled .sendIcon {
+        display: none;
+      }
+    }
   }
 }
 
