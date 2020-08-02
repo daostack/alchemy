@@ -54,7 +54,7 @@ const ProposalPluginCard = (props: IProps) => {
           </TrainingTooltip> : headerHtml
         }
         <div>
-          <b>{pluginState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{pluginState.numberOfPreBoostedProposals}</b> <span>Pending Boosting</span> <b>{pluginState.numberOfQueuedProposals}</b> <span>Regular</span>
+          <b>{pluginState.numberOfBoostedProposals}</b> <span>Boosted   </span> <b>{pluginState.numberOfPreBoostedProposals}</b> <span>Pending Boosting   </span> <b>{pluginState.numberOfQueuedProposals}</b> <span>Regular</span>
         </div>
         {proposals.length === 0 ?
           <div className={css.loading}>

@@ -28,7 +28,7 @@
         font-size: 15px;
         width: 425px;
         border-radius: 20px;
-        border: 1px solid;
+        border: none;
         text-indent: 30px;
         height: 30px;
         background: url("../../assets/images/Icon/search.svg") $white no-repeat left 5px center;
@@ -134,7 +134,7 @@
         align-items: center;
 
         .daoName {
-          font-size: 28px;
+          font-size: 25px;
           font-weight: bold;
           display: inline-block;
           overflow-x: hidden;
@@ -160,10 +160,10 @@
         font-size: $body;
         width: 100%;
         display: inline-block;
-        padding: 30px 0;
+        padding: 20px 0;
 
         b {
-          font-size: 30px;
+          font-size: 25px;
           text-align: center;
           display: block;
         }
@@ -184,7 +184,7 @@
     }
 
     .dao {
-      width: 480px;
+      width: 335px;
       background-color: $white;
       border-radius: 15px;
       display: inline-block;

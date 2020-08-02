@@ -15,7 +15,6 @@
   left: 50%;
   transform: translate(-50%, -50%);
   box-shadow: $shadow-3;
-  height: calc(80%);
 
   .header {
     background-color: $navy;
@@ -370,7 +369,7 @@
 
   .createProposalActions {
     text-align: right;
-    margin: 20px 0px;
+    padding: 20px 0px;
   }
 }
 
@@ -388,7 +387,7 @@
   content: "";
   clear: both;
   overflow: auto;
-  height: calc(100% - 40px);
+  max-height: calc(100vh - 200px);
 
   .sidebar {
     width: 199px;
