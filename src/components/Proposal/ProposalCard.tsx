@@ -21,6 +21,7 @@ import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
+import RiskTag from './RiskTag';
 
 import * as css from "./ProposalCard.scss";
 
@@ -208,6 +209,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   }
                   </TrackVisibility>
                 </div>
+                <RiskTag riskLevel="high" />
               </div>
             </div>
             <div className={css.createdBy}>

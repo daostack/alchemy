@@ -1,0 +1,32 @@
+.wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 0 3px;
+  
+    button {
+        height: 20px;
+        width: 20px;
+        transition: width 0.25s ease;
+        line-height: 20px;
+
+        background-color: red;
+        border-radius: 10px;
+        border: none;
+
+        font-size: 11px;
+        font-weight: bold;
+        color: $white;
+
+        padding: 0 6px;
+        
+        overflow: hidden;
+        cursor: pointer;
+        outline: none;
+
+      &:hover {
+        width: 80px;
+      }
+    }
+  }
+  
+  
