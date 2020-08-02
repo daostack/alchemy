@@ -56,7 +56,6 @@ class RiskTag extends React.Component<IProps, IState> {
       </span>
     );
   }
-
 }
 
 export default RiskTag;
