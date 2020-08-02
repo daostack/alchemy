@@ -21,7 +21,7 @@ import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
-import RiskTag from './RiskTag';
+import RiskTag, {IRisk} from './RiskTag';
 
 import * as css from "./ProposalCard.scss";
 
@@ -42,6 +42,43 @@ export default class ProposalCard extends React.Component<IProps, null> {
 
   private stopClick = (e: any) => { e.preventDefault(); e.stopPropagation(); }
 
+  private calculateRiskRating(proposalId: string): IRisk {
+    var firstDigit = proposalId.substr(1).match(/\d/)[0];
+    switch(firstDigit) {
+      case '9':
+      case '1':
+      case '2':
+      case '3':
+        return {
+          tag: 'H',
+          text: 'High Risk',
+          className: 'high'
+        }
+      case '4':
+      case '5':
+      case '6':
+        return {
+            tag: 'M',
+            text: 'Medium Risk',
+            className: 'medium'
+        }
+      case '7':
+      case '8':
+      case '0':
+        return {
+          tag: 'L',
+          text: 'Low Risk',
+          className: 'low'
+        }
+      default:
+        return {
+          tag: '',
+          text: '',
+          className: ''
+        };
+    }
+  }
+
   public render(): RenderOutput {
 
     const {
@@ -49,6 +86,8 @@ export default class ProposalCard extends React.Component<IProps, null> {
       daoState,
       proposal,
     } = this.props;
+
+    const riskLevel = this.calculateRiskRating(proposal.id);
 
     return <ProposalData currentAccountAddress={currentAccountAddress} daoState={daoState} proposalId={proposal.id}>
       { props => {
@@ -209,7 +248,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   }
                   </TrackVisibility>
                 </div>
-                <RiskTag riskLevel="high" />
+                <RiskTag riskLevel={riskLevel} />
               </div>
             </div>
             <div className={css.createdBy}>
