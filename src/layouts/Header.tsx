@@ -24,11 +24,13 @@ import { Address, IDAOState } from "@daostack/arc.js";
 import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 import ProviderConfigButton from "layouts/ProviderConfigButton";
+import axios from "axios";
+import Tooltip from "rc-tooltip";
 
 interface IExternalProps extends RouteComponentProps<any> {
 }
 
-interface IStateProps {
+interface IExternalStateProps {
   showRedemptionsButton: boolean;
   currentAccountProfile: IProfileState;
   currentAccountAddress: string | null;
@@ -37,7 +39,11 @@ interface IStateProps {
   threeBox: any;
 }
 
-const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalProps): IExternalProps & IStateProps => {
+interface ILocalStateProps {
+  alchemyVersion: string;
+}
+
+const mapStateToProps = (state: IRootState & IExternalStateProps, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
   const match = matchPath(ownProps.location.pathname, {
     path: "/dao/:daoAvatarAddress",
     strict: false,
@@ -86,26 +92,33 @@ const mapDispatchToProps = {
   threeBoxLogout,
 };
 
-type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
+type IProps = IExternalProps & IExternalStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
 
-class Header extends React.Component<IProps, null> {
+class Header extends React.Component<IProps, ILocalStateProps> {
 
   constructor(props: IProps) {
     super(props);
     this.toggleDiv = React.createRef();
     this.initializeTrainingTooltipsToggle();
+    this.state = {
+      alchemyVersion: "",
+    };
   }
 
   private static trainingTooltipsEnabledKey = "trainingTooltipsEnabled";
   private toggleDiv: RefObject<HTMLDivElement>;
 
-  public componentDidMount() {
-    this.toggleDiv.current.onmouseenter = (_ev: MouseEvent) => {
-      this.props.enableTrainingTooltipsShowAll();
-    };
-    this.toggleDiv.current.onmouseleave = (_ev: MouseEvent) => {
-      this.props.disableTrainingTooltipsShowAll();
-    };
+  public async componentDidMount() {
+    if (this.toggleDiv.current) {
+      this.toggleDiv.current.onmouseenter = (_ev: MouseEvent) => {
+        this.props.enableTrainingTooltipsShowAll();
+      };
+      this.toggleDiv.current.onmouseleave = (_ev: MouseEvent) => {
+        this.props.disableTrainingTooltipsShowAll();
+      };
+    }
+
+    this.setState({ alchemyVersion: (await axios("https://raw.githubusercontent.com/daostack/alchemy/master-2/package.json"))?.data?.version ?? "Not found" });
   }
 
   public handleClickLogin = async (_event: any): Promise<void> => {
@@ -179,13 +192,13 @@ class Header extends React.Component<IProps, null> {
               <img src="/assets/images/Icon/Close.svg"/> :
               <img src="/assets/images/Icon/Menu.svg"/>}
           </div>
-          <TrainingTooltip overlay="View your personal feed" placement="bottomRight">
+          <Tooltip overlay={`DAOstack Alchemy version: ${this.state.alchemyVersion}`} placement="bottomRight">
             <div className={css.menu}>
               <Link to="/">
                 <img src="/assets/images/alchemy-logo-white.svg"/>
               </Link>
             </div>
-          </TrainingTooltip>
+          </Tooltip>
           <div className={css.topInfo}>
             <Breadcrumbs
               separator={<b> &gt;   </b>}
