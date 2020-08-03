@@ -43,14 +43,10 @@
       font-size: 16px;
       font-family: $body-font;
 
-      b {
-        color: rgba(0, 29, 52, 1);
-        font-size: 21px;
-      }
-
       span {
         color: $gray-1;
         font-weight: normal;
+        margin-right: 10px;
       }
     }
 
@@ -113,6 +109,11 @@ a.proposalTitle {
       padding-right: 16px;
     }
   }
+}
+
+.numberOfProposals {
+  display: inline-block;
+  font-weight: $bold;
 }
 
 .numProposals {
