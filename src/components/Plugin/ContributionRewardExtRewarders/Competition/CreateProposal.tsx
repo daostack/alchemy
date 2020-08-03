@@ -485,6 +485,7 @@ class CreateProposal extends FormModalBase<IProps, IStateProps, IFormValues> {
                   id="proposerIsAdmin"
                   name="proposerIsAdmin"
                   type="checkbox"
+                  checked={this.valuesToPersist.proposerIsAdmin}
                   className={touched.proposerIsAdmin && errors.proposerIsAdmin ? css.error : null}
                 />
               </div>
