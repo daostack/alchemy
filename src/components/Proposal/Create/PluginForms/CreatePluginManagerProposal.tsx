@@ -440,8 +440,8 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormVal
     this.setState({tags});
   }
 
-  protected thisResetToDefaults = (): void => {
-    this.resetToDefaults();
+  protected resetToDefaults = (resetForm: (newProps?: any) => void) => () => {
+    this.resetToDefaults(resetForm)();
     this.setState({ requiredPermissions: 0 });
   }
 
@@ -677,10 +677,8 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormVal
                     </button>
 
                     <ResetFormButton
-                      defaultValues={defaultValues}
-                      handleReset={this.thisResetToDefaults}
+                      resetToDefaults={this.resetToDefaults(resetForm)}
                       isSubmitting={isSubmitting}
-                      resetForm={resetForm}
                     ></ResetFormButton>
 
                     <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">

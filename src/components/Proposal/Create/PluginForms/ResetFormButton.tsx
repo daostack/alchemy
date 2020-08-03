@@ -2,16 +2,8 @@ import * as React from "react";
 import * as css from "./ResetFormButton.scss";
 
 export default (props: {
-  defaultValues: any,
-  /**
-   * this should restore default values
-   */
-  handleReset: () => void,
+  resetToDefaults: () => void,
   isSubmitting: boolean,
-  /**
-   * this should reset the form to the default values
-   */
-  resetForm: (newProps?: any) => void,
 }): JSX.Element => {
   return (
     <button className={css.resetFormButton} type="button" disabled={props.isSubmitting}
@@ -22,8 +14,7 @@ export default (props: {
        * that triggers validation, which causes this operation not to work
        */
         setTimeout(() => {
-          props.resetForm(props.defaultValues);
-          props.handleReset();
+          props.resetToDefaults();
         }, 0);
       }}>
     Clear entries

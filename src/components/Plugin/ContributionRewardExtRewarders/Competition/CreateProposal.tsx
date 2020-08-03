@@ -114,13 +114,11 @@ export const SelectField: React.SFC<any> = ({ options, field, form, _value }) =>
   />;
 };
 
-let defaultValues: IFormValues;
-
 const setInitialFormValues = () => {
   const arc = getArc();
   const now = moment();
 
-  defaultValues = {
+  const defaultValues: IFormValues = {
     rewardSplit: "",
     description: "",
     ethReward: 0,
@@ -639,10 +637,8 @@ class CreateProposal extends FormModalBase<IProps, IStateProps, IFormValues> {
                 </button>
 
                 <ResetFormButton
-                  defaultValues={defaultValues}
-                  handleReset={this.resetToDefaults}
+                  resetToDefaults={this.resetToDefaults(resetForm)}
                   isSubmitting={isSubmitting}
-                  resetForm={resetForm}
                 ></ResetFormButton>
 
                 <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">

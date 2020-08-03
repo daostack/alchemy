@@ -174,8 +174,8 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState, IFormV
     this.setState({ showForm: !this.state.showForm });
   }
 
-  protected thisResetToDefaults = (): void => {
-    this.resetToDefaults();
+  protected resetToDefaults = (resetForm: (newProps?: any) => void) => () => {
+    this.resetToDefaults(resetForm)();
     this.setState({ requiredPermissions: 0 });
   }
 
@@ -503,10 +503,8 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState, IFormV
                       </button>
 
                       <ResetFormButton
-                        defaultValues={defaultValues}
-                        handleReset={this.thisResetToDefaults}
+                        resetToDefaults={this.resetToDefaults(resetForm)}
                         isSubmitting={isSubmitting}
-                        resetForm={resetForm}
                       ></ResetFormButton>
 
                       <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">

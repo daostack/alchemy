@@ -91,10 +91,8 @@ export const SelectField: React.SFC<any> = ({options, field, form }) => (
   </React.Suspense>
 );
 
-let defaultValues: IFormValues;
-
 const setInitialFormValues = () => {
-  return defaultValues = Object.freeze({
+  return Object.freeze({
     beneficiary: "",
     description: "",
     ethReward: 0,
@@ -411,10 +409,8 @@ class CreateContributionReward extends FormModalBase<IProps, IStateProps, IFormV
                 </button>
 
                 <ResetFormButton
-                  defaultValues={defaultValues}
-                  handleReset={this.resetToDefaults}
+                  resetToDefaults={this.resetToDefaults(resetForm)}
                   isSubmitting={isSubmitting}
-                  resetForm={resetForm}
                 ></ResetFormButton>
 
                 <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">

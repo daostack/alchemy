@@ -67,11 +67,9 @@ interface IState {
   tags: Array<string>;
 }
 
-let defaultValues: IFormValues;
-
 const setInitialFormValues = (props: IProps) => {
 
-  defaultValues = {
+  const defaultValues: IFormValues = {
     description: "",
     title: "",
     url: "",
@@ -491,10 +489,8 @@ class CreateKnownPluginProposal extends FormModalBase<IProps, IState, IFormValue
                     </button>
 
                     <ResetFormButton
-                      defaultValues={defaultValues}
-                      handleReset={this.resetToDefaults}
+                      resetToDefaults={this.resetToDefaults(resetForm)}
                       isSubmitting={isSubmitting}
-                      resetForm={resetForm}
                     ></ResetFormButton>
 
                     <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">

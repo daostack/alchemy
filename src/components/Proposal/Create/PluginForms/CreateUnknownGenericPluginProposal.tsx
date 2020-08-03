@@ -266,10 +266,8 @@ class CreateGenericPlugin extends FormModalBase<IProps, IStateProps, IFormValues
                 </button>
 
                 <ResetFormButton
-                  defaultValues={defaultValues}
-                  handleReset={this.resetToDefaults}
+                  resetToDefaults={this.resetToDefaults(resetForm)}
                   isSubmitting={isSubmitting}
-                  resetForm={resetForm}
                 ></ResetFormButton>
 
                 <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">

@@ -218,10 +218,8 @@ class CreateSubmission extends FormModalBase<IProps, IStateProps, IFormValues> {
                 </button>
 
                 <ResetFormButton
-                  defaultValues={defaultValues}
-                  handleReset={this.resetToDefaults}
+                  resetToDefaults={this.resetToDefaults(resetForm)}
                   isSubmitting={isSubmitting}
-                  resetForm={resetForm}
                 ></ResetFormButton>
 
                 <TrainingTooltip overlay="Once the submission is submitted it cannot be edited or deleted" placement="top">
