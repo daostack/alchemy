@@ -3,9 +3,10 @@ import { IProposalState } from "@daostack/arc.js";
 import BN = require("bn.js");
 import classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
-import { formatTokens } from "lib/util";
+import { formatTokens, truncateWithEllipses } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
+import CopyToClipboard from "components/Shared/CopyToClipboard";
 
 interface IProps {
   genericSchemeInfo: GenericSchemeInfo;
@@ -15,6 +16,15 @@ interface IProps {
 }
 
 export default class ProposalSummaryCO2ken extends React.Component<IProps, null> {
+
+  private rawCallData(proposal: IProposalState) {
+    return <>
+      <p>Raw call data:</p>
+      <pre>
+        { truncateWithEllipses(proposal.genericScheme.callData, 66) }<CopyToClipboard value={proposal.genericScheme.callData} />
+      </pre>
+    </>;
+  }
 
   public render(): RenderOutput {
     const { proposal, detailView, genericSchemeInfo, transactionModal } = this.props;
@@ -64,6 +74,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
                     <a href={`https://cloudflare-ipfs.com/ipfs/${ipfsHashValue}`} target="_blank" rel="noopener noreferrer">{ipfsHashValue}</a>
                   </pre>
                 </div>
+                {this.rawCallData(proposal)}
               </div>
               : ""
             }
@@ -84,6 +95,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
                 <pre>{-1}</pre>
                 It allows the the CO2ken contract to move DAI held by the DAO. This way, the DAO can offset its emissions by calling:
                 <pre>offsetCarbon()</pre>
+                {this.rawCallData(proposal)}
               </div>
               : ""
             }
@@ -100,6 +112,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
                 Executing this proposal will call the function
                 <pre>{action.id}()</pre>
                 It transfers all the DAI stored in the CO2ken contract to the DAO.
+                {this.rawCallData(proposal)}
               </div>
               : ""
             }
@@ -122,6 +135,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
                 <pre>
                   {formatTokens(new BN(value), field.unit, field.decimals)}
                 </pre>
+                {this.rawCallData(proposal)}
               </div>
               : ""
             }
@@ -146,6 +160,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
                   { field.label }: {formatTokens(new BN(value), field.unit, field.decimals)}
                 </pre>
                 The value describes the amount of carbon tons the DAO wants to offset.
+                {this.rawCallData(proposal)}
               </div>
               : ""
             }
@@ -165,6 +180,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
                 <pre>{action.id}()</pre>
                 with the new owner‘s address being
                 <pre>{decodedCallData.values[0]}</pre>
+                {this.rawCallData(proposal)}
               </div>
               : ""
             }
