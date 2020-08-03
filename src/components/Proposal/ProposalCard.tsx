@@ -79,6 +79,8 @@ export default class ProposalCard extends React.Component<IProps, null> {
     }
   }
 
+  riskLevel = this.calculateRiskRating(this.props.proposal.id);
+
   public render(): RenderOutput {
 
     const {
@@ -86,8 +88,6 @@ export default class ProposalCard extends React.Component<IProps, null> {
       daoState,
       proposal,
     } = this.props;
-
-    const riskLevel = this.calculateRiskRating(proposal.id);
 
     return <ProposalData currentAccountAddress={currentAccountAddress} daoState={daoState} proposalId={proposal.id}>
       { props => {
@@ -248,7 +248,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   }
                   </TrackVisibility>
                 </div>
-                <RiskTag riskLevel={riskLevel} />
+                <RiskTag riskLevel={this.riskLevel} />
               </div>
             </div>
             <div className={css.createdBy}>
