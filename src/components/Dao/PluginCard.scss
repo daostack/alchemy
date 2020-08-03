@@ -40,7 +40,6 @@
 
     div {
       padding-top: 10px;
-      font-size: 16px;
       font-family: $body-font;
 
       span {
@@ -114,6 +113,8 @@ a.proposalTitle {
 .numberOfProposals {
   display: inline-block;
   font-weight: $bold;
+  margin-right: 2px;
+  font-size: $title;
 }
 
 .numProposals {
