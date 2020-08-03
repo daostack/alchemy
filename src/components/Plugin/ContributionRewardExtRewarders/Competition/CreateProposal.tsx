@@ -99,11 +99,11 @@ const CustomDateInput: React.SFC<any> = ({ field, form }) => {
 };
 
 export const SelectField: React.SFC<any> = ({ options, field, form, _value }) => {
-  // value={options ? options.find((option: any) => option.value === field.value) : ""}
   return <Select
     options={options}
     name={field.name}
     defaultValue={options[0]}
+    value={options ? options.find((option: any) => option.value === field.value) : ""}
     maxMenuHeight={100}
     // eslint-disable-next-line react/jsx-no-bind
     onChange={(option: any) => form.setFieldValue(field.name, option.value)}
@@ -544,6 +544,7 @@ class CreateProposal extends FormModalBase<IProps, IStateProps, IFormValues> {
                         id="externalTokenAddress"
                         name="externalTokenAddress"
                         component={SelectField}
+                        value={this.valuesToPersist.externalTokenAddress}
                         options={Object.keys(supportedTokens()).map((tokenAddress) => {
                           const token = supportedTokens()[tokenAddress];
                           return { value: tokenAddress, label: token["symbol"] };
