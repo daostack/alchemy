@@ -122,7 +122,7 @@ class PluginContainer extends React.Component<IProps, IState> {
   private handleEditPlugin = async (e: any) => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    this.props.history.push(`/dao/${this.props.daoState.id}/plugin/${this.props.data[1].id}/proposals/create/?currentTab=editScheme`);
+    this.props.history.push(`/dao/${this.props.daoState.id}/plugin/${this.props.data[1].id}/proposals/create/?currentTab=replacePlugin`);
     e.preventDefault();
   }
 
