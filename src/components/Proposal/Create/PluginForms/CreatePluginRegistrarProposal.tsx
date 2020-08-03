@@ -174,7 +174,7 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState, IFormV
     this.setState({ showForm: !this.state.showForm });
   }
 
-  protected resetToDefaults = (resetForm: (newProps?: any) => void) => () => {
+  protected resetToDefaultsX = (resetForm: (newProps?: any) => void) => () => {
     this.resetToDefaults(resetForm)();
     this.setState({ requiredPermissions: 0 });
   }
@@ -503,7 +503,7 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState, IFormV
                       </button>
 
                       <ResetFormButton
-                        resetToDefaults={this.resetToDefaults(resetForm)}
+                        resetToDefaults={this.resetToDefaultsX(resetForm)}
                         isSubmitting={isSubmitting}
                       ></ResetFormButton>
 

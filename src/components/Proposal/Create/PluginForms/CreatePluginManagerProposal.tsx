@@ -440,7 +440,7 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormVal
     this.setState({tags});
   }
 
-  protected resetToDefaults = (resetForm: (newProps?: any) => void) => () => {
+  protected resetToDefaultsX = (resetForm: (newProps?: any) => void) => () => {
     this.resetToDefaults(resetForm)();
     this.setState({ requiredPermissions: 0 });
   }
@@ -677,7 +677,7 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormVal
                     </button>
 
                     <ResetFormButton
-                      resetToDefaults={this.resetToDefaults(resetForm)}
+                      resetToDefaults={this.resetToDefaultsX(resetForm)}
                       isSubmitting={isSubmitting}
                     ></ResetFormButton>
 
