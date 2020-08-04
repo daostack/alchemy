@@ -16,7 +16,7 @@ a.blueButton {
 
   &.disabled,
   &disabled:hover {
-    background-color: $disabled-button-color;
+    background-color: $disabled-button-background-color;
     border: $disabled-button-border;
     cursor: not-allowed;
   }
@@ -743,9 +743,9 @@ a.blueButton {
       }
 
       :disabled {
-        background-color: $disabled-button-color;
+        background-color: $disabled-button-background-color;
         border: $disabled-button-border;
-        color: rgba(75, 75, 75, 1);
+        color: $disabled-button-color;
       }
 
       :disabled .sendIcon {
