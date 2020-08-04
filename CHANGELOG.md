@@ -1,7 +1,7 @@
 ## 0.10.14
   - Features Added
     - show raw calldata in proposal details for relevant plugins
-    - improve doc on added GenericSchemes
+    - improve doc about adding GenericSchemes to Alchemy
     - show the Alchemy package version as tooltip over the Alchemy header icon
 
   - Bugs Fixed
