@@ -58,7 +58,7 @@ export abstract class FormModalBase<TProps,
     this.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
   }
 
-  protected resetToDefaults = (resetForm: (newProps?: any) => void) => () => {
+  protected resetToDefaults = (resetForm: (newProps?: any) => void) => (): void => {
     resetForm(this.defaultValues);
     this.currentFormValues = Object.assign({}, this.defaultValues);
     if (this.defaultValues.tags) {
