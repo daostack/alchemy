@@ -1,3 +1,12 @@
+## 0.10.14
+  - Features Added
+    - show raw calldata in proposal details for relevant plugins
+    - improve doc on added GenericSchemes
+    - show the Alchemy package version as tooltip over the Alchemy header icon
+
+  - Bugs Fixed
+    - upgrade DaoCreator to fix a bug when creating a new DAO
+
 ## 0.10.13
   - Features Added
     - added support for awarding the DMG token
