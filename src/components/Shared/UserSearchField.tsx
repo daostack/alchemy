@@ -36,7 +36,6 @@ const mapStateToProps = (state: IRootState, _ownProps: IExternalProps): IExterna
 
 interface IState {
   suggestions: IProfileState[];
-  value: string;
 }
 
 class UserSearchField extends React.Component<IProps, IState> {
@@ -46,24 +45,14 @@ class UserSearchField extends React.Component<IProps, IState> {
 
     this.state = {
       suggestions: [],
-      value: props.value ? props.value : "",
     };
-  }
-
-  public componentDidUpdate(prevProps: IProps) {
-    if (prevProps.value !== this.props.value) {
-      this.setState({ value: this.props.value });
-    }
   }
 
   public handleBlur = (_event: any): void => {
     this.props.onBlur(true);
   }
 
-  public handleChange = (event: any, { newValue }: { newValue: string }) => {
-    this.setState({
-      value: newValue,
-    });
+  public handleChange = (_event: any, { newValue }: { newValue: string }) => {
     this.props.onChange(newValue);
   }
 
@@ -118,7 +107,7 @@ class UserSearchField extends React.Component<IProps, IState> {
   public getSuggestionValue = (suggestion: IProfileState) => suggestion.ethereumAccountAddress;
 
   public render(): RenderOutput {
-    const { value, suggestions } = this.state;
+    const { suggestions } = this.state;
 
     // Autosuggest will pass through all these props to the input.
     const inputProps = {
@@ -128,7 +117,8 @@ class UserSearchField extends React.Component<IProps, IState> {
       "onBlur": this.handleBlur,
       "onChange": this.handleChange,
       "placeholder": this.props.placeholder || "Name or public key",
-      value,
+      // depends on the container to update props.value, via handleChange
+      value: this.props.value,
     };
 
     return (

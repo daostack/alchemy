@@ -201,7 +201,7 @@ class CreateSubmission extends FormModalBase<IProps, IStateProps, IFormValues> {
                   // eslint-disable-next-line react/jsx-no-bind
                   onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                   // eslint-disable-next-line react/jsx-no-bind
-                  onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
+                  onChange={(newValue) => { this.currentFormValues.beneficiary=newValue; setFieldValue("beneficiary", newValue); }}
                   value={this.currentFormValues.beneficiary}
                   placeholder={this.props.currentAccountAddress}
                 />
