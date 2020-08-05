@@ -8,6 +8,7 @@ import { ActionTypes, FollowType, newProfile, IFollowingPayload } from "reducers
 import { arrayRemove } from "lib/util";
 import { Address } from "@daostack/arc.js";
 import { IRootState } from "reducers";
+import i18next from "i18next";
 
 // Load account profile data from our database for all the "members" of the DAO
 // TODO: use this once 3box fixes getProfiles
@@ -200,7 +201,7 @@ export function threeboxLogin(accountAddress: string): (dispatch: any, _getState
       return false;
     }
 
-    dispatch(showNotification(NotificationStatus.Success, "Logged in to 3box"));
+    dispatch(showNotification(NotificationStatus.Success, i18next.t("3BoxLoginSuccess")));
     return true;
   };
 }
@@ -265,7 +266,7 @@ export function updateProfile(accountAddress: string, name: string, description:
       Description: description,
     });
 
-    dispatch(showNotification(NotificationStatus.Success, "Profile data saved to 3box"));
+    dispatch(showNotification(NotificationStatus.Success, i18next.t("3BoxProfileSuccess")));
     return true;
   };
 }
@@ -314,6 +315,6 @@ export function toggleFollow(accountAddress: string, type: FollowType, id: strin
       payload: { type, id, isFollowing },
     } as FollowItemAction);
 
-    dispatch(showNotification(NotificationStatus.Success, (isFollowing ? "Now following" : "No longer following") + ` ${type.slice(0, -1)} ${id.slice(0, 8)}...`));
+    dispatch(showNotification(NotificationStatus.Success, i18next.t((isFollowing ? "Following" : "UnFollowing")) + ` ${type.slice(0, -1)} ${id.slice(0, 8)}...`));
   };
 }
