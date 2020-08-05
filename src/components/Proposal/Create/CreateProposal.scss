@@ -321,10 +321,10 @@
       padding: 0 25px 2px 25px;
       font-family: $body-font;
       transition: all 0.25s ease;
-      border: none;
-      background-color: rgba(225, 235, 247, 1);
+      border: $secondary-button-border;
+      background-color: $secondary-button-background-color;
       border-radius: 15px;
-      color: rgba(0, 113, 255, 1);
+      color: $secondary-button-color;
     }
 
     .submitProposal {

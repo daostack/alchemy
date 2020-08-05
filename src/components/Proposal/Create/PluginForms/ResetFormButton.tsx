@@ -24,7 +24,7 @@ export default class ResetFormButton extends React.Component<{
         type="button"
         disabled={this.props.isSubmitting}
         onClick={this.handleClick}>
-        {i18next.t("Clear entries")}
+        <img src="/assets/images/Icon/eraser.svg"/>{i18next.t("Clear entries")}
       </button>
     );
   }

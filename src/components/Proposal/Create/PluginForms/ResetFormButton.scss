@@ -1,24 +1,25 @@
 .resetFormButton {
   height: 30px;
-  border: none;
-  display: inline-block;
+  border: $secondary-button-border;
   margin: 0 5px;
+  display: inline-block;
   font-size: 13px;
-  padding: 0 25px 2px 25px;
+  padding: 0 25px 0 20px;
   font-family: $body-font;
-  font-weight: bold;
   transition: all 0.25s ease;
-  background-color: $green-button-color;
+  background-color: $secondary-button-background-color;
   border-radius: 15px;
-  color: $white;
+  color: $secondary-button-color;
+  padding-bottom: 5px;
 
   &:hover {
     cursor: pointer;
   }
 
-  :disabled {
-    background-color: $disabled-button-background-color;
-    border: $disabled-button-border;
-    color: $disabled-button-color;
+  img {
+    width: 18px;
+    margin-right: 6px;
+    position: relative;
+    top: 3px;
   }
 }
