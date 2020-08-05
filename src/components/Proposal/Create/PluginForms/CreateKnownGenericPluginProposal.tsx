@@ -67,15 +67,13 @@ interface IState {
   tags: Array<string>;
 }
 
-const initialActionId = "";
-
 const setInitialFormValues = (props: IProps): IFormValues => {
 
   const defaultValues: IFormValues = {
     description: "",
     title: "",
     url: "",
-    currentActionId: initialActionId,
+    currentActionId: "",
     tags: [],
   };
 
