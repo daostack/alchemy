@@ -123,12 +123,12 @@ export function getProfile(accountAddress: string, currentAccount = false):
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState): Promise<void> => {
     if (accountAddress) {
       try {
-      /**
-       * Get profile data for this account.
-       * Note accountAddress is case insensitive to `Box.getProfile`, but
-       * we need to cast to lower because state.currentAccountAddress is cast to lower, thus
-       * facilitating address comparisons, and array key matching.
-       */
+        /**
+         * Get profile data for this account.
+         * Note accountAddress is case insensitive to `Box.getProfile`, but
+         * we need to cast to lower because state.currentAccountAddress is cast to lower, thus
+         * facilitating address comparisons, and array key matching.
+         */
         accountAddress = accountAddress.toLowerCase();
         const profile: any = await Box.getProfile(accountAddress);
 
@@ -155,14 +155,14 @@ export function getProfile(accountAddress: string, currentAccount = false):
           });
 
           if (currentAccount) {
-          // If getting profile for the current account then update our analytics services with the profile data
+            // If getting profile for the current account then update our analytics services with the profile data
             Analytics.people.set({
               Name: profile.name,
               Description: profile.description,
             });
           }
         } else {
-        // Setup blank profile for the account
+          // Setup blank profile for the account
           dispatch({
             type: ActionTypes.GET_PROFILE_DATA,
             sequence: AsyncActionSequence.Success,
@@ -170,7 +170,7 @@ export function getProfile(accountAddress: string, currentAccount = false):
           });
         }
       } catch (e) {
-      // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
         console.error("Error getting profile from 3box", e);
         dispatch({
           type: ActionTypes.GET_PROFILE_DATA,
