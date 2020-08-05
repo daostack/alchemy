@@ -3,13 +3,13 @@ import { showNotification as ShowNotification, NotificationStatus } from "reduce
 
 export interface IFormModalService<TValues extends { [key: string]: any, tags?: Array<string> }> {
   sendFormValuesToClipboard: () => void,
-  resetToDefaults: (resetForm: (newProps?: any) => void) => () => void,
+  resetFormToDefaults: (resetForm: (newProps?: any) => void) => () => void,
   saveCurrentValues: () => void,
 }
 
 /**
- * service for modals that have a single form and they want to persist the form's values to sessionStorage,
- * hydrate the form from url querystring params, and copy form values to the clipboadrd.
+ * service for modals that have a single form and they want to persist and hydrate the form's values in sessionStorage,
+ * hydrate the form from url querystring params, or copy to the clipboard the form values as a url.
  */
 class FormModalService<TValues> implements IFormModalService<TValues> {
   /**
@@ -49,23 +49,32 @@ class FormModalService<TValues> implements IFormModalService<TValues> {
     }
   }
 
-  public resetToDefaults = (resetForm: (newProps?: any) => void) => (): void => {
+  /**
+   * this should be passed to ResetFormButton
+   * @param resetForm the function given by Formik
+   */
+  public resetFormToDefaults = (resetForm: (newProps?: any) => void) => (): void => {
     resetForm(this.defaultValues);
     this.updateCurrentValues(Object.assign({}, this.defaultValues), false);
   }
 
-  // public componentWillUnmount(): void {
+  /**
+   * save values to sessionStorage
+   */
   public saveCurrentValues(): void {
-    /**
-     * save values to the clipboard.
-     */
     saveModalFormEntries(this.formName, this.valuesToPersist());
   }
 }
 
-export const CreateFormModalService = <
-  TValues extends { [key: string]: any, tags?: Array<string> }
->(
+/**
+ * Returns object that implements IFormModalService<TValues>
+ * @param formName
+ * @param defaultValues
+ * @param valuesToPersist
+ * @param updateCurrentValues
+ * @param showNotification
+ */
+export const CreateFormModalService = <TValues extends { [key: string]: any, tags?: Array<string> }>(
   formName: string,
   defaultValues: TValues,
   valuesToPersist: () => TValues,

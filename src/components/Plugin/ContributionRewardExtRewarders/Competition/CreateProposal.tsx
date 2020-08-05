@@ -655,7 +655,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 </button>
 
                 <ResetFormButton
-                  resetToDefaults={this.formModalService.resetToDefaults(resetForm)}
+                  resetToDefaults={this.formModalService.resetFormToDefaults(resetForm)}
                   isSubmitting={isSubmitting}
                 ></ResetFormButton>
 

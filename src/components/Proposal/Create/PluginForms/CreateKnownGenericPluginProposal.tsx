@@ -506,7 +506,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                     </button>
 
                     <ResetFormButton
-                      resetToDefaults={this.formModalService.resetToDefaults(resetForm)}
+                      resetToDefaults={this.formModalService.resetFormToDefaults(resetForm)}
                       isSubmitting={isSubmitting}
                     ></ResetFormButton>
 
