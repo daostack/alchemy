@@ -204,7 +204,7 @@ export function threeboxLogin(accountAddress: string): (dispatch: any, _getState
       return false;
     }
 
-    dispatch(showNotification(NotificationStatus.Success, "Logged in to 3box"));
+    dispatch(showNotification(NotificationStatus.Success, i18next.t("3BoxLoginSuccess")));
     return true;
   };
 }
