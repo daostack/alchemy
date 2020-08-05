@@ -1,9 +1,10 @@
 import { IProposalState } from "@daostack/arc.js";
 import * as classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
-import { linkToEtherScan } from "lib/util";
+import { linkToEtherScan, truncateWithEllipses } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
+import CopyToClipboard from "components/Shared/CopyToClipboard";
 
 const web3 = require("web3");
 
@@ -15,6 +16,15 @@ interface IProps {
 }
 
 export default class ProposalSummaryStandardBounties extends React.Component<IProps, null> {
+
+  private rawCallData(proposal: IProposalState) {
+    return <>
+      <div>Raw call data:
+        {truncateWithEllipses(proposal.genericScheme.callData, 66)}<CopyToClipboard value={proposal.genericScheme.callData} />
+      </div>
+    </>;
+  }
+
 
   public render(): RenderOutput {
 
@@ -70,6 +80,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Approver: <a href={linkToEtherScan(decodedCallData.values[2])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[2]}</a>
                 </div>
+                {this.rawCallData(proposal)}
               </div>
             }
           </div>
@@ -91,6 +102,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
                 </div>
+                {this.rawCallData(proposal)}
               </div>
             }
           </div>
@@ -122,6 +134,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
                 </div>
+                {this.rawCallData(proposal)}
               </div>
             }
           </div>
@@ -143,6 +156,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
                 </div>
+                {this.rawCallData(proposal)}
               </div>
             }
           </div>
@@ -164,6 +178,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Approver ID: {decodedCallData.values[3]}
                 </div>
+                {this.rawCallData(proposal)}
               </div>
             }
           </div>
@@ -211,6 +226,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
                 </div>
+                {this.rawCallData(proposal)}
               </div>
             }
           </div>
@@ -232,6 +248,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
                 </div>
+                {this.rawCallData(proposal)}
               </div>
             }
           </div>
@@ -253,6 +270,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
                 </div>
+                {this.rawCallData(proposal)}
               </div>
             }
           </div>
@@ -287,6 +305,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Bounty Details: <a href={`https://ipfs.io/ipfs/${decodedCallData.values[3]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[3]}</a>
                 </div>
+                {this.rawCallData(proposal)}
               </ul>
             }
           </div>
@@ -318,6 +337,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
                 </div>
+                {this.rawCallData(proposal)}
               </div>
             }
           </div>
@@ -349,6 +369,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
                 </div>
+                {this.rawCallData(proposal)}
               </div>
             }
           </div>

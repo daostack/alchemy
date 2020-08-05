@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+A clear and concise description of the bug.
 
 **To Reproduce**
 Steps to reproduce the behavior:
@@ -19,6 +19,12 @@ Steps to reproduce the behavior:
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
+
+**Alchemy Version Number**
+You may obtain the Alchemy version number as follows:
+
+1. Hover your mouse over the Alchemy logo image in the upper left corner of any page in Alchemy. Below the icon a tooltip will appear which will contain the Alchemy version number.
+2. In the tooltip, select the version number, copy it to your clipboard and paste it into this bug report.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.

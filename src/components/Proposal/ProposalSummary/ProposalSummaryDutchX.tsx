@@ -3,9 +3,10 @@ import { IProposalState } from "@daostack/arc.js";
 import BN = require("bn.js");
 import classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
-import { formatTokens, linkToEtherScan } from "lib/util";
+import { formatTokens, linkToEtherScan, truncateWithEllipses } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
+import CopyToClipboard from "components/Shared/CopyToClipboard";
 
 interface IProps {
   genericSchemeInfo: GenericSchemeInfo;
@@ -15,6 +16,16 @@ interface IProps {
 }
 
 export default class ProposalSummaryDutchX extends React.Component<IProps, null> {
+
+  private rawCallData(proposal: IProposalState) {
+    return <>
+      <p>Raw call data:</p>
+      <pre>
+        {truncateWithEllipses(proposal.genericScheme.callData, 66)}<CopyToClipboard value={proposal.genericScheme.callData} />
+      </pre>
+    </>;
+  }
+
 
   public render(): RenderOutput {
     const { proposal, detailView, genericSchemeInfo, transactionModal } = this.props;
@@ -57,6 +68,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             { detailView ?
               <div className={css.summaryDetails}>
                 <div>{ action.fields[0].label}: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a></div>
+                {this.rawCallData(proposal)}
               </div>
               : ""
             }
@@ -73,6 +85,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             { detailView ?
               <div className={css.summaryDetails}>
                 New oracle address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                {this.rawCallData(proposal)}
               </div>
               : ""
             }
@@ -89,6 +102,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             { detailView ?
               <div className={css.summaryDetails}>
                 New owner address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                {this.rawCallData(proposal)}
               </div>
               : ""
             }
@@ -107,6 +121,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
                 <ul>
                   {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
                 </ul>
+                {this.rawCallData(proposal)}
               </div>
               : ""
             }
@@ -126,6 +141,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
+                {this.rawCallData(proposal)}
               </div>
               : ""
             }
