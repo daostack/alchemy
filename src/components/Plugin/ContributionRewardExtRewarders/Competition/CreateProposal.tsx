@@ -19,7 +19,7 @@ import i18next from "i18next";
 import moment = require("moment");
 import BN = require("bn.js");
 import HelpButton from "components/Shared/HelpButton";
-import { FormModalBase } from "components/Shared/FormModalBase";
+import { IFormModalService, CreateFormModalService } from "components/Shared/FormModalService";
 import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 interface IExternalProps {
@@ -114,7 +114,7 @@ export const SelectField: React.SFC<any> = ({ options, field, form, _value }) =>
   />;
 };
 
-const setInitialFormValues = () => {
+const setInitialFormValues = (): IFormValues => {
   const arc = getArc();
   const now = moment();
 
@@ -141,12 +141,28 @@ const setInitialFormValues = () => {
   return Object.freeze(defaultValues);
 };
 
-class CreateProposal extends FormModalBase<IProps, IStateProps, IFormValues> {
+class CreateProposal extends React.Component<IProps, IStateProps> {
 
-  get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
-    super(props, "CreateCompetitionProposal", setInitialFormValues(), props.showNotification);
+    super(props);
+    this.state = { tags: [] };
+    this.formModalService = CreateFormModalService(
+      "CreateCompetitionProposal",
+      setInitialFormValues(),
+      () => Object.assign(this.currentFormValues, this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) { this.state = { tags: formValues.tags }; }
+        else { this.setState({ tags: formValues.tags }); }
+      },
+      this.props.showNotification);
+  }
+
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
   }
 
   public handleSubmit = async (values: IFormValues, { _setSubmitting }: any): Promise<void> => {
@@ -485,7 +501,7 @@ class CreateProposal extends FormModalBase<IProps, IStateProps, IFormValues> {
                   id="proposerIsAdmin"
                   name="proposerIsAdmin"
                   type="checkbox"
-                  checked={this.valuesToPersist.proposerIsAdmin}
+                  checked={this.currentFormValues.proposerIsAdmin}
                   className={touched.proposerIsAdmin && errors.proposerIsAdmin ? css.error : null}
                 />
               </div>
@@ -544,7 +560,7 @@ class CreateProposal extends FormModalBase<IProps, IStateProps, IFormValues> {
                         id="externalTokenAddress"
                         name="externalTokenAddress"
                         component={SelectField}
-                        value={this.valuesToPersist.externalTokenAddress}
+                        value={this.currentFormValues.externalTokenAddress}
                         options={Object.keys(supportedTokens()).map((tokenAddress) => {
                           const token = supportedTokens()[tokenAddress];
                           return { value: tokenAddress, label: token["symbol"] };
@@ -630,7 +646,7 @@ class CreateProposal extends FormModalBase<IProps, IStateProps, IFormValues> {
               }
               <div className={css.createProposalActions}>
                 <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.sendFormValuesToClipboard}>
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService.sendFormValuesToClipboard}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
                 </TrainingTooltip>
@@ -639,7 +655,7 @@ class CreateProposal extends FormModalBase<IProps, IStateProps, IFormValues> {
                 </button>
 
                 <ResetFormButton
-                  resetToDefaults={this.resetToDefaults(resetForm)}
+                  resetToDefaults={this.formModalService.resetToDefaults(resetForm)}
                   isSubmitting={isSubmitting}
                 ></ResetFormButton>
 

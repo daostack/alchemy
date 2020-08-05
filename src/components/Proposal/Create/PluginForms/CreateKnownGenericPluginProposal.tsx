@@ -24,7 +24,7 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
-import { FormModalBase } from "components/Shared/FormModalBase";
+import { IFormModalService, CreateFormModalService } from "components/Shared/FormModalService";
 import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 const BN = require("bn.js");
@@ -67,13 +67,15 @@ interface IState {
   tags: Array<string>;
 }
 
-const setInitialFormValues = (props: IProps) => {
+const initialActionId = "";
+
+const setInitialFormValues = (props: IProps): IFormValues => {
 
   const defaultValues: IFormValues = {
     description: "",
     title: "",
     url: "",
-    currentActionId: "",
+    currentActionId: initialActionId,
     tags: [],
   };
 
@@ -108,28 +110,45 @@ const setInitialFormValues = (props: IProps) => {
   return Object.freeze(defaultValues);
 };
 
-class CreateKnownPluginProposal extends FormModalBase<IProps, IState, IFormValues> {
+class CreateKnownPluginProposal extends React.Component<IProps, IState> {
 
-  get valuesToPersist() { return {
-    ...this.currentFormValues,
-    currentActionId: this.state.currentAction.id,
-    ...this.state,
-  }; }
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
-    super(props, "CreateKnownGenericPluginProposal", setInitialFormValues(props), props.showNotification);
+    super(props);
 
     if (!props.genericPluginInfo) {
       throw Error("GenericPluginInfo should be provided");
     }
 
     const actions = props.genericPluginInfo.actions();
-    const initialActionId = this.currentFormValues.currentActionId;
     this.state = {
-      ...this.state, // pull in contribution of super class
       actions: props.genericPluginInfo.actions(),
-      currentAction: initialActionId ? actions.find(action => action.id === initialActionId) : actions[0],
+      currentAction: actions[0],
+      tags: [],
     };
+    this.formModalService = CreateFormModalService(
+      "CreateKnownGenericPluginProposal",
+      setInitialFormValues(this.props),
+      () => Object.assign(this.currentFormValues,
+        { currentActionId: this.state.currentAction.id },
+        this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) { Object.assign(this.state,
+          {
+            currentAction: formValues.currentActionId ?
+              this.state.actions.find(action => action.id === formValues.currentActionId) : this.state.currentAction,
+            tags: formValues.tags,
+          }); }
+        else { this.setState({ tags: formValues.tags }); }
+      },
+      this.props.showNotification);
+  }
+
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
   }
 
   private async getBountyEth(values: IFormValues): Promise<any> {
@@ -146,7 +165,7 @@ class CreateKnownPluginProposal extends FormModalBase<IProps, IState, IFormValue
   }
 
 
-  private handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
+  private handleSubmit = async (values: IFormValues, { setSubmitting }: any): Promise<void> => {
 
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
@@ -243,7 +262,7 @@ class CreateKnownPluginProposal extends FormModalBase<IProps, IState, IFormValue
                 values[field.name].map((value: any, index: number) => (
                   <div key={field.name + "_" + index} className={css.arrayField}>
                     {this.renderField(
-                      new ActionField({name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: "", placeholder: field.placeholder}),
+                      new ActionField({ name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: "", placeholder: field.placeholder }),
                       values,
                       touched,
                       errors
@@ -281,7 +300,7 @@ class CreateKnownPluginProposal extends FormModalBase<IProps, IState, IFormValue
   }
 
   private onTagsChange = (tags: any[]): void => {
-    this.setState({tags});
+    this.setState({ tags });
   }
 
   public render(): RenderOutput {
@@ -293,7 +312,7 @@ class CreateKnownPluginProposal extends FormModalBase<IProps, IState, IFormValue
     return (
       <div className={css.containerWithSidebar}>
         <div className={css.sidebar}>
-          { actions.map((action) =>
+          {actions.map((action) =>
             <button
               data-test-id={"action-tab-" + action.id}
               key={action.id}
@@ -303,7 +322,7 @@ class CreateKnownPluginProposal extends FormModalBase<IProps, IState, IFormValue
               })}
               onClick={this.handleTabClick(action.id)}>
               <span></span>
-              { action.label }
+              {action.label}
             </button>
           )}
         </div>
@@ -468,7 +487,7 @@ class CreateKnownPluginProposal extends FormModalBase<IProps, IState, IFormValue
                           <div key={field.name}>
                             <label htmlFor={field.name}>
                               {field.type !== "bool" && !field.optional ? <div className={css.requiredMarker}>*</div> : ""}
-                              { field.label }
+                              {field.label}
                               <ErrorMessage name={field.name}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                             </label>
                             {this.renderField(field, values, touched, errors)}
@@ -480,7 +499,7 @@ class CreateKnownPluginProposal extends FormModalBase<IProps, IState, IFormValue
 
                   <div className={css.createProposalActions}>
                     <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.sendFormValuesToClipboard}>
+                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService.sendFormValuesToClipboard}>
                         <img src="/assets/images/Icon/share-blue.svg" />
                       </button>
                     </TrainingTooltip>
@@ -489,7 +508,7 @@ class CreateKnownPluginProposal extends FormModalBase<IProps, IState, IFormValue
                     </button>
 
                     <ResetFormButton
-                      resetToDefaults={this.resetToDefaults(resetForm)}
+                      resetToDefaults={this.formModalService.resetToDefaults(resetForm)}
                       isSubmitting={isSubmitting}
                     ></ResetFormButton>
 

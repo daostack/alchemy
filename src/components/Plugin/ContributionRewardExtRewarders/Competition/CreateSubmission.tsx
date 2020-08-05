@@ -20,7 +20,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 import HelpButton from "components/Shared/HelpButton";
-import { FormModalBase } from "components/Shared/FormModalBase";
+import { IFormModalService, CreateFormModalService } from "components/Shared/FormModalService";
 import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 interface IExternalProps {
@@ -49,12 +49,28 @@ const defaultValues: IFormValues = Object.freeze({
   tags: [],
 });
 
-class CreateSubmission extends FormModalBase<IProps, IStateProps, IFormValues> {
+class CreateSubmission extends React.Component<IProps, IStateProps> {
 
-  get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
-    super(props, "CreateCompetitionSubmission", defaultValues, props.showNotification);
+    super(props);
+    this.state = { tags: [] };
+    this.formModalService = CreateFormModalService(
+      "CreateCompetitionSubmission",
+      defaultValues,
+      () => Object.assign(this.currentFormValues, this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) { this.state = { tags: formValues.tags }; }
+        else { this.setState({ tags: formValues.tags }); }
+      },
+      this.props.showNotification);
+  }
+
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
   }
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any): Promise<void> => {
@@ -201,7 +217,7 @@ class CreateSubmission extends FormModalBase<IProps, IStateProps, IFormValues> {
                   // eslint-disable-next-line react/jsx-no-bind
                   onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                   // eslint-disable-next-line react/jsx-no-bind
-                  onChange={(newValue) => { this.currentFormValues.beneficiary=newValue; setFieldValue("beneficiary", newValue); }}
+                  onChange={(newValue) => { this.currentFormValues.beneficiary = newValue; setFieldValue("beneficiary", newValue); }}
                   value={this.currentFormValues.beneficiary}
                   placeholder={this.props.currentAccountAddress}
                 />
@@ -209,7 +225,7 @@ class CreateSubmission extends FormModalBase<IProps, IStateProps, IFormValues> {
 
               <div className={css.createProposalActions}>
                 <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.sendFormValuesToClipboard}>
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService.sendFormValuesToClipboard}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
                 </TrainingTooltip>
@@ -218,7 +234,7 @@ class CreateSubmission extends FormModalBase<IProps, IStateProps, IFormValues> {
                 </button>
 
                 <ResetFormButton
-                  resetToDefaults={this.resetToDefaults(resetForm)}
+                  resetToDefaults={this.formModalService.resetToDefaults(resetForm)}
                   isSubmitting={isSubmitting}
                 ></ResetFormButton>
 

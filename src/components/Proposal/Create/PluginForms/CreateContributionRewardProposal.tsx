@@ -15,7 +15,7 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
-import { FormModalBase } from "../../../Shared/FormModalBase";
+import { IFormModalService, CreateFormModalService } from "../../../Shared/FormModalService";
 import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 const Select = React.lazy(() => import("react-select"));
@@ -91,7 +91,7 @@ export const SelectField: React.SFC<any> = ({options, field, form }) => (
   </React.Suspense>
 );
 
-const setInitialFormValues = () => {
+const setInitialFormValues = (): IFormValues => {
   return Object.freeze({
     beneficiary: "",
     description: "",
@@ -106,12 +106,28 @@ const setInitialFormValues = () => {
   });
 };
 
-class CreateContributionReward extends FormModalBase<IProps, IStateProps, IFormValues> {
+class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
-  get valuesToPersist() { return Object.assign(this.currentFormValues, this.state); }
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
-    super(props, "CreateContributionRewardProposal", setInitialFormValues(), props.showNotification);
+    super(props);
+    this.state = { tags: [] };
+    this.formModalService = CreateFormModalService(
+      "CreateContributionRewardProposal",
+      setInitialFormValues(),
+      () => Object.assign(this.currentFormValues, this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) { this.state = { tags: formValues.tags }; }
+        else { this.setState({ tags: formValues.tags }); }
+      },
+      this.props.showNotification);
+  }
+
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
   }
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
@@ -400,7 +416,7 @@ class CreateContributionReward extends FormModalBase<IProps, IStateProps, IFormV
               </div>
               <div className={css.createProposalActions}>
                 <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.sendFormValuesToClipboard}>
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService.sendFormValuesToClipboard}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
                 </TrainingTooltip>
@@ -409,7 +425,7 @@ class CreateContributionReward extends FormModalBase<IProps, IStateProps, IFormV
                 </button>
 
                 <ResetFormButton
-                  resetToDefaults={this.resetToDefaults(resetForm)}
+                  resetToDefaults={this.formModalService.resetToDefaults(resetForm)}
                   isSubmitting={isSubmitting}
                 ></ResetFormButton>
 

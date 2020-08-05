@@ -41,7 +41,7 @@ export function importUrlValues<TValues>(defaultValues: TValues): TValues {
   return initialFormValues;
 }
 
-export const exportUrl = (values: unknown): void => {
+export const exportUrl = (values: { [key: string]: any }): void => {
   const setQueryString = (key: keyof typeof values): string => {
     if (values[key] === undefined) {
       return "";
@@ -66,7 +66,7 @@ export const exportUrl = (values: unknown): void => {
 
 function formValuesKey(name: string): string { return `formValues_${name}`; }
 
-export function saveModalFormEntries(name: string, values: Record<string, unknown>): void {
+export function saveModalFormEntries(name: string, values: { [key: string]: any }): void {
   try {
     const json = JSON.stringify(values);
     sessionStorage.setItem(formValuesKey(name), json);
@@ -75,7 +75,7 @@ export function saveModalFormEntries(name: string, values: Record<string, unknow
   catch {}
 }
 
-export function restoreModalFormEntries(name: string): Record<string, unknown> {
+export function restoreModalFormEntries(name: string): { [key: string]: any } {
   const valuesString = sessionStorage.getItem(formValuesKey(name));
   if (valuesString) {
     sessionStorage.removeItem(formValuesKey(name));

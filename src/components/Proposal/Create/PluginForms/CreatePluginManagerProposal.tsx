@@ -10,7 +10,7 @@ import { createProposal } from "actions/arcActions";
 import { showNotification } from "reducers/notifications";
 import Analytics from "lib/analytics";
 import { isValidUrl } from "lib/util";
-import { GetPluginIsActiveActions, getPluginIsActive, REQUIRED_PLUGIN_PERMISSIONS, pluginNameAndAddress, PLUGIN_NAMES } from "lib/pluginUtils";
+import { GetPluginIsActiveActions, getPluginIsActive, pluginNameAndAddress, PLUGIN_NAMES } from "lib/pluginUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
 import { IPluginState, AnyPlugin, IProposalCreateOptionsPM, LATEST_ARC_VERSION } from "@daostack/arc.js";
@@ -22,7 +22,7 @@ import { PluginInitializeFields } from "./PluginInitializeFields";
 import * as moment from "moment";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
-import { FormModalBase } from "components/Shared/FormModalBase";
+import { IFormModalService, CreateFormModalService } from "components/Shared/FormModalService";
 import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 interface IExternalProps {
@@ -144,7 +144,6 @@ export interface IFormValues {
 interface IState {
   currentTab: ITab;
   tags: Array<string>;
-  requiredPermissions: number;
 }
 
 const votingParams: IGenesisProtocolFormValues = {
@@ -265,33 +264,42 @@ const defaultValues: IFormValues = {
   },
 };
 
-class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormValues> {
+class CreatePluginManagerProposal extends React.Component<IProps, IState> {
 
-  get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
-    super(props, "CreatePluginManagerProposal", defaultValues, props.showNotification);
+    super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
 
     this.state = {
-      ...this.state, // get contribution of super class
-      currentTab: this.currentFormValues.currentTab,
-      requiredPermissions: 0,
+      currentTab: defaultValues.currentTab,
+      tags: [],
     };
+    this.formModalService = CreateFormModalService(
+      "CreatePluginManagerProposal",
+      defaultValues,
+      () => Object.assign(this.currentFormValues, this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) {
+          Object.assign(this.state, {
+            currentTab: formValues.currentTab,
+            tags: formValues.tags,
+          });
+        }
+        else { this.setState({ tags: formValues.tags }); }
+      },
+      this.props.showNotification);
   }
 
-  public handleChangePlugin = (e: any) => {
-    const arc = getArc();
-    try {
-      // If we know about this contract then require the minimum permissions for it
-      const contractInfo = arc.getContractInfoByName(e.target.value, LATEST_ARC_VERSION);
-      this.setState({ requiredPermissions: REQUIRED_PLUGIN_PERMISSIONS[contractInfo.name] });
-      /* eslint-disable-next-line no-empty */
-    } catch (e) {}
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const packageVersion = [0, 1, Number(LATEST_ARC_VERSION.split(".").slice(-1)[0])];
@@ -437,12 +445,7 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormVal
   }
 
   private onTagsChange = (tags: any[]): void => {
-    this.setState({tags});
-  }
-
-  protected resetToDefaultsX = (resetForm: (newProps?: any) => void) => () => {
-    this.resetToDefaults(resetForm)();
-    this.setState({ requiredPermissions: 0 });
+    this.setState({ tags });
   }
 
   public render(): RenderOutput {
@@ -476,24 +479,24 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormVal
     return (
       <div className={css.containerWithSidebar}>
         <div className={css.sidebar}>
-          { isAddActive ?
+          {isAddActive ?
             <button className={addPluginButtonClass} onClick={this.handleTabClick("addPlugin")} data-test-id="tab-AddPlugin">
               <span></span>
               Add Plugin
             </button>
-            : "" }
-          { isRemoveActive ?
+            : ""}
+          {isRemoveActive ?
             <button className={removePluginButtonClass} onClick={this.handleTabClick("removePlugin")} data-test-id="tab-RemovePlugin">
               <span></span>
             Remove Plugin
             </button>
-            : "" }
-          { isReplaceActive ?
+            : ""}
+          {isReplaceActive ?
             <button className={replacePluginButtonClass} onClick={this.handleTabClick("replacePlugin")} data-test-id="tab-ReplacePlugin">
               <span></span>
             Replace Plugin
             </button>
-            : "" }
+            : ""}
         </div>
 
         <div className={pluginManagerFormClass}>
@@ -548,7 +551,7 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormVal
               return (
                 <Form noValidate>
                   <label className={css.description}>What to Expect</label>
-                  { (currentTab === "addPlugin") ?
+                  {(currentTab === "addPlugin") ?
                     <div className={css.description}>Propose to add a new plugin to the DAO.</div> :
                     (currentTab === "removePlugin") ?
                       <div className={css.description}>Propose to remove a plugin from the DAO.</div> :
@@ -593,7 +596,7 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormVal
 
                   <TrainingTooltip overlay={i18next.t("Tags Tooltip")} placement="right">
                     <label className={css.tagSelectorLabel}>
-                    Tags
+                      Tags
                     </label>
                   </TrainingTooltip>
 
@@ -603,7 +606,7 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormVal
 
                   <TrainingTooltip overlay={i18next.t("URL Tooltip")} placement="right">
                     <label htmlFor="urlInput">
-                    URL
+                      URL
                       <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     </label>
                   </TrainingTooltip>
@@ -653,7 +656,6 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormVal
                         onChange={(e: any) => {
                           // call the built-in handleChange
                           handleChange(e);
-                          this.handleChangePlugin(e);
                         }}
                       >
                         <option value="">Select a plugin...</option>
@@ -663,12 +665,12 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormVal
                       </Field>
                     </div>
 
-                    <PluginInitializeFields pluginName={values.pluginToAdd} values={values}/>
+                    <PluginInitializeFields pluginName={values.pluginToAdd} values={values} />
                   </div>
 
                   <div className={css.createProposalActions}>
                     <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.sendFormValuesToClipboard}>
+                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService.sendFormValuesToClipboard}>
                         <img src="/assets/images/Icon/share-blue.svg" />
                       </button>
                     </TrainingTooltip>
@@ -677,13 +679,13 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormVal
                     </button>
 
                     <ResetFormButton
-                      resetToDefaults={this.resetToDefaultsX(resetForm)}
+                      resetToDefaults={this.formModalService.resetToDefaults(resetForm)}
                       isSubmitting={isSubmitting}
                     ></ResetFormButton>
 
                     <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                       <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                      Submit proposal
+                        Submit proposal
                       </button>
                     </TrainingTooltip>
                   </div>
@@ -699,7 +701,7 @@ class CreatePluginManagerProposal extends FormModalBase<IProps, IState, IFormVal
 
 const SubscribedCreatePluginManagerProposal = withSubscription({
   wrappedComponent: CreatePluginManagerProposal,
-  loadingComponent: <Loading/>,
+  loadingComponent: <Loading />,
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {

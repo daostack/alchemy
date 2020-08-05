@@ -20,7 +20,7 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
-import { FormModalBase } from "components/Shared/FormModalBase";
+import { IFormModalService, CreateFormModalService } from "components/Shared/FormModalService";
 import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 interface IExternalProps {
@@ -87,20 +87,39 @@ const defaultValues: IFormValues = Object.freeze({
   tags: [],
 });
 
-class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState, IFormValues> {
+class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
 
-  get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
-    super(props, "CreatePluginRegistrarProposal", defaultValues, props.showNotification);
+    super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.state = {
-      ...this.state,
-      currentTab: this.currentFormValues.currentTab,
+      currentTab: defaultValues.currentTab,
       requiredPermissions: 0,
       showForm: false,
+      tags: [],
     };
+    this.formModalService = CreateFormModalService(
+      "CreatePluginRegistrarProposal",
+      defaultValues,
+      () => Object.assign(this.currentFormValues, this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) { Object.assign(this.state, {
+          currentTab: formValues.currentTab,
+          requiredPermissions: formValues.requiredPermissions,
+          tags: formValues.tags,
+        }); }
+        else { this.setState({ tags: formValues.tags, requiredPermissions: formValues.requiredPermissions }); }
+      },
+      this.props.showNotification);
+  }
+
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
   }
 
   public handleChangePlugin = (e: any) => {
@@ -174,11 +193,6 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState, IFormV
     this.setState({ showForm: !this.state.showForm });
   }
 
-  protected resetToDefaultsX = (resetForm: (newProps?: any) => void) => () => {
-    this.resetToDefaults(resetForm)();
-    this.setState({ requiredPermissions: 0 });
-  }
-
   public render(): RenderOutput {
     // "plugins" are the plugins registered in this DAO
     const plugins = this.props.data;
@@ -210,13 +224,13 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState, IFormV
     return (
       <div className={css.containerWithSidebar}>
         <div className={css.sidebar}>
-          { isAddActive ?
+          {isAddActive ?
             <button className={addPluginButtonClass} onClick={this.handleTabClick("addPlugin")} data-test-id="tab-AddPlugin">
               <span></span>
               Add Plugin
             </button>
-            : "" }
-          { isRemoveActive ?
+            : ""}
+          {isRemoveActive ?
             <button className={removePluginButtonClass} onClick={this.handleTabClick("removePlugin")} data-test-id="tab-RemovePlugin">
               <span></span>
             Remove Plugin
@@ -325,7 +339,7 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState, IFormV
                       <div className={css.description}>Create a proposal to add a new plugin to the DAO.</div> :
                       <div className={css.description}>Create a proposal to remove a plugin from the DAO.</div>
                     }
-                    <TrainingTooltip overlay={i18next.t("Title Tooltip")}placement="right">
+                    <TrainingTooltip overlay={i18next.t("Title Tooltip")} placement="right">
                       <label htmlFor="titleInput">
                         <div className={css.requiredMarker}>*</div>
                       Title
@@ -494,7 +508,7 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState, IFormV
 
                     <div className={css.createProposalActions}>
                       <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                        <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.sendFormValuesToClipboard}>
+                        <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService.sendFormValuesToClipboard}>
                           <img src="/assets/images/Icon/share-blue.svg" />
                         </button>
                       </TrainingTooltip>
@@ -503,7 +517,7 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState, IFormV
                       </button>
 
                       <ResetFormButton
-                        resetToDefaults={this.resetToDefaultsX(resetForm)}
+                        resetToDefaults={this.formModalService.resetToDefaults(resetForm)}
                         isSubmitting={isSubmitting}
                       ></ResetFormButton>
 
@@ -526,7 +540,7 @@ class CreatePluginRegistrarProposal extends FormModalBase<IProps, IState, IFormV
 
 const SubscribedCreatePluginRegistrarProposal = withSubscription({
   wrappedComponent: CreatePluginRegistrarProposal,
-  loadingComponent: <Loading/>,
+  loadingComponent: <Loading />,
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {

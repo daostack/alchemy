@@ -13,7 +13,7 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
-import { FormModalBase } from "components/Shared/FormModalBase";
+import { IFormModalService, CreateFormModalService } from "components/Shared/FormModalService";
 import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 interface IExternalProps {
@@ -56,20 +56,37 @@ const defaultValues: IFormValues = Object.freeze({
   tags: [],
 });
 
-class CreateGenericPlugin extends FormModalBase<IProps, IStateProps, IFormValues> {
+class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
 
-  get valuesToPersist() { return { ...this.currentFormValues, ...this.state }; }
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
-    super(props, "CreateGenericPlugin", defaultValues, props.showNotification);
+    super(props);
+    this.state = { tags: [] };
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.formModalService = CreateFormModalService(
+      "CreateGenericPlugin",
+      defaultValues,
+      () => Object.assign(this.currentFormValues, this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) { this.state = { tags: formValues.tags }; }
+        else { this.setState({ tags: formValues.tags }); }
+      },
+      this.props.showNotification);
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
+  }
+
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    const proposalValues = {...values,
+    const proposalValues = {
+      ...values,
       dao: this.props.daoAvatarAddress,
       plugin: this.props.pluginState.address,
       tags: this.state.tags,
@@ -89,7 +106,7 @@ class CreateGenericPlugin extends FormModalBase<IProps, IStateProps, IFormValues
   }
 
   private onTagsChange = (tags: any[]): void => {
-    this.setState({tags});
+    this.setState({ tags });
   }
 
   public render(): RenderOutput {
@@ -198,7 +215,7 @@ class CreateGenericPlugin extends FormModalBase<IProps, IStateProps, IFormValues
 
               <TrainingTooltip overlay={i18next.t("Tags Tooltip")} placement="right">
                 <label className={css.tagSelectorLabel}>
-                Tags
+                  Tags
                 </label>
               </TrainingTooltip>
 
@@ -208,7 +225,7 @@ class CreateGenericPlugin extends FormModalBase<IProps, IStateProps, IFormValues
 
               <TrainingTooltip overlay={i18next.t("URL Tooltip")} placement="right">
                 <label htmlFor="urlInput">
-                URL
+                  URL
                   <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>
@@ -257,7 +274,7 @@ class CreateGenericPlugin extends FormModalBase<IProps, IStateProps, IFormValues
 
               <div className={css.createProposalActions}>
                 <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.sendFormValuesToClipboard}>
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService?.sendFormValuesToClipboard}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
                 </TrainingTooltip>
@@ -266,13 +283,13 @@ class CreateGenericPlugin extends FormModalBase<IProps, IStateProps, IFormValues
                 </button>
 
                 <ResetFormButton
-                  resetToDefaults={this.resetToDefaults(resetForm)}
+                  resetToDefaults={this.formModalService?.resetToDefaults(resetForm)}
                   isSubmitting={isSubmitting}
                 ></ResetFormButton>
 
                 <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                  Submit proposal
+                    Submit proposal
                   </button>
                 </TrainingTooltip>
               </div>
