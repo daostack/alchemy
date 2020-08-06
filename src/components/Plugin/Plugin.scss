@@ -64,6 +64,8 @@
     .editPlugin,
     .createProposal {
       align-self: center;
+      display: flex;
+      align-items: center;
 
       a {
         padding: 8px 15px;
@@ -77,13 +79,17 @@
         &:hover {
           opacity: 0.8;
         }
-
-        .disabled,
-        .disabled:hover {
-          background-color: $disabled-button-background-color;
-          border: $disabled-button-border;
-          cursor: not-allowed;
-        }
+      }
+      .disabled,
+      .disabled:hover {
+        background-color: $disabled-button-color;
+        border: $disabled-button-border;
+        cursor: not-allowed;
+      }
+      .activationTime {
+        font-size: $caption;
+        color: $gray-3;
+        margin-right: 10px;
       }
     }
   }
