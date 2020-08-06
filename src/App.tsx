@@ -1,3 +1,4 @@
+import "symbol-observable";
 import { initializeArc } from "arc";
 import Loading from "components/Shared/Loading";
 import AppContainer from "layouts/AppContainer";

@@ -16,12 +16,12 @@ export default class TradeString extends React.Component<IProps, null> {
     let receiveToken;
     let sendToken;
 
-    if (proposalState.sendTokenAddress && proposalState.sendTokenAmount && proposalState.sendTokenAmount > 0) {
+    if (proposalState.sendTokenAddress && proposalState.sendTokenAmount && proposalState.sendTokenAmount.gt(new BN(0))) {
       const tokenData = tokenDetails(proposalState.sendTokenAddress);
       sendToken = formatTokens(new BN(proposalState.sendTokenAmount), tokenData ? tokenData["symbol"] : "?", tokenData ? tokenData["decimals"] : 18);
     }
 
-    if (proposalState.receiveTokenAddress && proposalState.receiveTokenAmount && proposalState.receiveTokenAmount > 0) {
+    if (proposalState.receiveTokenAddress && proposalState.receiveTokenAmount && proposalState.receiveTokenAmount.gt(new BN(0))) {
       const tokenData = tokenDetails(proposalState.receiveTokenAddress);
       receiveToken = formatTokens(new BN(proposalState.receiveTokenAmount), tokenData ? tokenData["symbol"] : "?", tokenData ? tokenData["decimals"] : 18);
     }

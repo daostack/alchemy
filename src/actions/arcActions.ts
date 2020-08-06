@@ -10,6 +10,7 @@ import {
   FundingRequestProposal,
   JoinAndQuitProposal,
   IProposalState,
+  TokenTradeProposal,
 } from "@daostack/arc.js";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
@@ -90,6 +91,9 @@ async function tryRedeemProposal(proposalId: string, accountAddress: string, obs
       break;
     case "JoinAndQuit":
       await (proposal as JoinAndQuitProposal).redeem().subscribe(...observer);
+      break;
+    case "TokenTrade":
+      await (proposal as TokenTradeProposal).redeem().subscribe(...observer);
       break;
     default:
       break;

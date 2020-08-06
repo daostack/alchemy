@@ -6,14 +6,12 @@ import { enableWalletProvider } from "arc";
 
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 
-import { GenericPluginInfo } from "genericPluginRegistry";
-
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as arcActions from "actions/arcActions";
 
 import Analytics from "lib/analytics";
-import { isValidUrl, supportedTokens } from "lib/util";
+import { isValidUrl, supportedTokens, toWei } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
@@ -22,8 +20,6 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import { SelectField } from "./CreateContributionRewardProposal";
-
-const BN = require("bn.js");
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -98,9 +94,9 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
       plugin: this.props.pluginState.address,
       url: values.url,
       sendTokenAddress: values.sendTokenAddress,
-      sendTokenAmount: new BN(values.sendTokenAmount),
+      sendTokenAmount: toWei(values.sendTokenAmount),
       receiveTokenAddress: values.receiveTokenAddress,
-      receiveTokenAmount: new BN(values.receiveTokenAmount),
+      receiveTokenAmount: toWei(values.receiveTokenAmount),
     };
 
     setSubmitting(false);
