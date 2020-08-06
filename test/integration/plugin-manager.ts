@@ -1,6 +1,6 @@
 import { first } from "rxjs/operators";
 import { DAO, Arc } from "@daostack/arc.js";
-import { getArc, gotoDaoPlugins, submit, hideCookieAcceptWindow } from "./utils";
+import { getArc, gotoDaoPlugins, submit, hideCookieAcceptWindow, deleteCachedFormValues } from "./utils";
 
 describe("Plugin Manager", () => {
   let dao: DAO;
@@ -18,6 +18,7 @@ describe("Plugin Manager", () => {
     dao = new DAO(arc, contributionRewardExtState.dao.id);
     await gotoDaoPlugins(dao.id);
     await hideCookieAcceptWindow();
+    await deleteCachedFormValues("CreatePluginManagerProposal");
   });
 
   it("Add Plugin", async () => {

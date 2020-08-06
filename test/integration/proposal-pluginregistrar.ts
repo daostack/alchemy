@@ -1,5 +1,5 @@
 import * as uuid from "uuid";
-import { getTestAddresses, hideCookieAcceptWindow, ITestAddresses, gotoDaoPlugins } from "./utils";
+import { getTestAddresses, hideCookieAcceptWindow, ITestAddresses, gotoDaoPlugins, deleteCachedFormValues } from "./utils";
 
 describe("PluginRegistrar Proposals", () => {
   let daoAddress: string;
@@ -14,6 +14,7 @@ describe("PluginRegistrar Proposals", () => {
     await gotoDaoPlugins(daoAddress);
 
     const pluginCard = await $("[data-test-id=\"pluginCard-SchemeRegistrar\"]");
+    await pluginCard.waitForExist();
     await pluginCard.click();
 
     await hideCookieAcceptWindow();
@@ -58,7 +59,10 @@ describe("PluginRegistrar Proposals", () => {
     await gotoDaoPlugins(daoAddress);
 
     const pluginCard = await $("[data-test-id=\"pluginCard-SchemeRegistrar\"]");
+    await pluginCard.waitForExist();
     await pluginCard.click();
+
+    await deleteCachedFormValues("CreatePluginRegistrarProposal");
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();

@@ -5,15 +5,16 @@ import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { showNotification } from "reducers/notifications";
 import { baseTokenName, isValidUrl } from "lib/util";
-import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
+import { IFormModalService, CreateFormModalService } from "components/Shared/FormModalService";
+import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -46,31 +47,46 @@ interface IFormValues {
   [key: string]: any;
 }
 
+const defaultValues: IFormValues = Object.freeze({
+  description: "",
+  callData: "",
+  title: "",
+  url: "",
+  value: 0,
+  tags: [],
+});
+
 class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
 
-  initialFormValues: IFormValues;
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
     super(props);
+    this.state = { tags: [] };
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.initialFormValues = importUrlValues<IFormValues>({
-      description: "",
-      callData: "",
-      title: "",
-      url: "",
-      value: 0,
-      tags: [],
-    });
-    this.state = {
-      tags: this.initialFormValues.tags,
-    };
+    this.formModalService = CreateFormModalService(
+      "CreateGenericPlugin",
+      defaultValues,
+      () => Object.assign(this.currentFormValues, this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) { this.state = { tags: formValues.tags }; }
+        else { this.setState({ tags: formValues.tags }); }
+      },
+      this.props.showNotification);
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
+  }
+
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    const proposalValues = {...values,
+    const proposalValues = {
+      ...values,
       dao: this.props.daoAvatarAddress,
       plugin: this.props.pluginState.address,
       tags: this.state.tags,
@@ -89,14 +105,8 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
     this.props.handleClose();
   }
 
-  // Exports data from form to a shareable url.
-  public exportFormValues(values: IFormValues) {
-    exportUrl({ ...values, ...this.state });
-    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
-  }
-
   private onTagsChange = (tags: any[]): void => {
-    this.setState({tags});
+    this.setState({ tags });
   }
 
   public render(): RenderOutput {
@@ -106,10 +116,12 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
       <div className={css.containerNoSidebar}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={this.initialFormValues}
+          initialValues={this.currentFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
+
+            this.currentFormValues = values;
 
             const require = (name: string) => {
               if (!(values as any)[name]) {
@@ -159,10 +171,10 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             handleSubmit,
             isSubmitting,
+            resetForm,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             setFieldTouched,
             setFieldValue,
-            values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <TrainingTooltip overlay={i18next.t("Title Tooltip")} placement="right">
@@ -203,7 +215,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
 
               <TrainingTooltip overlay={i18next.t("Tags Tooltip")} placement="right">
                 <label className={css.tagSelectorLabel}>
-                Tags
+                  Tags
                 </label>
               </TrainingTooltip>
 
@@ -213,7 +225,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
 
               <TrainingTooltip overlay={i18next.t("URL Tooltip")} placement="right">
                 <label htmlFor="urlInput">
-                URL
+                  URL
                   <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>
@@ -262,17 +274,22 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
 
               <div className={css.createProposalActions}>
                 <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                  {/* eslint-disable-next-line react/jsx-no-bind */}
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService?.sendFormValuesToClipboard}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
                 </TrainingTooltip>
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
                 </button>
+
+                <ResetFormButton
+                  resetToDefaults={this.formModalService?.resetFormToDefaults(resetForm)}
+                  isSubmitting={isSubmitting}
+                ></ResetFormButton>
+
                 <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                  Submit proposal
+                    Submit proposal
                   </button>
                 </TrainingTooltip>
               </div>

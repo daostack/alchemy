@@ -7,11 +7,10 @@ import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 
 import { createProposal } from "actions/arcActions";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { showNotification } from "reducers/notifications";
 import Analytics from "lib/analytics";
 import { isValidUrl, isAddress } from "lib/util";
 import { GetPluginIsActiveActions, getPluginIsActive, REQUIRED_PLUGIN_PERMISSIONS, pluginNameAndAddress, PluginPermissions } from "lib/pluginUtils";
-import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
 import { ProposalName, IPluginState, AnyPlugin } from "@daostack/arc.js";
@@ -21,6 +20,8 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
+import { IFormModalService, CreateFormModalService } from "components/Shared/FormModalService";
+import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -67,37 +68,58 @@ interface IState {
   tags: Array<string>;
 }
 
+
+const defaultValues: IFormValues = Object.freeze({
+  description: "",
+  otherPlugin: "",
+  pluginToAdd: "",
+  pluginToRemove: "",
+  parametersHash: "",
+  permissions: {
+    registerPlugins: false,
+    changeConstraints: false,
+    upgradeController: false,
+    genericCall: false,
+  },
+  title: "",
+  url: "",
+  currentTab: "addPlugin",
+  tags: [],
+});
+
 class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
 
-  initialFormValues: IFormValues;
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.initialFormValues = importUrlValues<IFormValues>({
-      description: "",
-      otherPlugin: "",
-      pluginToAdd: "",
-      pluginToRemove: "",
-      parametersHash: "",
-      permissions: {
-        registerPlugins: false,
-        changeConstraints: false,
-        upgradeController: false,
-        genericCall: false,
-      },
-      title: "",
-      url: "",
-      currentTab: "addPlugin",
-      tags: [],
-    });
     this.state = {
-      currentTab: this.initialFormValues.currentTab,
+      currentTab: defaultValues.currentTab,
       requiredPermissions: 0,
       showForm: false,
-      tags: this.initialFormValues.tags,
+      tags: [],
     };
+    this.formModalService = CreateFormModalService(
+      "CreatePluginRegistrarProposal",
+      defaultValues,
+      () => Object.assign(this.currentFormValues, this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) { Object.assign(this.state, {
+          currentTab: formValues.currentTab,
+          requiredPermissions: formValues.requiredPermissions,
+          tags: formValues.tags,
+        }); }
+        else { this.setState({ tags: formValues.tags, requiredPermissions: formValues.requiredPermissions }); }
+      },
+      this.props.showNotification);
+  }
+
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
   }
 
   public handleChangePlugin = (e: any) => {
@@ -171,15 +193,6 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
     this.setState({ showForm: !this.state.showForm });
   }
 
-  public exportFormValues(values: IFormValues) {
-    values = {
-      ...values,
-      ...this.state,
-    };
-    exportUrl(values);
-    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
-  }
-
   public render(): RenderOutput {
     // "plugins" are the plugins registered in this DAO
     const plugins = this.props.data;
@@ -211,13 +224,13 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
     return (
       <div className={css.containerWithSidebar}>
         <div className={css.sidebar}>
-          { isAddActive ?
+          {isAddActive ?
             <button className={addPluginButtonClass} onClick={this.handleTabClick("addPlugin")} data-test-id="tab-AddPlugin">
               <span></span>
               Add Plugin
             </button>
-            : "" }
-          { isRemoveActive ?
+            : ""}
+          {isRemoveActive ?
             <button className={removePluginButtonClass} onClick={this.handleTabClick("removePlugin")} data-test-id="tab-RemovePlugin">
               <span></span>
             Remove Plugin
@@ -266,9 +279,12 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
           <div className={formContentClass}>
             <Formik
               // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-              initialValues={this.initialFormValues}
+              initialValues={this.currentFormValues}
               // eslint-disable-next-line react/jsx-no-bind
               validate={(values: IFormValues) => {
+
+                this.currentFormValues = values;
+
                 const errors: any = {};
 
                 const require = (name: string) => {
@@ -311,6 +327,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                 errors,
                 touched,
                 handleChange,
+                resetForm,
                 isSubmitting,
                 setFieldValue,
                 values,
@@ -322,7 +339,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                       <div className={css.description}>Create a proposal to add a new plugin to the DAO.</div> :
                       <div className={css.description}>Create a proposal to remove a plugin from the DAO.</div>
                     }
-                    <TrainingTooltip overlay={i18next.t("Title Tooltip")}placement="right">
+                    <TrainingTooltip overlay={i18next.t("Title Tooltip")} placement="right">
                       <label htmlFor="titleInput">
                         <div className={css.requiredMarker}>*</div>
                       Title
@@ -490,15 +507,20 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
                     </div>
 
                     <div className={css.createProposalActions}>
-                      <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")}placement="top">
-                        {/* eslint-disable-next-line react/jsx-no-bind */}
-                        <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                      <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
+                        <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService.sendFormValuesToClipboard}>
                           <img src="/assets/images/Icon/share-blue.svg" />
                         </button>
                       </TrainingTooltip>
                       <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                         Cancel
                       </button>
+
+                      <ResetFormButton
+                        resetToDefaults={this.formModalService.resetFormToDefaults(resetForm)}
+                        isSubmitting={isSubmitting}
+                      ></ResetFormButton>
+
                       <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                         <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                           Submit proposal
@@ -518,7 +540,7 @@ class CreatePluginRegistrarProposal extends React.Component<IProps, IState> {
 
 const SubscribedCreatePluginRegistrarProposal = withSubscription({
   wrappedComponent: CreatePluginRegistrarProposal,
-  loadingComponent: <Loading/>,
+  loadingComponent: <Loading />,
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {

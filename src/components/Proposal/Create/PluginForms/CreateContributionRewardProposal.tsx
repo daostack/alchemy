@@ -10,12 +10,13 @@ import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Analytics from "lib/analytics";
 import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress } from "lib/util";
-import { showNotification, NotificationStatus } from "reducers/notifications";
-import { exportUrl, importUrlValues } from "lib/proposalUtils";
+import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
+import { IFormModalService, CreateFormModalService } from "../../../Shared/FormModalService";
+import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 const Select = React.lazy(() => import("react-select"));
 
@@ -52,6 +53,10 @@ interface IFormValues {
   reputationReward: number;
   title: string;
   url: string;
+  /**
+   * not actually used by Formik
+   */
+  tags: Array<string>;
 
   [key: string]: any;
 }
@@ -86,27 +91,43 @@ export const SelectField: React.SFC<any> = ({options, field, form }) => (
   </React.Suspense>
 );
 
+const setInitialFormValues = (): IFormValues => {
+  return Object.freeze({
+    beneficiary: "",
+    description: "",
+    ethReward: 0,
+    externalTokenAddress: getArc().GENToken().address,
+    externalTokenReward: 0,
+    nativeTokenReward: 0,
+    reputationReward: 0,
+    title: "",
+    url: "",
+    tags: new Array<string>(),
+  });
+};
+
 class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
-  initialFormValues: IFormValues;
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
     super(props);
-    this.initialFormValues = importUrlValues<IFormValues>({
-      beneficiary: "",
-      description: "",
-      ethReward: 0,
-      externalTokenAddress: getArc().GENToken().address,
-      externalTokenReward: 0,
-      nativeTokenReward: 0,
-      reputationReward: 0,
-      title: "",
-      url: "",
-      tags: [],
-    });
-    this.state = {
-      tags: this.initialFormValues.tags,
-    };
+    this.state = { tags: [] };
+    this.formModalService = CreateFormModalService(
+      "CreateContributionRewardProposal",
+      setInitialFormValues(),
+      () => Object.assign(this.currentFormValues, this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) { this.state = { tags: formValues.tags }; }
+        else { this.setState({ tags: formValues.tags }); }
+      },
+      this.props.showNotification);
+  }
+
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
   }
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
@@ -157,18 +178,12 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     this.props.handleClose();
   }
 
-  // Exports data from form to a shareable url.
-  public exportFormValues(values: IFormValues) {
-    exportUrl({ ...values, ...this.state });
-    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
-  }
-
   private onTagsChange = () => (tags: string[]): void => {
     this.setState({ tags });
   }
 
   public render(): RenderOutput {
-    const { data, daoAvatarAddress, handleClose } = this.props;
+    const { data, daoAvatarAddress } = this.props;
 
     if (!data) {
       return null;
@@ -179,9 +194,12 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       <div className={css.containerNoSidebar}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={this.initialFormValues}
+          initialValues={this.currentFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
+
+            this.currentFormValues = values;
+
             const errors: any = {};
 
             const require = (name: string): void => {
@@ -229,7 +247,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
             isSubmitting,
             setFieldTouched,
             setFieldValue,
-            values,
+            resetForm,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <div className={css.description}>This proposal can send eth / erc20 token, mint new DAO tokens ({dao.tokenSymbol}) and mint / slash reputation in the DAO. Each proposal can have one of each of these actions. e.g. 100 rep for completing a project + 0.05 ETH for covering expenses.</div>
@@ -307,8 +325,8 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                   // eslint-disable-next-line react/jsx-no-bind
                   onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                   // eslint-disable-next-line react/jsx-no-bind
-                  onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                  defaultValue={this.initialFormValues.beneficiary}
+                  onChange={(newValue) => { this.currentFormValues.beneficiary = newValue; setFieldValue("beneficiary", newValue); }}
+                  value={this.currentFormValues.beneficiary}
                   placeholder={this.props.currentAccountAddress}
                 />
               </div>
@@ -398,14 +416,19 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               </div>
               <div className={css.createProposalActions}>
                 <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                  {/* eslint-disable-next-line react/jsx-no-bind */}
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService.sendFormValuesToClipboard}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
                 </TrainingTooltip>
-                <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
+                <button className={css.exitProposalCreation} type="button" onClick={this.props.handleClose}>
                   Cancel
                 </button>
+
+                <ResetFormButton
+                  resetToDefaults={this.formModalService.resetFormToDefaults(resetForm)}
+                  isSubmitting={isSubmitting}
+                ></ResetFormButton>
+
                 <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                     Submit proposal

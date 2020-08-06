@@ -656,3 +656,4 @@ export function safeMoment(dateSpecifier: moment.Moment | Date | number | string
       throw new Error(`safeMoment: unknown type: ${typeof dateSpecifier}`);
   }
 }
+

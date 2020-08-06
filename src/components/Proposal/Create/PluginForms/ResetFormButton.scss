@@ -1,0 +1,25 @@
+.resetFormButton {
+  height: 30px;
+  border: $secondary-button-border;
+  margin: 0 5px;
+  display: inline-block;
+  font-size: 13px;
+  padding: 0 25px 0 20px;
+  font-family: $body-font;
+  transition: all 0.25s ease;
+  background-color: $secondary-button-background-color;
+  border-radius: 15px;
+  color: $secondary-button-color;
+  padding-bottom: 5px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  img {
+    width: 18px;
+    margin-right: 6px;
+    position: relative;
+    top: 3px;
+  }
+}
