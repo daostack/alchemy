@@ -64,6 +64,8 @@
     .editPlugin,
     .createProposal {
       align-self: center;
+      display: flex;
+      align-items: center;
 
       a {
         padding: 8px 15px;
@@ -83,6 +85,11 @@
         background-color: $disabled-button-color;
         border: $disabled-button-border;
         cursor: not-allowed;
+      }
+      .activationTime {
+        font-size: $caption;
+        color: $gray-3;
+        margin-right: 10px;
       }
     }
   }

@@ -225,7 +225,8 @@ class PluginContainer extends React.Component<IProps, IState> {
                   </div>
                   :
                   <div className={css.createProposal}>
-                    <TrainingTooltip placement="topRight" overlay={isActive ? i18next.t("New Proposal Button Tooltip") : `${i18next.t("Plugin activation time")} ${formatFriendlyDateForLocalTimezone(moment.unix((pluginState as any).pluginParams.voteParams.activationTime))}`}>
+                    {!isActive && <div className={css.activationTime}>{i18next.t("Plugin activation time")} {formatFriendlyDateForLocalTimezone(moment.unix((pluginState as any).pluginParams.voteParams.activationTime))}</div>}
+                    <TrainingTooltip placement="topRight" overlay={i18next.t("New Proposal Button Tooltip")}>
                       <a className={
                         classNames({
                           [css.disabled]: !isActive,
