@@ -7,11 +7,10 @@ import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { convertDateToPosix } from "../../../../lib/util";
 import { createProposal } from "actions/arcActions";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { showNotification } from "reducers/notifications";
 import Analytics from "lib/analytics";
 import { isValidUrl } from "lib/util";
-import { GetPluginIsActiveActions, getPluginIsActive, REQUIRED_PLUGIN_PERMISSIONS, pluginNameAndAddress, PLUGIN_NAMES } from "lib/pluginUtils";
-import { exportUrl, importUrlValues } from "lib/proposalUtils";
+import { GetPluginIsActiveActions, getPluginIsActive, pluginNameAndAddress, PLUGIN_NAMES } from "lib/pluginUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
 import { IPluginState, AnyPlugin, IProposalCreateOptionsPM, LATEST_ARC_VERSION } from "@daostack/arc.js";
@@ -23,6 +22,8 @@ import { PluginInitializeFields } from "./PluginInitializeFields";
 import * as moment from "moment";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
+import { IFormModalService, CreateFormModalService } from "components/Shared/FormModalService";
+import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -143,153 +144,162 @@ export interface IFormValues {
 interface IState {
   currentTab: ITab;
   tags: Array<string>;
-  requiredPermissions: number;
 }
+
+const votingParams: IGenesisProtocolFormValues = {
+  queuedVoteRequiredPercentage: 50,
+  queuedVotePeriodLimit: 2592000,
+  boostedVotePeriodLimit: 345600,
+  preBoostedVotePeriodLimit: 86400,
+  thresholdConst: 1200,
+  quietEndingPeriod: 172800,
+  proposingRepReward: 50,
+  votersReputationLossRatio: 4,
+  minimumDaoBounty: 150,
+  daoBountyConst: 10,
+  activationTime: moment().add(1, "day").format("YYYY-MM-DDTHH:mm"), //default date for the next day
+  voteOnBehalf: "0x0000000000000000000000000000000000000000",
+  voteParamsHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+};
+
+const defaultValues: IFormValues = {
+  description: "",
+  pluginToAdd: "",
+  pluginToRemove: "",
+  title: "",
+  url: "",
+  currentTab: "addPlugin",
+  tags: [],
+  GenericScheme: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: true,
+    },
+    contractToCall: "",
+  },
+  ContributionReward: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+  },
+  Competition: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+  },
+  ContributionRewardExt: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+    rewarderName: "",
+  },
+  FundingRequest: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+    fundingToken: "0x0000000000000000000000000000000000000000",
+  },
+  JoinAndQuit: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+    fundingToken: "0x0000000000000000000000000000000000000000",
+    minFeeToJoin: 0,
+    memberReputation: 0,
+    fundingGoal: 0,
+    fundingGoalDeadline: 0,
+    rageQuitEnable: true,
+  },
+  SchemeRegistrar: {
+    votingParamsRegister: { ...votingParams },
+    votingParamsRemove: { ...votingParams },
+    permissions: {
+      registerPlugins: true,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+  },
+  SchemeFactory: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: true,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+  },
+  ReputationFromToken: {
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+    tokenContract: "0x0000000000000000000000000000000000000000",
+    curveInterface: "0x0000000000000000000000000000000000000000",
+  },
+};
 
 class CreatePluginManagerProposal extends React.Component<IProps, IState> {
 
-  initialFormValues: IFormValues;
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    const votingParams: IGenesisProtocolFormValues = {
-      queuedVoteRequiredPercentage: 50,
-      queuedVotePeriodLimit: 2592000,
-      boostedVotePeriodLimit: 345600,
-      preBoostedVotePeriodLimit: 86400,
-      thresholdConst: 1200,
-      quietEndingPeriod: 172800,
-      proposingRepReward: 50,
-      votersReputationLossRatio: 4,
-      minimumDaoBounty: 150,
-      daoBountyConst: 10,
-      activationTime: moment().add(1, "day").format("YYYY-MM-DDTHH:mm"), //default date for the next day
-      voteOnBehalf: "0x0000000000000000000000000000000000000000",
-      voteParamsHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
-    };
-
-    this.initialFormValues = importUrlValues<IFormValues>({
-      description: "",
-      pluginToAdd: "",
-      pluginToRemove: "",
-      title: "",
-      url: "",
-      currentTab: "addPlugin",
-      tags: [],
-      GenericScheme: {
-        votingParams: { ...votingParams },
-        permissions: {
-          registerPlugins: false,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: true,
-        },
-        contractToCall: "",
-      },
-      ContributionReward: {
-        votingParams: { ...votingParams },
-        permissions: {
-          registerPlugins: false,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-      },
-      Competition: {
-        votingParams: { ...votingParams },
-        permissions: {
-          registerPlugins: false,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-      },
-      ContributionRewardExt: {
-        votingParams: { ...votingParams },
-        permissions: {
-          registerPlugins: false,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-        rewarderName: "",
-      },
-      FundingRequest: {
-        votingParams: { ...votingParams },
-        permissions: {
-          registerPlugins: false,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-        fundingToken: "0x0000000000000000000000000000000000000000",
-      },
-      JoinAndQuit: {
-        votingParams: { ...votingParams },
-        permissions: {
-          registerPlugins: false,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-        fundingToken: "0x0000000000000000000000000000000000000000",
-        minFeeToJoin: 0,
-        memberReputation: 0,
-        fundingGoal: 0,
-        fundingGoalDeadline: 0,
-        rageQuitEnable: true,
-      },
-      SchemeRegistrar: {
-        votingParamsRegister: { ...votingParams },
-        votingParamsRemove: { ...votingParams },
-        permissions: {
-          registerPlugins: true,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-      },
-      SchemeFactory: {
-        votingParams: { ...votingParams },
-        permissions: {
-          registerPlugins: true,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-      },
-      ReputationFromToken: {
-        permissions: {
-          registerPlugins: false,
-          changeConstraints: false,
-          upgradeController: false,
-          genericCall: false,
-        },
-        tokenContract: "0x0000000000000000000000000000000000000000",
-        curveInterface: "0x0000000000000000000000000000000000000000",
-      },
-    });
 
     this.state = {
-      currentTab: this.initialFormValues.currentTab,
-      tags: this.initialFormValues.tags,
-      requiredPermissions: 0,
+      currentTab: defaultValues.currentTab,
+      tags: [],
     };
+    this.formModalService = CreateFormModalService(
+      "CreatePluginManagerProposal",
+      defaultValues,
+      () => Object.assign(this.currentFormValues, this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) {
+          Object.assign(this.state, {
+            currentTab: formValues.currentTab,
+            tags: formValues.tags,
+          });
+        }
+        else { this.setState({ tags: formValues.tags }); }
+      },
+      this.props.showNotification);
   }
 
-  public handleChangePlugin = (e: any) => {
-    const arc = getArc();
-    try {
-      // If we know about this contract then require the minimum permissions for it
-      const contractInfo = arc.getContractInfoByName(e.target.value, LATEST_ARC_VERSION);
-      this.setState({ requiredPermissions: REQUIRED_PLUGIN_PERMISSIONS[contractInfo.name] });
-      /* eslint-disable-next-line no-empty */
-    } catch (e) {}
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const packageVersion = [0, 1, Number(LATEST_ARC_VERSION.split(".").slice(-1)[0])];
@@ -435,16 +445,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
   }
 
   private onTagsChange = (tags: any[]): void => {
-    this.setState({tags});
-  }
-
-  public exportFormValues(values: IFormValues) {
-    values = {
-      ...values,
-      ...this.state,
-    };
-    exportUrl(values);
-    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
+    this.setState({ tags });
   }
 
   public render(): RenderOutput {
@@ -478,33 +479,35 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
     return (
       <div className={css.containerWithSidebar}>
         <div className={css.sidebar}>
-          { isAddActive ?
+          {isAddActive ?
             <button className={addPluginButtonClass} onClick={this.handleTabClick("addPlugin")} data-test-id="tab-AddPlugin">
               <span></span>
               Add Plugin
             </button>
-            : "" }
-          { isRemoveActive ?
+            : ""}
+          {isRemoveActive ?
             <button className={removePluginButtonClass} onClick={this.handleTabClick("removePlugin")} data-test-id="tab-RemovePlugin">
               <span></span>
             Remove Plugin
             </button>
-            : "" }
-          { isReplaceActive ?
+            : ""}
+          {isReplaceActive ?
             <button className={replacePluginButtonClass} onClick={this.handleTabClick("replacePlugin")} data-test-id="tab-ReplacePlugin">
               <span></span>
             Replace Plugin
             </button>
-            : "" }
+            : ""}
         </div>
 
         <div className={pluginManagerFormClass}>
           <Formik
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            initialValues={this.initialFormValues}
+            initialValues={this.currentFormValues}
             // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues) => {
               const errors: any = {};
+
+              this.currentFormValues = values;
 
               const require = (name: string) => {
                 if (!(values as any)[name]) {
@@ -541,13 +544,14 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
               touched,
               handleChange,
               isSubmitting,
+              resetForm,
               setFieldValue,
               values,
             }: FormikProps<IFormValues>) => {
               return (
                 <Form noValidate>
                   <label className={css.description}>What to Expect</label>
-                  { (currentTab === "addPlugin") ?
+                  {(currentTab === "addPlugin") ?
                     <div className={css.description}>Propose to add a new plugin to the DAO.</div> :
                     (currentTab === "removePlugin") ?
                       <div className={css.description}>Propose to remove a plugin from the DAO.</div> :
@@ -592,7 +596,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
 
                   <TrainingTooltip overlay={i18next.t("Tags Tooltip")} placement="right">
                     <label className={css.tagSelectorLabel}>
-                    Tags
+                      Tags
                     </label>
                   </TrainingTooltip>
 
@@ -602,7 +606,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
 
                   <TrainingTooltip overlay={i18next.t("URL Tooltip")} placement="right">
                     <label htmlFor="urlInput">
-                    URL
+                      URL
                       <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     </label>
                   </TrainingTooltip>
@@ -652,7 +656,6 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                         onChange={(e: any) => {
                           // call the built-in handleChange
                           handleChange(e);
-                          this.handleChangePlugin(e);
                         }}
                       >
                         <option value="">Select a plugin...</option>
@@ -662,22 +665,27 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
                       </Field>
                     </div>
 
-                    <PluginInitializeFields pluginName={values.pluginToAdd} values={values}/>
+                    <PluginInitializeFields pluginName={values.pluginToAdd} values={values} />
                   </div>
 
                   <div className={css.createProposalActions}>
                     <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                      {/* eslint-disable-next-line react/jsx-no-bind */}
-                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService.sendFormValuesToClipboard}>
                         <img src="/assets/images/Icon/share-blue.svg" />
                       </button>
                     </TrainingTooltip>
                     <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                       Cancel
                     </button>
+
+                    <ResetFormButton
+                      resetToDefaults={this.formModalService.resetFormToDefaults(resetForm)}
+                      isSubmitting={isSubmitting}
+                    ></ResetFormButton>
+
                     <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                       <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                      Submit proposal
+                        Submit proposal
                       </button>
                     </TrainingTooltip>
                   </div>
@@ -693,7 +701,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
 
 const SubscribedCreatePluginManagerProposal = withSubscription({
   wrappedComponent: CreatePluginManagerProposal,
-  loadingComponent: <Loading/>,
+  loadingComponent: <Loading />,
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {

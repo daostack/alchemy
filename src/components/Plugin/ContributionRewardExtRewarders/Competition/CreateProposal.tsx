@@ -7,19 +7,20 @@ import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isVali
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { showNotification } from "reducers/notifications";
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/PluginForms/MarkdownField";
 import { checkTotalPercent } from "lib/util";
 import * as Datetime from "react-datetime";
-import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import i18next from "i18next";
 
 import moment = require("moment");
 import BN = require("bn.js");
 import HelpButton from "components/Shared/HelpButton";
+import { IFormModalService, CreateFormModalService } from "components/Shared/FormModalService";
+import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 interface IExternalProps {
   plugin: CompetitionPlugin;
@@ -98,11 +99,11 @@ const CustomDateInput: React.SFC<any> = ({ field, form }) => {
 };
 
 export const SelectField: React.SFC<any> = ({ options, field, form, _value }) => {
-  // value={options ? options.find((option: any) => option.value === field.value) : ""}
   return <Select
     options={options}
     name={field.name}
     defaultValue={options[0]}
+    value={options ? options.find((option: any) => option.value === field.value) : ""}
     maxMenuHeight={100}
     // eslint-disable-next-line react/jsx-no-bind
     onChange={(option: any) => form.setFieldValue(field.name, option.value)}
@@ -113,44 +114,55 @@ export const SelectField: React.SFC<any> = ({ options, field, form, _value }) =>
   />;
 };
 
+const setInitialFormValues = (): IFormValues => {
+  const arc = getArc();
+  const now = moment();
+
+  const defaultValues: IFormValues = {
+    rewardSplit: "",
+    description: "",
+    ethReward: 0,
+    externalTokenAddress: arc.GENToken().address,
+    externalTokenReward: 0,
+    nativeTokenReward: 0,
+    numWinners: 0,
+    numberOfVotesPerVoter: 0,
+    proposerIsAdmin: false,
+    reputationReward: 0,
+    compStartTimeInput: now, // testing ? undefined : now,
+    suggestionEndTimeInput: now, // testing ? undefined : now,
+    votingStartTimeInput: now, // testing ? undefined : now,
+    compEndTimeInput: now, // testing ? undefined : now,
+    title: "",
+    url: "",
+    tags: [],
+  };
+
+  return Object.freeze(defaultValues);
+};
+
 class CreateProposal extends React.Component<IProps, IStateProps> {
 
-  private initialFormValues: IFormValues;
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
     super(props);
-
-    const arc = getArc();
-    const now = moment();
-
-    this.initialFormValues = importUrlValues<IFormValues>({
-      rewardSplit: "",
-      description: "",
-      ethReward: 0,
-      externalTokenAddress: arc.GENToken().address,
-      externalTokenReward: 0,
-      nativeTokenReward: 0,
-      numWinners: 0,
-      numberOfVotesPerVoter: 0,
-      proposerIsAdmin: false,
-      reputationReward: 0,
-      compStartTimeInput: now, // testing ? undefined : now,
-      suggestionEndTimeInput: now, // testing ? undefined : now,
-      votingStartTimeInput: now, // testing ? undefined : now,
-      compEndTimeInput: now, // testing ? undefined : now,
-      title: "",
-      url: "",
-      tags: [],
-    });
-    this.state = {
-      tags: this.initialFormValues.tags,
-    };
+    this.state = { tags: [] };
+    this.formModalService = CreateFormModalService(
+      "CreateCompetitionProposal",
+      setInitialFormValues(),
+      () => Object.assign(this.currentFormValues, this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) { this.state = { tags: formValues.tags }; }
+        else { this.setState({ tags: formValues.tags }); }
+      },
+      this.props.showNotification);
   }
 
-  // Exports data from form to a shareable url.
-  public exportFormValues(values: IFormValues) {
-    exportUrl({ ...values, ...this.state });
-    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
   }
 
   public handleSubmit = async (values: IFormValues, { _setSubmitting }: any): Promise<void> => {
@@ -226,10 +238,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
       <div className={css.containerNoSidebar}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={this.initialFormValues}
+          initialValues={this.currentFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
+
+            this.currentFormValues = values;
 
             const require = (name: string): void => {
               if (!(values as any)[name]) {
@@ -349,10 +363,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             handleSubmit,
             isSubmitting,
+            resetForm,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             setFieldTouched,
             setFieldValue,
-            values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <label className={css.description}>What to Expect</label>
@@ -487,6 +501,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                   id="proposerIsAdmin"
                   name="proposerIsAdmin"
                   type="checkbox"
+                  checked={this.currentFormValues.proposerIsAdmin}
                   className={touched.proposerIsAdmin && errors.proposerIsAdmin ? css.error : null}
                 />
               </div>
@@ -545,6 +560,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                         id="externalTokenAddress"
                         name="externalTokenAddress"
                         component={SelectField}
+                        value={this.currentFormValues.externalTokenAddress}
                         options={Object.keys(supportedTokens()).map((tokenAddress) => {
                           const token = supportedTokens()[tokenAddress];
                           return { value: tokenAddress, label: token["symbol"] };
@@ -630,14 +646,19 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               }
               <div className={css.createProposalActions}>
                 <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                  {/* eslint-disable-next-line react/jsx-no-bind */}
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService.sendFormValuesToClipboard}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
                 </TrainingTooltip>
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
                 </button>
+
+                <ResetFormButton
+                  resetToDefaults={this.formModalService.resetFormToDefaults(resetForm)}
+                  isSubmitting={isSubmitting}
+                ></ResetFormButton>
+
                 <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                     Submit proposal

@@ -42,14 +42,24 @@ type IProps = IExternalProps & ISubscriptionProps<Array<ITagState>>
 
 class TagsSelector extends React.Component<IProps, IStateProps> {
 
+  private getWorkingTags(tags: Array<string>) {
+    return tags ? tags.map((tag: string) => { return { id: tag, text: tag }; }) : new Array<Tag>();
+  }
+
   constructor(props: IProps) {
     super(props);
 
     this.tagsComponent = React.createRef();
 
     this.state = {
-      workingTags: props.tags ? props.tags.map((tag: string) => {return { id: tag, text: tag }; }) : new Array<Tag>(),
+      workingTags: this.getWorkingTags(props.tags),
     };
+  }
+
+  public componentDidUpdate(prevProps: IProps) {
+    if (prevProps.tags !== this.props.tags) {
+      this.setState({workingTags: this.getWorkingTags(this.props.tags)});
+    }
   }
 
   private tagsComponent: RefObject<HTMLDivElement>;

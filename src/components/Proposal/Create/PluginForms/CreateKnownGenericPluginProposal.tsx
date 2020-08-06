@@ -17,7 +17,6 @@ import * as arcActions from "actions/arcActions";
 
 import Analytics from "lib/analytics";
 import { isValidUrl, isAddress } from "lib/util";
-import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -25,6 +24,8 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import i18next from "i18next";
+import { IFormModalService, CreateFormModalService } from "components/Shared/FormModalService";
+import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 const BN = require("bn.js");
 
@@ -55,6 +56,8 @@ interface IFormValues {
   description: string;
   title: string;
   url: string;
+  tags: Array<string>;
+
   [key: string]: any;
 }
 
@@ -64,9 +67,51 @@ interface IState {
   tags: Array<string>;
 }
 
+const setInitialFormValues = (props: IProps): IFormValues => {
+
+  const defaultValues: IFormValues = {
+    description: "",
+    title: "",
+    url: "",
+    currentActionId: "",
+    tags: [],
+  };
+
+  const actions = props.genericPluginInfo.actions();
+  const daoAvatarAddress = props.daoAvatarAddress;
+  actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
+    if (typeof (field.defaultValue) !== "undefined") {
+      if (field.defaultValue === "_avatar") {
+        defaultValues[field.name] = daoAvatarAddress;
+      } else {
+        defaultValues[field.name] = field.defaultValue;
+      }
+    } else {
+      switch (field.type) {
+        case "uint64":
+        case "uint256":
+        case "bytes32":
+        case "bytes":
+        case "address":
+        case "string":
+          defaultValues[field.name] = "";
+          break;
+        case "bool":
+          defaultValues[field.name] = 0;
+          break;
+        case "address[]":
+          defaultValues[field.name] = [""];
+          break;
+      }
+    }
+  }));
+  return Object.freeze(defaultValues);
+};
+
 class CreateKnownPluginProposal extends React.Component<IProps, IState> {
 
-  initialFormValues: IFormValues;
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
     super(props);
@@ -74,14 +119,34 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
     if (!props.genericPluginInfo) {
       throw Error("GenericPluginInfo should be provided");
     }
-    this.setInititialFormValues();
+
     const actions = props.genericPluginInfo.actions();
-    const initialActionId = this.initialFormValues.currentActionId;
     this.state = {
       actions: props.genericPluginInfo.actions(),
-      currentAction: initialActionId ? actions.find(action => action.id === initialActionId) : actions[0],
-      tags: this.initialFormValues.tags,
+      currentAction: actions[0],
+      tags: [],
     };
+    this.formModalService = CreateFormModalService(
+      "CreateKnownGenericPluginProposal",
+      setInitialFormValues(this.props),
+      () => Object.assign(this.currentFormValues,
+        { currentActionId: this.state.currentAction.id },
+        this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) { Object.assign(this.state,
+          {
+            currentAction: formValues.currentActionId ?
+              this.state.actions.find(action => action.id === formValues.currentActionId) : this.state.currentAction,
+            tags: formValues.tags,
+          }); }
+        else { this.setState({ tags: formValues.tags }); }
+      },
+      this.props.showNotification);
+  }
+
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
   }
 
   private async getBountyEth(values: IFormValues): Promise<any> {
@@ -98,7 +163,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
   }
 
 
-  private handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
+  private handleSubmit = async (values: IFormValues, { setSubmitting }: any): Promise<void> => {
 
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
@@ -195,7 +260,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                 values[field.name].map((value: any, index: number) => (
                   <div key={field.name + "_" + index} className={css.arrayField}>
                     {this.renderField(
-                      new ActionField({name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: "", placeholder: field.placeholder}),
+                      new ActionField({ name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: "", placeholder: field.placeholder }),
                       values,
                       touched,
                       errors
@@ -233,55 +298,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
   }
 
   private onTagsChange = (tags: any[]): void => {
-    this.setState({tags});
-  }
-
-  private setInititialFormValues(){
-    this.initialFormValues = {
-      description: "",
-      title: "",
-      url: "",
-      currentActionId: "",
-      tags: [],
-    };
-    const actions = this.props.genericPluginInfo.actions();
-    const daoAvatarAddress = this.props.daoAvatarAddress;
-    actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
-      if (typeof(field.defaultValue) !== "undefined") {
-        if (field.defaultValue === "_avatar") {
-          this.initialFormValues[field.name] = daoAvatarAddress;
-        } else {
-          this.initialFormValues[field.name] = field.defaultValue;
-        }
-      } else {
-        switch (field.type) {
-          case "uint64":
-          case "uint256":
-          case "bytes32":
-          case "bytes":
-          case "address":
-          case "string":
-            this.initialFormValues[field.name] = "";
-            break;
-          case "bool":
-            this.initialFormValues[field.name] = 0;
-            break;
-          case "address[]":
-            this.initialFormValues[field.name] = [""];
-            break;
-        }
-      }
-    }));
-    this.initialFormValues = importUrlValues<IFormValues>(this.initialFormValues);
-  }
-  public exportFormValues(values: IFormValues) {
-    values = {
-      ...values,
-      currentActionId: this.state.currentAction.id,
-      ...this.state,
-    };
-    exportUrl(values);
-    this.props.showNotification(NotificationStatus.Success, i18next.t("In Clipboard"));
+    this.setState({ tags });
   }
 
   public render(): RenderOutput {
@@ -293,7 +310,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
     return (
       <div className={css.containerWithSidebar}>
         <div className={css.sidebar}>
-          { actions.map((action) =>
+          {actions.map((action) =>
             <button
               data-test-id={"action-tab-" + action.id}
               key={action.id}
@@ -303,17 +320,19 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
               })}
               onClick={this.handleTabClick(action.id)}>
               <span></span>
-              { action.label }
+              {action.label}
             </button>
           )}
         </div>
 
         <div className={css.contentWrapper}>
           <Formik
-            initialValues={this.initialFormValues}
+            initialValues={this.currentFormValues}
             // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues): void => {
               const errors: any = {};
+
+              this.currentFormValues = values;
 
               const valueIsRequired = (name: string) => {
                 const value = values[name];
@@ -388,6 +407,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
               errors,
               touched,
               isSubmitting,
+              resetForm,
               setFieldValue,
               values,
             }: FormikProps<IFormValues>) => {
@@ -465,7 +485,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                           <div key={field.name}>
                             <label htmlFor={field.name}>
                               {field.type !== "bool" && !field.optional ? <div className={css.requiredMarker}>*</div> : ""}
-                              { field.label }
+                              {field.label}
                               <ErrorMessage name={field.name}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                             </label>
                             {this.renderField(field, values, touched, errors)}
@@ -477,14 +497,19 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
 
                   <div className={css.createProposalActions}>
                     <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                      {/* eslint-disable-next-line react/jsx-no-bind */}
-                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService.sendFormValuesToClipboard}>
                         <img src="/assets/images/Icon/share-blue.svg" />
                       </button>
                     </TrainingTooltip>
                     <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                       Cancel
                     </button>
+
+                    <ResetFormButton
+                      resetToDefaults={this.formModalService.resetFormToDefaults(resetForm)}
+                      isSubmitting={isSubmitting}
+                    ></ResetFormButton>
+
                     <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                       <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                         Submit proposal
