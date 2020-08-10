@@ -12,7 +12,7 @@ describe("Proposals", () => {
     // TODO: create a test_env with a nameed DAO so we can find it consistently
     arc = getArc();
     await arc.fetchContractInfos();
-    const ARC_VERSION = "0.0.1-rc.40";
+    const ARC_VERSION = "0.0.1-rc.43";
     const contributionRewardExtContract = arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);
 
     // find the corresponding scheme object
