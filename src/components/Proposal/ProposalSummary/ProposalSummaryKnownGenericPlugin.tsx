@@ -33,7 +33,7 @@ export default class ProposalSummary extends React.Component<IProps> {
       return <div
         className={isArrayItem ? css.arrayItem : ""}
         key={value}
-      >{truncatedValue}<CopyToClipboard value={value}/>{isArrayItem ? "," : ""}
+      >{truncatedValue}<CopyToClipboard value={value} />{isArrayItem ? "," : ""}
       </div>;
 
     } else {
@@ -118,6 +118,11 @@ export default class ProposalSummary extends React.Component<IProps> {
           <pre><a href={linkToEtherScan(proposalState.contractToCall)}>{proposalState.contractToCall}</a></pre>
           sending to contract:
           <pre className={sendsETH ? css.warning : ""}>{formatTokens(proposalState.value)} ETH</pre>
+
+          Raw call data:
+          <pre>
+            {truncateWithEllipses(proposalState.callData, 66)}<CopyToClipboard value={proposalState.callData} />
+          </pre>
         </div>
         : ""
       }
