@@ -46,18 +46,18 @@ services:
       GRAPH_GRAPHQL_MAX_FIRST: 1000
 
   ipfs:
-    image: dorgtech/test-env-experimental-ipfs:4.0.19
+    image: dorgtech/test-env-experimental-ipfs:4.0.20
     ports:
       - 5001:5001
 
   postgres:
-    image: dorgtech/test-env-experimental-postgres:4.0.19
+    image: dorgtech/test-env-experimental-postgres:4.0.20
     ports:
       - 9432:5432
     environment:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    image: dorgtech/test-env-experimental-ganache:4.0.19
+    image: dorgtech/test-env-experimental-ganache:4.0.20
     ports:
       - 8545:8545

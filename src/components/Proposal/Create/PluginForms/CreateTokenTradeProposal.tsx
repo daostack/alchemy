@@ -11,7 +11,7 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as arcActions from "actions/arcActions";
 
 import Analytics from "lib/analytics";
-import { isValidUrl, supportedTokens, toWei } from "lib/util";
+import { isValidUrl, supportedTokens } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
@@ -86,6 +86,8 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
+    console.log(values)
+
     const proposalOptions: IProposalCreateOptionsTokenTrade = {
       dao: this.props.daoAvatarAddress,
       descriptionHash: values.description,
@@ -94,9 +96,9 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
       plugin: this.props.pluginState.address,
       url: values.url,
       sendTokenAddress: values.sendTokenAddress,
-      sendTokenAmount: toWei(values.sendTokenAmount),
+      sendTokenAmount: values.sendTokenAmount,
       receiveTokenAddress: values.receiveTokenAddress,
-      receiveTokenAmount: toWei(values.receiveTokenAmount),
+      receiveTokenAmount: values.receiveTokenAmount,
     };
 
     setSubmitting(false);

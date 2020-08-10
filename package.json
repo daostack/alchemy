@@ -149,7 +149,7 @@
   },
   "devDependencies": {
     "@babel/plugin-syntax-dynamic-import": "^7.7.4",
-    "@dorgtech/test-env-experimental": "4.0.19",
+    "@dorgtech/test-env-experimental": "4.0.20",
     "@storybook/addon-info": "^5.0.10",
     "@storybook/react": "^5.0.10",
     "@types/chai": "^4.1.7",
