@@ -21,6 +21,9 @@ script:
   - echo -en 'travis_fold:end:script.1\\r'
   - echo 'docker-compose up -d' && echo -en 'travis_fold:start:script.2\\r'
   - docker-compose up -d
+  # set up test env patch
+  - npm run test-env-patch
+
   - echo -en 'travis_fold:end:script.2\\r'
 
   # wait for alchemy (the slowest latest process to respond

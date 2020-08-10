@@ -74,12 +74,13 @@
     "test": "wdio ./test/integration/wdio.conf.js",
     "test:integration": "wdio ./test/integration/wdio.conf.js --inspect",
     "test:integration:headless": "wdio ./test/integration/wdio-headless.conf.js",
-    "test:unit": "jest"
+    "test:unit": "jest",
+    "test-env-patch": "cd node_modules/@daostack/subgraph-test-env && npm i && npm run deploy && cd ../../../"
   },
   "dependencies": {
     "3box": "1.17.1",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
-    "@daostack/arc.js": "^0.2.70",
+    "@daostack/arc.js": "^0.2.71",
     "@dorgtech/daocreator-ui": "^1.0.13",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
@@ -146,6 +147,7 @@
   "devDependencies": {
     "@babel/plugin-syntax-dynamic-import": "^7.7.4",
     "@daostack/migration": "0.0.1-rc.41-v4",
+    "@daostack/subgraph-test-env": "0.0.39-8",
     "@storybook/addon-info": "^5.0.10",
     "@storybook/react": "^5.0.10",
     "@types/chai": "^4.1.7",
