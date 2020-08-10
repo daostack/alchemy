@@ -24,6 +24,8 @@ script:
   # set up test env patch
   - npm run test-env-patch
 
+  - sleep 120
+
   - echo -en 'travis_fold:end:script.2\\r'
 
   # wait for alchemy (the slowest latest process to respond
