@@ -86,8 +86,6 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    console.log(values)
-
     const proposalOptions: IProposalCreateOptionsTokenTrade = {
       dao: this.props.daoAvatarAddress,
       descriptionHash: values.description,
