@@ -198,16 +198,16 @@ export function getPluginIsActive(plugin: IPluginState, action?: GetPluginIsActi
     }
   }
 
-  const votingMachineParams = (plugin as any).pluginParams[votingMachineParamsPropertyName];
+  const votingMachineParams = (plugin as any).pluginParams?.[votingMachineParamsPropertyName];
 
   if (!votingMachineParams) {
     // eslint-disable-next-line no-console
-    console.warn(` getPluginIsActive: voting machine parameters parameters not found for ${plugin.name}`);
+    console.warn(`getPluginIsActive: voting machine parameters parameters not found for ${plugin?.name ?? plugin.address}`);
     return true;
   }
   if ((typeof(votingMachineParams.activationTime) === undefined) || (votingMachineParams.activationTime === null)) {
     // eslint-disable-next-line no-console
-    console.warn(` getPluginIsActive: voting machine appears not to be GenesisProtocol: ${plugin.name}`);
+    console.warn(`getPluginIsActive: voting machine appears not to be GenesisProtocol: ${plugin.name}`);
     return true;
   } else {
     return moment(votingMachineParams.activationTime*1000).isSameOrBefore(moment());
