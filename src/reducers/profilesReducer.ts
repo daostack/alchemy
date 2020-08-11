@@ -72,7 +72,7 @@ const profilesReducer = (
   switch (action.type) {
     case ActionTypes.SAVE_THREEBOX: {
       const threeBoxPayload = action.payload as I3BoxState;
-      let newState: I3BoxState;
+      const newState: I3BoxState = {};
       if (threeBoxPayload && threeBoxPayload.threeBox) {
         Object.assign(newState, update(state, { threeBox: { $set: threeBoxPayload.threeBox } }));
       }

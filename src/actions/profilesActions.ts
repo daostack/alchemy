@@ -106,12 +106,11 @@ async function get3Box(accountAddress: Address, dispatch: any, state: any, withS
   if (updateState) {
     /**
      * This is synchronous.
-     * Has the annoying side-effect of deleting the threeBox and threeBoxSpace properties in the payload.
      */
     dispatch({
       type: ActionTypes.SAVE_THREEBOX,
       sequence: AsyncActionSequence.Success,
-      payload: { ...result },
+      payload: result,
     });
   }
 
