@@ -79,23 +79,24 @@ async function get3Box(accountAddress: Address, dispatch: any, state: any, withS
   /**
    * this ensures that a space for the account exists
    */
-  if (state.profiles.threeBoxSpace) {
-    space = state.profiles.threeBoxSpace;
-  }
-  else if (withSpace) {
-    /**
-     * It is assumed here that the 3box admin space has already been created
-     */
-    console.log("box.openSpace");
-    console.time("box.openSpace");
-    space = await box.openSpace(spaceName);
-    console.timeEnd("box.openSpace");
+  if (withSpace) {
+    if (state.profiles.threeBoxSpace) {
+      space = state.profiles.threeBoxSpace;
+    } else {
+      /**
+       * It is assumed here that the 3box admin space has already been created
+       */
+      console.log("box.openSpace");
+      console.time("box.openSpace");
+      space = await box.openSpace(spaceName);
+      console.timeEnd("box.openSpace");
 
-    console.log("space.syncDone");
-    console.time("space.syncDone");
-    await space.syncDone;
-    console.timeEnd("space.syncDone");
-    updateState = true;
+      console.log("space.syncDone");
+      console.time("space.syncDone");
+      await space.syncDone;
+      console.timeEnd("space.syncDone");
+      updateState = true;
+    }
   }
 
   const result = {
@@ -278,44 +279,44 @@ export type FollowItemAction = IAsyncAction<"FOLLOW_ITEM", { accountAddress: str
 export function toggleFollow(accountAddress: string, type: FollowType, id: string) {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState): Promise<boolean> => {
     let threeBoxSpace;
+    let isFollowing = true;
 
     try {
-      threeBoxSpace = (await get3Box(accountAddress, dispatch, _getState())).threeBoxSpace;
+      threeBoxSpace = (await get3Box(accountAddress, dispatch, _getState(), true)).threeBoxSpace;
+
+      let follows = await threeBoxSpace.public.get("follows");
+      if (!follows) {
+        follows = {
+          daos: [],
+          proposals: [],
+          users: [],
+        };
+      }
+      if (!follows[type]) {
+        follows[type] = [];
+      }
+
+      if (follows[type].includes(id)) {
+        follows[type] = arrayRemove(follows[type], id);
+        isFollowing = false;
+      } else {
+        follows[type].push(id);
+      }
+
+      // TODO: check success?
+      await threeBoxSpace.public.set("follows", follows);
+
+      dispatch({
+        type: ActionTypes.FOLLOW_ITEM,
+        sequence: AsyncActionSequence.Success,
+        meta: { accountAddress },
+        payload: { type, id, isFollowing },
+      } as FollowItemAction);
+
     } catch (e) {
       dispatch(showNotification(NotificationStatus.Failure, `Failed to connect to 3box: ${e.message}`));
       return false;
     }
-
-    let follows = await threeBoxSpace.public.get("follows");
-    if (!follows) {
-      follows = {
-        daos: [],
-        proposals: [],
-        users: [],
-      };
-    }
-    if (!follows[type]) {
-      follows[type] = [];
-    }
-
-    let isFollowing = true;
-
-    if (follows[type].includes(id)) {
-      follows[type] = arrayRemove(follows[type], id);
-      isFollowing = false;
-    } else {
-      follows[type].push(id);
-    }
-
-    // TODO: check success?
-    await threeBoxSpace.public.set("follows", follows);
-
-    dispatch({
-      type: ActionTypes.FOLLOW_ITEM,
-      sequence: AsyncActionSequence.Success,
-      meta: { accountAddress },
-      payload: { type, id, isFollowing },
-    } as FollowItemAction);
 
     dispatch(showNotification(NotificationStatus.Success, i18next.t((isFollowing ? "Following" : "UnFollowing")) + ` ${type.slice(0, -1)} ${id.slice(0, 8)}...`));
   };
