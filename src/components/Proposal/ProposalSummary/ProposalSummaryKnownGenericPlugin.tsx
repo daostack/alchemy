@@ -10,6 +10,7 @@ import ProposalSummaryDutchX from "./ProposalSummaryDutchX";
 import ProposalSummaryStandardBounties from "./ProposalSummaryStandardBounties";
 import ProposalSummaryCO2ken from "./ProposalSummaryCO2ken";
 import ProposalSummaryNFTManager from "./ProposalSummaryNFTManager";
+import i18next from "i18next";
 
 interface IExternalProps {
   beneficiaryProfile?: IProfileState;
@@ -119,7 +120,7 @@ export default class ProposalSummary extends React.Component<IProps> {
           sending to contract:
           <pre className={sendsETH ? css.warning : ""}>{formatTokens(proposalState.value)} ETH</pre>
 
-          Raw call data:
+          {i18next.t("Raw call data")}:
           <pre>
             {truncateWithEllipses(proposalState.callData, 66)}<CopyToClipboard value={proposalState.callData} />
           </pre>

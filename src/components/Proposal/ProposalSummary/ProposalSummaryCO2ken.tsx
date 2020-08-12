@@ -7,6 +7,7 @@ import { formatTokens, truncateWithEllipses } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
 import CopyToClipboard from "components/Shared/CopyToClipboard";
+import i18next from "i18next";
 
 interface IProps {
   genericPluginInfo: GenericPluginInfo;
@@ -19,7 +20,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
 
   private rawCallData(proposalState: IGenericPluginProposalState) {
     return <>
-      <p>Raw call data:</p>
+      <p>{i18next.t("Raw call data")}:</p>
       <pre>
         {truncateWithEllipses(proposalState.callData, 66)}<CopyToClipboard value={proposalState.callData} />
       </pre>

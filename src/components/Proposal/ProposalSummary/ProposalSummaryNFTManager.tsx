@@ -5,6 +5,7 @@ import { linkToEtherScan, truncateWithEllipses } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
 import CopyToClipboard from "components/Shared/CopyToClipboard";
+import i18next from "i18next";
 const Web3 = require("web3");
 
 interface IProps {
@@ -71,7 +72,7 @@ export default class ProposalSummaryNFTManager extends React.Component<IProps, n
                   <strong>TokenID:</strong> {decodedCallData.values[2]}
                 </div>
                 <div>
-                  <strong>Raw call data:</strong>
+                  <strong>{i18next.t("Raw call data")}:</strong>
                   {truncateWithEllipses(proposalState.callData, 66)}<CopyToClipboard value={proposalState.callData} />
                 </div>
               </div>

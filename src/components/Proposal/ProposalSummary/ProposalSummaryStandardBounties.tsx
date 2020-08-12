@@ -5,6 +5,7 @@ import { linkToEtherScan, fromWeiToString, truncateWithEllipses } from "lib/util
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
 import CopyToClipboard from "components/Shared/CopyToClipboard";
+import i18next from "i18next";
 
 interface IProps {
   genericPluginInfo: GenericPluginInfo;
@@ -17,7 +18,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
 
   private rawCallData(proposalState: IGenericPluginProposalState) {
     return <>
-      <div>Raw call data:&nbsp;
+      <div>{i18next.t("Raw call data")}:&nbsp;
         {truncateWithEllipses(proposalState.callData, 66)}<CopyToClipboard value={proposalState.callData} />
       </div>
     </>;
