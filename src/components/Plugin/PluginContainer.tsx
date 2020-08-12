@@ -22,6 +22,9 @@ import PluginInfoPage from "./PluginInfoPage";
 import PluginProposalsPage from "./PluginProposalsPage";
 import PluginOpenBountyPage from "./PluginOpenBountyPage";
 import * as css from "./Plugin.scss";
+import i18next from "i18next";
+import moment = require("moment");
+import { formatFriendlyDateForLocalTimezone } from "lib/util";
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -121,7 +124,7 @@ class PluginContainer extends React.Component<IProps, IState> {
   private handleEditPlugin = async (e: any) => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    this.props.history.push(`/dao/${this.props.daoState.id}/plugin/${this.props.data[1].id}/proposals/create/?currentTab=editScheme`);
+    this.props.history.push(`/dao/${this.props.daoState.id}/plugin/${this.props.data[1].id}/proposals/create/?currentTab=replacePlugin`);
     e.preventDefault();
   }
 
@@ -187,7 +190,7 @@ class PluginContainer extends React.Component<IProps, IState> {
                     : ""}
 
                 { // Information tab
-                  <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
+                  <TrainingTooltip placement="top" overlay={i18next.t("Information Tab Tooltip")}>
                     <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/plugin/${pluginId}/info/`}>Information</Link>
                   </TrainingTooltip>
                 }
@@ -210,7 +213,7 @@ class PluginContainer extends React.Component<IProps, IState> {
               {isProposalPlugin ?
                 inInfoTab ?
                   <div className={css.editPlugin}>
-                    <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+                    <TrainingTooltip placement="topRight" overlay={i18next.t("New Proposal Button Tooltip")}>
                       <a
                         data-test-id="createProposal"
                         href="#!"
@@ -222,7 +225,8 @@ class PluginContainer extends React.Component<IProps, IState> {
                   </div>
                   :
                   <div className={css.createProposal}>
-                    <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+                    {!isActive && <div className={css.activationTime}>{i18next.t("Plugin activation time")} {formatFriendlyDateForLocalTimezone(moment.unix((pluginState as any).pluginParams.voteParams.activationTime))}</div>}
+                    <TrainingTooltip placement="topRight" overlay={i18next.t("New Proposal Button Tooltip")}>
                       <a className={
                         classNames({
                           [css.disabled]: !isActive,
@@ -243,6 +247,7 @@ class PluginContainer extends React.Component<IProps, IState> {
         <Switch>
 
           <Route exact path="/dao/:daoAvatarAddress/plugin/:pluginId/openbounties"
+            // eslint-disable-next-line react/jsx-no-bind
             render={(props) => <PluginOpenBountyPage {...props} daoAvatarAddress={daoAvatarAddress} plugin={pluginState} />} />
           <Route exact path="/dao/:daoAvatarAddress/plugin/:pluginId/info" render={this.pluginInfoPageHtml} />
           {

@@ -25,7 +25,7 @@ export default class ProposalCountdown extends React.Component<IProps, IState> {
     this.state = calculateCountdown(closingTime(this.props.proposalState));
   }
 
-  public componentDidMount() {
+  public componentDidMount(): void {
     // update every five seconds
     this.interval = setInterval(() => {
       const countdownState = calculateCountdown(closingTime(this.props.proposalState));
@@ -40,15 +40,15 @@ export default class ProposalCountdown extends React.Component<IProps, IState> {
     }, 1000);
   }
 
-  public componentWillUnmount() {
+  public componentWillUnmount(): void {
     this.stop();
   }
 
-  public stop() {
+  public stop(): void {
     clearInterval(this.interval);
   }
 
-  public addLeadingZeros(value: string | number) {
+  public addLeadingZeros(value: string | number): string {
     value = String(value);
     while (value.length < 2) {
       value = "0" + value;

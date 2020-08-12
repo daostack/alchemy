@@ -8,6 +8,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { DiscussionEmbed } from "disqus-react";
 import { showSimpleMessage, targetedNetwork } from "lib/util";
 import customDaoInfo from "../../customDaoInfo";
+import i18next from "i18next";
 
 type IExternalProps = {
   daoState: IDAOState;
@@ -19,7 +20,7 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
 
   private disqusConfig = { url: "", identifier: "", title: "" };
 
-  public componentDidMount() {
+  public componentDidMount(): void {
     Analytics.track("Page View", {
       "Page Name": Page.DAOLanding,
       "DAO Address": this.props.daoState.id,
@@ -30,7 +31,7 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
   private handleEditContent = () => {
     showSimpleMessage(
       {
-        title: "Edit Home Page",
+        title: i18next.t("Edit Home Page"),
         body:
           <>
             <div>Editing the content on this DAO’s home page will soon be possible via proposal. Stay tuned!</div>
@@ -40,7 +41,7 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
     );
   }
 
-  public render() {
+  public render(): JSX.Element {
     const daoState = this.props.daoState;
     const customData = customDaoInfo[targetedNetwork()]?.[daoState.id.toLowerCase()];
 
@@ -58,7 +59,7 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
             <div className={css.row}>
               <div className={css.headerText}>{daoState.name}</div>
               <div className={css.editButton}>
-                <button onClick={this.handleEditContent}>Edit Home Page</button>
+                <button onClick={this.handleEditContent}>{i18next.t("Edit Home Page")}</button>
               </div>
             </div>
           </div>

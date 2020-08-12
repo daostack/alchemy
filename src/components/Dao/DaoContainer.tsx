@@ -23,6 +23,7 @@ import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
 import DaoLandingPage from "components/Dao/DaoLandingPage";
+import i18next from "i18next";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -101,7 +102,7 @@ class DaoContainer extends React.Component<IProps, null> {
             <div className={css.notice}>
               <div>
                 <img src="/assets/images/Icon/notice.svg" />
-                Alchemy and Arc are in Alpha. There will be BUGS! We don&apos;t guarantee complete security. *Play at your own risk*
+                {i18next.t("Alchemy Alpha Message")}
               </div>
             </div>
           </div>

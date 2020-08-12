@@ -16,7 +16,7 @@ interface IProps {
   proposal: AnyProposal;
 }
 
-export default (props: IProps) => {
+export default (props: IProps): JSX.Element => {
   const { canRewardNone, canRewardOnlySome, currentAccountAddress, contributionRewards, daoState, gpRewards, id, proposal } = props;
   const proposalState = proposal.coreState;
 

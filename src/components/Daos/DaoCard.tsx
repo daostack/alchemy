@@ -7,6 +7,9 @@ import * as moment from "moment";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import * as css from "./Daos.scss";
+import { formatTokens } from "lib/util";
+import BN = require("bn.js");
+import i18next from "i18next";
 
 interface IExternalProps {
   dao: DAO;
@@ -28,6 +31,7 @@ const DaoCard = (props: IProps) => {
       to={"/dao/" + dao.id}
       key={"dao_" + dao.id}
       data-test-id="dao-link"
+      // eslint-disable-next-line react/jsx-no-bind
       onClick={handleClick}
     >
       <div className={classNames({
@@ -45,10 +49,9 @@ const DaoCard = (props: IProps) => {
           <table className={css.daoInfoContainer}>
             <tbody>
               <tr>
-                <td></td>
                 <td><div className={css.daoInfo}>
                   <b>{daoState.memberCount || "0"}</b>
-                  <span>DAO Members</span>
+                  <span>{i18next.t("Members")}</span>
                 </div>
                 </td>
                 <td><div className={css.daoInfo}>
@@ -56,7 +59,11 @@ const DaoCard = (props: IProps) => {
                   <span>Open Proposals</span>
                 </div>
                 </td>
-                <td></td>
+                <td><div className={css.daoInfo}>
+                  <b>{formatTokens(new BN(daoState.ethBalance))}</b>
+                  <span>ETH</span>
+                </div>
+                </td>
               </tr>
             </tbody>
           </table>

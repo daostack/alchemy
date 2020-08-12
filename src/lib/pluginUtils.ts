@@ -61,7 +61,7 @@ export const PLUGIN_NAMES = {
  * @param  address [description]
  * @return         [description]
  */
-export function isKnownPlugin(address: Address) {
+export function isKnownPlugin(address: Address): boolean {
   const arc = getArc();
   let contractInfo;
   try {
@@ -80,7 +80,7 @@ export function isKnownPlugin(address: Address) {
   }
 }
 
-export function pluginName(plugin: IPluginState|IContractInfo, fallback?: string) {
+export function pluginName(plugin: IPluginState|IContractInfo, fallback?: string): string {
   let name: string;
   if (plugin.name === "GenericScheme") {
     const generic = plugin as IGenericPluginState;
@@ -129,7 +129,7 @@ function getNameAndAddressString(address: string, name?: string) {
  * Given a plugin or a plugin address, returns a friendly string representing the plugin's address and it's name
  * @param plugin plugin or plugin address
  */
-export function pluginNameAndAddress(plugin: string|IPluginState) {
+export function pluginNameAndAddress(plugin: string|IPluginState): string {
   let name;
   if (typeof plugin === "string"){ // Plugin address
     const arc = getArc();
@@ -199,16 +199,16 @@ export function getPluginIsActive(plugin: IPluginState, action?: GetPluginIsActi
     }
   }
 
-  const votingMachineParams = (plugin as any).pluginParams[votingMachineParamsPropertyName];
+  const votingMachineParams = (plugin as any).pluginParams?.[votingMachineParamsPropertyName];
 
   if (!votingMachineParams) {
     // eslint-disable-next-line no-console
-    console.warn(` getPluginIsActive: voting machine parameters parameters not found for ${plugin.name}`);
+    console.warn(`getPluginIsActive: voting machine parameters parameters not found for ${plugin?.name ?? plugin.address}`);
     return true;
   }
   if ((typeof(votingMachineParams.activationTime) === undefined) || (votingMachineParams.activationTime === null)) {
     // eslint-disable-next-line no-console
-    console.warn(` getPluginIsActive: voting machine appears not to be GenesisProtocol: ${plugin.name}`);
+    console.warn(`getPluginIsActive: voting machine appears not to be GenesisProtocol: ${plugin.name}`);
     return true;
   } else {
     return moment(votingMachineParams.activationTime*1000).isSameOrBefore(moment());

@@ -18,20 +18,19 @@
     top: 85px;
     z-index: 2;
     background-color: rgba(229, 235, 242, 1);
+    align-items: center;
+    padding-bottom: 20px;
 
     .searchBox {
-      flex-grow: 2;
       color: #4f6176;
-      margin-bottom: 20px;
-
+      margin-right: 30px;
       input {
         font-size: 15px;
         width: 425px;
         border-radius: 20px;
-        border: 1px solid;
+        border: none;
         text-indent: 30px;
         height: 30px;
-        line-height: 60px;
         background: url("../../assets/images/Icon/search.svg") $white no-repeat left 5px center;
         background-size: 20px;
         font-family: "AccordBold", sans-serif;
@@ -42,11 +41,60 @@
       }
     }
 
+    .sortWrapper {
+      display: flex;
+      flex-grow: 1;
+      
+      .sortSelect {
+        -webkit-appearance: none;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        margin-left: 10px;
+        outline: none;
+        text-decoration: underline;
+        color: $accent-1;
+      }
+
+      .sortOrder {
+        margin-right: 10px;
+        width: 15px;
+        background: url("../../assets/images/Icon/sort-order-arrow.svg") no-repeat center;
+        transform: rotate(270deg);
+        cursor: pointer;
+        animation: rotateArrowUp 0.2s forwards;
+
+        &.sortOrderDescending {
+          animation: rotateArrowDown 0.2s forwards;
+        }
+      }
+
+      @keyframes rotateArrowDown {
+        to {
+          transform: rotate(90deg);
+        }
+      }
+
+      @keyframes rotateArrowUp {
+        from {
+          transform: rotate(90deg);
+        }
+
+        to {
+          transform: rotate(270deg);
+        }
+      }
+
+      .sortOrder:hover,
+      .sortSelect:hover {
+        opacity: 0.7;
+      }
+    }
+
     .createDaoButton {
       text-align: right;
       align-self: center;
-      padding-right: 26px;
-      margin-bottom: 20px;
+      margin-right: 25px;
 
       a {
         border-radius: 15px;
@@ -135,7 +183,7 @@
         align-items: center;
 
         .daoName {
-          font-size: 28px;
+          font-size: 25px;
           font-weight: bold;
           display: inline-block;
           overflow-x: hidden;
@@ -161,10 +209,10 @@
         font-size: $body;
         width: 100%;
         display: inline-block;
-        padding: 30px 0;
+        padding: 20px 0;
 
         b {
-          font-size: 30px;
+          font-size: 25px;
           text-align: center;
           display: block;
         }
@@ -185,7 +233,7 @@
     }
 
     .dao {
-      width: 480px;
+      width: 335px;
       background-color: $white;
       border-radius: 15px;
       display: inline-block;
@@ -224,6 +272,9 @@
           width: 100%;
         }
       }
+      .sortWrapper {
+        margin: 10px 0px;
+      }
     }
   }
 }
@@ -243,6 +294,10 @@
         input {
           width: 100%;
         }
+      }
+
+      .sortWrapper {
+        margin: 10px 0px;
       }
     }
 

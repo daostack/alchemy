@@ -13,7 +13,7 @@ interface IProps {
 
 export default class DaoDiscussionPage extends React.Component<IProps, null> {
 
-  public async componentDidMount() {
+  public async componentDidMount(): Promise<void> {
     localStorage.setItem(`daoWallEntryDate_${this.props.dao.address}`, moment().toISOString());
   }
 

@@ -16,9 +16,12 @@ import { combineLatest, of } from "rxjs";
 import { first } from "rxjs/operators";
 import cn from "classnames";
 import { showSimpleMessage } from "lib/util";
+import { SortService } from "lib/sortService";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 import BHubReg from "../Buidlhub/Registration";
+import i18next from "i18next";
+import classNames from "classnames";
 
 type SubscriptionData = [DAO[], DAO[], DAO[]];
 
@@ -40,6 +43,8 @@ interface IState {
   isMobile: boolean;
   search: string;
   searchDaos: DAO[];
+  sortBy: string;
+  sortOrder: number;
 }
 
 const PAGE_SIZE = 50;
@@ -53,6 +58,8 @@ class DaosPage extends React.Component<IProps, IState> {
       isMobile: window.innerWidth <= 550,
       search: "",
       searchDaos: [],
+      sortBy: "name",
+      sortOrder: 1,
     };
   }
 
@@ -109,13 +116,36 @@ class DaosPage extends React.Component<IProps, IState> {
     }
   }
 
+  sortDaos = (daos: DAO[]) => {
+    const sortBy = this.state.sortBy;
+    switch (sortBy) {
+      case "name":
+        daos.sort((a, b) => SortService.evaluateString(a.coreState[sortBy], b.coreState[sortBy], this.state.sortOrder ));
+        break;
+      case "memberCount":
+      case "ethBalance":
+        daos.sort((a, b) => SortService.evaluateNumber(a.coreState[sortBy] as number, b.coreState[sortBy] as number, this.state.sortOrder ));
+    }
+  }
+
+  onSortChange = (e: any) => {
+    this.setState({ sortBy: e.target.value });
+  }
+
+  onSortOrderChange = () => {
+    let sortOrder = this.state.sortOrder;
+    this.setState({ sortOrder: sortOrder *= -1});
+  }
+
   public render(): RenderOutput {
     const { data, fetchMore } = this.props;
     const search = this.state.search.length > 2 ? this.state.search.toLowerCase() : "";
 
     // Always show DAOs that the current user is a member of or follows first
-    const yourDAOs = data[1].concat(data[2]).filter(d => d.coreState.name.toLowerCase().includes(search)).sort((a, b) => a.coreState.name.localeCompare(b.coreState.name));
+    const yourDAOs = data[1].concat(data[2]).filter(d => d.coreState.name.toLowerCase().includes(search));
     const yourDAOAddresses = yourDAOs.map(dao => dao.id);
+
+    this.sortDaos(yourDAOs);
 
     // Then all the rest of the DAOs
     let otherDAOs = data[0];
@@ -141,6 +171,8 @@ class DaosPage extends React.Component<IProps, IState> {
       });
     }
 
+    this.sortDaos(otherDAOs);
+
     const yourDaoNodes = yourDAOs.map((dao: DAO) => {
       return (
         <DaoCard
@@ -159,6 +191,11 @@ class DaosPage extends React.Component<IProps, IState> {
       );
     });
 
+    const sortOrderClass = classNames({
+      [css.sortOrder]: true,
+      [css.sortOrderDescending]: this.state.sortOrder === -1,
+    });
+
     return (
       <div className={css.wrapper}>
         <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
@@ -168,6 +205,16 @@ class DaosPage extends React.Component<IProps, IState> {
         <div className={css.topRow}>
           <div className={css.searchBox}>
             <input type="text" name="search" placeholder="Search DAOs" onChange={this.onSearchChange} value={this.state.search} />
+          </div>
+
+          <div className={css.sortWrapper}>
+            <div className={sortOrderClass} onClick={this.onSortOrderChange} />
+            {i18next.t("Sort by")}
+            <select className={css.sortSelect} onChange={this.onSortChange}>
+              <option value="name">{i18next.t("Name")}</option>
+              <option value="ethBalance">{i18next.t("ETH Balance")}</option>
+              <option value="memberCount">{i18next.t("Members")}</option>
+            </select>
           </div>
 
           <div className={css.createDaoButton}>
@@ -186,7 +233,7 @@ class DaosPage extends React.Component<IProps, IState> {
                 </h2>
                 <div className={css.emailAlertsWrapper} onClick={this.registerForMonitoring} >
                   <div className={cn("fa fa-envelope", css.emailIcon)} />
-                  email alerts
+                  {i18next.t("Email Alerts")}
                 </div>
               </div>
             </div>

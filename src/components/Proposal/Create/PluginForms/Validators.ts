@@ -17,12 +17,12 @@ const constants = {
   VALID_ADDRESS: "Must be a valid address",
 };
 
-const positiveNumber = (value: any) => {
+const positiveNumber = (value: number): boolean => {
   const reg = new RegExp(/^\d+$/); // including zero
-  return reg.test(value);
+  return reg.test(value.toString());
 };
 
-export const validRange = (value: any, min: number, max: number) => {
+export const validRange = (value: number, min: number, max: number): string => {
   let error;
   if (!value) {
     error = constants.REQUIRED;
@@ -32,7 +32,7 @@ export const validRange = (value: any, min: number, max: number) => {
   return error;
 };
 
-export const validNumber = (value: any) => {
+export const validNumber = (value: number): string => {
   let error;
   if (!value) {
     error = constants.REQUIRED;
@@ -43,7 +43,7 @@ export const validNumber = (value: any) => {
   return error;
 };
 
-export const validPercentage = (value: any) => {
+export const validPercentage = (value: number): string => {
   let error;
   if (!value) {
     error = constants.REQUIRED;
@@ -53,7 +53,7 @@ export const validPercentage = (value: any) => {
   return error;
 };
 
-export const thresholdConst = (value: any) => {
+export const thresholdConst = (value: number): string => {
   let error;
   if (!value) {
     error = constants.REQUIRED;
@@ -63,7 +63,7 @@ export const thresholdConst = (value: any) => {
   return error;
 };
 
-export const greaterThan = (value: any, limit: number) => {
+export const greaterThan = (value: number, limit: number): string => {
   let error;
   if (!value) {
     error = constants.REQUIRED;
@@ -73,7 +73,7 @@ export const greaterThan = (value: any, limit: number) => {
   return error;
 };
 
-export const boostedVotePeriodLimit = (value: any) => {
+export const boostedVotePeriodLimit = (value: number): string => {
   let error;
   if (!value) {
     error = constants.REQUIRED;
@@ -85,7 +85,7 @@ export const boostedVotePeriodLimit = (value: any) => {
   return error;
 };
 
-export const validQuietEndingPeriod = (value: any) => {
+export const validQuietEndingPeriod = (value: number): string => {
   let error;
   if (!value) {
     error = constants.REQUIRED;
@@ -97,7 +97,7 @@ export const validQuietEndingPeriod = (value: any) => {
   return error;
 };
 
-export const futureTime = (value: any) => {
+export const futureTime = (value: number): string => {
   let error;
   if (!value) {
     error = constants.REQUIRED;
@@ -107,11 +107,11 @@ export const futureTime = (value: any) => {
   return error;
 };
 
-export const address = (value: any, allowNulls = false) => {
+export const address = (value: string, allowNulls = false): string => {
   let error;
   if (!value) {
     error = constants.REQUIRED;
-  } else if (!isAddress(value, allowNulls)) {
+  } else if (!isAddress(value.toString(), allowNulls)) {
     error = constants.VALID_ADDRESS;
   }
   return error;

@@ -21,6 +21,7 @@ import { getArc } from "../arc";
 import { Signer } from "ethers";
 import { promisify } from "util";
 import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
+const Web3 = require("web3");
 
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
@@ -293,17 +294,8 @@ export async function getNetworkId(web3Provider?: Web3Provider): Promise<string>
       const network = await web3Provider.provider.getNetwork();
       return network.chainId.toString();
     } else {
-      const promise = new Promise<string>((resolve, reject) => {
-        web3Provider.send("net_version", (error: any, response: any) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(response);
-          }
-        });
-      });
-
-      return await promise;
+      const web3 = new Web3(web3Provider);
+      return (await web3.eth.getChainId()).toString();
     }
   } else {
     let arc: Arc;
@@ -664,3 +656,4 @@ export function safeMoment(dateSpecifier: moment.Moment | Date | number | string
       throw new Error(`safeMoment: unknown type: ${typeof dateSpecifier}`);
   }
 }
+

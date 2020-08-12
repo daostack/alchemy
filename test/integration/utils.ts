@@ -22,7 +22,7 @@ export const userAddresses = [
   "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
 ];
 
-export function getArc() {
+export function getArc(): Arc {
   const arc = new Arc(settings);
   arc.setAccount(userAddresses[0]);
   return arc;
@@ -57,17 +57,18 @@ export function getTestAddresses(version: string = LATEST_ARC_VERSION): ITestAdd
   return require("@daostack/test-env-experimental/daos.json").demo[version];
 }
 
-export async function hideTrainingTooltips() {
+export async function hideTrainingTooltips(): Promise<void> {
   localStorage.setItem("trainingTooltipsEnabled", "false");
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const setCalendarDate = async (element: any, date: string): Promise<void> => {
   await element.click(); // hide previous calendar
   await element.setValue(date);
 };
 
 export async function gotoDaoPlugins(daoAddress: string): Promise<any> {
-  return browser.url(`/dao/${daoAddress}/plugins`);
+  return goToUrl(`/dao/${daoAddress}/plugins`);
 }
 
 /**
@@ -92,4 +93,13 @@ export const submit = async(): Promise<void> => {
   await submitButton.waitForExist();
   await submitButton.scrollIntoView();
   await submitButton.click();
+};
+
+export const goToUrl = async (url: string): Promise<void> => {
+  await browser.url(url);
+  return browser.execute(() => { (window as any).inAlchemyTests = true; });
+};
+
+export const deleteCachedFormValues = async (formName: string): Promise<void> => {
+  return browser.execute((k: string) => window.sessionStorage.removeItem(k), `formValues_${formName}`);
 };

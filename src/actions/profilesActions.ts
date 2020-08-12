@@ -7,6 +7,7 @@ import * as Redux from "redux";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { ActionTypes, FollowType, newProfile } from "reducers/profilesReducer";
 import { arrayRemove } from "lib/util";
+import { IRootState } from "reducers/index";
 
 // Load account profile data from our database for all the "members" of the DAO
 // TODO: use this once 3box fixes getProfiles
@@ -86,7 +87,7 @@ export function getProfile(accountAddress: string, currentAccount = false) {
 }
 
 export function threeBoxLogout() {
-  return async (dispatch: any, _getState: any) => {
+  return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState): Promise<void> => {
     const state = _getState();
     if (state.profiles.threeBox) {
       state.profiles.threeBox.logout();
@@ -102,7 +103,7 @@ export function threeBoxLogout() {
 export type UpdateProfileAction = IAsyncAction<"UPDATE_PROFILE", { accountAddress: string }, { description: string; name: string; socialURLs?: any }>;
 
 export function updateProfile(accountAddress: string, name: string, description: string) {
-  return async (dispatch: any, _getState: any) => {
+  return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState): Promise<boolean> => {
     dispatch({
       type: ActionTypes.UPDATE_PROFILE,
       sequence: AsyncActionSequence.Pending,
@@ -162,7 +163,7 @@ export function updateProfile(accountAddress: string, name: string, description:
 export type FollowItemAction = IAsyncAction<"FOLLOW_ITEM", { accountAddress: string }, { type: FollowType; id: string; isFollowing: boolean}>;
 
 export function toggleFollow(accountAddress: string, type: FollowType, id: string) {
-  return async (dispatch: any, _getState: any) => {
+  return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState): Promise<boolean> => {
     const state = _getState();
     let threeBox;
     let threeBoxSpace;

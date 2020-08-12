@@ -37,7 +37,7 @@ script:
   - echo -en 'travis_fold:end:script.4\\r'
 
   # check lint
-  - npm run lint -- --quiet
+  - npm run lint
   # unit tests
   - npm run test:unit -- --forceExit
 

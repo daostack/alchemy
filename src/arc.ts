@@ -7,6 +7,7 @@ import { Address, Arc, Web3Client, Web3Provider } from "@daostack/arc.js";
 import { Observable } from "rxjs";
 import { first } from "rxjs/operators";
 import { AsyncSendable, Block } from "ethers/providers";
+import { showNotification as showNotificationFunction } from "./reducers/notifications";
 
 /**
  * This is only set after the user has selected a provider and enabled an account.
@@ -272,7 +273,7 @@ export interface IEnableWalletProviderParams {
 }
 
 function inTesting(): boolean {
-  if (process.env.NODE_ENV === "development" && (global as any).inAlchemyTests) {
+  if ((process.env.NODE_ENV === "development") && (window as any).inAlchemyTests) {
     // in test mode, we have an unlocked ganache and we are not using any wallet
     // eslint-disable-next-line no-console
     console.log("not using any wallet, because we are in automated test");
@@ -421,7 +422,8 @@ async function getCurrentAccountFromProvider(): Promise<Address | null> {
  * Clear caches as every case where we're manually logging out
  * implies that the cache should be cleared
  */
-export async function logout(showNotification?: any): Promise<boolean> {
+
+export async function logout(showNotification?: typeof showNotificationFunction): Promise<boolean> {
   let success = false;
 
   uncacheWeb3Info();
@@ -472,6 +474,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
 
     // If not MetaMask or other injected web3 and on ganache then try to connect to local ganache directly
     if (inTesting() || (targetedNetwork() === "ganache" && !(window as any).web3 && !(window as any).ethereum)) {
+      // console.log("****** connecting to ganache directly");
       selectedProvider = settings.ganache.web3Provider;
       return true;
     }

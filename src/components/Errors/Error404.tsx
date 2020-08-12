@@ -5,14 +5,14 @@ import * as css from "./Errors.scss";
 
 export default class Error404 extends React.PureComponent {
 
-  constructor(props: any) {
+  constructor(props: unknown) {
     super(props);
     this.state = {
       sentryEventId: null,
     };
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className={css.errorContainer}>
         <nav className={appCss.header}>

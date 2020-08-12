@@ -26,11 +26,11 @@ export default class Countdown extends React.Component<IProps, IState> {
     this.state = calculateCountdown(this.props.toDate);
   }
 
-  public componentDidMount() {
+  public componentDidMount(): void {
     this.setInterval();
   }
 
-  public setInterval() {
+  public setInterval(): void {
     if (!this.interval) {
 
       // update every five seconds
@@ -48,16 +48,16 @@ export default class Countdown extends React.Component<IProps, IState> {
     }
   }
 
-  public componentWillUnmount() {
+  public componentWillUnmount(): void {
     this.stop();
   }
 
-  public stop() {
+  public stop(): void {
     clearInterval(this.interval);
     this.interval = 0;
   }
 
-  public addLeadingZeros(value: string | number) {
+  public addLeadingZeros(value: string | number): string {
     value = String(value);
     while (value.length < 2) {
       value = "0" + value;

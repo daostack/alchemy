@@ -20,6 +20,7 @@ import { of } from "rxjs";
 
 import Tooltip from "rc-tooltip";
 import * as css from "./SidebarMenu.scss";
+import i18next from "i18next";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -149,7 +150,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               </Link>
             </li>
             <li>
-              <TrainingTooltip placement="right" overlay={"List of entities (DAOs and individuals) that have voting power in the DAO"}>
+              <TrainingTooltip placement="right" overlay={i18next.t("Members Tooltip")}>
                 <Link to={"/dao/" + dao.address + "/members/"} onClick={this.handleCloseMenu}>
                   <span className={css.menuDot} />
                   <span className={
@@ -222,7 +223,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
             <ul>
               <li><Link to="/" onClick={this.handleCloseMenu}>Home</Link></li>
               <li>
-                <TrainingTooltip overlay="See a feed of recent updates to DAOs you follow" placement="right">
+                <TrainingTooltip overlay={i18next.t("Feed Tooltip")} placement="right">
                   <Link to="/feed" onClick={this.handleCloseMenu}>Feed</Link>
                 </TrainingTooltip>
               </li>

@@ -10,11 +10,13 @@ import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Analytics from "lib/analytics";
 import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress } from "lib/util";
-import { showNotification, NotificationStatus } from "reducers/notifications";
-import { exportUrl, importUrlValues } from "lib/proposalUtils";
+import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
+import i18next from "i18next";
+import { IFormModalService, CreateFormModalService } from "../../../Shared/FormModalService";
+import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 
 const Select = React.lazy(() => import("react-select"));
 
@@ -51,6 +53,10 @@ interface IFormValues {
   reputationReward: number;
   title: string;
   url: string;
+  /**
+   * not actually used by Formik
+   */
+  tags: Array<string>;
 
   [key: string]: any;
 }
@@ -75,6 +81,7 @@ export const SelectField: React.SFC<any> = ({options, field, form }) => (
       name={field.name}
       value={options ? options.find((option: any) => option.value === field.value) : ""}
       maxMenuHeight={100}
+      // eslint-disable-next-line react/jsx-no-bind
       onChange={(option: any) => form.setFieldValue(field.name, option.value)}
       onBlur={field.onBlur}
       className="react-select-container"
@@ -84,30 +91,44 @@ export const SelectField: React.SFC<any> = ({options, field, form }) => (
   </React.Suspense>
 );
 
+const setInitialFormValues = (): IFormValues => {
+  return Object.freeze({
+    beneficiary: "",
+    description: "",
+    ethReward: 0,
+    externalTokenAddress: getArc().GENToken().address,
+    externalTokenReward: 0,
+    nativeTokenReward: 0,
+    reputationReward: 0,
+    title: "",
+    url: "",
+    tags: new Array<string>(),
+  });
+};
+
 class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
-  initialFormValues: IFormValues;
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
     super(props);
-    this.initialFormValues = importUrlValues<IFormValues>({
-      beneficiary: "",
-      description: "",
-      ethReward: 0,
-      externalTokenAddress: getArc().GENToken().address,
-      externalTokenReward: 0,
-      nativeTokenReward: 0,
-      reputationReward: 0,
-      title: "",
-      url: "",
-      tags: [],
-    });
-    this.state = {
-      tags: this.initialFormValues.tags,
-    };
+    this.state = { tags: [] };
+    this.formModalService = CreateFormModalService(
+      "CreateContributionRewardProposal",
+      setInitialFormValues(),
+      () => Object.assign(this.currentFormValues, this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) { this.state = { tags: formValues.tags }; }
+        else { this.setState({ tags: formValues.tags }); }
+      },
+      this.props.showNotification);
   }
 
-  private fnDescription = (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
+  }
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
@@ -157,18 +178,12 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     this.props.handleClose();
   }
 
-  // Exports data from form to a shareable url.
-  public exportFormValues(values: IFormValues) {
-    exportUrl({ ...values, ...this.state });
-    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
-  }
-
   private onTagsChange = () => (tags: string[]): void => {
     this.setState({ tags });
   }
 
   public render(): RenderOutput {
-    const { data, daoAvatarAddress, handleClose } = this.props;
+    const { data, daoAvatarAddress } = this.props;
 
     if (!data) {
       return null;
@@ -179,9 +194,12 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       <div className={css.containerNoSidebar}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={this.initialFormValues}
+          initialValues={this.currentFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
+
+            this.currentFormValues = values;
+
             const errors: any = {};
 
             const require = (name: string): void => {
@@ -226,15 +244,14 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
           render={({
             errors,
             touched,
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             isSubmitting,
             setFieldTouched,
             setFieldValue,
-            values,
+            resetForm,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <div className={css.description}>This proposal can send eth / erc20 token, mint new DAO tokens ({dao.tokenSymbol}) and mint / slash reputation in the DAO. Each proposal can have one of each of these actions. e.g. 100 rep for completing a project + 0.05 ETH for covering expenses.</div>
-              <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
+              <TrainingTooltip overlay={i18next.t("Title Tooltip")} placement="right">
                 <label htmlFor="titleInput">
                   <div className={css.requiredMarker}>*</div>
                 Title
@@ -245,31 +262,32 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 autoFocus
                 id="titleInput"
                 maxLength={120}
-                placeholder="Summarize your proposal"
+                placeholder={i18next.t("Title Placeholder")}
                 name="title"
                 type="text"
                 className={touched.title && errors.title ? css.error : null}
               />
 
-              <TrainingTooltip overlay={this.fnDescription} placement="right">
+              <TrainingTooltip overlay={i18next.t("Description Tooltip")} placement="right">
                 <label htmlFor="descriptionInput">
                   <div className={css.proposalDescriptionLabelText}>
                     <div className={css.requiredMarker}>*</div>
-                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                    <div className={css.body}>Description</div><HelpButton text={i18next.t("Help Button Tooltip")} />
                   </div>
                   <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                 </label>
               </TrainingTooltip>
               <Field
                 component={MarkdownField}
+                // eslint-disable-next-line react/jsx-no-bind
                 onChange={(value: any) => { setFieldValue("description", value); }}
                 id="descriptionInput"
-                placeholder="Describe your proposal in greater detail"
+                placeholder={i18next.t("Description Placeholder")}
                 name="description"
                 className={touched.description && errors.description ? css.error : null}
               />
 
-              <TrainingTooltip overlay="Add some tags to give context about your proposal e.g. idea, signal, bounty, research, etc" placement="right">
+              <TrainingTooltip overlay={i18next.t("Tags Tooltip")} placement="right">
                 <label className={css.tagSelectorLabel}>
                 Tags
                 </label>
@@ -279,7 +297,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 <TagsSelector onChange={this.onTagsChange()} tags={this.state.tags}></TagsSelector>
               </div>
 
-              <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
+              <TrainingTooltip overlay={i18next.t("URL Tooltip")} placement="right">
                 <label htmlFor="urlInput">
                 URL
                   <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -288,7 +306,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               <Field
                 id="urlInput"
                 maxLength={120}
-                placeholder="Description URL"
+                placeholder={i18next.t("URL Placeholder")}
                 name="url"
                 type="text"
                 className={touched.url && errors.url ? css.error : null}
@@ -304,9 +322,11 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 <UserSearchField
                   daoAvatarAddress={daoAvatarAddress}
                   name="beneficiary"
+                  // eslint-disable-next-line react/jsx-no-bind
                   onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
-                  onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                  defaultValue={this.initialFormValues.beneficiary}
+                  // eslint-disable-next-line react/jsx-no-bind
+                  onChange={(newValue) => { this.currentFormValues.beneficiary = newValue; setFieldValue("beneficiary", newValue); }}
+                  value={this.currentFormValues.beneficiary}
                   placeholder={this.props.currentAccountAddress}
                 />
               </div>
@@ -395,15 +415,21 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 }
               </div>
               <div className={css.createProposalActions}>
-                <TrainingTooltip overlay="Export proposal" placement="top">
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
+                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService.sendFormValuesToClipboard}>
                     <img src="/assets/images/Icon/share-blue.svg" />
                   </button>
                 </TrainingTooltip>
-                <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
+                <button className={css.exitProposalCreation} type="button" onClick={this.props.handleClose}>
                   Cancel
                 </button>
-                <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
+
+                <ResetFormButton
+                  resetToDefaults={this.formModalService.resetFormToDefaults(resetForm)}
+                  isSubmitting={isSubmitting}
+                ></ResetFormButton>
+
+                <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                     Submit proposal
                   </button>

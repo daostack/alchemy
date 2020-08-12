@@ -14,6 +14,7 @@
   width: 100%;
   height: 100%;
   color: $black;
+  white-space: pre-wrap; // Strings with \n will open a new line
 }
 
 :global(.clearfix:after) {

@@ -103,7 +103,7 @@ async function tryRedeemProposal(proposalId: string, accountAddress: string, obs
 }
 
 export function executeProposal(avatarAddress: string, proposalId: string, accountAddress: string) {
-  return async (dispatch: Redux.Dispatch<any, any>) => {
+  return async (dispatch: Redux.Dispatch<any, any>): Promise<void> => {
     const arc = getArc();
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
     const proposalObj = await arc.dao(avatarAddress).proposal({ where: { id: proposalId } });
@@ -133,7 +133,7 @@ export type VoteAction = IAsyncAction<"ARC_VOTE", {
 }>;
 
 export function voteOnProposal(daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) {
-  return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
+  return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState): Promise<void> => {
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal({ where: { id: proposalId } });
     const observer = operationNotifierObserver(dispatch, "Vote");
@@ -153,7 +153,7 @@ export type StakeAction = IAsyncAction<"ARC_STAKE", {
 }>;
 
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
-  return async (dispatch: Redux.Dispatch<any, any>, ) => {
+  return async (dispatch: Redux.Dispatch<any, any>, ): Promise<void> => {
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal({ where: { id: proposalId } });
     const observer = operationNotifierObserver(dispatch, "Stake");
@@ -163,7 +163,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
 
 // Approve transfer of 100000 GENs from accountAddress to the GenesisProtocol contract for use in staking
 export function approveStakingGens(spender: Address) {
-  return async (dispatch: Redux.Dispatch<any, any>, ) => {
+  return async (dispatch: Redux.Dispatch<any, any>, ): Promise<void> => {
     const arc = getArc();
     const observer = operationNotifierObserver(dispatch, "Approve GEN");
     await arc.approveForStaking(spender, toWei(100000)).subscribe(...observer);
@@ -184,14 +184,14 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
 }>;
 
 export function redeemProposal(proposalId: string, accountAddress: string) {
-  return async (dispatch: Redux.Dispatch<any, any>) => {
+  return async (dispatch: Redux.Dispatch<any, any>): Promise<void> => {
     const observer = operationNotifierObserver(dispatch, "Reward");
     return tryRedeemProposal(proposalId, accountAddress, observer);
   };
 }
 
 export function redeemReputationFromToken(reputationFromTokenPlugin: ReputationFromTokenPlugin, addressToRedeem: string, privateKey: string|undefined, redeemerAddress: Address|undefined, redemptionSucceededCallback: () => void) {
-  return async (dispatch: Redux.Dispatch<any, any>) => {
+  return async (dispatch: Redux.Dispatch<any, any>): Promise<void> => {
     const arc = getArc();
 
     const state = await reputationFromTokenPlugin.fetchState();

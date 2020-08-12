@@ -48,7 +48,7 @@ export function newProfile(ethereumAccountAddress: string): IProfileState {
 
 const initialState: IProfilesState = { threeBox: null, threeBoxSpace: null };
 
-const profilesReducer = (state = initialState, action: any) => {
+const profilesReducer = (state = initialState, action: { type: ActionTypes, payload: any, meta: any, sequence: AsyncActionSequence }): IProfilesState => {
   const { payload, meta } = action;
 
   if (payload && Object.prototype.hasOwnProperty.call(payload, "threeBox")) {
