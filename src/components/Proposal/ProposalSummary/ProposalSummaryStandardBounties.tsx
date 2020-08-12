@@ -17,7 +17,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
 
   private rawCallData(proposalState: IGenericPluginProposalState) {
     return <>
-      <div>Raw call data:
+      <div>Raw call data:&nbsp;
         {truncateWithEllipses(proposalState.callData, 66)}<CopyToClipboard value={proposalState.callData} />
       </div>
     </>;
