@@ -303,11 +303,9 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                         <span>{accountAddress.substr(0, 20)}...</span>
                         <CopyToClipboard value={accountAddress} color={IconColor.Black}/>
                       </div>
-                      {(canEdit && !editing) ?
+                      {(canEdit && !editing && currentAccountAddress) ?
                         <div className={css.saveProfile}>
-                          <button className={css.submitButton} type="button" onClick={this.handleConnect}>
-                            {currentAccountAddress ? "Edit" : "Try Edit"}
-                          </button>
+                          <button className={css.submitButton} type="button" onClick={this.handleConnect}>Edit</button>
                         </div>
                         : ""
                       }
