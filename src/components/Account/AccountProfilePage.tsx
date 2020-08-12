@@ -150,8 +150,8 @@ class AccountProfilePage extends React.Component<IProps, IState> {
     }
 
     // TODO: dont show profile until loaded from 3box and we are fully in sync with the actual current account
-    const canEdit = !currentAccountAddress || (accountAddress === currentAccountAddress);
-    const editing = currentAccountAddress && (accountAddress === currentAccountAddress) && this.props.isConnected;
+    const canEdit = currentAccountAddress && (accountAddress === currentAccountAddress);
+    const editing = canEdit && this.props.isConnected;
 
     const profileContainerClass = classNames({
       [css.profileContainer]: true,
@@ -303,7 +303,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                         <span>{accountAddress.substr(0, 20)}...</span>
                         <CopyToClipboard value={accountAddress} color={IconColor.Black}/>
                       </div>
-                      {(canEdit && !editing && currentAccountAddress) ?
+                      {(canEdit && !editing) ?
                         <div className={css.saveProfile}>
                           <button className={css.submitButton} type="button" onClick={this.handleConnect}>Edit</button>
                         </div>
