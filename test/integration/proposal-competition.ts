@@ -22,14 +22,11 @@ describe("Proposals", () => {
     const contributionRewardExt = contributionRewardExts[0];
     const contributionRewardExtState = await contributionRewardExt.state().pipe(first()).toPromise();
     dao = await new DAO(contributionRewardExtState.dao, arc);
-    console.log(contributionRewardExtState.dao)
   });
 
 
   it("Create a Competition Scheme proposal, vote for it, stake on it", async () => {
-    console.log(1)
     await gotoDaoSchemes(dao.id);
-console.log(2)
     const schemeTitle = await $("h2=Competition");
     await schemeTitle.click();
 
