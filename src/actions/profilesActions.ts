@@ -158,9 +158,6 @@ export function getProfile(accountAddress: string, currentAccount = false):
         });
       }
     }
-
-    dispatch(showNotification(NotificationStatus.Success, i18next.t("3BoxLoginSuccess")));
-    return true;
   };
 }
 
@@ -297,5 +294,6 @@ export function toggleFollow(accountAddress: string, type: FollowType, id: strin
     }
 
     dispatch(showNotification(NotificationStatus.Success, i18next.t((isFollowing ? "Following" : "UnFollowing")) + ` ${type.slice(0, -1)} ${id.slice(0, 8)}...`));
+    return true;
   };
 }
