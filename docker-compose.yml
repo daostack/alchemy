@@ -44,6 +44,7 @@ services:
       ethereum: private:http://ganache:8545
       GRAPH_LOG: "graph.log"
       GRAPH_GRAPHQL_MAX_FIRST: 1000
+      GRAPH_MAX_IPFS_FILE_BYTES: 900000
 
   ipfs:
     image: daostack/test-env-ipfs:3.0.36
