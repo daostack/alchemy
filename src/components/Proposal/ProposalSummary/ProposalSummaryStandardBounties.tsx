@@ -1,9 +1,11 @@
 import { IGenericPluginProposalState } from "@daostack/arc.js";
 import * as classNames from "classnames";
 import { GenericPluginInfo } from "genericPluginRegistry";
-import { linkToEtherScan, fromWeiToString } from "lib/util";
+import { linkToEtherScan, fromWeiToString, truncateWithEllipses } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
+import CopyToClipboard from "components/Shared/CopyToClipboard";
+import i18next from "i18next";
 
 interface IProps {
   genericPluginInfo: GenericPluginInfo;
@@ -13,6 +15,14 @@ interface IProps {
 }
 
 export default class ProposalSummaryStandardBounties extends React.Component<IProps, null> {
+
+  private rawCallData(proposalState: IGenericPluginProposalState) {
+    return <>
+      <div>{i18next.t("Raw call data")}:&nbsp;
+        {truncateWithEllipses(proposalState.callData, 66)}<CopyToClipboard value={proposalState.callData} />
+      </div>
+    </>;
+  }
 
   public render(): RenderOutput {
 
@@ -43,15 +53,15 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding}/> {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding} /> {action.label}
             </span>
-            { detailView &&
+            {detailView &&
               <div className={css.summaryDetails}>
                 <div>
                   Bounty Details: <a href={`https://ipfs.io/ipfs/${decodedCallData.values[3]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[3]}</a>.
                 </div>
                 <div>
-                  Deadline: {(new Date(parseInt(decodedCallData.values[4], 10)*1000)).toString()}.
+                  Deadline: {(new Date(parseInt(decodedCallData.values[4], 10) * 1000)).toString()}.
                 </div>
                 <div>
                   Amount funded: {fromWeiToString(decodedCallData.values[7])} {decodedCallData.values[6].toString() === "0" ? "ETH" : "tokens"}.
@@ -68,6 +78,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Approver: <a href={linkToEtherScan(decodedCallData.values[2])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[2]}</a>
                 </div>
+                {this.rawCallData(proposalState)}
               </div>
             }
           </div>
@@ -76,9 +87,9 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding}/> {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding} /> {action.label}
             </span>
-            { detailView &&
+            {detailView &&
               <div className={css.summaryDetails}>
                 <div>
                   Contribution Amount: {fromWeiToString(decodedCallData.values[2])}
@@ -89,6 +100,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
                 </div>
+                {this.rawCallData(proposalState)}
               </div>
             }
           </div>
@@ -97,9 +109,9 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding}/> {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding} /> {action.label}
             </span>
-            { detailView &&
+            {detailView &&
               <div className={css.summaryDetails}>
                 <div>
                   Refund for contribution IDs:
@@ -120,6 +132,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
                 </div>
+                {this.rawCallData(proposalState)}
               </div>
             }
           </div>
@@ -128,9 +141,9 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding}/> {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding} /> {action.label}
             </span>
-            { detailView &&
+            {detailView &&
               <div className={css.summaryDetails}>
                 <div>
                   Draining {fromWeiToString(decodedCallData.values[3])} amount of tokens for bounty ID {decodedCallData.values[1]}.
@@ -141,6 +154,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
                 </div>
+                {this.rawCallData(proposalState)}
               </div>
             }
           </div>
@@ -149,9 +163,9 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding}/> {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding} /> {action.label}
             </span>
-            { detailView &&
+            {detailView &&
               <div className={css.summaryDetails}>
                 <div>
                   Accepting submission ID {decodedCallData.values[2]} for bounty ID {decodedCallData.values[1]} of {fromWeiToString(decodedCallData.values[4])} tokens.
@@ -162,6 +176,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Approver ID: {decodedCallData.values[3]}
                 </div>
+                {this.rawCallData(proposalState)}
               </div>
             }
           </div>
@@ -170,9 +185,9 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding}/> {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding} /> {action.label}
             </span>
-            { detailView &&
+            {detailView &&
               <div className={css.summaryDetails}>
                 <div>
                   For Bounty ID {decodedCallData.values[1]},
@@ -201,7 +216,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   Change bounty details to <a href={`https://ipfs.io/ipfs/${decodedCallData.values[5]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[5]}</a>
                 </div>
                 <div>
-                  Change bounty deadline to {(new Date(parseInt(decodedCallData.values[6], 10)*1000)).toString()}
+                  Change bounty deadline to {(new Date(parseInt(decodedCallData.values[6], 10) * 1000)).toString()}
                 </div>
                 <div>
                   Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
@@ -209,6 +224,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
                 </div>
+                {this.rawCallData(proposalState)}
               </div>
             }
           </div>
@@ -217,9 +233,9 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding}/> {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding} /> {action.label}
             </span>
-            { detailView &&
+            {detailView &&
               <div className={css.summaryDetails}>
                 <div>
                   Change details of bounty ID  {decodedCallData.values[1]} to <a href={`https://ipfs.io/ipfs/${decodedCallData.values[3]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[3]}</a>.
@@ -230,6 +246,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
                 </div>
+                {this.rawCallData(proposalState)}
               </div>
             }
           </div>
@@ -238,12 +255,12 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding}/> {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding} /> {action.label}
             </span>
-            { detailView &&
+            {detailView &&
               <div className={css.summaryDetails}>
                 <div>
-                  Change deadline of bounty ID {decodedCallData.values[1]} to {(new Date(parseInt(decodedCallData.values[3], 10)*1000)).toString()}
+                  Change deadline of bounty ID {decodedCallData.values[1]} to {(new Date(parseInt(decodedCallData.values[3], 10) * 1000)).toString()}
                 </div>
                 <div>
                   Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
@@ -251,6 +268,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
                 </div>
+                {this.rawCallData(proposalState)}
               </div>
             }
           </div>
@@ -259,9 +277,9 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding}/> {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding} /> {action.label}
             </span>
-            { detailView &&
+            {detailView &&
               <ul className={css.summaryDetails}>
                 <div>
                   Accept submission of:
@@ -285,6 +303,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Bounty Details: <a href={`https://ipfs.io/ipfs/${decodedCallData.values[3]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[3]}</a>
                 </div>
+                {this.rawCallData(proposalState)}
               </ul>
             }
           </div>
@@ -293,9 +312,9 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding}/> {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding} /> {action.label}
             </span>
-            { detailView &&
+            {detailView &&
               <div className={css.summaryDetails}>
                 <div>
                   Change approvers to:
@@ -316,6 +335,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
                 </div>
+                {this.rawCallData(proposalState)}
               </div>
             }
           </div>
@@ -324,9 +344,9 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding}/> {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" className={css.iconPadding} /> {action.label}
             </span>
-            { detailView &&
+            {detailView &&
               <div className={css.summaryDetails}>
                 <div>
                   Change issuers to:
@@ -347,6 +367,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
                 </div>
+                {this.rawCallData(proposalState)}
               </div>
             }
           </div>

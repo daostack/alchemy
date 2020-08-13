@@ -3,9 +3,11 @@ import { IGenericPluginProposalState } from "@daostack/arc.js";
 import BN = require("bn.js");
 import classNames from "classnames";
 import { GenericPluginInfo } from "genericPluginRegistry";
-import { formatTokens } from "lib/util";
+import { formatTokens, truncateWithEllipses } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
+import CopyToClipboard from "components/Shared/CopyToClipboard";
+import i18next from "i18next";
 
 interface IProps {
   genericPluginInfo: GenericPluginInfo;
@@ -16,6 +18,14 @@ interface IProps {
 
 export default class ProposalSummaryCO2ken extends React.Component<IProps, null> {
 
+  private rawCallData(proposalState: IGenericPluginProposalState) {
+    return <>
+      <p>{i18next.t("Raw call data")}:</p>
+      <pre>
+        {truncateWithEllipses(proposalState.callData, 66)}<CopyToClipboard value={proposalState.callData} />
+      </pre>
+    </>;
+  }
   public render(): RenderOutput {
     const { proposalState, detailView, genericPluginInfo, transactionModal } = this.props;
     let decodedCallData: any;
@@ -47,7 +57,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
             <span className={css.summaryTitle}>
               {action.label}
             </span>
-            { detailView ?
+            {detailView ?
               <div className={css.summaryDetails}>
                 <div>
                   <p>
@@ -64,6 +74,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
                     <a href={`https://cloudflare-ipfs.com/ipfs/${ipfsHashValue}`} target="_blank" rel="noopener noreferrer">{ipfsHashValue}</a>
                   </pre>
                 </div>
+                {this.rawCallData(proposalState)}
               </div>
               : ""
             }
@@ -84,6 +95,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
                 <pre>{-1}</pre>
                 It allows the the CO2ken contract to move DAI held by the DAO. This way, the DAO can offset its emissions by calling:
                 <pre>offsetCarbon()</pre>
+                {this.rawCallData(proposalState)}
               </div>
               : ""
             }
@@ -100,6 +112,7 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
                 Executing this proposal will call the function
                 <pre>{action.id}()</pre>
                 It transfers all the DAI stored in the CO2ken contract to the DAO.
+                {this.rawCallData(proposalState)}
               </div>
               : ""
             }
@@ -116,12 +129,13 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                Executing this proposal will call the function
+                  Executing this proposal will call the function
                 <pre>{action.id}()</pre>
-                DAI are sent to the CO2ken contract to retire a respecive number of CO2kens. One CO2ken is equivalent to a ton of carbon emissions. The total amount of DAI which will be sent to the contract is:
+                  DAI are sent to the CO2ken contract to retire a respecive number of CO2kens. One CO2ken is equivalent to a ton of carbon emissions. The total amount of DAI which will be sent to the contract is:
                 <pre>
                   {formatTokens(new BN(value), field.unit, field.decimals)}
                 </pre>
+                {this.rawCallData(proposalState)}
               </div>
               : ""
             }
@@ -139,13 +153,14 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                Executing this proposal will call the function
+                  Executing this proposal will call the function
                 <pre>{action.id}()</pre>
                 with value
                 <pre>
-                  { field.label }: {formatTokens(new BN(value), field.unit, field.decimals)}
+                  {field.label}: {formatTokens(new BN(value), field.unit, field.decimals)}
                 </pre>
                 The value describes the amount of carbon tons the DAO wants to offset.
+                {this.rawCallData(proposalState)}
               </div>
               : ""
             }
@@ -161,10 +176,11 @@ export default class ProposalSummaryCO2ken extends React.Component<IProps, null>
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                Executing this proposal will call the function
+                  Executing this proposal will call the function
                 <pre>{action.id}()</pre>
                 with the new owner‘s address being
                 <pre>{decodedCallData.values[0]}</pre>
+                {this.rawCallData(proposalState)}
               </div>
               : ""
             }
