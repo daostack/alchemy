@@ -5,7 +5,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
 import { DiscussionEmbed } from "disqus-react";
-import { humanProposalTitle, ensureHttps } from "lib/util";
+import { humanProposalTitle, ensureHttps, formatFriendlyDateForLocalTimezone, safeMoment } from "lib/util";
 import { schemeName } from "lib/schemeUtils";
 import Analytics from "lib/analytics";
 import { Page } from "pages";
@@ -303,6 +303,19 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 />
                 <BoostAmount detailView expired={expired} proposal={proposal} />
               </div>
+            </div>
+
+            <div className={css.eventHistory}>
+              <div className={css.event}>
+                <div className={css.label}>Created:</div>
+                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(safeMoment(proposal.createdAt))}</div>
+              </div>
+              {proposal.executedAt ?
+                <div className={css.event}>
+                  <div className={css.label}>Executed:</div>
+                  <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(safeMoment(proposal.executedAt))}</div>
+                </div>
+                : ""}
             </div>
 
           </div>
