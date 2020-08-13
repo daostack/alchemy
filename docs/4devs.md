@@ -30,3 +30,8 @@ For _very_ rough statistics, open devTools -> Network and look at the line that 
 ## Subscriptions and queries
 
 For the performance of the app, it is important that we limit the amount of queries and subscriptions that alchemy creates when loading a page.
+
+## Coding conventions
+
+- As an ongoing process of adopting language localization, any new static text should be added to a translation file and used via `i18next` internationalization-framework.
+Translation files location is under `src/assets/locales/`.
