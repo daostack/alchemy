@@ -498,201 +498,202 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
             </button>
             : ""}
         </div>
+        <div className={css.contentWrapper}>
+          <div className={pluginManagerFormClass}>
+            <Formik
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              initialValues={this.currentFormValues}
+              // eslint-disable-next-line react/jsx-no-bind
+              validate={(values: IFormValues) => {
+                const errors: any = {};
 
-        <div className={pluginManagerFormClass}>
-          <Formik
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            initialValues={this.currentFormValues}
-            // eslint-disable-next-line react/jsx-no-bind
-            validate={(values: IFormValues) => {
-              const errors: any = {};
+                this.currentFormValues = values;
 
-              this.currentFormValues = values;
-
-              const require = (name: string) => {
-                if (!(values as any)[name]) {
-                  errors[name] = "Required";
-                }
-              };
-
-              require("description");
-              require("title");
-
-              if (values.title.length > 120) {
-                errors.title = "Title is too long (max 120 characters)";
-              }
-
-              if (currentTab === "addPlugin") {
-                require("pluginToAdd");
-              } else if (currentTab === "removePlugin") {
-                require("pluginToRemove");
-              } else if (currentTab === "replacePlugin") {
-                require("pluginToAdd");
-                require("pluginToRemove");
-              }
-
-              if (!isValidUrl(values.url)) {
-                errors.url = "Invalid URL";
-              }
-
-              return errors;
-            }}
-            onSubmit={this.handleSubmit}
-            // eslint-disable-next-line react/jsx-no-bind
-            render={({
-              errors,
-              touched,
-              handleChange,
-              isSubmitting,
-              resetForm,
-              setFieldValue,
-              values,
-            }: FormikProps<IFormValues>) => {
-              return (
-                <Form noValidate>
-                  <label className={css.description}>What to Expect</label>
-                  {(currentTab === "addPlugin") ?
-                    <div className={css.description}>Propose to add a new plugin to the DAO.</div> :
-                    (currentTab === "removePlugin") ?
-                      <div className={css.description}>Propose to remove a plugin from the DAO.</div> :
-                      (currentTab === "replacePlugin") ?
-                        <div className={css.description}>Propose to replace a plugin from the DAO.</div> : ""
+                const require = (name: string) => {
+                  if (!(values as any)[name]) {
+                    errors[name] = "Required";
                   }
-                  <TrainingTooltip overlay={i18next.t("Title Tooltip")} placement="right">
-                    <label htmlFor="titleInput">
-                      <div className={css.requiredMarker}>*</div>
-                    Title
-                      <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                    </label>
-                  </TrainingTooltip>
-                  <Field
-                    autoFocus
-                    id="titleInput"
-                    maxLength={120}
-                    placeholder={i18next.t("Title Placeholder")}
-                    name="title"
-                    type="text"
-                    className={touched.title && errors.title ? css.error : null}
-                  />
+                };
 
-                  <TrainingTooltip overlay={i18next.t("Description Tooltip")} placement="right">
-                    <label htmlFor="descriptionInput">
-                      <div className={css.proposalDescriptionLabelText}>
+                require("description");
+                require("title");
+
+                if (values.title.length > 120) {
+                  errors.title = "Title is too long (max 120 characters)";
+                }
+
+                if (currentTab === "addPlugin") {
+                  require("pluginToAdd");
+                } else if (currentTab === "removePlugin") {
+                  require("pluginToRemove");
+                } else if (currentTab === "replacePlugin") {
+                  require("pluginToAdd");
+                  require("pluginToRemove");
+                }
+
+                if (!isValidUrl(values.url)) {
+                  errors.url = "Invalid URL";
+                }
+
+                return errors;
+              }}
+              onSubmit={this.handleSubmit}
+              // eslint-disable-next-line react/jsx-no-bind
+              render={({
+                errors,
+                touched,
+                handleChange,
+                isSubmitting,
+                resetForm,
+                setFieldValue,
+                values,
+              }: FormikProps<IFormValues>) => {
+                return (
+                  <Form noValidate>
+                    <label className={css.description}>What to Expect</label>
+                    {(currentTab === "addPlugin") ?
+                      <div className={css.description}>Propose to add a new plugin to the DAO.</div> :
+                      (currentTab === "removePlugin") ?
+                        <div className={css.description}>Propose to remove a plugin from the DAO.</div> :
+                        (currentTab === "replacePlugin") ?
+                          <div className={css.description}>Propose to replace a plugin from the DAO.</div> : ""
+                    }
+                    <TrainingTooltip overlay={i18next.t("Title Tooltip")} placement="right">
+                      <label htmlFor="titleInput">
                         <div className={css.requiredMarker}>*</div>
-                        <div className={css.body}>Description</div><HelpButton text={i18next.t("Help Button Tooltip")} />
+                      Title
+                        <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      </label>
+                    </TrainingTooltip>
+                    <Field
+                      autoFocus
+                      id="titleInput"
+                      maxLength={120}
+                      placeholder={i18next.t("Title Placeholder")}
+                      name="title"
+                      type="text"
+                      className={touched.title && errors.title ? css.error : null}
+                    />
+
+                    <TrainingTooltip overlay={i18next.t("Description Tooltip")} placement="right">
+                      <label htmlFor="descriptionInput">
+                        <div className={css.proposalDescriptionLabelText}>
+                          <div className={css.requiredMarker}>*</div>
+                          <div className={css.body}>Description</div><HelpButton text={i18next.t("Help Button Tooltip")} />
+                        </div>
+                        <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      </label>
+                    </TrainingTooltip>
+                    <Field
+                      component={MarkdownField}
+                      // eslint-disable-next-line react/jsx-no-bind
+                      onChange={(value: any) => { setFieldValue("description", value); }}
+                      id="descriptionInput"
+                      placeholder={i18next.t("Description Placeholder")}
+                      name="description"
+                      className={touched.description && errors.description ? css.error : null}
+                    />
+
+                    <TrainingTooltip overlay={i18next.t("Tags Tooltip")} placement="right">
+                      <label className={css.tagSelectorLabel}>
+                        Tags
+                      </label>
+                    </TrainingTooltip>
+
+                    <div className={css.tagSelectorContainer}>
+                      <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
+                    </div>
+
+                    <TrainingTooltip overlay={i18next.t("URL Tooltip")} placement="right">
+                      <label htmlFor="urlInput">
+                        URL
+                        <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      </label>
+                    </TrainingTooltip>
+                    <Field
+                      id="urlInput"
+                      maxLength={120}
+                      placeholder={i18next.t("URL Placeholder")}
+                      name="url"
+                      type="text"
+                      className={touched.url && errors.url ? css.error : null}
+                    />
+
+                    <div className={`${css.removePluginFields} ${css.replacePluginFields}`}>
+                      <div className={`${css.removePluginSelectContainer} ${css.replacePluginSelectContainer}`}>
+                        <label htmlFor="schemeToRemoveInput">
+                          <div className={css.requiredMarker}>*</div>
+                            Plugin to remove
+                          <ErrorMessage name="pluginToRemove">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="pluginToRemove"
+                          name="pluginToRemove"
+                          component="select"
+                          className={css.pluginSelect}
+                        >
+                          <option value="">Select a plugin...</option>
+                          {plugins.map((plugin, _i) => {
+                            return <option id={`option-${_i}`} key={`remove_plugin_${plugin.coreState.address}`} value={plugin.coreState.address}>{pluginNameAndAddress(plugin.coreState)}</option>;
+                          })}
+                        </Field>
                       </div>
-                      <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                    </label>
-                  </TrainingTooltip>
-                  <Field
-                    component={MarkdownField}
-                    // eslint-disable-next-line react/jsx-no-bind
-                    onChange={(value: any) => { setFieldValue("description", value); }}
-                    id="descriptionInput"
-                    placeholder={i18next.t("Description Placeholder")}
-                    name="description"
-                    className={touched.description && errors.description ? css.error : null}
-                  />
-
-                  <TrainingTooltip overlay={i18next.t("Tags Tooltip")} placement="right">
-                    <label className={css.tagSelectorLabel}>
-                      Tags
-                    </label>
-                  </TrainingTooltip>
-
-                  <div className={css.tagSelectorContainer}>
-                    <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
-                  </div>
-
-                  <TrainingTooltip overlay={i18next.t("URL Tooltip")} placement="right">
-                    <label htmlFor="urlInput">
-                      URL
-                      <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                    </label>
-                  </TrainingTooltip>
-                  <Field
-                    id="urlInput"
-                    maxLength={120}
-                    placeholder={i18next.t("URL Placeholder")}
-                    name="url"
-                    type="text"
-                    className={touched.url && errors.url ? css.error : null}
-                  />
-
-                  <div className={`${css.removePluginFields} ${css.replacePluginFields}`}>
-                    <div className={`${css.removePluginSelectContainer} ${css.replacePluginSelectContainer}`}>
-                      <label htmlFor="schemeToRemoveInput">
-                        <div className={css.requiredMarker}>*</div>
-                          Plugin to remove
-                        <ErrorMessage name="pluginToRemove">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="pluginToRemove"
-                        name="pluginToRemove"
-                        component="select"
-                        className={css.pluginSelect}
-                      >
-                        <option value="">Select a plugin...</option>
-                        {plugins.map((plugin, _i) => {
-                          return <option id={`option-${_i}`} key={`remove_plugin_${plugin.coreState.address}`} value={plugin.coreState.address}>{pluginNameAndAddress(plugin.coreState)}</option>;
-                        })}
-                      </Field>
-                    </div>
-                  </div>
-
-                  <div className={`${css.addEditPluginFields} ${css.replacePluginFields}`}>
-                    <div className={`${css.addPluginSelectContainer} ${css.replacePluginSelectContainer}`}>
-                      <label htmlFor="pluginToAdd">
-                        <div className={css.requiredMarker}>*</div>
-                          Plugin to add
-                        <ErrorMessage name="pluginToAdd">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="pluginToAdd"
-                        name="pluginToAdd"
-                        component="select"
-                        className={css.pluginSelect}
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onChange={(e: any) => {
-                          // call the built-in handleChange
-                          handleChange(e);
-                        }}
-                      >
-                        <option value="">Select a plugin...</option>
-                        {Object.entries(PLUGIN_NAMES).map(([name, uiName]) => {
-                          return <option id={`option-${name}`} key={`add_plugin_${name}`} value={name}>{uiName}</option>;
-                        })}
-                      </Field>
                     </div>
 
-                    <PluginInitializeFields pluginName={values.pluginToAdd} values={values} />
-                  </div>
+                    <div className={`${css.addEditPluginFields} ${css.replacePluginFields}`}>
+                      <div className={`${css.addPluginSelectContainer} ${css.replacePluginSelectContainer}`}>
+                        <label htmlFor="pluginToAdd">
+                          <div className={css.requiredMarker}>*</div>
+                            Plugin to add
+                          <ErrorMessage name="pluginToAdd">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="pluginToAdd"
+                          name="pluginToAdd"
+                          component="select"
+                          className={css.pluginSelect}
+                          // eslint-disable-next-line react/jsx-no-bind
+                          onChange={(e: any) => {
+                            // call the built-in handleChange
+                            handleChange(e);
+                          }}
+                        >
+                          <option value="">Select a plugin...</option>
+                          {Object.entries(PLUGIN_NAMES).map(([name, uiName]) => {
+                            return <option id={`option-${name}`} key={`add_plugin_${name}`} value={name}>{uiName}</option>;
+                          })}
+                        </Field>
+                      </div>
 
-                  <div className={css.createProposalActions}>
-                    <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
-                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService.sendFormValuesToClipboard}>
-                        <img src="/assets/images/Icon/share-blue.svg" />
+                      <PluginInitializeFields pluginName={values.pluginToAdd} values={values} />
+                    </div>
+
+                    <div className={css.createProposalActions}>
+                      <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
+                        <button id="export-proposal" className={css.exportProposal} type="button" onClick={this.formModalService.sendFormValuesToClipboard}>
+                          <img src="/assets/images/Icon/share-blue.svg" />
+                        </button>
+                      </TrainingTooltip>
+                      <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
+                        Cancel
                       </button>
-                    </TrainingTooltip>
-                    <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
-                      Cancel
-                    </button>
 
-                    <ResetFormButton
-                      resetToDefaults={this.formModalService.resetFormToDefaults(resetForm)}
-                      isSubmitting={isSubmitting}
-                    ></ResetFormButton>
+                      <ResetFormButton
+                        resetToDefaults={this.formModalService.resetFormToDefaults(resetForm)}
+                        isSubmitting={isSubmitting}
+                      ></ResetFormButton>
 
-                    <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
-                      <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                        Submit proposal
-                      </button>
-                    </TrainingTooltip>
-                  </div>
-                </Form>
-              );
-            }}
-          />
+                      <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
+                        <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
+                          Submit proposal
+                        </button>
+                      </TrainingTooltip>
+                    </div>
+                  </Form>
+                );
+              }}
+            />
+          </div>
         </div>
       </div>
     );
