@@ -36,11 +36,20 @@ For the performance of the app, it is important that we limit the amount of quer
 - As an ongoing process of adopting language localization, any new static text should be added to a translation file and used via `i18next` internationalization-framework.
 Translation files location is under `src/assets/locales/`. After adding your text just import `i18next` and use the translation function:
 
+  `src/assets/locales/en/translation.json`
+
+  ```
+  {
+    "My text key" : "Lorem ipsum dolor sit amet"
+  }
+  ```
+
+  Your code:
+  
   ```
   import i18next from "i18next";
 
-  i18next.t("YOUR TEXT FROM THE TRANSLATION FILE")}
+  i18next.t("My text key"")}
   ```
-
 - Use global variables for styling. See `src/assets/styles/global-variables.scss`.
 We aim to stick to a uniform variables palette so add a new one only if it's necessary.
