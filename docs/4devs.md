@@ -35,3 +35,6 @@ For the performance of the app, it is important that we limit the amount of quer
 
 - As an ongoing process of adopting language localization, any new static text should be added to a translation file and used via `i18next` internationalization-framework.
 Translation files location is under `src/assets/locales/`.
+
+- Use global variables for styling. See `src/assets/styles/global-variables.scss`.
+We aim to stick to a uniform color palette so add a new color only if it's necessary.
