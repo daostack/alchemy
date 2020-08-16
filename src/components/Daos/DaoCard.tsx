@@ -13,12 +13,13 @@ import i18next from "i18next";
 
 interface IExternalProps {
   dao: DAO;
+  totalHoldings?: string;
 }
 
 type IProps = IExternalProps & ISubscriptionProps<IDAOState>
 
 const DaoCard = (props: IProps) => {
-  const { dao } = props;
+  const { dao, totalHoldings } = props;
   const daoState = props.data;
   const bgPattern = generate(dao.id + daoState.name);
   const dxDaoActivationDate = moment("2019-07-14T12:00:00.000+0000");
@@ -62,6 +63,11 @@ const DaoCard = (props: IProps) => {
                 <td><div className={css.daoInfo}>
                   <b>{formatTokens(new BN(daoState.ethBalance))}</b>
                   <span>ETH</span>
+                </div>
+                </td>
+                <td><div className={css.daoInfo}>
+                  <b>{totalHoldings}</b>
+                  <span>USD $</span>
                 </div>
                 </td>
               </tr>
