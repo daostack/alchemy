@@ -1,9 +1,11 @@
 import { IGenericPluginProposalState, IDAOState } from "@daostack/arc.js";
 import * as classNames from "classnames";
 import { GenericPluginInfo } from "genericPluginRegistry";
-import { linkToEtherScan } from "lib/util";
+import { linkToEtherScan, truncateWithEllipses } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
+import CopyToClipboard from "components/Shared/CopyToClipboard";
+import i18next from "i18next";
 const Web3 = require("web3");
 
 interface IProps {
@@ -55,19 +57,23 @@ export default class ProposalSummaryNFTManager extends React.Component<IProps, n
                 {decodedCallData.values[0]}
               </span>
             }
-            { detailView &&
+            {detailView &&
               <div className={css.summaryDetails}>
                 <div>
                   <strong>Send NFT </strong>
                   <img className={css.iconPadding} src="/assets/images/Icon/Transfer.svg" />
                   <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
                 </div>
-                <br/>
+                <br />
                 <div>
                   <strong>NFT Contract:</strong> <a href={linkToEtherScan(decodedCallData.values[1])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[1]}</a>
                 </div>
                 <div>
                   <strong>TokenID:</strong> {decodedCallData.values[2]}
+                </div>
+                <div>
+                  <strong>{i18next.t("Raw call data")}:</strong>
+                  {truncateWithEllipses(proposalState.callData, 66)}<CopyToClipboard value={proposalState.callData} />
                 </div>
               </div>
             }

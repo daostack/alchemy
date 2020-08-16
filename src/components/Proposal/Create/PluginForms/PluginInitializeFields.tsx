@@ -130,14 +130,14 @@ const FundingRequest = () => (
   </div>
 );
 
-const JoinAndQuit = () => (
+const Join = () => (
   <div>
-    {fieldView("JoinAndQuit", "Funding Token", "fundingToken")}
-    {fieldView("JoinAndQuit", "Minimum Join Fee", "minFeeToJoin")}
-    {fieldView("JoinAndQuit", "Initial Reputation", "memberReputation")}
-    {fieldView("JoinAndQuit", "Funding Goal", "fundingGoal")}
-    {fieldView("JoinAndQuit", "Deadline", "fundingGoalDeadline")}
-    {fieldView("JoinAndQuit", "Allow Rage Quit", "rageQuitEnable")}
+    {fieldView("Join", "Funding Token", "fundingToken")}
+    {fieldView("Join", "Minimum Join Fee", "minFeeToJoin")}
+    {fieldView("Join", "Initial Reputation", "memberReputation")}
+    {fieldView("Join", "Funding Goal", "fundingGoal")}
+    {fieldView("Join", "Deadline", "fundingGoalDeadline")}
+    {fieldView("Join", "Allow Rage Quit", "rageQuitEnable")}
   </div>
 );
 
@@ -173,7 +173,7 @@ const fieldsMap = {
   Competition: CompetitionFields,
   ContributionRewardExt: ContributionRewardExtFields,
   FundingRequest: FundingRequest,
-  JoinAndQuit: JoinAndQuit,
+  Join: Join,
   SchemeRegistrar: SchemeRegistrarFields,
   SchemeFactory: PluginManagerFields,
   ReputationFromToken: ReputationFromTokenFields,
