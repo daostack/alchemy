@@ -6,13 +6,12 @@ import { enableWalletProvider } from "arc";
 
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 
-import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as arcActions from "actions/arcActions";
 
 import Analytics from "lib/analytics";
 import { isValidUrl, supportedTokens } from "lib/util";
-import { exportUrl, importUrlValues } from "lib/proposalUtils";
+import { exportUrl } from "lib/proposalUtils";
 
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -20,6 +19,9 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import { SelectField } from "./CreateContributionRewardProposal";
+import i18next from "i18next";
+import { IFormModalService, CreateFormModalService } from "components/Shared/FormModalService";
+import { IRootState } from "reducers";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -27,14 +29,14 @@ interface IExternalProps {
   pluginState: IPluginState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps) => {
-  return ownProps;
-};
-
 interface IDispatchProps {
   createProposal: typeof arcActions.createProposal;
   showNotification: typeof showNotification;
 }
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps) => {
+  return ownProps;
+};
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
@@ -56,34 +58,58 @@ interface IFormValues {
 
 interface IState {
   tags: Array<string>;
+  tokens: {
+    value: string;
+    label: string;
+  }[]
 }
 
-class CreateKnownPluginProposal extends React.Component<IProps, IState> {
+const setInitialFormValues = (): IFormValues => {
+  return Object.freeze({
+    description: "",
+    title: "",
+    url: "",
+    tags: [],
+    sendTokenAddress: "",
+    sendTokenAmount: 0,
+    receiveTokenAddress: "",
+    receiveTokenAmount: 0,
+  });
+};
 
-  initialFormValues: IFormValues;
+class CreateTokenTradeProposal extends React.Component<IProps, IState> {
+
+  formModalService: IFormModalService<IFormValues>;
+  currentFormValues: IFormValues;
 
   constructor(props: IProps) {
     super(props);
 
-    this.handleSubmit = this.handleSubmit.bind(this);
-
-    this.initialFormValues = importUrlValues<IFormValues>({
-      description: "",
-      title: "",
-      url: "",
-      tags: [],
-      sendTokenAddress: "",
-      sendTokenAmount: 0,
-      receiveTokenAddress: "",
-      receiveTokenAmount: 0,
+    const tokens = Object.keys(supportedTokens()).map((tokenAddress) => {
+      const token = supportedTokens()[tokenAddress];
+      return { value: tokenAddress, label: token["symbol"] };
     });
 
-    this.state = {
-      tags: this.initialFormValues.tags,
-    };
+    this.state = { tags: [], tokens: [] };
+
+    this.formModalService = CreateFormModalService(
+      "CreateTokenTradeProposal",
+      setInitialFormValues(),
+      () => Object.assign(this.currentFormValues, this.state),
+      (formValues: IFormValues, firstTime: boolean) => {
+        this.currentFormValues = formValues;
+        if (firstTime) { this.state = { tags: formValues.tags, tokens }; }
+        else { this.setState({ tags: formValues.tags, tokens }); }
+      },
+      this.props.showNotification);
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
+  componentWillUnmount() {
+    this.formModalService.saveCurrentValues();
+  }
+
+  private handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
+    console.log(values)
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const proposalOptions: IProposalCreateOptionsTokenTrade = {
@@ -129,15 +155,16 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
   public render(): RenderOutput {
     const { handleClose } = this.props;
 
-    const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li></ul></span>);
-
     return (
       <div className={css.containerNoSidebar}>
 
         <Formik
-          initialValues={this.initialFormValues}
+          initialValues={this.currentFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues) => {
+
+            this.currentFormValues = values;
+
             const errors: any = {};
 
             const require = (name: string) => {
@@ -176,7 +203,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
               <Form noValidate>
                 <label className={css.description}>What to Expect</label>
                 <div className={css.description}>Propose to trade tokens with the DAO.</div>
-                <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
+                <TrainingTooltip overlay={i18next.t("Title Tooltip")} placement="right">
                   <label htmlFor="titleInput">
                     <div className={css.requiredMarker}>*</div>
                     Title
@@ -187,17 +214,17 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                   autoFocus
                   id="titleInput"
                   maxLength={120}
-                  placeholder="Summarize your proposal"
+                  placeholder={i18next.t("Title Placeholder")}
                   name="title"
                   type="text"
                   className={touched.title && errors.title ? css.error : null}
                 />
 
-                <TrainingTooltip overlay={fnDescription} placement="right">
+                <TrainingTooltip overlay={i18next.t("Description Tooltip")} placement="right">
                   <label htmlFor="descriptionInput">
                     <div className={css.proposalDescriptionLabelText}>
                       <div className={css.requiredMarker}>*</div>
-                      <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                      <div className={css.body}>Description</div><HelpButton text={i18next.t("Help Button Tooltip")} />
                     </div>
                     <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
@@ -206,12 +233,12 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                   component={MarkdownField}
                   onChange={(value: any) => { setFieldValue("description", value); }}
                   id="descriptionInput"
-                  placeholder="Describe your proposal in greater detail"
+                  placeholder={i18next.t("Description Placeholder")}
                   name="description"
                   className={touched.description && errors.description ? css.error : null}
                 />
 
-                <TrainingTooltip overlay="Add some tags to give context about your proposal e.g. idea, signal, bounty, research, etc" placement="right">
+                <TrainingTooltip overlay={i18next.t("Tags Tooltip")} placement="right">
                   <label className={css.tagSelectorLabel}>
                     Tags
                   </label>
@@ -221,7 +248,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                   <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
                 </div>
 
-                <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
+                <TrainingTooltip overlay={i18next.t("URL Tooltip")} placement="right">
                   <label htmlFor="urlInput">
                     URL
                     <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -230,7 +257,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                 <Field
                   id="urlInput"
                   maxLength={120}
-                  placeholder="Description URL"
+                  placeholder={i18next.t("URL Placeholder")}
                   name="url"
                   type="text"
                   className={touched.url && errors.url ? css.error : null}
@@ -245,7 +272,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                     <div className={css.amount}>
                       <Field
                         id="sendTokenAmountInput"
-                        placeholder={"How many tokens to send"}
+                        placeholder={i18next.t("Send tokens amount placeholder")}
                         name="sendTokenAmount"
                         type="number"
                         className={touched.sendTokenAmount && errors.sendTokenAmount ? css.error : null}
@@ -276,7 +303,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                     <div className={css.amount}>
                       <Field
                         id="receiveTokenAmountInput"
-                        placeholder={"How many tokens to receive"}
+                        placeholder={i18next.t("Receive tokens amount placeholder")}
                         name="receiveTokenAmount"
                         type="number"
                         className={touched.receiveTokenAmount && errors.receiveTokenAmount ? css.error : null}
@@ -289,17 +316,14 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                         id="receiveTokenAddress"
                         name="receiveTokenAddress"
                         component={SelectField}
-                        options={Object.keys(supportedTokens()).map((tokenAddress) => {
-                          const token = supportedTokens()[tokenAddress];
-                          return { value: tokenAddress, label: token["symbol"] };
-                        })}
+                        options={this.state.tokens}
                       />
                     </div>
                   </div>
                 </div>
 
                 <div className={css.createProposalActions}>
-                  <TrainingTooltip overlay="Export proposal" placement="top">
+                  <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
                     <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
                       <img src="/assets/images/Icon/share-blue.svg" />
                     </button>
@@ -307,7 +331,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                   <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                       Cancel
                   </button>
-                  <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
+                  <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                     <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                         Submit proposal
                     </button>
@@ -322,4 +346,4 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateKnownPluginProposal);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateTokenTradeProposal);

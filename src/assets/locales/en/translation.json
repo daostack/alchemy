@@ -27,5 +27,9 @@
     "Name": "Name",
     "ETH Balance": "ETH Balance",
     "Members": "Members",
-    "Plugin activation time": "The plugin will be activated at"
+    "Plugin activation time": "The plugin will be activated at",
+    "Send tokens amount placeholder": "How many tokens to send",
+    "Receive tokens amount placeholder": "How many tokens to receive",
+    "Send to DAO label": "Send to DAO",
+    "Receive from DAO label": "Receives from DAO"
 }

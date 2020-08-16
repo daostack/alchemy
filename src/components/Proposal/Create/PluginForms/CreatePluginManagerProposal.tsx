@@ -193,6 +193,15 @@ const defaultValues: IFormValues = {
       genericCall: false,
     },
   },
+  TokenTrade: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+  },
   Competition: {
     votingParams: { ...votingParams },
     permissions: {
