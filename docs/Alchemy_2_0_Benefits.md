@@ -44,6 +44,6 @@
 ## Misc 
  - NFT management plugin - send/mint/list 
  - Arc.react  - enable easy custom React UI components on top of subgraph and arc.js 
- - 2 new Common plugins - JoinAndQuit and Funding Request.
+ - 2 new Common plugins - Join and Funding Request.
  - Key value on chain DAO DB (implemented for Common) though can be used by other DAOs.
  - Automatic etherscan/blockscout contract verification upon each DAO deployment. 
