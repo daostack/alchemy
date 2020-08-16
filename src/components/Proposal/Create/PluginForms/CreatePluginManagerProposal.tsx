@@ -115,7 +115,7 @@ export interface IFormValues {
     votingParams: IGenesisProtocolFormValues;
     fundingToken: string;
   };
-  JoinAndQuit: {
+  Join: {
     permissions: IPermissions;
     votingParams: IGenesisProtocolFormValues;
     fundingToken: string;
@@ -218,7 +218,7 @@ const defaultValues: IFormValues = {
     },
     fundingToken: "0x0000000000000000000000000000000000000000",
   },
-  JoinAndQuit: {
+  Join: {
     votingParams: { ...votingParams },
     permissions: {
       registerPlugins: false,
