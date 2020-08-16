@@ -7,6 +7,7 @@ import { IProfileState } from "reducers/profilesReducer";
 
 import * as css from "./ProposalSummary.scss";
 import { tokenDetails, formatTokens, toWei } from "lib/util";
+import i18next from "i18next";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;
@@ -49,30 +50,32 @@ export default class ProposalSummaryTokenTrade extends React.Component<IProps> {
       <div className={proposalSummaryClass}>
         <span className={css.transferType}>
           { sendToken &&
-        <>
-          <strong>Sends to DAO:</strong><br/>
-          <AccountPopup accountAddress={proposalState.beneficiary} daoState={daoState} width={12} />
-          <strong>
-            <AccountProfileName accountAddress={proposalState.beneficiary} accountProfile={beneficiaryProfile} daoAvatarAddress={daoState.address}/>
-          </strong>
-          <strong className={css.transferAmount}></strong>
-          <img className={css.transferIcon} src="/assets/images/Icon/Transfer.svg" />
-          {receiveToken}
-          <br/>
-        </>
+          <div>
+            <div>
+              <span className={css.bold}>{i18next.t("Send to DAO label")}:</span>
+            </div>
+            <AccountPopup accountAddress={proposalState.beneficiary} daoState={daoState} width={12} />
+            <span>
+              <AccountProfileName accountAddress={proposalState.beneficiary} accountProfile={beneficiaryProfile} daoAvatarAddress={daoState.address}/>
+            </span>
+            <span className={css.transferAmount}></span>
+            <img className={css.transferIcon} src="/assets/images/Icon/Transfer.svg" />
+            {receiveToken}
+          </div>
           }
           { receiveToken &&
-        <>
-          <br/>
-          <strong>Receives from DAO:</strong><br/>
-          {receiveToken}
-          <strong className={css.transferAmount}></strong>
-          <img className={css.transferIcon} src="/assets/images/Icon/Transfer.svg" />
-          <AccountPopup accountAddress={proposalState.beneficiary} daoState={daoState} width={12} />
-          <strong>
-            <AccountProfileName accountAddress={proposalState.beneficiary} accountProfile={beneficiaryProfile} daoAvatarAddress={daoState.address}/>
-          </strong>
-        </>
+          <div>
+            <div>
+              <span>{i18next.t("Receive from DAO label")}:</span>
+            </div>
+            {receiveToken}
+            <span className={css.transferAmount}></span>
+            <img className={css.transferIcon} src="/assets/images/Icon/Transfer.svg" />
+            <AccountPopup accountAddress={proposalState.beneficiary} daoState={daoState} width={12} />
+            <span>
+              <AccountProfileName accountAddress={proposalState.beneficiary} accountProfile={beneficiaryProfile} daoAvatarAddress={daoState.address}/>
+            </span>
+          </div>
           }
         </span>
       </div>
