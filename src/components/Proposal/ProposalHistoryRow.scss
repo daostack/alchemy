@@ -12,7 +12,7 @@
 
 .proposalCreator {
   width: auto;
-  min-width: 145px;
+  min-width: 120px;
   padding-left: 7px;
   cursor: default;
 }
@@ -25,21 +25,30 @@
 
 .endDate {
   color: $gray-1;
+  max-width: 100px;
 }
 
 .plugin {
   color: $gray-1;
+  max-width: 120px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .title {
-  color: rgba(80, 97, 118, 1.000);
+  color: $gray-3;
+  max-width: 130px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 
   a {
-    color: rgba(80, 97, 118, 1.000);
+    color: $gray-3;
   }
 
   a:visited {
-    color: rgba(80, 97, 118, 1.000);
+    color: $gray-3;
   }
 }
 
@@ -85,7 +94,7 @@
 }
 
 .myActions {
-  color: rgba(80, 97, 118, 1.000);
+  color: $gray-3;
   padding-top: 10px;
   text-align: center;
 }
@@ -135,18 +144,6 @@
     padding: 0 0 15px 8px;
     font-weight: bold;
     font-size: 13px;
-  }
-
-  .closeReason {
-
-  }
-
-  .votes {
-
-  }
-
-  .predictions {
-
   }
 
   .closeReason .decisionReason {
