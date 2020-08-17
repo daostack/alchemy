@@ -1,5 +1,4 @@
 import * as update from "immutability-helper";
-
 import { AsyncActionSequence } from "actions/async";
 
 export enum ActionTypes {
@@ -11,34 +10,47 @@ export enum ActionTypes {
 
 export type FollowType = "daos" | "proposals" | "users";
 
-export type IProfileState = {
+export interface IFollowsCollections {
+  daos: Array<string>,
+  proposals: Array<string>,
+  users: Array<string>,
+}
+
+export interface IProfileState {
   description: string;
   ethereumAccountAddress: string;
-  follows: {
-    daos: string[];
-    proposals: string[];
-    plugins: string[];
-    users: string[];
-  };
+  follows: IFollowsCollections;
   image?: any;
   name: string;
   socialURLs: any;
-};
+}
 
-export interface IProfilesState {
-  threeBox: any; // To store the opened 3box box so we dont have to wait to open it every time we want to update data in it
-  threeBoxSpace: any; // To store the opened 3box DAOstack space so we dont have to wait to open it every time we want to update data in it
+export interface I3BoxState {
+  threeBox?: any; // To store the opened 3box box so we dont have to wait to open it every time we want to update data in it
+  threeBoxSpace?: any; // To store the opened 3box DAOstack space so we dont have to wait to open it every time we want to update data in it
+}
+
+export interface IProfilesState extends I3BoxState {
   [accountAddress: string]: IProfileState;
+}
+
+export interface IProfilesPayload {
+  profiles: Record<string, IProfileState>;
+}
+
+export interface IFollowingPayload {
+  type: FollowType;
+  id: string;
+  isFollowing: boolean;
 }
 
 export function newProfile(ethereumAccountAddress: string): IProfileState {
   return {
     description: "",
-    ethereumAccountAddress,
+    ethereumAccountAddress, // assumed already cast to lowercase
     follows: {
       daos: [],
       proposals: [],
-      plugins: [],
       users: [],
     },
     name: "",
@@ -46,29 +58,43 @@ export function newProfile(ethereumAccountAddress: string): IProfileState {
   };
 }
 
-const initialState: IProfilesState = { threeBox: null, threeBoxSpace: null };
+const profilesReducer = (
+  state: IProfilesState = {},
+  action: {
+    payload: IFollowingPayload | I3BoxState | IProfilesPayload | IProfileState,
+    meta: { accountAddress: string },
+    type: ActionTypes,
+    sequence: AsyncActionSequence
+  }): IProfilesState | I3BoxState | IProfileState => {
 
-const profilesReducer = (state = initialState, action: { type: ActionTypes, payload: any, meta: any, sequence: AsyncActionSequence }): IProfilesState => {
-  const { payload, meta } = action;
-
-  if (payload && Object.prototype.hasOwnProperty.call(payload, "threeBox")) {
-    state = update(state, { threeBox: { $set: payload.threeBox } });
-    delete payload.threeBox;
-  }
-
-  if (payload && Object.prototype.hasOwnProperty.call(payload, "threeBoxSpace")) {
-    state = update(state, { threeBoxSpace: { $set: payload.threeBoxSpace } });
-    delete payload.threeBoxSpace;
-  }
+  const { meta } = action;
 
   switch (action.type) {
+    case ActionTypes.SAVE_THREEBOX: {
+      const threeBoxPayload = action.payload as I3BoxState;
+      const newState: I3BoxState = {};
+      if (threeBoxPayload && threeBoxPayload.threeBox) {
+        Object.assign(newState, update(state, { threeBox: { $set: threeBoxPayload.threeBox } }));
+      }
+
+      if (threeBoxPayload && threeBoxPayload.threeBoxSpace) {
+        Object.assign(newState, update(newState, { threeBoxSpace: { $set: threeBoxPayload.threeBoxSpace } }));
+      }
+
+      return newState;
+    }
 
     case ActionTypes.UPDATE_PROFILE: {
       switch (action.sequence) {
-        case AsyncActionSequence.Success:
-          return update(state, { [meta.accountAddress]: (profile: any) => {
-            return update(profile || newProfile(meta.accountAddress), { $merge: payload });
-          }});
+        case AsyncActionSequence.Success: {
+          const profilePayload = action.payload as IProfileState;
+          const accountAddress = meta.accountAddress?.toLowerCase();
+          return update(state, {
+            [accountAddress]: (profile: any) => {
+              return update(profile || newProfile(accountAddress), { $merge: profilePayload });
+            },
+          });
+        }
         default: {
           return state;
         }
@@ -78,16 +104,18 @@ const profilesReducer = (state = initialState, action: { type: ActionTypes, payl
     case ActionTypes.FOLLOW_ITEM: {
       switch (action.sequence) {
         case AsyncActionSequence.Success: {
-          const { type, id, isFollowing } = payload;
+          const { type, id, isFollowing } = action.payload as IFollowingPayload;
+          const profilesState = state as IProfilesState;
+          const accountAddress = meta.accountAddress?.toLowerCase();
 
-          if (!state[meta.accountAddress]) {
-            state = update(state, { [meta.accountAddress]: { $set: newProfile(meta.accountAddress) }});
+          if (!profilesState[accountAddress]) {
+            state = update(state, { [accountAddress]: { $set: newProfile(accountAddress) } });
           }
 
-          if (isFollowing && !state[meta.accountAddress].follows[type as FollowType].includes(id)) {
-            return update(state, { [meta.accountAddress]: { follows: { [type]: { $push: [id] } }}});
-          } else if (!isFollowing && state[meta.accountAddress].follows[type as FollowType].includes(id)) {
-            return update(state, { [meta.accountAddress]: { follows: { [type]: (arr: string[]) => arr.filter((item) => item !== id) }}});
+          if (isFollowing && !profilesState[accountAddress].follows[type].includes(id)) {
+            return update(state, { [accountAddress]: { follows: { [type]: { $push: [id] } } } });
+          } else if (!isFollowing && profilesState[accountAddress].follows[type].includes(id)) {
+            return update(state, { [accountAddress]: { follows: { [type]: (arr: string[]) => arr.filter((item) => item !== id) } } });
           }
           return state;
         }
@@ -100,8 +128,7 @@ const profilesReducer = (state = initialState, action: { type: ActionTypes, payl
     case ActionTypes.GET_PROFILE_DATA: {
       switch (action.sequence) {
         case AsyncActionSequence.Success: {
-          const { profiles } = payload;
-
+          const profiles = (action.payload as IProfilesPayload).profiles;
           for (const address of Object.keys(profiles)) {
             state = update(state, { [address]: { $set: profiles[address] } });
           }
@@ -109,7 +136,7 @@ const profilesReducer = (state = initialState, action: { type: ActionTypes, payl
         }
         case AsyncActionSequence.Failure: {
           // eslint-disable-next-line no-console
-          console.error(`ERROR: ${payload}`);
+          console.error(`ERROR: ${state}`);
           return state;
         }
       }
