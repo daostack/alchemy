@@ -9,8 +9,10 @@ import { IAsyncAction } from "./async";
 
 export type ConnectAction = IAsyncAction<"WEB3_CONNECT", void, IWeb3State>;
 
-export function setCurrentAccount(accountAddress: string) {
-  return async (dispatch: Redux.Dispatch<any, any>, _getState: unknown): Promise<void> => {
+export function setCurrentAccount(accountAddress: string):
+(dispatch: Redux.Dispatch<any, any>, _getState: unknown) => Promise<void> {
+
+  return async (dispatch: Redux.Dispatch<any, any>, _getState: unknown) => {
     const payload = {
       currentAccountAddress: accountAddress?.toLowerCase(),
     };

@@ -1,18 +1,13 @@
 export enum ActionTypes {
   WEB3_SET_ACCOUNT = "WEB3_SET_ACCOUNT",
-  OTHER_ACTION = "__any_other_action_type__",
 }
 
 export interface IWeb3State {
-  accounts: string[];
   currentAccountAddress: string | null;
-  networkId: number;
 }
 
 const initialState: IWeb3State = {
-  accounts: [],
   currentAccountAddress: null,
-  networkId: 0, // unknown network
 };
 
 const web3Reducer = (state = initialState, action: { type: ActionTypes, payload: { currentAccountAddress: string } }): IWeb3State => {
