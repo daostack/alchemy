@@ -1,3 +1,7 @@
+## 0.10.14-2
+  - Bugs Fixed
+    - revert subgraph endpoint domain
+
 ## 0.10.14-1
   - Bugs Fixed
     - fix display of DXD and NEC tokens
