@@ -46,6 +46,7 @@
   transition: all .25s ease;
   vertical-align: top;
   z-index: 0;
+  cursor: pointer;
 
   .description, .url {
     display: none;
@@ -102,6 +103,7 @@
 
 .summary {
   margin: 0 20px 0px 20px;
+  color: $black;
 }
 
 .proposal:hover {
