@@ -7,8 +7,6 @@ import * as moment from "moment";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import * as css from "./Daos.scss";
-import { formatTokens } from "lib/util";
-import BN = require("bn.js");
 import i18next from "i18next";
 
 interface IExternalProps {
@@ -57,17 +55,12 @@ const DaoCard = (props: IProps) => {
                 </td>
                 <td><div className={css.daoInfo}>
                   <b>{daoState.numberOfQueuedProposals+ daoState.numberOfBoostedProposals + daoState.numberOfPreBoostedProposals}</b>
-                  <span>Open Proposals</span>
-                </div>
-                </td>
-                <td><div className={css.daoInfo}>
-                  <b>{formatTokens(new BN(daoState.ethBalance))}</b>
-                  <span>ETH</span>
+                  <span>{i18next.t("Open Proposals")}</span>
                 </div>
                 </td>
                 <td><div className={css.daoInfo}>
                   <b>{totalHoldings}</b>
-                  <span>USD $</span>
+                  <span>USD</span>
                 </div>
                 </td>
               </tr>

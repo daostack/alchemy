@@ -245,17 +245,10 @@
     }
 
     table.daoInfoContainer {
-      text-align: center;
-
+      table-layout: fixed;
       width: 100%;
       tr > td {
-        width: 40%;
-        border: 0;
         padding: 0;
-      }
-      tr > td:first-child,
-      tr > td:last-child {
-        width: 10%;
       }
     }
   }
