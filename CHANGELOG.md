@@ -1,3 +1,11 @@
+## 0.10.14-2
+  - Bugs Fixed
+    - revert subgraph endpoint domain
+
+## 0.10.14-1
+  - Bugs Fixed
+    - fix display of DXD and NEC tokens
+
 ## 0.10.14
   - Features Added
     - show raw calldata in proposal details for relevant plugins
