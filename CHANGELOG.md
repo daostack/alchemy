@@ -1,3 +1,7 @@
+## 0.10.15
+  - Features Added
+   - update subgraph endpoints
+
 ## 0.10.14-2
   - Bugs Fixed
     - revert subgraph endpoint domain
