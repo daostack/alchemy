@@ -657,3 +657,11 @@ export function safeMoment(dateSpecifier: moment.Moment | Date | number | string
   }
 }
 
+/**
+ * Checks whether an element is an empty object
+ * @param element
+ * @returns {boolean}
+ */
+export const isEmptyObject = (element: unknown): boolean => {
+  return Object.keys(element).length === 0 && element.constructor === Object;
+};

@@ -7,18 +7,17 @@ import * as moment from "moment";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import * as css from "./Daos.scss";
-import { formatTokens } from "lib/util";
-import BN = require("bn.js");
 import i18next from "i18next";
 
 interface IExternalProps {
   dao: DAO;
+  totalHoldings?: string;
 }
 
 type IProps = IExternalProps & ISubscriptionProps<IDAOState>
 
 const DaoCard = (props: IProps) => {
-  const { dao } = props;
+  const { dao, totalHoldings } = props;
   const daoState = props.data;
   const bgPattern = generate(dao.id + daoState.name);
   const dxDaoActivationDate = moment("2019-07-14T12:00:00.000+0000");
@@ -56,12 +55,12 @@ const DaoCard = (props: IProps) => {
                 </td>
                 <td><div className={css.daoInfo}>
                   <b>{daoState.numberOfQueuedProposals+ daoState.numberOfBoostedProposals + daoState.numberOfPreBoostedProposals}</b>
-                  <span>Open Proposals</span>
+                  <span>{i18next.t("Open Proposals")}</span>
                 </div>
                 </td>
                 <td><div className={css.daoInfo}>
-                  <b>{formatTokens(new BN(daoState.ethBalance))}</b>
-                  <span>ETH</span>
+                  <b>{totalHoldings}</b>
+                  <span>USD</span>
                 </div>
                 </td>
               </tr>
