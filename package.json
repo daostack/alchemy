@@ -2,6 +2,9 @@
   "name": "alchemy-client",
   "version": "0.10.15",
   "description": "An app for collaborative networks (DAOs), based on the DAO stack.",
+  "author": "DAOstack",
+  "license": "GPL-3.0",
+  "main": "./src/index.tsx",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/daostack/alchemy.git"
