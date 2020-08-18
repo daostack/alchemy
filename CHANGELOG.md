@@ -1,6 +1,7 @@
 ## 0.10.15
   - Features Added
    - update subgraph endpoints
+   - Display proposal event history on the Proposal Details page
 
 ## 0.10.14-2
   - Bugs Fixed

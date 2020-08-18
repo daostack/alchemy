@@ -678,3 +678,27 @@ export function ethBalance(address: Address): Observable<BN> {
 
   return observable.pipe(map((item: any) => new BN(item)));
 }
+
+/**
+ * arc.js is inconsistent in how it returns datetimes.
+ * Convert all possibilities safely to a `moment`.
+ * Is OK when the dateSpecifier is already a moment.
+ * If is a string, must be ISO-conformant.
+ * @param dateSpecifier
+ */
+export function safeMoment(dateSpecifier: moment.Moment | Date | number | string | undefined): moment.Moment {
+  switch (typeof dateSpecifier) {
+    case "object":
+      if (moment.isMoment(dateSpecifier)) {
+        return dateSpecifier;
+      }
+    // else assume is a Date, fallthrough
+    case "string":
+      return moment(dateSpecifier);
+    case "number":
+      // then should be a count of seconds in UNIX epoch
+      return moment.unix(dateSpecifier);
+    default:
+      throw new Error(`safeMoment: unknown type: ${typeof dateSpecifier}`);
+  }
+}
