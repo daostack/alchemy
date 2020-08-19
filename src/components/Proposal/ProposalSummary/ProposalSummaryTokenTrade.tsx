@@ -66,7 +66,7 @@ export default class ProposalSummaryTokenTrade extends React.Component<IProps> {
           { receiveToken &&
           <div>
             <div>
-              <span>{i18next.t("Receive from DAO label")}:</span>
+              <span className={css.bold}>{i18next.t("Receive from DAO label")}:</span>
             </div>
             {receiveToken}
             <span className={css.transferAmount}></span>
