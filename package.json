@@ -79,6 +79,7 @@
   "dependencies": {
     "3box": "^1.20.3",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
+    "@daostack/arc.js": "2.0.0-experimental.50",
     "@dorgtech/daocreator-ui-experimental": "1.1.12",
     "@daostack/arc.js": "2.0.0-experimental.49",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
@@ -150,7 +151,7 @@
   },
   "devDependencies": {
     "@babel/plugin-syntax-dynamic-import": "^7.7.4",
-    "@dorgtech/test-env-experimental": "4.0.20",
+    "@daostack/test-env-experimental": "4.0.18",
     "@storybook/addon-info": "^5.0.10",
     "@storybook/react": "^5.0.10",
     "@types/chai": "^4.1.7",

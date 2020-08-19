@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import BN = require("bn.js");
 import { getProfile, updateProfile } from "actions/profilesActions";
-import { enableWalletProvider, getArc } from "arc";
+import { enableWalletProvider, getArc, getAccountIsEnabled } from "arc";
 import classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import Reputation from "components/Account/Reputation";
@@ -35,6 +35,7 @@ interface IStateProps {
   accountProfile?: IProfileState;
   currentAccountAddress: string;
   daoAvatarAddress: string;
+  isConnected: boolean;
   threeBox: any;
 }
 
@@ -58,6 +59,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
     accountProfile: state.profiles[accountAddress],
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress,
+    isConnected: getAccountIsEnabled(),
     threeBox: state.profiles.threeBox,
   };
 };
@@ -93,7 +95,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
     };
   }
 
-  public async componentDidMount(): Promise<void> {
+  public componentDidMount(): void {
     const { accountAddress, getProfile, accountProfile} = this.props;
 
     if (!accountProfile) {
@@ -118,6 +120,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
   public handleFormSubmit = async (values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> => {
     const { currentAccountAddress, showNotification, updateProfile } = this.props;
 
+    // hopefully this isn't necessasry at this point
     if (!await enableWalletProvider({ showNotification })) { setSubmitting(false); return; }
 
     if (this.props.threeBox || parseInt(localStorage.getItem("dontShowThreeboxModal"))) {
@@ -127,6 +130,10 @@ class AccountProfilePage extends React.Component<IProps, IState> {
     }
 
     setSubmitting(false);
+  }
+
+  public handleConnect = () => {
+    enableWalletProvider({ showNotification });
   }
 
   private closeThreeboxModal = (_e: any): void => {
@@ -142,8 +149,9 @@ class AccountProfilePage extends React.Component<IProps, IState> {
       return <Loading/>;
     }
 
-    // TODO: dont show profile until loaded from 3box
-    const editing = currentAccountAddress && accountAddress === currentAccountAddress;
+    // TODO: dont show profile until loaded from 3box and we are fully in sync with the actual current account
+    const canEdit = currentAccountAddress && (accountAddress === currentAccountAddress);
+    const editing = canEdit && this.props.isConnected;
 
     const profileContainerClass = classNames({
       [css.profileContainer]: true,
@@ -252,7 +260,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                             <div className={css.saveProfile}>
                               <button className={css.submitButton} type="submit" disabled={isSubmitting}>
                                 <img className={css.loading} src="/assets/images/Icon/Loading-black.svg" />
-                                SUBMIT
+                                Submit
                               </button>
                             </div>
                           </div>
@@ -295,6 +303,12 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                         <span>{accountAddress.substr(0, 20)}...</span>
                         <CopyToClipboard value={accountAddress} color={IconColor.Black}/>
                       </div>
+                      {(canEdit && !editing) ?
+                        <div className={css.saveProfile}>
+                          <button className={css.submitButton} type="button" onClick={this.handleConnect}>Edit</button>
+                        </div>
+                        : ""
+                      }
                     </div>
                   </div>
                 </form>

@@ -8,6 +8,7 @@ import {
   ReputationFromTokenPlugin,
   Proposal,
   FundingRequestProposal,
+  JoinProposal,
   IProposalState,
   TokenTradeProposal,
   JoinProposal,
