@@ -23,7 +23,7 @@ import BHubReg from "../Buidlhub/Registration";
 import i18next from "i18next";
 import classNames from "classnames";
 import axios from "axios";
-import { getNetworkName, isEmptyObject } from "lib/util";
+import { getNetworkName } from "lib/util";
 
 type SubscriptionData = [DAO[], DAO[], DAO[]];
 
@@ -206,7 +206,7 @@ class DaosPage extends React.Component<IProps, IState> {
         <DaoCard
           key={dao.id}
           dao={dao}
-          totalHoldings={isEmptyObject(daosBalances) ? "N/A" : daosBalances[dao.id]?.formattedBalance}
+          totalHoldings={daosBalances[dao.id] ? daosBalances[dao.id]?.formattedBalance : "N/A"}
         />
       );
     });
@@ -216,7 +216,7 @@ class DaosPage extends React.Component<IProps, IState> {
         <DaoCard
           key={dao.id}
           dao={dao}
-          totalHoldings={isEmptyObject(daosBalances) ? "N/A" : daosBalances[dao.id]?.formattedBalance}
+          totalHoldings={daosBalances[dao.id] ? daosBalances[dao.id]?.formattedBalance : "N/A"}
         />
       );
     });
