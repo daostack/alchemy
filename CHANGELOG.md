@@ -2,6 +2,9 @@
   - Features Added
    - update subgraph endpoints
    - Display proposal event history on the Proposal Details page
+   
+  - Bugs Fixed
+    - user's vote was not automatically updating in the UI after the user voted
 
 ## 0.10.14-2
   - Bugs Fixed
