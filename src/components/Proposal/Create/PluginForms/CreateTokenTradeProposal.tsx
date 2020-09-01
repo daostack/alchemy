@@ -109,7 +109,6 @@ class CreateTokenTradeProposal extends React.Component<IProps, IState> {
   }
 
   private handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
-    console.log(values)
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const proposalOptions: IProposalCreateOptionsTokenTrade = {
@@ -231,7 +230,8 @@ class CreateTokenTradeProposal extends React.Component<IProps, IState> {
                 </TrainingTooltip>
                 <Field
                   component={MarkdownField}
-                  onChange={(value: any) => { setFieldValue("description", value); }}
+                  // eslint-disable-next-line react/jsx-no-bind
+                  onChange={(value: any) => setFieldValue("description", value)}
                   id="descriptionInput"
                   placeholder={i18next.t("Description Placeholder")}
                   name="description"
@@ -324,6 +324,7 @@ class CreateTokenTradeProposal extends React.Component<IProps, IState> {
 
                 <div className={css.createProposalActions}>
                   <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
+                    { // eslint-disable-next-line react/jsx-no-bind }
                     <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
                       <img src="/assets/images/Icon/share-blue.svg" />
                     </button>
