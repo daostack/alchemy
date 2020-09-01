@@ -223,7 +223,7 @@
     "typescript": "^3.6.3",
     "typings-for-css-modules-loader": "^1.7.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
-    "webdriverio": "^6.1.12",
+    "webdriverio": "^6.4.5",
     "webpack": "^4.44.0",
     "webpack-bundle-analyzer": "^3.6.1",
     "webpack-cli": "^3.2.1",
