@@ -33,7 +33,7 @@ const proposalsQuery = (dao: DAO, skip: number, titleSearch?: string): Observabl
     // eslint-disable-next-line @typescript-eslint/camelcase
     // stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed, IProposalStage.Queued],
     // eslint-disable-next-line @typescript-eslint/camelcase
-    closingAt_lte: Math.floor(new Date().getTime() / 1000),
+    // closingAt_lte: Math.floor(new Date().getTime() / 1000),
   };
 
   if (titleSearch?.trim()) {
@@ -121,7 +121,7 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
         >
           {proposals.length === 0 ?
             this.state.filteredProposalSet ?
-              <span>No proposals found whose title contains the given text.</span> :
+              <span>No proposals found whose title contains the given text.  Note the filter is case-sensitive.</span> :
               <span>{this.props.daoState.name} hasn&apos;t created any proposals yet. Go to the <Link to={"/dao/" + daoState.id + "/proposal/"}>DAO&apos;s installed plugins</Link> to create proposals.</span> :
 
             <table className={css.proposalHistoryTable}>
