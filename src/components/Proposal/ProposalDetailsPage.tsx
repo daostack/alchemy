@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IContributionRewardExtState } from "@daostack/arc.js";
+import { Address, IDAOState, IProposalStage, IContributionRewardExtState, IProposalOutcome } from "@daostack/arc.js";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -123,6 +123,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       proposal,
       rewards,
       stakes,
+      votes,
     } = this.props;
 
     const proposalState = proposal.coreState;
@@ -138,6 +139,13 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     this.disqusConfig.title = proposalState.title;
     this.disqusConfig.url = process.env.BASE_URL + this.props.location.pathname;
     this.disqusConfig.identifier = this.props.proposalId;
+
+    let currentAccountVote: IProposalOutcome | undefined;
+
+    if (votes.length > 0) {
+      const currentVote = this.props.votes[0];
+      currentAccountVote = currentVote.coreState.outcome;
+    }
 
     return (
       <div className={css.wrapper}>
@@ -225,7 +233,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   <VoteButtons
                     altStyle
                     currentAccountAddress={currentAccountAddress}
-                    currentVote={this.state.currentAccountVote}
+                    currentVote={currentAccountVote}
                     daoState={daoState}
                     expired={expired}
                     currentAccountState={member}
@@ -256,7 +264,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   <VoteButtons
                     currentAccountAddress={currentAccountAddress}
                     currentAccountState={member}
-                    currentVote={this.state.currentAccountVote}
+                    currentVote={currentAccountVote}
                     daoState={daoState}
                     expired={expired}
                     proposalState={proposalState}
@@ -273,7 +281,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 <VoteBreakdown
                   currentAccountAddress={currentAccountAddress}
                   currentAccountState={member}
-                  currentVote={this.state.currentAccountVote}
+                  currentVote={currentAccountVote}
                   daoState={daoState}
                   detailView
                   proposalState={proposalState} />
