@@ -140,6 +140,8 @@ class PluginContainer extends React.Component<IProps, IState> {
     }
 
     const isActive = getPluginIsActive(pluginState);
+    // The next line is temporary until creation of Join and FundingRequest proposals will be available.
+    const disabled = pluginState.name === "Join" || pluginState.name === "FundingRequest";
     const isProposalPlugin = Object.keys(PLUGIN_NAMES).includes(pluginState.name);
     const isBountyPlugin = pluginName(pluginState, pluginState.address) === "Standard Bounties";
     // checking the special case here where the information tab is the default
@@ -229,7 +231,7 @@ class PluginContainer extends React.Component<IProps, IState> {
                     <TrainingTooltip placement="topRight" overlay={i18next.t("New Proposal Button Tooltip")}>
                       <a className={
                         classNames({
-                          [css.disabled]: !isActive,
+                          [css.disabled]: !isActive || disabled,
                         })}
                       data-test-id="createProposal"
                       href="#!"
