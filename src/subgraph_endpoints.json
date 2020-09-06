@@ -1,6 +1,6 @@
 {
-  "http_main": "https://api.thegraph.com/subgraphs/name/daostack/TODO",
-  "ws_main": "wss://api.thegraph.com/subgraphs/name/daostack/TODO",
+  "http_main": "https://api.thegraph.com/subgraphs/name/daostack/v8_12_exp",
+  "ws_main": "wss://api.thegraph.com/subgraphs/name/daostack/v8_12_exp",
   "http_rinkeby": "https://api.thegraph.com/subgraphs/name/daostack/v8_12_exp_rinkeby",
   "ws_rinkeby": "wss://api.thegraph.com/subgraphs/name/daostack/v8_12_exp_rinkeby",
   "http_kovan": "https://api.thegraph.com/subgraphs/name/daostack/v8_12_exp_kovan",
