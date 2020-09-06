@@ -30,7 +30,9 @@
           {
             "label": "Data",
             "name": "data",
-            "placeholder": ""
+            "placeholder": "Arbitrary data to transfer (0x0 means no data)",
+            "defaultValue": "0x0",
+            "optional": true
           }
         ],
         "abi": {
