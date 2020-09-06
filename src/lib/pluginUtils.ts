@@ -42,6 +42,8 @@ export const REQUIRED_PLUGIN_PERMISSIONS: any = {
   "UpgradeScheme": PluginPermissions.IsRegistered | PluginPermissions.CanRegisterPlugins | PluginPermissions.CanUpgradeController,
   "VestingScheme": PluginPermissions.IsRegistered,
   "VoteInOrganizationScheme": PluginPermissions.IsRegistered | PluginPermissions.CanCallDelegateCall,
+  "Join": PluginPermissions.IsRegistered,
+  "FundingRequest": PluginPermissions.IsRegistered,
 };
 
 /** plugins that we know how to interpret  */
@@ -53,6 +55,8 @@ export const PLUGIN_NAMES = {
   SchemeFactory: "Plugin Manager",
   Competition: "Competition",
   ContributionRewardExt: "Contribution Reward Ext",
+  Join: "Join",
+  FundingRequest: "Funding Request",
 };
 
 /**

@@ -38,5 +38,11 @@
     "3BoxProfileSuccess": "Profile data saved to 3Box",
     "Following": "Now following",
     "UnFollowing": "No longer following",
-    "Raw call data": "Raw call data"
+    "Raw call data": "Raw call data",
+    "Address": "Address:",
+    "Funding": "Funding:",
+    "Reputation Minted": "Reputation Minted:",
+    "Minimum DAO bounty": "Minimum DAO bounty:",
+    "Amount": "Amount:",
+    "Amount Redeemed": "Amount Redeemed:"
 }
