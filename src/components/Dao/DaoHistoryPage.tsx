@@ -30,10 +30,6 @@ type IProps = IExternalProps & IState & ISubscriptionProps<SubscriptionData>;
 
 const proposalsQuery = (dao: DAO, skip: number, titleSearch?: string): Observable<Array<Proposal>> => {
   const filter: any = {
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    // stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed, IProposalStage.Queued],
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    // closingAt_lte: Math.floor(new Date().getTime() / 1000),
   };
 
   if (titleSearch?.trim()) {
@@ -105,7 +101,7 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
         <div className={css.daoHistoryHeader}>History</div>
 
         <div className={css.searchBox}>
-          <input type="text" name="search" placeholder="Filter proposals by title containing"
+          <input type="text" name="search" placeholder="Type and press Enter or Tab to filter proposals by title"
             onKeyPress={this.onSearchExecute}
             onBlur ={this.onSearchExecute}
             onInput={this.onSearchChange}/>
