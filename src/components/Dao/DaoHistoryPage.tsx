@@ -23,10 +23,26 @@ interface IExternalProps extends RouteComponentProps<any> {
 
 interface IState {
   filteredProposalSet: Array<Proposal>;
+  filtering: boolean;
 }
 
 type SubscriptionData = Array<Proposal>;
 type IProps = IExternalProps & IState & ISubscriptionProps<SubscriptionData>;
+
+const ProposalsHTML = (props:
+{
+  proposals: Array<Proposal>;
+  history: any;
+  daoState: IDAOState;
+  currentAccountAddress: Address;
+}): React.ReactElement => {
+  return <> {
+    props.proposals.map((proposal: Proposal) => {
+      return (<ProposalHistoryRow key={"proposal_" + proposal.id} history={props.history} proposal={proposal} daoState={props.daoState} currentAccountAddress={props.currentAccountAddress} />);
+    })
+  }
+  </>;
+};
 
 const proposalsQuery = (dao: DAO, skip: number, titleSearch?: string): Observable<Array<Proposal>> => {
   const filter: any = {
@@ -54,6 +70,7 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
 
     this.state = {
       filteredProposalSet: null,
+      filtering: false,
     };
   }
 
@@ -76,12 +93,14 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
        * Note that as written this will return no more than 1000 proposals
        */
       if (this.filterString?.length) {
+        this.setState({filtering: true});
+
         foundProposals = await proposalsQuery(this.props.daoState.dao, 0, this.filterString).pipe(first()).toPromise();
       }
       else {
         foundProposals = null;
       }
-      this.setState({ filteredProposalSet: foundProposals });
+      this.setState({ filteredProposalSet: foundProposals, filtering: false });
     }
   }
 
@@ -90,17 +109,13 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
 
     const proposals = this.state.filteredProposalSet ?? data;
 
-    const proposalsHTML = proposals.map((proposal: Proposal) => {
-      return (<ProposalHistoryRow key={"proposal_" + proposal.id} history={this.props.history} proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} />);
-    });
-
     return (
       <div className={css.container}>
         <BreadcrumbsItem to={"/dao/" + daoState.address + "/history"}>History</BreadcrumbsItem>
 
         <div className={css.daoHistoryHeader}>History</div>
 
-        <div className={css.searchBox}>
+        <div className={css.searchBox.concat(`${this.state.filtering ? ` ${css.filtering}` : ""}`)}>
           <input type="text" name="search" placeholder="Type and press Enter or Tab to filter proposals by title"
             onKeyPress={this.onSearchExecute}
             onBlur ={this.onSearchExecute}
@@ -134,7 +149,11 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
                 </tr>
               </thead>
               <tbody>
-                {proposalsHTML}
+                <ProposalsHTML
+                  proposals={proposals}
+                  history={this.props.history}
+                  daoState={daoState}
+                  currentAccountAddress={currentAccountAddress} />
               </tbody>
             </table>
           }

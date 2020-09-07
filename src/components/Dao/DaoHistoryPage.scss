@@ -34,6 +34,10 @@
       transition: all 5000s ease-in-out 0s;
     }
 
+    &.filtering {
+      background: url("/assets/images/Icon/buttonLoadingBlue.gif") $white no-repeat left 6px center;
+    }
+
     input {
       border: none;
       font-family: "AccordBold", sans-serif;
