@@ -1,4 +1,16 @@
-import { IDAOState, AnyProposal, IContributionRewardProposalState, IGenericPluginProposalState, IPluginRegistrarProposalState, IProposalState, Proposal, IPluginManagerProposalState, ITokenTradeProposalState } from "@daostack/arc.js";
+import {
+  IDAOState,
+  AnyProposal,
+  IContributionRewardProposalState,
+  IGenericPluginProposalState,
+  IPluginRegistrarProposalState,
+  IProposalState,
+  Proposal,
+  IPluginManagerProposalState,
+  IFundingRequestProposalState,
+  ITokenTradeProposalState,
+  IJoinProposalState 
+} from "@daostack/arc.js";
 import classNames from "classnames";
 import { GenericPluginRegistry } from "genericPluginRegistry";
 import * as React from "react";
@@ -9,6 +21,8 @@ import ProposalSummaryKnownGenericPlugin from "./ProposalSummaryKnownGenericPlug
 import ProposalSummaryPluginRegistrar from "./ProposalSummaryPluginRegistrar";
 import ProposalSummaryPluginManager from "./ProposalSummaryPluginManager";
 import ProposalSummaryUnknownGenericPlugin from "./ProposalSummaryUnknownGenericPlugin";
+import ProposalSummaryJoin from "./ProposalSummaryJoin";
+import ProposalSummaryFundingRequest from "./ProposalSummaryFundingRequest";
 import { getArc } from "arc";
 import ProposalSummaryTokenTrade from "./ProposalSummaryTokenTrade";
 
@@ -68,6 +82,12 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       } else {
         return <ProposalSummaryUnknownGenericPlugin {...this.props} proposalState={state} />;
       }
+    } else if (proposal.coreState.name === "Join"){
+      const state = proposal.coreState as IJoinProposalState;
+      return <ProposalSummaryJoin {...this.props} proposalState={state} />;
+    } else if (proposal.coreState.name === "FundingRequest") {
+      const state = proposal.coreState as IFundingRequestProposalState;
+      return <ProposalSummaryFundingRequest {...this.props} proposalState={state} />;
     } else {
       return <div className={proposalSummaryClass}>Unknown proposal type</div>;
     }

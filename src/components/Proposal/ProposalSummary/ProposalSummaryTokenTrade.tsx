@@ -45,14 +45,13 @@ export default class ProposalSummaryTokenTrade extends React.Component<IProps> {
       [css.transactionModal]: transactionModal,
       [css.proposalSummary]: true,
     });
-
     return (
       <div className={proposalSummaryClass}>
         <span className={css.transferType}>
           { sendToken &&
           <div>
             <div>
-              <span className={css.bold}>{i18next.t("Send to DAO label")}:</span>
+              <span className={css.bold}>{i18next.t("Send to DAO")}:</span>
             </div>
             <AccountPopup accountAddress={proposalState.beneficiary} daoState={daoState} width={12} />
             <span>
@@ -66,7 +65,7 @@ export default class ProposalSummaryTokenTrade extends React.Component<IProps> {
           { receiveToken &&
           <div>
             <div>
-              <span className={css.bold}>{i18next.t("Receive from DAO label")}:</span>
+              <span className={css.bold}>{i18next.t("Receive from DAO")}:</span>
             </div>
             {receiveToken}
             <span className={css.transferAmount}></span>

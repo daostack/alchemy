@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { connect } from "react-redux";
-import { IPluginState, IProposalCreateOptionsTokenTrade } from "@daostack/arc.js";
+import { IPluginState } from "@daostack/arc.js";
 import { enableWalletProvider } from "arc";
 
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
@@ -18,7 +18,6 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
-import { SelectField } from "./CreateContributionRewardProposal";
 import i18next from "i18next";
 import { IFormModalService, CreateFormModalService } from "components/Shared/FormModalService";
 import { IRootState } from "reducers";
@@ -111,9 +110,9 @@ class CreateTokenTradeProposal extends React.Component<IProps, IState> {
   private handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    const proposalOptions: IProposalCreateOptionsTokenTrade = {
+    const proposalOptions = {
       dao: this.props.daoAvatarAddress,
-      descriptionHash: values.description,
+      description: values.description,
       title: values.title,
       tags: this.state.tags,
       plugin: this.props.pluginState.address,
@@ -284,17 +283,20 @@ class CreateTokenTradeProposal extends React.Component<IProps, IState> {
                       <Field
                         id="sendTokenAddress"
                         name="sendTokenAddress"
-                        component={SelectField}
-                        options={Object.keys(supportedTokens()).map((tokenAddress) => {
+                        component="select"
+                        className={css.pluginSelect}
+                        >
+                        <option value=""> Select token to send...</option>
+                        {Object.keys(supportedTokens()).map((tokenAddress, _i) => {
                           const token = supportedTokens()[tokenAddress];
-                          return { value: tokenAddress, label: token["symbol"] };
+                          return <option id={`token-${_i}`} key={`token-${_i}`} value={tokenAddress} label={token["symbol"]} />
                         })}
-                      />
+                      </Field>
                     </div>
                   </div>
                 </div>
 
-                <div className={css.reward}>
+                <div>
                   <label htmlFor="receiveTokenAmountInput">
                     Receive token amount
                     <ErrorMessage name="receiveTokenAmount">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -311,13 +313,21 @@ class CreateTokenTradeProposal extends React.Component<IProps, IState> {
                         step={1}
                       />
                     </div>
-                    <div className={css.select}>
+                    <div>
                       <Field
                         id="receiveTokenAddress"
                         name="receiveTokenAddress"
-                        component={SelectField}
-                        options={this.state.tokens}
-                      />
+                        component="select"
+                        className={css.pluginSelect}
+                        >
+                        <option value=""> Select token to receive...</option>
+                        {
+                          this.state.tokens.map((token, _i) => {
+                            return <option id={`token-${_i}`} key={`token-${_i}`} value={token.value} label={token.label} />
+                          })
+                        }
+
+                        </Field>
                     </div>
                   </div>
                 </div>

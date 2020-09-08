@@ -39,8 +39,10 @@
     "Following": "Now following",
     "UnFollowing": "No longer following",
     "Raw call data": "Raw call data",
-    "Send tokens amount placeholder": "How many tokens to send",
-    "Receive tokens amount placeholder": "How many tokens to receive",
-    "Send to DAO label": "Send to DAO",
-    "Receive from DAO label": "Receives from DAO"
+    "Address": "Address:",
+    "Funding": "Funding:",
+    "Reputation Minted": "Reputation Minted:",
+    "Minimum DAO bounty": "Minimum DAO bounty:",
+    "Amount": "Amount:",
+    "Amount Redeemed": "Amount Redeemed:"
 }
