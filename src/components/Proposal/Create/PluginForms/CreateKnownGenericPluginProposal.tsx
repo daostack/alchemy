@@ -171,7 +171,10 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
     const callValues = [];
 
     for (const field of currentAction.getFields()) {
-      const callValue = field.callValue(values[field.name]);
+      let callValue = field.callValue(values[field.name]);
+      if (!callValue && field.defaultValue){
+        callValue = field.defaultValue;
+      }
       values[field.name] = callValue;
       callValues.push(callValue);
     }
@@ -380,7 +383,7 @@ class CreateKnownPluginProposal extends React.Component<IProps, IState> {
                 }
 
                 if (field.type.includes("bytes")) {
-                  if (!isHexString(value)) {
+                  if (value && !isHexString(value)) {
                     errors[field.name] = "Must be a hex value";
                   }
                 }
