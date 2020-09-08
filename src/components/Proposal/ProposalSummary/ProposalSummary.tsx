@@ -9,7 +9,7 @@ import {
   IPluginManagerProposalState,
   IFundingRequestProposalState,
   ITokenTradeProposalState,
-  IJoinProposalState 
+  IJoinProposalState,
 } from "@daostack/arc.js";
 import classNames from "classnames";
 import { GenericPluginRegistry } from "genericPluginRegistry";

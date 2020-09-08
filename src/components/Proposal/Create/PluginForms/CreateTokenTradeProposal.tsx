@@ -285,11 +285,11 @@ class CreateTokenTradeProposal extends React.Component<IProps, IState> {
                         name="sendTokenAddress"
                         component="select"
                         className={css.pluginSelect}
-                        >
+                      >
                         <option value=""> Select token to send...</option>
                         {Object.keys(supportedTokens()).map((tokenAddress, _i) => {
                           const token = supportedTokens()[tokenAddress];
-                          return <option id={`token-${_i}`} key={`token-${_i}`} value={tokenAddress} label={token["symbol"]} />
+                          return <option id={`token-${_i}`} key={`token-${_i}`} value={tokenAddress} label={token["symbol"]} />;
                         })}
                       </Field>
                     </div>
@@ -319,15 +319,15 @@ class CreateTokenTradeProposal extends React.Component<IProps, IState> {
                         name="receiveTokenAddress"
                         component="select"
                         className={css.pluginSelect}
-                        >
+                      >
                         <option value=""> Select token to receive...</option>
                         {
                           this.state.tokens.map((token, _i) => {
-                            return <option id={`token-${_i}`} key={`token-${_i}`} value={token.value} label={token.label} />
+                            return <option id={`token-${_i}`} key={`token-${_i}`} value={token.value} label={token.label} />;
                           })
                         }
 
-                        </Field>
+                      </Field>
                     </div>
                   </div>
                 </div>

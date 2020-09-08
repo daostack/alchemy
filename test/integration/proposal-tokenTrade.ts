@@ -1,12 +1,12 @@
 import * as uuid from "uuid";
-import { getTestAddresses, LATEST_ARC_VERSION, hideCookieAcceptWindow, ITestAddresses, gotoDaoPlugins, deleteCachedFormValues } from "./utils";
+import { LATEST_ARC_VERSION, hideCookieAcceptWindow, ITestAddresses, gotoDaoPlugins } from "./utils";
 
 describe("Token Trade Proposals", () => {
   let daoAddress: string;
   let addresses: ITestAddresses;
 
   before(() => {
-    const { daos } = require("@daostack/test-env-experimental/daos.json")
+    const { daos } = require("@daostack/test-env-experimental/daos.json");
     addresses = daos[LATEST_ARC_VERSION].find((dao: any) => dao.name === "DAO For Testing");
     daoAddress = addresses.Avatar.toLowerCase();
   });
@@ -31,7 +31,7 @@ describe("Token Trade Proposals", () => {
     await titleInput.setValue(title);
 
     const descriptionInput = await $(".mde-text");
-    await descriptionInput.setValue(`Trade some tokens`);
+    await descriptionInput.setValue("Trade some tokens");
 
     const urlInput = await $("*[id=\"urlInput\"]");
     await urlInput.setValue(`https://this.must.be/a/valid/url${uuid()}/lets.trade.tokens`);
