@@ -94,7 +94,6 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
        */
       if (this.filterString?.length) {
         this.setState({filtering: true});
-
         foundProposals = await proposalsQuery(this.props.daoState.dao, 0, this.filterString).pipe(first()).toPromise();
       }
       else {
@@ -109,7 +108,7 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
 
     const proposals = this.state.filteredProposalSet ?? data;
 
-    return (
+    const result = (
       <div className={css.container}>
         <BreadcrumbsItem to={"/dao/" + daoState.address + "/history"}>History</BreadcrumbsItem>
 
@@ -161,6 +160,8 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
 
       </div>
     );
+
+    return result;
   }
 }
 
