@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Proposal, Vote, Scheme, Stake, DAO } from "@daostack/arc.js";
+import { Address, IDAOState, Proposal, Vote, Scheme, Stake, DAO } from "@daostack/arc.js";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -89,9 +89,6 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
   onSearchExecute = async (e: any) => {
     let foundProposals: Array<Proposal>;
     if ((e.type === "blur") || (e.key === "Enter")) {
-    /**
-       * Note that as written this will return no more than 1000 proposals
-       */
       if (this.filterString?.length) {
         this.setState({filtering: true});
         foundProposals = await proposalsQuery(this.props.daoState.dao, 0, this.filterString).pipe(first()).toPromise();
@@ -180,11 +177,12 @@ export default withSubscription({
     // with all separate queries for votes and stakes and stuff...
     let voterClause = "";
     let stakerClause = "";
+
     if (props.currentAccountAddress) {
       voterClause = `(where: { voter: "${props.currentAccountAddress}"})`;
       stakerClause = `(where: { staker: "${props.currentAccountAddress}"})`;
-
     }
+
     const prefetchQuery = gql`
       query prefetchProposalDataForDAOHistory {
         proposals (
@@ -194,12 +192,6 @@ export default withSubscription({
           orderDirection: "desc"
           where: {
             dao: "${dao.id}"
-            stage_in: [
-              "${IProposalStage[IProposalStage.ExpiredInQueue]}",
-              "${IProposalStage[IProposalStage.Executed]}",
-              "${IProposalStage[IProposalStage.Queued]}"
-            ]
-            closingAt_lte: "${Math.floor(new Date().getTime() / 1000)}"
           }
         ){
           ...ProposalFields
