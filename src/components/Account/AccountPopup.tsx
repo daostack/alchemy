@@ -1,6 +1,5 @@
 import { Address, IDAOState, Member, IMemberState } from "@daostack/arc.js";
 import { getArc } from "arc";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getProfile } from "actions/profilesActions";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -80,11 +79,11 @@ class AccountPopup extends React.Component<IProps, null> {
               <span>
                 {profile.socialURLs.twitter ?
                   <a href={"https://twitter.com/" + profile.socialURLs.twitter.username} className={css.socialButton} target="_blank" rel="noopener noreferrer">
-                    <FontAwesomeIcon icon={["fab", "twitter"]} className={css.icon} />
+                    <img src='/assets/images/Icon/social/twitter.svg' className={css.icon} />
                   </a> : ""}
                 {profile.socialURLs.github ?
                   <a href={"https://github.com/" + profile.socialURLs.github.username} className={css.socialButton} target="_blank" rel="noopener noreferrer">
-                    <FontAwesomeIcon icon={["fab", "github"]} className={css.icon} />
+                    <img src='/assets/images/Icon/social/github.svg' className={css.icon} />
                   </a> : ""}
               </span>
             }

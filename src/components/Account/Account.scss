@@ -284,8 +284,10 @@ a.accountName {
 }
 
 .socialButtonAuthenticated {
+  display: flex;
   .icon {
-    color: #76c9de;
+    width: 20px;
+    margin-right: 10px;
   }
 }
 
