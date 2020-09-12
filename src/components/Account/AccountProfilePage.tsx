@@ -1,6 +1,4 @@
 import { IDAOState, IMemberState, DAO, Member } from "@daostack/arc.js";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import BN = require("bn.js");
 import { getProfile, updateProfile } from "actions/profilesActions";
 import { enableWalletProvider, getArc, getAccountIsEnabled } from "arc";
@@ -282,11 +280,11 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                         }
 
                         <a href={accountProfile.socialURLs.twitter ? "https://twitter.com/" + accountProfile.socialURLs.twitter.username : "https://3box.io/" + accountAddress} className={css.socialButtonAuthenticated} target="_blank" rel="noopener noreferrer">
-                          <FontAwesomeIcon icon={["fab", "twitter"]} className={css.icon} /> {accountProfile.socialURLs.twitter ? "Verified as https://twitter.com/" + accountProfile.socialURLs.twitter.username : "Verify Twitter through 3box"}
+                          <img src='/assets/images/Icon/social/twitter.svg' className={css.icon} /> {accountProfile.socialURLs.twitter ? "Verified as https://twitter.com/" + accountProfile.socialURLs.twitter.username : "Verify Twitter through 3box"}
                         </a>
                         <br/>
                         <a href={accountProfile.socialURLs.github ? "https://github.com/" + accountProfile.socialURLs.github.username : "https://3box.io/" + accountAddress} className={css.socialButtonAuthenticated} target="_blank" rel="noopener noreferrer">
-                          <FontAwesomeIcon icon={["fab", "github"]} className={css.icon} /> {accountProfile.socialURLs.github ? "Verified as https://github.com/" + accountProfile.socialURLs.github.username : "Verify Github through 3box"}
+                          <img src='/assets/images/Icon/social/github.svg' className={css.icon} /> {accountProfile.socialURLs.github ? "Verified as https://github.com/" + accountProfile.socialURLs.github.username : "Verify Github through 3box"}
                         </a>
                       </div>
                     }

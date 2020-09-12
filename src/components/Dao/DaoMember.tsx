@@ -1,6 +1,5 @@
 import BN = require("bn.js");
 import { IDAOState, IMemberState, Member } from "@daostack/arc.js";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
@@ -67,11 +66,11 @@ class DaoMember extends React.Component<IProps, null> {
                     <span>
                       { profile.socialURLs.twitter ?
                         <span onClick={this.openSocial("https://twitter.com/" + profile.socialURLs.twitter.username)} className={css.socialButton}>
-                          <FontAwesomeIcon icon={["fab", "twitter"]} className={css.icon} />
+                          <img src='/assets/images/Icon/social/twitter.svg' className={css.icon} />
                         </span> : ""}
                       { profile.socialURLs.github ?
                         <span onClick={this.openSocial("https://github.com/" + profile.socialURLs.github.username)} className={css.socialButton}>
-                          <FontAwesomeIcon icon={["fab", "github"]} className={css.icon} />
+                          <img src='/assets/images/Icon/social/github.svg' className={css.icon} />
                         </span> : ""}
                     </span>
                     : ""
