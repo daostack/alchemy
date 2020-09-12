@@ -74,6 +74,7 @@ module.exports = {
       {
         test: /\.css$/,
         include: [
+          resolve("node_modules/@fortawesome/fontawesome-free/css/all.min.css"),
           resolve("node_modules/mdbreact/dist/css/mdb.css"),
           resolve("node_modules/@dorgtech/daocreator-ui-experimental/dist")
         ],
