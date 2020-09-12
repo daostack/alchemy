@@ -24,21 +24,26 @@
     .searchBox {
       color: #4f6176;
       margin-right: 30px;
+      border-radius: 20px;
+      background: url("../../assets/images/Icon/search.svg") $white no-repeat left 5px center;
+      background-size: 20px;
+      padding-left: 30px;
       input {
         font-size: 15px;
         width: 425px;
-        border-radius: 20px;
         border: none;
-        text-indent: 30px;
         height: 30px;
-        background: url("../../assets/images/Icon/search.svg") $white no-repeat left 5px center;
-        background-size: 20px;
         font-family: "AccordBold", sans-serif;
+        margin-right: 20px;
       }
 
       input:focus {
         outline: none;
       }
+
+      input:-webkit-autofill {
+        transition: all 5000s ease-in-out 0s;
+      }      
     }
 
     .sortWrapper {
