@@ -40,6 +40,10 @@
       input:focus {
         outline: none;
       }
+
+      input:-webkit-autofill {
+        transition: all 5000s ease-in-out 0s;
+      }      
     }
 
     .sortWrapper {

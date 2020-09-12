@@ -24,10 +24,6 @@ button:focus {
   outline: none;
 }
 
-input:-webkit-autofill {
-  transition: all 5000s ease-in-out 0s;
-}
-
 /* width */
 ::-webkit-scrollbar {
   width: 10px;
