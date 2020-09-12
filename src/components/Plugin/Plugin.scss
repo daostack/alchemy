@@ -85,6 +85,7 @@
         background-color: $disabled-button-color;
         border: $disabled-button-border;
         cursor: not-allowed;
+        pointer-events: none;
       }
       .activationTime {
         font-size: $caption;

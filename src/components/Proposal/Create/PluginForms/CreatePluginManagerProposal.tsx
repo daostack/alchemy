@@ -386,9 +386,9 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
           proposalOptions.add.pluginInitParams = {
             daoId: daoId,
             votingMachine: votingMachine,
-            votingParams: gpFormValuesToVotingParams(values.ContributionRewardExt.votingParams),
-            voteOnBehalf: values.ContributionRewardExt.votingParams.voteOnBehalf,
-            voteParamsHash: values.ContributionRewardExt.votingParams.voteParamsHash,
+            votingParams: gpFormValuesToVotingParams(values.SchemeFactory.votingParams),
+            voteOnBehalf: values.SchemeFactory.votingParams.voteOnBehalf,
+            voteParamsHash: values.SchemeFactory.votingParams.voteParamsHash,
             daoFactory: arc.getContractInfoByName("DAOFactoryInstance", LATEST_ARC_VERSION).address,
           };
           break;

@@ -22,12 +22,18 @@ import * as css from "./Daos.scss";
 import BHubReg from "../Buidlhub/Registration";
 import i18next from "i18next";
 import classNames from "classnames";
+import axios from "axios";
+import { getNetworkName } from "lib/util";
 
 type SubscriptionData = [DAO[], DAO[], DAO[]];
 
 interface IStateProps {
   currentAccountAddress: string;
   followingDAOs: string[];
+}
+
+interface IDAOsBalances {
+  [address: string]: { balance: string, formattedBalance: string };
 }
 
 const mapStateToProps = (state: IRootState): IStateProps => {
@@ -45,6 +51,7 @@ interface IState {
   searchDaos: DAO[];
   sortBy: string;
   sortOrder: number;
+  daosBalances: IDAOsBalances
 }
 
 const PAGE_SIZE = 50;
@@ -60,11 +67,13 @@ class DaosPage extends React.Component<IProps, IState> {
       searchDaos: [],
       sortBy: "name",
       sortOrder: 1,
+      daosBalances: {},
     };
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     window.addEventListener("resize", this.updateWindowDimensions);
+    await this.getDaosBalances();
 
     Analytics.track("Page View", {
       "Page Name": Page.AllDAOs,
@@ -91,6 +100,21 @@ class DaosPage extends React.Component<IProps, IState> {
         hideFooter: true,
       }
     );
+  }
+
+  /**
+   * Fetches the DAOs total holdings from the DAOs Balances Service
+   */
+  getDaosBalances = async () => {
+    const network = (await getNetworkName()).toLowerCase();
+    const url = `https://daos-balances-service.herokuapp.com/daosBalance/getDaosBalances/?version=v2&network=http_${network}`;
+    const dataArray = await axios ({ url: url, method: "GET" }).then(res => { return res.data; });
+    const data:IDAOsBalances = {};
+    for (const dao of dataArray){
+      const { address="", ...balanceData } = { ...dao };
+      data[address] = { ...balanceData };
+    }
+    this.setState({ daosBalances: data });
   }
 
   onSearchChange = async (e: any) => {
@@ -123,8 +147,11 @@ class DaosPage extends React.Component<IProps, IState> {
         daos.sort((a, b) => SortService.evaluateString(a.coreState[sortBy], b.coreState[sortBy], this.state.sortOrder ));
         break;
       case "memberCount":
-      case "ethBalance":
         daos.sort((a, b) => SortService.evaluateNumber(a.coreState[sortBy] as number, b.coreState[sortBy] as number, this.state.sortOrder ));
+        break;
+      case "totalHoldings":
+        daos.sort((a, b) => SortService.evaluateString(this.state.daosBalances[a.coreState.address]?.balance, this.state.daosBalances[b.coreState.address]?.balance, this.state.sortOrder ));
+        break;
     }
   }
 
@@ -140,6 +167,7 @@ class DaosPage extends React.Component<IProps, IState> {
   public render(): RenderOutput {
     const { data, fetchMore } = this.props;
     const search = this.state.search.length > 2 ? this.state.search.toLowerCase() : "";
+    const daosBalances = this.state.daosBalances;
 
     // Always show DAOs that the current user is a member of or follows first
     const yourDAOs = data[1].concat(data[2]).filter(d => d.coreState.name.toLowerCase().includes(search));
@@ -178,6 +206,7 @@ class DaosPage extends React.Component<IProps, IState> {
         <DaoCard
           key={dao.id}
           dao={dao}
+          totalHoldings={daosBalances[dao.id] ? daosBalances[dao.id]?.formattedBalance : "N/A"}
         />
       );
     });
@@ -187,6 +216,7 @@ class DaosPage extends React.Component<IProps, IState> {
         <DaoCard
           key={dao.id}
           dao={dao}
+          totalHoldings={daosBalances[dao.id] ? daosBalances[dao.id]?.formattedBalance : "N/A"}
         />
       );
     });
@@ -198,7 +228,7 @@ class DaosPage extends React.Component<IProps, IState> {
 
     return (
       <div className={css.wrapper}>
-        <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
+        <BreadcrumbsItem to="/daos/">{i18next.t("All DAOs")}</BreadcrumbsItem>
 
         <div className={css.paddingTop}>&nbsp;</div>
 
@@ -212,14 +242,14 @@ class DaosPage extends React.Component<IProps, IState> {
             {i18next.t("Sort by")}
             <select className={css.sortSelect} onChange={this.onSortChange}>
               <option value="name">{i18next.t("Name")}</option>
-              <option value="ethBalance">{i18next.t("ETH Balance")}</option>
               <option value="memberCount">{i18next.t("Members")}</option>
+              <option value="totalHoldings">{i18next.t("Total Holdings")}</option>
             </select>
           </div>
 
           <div className={css.createDaoButton}>
             <Link to={"/daos/create"}>
-              Create A DAO
+              {i18next.t("Create A DAO")}
             </Link>
           </div>
         </div>
@@ -229,7 +259,7 @@ class DaosPage extends React.Component<IProps, IState> {
             <div className={css.headerWrapper}>
               <div className={css.headerTitle}>
                 <h2 data-test-id="header-all-daos">
-                  Your DAOs
+                  {i18next.t("Your DAOs")}
                 </h2>
                 <div className={css.emailAlertsWrapper} onClick={this.registerForMonitoring} >
                   <div className={cn("fa fa-envelope", css.emailIcon)} />
@@ -249,7 +279,7 @@ class DaosPage extends React.Component<IProps, IState> {
         <div className={css.otherDaos}>
           <div className={css.headerWrapper}>
             <div className={css.headerTitle}>
-              <h2 data-test-id="header-all-daos">Other DAOs</h2>
+              <h2 data-test-id="header-all-daos">{i18next.t("Other DAOs")}</h2>
             </div>
           </div>
           <div className={css.daoList}>
