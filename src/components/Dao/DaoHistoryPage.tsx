@@ -30,12 +30,12 @@ type SubscriptionData = Array<Proposal>;
 type IProps = IExternalProps & IState & ISubscriptionProps<SubscriptionData>;
 
 const ProposalsHTML = (props:
-{
-  proposals: Array<Proposal>;
-  history: any;
-  daoState: IDAOState;
-  currentAccountAddress: Address;
-}): React.ReactElement => {
+  {
+    proposals: Array<Proposal>;
+    history: any;
+    daoState: IDAOState;
+    currentAccountAddress: Address;
+  }): React.ReactElement => {
   return <> {
     props.proposals.map((proposal: Proposal) => {
       return (<ProposalHistoryRow key={"proposal_" + proposal.id} history={props.history} proposal={proposal} daoState={props.daoState} currentAccountAddress={props.currentAccountAddress} />);
@@ -82,7 +82,7 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
     });
   }
 
-  onSearchChange = async (e: any) => {
+  onSearchChange = (e: any) => {
     this.filterString = e.target.value;
   }
 
@@ -90,7 +90,7 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
     let foundProposals: Array<Proposal>;
     if ((e.type === "blur") || (e.key === "Enter")) {
       if (this.filterString?.length) {
-        this.setState({filtering: true});
+        this.setState({ filtering: true });
         foundProposals = await proposalsQuery(this.props.daoState.dao, 0, this.filterString).pipe(first()).toPromise();
       }
       else {
@@ -114,8 +114,8 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
         <div className={css.searchBox.concat(`${this.state.filtering ? ` ${css.filtering}` : ""}`)}>
           <input type="text" name="search" placeholder="Type and press Enter or Tab to filter proposals by title"
             onKeyPress={this.onSearchExecute}
-            onBlur ={this.onSearchExecute}
-            onInput={this.onSearchChange}/>
+            onBlur={this.onSearchExecute}
+            onInput={this.onSearchChange} />
         </div>
 
         <InfiniteScroll
@@ -123,7 +123,7 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
           next={fetchMore}
           hasMore={hasMoreToLoad}
           loader=""
-          style={{overflow: "visible"}}
+          style={{ overflow: "visible" }}
           endMessage={null}
         >
           {proposals.length === 0 ?
