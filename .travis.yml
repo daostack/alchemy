@@ -40,6 +40,8 @@ script:
   - npm run lint
   # unit tests
   - npm run test:unit -- --forceExit
+  # run test coverage report
+  - npm run report-coverage
 
   - docker-compose logs alchemy || true
   # run integration tests
