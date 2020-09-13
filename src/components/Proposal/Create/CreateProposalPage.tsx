@@ -20,6 +20,8 @@ import { pluginName } from "lib/pluginUtils";
 import * as css from "./CreateProposal.scss";
 import CreatePluginManagerProposal from "./PluginForms/CreatePluginManagerProposal";
 import { of } from "rxjs";
+import CreateTokenTradeProposal from "./PluginForms/CreateTokenTradeProposal";
+import { ITokenTradeState } from "@daostack/arc.js";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -120,6 +122,8 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
       createPluginComponent = <CreatePluginRegistrarProposal {...props} pluginState={pluginState as IPluginRegistrarState} />;
     } else if (pluginState.name === "SchemeFactory") {
       createPluginComponent = <CreatePluginManagerProposal {...props} pluginState={pluginState as IPluginManagerState} />;
+    } else if (pluginState.name === "TokenTrade") {
+      createPluginComponent = <CreateTokenTradeProposal {...props} pluginState={pluginState as ITokenTradeState} />;
     } else if (pluginState.name === "GenericScheme") {
       const contractToCall = (pluginState as IGenericPluginState).pluginParams.contractToCall;
       if (!contractToCall) {

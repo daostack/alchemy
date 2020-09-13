@@ -8,8 +8,9 @@ import {
   ReputationFromTokenPlugin,
   Proposal,
   FundingRequestProposal,
-  JoinProposal,
   IProposalState,
+  TokenTradeProposal,
+  JoinProposal,
 } from "@daostack/arc.js";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
@@ -90,6 +91,9 @@ async function tryRedeemProposal(proposalId: string, accountAddress: string, obs
       break;
     case "Join":
       await (proposal as JoinProposal).redeem().subscribe(...observer);
+      break;
+    case "TokenTrade":
+      await (proposal as TokenTradeProposal).redeem().subscribe(...observer);
       break;
     default:
       break;
