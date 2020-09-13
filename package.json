@@ -36,6 +36,18 @@
       "/node_modules/",
       "/test/"
     ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 10,
+        "functions": 10,
+        "lines": 10,
+        "statements": 10
+      }
+    },
+    "collectCoverage": false,
+    "collectCoverageFrom": [
+      "src/*.{js,ts}"
+    ],
     "moduleNameMapper": {
       "\\.(scss|css|less|svg|png|jpg)$": "identity-obj-proxy",
       "^arc": "<rootDir>/src/arc",
