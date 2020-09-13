@@ -123,7 +123,6 @@ export interface IFormValues {
     memberReputation: number;
     fundingGoal: number;
     fundingGoalDeadline: number;
-    rageQuitEnable: boolean;
   };
   SchemeRegistrar: {
     permissions: IPermissions;
@@ -231,7 +230,6 @@ const defaultValues: IFormValues = {
     memberReputation: 0,
     fundingGoal: 0,
     fundingGoalDeadline: 0,
-    rageQuitEnable: true,
   },
   SchemeRegistrar: {
     votingParamsRegister: { ...votingParams },
@@ -402,6 +400,30 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
             votingParamsRemove: gpFormValuesToVotingParams(values.SchemeRegistrar.votingParamsRemove),
             voteOnBehalfRemove: values.SchemeRegistrar.votingParamsRemove.voteOnBehalf,
             voteRemoveParamsHash: values.SchemeRegistrar.votingParamsRemove.voteParamsHash,
+          };
+          break;
+        case "Join":
+          proposalOptions.add.pluginInitParams = {
+            daoId: daoId,
+            votingMachine: votingMachine,
+            votingParams: gpFormValuesToVotingParams(values.Join.votingParams),
+            voteOnBehalf: values.Join.votingParams.voteOnBehalf,
+            voteParamsHash: values.Join.votingParams.voteParamsHash,
+            fundingToken: values.Join.fundingToken,
+            minFeeToJoin: values.Join.minFeeToJoin,
+            memberReputation: values.Join.memberReputation,
+            fundingGoal: values.Join.fundingGoal,
+            fundingGoalDeadline: values.Join.fundingGoalDeadline,
+          };
+          break;
+        case "FundingRequest":
+          proposalOptions.add.pluginInitParams = {
+            daoId: daoId,
+            votingMachine: votingMachine,
+            votingParams: gpFormValuesToVotingParams(values.FundingRequest.votingParams),
+            voteOnBehalf: values.FundingRequest.votingParams.voteOnBehalf,
+            voteParamsHash: values.FundingRequest.votingParams.voteParamsHash,
+            fundingToken: values.FundingRequest.fundingToken,
           };
           break;
         default:
