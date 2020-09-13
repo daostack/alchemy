@@ -44,9 +44,9 @@
         "statements": 10
       }
     },
-    "collectCoverage": false,
+    "collectCoverage": true,
     "collectCoverageFrom": [
-      "src/*.{js,ts}"
+      "src/**/*.{js,ts}"
     ],
     "moduleNameMapper": {
       "\\.(scss|css|less|svg|png|jpg)$": "identity-obj-proxy",
