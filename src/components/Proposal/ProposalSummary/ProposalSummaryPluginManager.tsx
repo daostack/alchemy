@@ -73,6 +73,9 @@ class ProposalSummary extends React.Component<IProps, IState> {
       else if (pluginName === "ContributionRewardExt"){
         pluginName = decodedData.params[7].value; // Rewarder name
       }
+      else if (pluginName === "SchemeFactory"){
+        pluginName = "Plugin Manager";
+      }
     }
 
     const proposalSummaryClass = classNames({
