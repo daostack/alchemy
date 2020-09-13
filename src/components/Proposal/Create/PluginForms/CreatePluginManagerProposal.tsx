@@ -124,6 +124,10 @@ export interface IFormValues {
     fundingGoal: number;
     fundingGoalDeadline: number;
   };
+  TokenTrade: {
+    permissions: IPermissions;
+    votingParams: IGenesisProtocolFormValues;
+  }
   SchemeRegistrar: {
     permissions: IPermissions;
     votingParamsRegister: IGenesisProtocolFormValues;
@@ -180,6 +184,15 @@ const defaultValues: IFormValues = {
     contractToCall: "",
   },
   ContributionReward: {
+    votingParams: { ...votingParams },
+    permissions: {
+      registerPlugins: false,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
+    },
+  },
+  TokenTrade: {
     votingParams: { ...votingParams },
     permissions: {
       registerPlugins: false,
@@ -388,6 +401,15 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
             voteOnBehalf: values.SchemeFactory.votingParams.voteOnBehalf,
             voteParamsHash: values.SchemeFactory.votingParams.voteParamsHash,
             daoFactory: arc.getContractInfoByName("DAOFactoryInstance", LATEST_ARC_VERSION).address,
+          };
+          break;
+        case "TokenTrade":
+          proposalOptions.add.pluginInitParams = {
+            daoId: daoId,
+            votingMachine: votingMachine,
+            votingParams: gpFormValuesToVotingParams(values.ContributionReward.votingParams),
+            voteOnBehalf: values.ContributionReward.votingParams.voteOnBehalf,
+            voteParamsHash: values.ContributionReward.votingParams.voteParamsHash,
           };
           break;
         case "SchemeRegistrar":
