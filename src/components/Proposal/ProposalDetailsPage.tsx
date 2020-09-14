@@ -1,11 +1,11 @@
-import { Address, IDAOState, IProposalStage, Vote } from "@daostack/arc.js";
+import { Address, IDAOState, IProposalStage, IProposalOutcome } from "@daostack/arc.js";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
 import { DiscussionEmbed } from "disqus-react";
-import { humanProposalTitle, ensureHttps } from "lib/util";
+import { humanProposalTitle, ensureHttps, formatFriendlyDateForLocalTimezone, safeMoment } from "lib/util";
 import { schemeName } from "lib/schemeUtils";
 import Analytics from "lib/analytics";
 import { Page } from "pages";
@@ -50,7 +50,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
    * Define these here rather than in `render` to minimize rerendering, particularly
    * of the disqus component
    **/
-  private currentAccountVote = 0;
   private crxContractName: string;
   private disqusConfig = { url: "", identifier: "", title: "" };
   private proposalClass = classNames({
@@ -77,15 +76,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       "Scheme Address": this.props.proposal.scheme.id,
       "Scheme Name": this.props.proposal.scheme.name,
     });
-
-    // TODO: the next line, is a hotfix for a  which filters the votes, should not be necessary,
-    // bc these should be filter in the `proposals.votes({where: {voter...}} query above)`
-    // https://daostack.tpondemand.com/RestUI/Board.aspx#page=board/5209716961861964288&appConfig=eyJhY2lkIjoiQjgzMTMzNDczNzlCMUI5QUE0RUE1NUVEOUQyQzdFNkIifQ==&boardPopup=bug/1766
-    const currentAccountVotes = this.props.votes.filter((v: Vote) => v.staticState.voter === this.props.currentAccountAddress);
-    if (currentAccountVotes.length > 0) {
-      const currentVote = currentAccountVotes[0];
-      this.currentAccountVote = currentVote.staticState.outcome;
-    }
 
     this.crxContractName = rewarderContractName(this.props.proposal.scheme);
   }
@@ -122,6 +112,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       proposal,
       rewards,
       stakes,
+      votes,
     } = this.props;
 
     if (daoState.id !== proposal.dao.id) {
@@ -136,6 +127,12 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     this.disqusConfig.url = process.env.BASE_URL + this.props.location.pathname;
     this.disqusConfig.identifier = this.props.proposalId;
 
+    let currentAccountVote: IProposalOutcome | undefined;
+
+    if (votes.length > 0) {
+      const currentVote = this.props.votes[0];
+      currentAccountVote = currentVote.staticState.outcome;
+    }
     return (
       <div className={css.wrapper}>
         <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme.id}`}>{schemeName(proposal.scheme, proposal.scheme.address)}</BreadcrumbsItem>
@@ -222,7 +219,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   <VoteButtons
                     altStyle
                     currentAccountAddress={currentAccountAddress}
-                    currentVote={this.currentAccountVote}
+                    currentVote={currentAccountVote}
                     dao={daoState}
                     expired={expired}
                     currentAccountState={member}
@@ -253,7 +250,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   <VoteButtons
                     currentAccountAddress={currentAccountAddress}
                     currentAccountState={member}
-                    currentVote={this.currentAccountVote}
+                    currentVote={currentAccountVote}
                     dao={daoState}
                     expired={expired}
                     proposal={proposal}
@@ -270,7 +267,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 <VoteBreakdown
                   currentAccountAddress={currentAccountAddress}
                   currentAccountState={member}
-                  currentVote={this.currentAccountVote}
+                  currentVote={currentAccountVote}
                   daoState={daoState}
                   detailView
                   proposal={proposal} />
@@ -303,6 +300,19 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 />
                 <BoostAmount detailView expired={expired} proposal={proposal} />
               </div>
+            </div>
+
+            <div className={css.eventHistory}>
+              <div className={css.event}>
+                <div className={css.label}>Created:</div>
+                <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(safeMoment(proposal.createdAt))}</div>
+              </div>
+              {proposal.executedAt ?
+                <div className={css.event}>
+                  <div className={css.label}>Executed:</div>
+                  <div className={css.datetime}>{formatFriendlyDateForLocalTimezone(safeMoment(proposal.executedAt))}</div>
+                </div>
+                : ""}
             </div>
 
           </div>

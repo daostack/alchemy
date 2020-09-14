@@ -1,3 +1,19 @@
+## 0.10.15
+  - Features Added
+   - update subgraph endpoints
+   - Display proposal event history on the Proposal Details page
+   
+  - Bugs Fixed
+    - user's vote was not automatically updating in the UI after the user voted
+
+## 0.10.14-2
+  - Bugs Fixed
+    - revert subgraph endpoint domain
+
+## 0.10.14-1
+  - Bugs Fixed
+    - fix display of DXD and NEC tokens
+
 ## 0.10.14
   - Features Added
     - show raw calldata in proposal details for relevant plugins

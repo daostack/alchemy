@@ -10,10 +10,10 @@ describe("Proposals", () => {
   beforeEach(async () => {
     // we need to find a DAO with a competition scheme
     // TODO: create a test_env with a nameed DAO so we can find it consistently
-    arc = getArc();
+    arc = await getArc();
     await arc.fetchContractInfos();
-    const ARC_VERSION = "0.0.1-rc.40";
-    const contributionRewardExtContract = arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);
+    const ARC_VERSION = "0.0.1-rc.43";
+    const contributionRewardExtContract = await arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);
 
     // find the corresponding scheme object
     const contributionRewardExts = await arc
@@ -21,14 +21,12 @@ describe("Proposals", () => {
 
     const contributionRewardExt = contributionRewardExts[0];
     const contributionRewardExtState = await contributionRewardExt.state().pipe(first()).toPromise();
-    dao = new DAO(contributionRewardExtState.dao, arc);
+    dao = await new DAO(contributionRewardExtState.dao, arc);
   });
 
 
   it("Create a Competition Scheme proposal, vote for it, stake on it", async () => {
-
     await gotoDaoSchemes(dao.id);
-
     const schemeTitle = await $("h2=Competition");
     await schemeTitle.click();
 
