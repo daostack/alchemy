@@ -103,17 +103,6 @@ button:hover {
   }
 }
 
-.proposalHistoryTable {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.proposalHistoryTableHeader {
-  font-size: 12px;
-  font-weight: bold;
-  text-align: left;
-}
-
 .noticeWrapper {
   width: 100%;
   position: fixed;
@@ -263,17 +252,6 @@ a {
   }
 }
 
-.daoHistoryHeader {
-  font-size: 28px;
-  color: rgba(104, 155, 214, 1);
-  border-bottom: 1px solid rgba(45, 109, 181, 0.2);
-  padding-bottom: 5px;
-  font-weight: bold;
-  margin-bottom: 30px;
-  background-color: rgba(229, 235, 242, 1);
-  padding-top: 10px;
-}
-
 @media only screen and (max-width: 425px) {
   .outer {
     display: block;
@@ -352,14 +330,6 @@ a {
 
   .membersContainer h2 {
     padding-left: 10px;
-  }
-
-  .daoHistoryHeader {
-    padding-left: 10px;
-  }
-
-  .proposalHistoryTableHeader {
-    display: none;
   }
 }
 
