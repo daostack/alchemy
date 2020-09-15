@@ -28,7 +28,7 @@ interface IExternalProps {
   beneficiaryProfile?: IProfileState;
   contextMenu?: boolean;
   currentAccountAddress?: Address;
-  currentAccountGens: BN|null;
+  currentAccountGens: BN | null;
   currentAccountGenStakingAllowance: BN;
   dao: IDAOState;
   expired?: boolean;
@@ -77,7 +77,7 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public showPreStakeModal = (prediction: number): (_event: any) => void => async (_event: any): Promise<void> => {
-    if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
     this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
   }
 
@@ -86,7 +86,7 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public handleClickPreApprove = async (_event: any): Promise<void> => {
-    if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.proposal.votingMachine);
@@ -177,9 +177,10 @@ class StakeButtons extends React.Component<IProps, IState> {
       (proposal.stage === IProposalStage.PreBoosted);
 
     const disabledMessage =
-      (proposal.stage === IProposalStage.Queued && expired) || proposal.stage === IProposalStage.ExpiredInQueue ? "Can't predict on expired proposals" :
-        (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) ? "Can't predict on boosted proposals" :
-          (proposal.stage === IProposalStage.Executed) ? `Can't predict on ${proposal.winningOutcome === IProposalOutcome.Pass ? "passed" : "failed"} proposals` : "";
+      (proposal.stage !== IProposalStage.Executed) ?
+        ((proposal.stage === IProposalStage.Queued && expired) || proposal.stage === IProposalStage.ExpiredInQueue ? "Can't predict on expired proposals" :
+          (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) ? "Can't predict on boosted proposals" : "")
+        : "";
 
     const hasGens = currentAccountGens && currentAccountGens.gt(new BN(0));
 
@@ -206,13 +207,13 @@ class StakeButtons extends React.Component<IProps, IState> {
 
     const passButton = (
       <button className={passButtonClass} onClick={disableStakePass ? null : this.showPreStakeModal(1)} data-test-id="stakePass">
-        <img className={css.stakeIcon} src="/assets/images/Icon/v.svg"/> Pass
+        <img className={css.stakeIcon} src="/assets/images/Icon/v.svg" /> Pass
       </button>
     );
 
     const failButton = (
       <button className={failButtonClass} onClick={disableStakeFail ? null : this.showPreStakeModal(2)}>
-        <img className={css.stakeIcon} src="/assets/images/Icon/x.svg"/> Fail
+        <img className={css.stakeIcon} src="/assets/images/Icon/x.svg" /> Fail
       </button>
     );
 
