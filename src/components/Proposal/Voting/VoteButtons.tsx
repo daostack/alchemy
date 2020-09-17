@@ -19,7 +19,7 @@ interface IExternalProps {
   contextMenu?: boolean;
   currentAccountAddress: Address;
   currentAccountState: IMemberState;
-  currentVote: IProposalOutcome|undefined;
+  currentVote: IProposalOutcome | undefined;
   dao: IDAOState;
   expired?: boolean;
   parentPage: Page;
@@ -35,7 +35,7 @@ type IProps = IExternalProps & IDispatchProps;
 
 interface IState {
   contextMenu?: boolean;
-  currentVote: IProposalOutcome|undefined;
+  currentVote: IProposalOutcome | undefined;
   showPreVoteModal: boolean;
 }
 
@@ -96,48 +96,48 @@ class VoteButtons extends React.Component<IProps, IState> {
     } = this.props;
 
     const votingDisabled = proposal.stage === IProposalStage.ExpiredInQueue ||
-                            proposal.stage === IProposalStage.Executed ||
-                            (proposal.stage === IProposalStage.Queued && expired) ||
-                            (proposal.stage === IProposalStage.Boosted && expired) ||
-                            (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
-                            (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ||
-                            (currentAccountState && (proposal.createdAt < currentAccountState.createdAt) &&
-                            //this is a workaround till https://github.com/daostack/subgraph/issues/548
-                            (targetedNetwork() !== "ganache")) ||
-                            currentVote === IProposalOutcome.Pass ||
-                            currentVote === IProposalOutcome.Fail
-                            ;
+      proposal.stage === IProposalStage.Executed ||
+      (proposal.stage === IProposalStage.Queued && expired) ||
+      (proposal.stage === IProposalStage.Boosted && expired) ||
+      (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
+      (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ||
+      (currentAccountState && (proposal.createdAt < currentAccountState.createdAt) &&
+        //this is a workaround till https://github.com/daostack/subgraph/issues/548
+        (targetedNetwork() !== "ganache")) ||
+      currentVote === IProposalOutcome.Pass ||
+      currentVote === IProposalOutcome.Fail
+      ;
 
     /**
      * only used when votingDisabled
      */
     const disabledMessage =
-      ((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)) ?
-        "Can't change your vote" :
-        (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
-          "Requires reputation in this DAO" :
-          /**
-           * The following condition deduces that the user could not have had rep when the
-           * proposal was created because of the following behavior in the subgraph:
-           *
-           * 1) `currentAccountState` (`ReputationHolder` in the subgraph) represents an entity that associates
-           * a single DAO with an ethereum account
-           * 2) currentAccountState can only exist in the subgraph when the account has > 0 rep in the DAO
-           * 3) `currentAccountState.createdAt` is set only once:  When currentAccountState is being instantiated
-           * for the first time, in response to a Mint event that brings the rep > 0
-           * 4) when a Burn event brings the rep <= 0, then the entity is removed from the subgraph
-           * 5) when `currentAccount` is not found in the subgraph, then a fake `currentAccountState` is created with
-           * rep == 0
-           */
-          (currentAccountState && (proposal.createdAt < currentAccountState.createdAt)) ?
-            "Must have had reputation in this DAO when the proposal was created" :
-            proposal.stage === IProposalStage.ExpiredInQueue ||
+      (proposal.stage !== IProposalStage.Executed) ?
+        (((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)) ?
+          "Can't change your vote" :
+          (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
+            "Requires reputation in this DAO" :
+            /**
+             * The following condition deduces that the user could not have had rep when the
+             * proposal was created because of the following behavior in the subgraph:
+             *
+             * 1) `currentAccountState` (`ReputationHolder` in the subgraph) represents an entity that associates
+             * a single DAO with an ethereum account
+             * 2) currentAccountState can only exist in the subgraph when the account has > 0 rep in the DAO
+             * 3) `currentAccountState.createdAt` is set only once:  When currentAccountState is being instantiated
+             * for the first time, in response to a Mint event that brings the rep > 0
+             * 4) when a Burn event brings the rep <= 0, then the entity is removed from the subgraph
+             * 5) when `currentAccount` is not found in the subgraph, then a fake `currentAccountState` is created with
+             * rep == 0
+             */
+            (currentAccountState && (proposal.createdAt < currentAccountState.createdAt)) ?
+              "Must have had reputation in this DAO when the proposal was created" :
+              proposal.stage === IProposalStage.ExpiredInQueue ||
                 (proposal.stage === IProposalStage.Boosted && expired) ||
                 (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
                 (proposal.stage === IProposalStage.Queued && expired) ?
-              "Can't vote on expired proposals" :
-              proposal.stage === IProposalStage.Executed ?
-                `Can't vote on ${proposal.winningOutcome === IProposalOutcome.Pass ? "passed" : "failed"} proposals` : "";
+                "Can't vote on expired proposals" : "")
+        : "";
 
     const voteUpButtonClass = classNames({
       [css.votedFor]: currentVote === IProposalOutcome.Pass,
@@ -177,10 +177,10 @@ class VoteButtons extends React.Component<IProps, IState> {
             <div className={css.contextTitle}>
               <div>
                 <span className={css.hasVoted}>
-                You voted
+                  You voted
                 </span>
                 <span className={css.hasNotVoted}>
-                Vote
+                  Vote
                 </span>
               </div>
             </div>
@@ -188,13 +188,13 @@ class VoteButtons extends React.Component<IProps, IState> {
               <div className={css.hasVoted}>
                 <div className={css.voteRecord}>
                   <span className={css.castVoteFor} data-test-id="youVotedFor">
-                    <img src="/assets/images/Icon/vote/for-fill-green.svg"/>
-                    <br/>
+                    <img src="/assets/images/Icon/vote/for-fill-green.svg" />
+                    <br />
                  For
                   </span>
                   <span className={css.castVoteAgainst}>
-                    <img src="/assets/images/Icon/vote/against-btn-fill-red.svg"/>
-                    <br/>
+                    <img src="/assets/images/Icon/vote/against-btn-fill-red.svg" />
+                    <br />
                  Against
                   </span>
                 </div>
@@ -204,18 +204,18 @@ class VoteButtons extends React.Component<IProps, IState> {
                   <div>
                     <button onClick={this.handleClickVote(1)} className={voteUpButtonClass} data-test-id="voteFor">
                       <img src={`/assets/images/Icon/vote/for-btn-selected${altStyle ? "-w" : ""}.svg`} />
-                      <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
+                      <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif" />
                       <span> For</span>
                     </button>
                     <button onClick={this.handleClickVote(2)} className={voteDownButtonClass}>
-                      <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`}/>
-                      <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
+                      <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`} />
+                      <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif" />
                       <span> Against</span>
                     </button>
                   </div>
                   :
                   <div className={css.votingDisabled}>
-                    <img src="/assets/images/Icon/Alert-yellow-b.svg"/> {disabledMessage}
+                    <img src="/assets/images/Icon/Alert-yellow-b.svg" /> {disabledMessage}
                   </div>
                 }
               </div>
@@ -228,12 +228,12 @@ class VoteButtons extends React.Component<IProps, IState> {
                 <div>
                   <button onClick={this.handleClickVote(1)} className={voteUpButtonClass} data-test-id="voteFor">
                     <img src={`/assets/images/Icon/vote/for-btn-selected${altStyle ? "-w" : ""}.svg`} />
-                    <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
+                    <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif" />
                     <span> For</span>
                   </button>
                   <button onClick={this.handleClickVote(2)} className={voteDownButtonClass}>
-                    <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`}/>
-                    <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
+                    <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`} />
+                    <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif" />
                     <span> Against</span>
                   </button>
                 </div>
@@ -245,12 +245,12 @@ class VoteButtons extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.voteRecord}>
-            You voted
+              You voted
               <span className={css.castVoteFor} data-test-id="youVotedFor">
-              - For
+                - For
               </span>
               <span className={css.castVoteAgainst}>
-              - Against
+                - Against
               </span>
             </div>
           </>
