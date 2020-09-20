@@ -96,13 +96,7 @@ class PluginProposalsPreboosted extends React.Component<IPropsPreBoosted, null> 
           <TrainingTooltip placement="bottom" overlay={i18next.t("Pending Proposal Tooltip")}>
             <span>Pending Boosting Proposals ({pluginState.numberOfPreBoostedProposals})</span>
           </TrainingTooltip>
-          {proposalsPreBoosted.length === 0
-            ?
-            <div>
-              <img src="/assets/images/yoga.svg" />
-            </div>
-            : " "
-          }
+          {proposalsPreBoosted.length === 0 && <div><img src="/assets/images/yoga.svg" /></div>}
         </div>
         <div className={css.proposalsContainer}>
           {
@@ -147,7 +141,7 @@ const SubscribedProposalsPreBoosted = withSubscription<IPropsPreBoosted, Preboos
       orderBy: "preBoostedAt",
       first: PAGE_SIZE_PREBOOSTED,
       skip: 0,
-    }, { subscribe: true });
+    }, { polling: true });
   },
 
   getFetchMoreObservable: (props: IPropsPreBoosted, data: PreboostedProposalsSubscriptionData) => {
@@ -159,7 +153,7 @@ const SubscribedProposalsPreBoosted = withSubscription<IPropsPreBoosted, Preboos
       orderBy: "preBoostedAt",
       first: PAGE_SIZE_PREBOOSTED,
       skip: data.length,
-    }, { subscribe: true });
+    }, { polling: true });
   },
 });
 
@@ -186,13 +180,7 @@ class PluginProposalsQueued extends React.Component<IPropsQueued, null> {
           <TrainingTooltip placement="bottom" overlay={i18next.t("Regular Proposal Tooltip")}>
             <span>Regular Proposals ({pluginState.numberOfQueuedProposals})</span>
           </TrainingTooltip>
-          {proposalsQueued.length === 0
-            ?
-            <div>
-              <img src="/assets/images/yoga.svg" />
-            </div>
-            : " "
-          }
+          {proposalsQueued.length === 0 && <div><img src="/assets/images/yoga.svg" /></div>}
         </div>
         <div className={css.proposalsContainer}>
           <InfiniteScroll
@@ -232,7 +220,7 @@ const SubscribedProposalsQueued = withSubscription<IPropsQueued, RegularProposal
       orderDirection: "desc",
       first: PAGE_SIZE_QUEUED,
       skip: 0,
-    }, { subscribe: true });
+    }, { polling: true });
   },
 
   getFetchMoreObservable: (props: IPropsQueued, data: RegularProposalsSubscriptionData) => {
@@ -246,7 +234,7 @@ const SubscribedProposalsQueued = withSubscription<IPropsQueued, RegularProposal
       orderDirection: "desc",
       first: PAGE_SIZE_QUEUED,
       skip: data.length,
-    }, { subscribe: true });
+    }, { polling: true });
   },
 });
 
@@ -307,13 +295,7 @@ class PluginProposalsPage extends React.Component<IProps, null> {
                 <TrainingTooltip placement="bottom" overlay={i18next.t("Boosted Proposal Tooltip")}>
                   <span>Boosted Proposals ({pluginState.numberOfBoostedProposals})</span>
                 </TrainingTooltip>
-                {proposalsBoosted.length === 0
-                  ?
-                  <div>
-                    <img src="/assets/images/yoga.svg" />
-                  </div>
-                  : " "
-                }
+                {proposalsBoosted.length === 0 && <div><img src="/assets/images/yoga.svg" /></div>}
               </div>
               <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
                 {boostedProposalsHTML}
@@ -473,9 +455,9 @@ const SubscribedPluginProposalsPage = withSubscription<IProps, SubscriptionData>
         // eslint-disable-next-line @typescript-eslint/naming-convention
         where: { scheme: pluginId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
         orderBy: "boostedAt",
-      }, { subscribe: true }),
+      }, { polling: true }),
       // big subscription query to make all other subscription queries obsolete
-      arc.getObservable(bigProposalQuery, { subscribe: true }) as Observable<AnyProposal[]>,
+      arc.getObservable(bigProposalQuery, { polling: true }) as Observable<AnyProposal[]>,
     );
   },
 });

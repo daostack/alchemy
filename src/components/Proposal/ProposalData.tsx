@@ -155,10 +155,10 @@ export default withSubscription({
 
       return combineLatest(
         of(proposal),
-        proposal.state({ subscribe: props.subscribeToProposalDetails }), // state of the current proposal
-        proposal.votes({where: { voter: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
-        proposal.stakes({where: { staker: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
-        proposal.rewards({ where: {beneficiary: currentAccountAddress}}, { subscribe: props.subscribeToProposalDetails })
+        proposal.state({ polling: true }), // state of the current proposal
+        proposal.votes({where: { voter: currentAccountAddress }}, { polling: true }),
+        proposal.stakes({where: { staker: currentAccountAddress }}, { polling: true }),
+        proposal.rewards({ where: {beneficiary: currentAccountAddress}}, { polling: true })
           .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
           .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
 
@@ -175,7 +175,7 @@ export default withSubscription({
     } else {
       return combineLatest(
         of(proposal),
-        proposal.state({ subscribe: props.subscribeToProposalDetails }), // state of the current proposal
+        proposal.state({ polling: true }), // state of the current proposal
         of([]), // votes
         of([]), // stakes
         of(null), // rewards
