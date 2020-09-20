@@ -273,7 +273,7 @@ const SubscribedRedemptionsPage = withSubscription({
       }
       ${DAO.fragments.DAOFields}
     `;
-    const proposals = await arc.getObservable(query, { subscribe: true })
+    const proposals = await arc.getObservable(query, { polling: true })
       .pipe(map(async (result: any) => {
         const proposals: IProposalData[] = result.data.proposals;
 
