@@ -381,7 +381,7 @@
 .containerNoSidebar {
   width: 562px;
   overflow-y: auto;
-  height: calc(100% - 90px);
+  max-height: calc(100vh - 200px);
   padding: 20px 30px 30px 30px;
 }
 
