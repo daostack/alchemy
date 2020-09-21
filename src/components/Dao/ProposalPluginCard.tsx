@@ -100,7 +100,7 @@ export default withSubscription({
       },
     }, {
       fetchAllData: true,
-      polling: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
+      polling: true, // subscribe to updates of the proposals.
     }); // the list of boosted proposals
   },
 });

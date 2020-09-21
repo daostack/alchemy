@@ -322,7 +322,7 @@ const SubscribedPluginContainer = withSubscription({
     }
 
     return combineLatest(
-      plugin.fetchState({ polling: true }),
+      plugin.state({ polling: true }),
       // Find the SchemeRegistrar plugin if this dao has one
       Plugin.search(arc, { where: { dao: props.daoState.id, name: "SchemeFactory" } }).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null))),
       approvedProposals
