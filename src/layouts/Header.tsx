@@ -303,7 +303,7 @@ const SubscribedHeader = withSubscription({
     if (props.daoAvatarAddress) {
       const arc = getArc();
       // subscribe if only to get DAO reputation supply updates
-      return arc.dao(props.daoAvatarAddress).state({ subscribe: true });
+      return arc.dao(props.daoAvatarAddress).state({ polling: true });
     } else {
       return of(null);
     }

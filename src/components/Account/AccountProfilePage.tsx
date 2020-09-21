@@ -355,7 +355,7 @@ const SubscribedAccountProfilePage = withSubscription({
 
     return combineLatest(
       // subscribe if only to to get DAO reputation supply updates
-      daoAvatarAddress ? dao.state({subscribe: true}) : of(null),
+      daoAvatarAddress ? dao.state({polling: true}) : of(null),
       of(memberState),
       ethBalance(accountAddress)
         .pipe(ethErrorHandler()),

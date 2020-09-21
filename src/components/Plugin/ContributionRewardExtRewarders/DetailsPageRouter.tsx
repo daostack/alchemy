@@ -75,6 +75,6 @@ export default withSubscription({
     const crxProposalState = await crxProposal.fetchState();
     const proposalClass = getCrxRewarderProposalClass(await crxProposalState.plugin.entity.fetchState() as IContributionRewardExtState);
     const proposal = new proposalClass(arc, props.proposalId);
-    return proposal.state( { subscribe: true });
+    return proposal.state( { polling: true });
   },
 });

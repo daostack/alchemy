@@ -202,7 +202,7 @@ const SubscribedMenuItemContent = withSubscription({
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
     // subscribe to dao to get DAO reputation supply updates
-    return combineLatest(dao.state({ subscribe: true }), rewards);
+    return combineLatest(dao.state({ polling: true }), rewards);
   },
 });
 

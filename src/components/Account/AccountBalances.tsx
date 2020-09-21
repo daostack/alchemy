@@ -76,7 +76,7 @@ export default withSubscription({
     })) : undefined;
 
     return combineLatest(
-      member ? member.state( { subscribe: true }).pipe(ethErrorHandler()) : of(null),
+      member ? member.state( { polling: true }).pipe(ethErrorHandler()) : of(null),
       ethBalance(accountAddress).pipe(ethErrorHandler()),
       arc.GENToken().balanceOf(accountAddress).pipe(ethErrorHandler())
     );

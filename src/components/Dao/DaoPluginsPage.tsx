@@ -152,7 +152,7 @@ const SubscribedDaoPluginsPage = withSubscription({
     const dao = new DAO(arc, props.daoState);
 
     return combineLatest(
-      dao.plugins({ where: { isRegistered: true } }, { fetchAllData: true, subscribe: true }),
+      dao.plugins({ where: { isRegistered: true } }, { fetchAllData: true, polling: true }),
       // Find the SchemeFactory plugin if this dao has one
       Plugin.search(arc, { where: { dao: dao.id, name: "SchemeFactory" } }).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null)))
     );

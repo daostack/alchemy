@@ -449,7 +449,7 @@ export default withSubscription({
     // // sending the query before subscribing seems to resolve a weird cache error - this would ideally be handled in the arc.js
     // await arc.sendQuery(cacheQuery);
     // // eslint-disable-next-line @typescript-eslint/no-empty-function
-    // await arc.getObservable(cacheQuery, {subscribe: true}).subscribe(() => {});
+    // await arc.getObservable(cacheQuery, {polling: true}).subscribe(() => {});
     // end cache priming
 
     return combineLatest(

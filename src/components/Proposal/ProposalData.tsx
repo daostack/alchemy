@@ -170,7 +170,7 @@ export default withSubscription({
           .pipe(ethErrorHandler()),
         arc.allowance(currentAccountAddress, spender)
           .pipe(ethErrorHandler()),
-        dao.state({ subscribe: true }),
+        dao.state({ polling: true }),
       );
     } else {
       return combineLatest(
@@ -182,7 +182,7 @@ export default withSubscription({
         of(null), // current account member state
         of(new BN(0)), // current account gen balance
         of(null), // current account GEN allowance
-        dao.state({ subscribe: true }),
+        dao.state({ polling: true }),
       );
     }
   },

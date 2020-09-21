@@ -286,7 +286,7 @@ const SubscribedPluginContainer = withSubscription({
       // eslint-disable-next-line @typescript-eslint/naming-convention
       { where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted, IProposalStage.Executed] } },
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      { fetchAllData: true, subscribe: true }).subscribe(() => { });
+      { fetchAllData: true, polling: true }).subscribe(() => { });
     // end cache priming
 
     const pluginState = await plugin.fetchState();
@@ -307,7 +307,7 @@ const SubscribedPluginContainer = withSubscription({
           orderBy: "closingAt",
           orderDirection: "desc",
         },
-        { subscribe: true, fetchAllData: true })
+        { polling: true, fetchAllData: true })
         .pipe(
           // work on each array individually so that toArray can perceive closure on the stream of items in the array
           mergeMap(proposals => of(proposals).pipe(
@@ -322,7 +322,7 @@ const SubscribedPluginContainer = withSubscription({
     }
 
     return combineLatest(
-      plugin.fetchState({ subscribe: true }),
+      plugin.fetchState({ polling: true }),
       // Find the SchemeRegistrar plugin if this dao has one
       Plugin.search(arc, { where: { dao: props.daoState.id, name: "SchemeFactory" } }).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null))),
       approvedProposals

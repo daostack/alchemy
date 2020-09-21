@@ -137,7 +137,7 @@ export default withSubscription({
     `;
 
     const arc = await getArc();
-    await arc.sendQuery(cacheQuery, {subscribe: true});
+    await arc.sendQuery(cacheQuery, {polling: true});
     // end cache priming
 
     // TODO: next lines can use some cleanup up

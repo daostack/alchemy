@@ -336,7 +336,7 @@ const SubscribedSidebarMenu = withSubscription({
   createObservable: (props: IProps) => {
     if (props.daoAvatarAddress) {
       const arc = getArc();
-      return arc.dao(props.daoAvatarAddress).state({ subscribe: true } );
+      return arc.dao(props.daoAvatarAddress).state({ polling: true } );
     } else {
       return of(null);
     }

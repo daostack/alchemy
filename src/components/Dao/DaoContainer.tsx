@@ -151,7 +151,7 @@ const SubscribedDaoContainer = withSubscription({
     const daoAddress = props.match.params.daoAvatarAddress;
     const dao = arc.dao(daoAddress);
     const observable = combineLatest(
-      dao.state({ subscribe: true, fetchAllData: true }), // DAO state
+      dao.state({ polling: true, fetchAllData: true }), // DAO state
       dao.members()
     );
     return observable;

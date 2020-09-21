@@ -201,7 +201,7 @@ export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: s
 
 // export const primeCacheForSubmissionsAndVotes = (): Observable<any> => {
 //   return combineLatest(
-//     CompetitionSuggestion.search(getArc(), {}, { subscribe: true, fetchAllData: true }),
-//     CompetitionVote.search(getArc(), {}, { subscribe: true, fetchAllData: true })
+//     CompetitionSuggestion.search(getArc(), {}, { polling: true, fetchAllData: true }),
+//     CompetitionVote.search(getArc(), {}, { polling: true, fetchAllData: true })
 //   );
 // };

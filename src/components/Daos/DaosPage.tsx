@@ -328,13 +328,13 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
     memberDAOsquery,
     (arc: Arc, r: any) => new DAO(arc, createDaoStateFromQuery(r.dao)),
     undefined,
-    { subscribe: true }
+    { polling: true }
   ) : of([]);
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc" }, { fetchAllData: true, subscribe: true }) : of([]);
+  const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc" }, { fetchAllData: true, polling: true }) : of([]);
 
   return combineLatest(
-    arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0 }, { fetchAllData: true, subscribe: true }),
+    arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0 }, { fetchAllData: true, polling: true }),
     followDAOs,
     memberOfDAOs
   );
