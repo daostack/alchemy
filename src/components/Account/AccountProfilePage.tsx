@@ -284,7 +284,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                     }
                     <div className={css.otherInfoContainer}>
                       <div className={css.tokens}>
-                        {accountInfo
+                        {(accountInfo && dao)
                           ? <div><strong>Rep. Score</strong><br /><Reputation reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /> </div>
                           : ""}
                         <div><strong>{genName()}:</strong><br /><span>{formatTokens(genBalance)}</span></div>

@@ -12,6 +12,12 @@ describe("Profile page", () => {
     daoAddress = addresses.dao.Avatar.toLowerCase();
   });
 
+  it("should also work without a DAO address", async () => {
+    await browser.url(`http://127.0.0.1:3000/profile/${userAddress}`);
+    const profileContainer = await $("*[data-test-id=\"profile-container\"]");
+    await profileContainer.waitForExist();
+  });
+
   it("should exist and be editable", async () => {
     await browser.url(`http://127.0.0.1:3000/profile/${userAddress}?daoAvatarAddress=${daoAddress}`);
 
@@ -29,11 +35,5 @@ describe("Profile page", () => {
     await descriptionInput.setValue("The ballad");
     const submitButton = await $("*[type=\"submit\"]");
     await submitButton.click();
-  });
-
-  it("should also work without a DAO address", async () => {
-    await browser.url(`http://127.0.0.1:3000/profile/${userAddress}`);
-    const profileContainer = await $("*[data-test-id=\"profile-container\"]");
-    await profileContainer.waitForExist();
   });
 });
