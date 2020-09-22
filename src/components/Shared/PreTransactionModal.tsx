@@ -284,8 +284,8 @@ class PreTransactionModal extends React.Component<IProps, IState> {
           "DAO Name": daoState.name,
           "Proposal Hash": proposalState.id,
           "Proposal Title": proposalState.title,
-          "Plugin Address": proposalState.plugin.entity.coreState.address,
-          "Plugin Name": proposalState.plugin.entity.coreState.name,
+          "Plugin Address": (proposalState as any).coreState.address,
+          "Plugin Name": (proposalState as any).coreState.name,
         });
         break;
       case ActionTypes.Execute:

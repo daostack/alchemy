@@ -126,7 +126,7 @@ class MenuItem extends React.Component<IMenuItemProps, null> {
     const { proposal } = this.props;
     return <div className={css.proposal}>
       <div className={css.title}>
-        <Link to={"/dao/" + proposal.dao.id + "/proposal/" + proposal.id}>
+        <Link to={"/dao/" + (proposal as any).coreState.dao.id + "/proposal/" + proposal.id}>
           <span>{humanProposalTitle(proposal)}</span>
           <img src="/assets/images/Icon/Open.svg" />
         </Link>
@@ -197,7 +197,7 @@ const SubscribedMenuItemContent = withSubscription({
   createObservable: async (props: IMenuItemProps) => {
     const { currentAccountAddress, proposal } = props;
     const arc = getArc();
-    const dao = arc.dao(proposal.dao.id);
+    const dao = arc.dao((proposal as any).coreState.dao.id);
     const rewards = (proposal as any).rewards({ where: { beneficiary: currentAccountAddress }})
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));

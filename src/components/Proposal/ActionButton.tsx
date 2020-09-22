@@ -200,9 +200,10 @@ class ActionButton extends React.Component<IProps, IState> {
      *
      * We'll display the redeem button even if the CR beneficiary is not the current account.
      */
-    const displayRedeemButton = proposalState.executedAt &&
+
+    const displayRedeemButton = (proposalState as any).coreState.executedAt &&
                         ((currentAccountNumUnredeemedGpRewards > 0) ||
-                        ((proposalState.winningOutcome === IProposalOutcome.Pass) && (beneficiaryNumUnredeemedCrRewards > 0)));
+                        (((proposalState as any).coreState.winningOutcome === IProposalOutcome.Pass) && (beneficiaryNumUnredeemedCrRewards > 0)));
 
     const redemptionsTip = RedemptionsTip({
       canRewardNone,
@@ -212,7 +213,7 @@ class ActionButton extends React.Component<IProps, IState> {
       daoState: daoState,
       gpRewards,
       id: rewards ? rewards.id : "0",
-      proposal: proposalState.proposal?.entity,
+      proposal: proposalState.proposal?.entity as any,
     });
 
     const redeemButtonClass = classNames({

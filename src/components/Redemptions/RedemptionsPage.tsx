@@ -1,4 +1,4 @@
-import { Address, IContributionRewardProposalState, IDAOState, IRewardState, Proposal, DAO, AnyProposal } from "@daostack/arc.js";
+import { Address, IContributionRewardProposalState, IDAOState, IRewardState, Proposal, DAO, IProposalState } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -48,7 +48,7 @@ interface IProposalData {
   dao: IDAOData;
   gpRewards: IRewardState[];
   contributionRewardState: IContributionRewardProposalState;
-  proposal: AnyProposal;
+  proposal: IProposalState;
 }
 
 class RedemptionsPage extends React.Component<IProps, null> {
@@ -150,7 +150,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
               key={"proposal_" + proposal.id}
               currentAccountAddress={currentAccountAddress}
               daoState={daoState}
-              proposal={proposal.proposal as any}
+              proposal={proposal.proposal}
             />;
           })}
         </div>
