@@ -201,7 +201,7 @@ class ActionButton extends React.Component<IProps, IState> {
      * We'll display the redeem button even if the CR beneficiary is not the current account.
      */
 
-    const displayRedeemButton = (proposalState as any).coreState.executedAt &&
+    const displayRedeemButton = (proposalState as any).coreState?.executedAt &&
                         ((currentAccountNumUnredeemedGpRewards > 0) ||
                         (((proposalState as any).coreState.winningOutcome === IProposalOutcome.Pass) && (beneficiaryNumUnredeemedCrRewards > 0)));
 
