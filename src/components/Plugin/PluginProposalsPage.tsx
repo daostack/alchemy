@@ -84,7 +84,7 @@ class PluginProposalsPreboosted extends React.Component<IPropsPreBoosted, null> 
       <TransitionGroup className="boosted-proposals-list">
         {proposalsPreBoosted.map((proposal: AnyProposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
+            <ProposalCard proposal={proposal as any} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -168,7 +168,7 @@ class PluginProposalsQueued extends React.Component<IPropsQueued, null> {
       <TransitionGroup className="queued-proposals-list">
         {proposalsQueued.map((proposal: AnyProposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
+            <ProposalCard proposal={proposal as any} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -261,7 +261,7 @@ class PluginProposalsPage extends React.Component<IProps, null> {
       <TransitionGroup className="boosted-proposals-list">
         {proposalsBoosted.map((proposal: AnyProposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
+            <ProposalCard proposal={proposal as any} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
           </Fade>
         ))}
       </TransitionGroup>

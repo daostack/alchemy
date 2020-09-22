@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, Vote, AnyProposal } from "@daostack/arc.js";
+import { Address, IDAOState, IProposalStage, Vote, IProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -27,7 +27,7 @@ import * as css from "./ProposalCard.scss";
 interface IExternalProps {
   currentAccountAddress: Address;
   daoState: IDAOState;
-  proposal: AnyProposal;
+  proposal: IProposalState;
   suppressTrainingTooltips?: boolean;
 }
 
@@ -59,13 +59,12 @@ export default class ProposalCard extends React.Component<IProps, null> {
           daoEthBalance,
           expired,
           member,
-          proposal,
+          proposalState,
           rewards,
           stakes,
           votes,
         } = props;
 
-        const proposalState = proposal.coreState;
         const tags = proposalState.tags;
 
         let currentAccountVote = 0;
@@ -166,7 +165,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     currentAccountAddress={currentAccountAddress}
                     daoState={daoState}
                     daoEthBalance={daoEthBalance}
-                    proposal={proposal}
+                    proposalState={proposal}
                     rewards={rewards}
                     expired={expired}
                     parentPage={Page.PluginProposals}

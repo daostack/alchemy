@@ -45,7 +45,7 @@ class RedemptionsButton extends React.Component<IProps, null> {
   private renderQuickMenuLink(): RenderOutput {
     const { data: redeemableProposals } = this.props;
     const menu = <RedemptionsMenu
-      redeemableProposals={redeemableProposals}
+      redeemableProposals={redeemableProposals as any}
       handleClose={this.closeMenu}
     />;
     return <Tooltip

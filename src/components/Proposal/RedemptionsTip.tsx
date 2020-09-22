@@ -18,7 +18,7 @@ interface IProps {
 
 export default (props: IProps): JSX.Element => {
   const { canRewardNone, canRewardOnlySome, currentAccountAddress, contributionRewards, daoState, gpRewards, id, proposal } = props;
-  const proposalState = proposal.coreState;
+  const proposalState = proposal?.coreState;
 
   const messageDiv = (canRewardNone || canRewardOnlySome) ? <div className={css.message}>
     <img className={css.icon} src="/assets/images/Icon/Alert-yellow-b.svg" />
@@ -70,7 +70,7 @@ export default (props: IProps): JSX.Element => {
   if (contributionRewards) {
     if (proposalState.winningOutcome === IProposalOutcome.Pass && proposalState.name === "ContributionReward") {
       if (Object.keys(contributionRewards).length > 0) {
-        const contributionReward = proposal.coreState as IContributionRewardProposalState;
+        const contributionReward = proposal?.coreState as IContributionRewardProposalState;
         ContributionRewardDiv = <div>
           <strong>
             {(currentAccountAddress && currentAccountAddress === contributionReward.beneficiary.toLowerCase()) ?

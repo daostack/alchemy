@@ -150,7 +150,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
               key={"proposal_" + proposal.id}
               currentAccountAddress={currentAccountAddress}
               daoState={daoState}
-              proposal={proposal.proposal}
+              proposal={proposal.proposal as any}
             />;
           })}
         </div>
