@@ -1,4 +1,4 @@
-import { Address, IContributionRewardProposalState, IDAOState, IRewardState, Proposal, DAO, AnyProposal } from "@daostack/arc.js";
+import { Address, IContributionRewardProposalState, IDAOState, IRewardState, Proposal, DAO, IProposalState } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -20,6 +20,7 @@ import { of } from "rxjs";
 import { map, first } from "rxjs/operators";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./RedemptionsPage.scss";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 interface IStateProps {
   currentAccountAddress: string;
@@ -48,7 +49,7 @@ interface IProposalData {
   dao: IDAOData;
   gpRewards: IRewardState[];
   contributionRewardState: IContributionRewardProposalState;
-  proposal: AnyProposal;
+  proposal: IProposalState;
 }
 
 class RedemptionsPage extends React.Component<IProps, null> {
@@ -273,7 +274,7 @@ const SubscribedRedemptionsPage = withSubscription({
       }
       ${DAO.fragments.DAOFields}
     `;
-    const proposals = await arc.getObservable(query, { subscribe: true })
+    const proposals = await arc.getObservable(query, { polling: true, pollInterval: GRAPH_POLL_INTERVAL })
       .pipe(map(async (result: any) => {
         const proposals: IProposalData[] = result.data.proposals;
 

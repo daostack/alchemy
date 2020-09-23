@@ -1,4 +1,4 @@
-import { Address, IDAOState, AnyProposal, IRewardState, IContributionRewardProposalState } from "@daostack/arc.js";
+import { Address, IDAOState, IProposalState, IRewardState, IContributionRewardProposalState } from "@daostack/arc.js";
 
 import BN = require("bn.js");
 import Reputation from "components/Account/Reputation";
@@ -9,7 +9,7 @@ import * as css from "./RedemptionsString.scss";
 interface IProps {
   currentAccountAddress: Address;
   daoState: IDAOState;
-  proposal: AnyProposal;
+  proposal: IProposalState;
   rewards: IRewardState | null;
   separator?: string;
 }
@@ -42,8 +42,8 @@ export default class RedemptionsString extends React.Component<IProps, null> {
       }
     }
 
-    const proposalState = proposal.coreState;
-    const contributionReward = proposal.coreState as IContributionRewardProposalState;
+    const proposalState = proposal;
+    const contributionReward = proposal as IContributionRewardProposalState;
 
     if ((proposalState.name === "ContributionReward") && contributionReward && currentAccountAddress === contributionReward.beneficiary) {
       const rewards = getCRRewards(contributionReward);
