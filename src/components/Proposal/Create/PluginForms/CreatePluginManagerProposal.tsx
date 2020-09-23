@@ -449,7 +449,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
           };
           break;
         default:
-          throw Error(`Unimplemented Plugin Manager Plugin Type ${proposalOptions.add.pluginName}`);
+          throw Error(`Unimplemented Plugin Manager Plugin Type ${(proposalOptions.add as any).pluginName}`);
       }
 
       let permissions = 1;
