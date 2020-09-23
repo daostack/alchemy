@@ -26,6 +26,7 @@ import * as css from "./App.scss";
 import ProviderConfigButton from "layouts/ProviderConfigButton";
 import Tooltip from "rc-tooltip";
 import i18next from "i18next";
+import { GRAPH_POLL_INTERVAL } from "../settings";
 
 interface IExternalProps extends RouteComponentProps<any> {
 }
@@ -303,7 +304,7 @@ const SubscribedHeader = withSubscription({
     if (props.daoAvatarAddress) {
       const arc = getArc();
       // subscribe if only to get DAO reputation supply updates
-      return arc.dao(props.daoAvatarAddress).state({ polling: true });
+      return arc.dao(props.daoAvatarAddress).state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL });
     } else {
       return of(null);
     }

@@ -19,6 +19,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./PluginProposals.scss";
 import i18next from "i18next";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 // For infinite scrolling
 const PAGE_SIZE_QUEUED = 100;
@@ -141,7 +142,7 @@ const SubscribedProposalsPreBoosted = withSubscription<IPropsPreBoosted, Preboos
       orderBy: "preBoostedAt",
       first: PAGE_SIZE_PREBOOSTED,
       skip: 0,
-    }, { polling: true });
+    }, { polling: true, pollInterval: GRAPH_POLL_INTERVAL });
   },
 
   getFetchMoreObservable: (props: IPropsPreBoosted, data: PreboostedProposalsSubscriptionData) => {
@@ -153,7 +154,7 @@ const SubscribedProposalsPreBoosted = withSubscription<IPropsPreBoosted, Preboos
       orderBy: "preBoostedAt",
       first: PAGE_SIZE_PREBOOSTED,
       skip: data.length,
-    }, { polling: true });
+    }, { polling: true, pollInterval: GRAPH_POLL_INTERVAL });
   },
 });
 
@@ -220,7 +221,7 @@ const SubscribedProposalsQueued = withSubscription<IPropsQueued, RegularProposal
       orderDirection: "desc",
       first: PAGE_SIZE_QUEUED,
       skip: 0,
-    }, { polling: true });
+    }, { polling: true, pollInterval: GRAPH_POLL_INTERVAL });
   },
 
   getFetchMoreObservable: (props: IPropsQueued, data: RegularProposalsSubscriptionData) => {
@@ -234,7 +235,7 @@ const SubscribedProposalsQueued = withSubscription<IPropsQueued, RegularProposal
       orderDirection: "desc",
       first: PAGE_SIZE_QUEUED,
       skip: data.length,
-    }, { polling: true });
+    }, { polling: true, pollInterval: GRAPH_POLL_INTERVAL });
   },
 });
 
@@ -455,9 +456,9 @@ const SubscribedPluginProposalsPage = withSubscription<IProps, SubscriptionData>
         // eslint-disable-next-line @typescript-eslint/naming-convention
         where: { scheme: pluginId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
         orderBy: "boostedAt",
-      }, { polling: true }),
+      }, { polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
       // big subscription query to make all other subscription queries obsolete
-      arc.getObservable(bigProposalQuery, { polling: true }) as Observable<AnyProposal[]>,
+      arc.getObservable(bigProposalQuery, { polling: true, pollInterval: GRAPH_POLL_INTERVAL }) as Observable<AnyProposal[]>,
     );
   },
 });

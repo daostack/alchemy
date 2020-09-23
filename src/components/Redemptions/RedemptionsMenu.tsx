@@ -18,6 +18,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, Observable, of } from "rxjs";
 import { defaultIfEmpty, map, mergeMap } from "rxjs/operators";
 import * as css from "./RedemptionsMenu.scss";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 interface IExternalProps {
   redeemableProposals: IProposalState[];
@@ -202,7 +203,7 @@ const SubscribedMenuItemContent = withSubscription({
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
     // subscribe to dao to get DAO reputation supply updates
-    return combineLatest(dao.state({ polling: true }), rewards);
+    return combineLatest(dao.state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL }), rewards);
   },
 });
 

@@ -8,6 +8,7 @@ import * as css from "layouts/App.scss";
 import * as React from "react";
 import { combineLatest, of } from "rxjs";
 import { getArc } from "arc";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 interface IExternalProps {
   daoState?: IDAOState;
@@ -76,7 +77,7 @@ export default withSubscription({
     })) : undefined;
 
     return combineLatest(
-      member ? member.state( { polling: true }).pipe(ethErrorHandler()) : of(null),
+      member ? member.state( { polling: true, pollInterval: GRAPH_POLL_INTERVAL }).pipe(ethErrorHandler()) : of(null),
       ethBalance(accountAddress).pipe(ethErrorHandler()),
       arc.GENToken().balanceOf(accountAddress).pipe(ethErrorHandler())
     );

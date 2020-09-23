@@ -20,6 +20,7 @@ import { of } from "rxjs";
 import { map, first } from "rxjs/operators";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./RedemptionsPage.scss";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 interface IStateProps {
   currentAccountAddress: string;
@@ -273,7 +274,7 @@ const SubscribedRedemptionsPage = withSubscription({
       }
       ${DAO.fragments.DAOFields}
     `;
-    const proposals = await arc.getObservable(query, { polling: true })
+    const proposals = await arc.getObservable(query, { polling: true, pollInterval: GRAPH_POLL_INTERVAL })
       .pipe(map(async (result: any) => {
         const proposals: IProposalData[] = result.data.proposals;
 

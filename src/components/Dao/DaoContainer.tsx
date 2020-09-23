@@ -24,6 +24,7 @@ import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
 import DaoLandingPage from "components/Dao/DaoLandingPage";
 import i18next from "i18next";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -151,7 +152,7 @@ const SubscribedDaoContainer = withSubscription({
     const daoAddress = props.match.params.daoAvatarAddress;
     const dao = arc.dao(daoAddress);
     const observable = combineLatest(
-      dao.state({ polling: true, fetchAllData: true }), // DAO state
+      dao.state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL, fetchAllData: true }), // DAO state
       dao.members()
     );
     return observable;

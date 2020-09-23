@@ -12,6 +12,7 @@ import { closingTime } from "lib/proposalHelpers";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of, Observable } from "rxjs";
 import { map, mergeMap } from "rxjs/operators";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 import * as css from "./ProposalCard.scss";
 
@@ -154,10 +155,10 @@ export default withSubscription({
 
 
       return combineLatest(
-        proposal.state({ polling: true }), // state of the current proposal
-        proposal.votes({where: { voter: currentAccountAddress }}, { polling: true }),
-        proposal.stakes({where: { staker: currentAccountAddress }}, { polling: true }),
-        proposal.rewards({ where: {beneficiary: currentAccountAddress}}, { polling: true })
+        proposal.state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL }), // state of the current proposal
+        proposal.votes({where: { voter: currentAccountAddress }}, { polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
+        proposal.stakes({where: { staker: currentAccountAddress }}, { polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
+        proposal.rewards({ where: {beneficiary: currentAccountAddress}}, { polling: true, pollInterval: GRAPH_POLL_INTERVAL })
           .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
           .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
 
@@ -169,18 +170,18 @@ export default withSubscription({
           .pipe(ethErrorHandler()),
         arc.allowance(currentAccountAddress, spender)
           .pipe(ethErrorHandler()),
-        dao.state({ polling: true }),
+        dao.state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
       );
     } else {
       return combineLatest(
-        proposal.state({ polling: true }), // state of the current proposal
+        proposal.state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL }), // state of the current proposal
         of([]), // votes
         of([]), // stakes
         of(null), // rewards
         of(null), // current account member state
         of(new BN(0)), // current account gen balance
         of(null), // current account GEN allowance
-        dao.state({ polling: true }),
+        dao.state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
       );
     }
   },

@@ -25,6 +25,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import Loading from "components/Shared/Loading";
 import * as css from "./Account.scss";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -355,7 +356,7 @@ const SubscribedAccountProfilePage = withSubscription({
 
     return combineLatest(
       // subscribe if only to to get DAO reputation supply updates
-      daoAvatarAddress ? dao.state({polling: true}) : of(null),
+      daoAvatarAddress ? dao.state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL }) : of(null),
       of(memberState),
       ethBalance(accountAddress)
         .pipe(ethErrorHandler()),

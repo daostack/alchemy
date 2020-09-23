@@ -19,6 +19,7 @@ import * as css from "./DaoPluginsPage.scss";
 import ProposalPluginCard from "./ProposalPluginCard";
 import SimplePluginCard from "./SimplePluginCard";
 import i18next from "i18next";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -152,7 +153,7 @@ const SubscribedDaoPluginsPage = withSubscription({
     const dao = new DAO(arc, props.daoState);
 
     return combineLatest(
-      dao.plugins({ where: { isRegistered: true } }, { fetchAllData: true, polling: true }),
+      dao.plugins({ where: { isRegistered: true } }, { fetchAllData: true, polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
       // Find the SchemeFactory plugin if this dao has one
       Plugin.search(arc, { where: { dao: dao.id, name: "SchemeFactory" } }).pipe(mergeMap((plugin: Array<AnyPlugin>): Observable<IPluginState> => plugin[0] ? plugin[0].state() : of(null)))
     );

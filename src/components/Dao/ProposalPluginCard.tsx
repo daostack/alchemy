@@ -10,6 +10,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "./PluginCard.scss";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 interface IExternalProps {
   daoState: IDAOState;
@@ -101,6 +102,7 @@ export default withSubscription({
     }, {
       fetchAllData: true,
       polling: true, // subscribe to updates of the proposals.
+      pollInterval: GRAPH_POLL_INTERVAL,
     }); // the list of boosted proposals
   },
 });
