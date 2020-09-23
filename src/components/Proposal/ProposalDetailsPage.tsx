@@ -76,10 +76,10 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       "Page Name": Page.ProposalDetails,
       "DAO Address": this.props.daoState.address,
       "DAO Name": this.props.daoState.name,
-      "Proposal Hash": this.props.proposal.id,
-      "Proposal Title": this.props.proposal.coreState.title,
-      "Plugin Address": this.props.proposal.coreState.plugin.id,
-      "Plugin Name": this.props.proposal.coreState.plugin.entity.coreState.name,
+      "Proposal Hash": this.props.proposalState.id,
+      "Proposal Title": this.props.proposalState.title,
+      "Plugin Address": this.props.proposalState.plugin.id,
+      "Plugin Name": this.props.proposalState.plugin.entity.coreState.name,
     });
 
     if (this.props.votes.length > 0) {
@@ -87,7 +87,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       newState.currentAccountVote = currentVote.coreState.outcome;
     }
 
-    newState.crxContractName = rewarderContractName(this.props.proposal.coreState.plugin.entity.coreState as IContributionRewardExtState);
+    newState.crxContractName = rewarderContractName(this.props.proposalState.plugin.entity.coreState as IContributionRewardExtState);
     this.setState(newState);
   }
 
@@ -120,13 +120,11 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       daoState,
       expired,
       member,
-      proposal,
+      proposalState,
       rewards,
       stakes,
       votes,
     } = this.props;
-
-    const proposalState = proposal.coreState;
 
     if (daoState.id !== proposalState.dao.id) {
       return <div>`The given proposal does not belong to ${daoState.name}. Please check the browser url.`</div>;
@@ -134,7 +132,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
     const tags = proposalState.tags;
 
-    const url = ensureHttps(proposal.coreState.url);
+    const url = ensureHttps(proposalState.url);
 
     this.disqusConfig.title = proposalState.title;
     this.disqusConfig.url = process.env.BASE_URL + this.props.location.pathname;
@@ -150,8 +148,8 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     return (
       <div className={css.wrapper}>
         <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/plugin/${proposalState.plugin.id}`}>{pluginName(proposalState.plugin.entity.coreState, proposalState.plugin.entity.coreState.address)}</BreadcrumbsItem>
-        <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposalState, 40)}</BreadcrumbsItem>
-        <div className={this.proposalClass} data-test-id={"proposal-" + proposal.id}>
+        <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposalState.id}`}>{humanProposalTitle(proposalState, 40)}</BreadcrumbsItem>
+        <div className={this.proposalClass} data-test-id={"proposal-" + proposalState.id}>
           <div className={css.proposalInfo}>
             <div>
               <div className={css.statusContainer}>
@@ -165,7 +163,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   daoEthBalance={daoEthBalance}
                   detailView
                   parentPage={Page.ProposalDetails}
-                  proposal={proposal}
+                  proposalState={proposalState}
                   rewards={rewards}
                   expired={expired}
                 />
@@ -173,13 +171,13 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               {
                 (this.state.crxContractName) ? <div className={css.gotoCompetition}>
                   {
-                    <Link to={`/dao/${daoState.address}/crx/proposal/${proposal.id}`}>Go to {this.state.crxContractName}&nbsp;&gt;</Link>
+                    <Link to={`/dao/${daoState.address}/crx/proposal/${proposalState.id}`}>Go to {this.state.crxContractName}&nbsp;&gt;</Link>
                   }
                 </div> : ""
               }
             </div>
             <h3 className={css.proposalTitleTop}>
-              <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposalState)}</Link>
+              <Link to={"/dao/" + daoState.address + "/proposal/" + proposalState.id} data-test-id="proposal-title">{humanProposalTitle(proposalState)}</Link>
             </h3>
 
             <div className={css.timer + " clearfix"}>
@@ -248,7 +246,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 <span>Share</span>
               </button>
 
-              <div className={css.followButton}><FollowButton type="proposals" id={proposal.id} style="bigButton" /></div>
+              <div className={css.followButton}><FollowButton type="proposals" id={proposalState.id} style="bigButton" /></div>
             </div>
           </div>
 
@@ -337,7 +335,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
         {this.state.showShareModal ?
           <SocialShareModal
             closeHandler={this.closeShareModal}
-            url={`https://alchemy.daostack.io/dao/${daoState.address}/proposal/${proposal.id}`}
+            url={`https://alchemy.daostack.io/dao/${daoState.address}/proposal/${proposalState.id}`}
           /> : ""
         }
       </div>

@@ -9,6 +9,7 @@ import { getArc } from "arc";
 import { CompetitionStatusEnum, CompetitionStatus } from "./utils";
 import Card from "./Card";
 import * as css from "./Competitions.scss";
+import { GRAPH_POLL_INTERVAL } from "../../../../settings";
 
 interface IExternalProps {
   daoState: IDAOState;
@@ -137,7 +138,7 @@ export default withSubscription({
     `;
 
     const arc = await getArc();
-    await arc.sendQuery(cacheQuery, {subscribe: true});
+    await arc.sendQuery(cacheQuery, { polling: true, pollInterval: GRAPH_POLL_INTERVAL });
     // end cache priming
 
     // TODO: next lines can use some cleanup up

@@ -19,6 +19,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./PluginProposals.scss";
 import i18next from "i18next";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 // For infinite scrolling
 const PAGE_SIZE_QUEUED = 100;
@@ -84,7 +85,7 @@ class PluginProposalsPreboosted extends React.Component<IPropsPreBoosted, null> 
       <TransitionGroup className="boosted-proposals-list">
         {proposalsPreBoosted.map((proposal: AnyProposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
+            <ProposalCard proposal={proposal as any} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -96,13 +97,7 @@ class PluginProposalsPreboosted extends React.Component<IPropsPreBoosted, null> 
           <TrainingTooltip placement="bottom" overlay={i18next.t("Pending Proposal Tooltip")}>
             <span>Pending Boosting Proposals ({pluginState.numberOfPreBoostedProposals})</span>
           </TrainingTooltip>
-          {proposalsPreBoosted.length === 0
-            ?
-            <div>
-              <img src="/assets/images/yoga.svg" />
-            </div>
-            : " "
-          }
+          {proposalsPreBoosted.length === 0 && <div><img src="/assets/images/yoga.svg" /></div>}
         </div>
         <div className={css.proposalsContainer}>
           {
@@ -147,7 +142,7 @@ const SubscribedProposalsPreBoosted = withSubscription<IPropsPreBoosted, Preboos
       orderBy: "preBoostedAt",
       first: PAGE_SIZE_PREBOOSTED,
       skip: 0,
-    }, { subscribe: true });
+    }, { polling: true, pollInterval: GRAPH_POLL_INTERVAL });
   },
 
   getFetchMoreObservable: (props: IPropsPreBoosted, data: PreboostedProposalsSubscriptionData) => {
@@ -159,7 +154,7 @@ const SubscribedProposalsPreBoosted = withSubscription<IPropsPreBoosted, Preboos
       orderBy: "preBoostedAt",
       first: PAGE_SIZE_PREBOOSTED,
       skip: data.length,
-    }, { subscribe: true });
+    }, { polling: true, pollInterval: GRAPH_POLL_INTERVAL });
   },
 });
 
@@ -174,7 +169,7 @@ class PluginProposalsQueued extends React.Component<IPropsQueued, null> {
       <TransitionGroup className="queued-proposals-list">
         {proposalsQueued.map((proposal: AnyProposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
+            <ProposalCard proposal={proposal as any} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -186,13 +181,7 @@ class PluginProposalsQueued extends React.Component<IPropsQueued, null> {
           <TrainingTooltip placement="bottom" overlay={i18next.t("Regular Proposal Tooltip")}>
             <span>Regular Proposals ({pluginState.numberOfQueuedProposals})</span>
           </TrainingTooltip>
-          {proposalsQueued.length === 0
-            ?
-            <div>
-              <img src="/assets/images/yoga.svg" />
-            </div>
-            : " "
-          }
+          {proposalsQueued.length === 0 && <div><img src="/assets/images/yoga.svg" /></div>}
         </div>
         <div className={css.proposalsContainer}>
           <InfiniteScroll
@@ -232,7 +221,7 @@ const SubscribedProposalsQueued = withSubscription<IPropsQueued, RegularProposal
       orderDirection: "desc",
       first: PAGE_SIZE_QUEUED,
       skip: 0,
-    }, { subscribe: true });
+    }, { polling: true, pollInterval: GRAPH_POLL_INTERVAL });
   },
 
   getFetchMoreObservable: (props: IPropsQueued, data: RegularProposalsSubscriptionData) => {
@@ -246,7 +235,7 @@ const SubscribedProposalsQueued = withSubscription<IPropsQueued, RegularProposal
       orderDirection: "desc",
       first: PAGE_SIZE_QUEUED,
       skip: data.length,
-    }, { subscribe: true });
+    }, { polling: true, pollInterval: GRAPH_POLL_INTERVAL });
   },
 });
 
@@ -273,7 +262,7 @@ class PluginProposalsPage extends React.Component<IProps, null> {
       <TransitionGroup className="boosted-proposals-list">
         {proposalsBoosted.map((proposal: AnyProposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
+            <ProposalCard proposal={proposal as any} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -307,13 +296,7 @@ class PluginProposalsPage extends React.Component<IProps, null> {
                 <TrainingTooltip placement="bottom" overlay={i18next.t("Boosted Proposal Tooltip")}>
                   <span>Boosted Proposals ({pluginState.numberOfBoostedProposals})</span>
                 </TrainingTooltip>
-                {proposalsBoosted.length === 0
-                  ?
-                  <div>
-                    <img src="/assets/images/yoga.svg" />
-                  </div>
-                  : " "
-                }
+                {proposalsBoosted.length === 0 && <div><img src="/assets/images/yoga.svg" /></div>}
               </div>
               <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
                 {boostedProposalsHTML}
@@ -473,9 +456,9 @@ const SubscribedPluginProposalsPage = withSubscription<IProps, SubscriptionData>
         // eslint-disable-next-line @typescript-eslint/naming-convention
         where: { scheme: pluginId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
         orderBy: "boostedAt",
-      }, { subscribe: true }),
+      }, { polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
       // big subscription query to make all other subscription queries obsolete
-      arc.getObservable(bigProposalQuery, { subscribe: true }) as Observable<AnyProposal[]>,
+      arc.getObservable(bigProposalQuery, { polling: true, pollInterval: GRAPH_POLL_INTERVAL }) as Observable<AnyProposal[]>,
     );
   },
 });
