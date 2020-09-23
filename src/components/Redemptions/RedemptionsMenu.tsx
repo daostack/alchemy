@@ -1,4 +1,4 @@
-import { Address, AnyProposal, IDAOState, IRewardState, Reward, IContributionRewardProposalState } from "@daostack/arc.js";
+import { Address, IDAOState, IRewardState, Reward, IContributionRewardProposalState, IProposalState } from "@daostack/arc.js";
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
@@ -18,9 +18,10 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, Observable, of } from "rxjs";
 import { defaultIfEmpty, map, mergeMap } from "rxjs/operators";
 import * as css from "./RedemptionsMenu.scss";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 interface IExternalProps {
-  redeemableProposals: AnyProposal[];
+  redeemableProposals: IProposalState[];
   handleClose: () => void;
 }
 
@@ -45,7 +46,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<AnyProposal[]>;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IProposalState[]>;
 
 class RedemptionsMenu extends React.Component<IProps, null> {
   public render(): RenderOutput {
@@ -111,12 +112,12 @@ const SubscribedRedemptionsMenu = withSubscription({
   createObservable: (props: IExternalProps) => {
     return of(
       props.redeemableProposals
-    ).pipe(defaultIfEmpty<AnyProposal[]>([]));
+    ).pipe(defaultIfEmpty<IProposalState[]>([]));
   },
 });
 
 interface IMenuItemProps {
-  proposal: AnyProposal;
+  proposal: IProposalState;
   currentAccountAddress: Address;
   handleClose: () => void;
 }
@@ -126,8 +127,8 @@ class MenuItem extends React.Component<IMenuItemProps, null> {
     const { proposal } = this.props;
     return <div className={css.proposal}>
       <div className={css.title}>
-        <Link to={"/dao/" + proposal.coreState.dao.id + "/proposal/" + proposal.id}>
-          <span>{humanProposalTitle(proposal.coreState)}</span>
+        <Link to={"/dao/" + (proposal as any).coreState.dao.id + "/proposal/" + proposal.id}>
+          <span>{humanProposalTitle(proposal)}</span>
           <img src="/assets/images/Icon/Open.svg" />
         </Link>
       </div>
@@ -143,8 +144,8 @@ interface IMenuItemContentStateProps {
 const mapStateToItemContentProps = (state: IRootState, ownProps: IMenuItemProps) => {
   const { proposal } = ownProps;
 
-  const proposalState = proposal.coreState;
-  const contributionReward = proposal.coreState as IContributionRewardProposalState;
+  const proposalState = proposal;
+  const contributionReward = proposal as IContributionRewardProposalState;
   return {
     ...ownProps,
     beneficiaryProfile: proposalState.name === "ContributionReward" ? state.profiles[contributionReward.beneficiary] : null,
@@ -159,7 +160,7 @@ class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
     const [daoState, rewards] = data;
     return <React.Fragment>
       <ProposalSummary
-        proposalState={proposal.coreState}
+        proposalState={proposal}
         daoState={daoState}
         beneficiaryProfile={beneficiaryProfile}
         detailView={false}
@@ -179,7 +180,7 @@ class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
           daoEthBalance={new BN(daoState.ethBalance)}
           expanded
           expired
-          proposal={proposal}
+          proposalState={proposal}
           rewards={rewards}
           parentPage={Page.RedemptionsMenu}
           onClick={handleClose}
@@ -197,12 +198,12 @@ const SubscribedMenuItemContent = withSubscription({
   createObservable: async (props: IMenuItemProps) => {
     const { currentAccountAddress, proposal } = props;
     const arc = getArc();
-    const dao = arc.dao(proposal.coreState.dao.id);
-    const rewards = proposal.rewards({ where: { beneficiary: currentAccountAddress }})
+    const dao = arc.dao((proposal as any).coreState.dao.id);
+    const rewards = (proposal as any).rewards({ where: { beneficiary: currentAccountAddress }})
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
     // subscribe to dao to get DAO reputation supply updates
-    return combineLatest(dao.state({ subscribe: true }), rewards);
+    return combineLatest(dao.state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL }), rewards);
   },
 });
 

@@ -24,6 +24,7 @@ import i18next from "i18next";
 import classNames from "classnames";
 import axios from "axios";
 import { getNetworkName } from "lib/util";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 type SubscriptionData = [DAO[], DAO[], DAO[]];
 
@@ -328,13 +329,13 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
     memberDAOsquery,
     (arc: Arc, r: any) => new DAO(arc, createDaoStateFromQuery(r.dao)),
     undefined,
-    { subscribe: true }
+    { polling: true, pollInterval: GRAPH_POLL_INTERVAL }
   ) : of([]);
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc" }, { fetchAllData: true, subscribe: true }) : of([]);
+  const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc" }, { fetchAllData: true, polling: true, pollInterval: GRAPH_POLL_INTERVAL }) : of([]);
 
   return combineLatest(
-    arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0 }, { fetchAllData: true, subscribe: true }),
+    arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0 }, { fetchAllData: true, polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
     followDAOs,
     memberOfDAOs
   );
