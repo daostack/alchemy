@@ -125,19 +125,19 @@ const ContributionRewardExtFields = () => (
 
 const FundingRequest = () => (
   <div>
-    {fieldView("FundingRequest", "Funding Token", "fundingToken")}
+    {fieldView("FundingRequest", "Funding Token", "fundingToken", (address: string) => validators.address(address, true))}
     {GenesisProtocolFields("FundingRequest.votingParams")}
   </div>
 );
 
 const Join = () => (
   <div>
-    {fieldView("Join", "Funding Token", "fundingToken")}
-    {fieldView("Join", "Minimum Join Fee", "minFeeToJoin")}
-    {fieldView("Join", "Initial Reputation", "memberReputation")}
-    {fieldView("Join", "Funding Goal", "fundingGoal")}
-    {fieldView("Join", "Deadline", "fundingGoalDeadline")}
-    {fieldView("Join", "Allow Rage Quit", "rageQuitEnable")}
+    {fieldView("Join", "Funding Token", "fundingToken", (address: string) => validators.address(address, true))}
+    {fieldView("Join", "Minimum Join Fee", "minFeeToJoin", validators.validNumber)}
+    {fieldView("Join", "Initial Reputation", "memberReputation", validators.validNumber)}
+    {fieldView("Join", "Funding Goal", "fundingGoal", validators.validNumber)}
+    {fieldView("Join", "Deadline", "fundingGoalDeadline", validators.validNumber)}
+    {GenesisProtocolFields("Join.votingParams")}
   </div>
 );
 
