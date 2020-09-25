@@ -1,0 +1,77 @@
+.container {
+  .daoHistoryHeader {
+    font-size: 28px;
+    color: rgba(104, 155, 214, 1);
+    border-bottom: 1px solid rgba(45, 109, 181, 0.2);
+    padding-bottom: 5px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    background-color: rgba(229, 235, 242, 1);
+    padding-top: 10px;
+  }
+
+  .proposalHistoryTable {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .proposalHistoryTableHeader {
+    font-size: 12px;
+    font-weight: bold;
+    text-align: left;
+  }
+
+  .searchBox {
+    margin-bottom: 20px;
+    width: 425px;
+    border-radius: 20px;
+    height: 30px;
+    background: url("/assets/images/Icon/search.svg") $white no-repeat left 6px center;
+    background-size: 18px;
+    padding-left: 30px;
+
+    input:-webkit-autofill {
+      transition: all 5000s ease-in-out 0s;
+    }
+
+    &.filtering {
+      background: url("/assets/images/Icon/buttonLoadingBlue.gif") $white no-repeat left 6px center;
+    }
+
+    input {
+      border: none;
+      font-family: "AccordBold", sans-serif;
+      height: 30px;
+      width: 406px;
+      font-size: 15px;
+      color: #4f6176;
+    }
+
+    input:focus {
+      outline: none;
+    }
+
+    button {
+      height: 26px;
+      display: inline-block;
+      position: relative;
+      top: 2px;
+      border: none;
+      outline: none;
+      background-color: transparent;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  @media only screen and (max-width: 425px) {
+    .daoHistoryHeader {
+      padding-left: 10px;
+    }
+    .proposalHistoryTableHeader {
+      display: none;
+    }
+  }
+}

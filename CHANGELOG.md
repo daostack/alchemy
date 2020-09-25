@@ -1,3 +1,14 @@
+## 0.10.16
+  - Features Added
+   - show account holdings even when out of scope of a DAO
+   - remove email notifications signup button on xDAI
+   - whitelist the PAN token
+   - add ability to filter proposal history by proposal title text
+
+  - Bugs Fixed
+    - properly report on why you can't vote or stake once the proposal is executed
+    - fix ability to redeem contribution rewards on Kovan
+
 ## 0.10.15
   - Features Added
    - update subgraph endpoints

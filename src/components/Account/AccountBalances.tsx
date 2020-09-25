@@ -15,41 +15,41 @@ interface IExternalProps {
   address: Address;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<[IMemberState, BN|null, BN|null]>
+type IProps = IExternalProps & ISubscriptionProps<[Address, IMemberState, BN|null, BN|null]>
 
 class AccountBalances extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
     const { dao, data } = this.props;
 
-    if (!data) {
-      return null;
-    }
-
-    const [currentAccountState, ethBalance, genBalance] = data;
+    const [currentAccountAddress, currentAccountState, ethBalance, genBalance] = data;
 
     return (
       <div className={css.balances}>
-        <h2>Reputation</h2>
-        { dao ?
-          <div className={css.daoBalance}>
-            <b>{dao.name}</b>
-            <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} hideTooltip/>
-          </div>
-          :
-          <div className={css.noReputation}>
-              No Reputation
-          </div>
+        { (dao && currentAccountState) ?
+          <div className={css.repBalance}>
+            <div className={css.heading}>Reputation</div>
+            <div className={css.rep}>
+              <div>{dao.name}</div>
+              <div className={css.underline}></div>
+              <div><Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} hideTooltip /></div>
+            </div>
+          </div> : dao ?
+            <div className={css.noReputation}>
+            No Reputation
+            </div> : ""
         }
-        <div className={css.userBalance}>
-          <h2>Holdings</h2>
-          <div>
-            <AccountBalance tokenSymbol={baseTokenName()} balance={ethBalance} accountAddress={currentAccountState.address} />
+        { currentAccountAddress ?
+          <div className={css.userBalance}>
+            <div className={css.heading}>Holdings</div>
+            <div>
+              <AccountBalance tokenSymbol={baseTokenName()} balance={ethBalance} accountAddress={currentAccountAddress} />
+            </div>
+            <div>
+              <AccountBalance tokenSymbol={genName()} balance={genBalance} accountAddress={currentAccountAddress} />
+            </div>
           </div>
-          <div>
-            <AccountBalance tokenSymbol={genName()} balance={genBalance} accountAddress={currentAccountState.address} />
-          </div>
-        </div>
+          : "" }
       </div>
     );
   }
@@ -65,14 +65,11 @@ export default withSubscription({
   },
 
   createObservable: ({ dao, address }: IExternalProps) => {
-    if (!dao) {
-      return of(null);
-    }
-    const daoState = dao;
     const arc = getArc();
 
     return combineLatest(
-      address && daoState.dao.member(address).state( { subscribe: true }) || of(null),
+      address,
+      (address && dao && dao.dao.member(address).state( { subscribe: true })) || of(null),
       ethBalance(address).pipe(ethErrorHandler()),
       arc.GENToken().balanceOf(address).pipe(ethErrorHandler()),
     );

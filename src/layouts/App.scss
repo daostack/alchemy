@@ -294,14 +294,24 @@ body {
 
       .balances {
         text-align: left;
-        padding: 25px;
-        border-bottom: 1px solid rgba(229, 235, 242, 1);
+        padding-left: 25px;
+        padding-right: 25px;
+        padding-top: 20px;
+        border-bottom: 1px solid $accent-6;
+        font-size: 11px;
+        color: $body-color;
+        font-weight: normal;
+        font-family: "Open Sans";
 
-        h2 {
-          font-size: 13px;
-          color: rgba(0, 29, 53, 1);
-          margin: 0;
-          margin-bottom: 3px;
+        .userBalance,
+        .repBalance {
+          .heading {
+            font-size: 13px;
+            color: $black;
+            margin: 0;
+            margin-bottom: 3px;
+            font-weight: bold;
+          }
         }
 
         .noReputation {
@@ -310,44 +320,25 @@ body {
         }
 
         .userBalance {
-          padding-top: 20px;
-
-          div {
-            font-size: 11px;
-            color: rgba(78, 97, 118, 1);
-            font-weight: normal;
-            font-family: "Open Sans";
-          }
+          padding-bottom: 20px;
         }
 
-        .daoBalance {
-          margin-bottom: 3px;
+        .repBalance {
           font-size: 12px;
-          border-bottom: 1px dashed rgba(191, 203, 213, 1);
+          margin-bottom: 20px;
+          background-color: rgba(252, 253, 255, 1);
+          font-weight: normal;
+          font-family: "Open Sans";
 
-          b,
-          span {
-            background-color: rgba(252, 253, 255, 1);
-            position: relative;
-            top: 2px;
-            font-weight: normal;
-            font-family: "Open Sans";
-          }
+          .rep {
+            display: flex;
 
-          b {
-            display: inline-block;
-            padding-right: 5px;
-          }
-
-          span {
-            float: right;
-          }
-
-          label {
-            display: block;
-            font-size: 9px;
-            margin-bottom: 10px;
-            opacity: 0.7;
+            .underline {
+              flex-grow: 2;
+              border-bottom: 1px dashed $gray-2;
+              margin-left: 4px;
+              margin-right: 4px;
+            }
           }
         }
       }
