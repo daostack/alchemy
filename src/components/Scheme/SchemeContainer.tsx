@@ -207,7 +207,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
                         href="#!"
                         onClick={this.handleEditPlugin}
                       >
-                        Edit Plugin
+                      Edit Plugin
                       </a>
                     </TrainingTooltip>
                   </div>
