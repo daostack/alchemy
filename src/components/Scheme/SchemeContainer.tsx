@@ -218,9 +218,9 @@ class SchemeContainer extends React.Component<IProps, IState> {
                         classNames({
                           [css.disabled]: !isActive,
                         })}
-                        data-test-id="createProposal"
-                        href="#!"
-                        onClick={isActive ? this.handleNewProposal : null}
+                      data-test-id="createProposal"
+                      href="#!"
+                      onClick={isActive ? this.handleNewProposal : null}
                       >
                         + New Proposal</a>
                     </TrainingTooltip>
@@ -277,8 +277,8 @@ const SubscribedSchemeContainer = withSubscription({
     let approvedProposals: Observable<Array<IProposalState>>;
     if (hasRewarderContract(schemeState)) {
       approvedProposals = props.daoState.dao.proposals(
-        // eslint-disable-next-line @typescript-eslint/camelcase
         {
+        // eslint-disable-next-line @typescript-eslint/camelcase
           where: { scheme: scheme.id, stage_in: [IProposalStage.Executed] },
           orderBy: "closingAt",
           orderDirection: "desc",

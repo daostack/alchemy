@@ -20,7 +20,7 @@ import { DiscussionEmbed } from "disqus-react";
 import { connect } from "react-redux";
 import {
   IDAOState, IProposalState, ICompetitionSuggestionState, Address, CompetitionVote, IProposalOutcome,
-  CompetitionSuggestion, Proposal, Scheme
+  CompetitionSuggestion, Proposal, Scheme,
 } from "@daostack/arc.js";
 import gql from "graphql-tag";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -217,9 +217,9 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
             <div className={classNames({
               [css.cell]: true,
               [css.selected]: isSelected(),
-              [css.winnerIcon]: true
+              [css.winnerIcon]: true,
             })}
-              onClick={this.openSubmissionDetailsModal(submission)}>
+            onClick={this.openSubmissionDetailsModal(submission)}>
               {submission.isWinner ? <img src="/assets/images/Icon/winner.svg"></img> : ""}
             </div> : ""}
           <div className={classNames({ [css.cell]: true, [css.selected]: isSelected(), [css.title]: true })}
