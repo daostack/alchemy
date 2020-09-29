@@ -22,6 +22,7 @@ import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
 import SchemeOpenBountyPage from "./SchemeOpenBountyPage";
 import * as css from "./Scheme.scss";
+import { standardPolling } from "lib/util";
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -77,9 +78,8 @@ class SchemeContainer extends React.Component<IProps, IState> {
        */
       daoState={this.props.daoState}
       currentAccountAddress={this.props.currentAccountAddress}
-      scheme={this.props.data[0]}crxRewarderProps={crxRewarderProps} />;
-  private contributionsRewardExtTabHtml = () => (props: any) =>
-  {
+      scheme={this.props.data[0]} crxRewarderProps={crxRewarderProps} />;
+  private contributionsRewardExtTabHtml = () => (props: any) => {
     if (!this.state.crxListComponent) {
       return null;
     }
@@ -92,7 +92,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
     const newState = {};
 
     if (!this.state.crxRewarderProps) {
-      Object.assign(newState, { crxRewarderProps: await getCrxRewarderProps(this.props.data[0]) } );
+      Object.assign(newState, { crxRewarderProps: await getCrxRewarderProps(this.props.data[0]) });
     }
 
     if (!this.state.crxListComponent) {
@@ -198,7 +198,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
                 }
               </div>
 
-              { isProposalScheme ?
+              {isProposalScheme ?
                 inInfoTab ?
                   <div className={css.editPlugin}>
                     <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
@@ -207,7 +207,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
                         href="#!"
                         onClick={this.handleEditPlugin}
                       >
-                    Edit Plugin
+                        Edit Plugin
                       </a>
                     </TrainingTooltip>
                   </div>
@@ -218,11 +218,11 @@ class SchemeContainer extends React.Component<IProps, IState> {
                         classNames({
                           [css.disabled]: !isActive,
                         })}
-                      data-test-id="createProposal"
-                      href="#!"
-                      onClick={isActive ? this.handleNewProposal : null}
+                        data-test-id="createProposal"
+                        href="#!"
+                        onClick={isActive ? this.handleNewProposal : null}
                       >
-                    + New Proposal</a>
+                        + New Proposal</a>
                     </TrainingTooltip>
                   </div>
                 : ""
@@ -250,7 +250,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
 
 const SubscribedSchemeContainer = withSubscription({
   wrappedComponent: SchemeContainer,
-  loadingComponent: <Loading/>,
+  loadingComponent: <Loading />,
   errorComponent: null,
   checkForUpdate: ["schemeId"],
   createObservable: async (props: IProps) => {
@@ -261,9 +261,9 @@ const SubscribedSchemeContainer = withSubscription({
     // why are we doing this for all schemes and not just the scheme we care about here?
     await props.daoState.dao.proposals(
       // eslint-disable-next-line @typescript-eslint/camelcase
-      {where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted, IProposalStage.Executed ]}},
+      { where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted, IProposalStage.Executed] } },
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      { fetchAllData: true, subscribe: true }).subscribe(() => {});
+      standardPolling(true)).subscribe(() => { });
     // end cache priming
 
     const schemeState = await scheme.state().pipe(first()).toPromise();
@@ -278,17 +278,18 @@ const SubscribedSchemeContainer = withSubscription({
     if (hasRewarderContract(schemeState)) {
       approvedProposals = props.daoState.dao.proposals(
         // eslint-disable-next-line @typescript-eslint/camelcase
-        { where: { scheme: scheme.id, stage_in: [IProposalStage.Executed]},
+        {
+          where: { scheme: scheme.id, stage_in: [IProposalStage.Executed] },
           orderBy: "closingAt",
           orderDirection: "desc",
         },
-        { subscribe: true, fetchAllData: true })
+        standardPolling(true))
         .pipe(
           // work on each array individually so that toArray can perceive closure on the stream of items in the array
           mergeMap(proposals => of(proposals).pipe(
             mergeMap(proposals => proposals),
             mergeMap(proposal => proposal.state().pipe(first())),
-            filter((proposal: IProposalState) => proposal.winningOutcome === IProposalOutcome.Pass ),
+            filter((proposal: IProposalState) => proposal.winningOutcome === IProposalOutcome.Pass),
             toArray())
           )
         );
@@ -298,9 +299,9 @@ const SubscribedSchemeContainer = withSubscription({
 
     return combineLatest(
       // refetch so we can subscribe.  Don't worry, has been cached
-      arc.scheme(props.schemeId).state({ subscribe: true }),
+      arc.scheme(props.schemeId).state(standardPolling()),
       // Find the SchemeManager scheme if this dao has one
-      Scheme.search(arc, {where: { dao: props.daoState.id, name: "SchemeRegistrar" }}).pipe(mergeMap((scheme: Array<Scheme | CompetitionScheme>): Observable<ISchemeState> => scheme[0] ? scheme[0].state() : of(null))),
+      Scheme.search(arc, { where: { dao: props.daoState.id, name: "SchemeRegistrar" } }).pipe(mergeMap((scheme: Array<Scheme | CompetitionScheme>): Observable<ISchemeState> => scheme[0] ? scheme[0].state() : of(null))),
       approvedProposals
     );
   },

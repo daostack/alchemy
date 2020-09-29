@@ -5,6 +5,7 @@ import { getArc } from "arc";
 import { IDAOState, IProposalState, Address } from "@daostack/arc.js";
 import Loading from "components/Shared/Loading";
 import { getCrxRewarderComponent, CrxRewarderComponentType } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
+import { standardPolling } from "lib/util";
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
@@ -51,11 +52,11 @@ class DetailsPageRouter extends React.Component<IProps, IStateProps>
      * that will completely hose the crxDetailsComponent
      */
     return <this.state.crxDetailsComponent
-      match= {this.props.match}
-      history= {this.props.history}
-      location = {this.props.location}
-      staticContext = {this.props.staticContext}
-      currentAccountAddress= {this.props.currentAccountAddress}
+      match={this.props.match}
+      history={this.props.history}
+      location={this.props.location}
+      staticContext={this.props.staticContext}
+      currentAccountAddress={this.props.currentAccountAddress}
       daoState={this.props.daoState}
       proposalState={proposalState} />;
   }
@@ -63,11 +64,11 @@ class DetailsPageRouter extends React.Component<IProps, IStateProps>
 
 export default withSubscription({
   wrappedComponent: DetailsPageRouter,
-  loadingComponent: <Loading/>,
+  loadingComponent: <Loading />,
   errorComponent: null,
   checkForUpdate: [],
   createObservable: (props: IProps) => {
     const arc = getArc();
-    return arc.proposal(props.proposalId).state( { subscribe: true });
+    return arc.proposal(props.proposalId).state(standardPolling());
   },
 });

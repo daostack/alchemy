@@ -1,4 +1,9 @@
-import { ICompetitionProposalState, Competition, CompetitionSuggestion, ICompetitionSuggestionState, CompetitionVote, Address } from "@daostack/arc.js";
+import { ICompetitionProposalState,
+  Competition,
+  CompetitionSuggestion,
+  ICompetitionSuggestionState,
+  CompetitionVote,
+  Address } from "@daostack/arc.js";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 
@@ -8,6 +13,7 @@ import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";
 import { Observable, of } from "rxjs";
 import { map, mergeMap, toArray, first } from "rxjs/operators";
+import { GRAPH_POLL_INTERVAL } from "../../../../settings";
 
 /**
  * Defined in the order that Competition cards should be sorted in the List component.
@@ -56,8 +62,8 @@ export class CompetitionStatus {
    */
   public get votingIsOver() {
     return ((this.status === CompetitionStatusEnum.Ended) ||
-            (this.status === CompetitionStatusEnum.EndedNoWinners) ||
-            (this.status === CompetitionStatusEnum.EndedNoSubmissions));
+      (this.status === CompetitionStatusEnum.EndedNoWinners) ||
+      (this.status === CompetitionStatusEnum.EndedNoSubmissions));
   }
   /**
    * competition is over, with or without submissions or winners
@@ -80,7 +86,7 @@ export const competitionStatus = (competition: ICompetitionProposalState): Compe
   const hasWinners = !!competition.numberOfWinningSuggestions;
   let status: CompetitionStatusEnum;
 
-  if (now.isBefore(startTime)){
+  if (now.isBefore(startTime)) {
     status = CompetitionStatusEnum.NotOpenYet;
   } else if (now.isBefore(votingStartTime)) {
     if (now.isSameOrAfter(submissionsEndTime)) {
@@ -105,7 +111,9 @@ export interface ICreateSubmissionOptions {
   tags: Array<string>;
 }
 
-export const createCompetitionSubmission = (proposalId: string, options: ICreateSubmissionOptions ): ThunkAction<any, IRootState, null> => {
+const standardPolling = (poll: boolean, fetchAllData = false) => { return { polling: poll, pollInterval: GRAPH_POLL_INTERVAL, fetchAllData }; };
+
+export const createCompetitionSubmission = (proposalId: string, options: ICreateSubmissionOptions): ThunkAction<any, IRootState, null> => {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Create Submission");
@@ -123,7 +131,7 @@ export interface IVoteSubmissionOptions {
   id: string; // actual id, not the counter
 }
 
-export const voteForSubmission = (options: IVoteSubmissionOptions ): ThunkAction<any, IRootState, null> => {
+export const voteForSubmission = (options: IVoteSubmissionOptions): ThunkAction<any, IRootState, null> => {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Vote Submission");
@@ -142,7 +150,7 @@ export interface IVoteSubmissionOptions {
   id: string; // actual id, not the counter
 }
 
-export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkAction<any, IRootState, null> => {
+export const redeemForSubmission = (options: IVoteSubmissionOptions): ThunkAction<any, IRootState, null> => {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Redeem Submission");
@@ -160,7 +168,7 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions ): ThunkActi
 export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestionState>> => {
   // fetchAllData so .state() comes from cache
   const competition = new Competition(proposalId, getArc());
-  return competition.suggestions({}, { subscribe, fetchAllData: true })
+  return competition.suggestions({}, standardPolling(subscribe, true))
     .pipe(
       mergeMap(submissions => of(submissions).pipe(
         mergeMap(submissions => submissions),
@@ -171,7 +179,7 @@ export const getProposalSubmissions = (proposalId: string, subscribe = false): O
 
 export const getSubmission = (id: string, subscribe = false): Observable<ICompetitionSuggestionState> => {
   const submission = new CompetitionSuggestion(id, getArc());
-  return submission.state({ subscribe });
+  return submission.state(standardPolling(subscribe));
 };
 
 export const getCompetitionVotes = (competitionId: string, voterAddress: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
@@ -179,14 +187,13 @@ export const getCompetitionVotes = (competitionId: string, voterAddress: Address
   /**
    * none of the current uses require the vote state
    */
-  return competition.votes({ where: { voter: voterAddress } },
-    { subscribe: subscribe, fetchAllData: true });
+  return competition.votes({ where: { voter: voterAddress } }, standardPolling(subscribe, true));
 };
 
 const getSubmissionVotes = (submissionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
   // submissionId is the actual id, not the count
   const submission = new CompetitionSuggestion(submissionId, getArc());
-  return submission.votes(voterAddress ? { where: { voter: voterAddress } } : {}, { subscribe, fetchAllData: true });
+  return submission.votes(voterAddress ? { where: { voter: voterAddress } } : {}, standardPolling(subscribe, true));
 };
 
 export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: string, subscribe = false): Observable<boolean> => {
@@ -200,7 +207,7 @@ export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: s
 
 // export const primeCacheForSubmissionsAndVotes = (): Observable<any> => {
 //   return combineLatest(
-//     CompetitionSuggestion.search(getArc(), {}, { subscribe: true, fetchAllData: true }),
-//     CompetitionVote.search(getArc(), {}, { subscribe: true, fetchAllData: true })
+//     CompetitionSuggestion.search(getArc(), {}, standardPolling(true)),
+//     CompetitionVote.search(getArc(), {}, standardPolling(true))
 //   );
 // };

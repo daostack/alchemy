@@ -18,6 +18,7 @@ import { showNotification } from "reducers/notifications";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./SchemeProposals.scss";
+import { standardPolling } from "lib/util";
 
 // For infinite scrolling
 const PAGE_SIZE_QUEUED = 100;
@@ -146,7 +147,7 @@ const SubscribedProposalsPreBoosted = withSubscription<IPropsPreBoosted, Preboos
       orderBy: "preBoostedAt",
       first: PAGE_SIZE_PREBOOSTED,
       skip: 0,
-    }, { subscribe: true });
+    }, standardPolling());
   },
 
   getFetchMoreObservable: (props: IPropsPreBoosted, data: PreboostedProposalsSubscriptionData) => {
@@ -157,7 +158,7 @@ const SubscribedProposalsPreBoosted = withSubscription<IPropsPreBoosted, Preboos
       orderBy: "preBoostedAt",
       first: PAGE_SIZE_PREBOOSTED,
       skip: data.length,
-    }, { subscribe: true });
+    }, standardPolling());
   },
 });
 
@@ -230,7 +231,7 @@ const SubscribedProposalsQueued = withSubscription<IPropsQueued, RegularProposal
       orderDirection: "desc",
       first: PAGE_SIZE_QUEUED,
       skip: 0,
-    }, { subscribe: true });
+    }, standardPolling());
   },
 
   getFetchMoreObservable: (props: IPropsQueued, data: RegularProposalsSubscriptionData) => {
@@ -243,7 +244,7 @@ const SubscribedProposalsQueued = withSubscription<IPropsQueued, RegularProposal
       orderDirection: "desc",
       first: PAGE_SIZE_QUEUED,
       skip: data.length,
-    }, { subscribe: true });
+    }, standardPolling());
   },
 });
 
@@ -262,15 +263,15 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
   public render(): RenderOutput {
     const { data } = this.props;
 
-    const [proposalsBoosted, allProposals ] = data;
+    const [proposalsBoosted, allProposals] = data;
     const { currentAccountAddress, daoState, scheme } = this.props;
-    let proposalCount=0;
+    let proposalCount = 0;
 
     const boostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
         { proposalsBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0}/>
+            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -286,14 +287,14 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
         {(allProposals.length === 0)
           ?
           <div className={css.noDecisions}>
-            <img className={css.relax} src="/assets/images/yogaman.svg"/>
+            <img className={css.relax} src="/assets/images/yogaman.svg" />
             <div className={css.proposalsHeader}>
               No upcoming proposals
             </div>
             <p>You can be the first one to create a {schemeFriendlyName} proposal today! :)</p>
             <div className={css.cta}>
               <Link to={"/dao/" + daoState.address}>
-                <img className={css.relax} src="/assets/images/lt.svg"/> Back to plugins
+                <img className={css.relax} src="/assets/images/lt.svg" /> Back to plugins
               </Link>
             </div>
           </div>
@@ -307,7 +308,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
                 {proposalsBoosted.length === 0
                   ?
                   <div>
-                    <img src="/assets/images/yoga.svg"/>
+                    <img src="/assets/images/yoga.svg" />
                   </div>
                   : " "
                 }
@@ -402,9 +403,9 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
         // eslint-disable-next-line @typescript-eslint/camelcase
         where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
         orderBy: "boostedAt",
-      }, { subscribe: true }),
+      }, standardPolling()),
       // big subscription query to make all other subscription queries obsolete
-      arc.getObservable(bigProposalQuery, { subscribe: true }) as Observable<Proposal[]>,
+      arc.getObservable(bigProposalQuery, standardPolling()) as Observable<Proposal[]>,
     );
   },
 });

@@ -4,7 +4,7 @@ import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { humanProposalTitle } from "lib/util";
+import { humanProposalTitle, standardPolling } from "lib/util";
 import { schemeName } from "lib/schemeUtils";
 import * as React from "react";
 import { Link } from "react-router-dom";
@@ -54,7 +54,7 @@ const ProposalSchemeCard = (props: IProps) => {
         <div>
           <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending Boosting</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
         </div>
-        {proposals.length === 0 ?
+        {numProposals === 0 ?
           <div className={css.loading}>
             <img src="/assets/images/meditate.svg" />
             <div>
@@ -65,7 +65,7 @@ const ProposalSchemeCard = (props: IProps) => {
         }
       </Link>
 
-      {proposals.length > 0 ?
+      {numProposals > 0 ?
         <div>
           {proposalsHTML}
           <div className={css.numProposals}>
@@ -91,17 +91,14 @@ export default withSubscription({
     const arc = getArc();
     const dao = arc.dao(props.dao.address);
     return combineLatest(
-      props.scheme.state(),
+      props.scheme.state(standardPolling()),
       dao.proposals({ where: {
         scheme:  props.scheme.id,
         // eslint-disable-next-line @typescript-eslint/camelcase
         stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
       },
       orderBy: "boostedAt",
-      }, {
-        fetchAllData: true,
-        subscribe: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
-      }) // the list of boosted proposals
+      }, { fetchAllData: true }) // the list of boosted proposals
     );
   },
 });

@@ -20,6 +20,7 @@ import { mergeMap } from "rxjs/operators";
 import * as css from "./DaoSchemesPage.scss";
 import ProposalSchemeCard from "./ProposalSchemeCard";
 import SimpleSchemeCard from "./SimpleSchemeCard";
+import { standardPolling } from "lib/util";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -150,7 +151,7 @@ const SubscribedDaoSchemesPage = withSubscription({
     const dao = props.daoState.dao;
 
     return combineLatest(
-      dao.schemes({ where: { isRegistered: true } }, { fetchAllData: true, subscribe: true }),
+      dao.schemes({ where: { isRegistered: true } }, standardPolling(true)),
       // Find the SchemeManager scheme if this dao has one
       Scheme.search(arc, {where: { dao: dao.id, name: "SchemeRegistrar" }}).pipe(mergeMap((scheme: Array<Scheme | CompetitionScheme>): Observable<ISchemeState> => scheme[0] ? scheme[0].state() : of(null)))
     );
