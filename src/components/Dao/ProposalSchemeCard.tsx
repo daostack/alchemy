@@ -54,7 +54,7 @@ const ProposalSchemeCard = (props: IProps) => {
         <div>
           <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending Boosting</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
         </div>
-        {numProposals === 0 ?
+        {proposals.length === 0 ?
           <div className={css.loading}>
             <img src="/assets/images/meditate.svg" />
             <div>
@@ -65,7 +65,7 @@ const ProposalSchemeCard = (props: IProps) => {
         }
       </Link>
 
-      {numProposals > 0 ?
+      {proposals.length > 0 ?
         <div>
           {proposalsHTML}
           <div className={css.numProposals}>
@@ -98,7 +98,7 @@ export default withSubscription({
         stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
       },
       orderBy: "boostedAt",
-      }, { fetchAllData: true }) // the list of boosted proposals
+      }, standardPolling(true)) // the list of boosted proposals
     );
   },
 });
