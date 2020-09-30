@@ -16,6 +16,7 @@ import "moment";
 import * as moment from "moment-timezone";
 import { getArc } from "../arc";
 import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
+import { GRAPH_POLL_INTERVAL } from "../settings";
 
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
@@ -702,3 +703,6 @@ export function safeMoment(dateSpecifier: moment.Moment | Date | number | string
       throw new Error(`safeMoment: unknown type: ${typeof dateSpecifier}`);
   }
 }
+
+export const standardPolling = (fetchAllData = false) =>
+{ return { polling: true, pollInterval: GRAPH_POLL_INTERVAL, fetchAllData }; };

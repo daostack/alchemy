@@ -9,6 +9,7 @@ import { of } from "rxjs";
 import { map } from "rxjs/operators";
 import RedemptionsMenu from "./RedemptionsMenu";
 import * as css from "./RedemptionsButton.scss";
+import { standardPolling } from "lib/util";
 
 interface IExternalProps {
   currentAccountAddress?: Address;
@@ -27,7 +28,7 @@ class RedemptionsButton extends React.Component<IProps, null> {
     }
 
     return <div className={css.button} data-test-id="redemptionsButton">
-      { document.documentElement.clientWidth < 640 ?
+      {document.documentElement.clientWidth < 640 ?
         this.renderDirectLink()
         : this.renderQuickMenuLink()
       }
@@ -38,7 +39,7 @@ class RedemptionsButton extends React.Component<IProps, null> {
     const { data: redeemableProposals } = this.props;
     return <Link to="/redemptions">
       <img src="/assets/images/Icon/menu/redemption.svg" />
-      { redeemableProposals.length > 0 ?
+      {redeemableProposals.length > 0 ?
         <span className={css.notification}></span>
         : ""}
     </Link>;
@@ -63,7 +64,7 @@ class RedemptionsButton extends React.Component<IProps, null> {
     >
       <div>
         <img src="/assets/images/Icon/menu/redemption.svg" />
-        { redeemableProposals.length > 0 ?
+        {redeemableProposals.length > 0 ?
           <span className={css.notification}></span>
           : ""}
       </div>
@@ -96,7 +97,7 @@ export default withSubscription({
           id
         }
       }`;
-    return arc.getObservable(redeemableProposalsQuery, { subscribe: true })
+    return arc.getObservable(redeemableProposalsQuery, standardPolling())
       .pipe(map((result: any) => result.data.proposals));
   },
 });

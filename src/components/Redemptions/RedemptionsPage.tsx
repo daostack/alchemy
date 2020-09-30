@@ -8,7 +8,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import gql from "graphql-tag";
 import Analytics from "lib/analytics";
 import { createDaoStateFromQuery, IDAOData } from "lib/daoHelpers";
-import { baseTokenName, formatTokens, genName, tokenDecimals, tokenSymbol } from "lib/util";
+import { baseTokenName, formatTokens, genName, standardPolling, tokenDecimals, tokenSymbol } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -101,7 +101,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
             <div>{this.renderProposalsPerDAO()}</div>
             :
             <div className={css.empty}>
-              <img src="/assets/images/empty-redemptions.svg"/>
+              <img src="/assets/images/empty-redemptions.svg" />
               <h2>Nothing to redeem</h2>
               <p>Get more rewards by proposing a proposal that the DAO accepts, and by voting / staking in alignment with the DAO.</p>
             </div>
@@ -180,7 +180,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
             genReward.iadd(new BN(reward.daoBountyForStaker));
           }
           if ((reward.reputationForVoter && Number(reward.reputationForVoterRedeemedAt) === 0)
-              || (reward.reputationForProposer && Number(reward.reputationForProposerRedeemedAt) === 0)) {
+            || (reward.reputationForProposer && Number(reward.reputationForProposerRedeemedAt) === 0)) {
             reputationRewardDaos.add(proposal.dao.id);
           }
         }
@@ -230,8 +230,8 @@ class RedemptionsPage extends React.Component<IProps, null> {
 
 const SubscribedRedemptionsPage = withSubscription({
   wrappedComponent: RedemptionsPage,
-  loadingComponent: <Loading/>,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
+  loadingComponent: <Loading />,
+  errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["currentAccountAddress"],
   createObservable: (props: IStateProps) => {
     const { currentAccountAddress } = props;
@@ -276,7 +276,7 @@ const SubscribedRedemptionsPage = withSubscription({
       }
       ${DAOFieldsFragment}
     `;
-    const proposals = arc.getObservable(query, { subscribe: true })
+    const proposals = arc.getObservable(query, standardPolling())
       .pipe(map((result: any) => result.data.proposals));
     return proposals;
   },
