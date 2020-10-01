@@ -52,5 +52,5 @@
     "Validate HEX" : "Must be a hex value",
     "Validate Digits" : "Must contain only digits",
     "Call to Contract": "This proposal will call the following contract:",
-    "No ABI": "No ABI for for this contract"
+    "No ABI": "No ABI for this contract"
 }

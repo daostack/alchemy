@@ -93,7 +93,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
             tags: formValues.tags, abiInputs: this.state.abiInputs, callData: this.state.callData,
           });
         }
-        else { this.setState({ tags: formValues.tags }); }
+        else { this.setState({ tags: formValues.tags, abiInputs: [], callData: "" }); }
       },
       this.props.showNotification);
   }
