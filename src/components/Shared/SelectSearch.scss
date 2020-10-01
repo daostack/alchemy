@@ -1,0 +1,57 @@
+.selectSearchWrapper {
+    position: relative;
+    margin: 20px 0px;
+    .dropdownSelection {
+        cursor: pointer;
+        .arrow {
+            width: 15px;
+            height: 15px;
+            background: url("../../assets/images/Icon/sort-order-arrow.svg") no-repeat center;
+            transform: rotate(90deg);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+        }
+        .arrow:hover {
+            opacity: 0.7;
+        }
+    }
+
+    .dropdownOpen {
+        display: flex;
+        flex-direction: column;
+        top: 60px;
+        position: absolute;
+        width: 100%;
+        z-index: 2;
+        background-color: $white;
+        box-shadow: 0px 3px 8px $gray-3;
+        margin-bottom: 40px;
+        .search {
+            position: sticky;
+            width: 95%;
+            align-self: center;
+            margin-top: 15px;
+        }
+        .elementsWrapper {
+            display: flex;
+            flex-direction: column;
+            max-height: 100px;
+            overflow-y: auto;
+            background-color: $white;
+            padding: 5px;
+            overflow-y: scroll;
+            .element {
+                padding: 10px;
+            }
+            .element:hover {
+                background-color: $border-accent;
+                cursor: pointer;
+            }
+            .noResults {
+                align-self: center;
+                color: $gray-1;
+            }
+        }
+    }
+}

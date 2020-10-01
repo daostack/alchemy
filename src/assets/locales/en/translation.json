@@ -44,5 +44,13 @@
     "Reputation Minted": "Reputation Minted:",
     "Minimum DAO bounty": "Minimum DAO bounty:",
     "Amount": "Amount:",
-    "Amount Redeemed": "Amount Redeemed:"
+    "Amount Redeemed": "Amount Redeemed:",
+    "No Results": "No Results",
+    "Choose": "Choose",
+    "Search": "Search",
+    "Validate Address" : "Please enter a valid address",
+    "Validate HEX" : "Must be a hex value",
+    "Validate Digits" : "Must contain only digits",
+    "Call to Contract": "This proposal will call the following contract:",
+    "No ABI": "No ABI for for this contract"
 }
