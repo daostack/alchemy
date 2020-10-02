@@ -11,6 +11,7 @@ import * as css from "./SelectSearch.scss";
  * label - select input label name
  * name - 'name' attribute in the parent form
  * required (true / false)
+ * value - parent form value of this filed
  * onChange - function to trigger on select. Also returns the whole selected element.
  * placeholder [optional]
  * errors - errors attribute of the parent form
@@ -23,6 +24,7 @@ interface IProps {
   label: string
   name: string
   required: boolean
+  value: string
   onChange: any
   placeholder?: string
   errors: any
@@ -34,11 +36,9 @@ interface IProps {
 export const SelectSearch = (props: IProps): React.ReactElement => {
   const [toggle, setToggle] = React.useState(false);
   const [search, setSearch] = React.useState("");
-  const [value, setValue] = React.useState(`-- ${i18next.t("Choose")} --`);
-  const { data, label, required, onChange, name, placeholder, errors, cssForm, touched, nameOnList } = props;
+  const { data, label, required, onChange, name, placeholder, errors, cssForm, touched, nameOnList, value } = props;
 
   const handleSelect = (element: any) => {
-    setValue(element.name);
     setToggle(false);
     setSearch("");
     onChange(element);
@@ -54,22 +54,24 @@ data?.forEach((element: any, index: number) => {
 });
 
 return (
-  <div className={css.selectSearchWrapper}>
+  <div className={css.selectSearchWrapper} >
     {/* eslint-disable-next-line react/jsx-no-bind */}
     <div className={css.dropdownSelection} onClick={() => setToggle(!toggle)} id="select-search" >
       <label htmlFor={name} style={{ width: "100%" }}>
         {required && <div className={cssForm.requiredMarker}>*</div>}
         {label}
         <ErrorMessage name={name}>{(msg: string) => <span className={cssForm.errorMessage}>{msg}</span>}</ErrorMessage>
-        <Field
-          name={name}
-          placeholder={placeholder}
-          type="text"
-          value={value}
-          disabled="true"
-          className={touched.name && errors.name ? cssForm.error : null} />
+        <div style={{ position: "relative" }}>
+          <Field
+            name={name}
+            placeholder={placeholder}
+            type="text"
+            value={value}
+            disabled="true"
+            className={touched.name && errors.name ? cssForm.error : null} />
+          <div className={css.arrow} />
+        </div>
       </label>
-      <div className={css.arrow} />
     </div>
     {toggle &&
     <div className={css.dropdownOpen}>

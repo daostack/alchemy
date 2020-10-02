@@ -1,16 +1,16 @@
 .selectSearchWrapper {
     position: relative;
     margin: 20px 0px;
+    cursor: pointer;
     .dropdownSelection {
-        cursor: pointer;
         .arrow {
             width: 15px;
             height: 15px;
-            background: url("../../assets/images/Icon/sort-order-arrow.svg") no-repeat center;
+            background: url("../../assets/images/Icon/sort-order-arrow.svg") no-repeat right;
             transform: rotate(90deg);
             position: absolute;
             right: 20px;
-            top: 50%;
+            top: 13px;
         }
         .arrow:hover {
             opacity: 0.7;

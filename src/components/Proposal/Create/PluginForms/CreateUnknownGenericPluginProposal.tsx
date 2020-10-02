@@ -19,6 +19,7 @@ import { IFormModalService, CreateFormModalService } from "components/Shared/For
 import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 import { getABIByContract, extractABIMethods, encodeABI } from "./ABIService";
 import Loading from "components/Shared/Loading";
+import { linkToEtherScan } from "lib/util";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -69,7 +70,7 @@ const defaultValues: IFormValues = Object.freeze({
   url: "",
   value: 0,
   tags: [],
-  method: null,
+  method: "",
 });
 
 class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
@@ -171,6 +172,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
 
   public render(): RenderOutput {
     const { handleClose } = this.props;
+    const contractToCall = (this.props.pluginState as IGenericPluginState).pluginParams.contractToCall;
 
     return (
       <div className={css.containerNoSidebar}>
@@ -179,7 +181,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
             {this.state.abiMethods.length > 0 ? <React.Fragment>
               <div className={css.callToContract}>
                 <span>{i18next.t("Call to Contract")}</span>
-                <span>{(this.props.pluginState as IGenericPluginState).pluginParams.contractToCall}</span>
+                <a href={linkToEtherScan(contractToCall)} target="_blank" rel="noopener noreferrer">{contractToCall}</a>
               </div>
               <Formik
                 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -346,10 +348,11 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
                       data={this.state.abiMethods}
                       label="ABI Method"
                       required
+                      value={values.method}
                       // eslint-disable-next-line react/jsx-no-bind
                       onChange={(data: any) => { setFieldValue("method", data.methodSignature); this.onSelectChange(data); }}
                       name="method"
-                      placeholder="Select method"
+                      placeholder="-- Select method --"
                       errors={errors}
                       cssForm={css}
                       touched={touched}
