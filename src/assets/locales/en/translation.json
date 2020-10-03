@@ -44,5 +44,7 @@
     "Reputation Minted": "Reputation Minted:",
     "Minimum DAO bounty": "Minimum DAO bounty:",
     "Amount": "Amount:",
-    "Amount Redeemed": "Amount Redeemed:"
+    "Amount Redeemed": "Amount Redeemed:",
+    "Add Params": "Add Params",
+    "Remove Params": "Remove Params"
 }
