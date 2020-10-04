@@ -101,9 +101,9 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
 
   async componentDidMount() {
     const contractToCall = (this.props.pluginState as IGenericPluginState).pluginParams.contractToCall;
-    const ABI_DATA = await getABIByContract(contractToCall);
-    const ABI_METHODS = extractABIMethods(ABI_DATA);
-    this.setState({ abiMethods: ABI_METHODS, loading: false });
+    const abiData = await getABIByContract(contractToCall);
+    const abiMethods = extractABIMethods(abiData);
+    this.setState({ abiMethods: abiMethods, loading: false });
   }
 
   componentWillUnmount() {
@@ -206,7 +206,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
                     if ((values as any)[name] === "") {
                       errors[name] = "Required";
                     }
-                  }
+                  };
 
                   const nonNegative = (name: string) => {
                     if ((values as any)[name] < 0) {

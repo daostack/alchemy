@@ -103,7 +103,7 @@ export const getABIByContract = async (contractAddress: string): Promise<Array<a
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error("Failed to retrieve ABI", e);
-    return undefined;
+    return [];
   }
 };
 

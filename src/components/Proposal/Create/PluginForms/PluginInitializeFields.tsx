@@ -89,7 +89,7 @@ const GenericSchemeFields: React.FC<IProps> = ({ values }) => {
           component="select"
           className={css.pluginSelect}
         >
-          <option value="">Custom...</option>
+          <option id="custom" value="">Custom...</option>
           {templates.map((template) => (
             <option key={`generic_action_${template.name}_${template.address}`} value={template.address}>
               {template.name}

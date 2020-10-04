@@ -49,14 +49,14 @@ export const SelectSearch = (props: IProps): React.ReactElement => {
 data?.forEach((element: any, index: number) => {
   if (element.name.toLowerCase().includes(search.toLowerCase())){
     // eslint-disable-next-line react/jsx-no-bind
-    elements.push(<div key={index} className={css.element} onClick={() => handleSelect(element)}>{element[nameOnList]}</div>);
+    elements.push(<div id={`select-search-element-${index}`} key={index} className={css.element} onClick={() => handleSelect(element)}>{element[nameOnList]}</div>);
   }
 });
 
 return (
   <div className={css.selectSearchWrapper} >
     {/* eslint-disable-next-line react/jsx-no-bind */}
-    <div className={css.dropdownSelection} onClick={() => setToggle(!toggle)} id="select-search" >
+    <div id="select-search" className={css.dropdownSelection} onClick={() => setToggle(!toggle)} >
       <label htmlFor={name} style={{ width: "100%" }}>
         {required && <div className={cssForm.requiredMarker}>*</div>}
         {label}
