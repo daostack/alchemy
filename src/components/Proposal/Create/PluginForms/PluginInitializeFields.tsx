@@ -9,6 +9,7 @@ import { IFormValues } from "./CreatePluginManagerProposal";
 import * as css from "../CreateProposal.scss";
 import { Form, ErrorMessage, Field } from "formik";
 import * as validators from "./Validators";
+import i18next from "i18next";
 
 interface IProps {
   pluginName: keyof typeof PLUGIN_NAMES | "";
@@ -149,14 +150,14 @@ const TokenTrade = () => (
 
 const SchemeRegistrarFields = () => (
   <div>
-    <title>
-      Add Plugin Vote Params
-    </title>
-    {GenesisProtocolFields("SchemeRegistrar.votingParamsRegister")}
-    <title>
-      Remove Plugin Vote Params
-    </title>
-    {GenesisProtocolFields("SchemeRegistrar.votingParamsRemove")}
+    <fieldset>
+      <legend>{i18next.t("Add Params")}</legend>
+      {GenesisProtocolFields("SchemeRegistrar.votingParamsRegister")}
+    </fieldset>
+    <fieldset>
+      <legend>{i18next.t("Remove Params")}</legend>
+      {GenesisProtocolFields("SchemeRegistrar.votingParamsRemove")}
+    </fieldset>
   </div>
 );
 
