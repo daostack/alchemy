@@ -44,6 +44,7 @@ export const REQUIRED_PLUGIN_PERMISSIONS: any = {
   "VoteInOrganizationScheme": PluginPermissions.IsRegistered | PluginPermissions.CanCallDelegateCall,
   "Join": PluginPermissions.IsRegistered,
   "FundingRequest": PluginPermissions.IsRegistered,
+  "TokenTrade": PluginPermissions.IsRegistered,
 };
 
 /** plugins that we know how to interpret  */
@@ -54,6 +55,7 @@ export const PLUGIN_NAMES = {
   SchemeRegistrar: "Plugin Registrar",
   SchemeFactory: "Plugin Manager",
   Competition: "Competition",
+  TokenTrade: "Token Trade",
   ContributionRewardExt: "Contribution Reward Ext",
   Join: "Join",
   FundingRequest: "Funding Request",

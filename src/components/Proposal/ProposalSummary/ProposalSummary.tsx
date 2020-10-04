@@ -8,7 +8,9 @@ import {
   Proposal,
   IPluginManagerProposalState,
   IFundingRequestProposalState,
-  IJoinProposalState } from "@daostack/arc.js";
+  ITokenTradeProposalState,
+  IJoinProposalState,
+} from "@daostack/arc.js";
 import classNames from "classnames";
 import { GenericPluginRegistry } from "genericPluginRegistry";
 import * as React from "react";
@@ -22,6 +24,7 @@ import ProposalSummaryUnknownGenericPlugin from "./ProposalSummaryUnknownGeneric
 import ProposalSummaryJoin from "./ProposalSummaryJoin";
 import ProposalSummaryFundingRequest from "./ProposalSummaryFundingRequest";
 import { getArc } from "arc";
+import ProposalSummaryTokenTrade from "./ProposalSummaryTokenTrade";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;
@@ -64,6 +67,9 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     } else if (proposal.coreState.name.includes("SchemeRegistrar")) {
       const state = proposal.coreState as IPluginRegistrarProposalState;
       return <ProposalSummaryPluginRegistrar {...this.props} proposalState={state} />;
+    } else if (proposal.coreState.name.includes("TokenTrade")) {
+      const state = proposal.coreState as ITokenTradeProposalState;
+      return <ProposalSummaryTokenTrade {...this.props} proposalState={state} />;
     } else if (proposal.coreState.name.includes("SchemeFactory")) {
       const state = proposal.coreState as IPluginManagerProposalState;
       return <ProposalSummaryPluginManager {...this.props} proposalState={state} />;

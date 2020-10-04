@@ -32,6 +32,22 @@
       "json",
       "node"
     ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 8,
+        "functions": 8,
+        "lines": 8,
+        "statements": 8
+      }
+    },
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.{js,ts}"
+    ],
     "moduleNameMapper": {
       "\\.(scss|css|less|svg|png|jpg)$": "identity-obj-proxy",
       "^arc": "<rootDir>/src/arc",
@@ -71,6 +87,7 @@
     "start-staging": "npm run start-staging-rinkeby",
     "start-xdai": "cross-env NODE_ENV=production SHOW_ALL_DAOS=true NETWORK=xdai node --max_old_space_size=4096 ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.config.js",
     "storybook": "start-storybook",
+    "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "test": "wdio ./test/integration/wdio.conf.js",
     "test:integration": "wdio ./test/integration/wdio.conf.js --inspect",
     "test:integration:headless": "wdio ./test/integration/wdio-headless.conf.js",
@@ -79,7 +96,7 @@
   "dependencies": {
     "3box": "^1.20.3",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
-    "@daostack/arc.js": "2.0.0-experimental.55",
+    "@daostack/arc.js": "2.0.0-experimental.56",
     "@dorgtech/daocreator-ui-experimental": "1.1.13",
     "@portis/web3": "^2.0.0-beta.56",
     "@sentry/browser": "^5.0.8",
@@ -195,6 +212,7 @@
     "babel-loader": "^8.0.6",
     "chai": "^4.2.0",
     "copy-webpack-plugin": "^5.1.1",
+    "coveralls": "^3.1.0",
     "cross-env": "^5.1.3",
     "dotenv": "^8.2.0",
     "eslint": "^7.3.1",

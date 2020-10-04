@@ -213,7 +213,7 @@ export default withSubscription({
       ${Stake.fragments.StakeFields}
       ${Plugin.baseFragment}
     `;
-    await arc.getObservable(prefetchQuery, { subscribe: true }).pipe(first()).toPromise();
+    await arc.getObservable(prefetchQuery, { polling: true }).pipe(first()).toPromise();
     return combineLatest(
       dao.proposals({
         where: {

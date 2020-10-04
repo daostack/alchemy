@@ -7,6 +7,10 @@
   display: none !important;
 }
 
+fieldset {
+  margin: 10px 0px;
+}
+
 .createProposalWrapper {
   border-radius: 15px 15px 0 0;
   background-color: $white;
@@ -381,7 +385,7 @@
 .containerNoSidebar {
   width: 562px;
   overflow-y: auto;
-  height: calc(100% - 90px);
+  max-height: calc(100vh - 200px);
   padding: 20px 30px 30px 30px;
 }
 

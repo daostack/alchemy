@@ -5,6 +5,7 @@ import { getArc } from "arc";
 import { IDAOState, IContributionRewardExtState, IContributionRewardExtProposalState, ContributionRewardExtProposal, Address } from "@daostack/arc.js";
 import Loading from "components/Shared/Loading";
 import { getCrxRewarderComponent, CrxRewarderComponentType, getCrxRewarderProposalClass } from "components/Plugin/ContributionRewardExtRewarders/rewardersProps";
+import { GRAPH_POLL_INTERVAL } from "../../../settings";
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
@@ -75,6 +76,6 @@ export default withSubscription({
     const crxProposalState = await crxProposal.fetchState();
     const proposalClass = getCrxRewarderProposalClass(await crxProposalState.plugin.entity.fetchState() as IContributionRewardExtState);
     const proposal = new proposalClass(arc, props.proposalId);
-    return proposal.state( { subscribe: true });
+    return proposal.state( { polling: true, pollInterval: GRAPH_POLL_INTERVAL });
   },
 });

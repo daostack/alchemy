@@ -1,4 +1,4 @@
-import { Address, AnyProposal, IProposalState, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, Member, IContributionRewardProposalState } from "@daostack/arc.js";
+import { Address, IProposalState, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, Member, IContributionRewardProposalState } from "@daostack/arc.js";
 import { getArc } from "arc";
 import { ethErrorHandler } from "lib/util";
 
@@ -12,6 +12,7 @@ import { closingTime } from "lib/proposalHelpers";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of, Observable } from "rxjs";
 import { map, mergeMap } from "rxjs/operators";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 import * as css from "./ProposalCard.scss";
 
@@ -31,7 +32,7 @@ interface IStateProps {
   creatorProfile?: IProfileState;
 }
 
-type SubscriptionData = [AnyProposal, IProposalState, Vote[], Stake[], IRewardState, IMemberState|null, BN, BN, IDAOState];
+type SubscriptionData = [IProposalState, Vote[], Stake[], IRewardState, IMemberState|null, BN, BN, IDAOState];
 type IPreProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
@@ -43,16 +44,16 @@ export interface IInjectedProposalProps {
   daoEthBalance: BN;
   expired: boolean;
   member: IMemberState;
-  proposal: AnyProposal;
+  proposalState: IProposalState;
   rewards: IRewardState;
   stakes: Stake[];
   votes: Vote[];
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IPreProps => {
-  const proposal = ownProps.data[0];
-  const proposalState = proposal ? proposal.coreState : null;
-  const crState = proposal ? proposal.coreState as IContributionRewardProposalState : null;
+  const proposalState = ownProps.data[0];
+  //const proposalState = proposal ? proposal.coreState : null;
+  const crState = proposalState as IContributionRewardProposalState;
 
   return {
     ...ownProps,
@@ -72,10 +73,10 @@ class ProposalData extends React.Component<IProps, IState> {
     super(props);
 
     if (props.data && props.data[0]) {
-      const proposal = props.data[0];
+      const proposalState = props.data[0];
 
       this.state = {
-        expired: proposal.coreState ? closingTime(proposal.coreState).isSameOrBefore(moment()) : false,
+        expired: proposalState ? closingTime(proposalState).isSameOrBefore(moment()) : false,
       };
     } else {
       this.state = {
@@ -91,7 +92,7 @@ class ProposalData extends React.Component<IProps, IState> {
 
     // Expire proposal in real time
     // Don't schedule timeout if its too long to wait, because browser will fail and trigger the timeout immediately
-    const millisecondsUntilExpires = closingTime(this.props.data[0].coreState).diff(moment());
+    const millisecondsUntilExpires = closingTime(this.props.data[0]).diff(moment());
     if (!this.state.expired && millisecondsUntilExpires < 2147483647) {
       this.expireTimeout = setTimeout(() => { this.setState({ expired: true });}, millisecondsUntilExpires);
     }
@@ -106,7 +107,7 @@ class ProposalData extends React.Component<IProps, IState> {
       return <></>;
     }
 
-    const [proposal,, votes, stakes, rewards, member, currentAccountGenBalance, currentAccountGenAllowance, daoState] = this.props.data;
+    const [proposal, votes, stakes, rewards, member, currentAccountGenBalance, currentAccountGenAllowance, daoState] = this.props.data;
     const { beneficiaryProfile, creatorProfile } = this.props;
     const daoEthBalance = new BN(daoState.ethBalance);
 
@@ -118,7 +119,7 @@ class ProposalData extends React.Component<IProps, IState> {
       daoEthBalance,
       expired: this.state.expired,
       member,
-      proposal,
+      proposalState: proposal,
       rewards,
       stakes,
       votes,
@@ -154,11 +155,10 @@ export default withSubscription({
 
 
       return combineLatest(
-        of(proposal),
-        proposal.state({ subscribe: props.subscribeToProposalDetails }), // state of the current proposal
-        proposal.votes({where: { voter: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
-        proposal.stakes({where: { staker: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
-        proposal.rewards({ where: {beneficiary: currentAccountAddress}}, { subscribe: props.subscribeToProposalDetails })
+        proposal.state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL }), // state of the current proposal
+        proposal.votes({where: { voter: currentAccountAddress }}, { polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
+        proposal.stakes({where: { staker: currentAccountAddress }}, { polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
+        proposal.rewards({ where: {beneficiary: currentAccountAddress}}, { polling: true, pollInterval: GRAPH_POLL_INTERVAL })
           .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
           .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
 
@@ -170,19 +170,18 @@ export default withSubscription({
           .pipe(ethErrorHandler()),
         arc.allowance(currentAccountAddress, spender)
           .pipe(ethErrorHandler()),
-        dao.state({ subscribe: true }),
+        dao.state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
       );
     } else {
       return combineLatest(
-        of(proposal),
-        proposal.state({ subscribe: props.subscribeToProposalDetails }), // state of the current proposal
+        proposal.state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL }), // state of the current proposal
         of([]), // votes
         of([]), // stakes
         of(null), // rewards
         of(null), // current account member state
         of(new BN(0)), // current account gen balance
         of(null), // current account GEN allowance
-        dao.state({ subscribe: true }),
+        dao.state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
       );
     }
   },

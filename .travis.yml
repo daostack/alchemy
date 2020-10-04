@@ -1,5 +1,5 @@
 language: node_js
-node_js: 12.16.2
+node_js: 12.18.3
 addons:
   apt:
     update: true
@@ -14,49 +14,55 @@ before_install:
 addons:
   chrome: stable
 
-script:
-  - docker -v
-  - docker-compose -v
-  # fail on error
-  # - set -e
-  - echo 'docker-compose build' && echo -en 'travis_fold:start:script.1\\r'
-  - docker-compose build
+jobs:
+  include:
+    - stage: tests
+      name: "Unit tests"
+      script:
+        - docker -v
+        - docker-compose -v
+        # fail on error
+        # - set -e
+        - echo 'docker-compose build' && echo -en 'travis_fold:start:script.1\\r'
+        - docker-compose build
 
-  - echo -en 'travis_fold:end:script.1\\r'
-  - echo 'docker-compose up -d' && echo -en 'travis_fold:start:script.2\\r'
-  - docker-compose up -d
-  - echo -en 'travis_fold:end:script.2\\r'
+        - echo -en 'travis_fold:end:script.1\\r'
+        - echo 'docker-compose up -d' && echo -en 'travis_fold:start:script.2\\r'
+        - docker-compose up -d
+        - echo -en 'travis_fold:end:script.2\\r'
 
-  # wait for alchemy (the slowest latest process to respond
-  - bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' 127.0.0.1:3000)" != "200" ]]; do sleep 5; done'
-  # prin the status of the services
-  - npm run service-status
+        # wait for alchemy (the slowest latest process to respond
+        - bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' 127.0.0.1:3000)" != "200" ]]; do sleep 5; done'
+        # prin the status of the services
+        - npm run service-status
 
-  # show the daos that are indexed
-  - ./scripts/checkDaos.sh
-  - echo -en 'travis_fold:end:script.4\\r'
+        # show the daos that are indexed
+        - ./scripts/checkDaos.sh
+        - echo -en 'travis_fold:end:script.4\\r'
 
-  # check lint
-  - npm run lint
-  # unit tests
-  - npm run test:unit -- --forceExit
+        # unit tests
+        - npm run test:unit -- --forceExit
+        # run coverage report
+        - docker-compose logs alchemy || true
+        # run integration tests
+        - npm run test:integration:headless
+        - npm run report-coverage
+        # get some diagnostic info fo debugging travis
+        - echo 'Debug info:' && echo -en 'travis_fold:start:script.3\\r'
+        - npm run service-status
+        - docker-compose logs alchemy || true
+        - echo -en 'travis_fold:end:script.3\\r'
 
-  - docker-compose logs alchemy || true
-  # run integration tests
-  - npm run test:integration:headless
+        - ./scripts/checkDaos.sh
 
-  # get some diagnostic info fo debugging travis
-  - echo 'Debug info:' && echo -en 'travis_fold:start:script.3\\r'
-  - npm run service-status
-  - docker-compose logs alchemy || true
-  - echo -en 'travis_fold:end:script.3\\r'
-
-  - ./scripts/checkDaos.sh
-
-  # see if the app builds correctly
-  - echo 'npm run build-travis' && echo -en 'travis_fold:start:script.4\\r'
-  - npm run build-travis
-  - echo -en 'travis_fold:end:script.4\\r'
+        # see if the app builds correctly
+        - echo 'npm run build-travis' && echo -en 'travis_fold:start:script.4\\r'
+        - npm run build-travis
+        - echo -en 'travis_fold:end:script.4\\r'
+        
+    - stage: tests
+      name: "ts/es lint"
+      script: npm run lint
 
 deploy:
   provider: pages
