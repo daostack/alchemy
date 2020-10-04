@@ -198,25 +198,21 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
                     }
                   };
 
-                  const nonEmpty = (name: string) => {
-                    if (!(values as any)[name].toString()) {
+                  if (!isValidUrl(values.url)) {
+                    errors.url = "Invalid URL";
+                  }
+
+                  const requireValue = (name: string) => {
+                    if ((values as any)[name] === "") {
                       errors[name] = "Required";
                     }
-                  };
+                  }
 
                   const nonNegative = (name: string) => {
                     if ((values as any)[name] < 0) {
                       errors[name] = "Please enter a non-negative value";
                     }
                   };
-
-                  if (values.title.length > 120) {
-                    errors.title = "Title is too long (max 120 characters)";
-                  }
-
-                  if (!isValidUrl(values.url)) {
-                    errors.url = "Invalid URL";
-                  }
 
                   if (this.state.abiInputs) {
                     for (const abiValue of this.state.abiInputs) {
@@ -241,12 +237,11 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
                     }
                   }
 
-                  require("method");
                   require("title");
                   require("description");
-                  require("value");
-                  nonEmpty("value");
+                  requireValue("value");
                   nonNegative("value");
+                  require("method");
 
                   return errors;
                 }}
@@ -339,8 +334,6 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
                         name="value"
                         type="number"
                         className={touched.value && errors.value ? css.error : null}
-                        min={0}
-                        step={0.1}
                       />
                     </div>
 
