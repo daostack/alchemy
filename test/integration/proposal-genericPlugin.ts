@@ -9,9 +9,6 @@ chai.Should();
 describe("Proposals", () => {
 
   beforeEach(async () => {
-    async () => {
-      chai.Should();
-    }
     await gotoDaoPlugins("0xeabea104eccbaa46a89bf28dee05c6ec1a8cd759");
     await hideCookieAcceptWindow();
   });
