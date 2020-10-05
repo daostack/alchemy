@@ -378,7 +378,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
                     }
 
                     <label>Encoded Data</label>
-                    <div className={css.encodedData}>{this.state.callData}</div>
+                    <div id="encoded-data" className={css.encodedData}>{this.state.callData}</div>
 
                     <div className={css.createProposalActions}>
                       <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">

@@ -160,7 +160,7 @@ const votingParams: IGenesisProtocolFormValues = {
   votersReputationLossRatio: 4,
   minimumDaoBounty: 150,
   daoBountyConst: 10,
-  activationTime: moment().add(1, "day").format("YYYY-MM-DDTHH:mm"), //default date for the next day
+  activationTime: moment().add(10, "seconds").format("YYYY-MM-DDTHH:mm:ss"), // default date for next 10 seconds
   voteOnBehalf: "0x0000000000000000000000000000000000000000",
   voteParamsHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
 };

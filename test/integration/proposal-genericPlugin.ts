@@ -1,19 +1,22 @@
 import * as uuid from "uuid";
-import { getTestAddresses, hideCookieAcceptWindow, ITestAddresses, gotoDaoPlugins, submit, setCalendarDate, goToUrl } from "./utils";
-import * as moment from "moment";
+import { hideCookieAcceptWindow, gotoDaoPlugins, submit } from "./utils";
+
+const chai = require("chai");
+
+global.expect = chai.expect;
+chai.Should();
 
 describe("Proposals", () => {
-  let daoAddress: string;
-  let addresses: ITestAddresses;
 
   before(async () => {
-    addresses = getTestAddresses();
-    daoAddress = addresses.dao.Avatar.toLowerCase();
+    async () => {
+      chai.Should();
+    }
+    await gotoDaoPlugins("0xeabea104eccbaa46a89bf28dee05c6ec1a8cd759");
     await hideCookieAcceptWindow();
   });
 
   it("Create a Generic Plugin scheme and vote for it", async () => {
-    await gotoDaoPlugins("0xeabea104eccbaa46a89bf28dee05c6ec1a8cd759");
 
     const createPluginButton = await $("a[data-test-id=\"createProposal\"]");
     await createPluginButton.waitForExist();
@@ -28,9 +31,9 @@ describe("Proposals", () => {
     await titleInput.waitForExist();
     await titleInput.setValue(title);
 
-    // const descriptionInput = await $(".mde-text");
-    // await descriptionInput.waitForExist();
-    // await descriptionInput.setValue(title);
+    const descriptionInput = await $(".mde-text");
+    await descriptionInput.waitForExist();
+    await descriptionInput.setValue(title);
 
     const pluginSelect = await $("*[id=\"pluginToAdd\"]");
     await pluginSelect.waitForExist();
@@ -50,84 +53,74 @@ describe("Proposals", () => {
     await customContractToCallInput.click();
     await customContractToCallInput.setValue("0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf");
 
-    const activationTimeInput = await $("input[id=\"activationTime\"]");
-    //const activationTimeInput = await $('//*[@id="activationTime"]/div[2]/div/input');
-    await activationTimeInput.waitForExist();
-    await activationTimeInput.scrollIntoView();
-    //await activationTimeInput.clearValue();
-    await activationTimeInput.click();
-    const futureDate = moment().add(1, "minutes").format("YYYY-MM-DDTHH:mm");
-    await activationTimeInput.setValue(futureDate);
-    //await browser.execute("document.getElementById('activationTime').setAttribute('value','2018-06-12T19:30')")
+    await submit();
 
-    //await submit();
+    const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
+    await titleElement.waitForExist();
+    await titleElement.scrollIntoView();
+    await titleElement.click();
 
-    // const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
-    // await titleElement.waitForExist();
-
-    // const proposal = await titleElement.$("./../../..");
-    // console.log(proposal);
-    // await proposal.scrollIntoView();
-
-    // const contextMenu = await proposal.$("[data-test-id=\"proposalContextMenu\"]");
-    // await contextMenu.click();
-
-    // const voteButton = await proposal.$("[data-test-id=\"voteFor\"]");
-    // await voteButton.waitForDisplayed();
-    // await voteButton.click();
-    // let launchMetaMaskButton = await $("[data-test-id=\"launch-metamask\"]");
-    // if (await launchMetaMaskButton.isExisting()) {
-    //   await launchMetaMaskButton.click();
-    // }
+    const voteButton = await $("[data-test-id=\"voteFor\"]");
+    await voteButton.waitForDisplayed();
+    await voteButton.click();
+    let launchMetaMaskButton = await $("[data-test-id=\"launch-metamask\"]");
+    if (await launchMetaMaskButton.isExisting()) {
+      await launchMetaMaskButton.click();
+    }
   });
 
-  // it("Create a Generic Plugin proposal", async () => {
-  //   await gotoDaoPlugins("0xeabea104eccbaa46a89bf28dee05c6ec1a8cd759");
+  it("Create a Generic Plugin proposal", async () => {
 
-  //   const pluginCard = await $("[data-test-id=\"pluginCard-GenericScheme\"]");
-  //   await pluginCard.click();
+    const pluginCard = await $("[data-test-id=\"pluginCard-GenericScheme\"]");
+    await pluginCard.scrollIntoView();
+    await pluginCard.click();
 
-  //   const currentURL = await browser.getUrl();
-  //   await goToUrl(currentURL + "/proposals/create/"); // HACK! ALSO NEED TO FIX IN THE APP ITSELF
+    const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
+    await createProposalButton.waitForExist();
 
-  //   const titleInput = await $("*[id=\"titleInput\"]");
-  //   await titleInput.waitForExist();
+    await createProposalButton.click();
 
-  //   const title = uuid();
-  //   await titleInput.setValue(title);
+    const titleInput = await $("*[id=\"titleInput\"]");
+    await titleInput.waitForExist();
 
-  //   const descriptionInput = await $(".mde-text");
-  //   await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
+    const title = uuid();
+    await titleInput.setValue(title);
 
-  //   const valueInput = await $("*[id=\"valueInput\"]");
-  //   await valueInput.click();
-  //   await valueInput.setValue("1");
+    const descriptionInput = await $(".mde-text");
+    await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
-  //   const selectSearchInput = await $("*[id=\"select-search\"]");
-  //   await selectSearchInput.scrollIntoView();
-  //   await selectSearchInput.click();
+    const valueInput = await $("*[id=\"valueInput\"]");
+    await valueInput.click();
+    await valueInput.setValue("1");
 
-  //   const elementList = await $("*[id=\"select-search-element-0\"]");
-  //   await elementList.click();
+    const selectSearchInput = await $("*[id=\"select-search\"]");
+    await selectSearchInput.scrollIntoView();
+    await selectSearchInput.click();
 
-  //   const abiInput_1 = await $("*[id=\"abi-input-0\"]");
-  //   await abiInput_1.scrollIntoView();
-  //   await abiInput_1.click();
-  //   await abiInput_1.setValue("0x853D2d862E2a2c76ef8a4F6Ef2b8A9fB3dA1f604");
+    const elementList = await $("*[id=\"select-search-element-0\"]");
+    await elementList.click();
 
-  //   const abiInput_2 = await $("*[id=\"abi-input-1\"]");
-  //   await abiInput_2.scrollIntoView();
-  //   await abiInput_2.click();
-  //   await abiInput_2.setValue("1");
+    const abiInput_1 = await $("*[id=\"abi-input-0\"]");
+    await abiInput_1.scrollIntoView();
+    await abiInput_1.click();
+    await abiInput_1.setValue("0x853D2d862E2a2c76ef8a4F6Ef2b8A9fB3dA1f604");
 
-  //   await abiInput_1.click();
+    const abiInput_2 = await $("*[id=\"abi-input-1\"]");
+    await abiInput_2.scrollIntoView();
+    await abiInput_2.click();
+    await abiInput_2.setValue("1");
 
-  //   await submit();
+    const encodedData = await $("*[id=\"encoded-data\"]");
+    await encodedData.scrollIntoView();
+    await encodedData.click();
 
-  //   const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
-  //   await titleElement.waitForExist();
+    (await encodedData.getText()).should.be.equal("0x095ea7b3000000000000000000000000853d2d862e2a2c76ef8a4f6ef2b8a9fb3da1f6040000000000000000000000000000000000000000000000000000000000000001");
 
-  // });
+    await submit();
 
+    const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
+    await titleElement.waitForExist();
+
+  });
 
 });
