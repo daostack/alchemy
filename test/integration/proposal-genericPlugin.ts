@@ -8,7 +8,7 @@ chai.Should();
 
 describe("Proposals", () => {
 
-  before(async () => {
+  beforeEach(async () => {
     async () => {
       chai.Should();
     }
@@ -63,10 +63,12 @@ describe("Proposals", () => {
     const voteButton = await $("[data-test-id=\"voteFor\"]");
     await voteButton.waitForDisplayed();
     await voteButton.click();
-    let launchMetaMaskButton = await $("[data-test-id=\"launch-metamask\"]");
-    if (await launchMetaMaskButton.isExisting()) {
-      await launchMetaMaskButton.click();
-    }
+
+    const launchMetaMaskButton = await $("[data-test-id=\"launch-metamask\"]");
+    await launchMetaMaskButton.click();
+    const notification = await $("[data-test-id=\"button-notification-close\"]");
+    await notification.waitForExist({ timeout: 5000 });
+
   });
 
   it("Create a Generic Plugin proposal", async () => {
@@ -122,5 +124,4 @@ describe("Proposals", () => {
     await titleElement.waitForExist();
 
   });
-
 });
