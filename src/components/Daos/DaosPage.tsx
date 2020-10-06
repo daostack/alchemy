@@ -15,7 +15,7 @@ import { IRootState } from "reducers";
 import { combineLatest, of } from "rxjs";
 import { first } from "rxjs/operators";
 import cn from "classnames";
-import { showSimpleMessage } from "lib/util";
+import { showSimpleMessage, standardPolling } from "lib/util";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 import BHubReg from "../Buidlhub/Registration";
@@ -136,8 +136,8 @@ class DaosPage extends React.Component<IProps, IState> {
       // Otherwise show registered DAOs
       otherDAOs = otherDAOs.filter((d: DAO) => {
         return !yourDAOAddresses.includes(d.id) &&
-               d.staticState.name.toLowerCase().includes(search) &&
-               d.staticState.register === "registered";
+          d.staticState.name.toLowerCase().includes(search) &&
+          d.staticState.register === "registered";
       });
     }
 
@@ -184,8 +184,8 @@ class DaosPage extends React.Component<IProps, IState> {
                 <h2 data-test-id="header-all-daos">
                   Your DAOs
                   {process.env.NETWORK !== "xdai" ?
-                    <i className={cn("fa fa-envelope", css.emailIcon)} onClick={this.registerForMonitoring}/>
-                    : "" }
+                    <i className={cn("fa fa-envelope", css.emailIcon)} onClick={this.registerForMonitoring} />
+                    : ""}
                 </h2>
               </div>
             </div>
@@ -245,12 +245,12 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
     }
     ${DAOFieldsFragment}
   `;
-  const memberOfDAOs = currentAccountAddress ? arc.getObservableList(memberDAOsquery, (r: any) => createDaoStateFromQuery(r.dao).dao, { subscribe: true }) : of([]);
+  const memberOfDAOs = currentAccountAddress ? arc.getObservableList(memberDAOsquery, (r: any) => createDaoStateFromQuery(r.dao).dao, standardPolling()) : of([]);
   // eslint-disable-next-line @typescript-eslint/camelcase
-  const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc"}, { fetchAllData: true, subscribe: true }) : of([]);
+  const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc" }, standardPolling(true)) : of([]);
 
   return combineLatest(
-    arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0}, { fetchAllData: true, subscribe: true }),
+    arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0 }, standardPolling(true)),
     followDAOs,
     memberOfDAOs
   );
@@ -258,8 +258,8 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
 
 const SubscribedDaosPage = withSubscription({
   wrappedComponent: DaosPage,
-  loadingComponent: <div className={css.wrapper}><Loading/></div>,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
+  loadingComponent: <div className={css.wrapper}><Loading /></div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   // Don't ever update the subscription
   checkForUpdate: ["currentAccountAddress", "followingDAOs"],

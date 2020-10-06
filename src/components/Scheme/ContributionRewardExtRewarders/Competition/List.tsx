@@ -9,6 +9,7 @@ import { getArc } from "arc";
 import { CompetitionStatusEnum, CompetitionStatus } from "./utils";
 import Card from "./Card";
 import * as css from "./Competitions.scss";
+import { standardPolling } from "lib/util";
 
 interface IExternalProps {
   daoState: IDAOState;
@@ -83,7 +84,7 @@ class CompetitionsList extends React.Component<IProps, IStateProps> {
 
   public render(): RenderOutput {
 
-    const { daoState, scheme, proposals} = this.props;
+    const { daoState, scheme, proposals } = this.props;
     const daoAvatarAddress = daoState.address;
 
     return <React.Fragment>
@@ -105,7 +106,7 @@ class CompetitionsList extends React.Component<IProps, IStateProps> {
 export default withSubscription({
   wrappedComponent: CompetitionsList,
   loadingComponent: null,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: [],
   createObservable: async (props: IExternalProps) => {
     // prime the cache before creating the observable...
@@ -137,7 +138,7 @@ export default withSubscription({
     `;
 
     const arc = await getArc();
-    await arc.sendQuery(cacheQuery, {subscribe: true});
+    await arc.sendQuery(cacheQuery, standardPolling());
     // end cache priming
 
     // TODO: next lines can use some cleanup up

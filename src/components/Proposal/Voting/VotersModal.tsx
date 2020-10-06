@@ -191,8 +191,8 @@ const voterModalWithSubscriptions = withSubscription({
     const dao = arc.dao(props.dao.address);
     const proposalId = props.proposal.id;
     const proposal = dao.proposal(proposalId);
-
-    return proposal.votes({}, { subscribe: false });
+    // subscribe is false by default
+    return proposal.votes({}, { });
   },
 });
 

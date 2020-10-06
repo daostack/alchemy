@@ -23,6 +23,7 @@ import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
 import DaoLandingPage from "components/Dao/DaoLandingPage";
+import { standardPolling } from "lib/util";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -151,7 +152,7 @@ const SubscribedDaoContainer = withSubscription({
     const daoAddress = props.match.params.daoAvatarAddress;
     const dao = arc.dao(daoAddress);
     const observable = combineLatest(
-      dao.state({ subscribe: true, fetchAllData: true }), // DAO state
+      dao.state(standardPolling(true)), // DAO state
       dao.members()
     );
     return observable;

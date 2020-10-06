@@ -13,6 +13,7 @@ import { first } from "rxjs/operators";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
 import * as css from "./DaoHistoryPage.scss";
 import { Observable } from "rxjs";
+import { standardPolling } from "lib/util";
 
 const PAGE_SIZE = 50;
 
@@ -209,7 +210,7 @@ export default withSubscription({
       ${Scheme.fragments.SchemeFields}
     `;
 
-    await arc.getObservable(prefetchQuery, { subscribe: true }).pipe(first()).toPromise();
+    await arc.getObservable(prefetchQuery, standardPolling()).pipe(first()).toPromise();
 
     return proposalsQuery(dao, 0);
   },

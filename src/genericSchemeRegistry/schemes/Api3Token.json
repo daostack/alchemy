@@ -1,0 +1,86 @@
+{
+  "name": "Api3Token",
+  "addresses": {
+    "main": [
+      ""
+    ],
+    "rinkeby": [
+      "0xA82aEF6C92C421D70923E91300631A39932c5E44"
+    ],
+    "private": [
+      ""
+    ]
+  },
+  "actions": [
+    {
+      "id": "approve",
+      "label": "Approve API3 tokens",
+      "description": "Approve address to transfer amount-many API3 tokens",
+      "notes": "https://github.com/api3dao/api3-contracts/blob/master/packages/api3-token/contracts/Api3Token.sol",
+      "fields": [
+        {
+          "label": "Address that will be approved to transfer the tokens",
+          "name": "spender",
+          "placeholder": "Address (0x0000...)"
+        },
+        {
+          "decimals": 18,
+          "label": "Number of API3 tokens to be approved",
+          "name": "amount",
+          "unit": "API3",
+          "placeholder": "Number of tokens (123)"
+        }
+      ],
+      "abi": {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "spender",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "approve",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "transferOwnership",
+      "label": "Tranfer ownership of the API3Token contract",
+      "description": "Tranfer ownership of the API3Token contract to newOwner",
+      "notes": "https://github.com/api3dao/api3-contracts/blob/master/packages/api3-token/contracts/Api3Token.sol",
+      "fields": [
+        {
+          "label": "Address that will receive the ownership of the API3Token contract",
+          "name": "newOwner",
+          "placeholder": "Address (0x0000...)"
+        }
+      ],
+      "abi": {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }
+  ]
+}

@@ -7,7 +7,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import ActionButton from "components/Proposal/ActionButton";
 import RedemptionsString from "components/Proposal/RedemptionsString";
 import ProposalSummary from "components/Proposal/ProposalSummary";
-import { ethErrorHandler, humanProposalTitle, ethBalance } from "lib/util";
+import { ethErrorHandler, humanProposalTitle, ethBalance, standardPolling } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -63,7 +63,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
           ))
           : <div className={css.empty}>
             <h2>Nothing to redeem</h2>
-            <img src="/assets/images/empty-redemptions.svg"/>
+            <img src="/assets/images/empty-redemptions.svg" />
           </div>}
       </div>
       <div className={css.actions}>
@@ -106,7 +106,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
 const SubscribedRedemptionsMenu = withSubscription({
   wrappedComponent: RedemptionsMenu,
   loadingComponent: <div className={css.menu}>Loading...</div>,
-  errorComponent: (props) => <div className={css.menu}>{ props.error.message }</div>,
+  errorComponent: (props) => <div className={css.menu}>{props.error.message}</div>,
   checkForUpdate: ["redeemableProposals"],
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
@@ -151,7 +151,7 @@ const mapStateToItemContentProps = (state: IRootState, ownProps: IMenuItemProps)
   };
 };
 
-type IMenuItemContentProps = IMenuItemProps & IMenuItemContentStateProps & ISubscriptionProps<[IDAOState, BN|null, IRewardState]>;
+type IMenuItemContentProps = IMenuItemProps & IMenuItemContentStateProps & ISubscriptionProps<[IDAOState, BN | null, IRewardState]>;
 
 class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
   public render(): RenderOutput {
@@ -192,18 +192,18 @@ class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
 const SubscribedMenuItemContent = withSubscription({
   wrappedComponent: MenuItemContent,
   loadingComponent: <div>Loading...</div>,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: [], // Parent component will rerender anyway.
   createObservable: (props: IMenuItemProps) => {
     const { currentAccountAddress, proposal } = props;
     const arc = getArc();
     const dao = arc.dao(proposal.dao.id);
     const daoEthBalance = concat(of(new BN("0")), ethBalance(proposal.dao.id)).pipe(ethErrorHandler());
-    const rewards = proposal.proposal.rewards({ where: { beneficiary: currentAccountAddress }})
+    const rewards = proposal.proposal.rewards({ where: { beneficiary: currentAccountAddress } })
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
     // subscribe to dao to get DAO reputation supply updates
-    return combineLatest(dao.state( { subscribe: true }), daoEthBalance, rewards);
+    return combineLatest(dao.state(standardPolling()), daoEthBalance, rewards);
   },
 });
 

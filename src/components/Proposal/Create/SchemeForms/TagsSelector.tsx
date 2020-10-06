@@ -163,7 +163,7 @@ export default withSubscription({
      * Returns an array of ITagState.
      * Ask for `first: 1000` to raise the minimum from the default of 100 to the max of 1000
      */
-    return arc.tags({ first: 1000 }, { subscribe: false })
+    return arc.tags({ first: 1000 }, { })
       .pipe(
         map((tags: Array<TagEntity>) => tags.map(tag => tag.staticState))
       );

@@ -1,0 +1,184 @@
+{
+  "name": "TimelockManager",
+  "addresses": {
+    "main": [
+      ""
+    ],
+    "rinkeby": [
+      "0xBEAFB0FB210D6A60550991632db7B88a2B2dece8"
+    ],
+    "private": [
+      ""
+    ]
+  },
+  "actions": [
+    {
+      "id": "transferOwnership",
+      "label": "Tranfer ownership of the TimelockManager contract",
+      "description": "Tranfer ownership of the TimelockManager contract to newOwner",
+      "notes": "https://github.com/api3dao/api3-contracts/blob/master/packages/api3-dao-v1/contracts/TimelockManager.sol",
+      "fields": [
+        {
+          "label": "Address that will receive the ownership of the TimelockManager contract",
+          "name": "newOwner",
+          "placeholder": "Address (0x0000...)"
+        }
+      ],
+      "abi": {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "updateApi3Pool",
+      "label": "Updates the address of the API3Pool contract",
+      "description": "Updates the address of the API3Pool contract to api3PoolAddress",
+      "notes": "https://github.com/api3dao/api3-contracts/blob/master/packages/api3-dao-v1/contracts/TimelockManager.sol",
+      "fields": [
+        {
+          "label": "Updated API3Pool contract address",
+          "name": "api3PoolAddress",
+          "placeholder": "Address (0x0000...)"
+        }
+      ],
+      "abi": {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "api3PoolAddress",
+            "type": "address"
+          }
+        ],
+        "name": "updateApi3Pool",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "transferAndLock",
+      "label": "Transfers and locks API3 tokens",
+      "description": "Transfers and locks amount-many API3 tokens from source for owner to be released at releaseTime",
+      "notes": "https://github.com/api3dao/api3-contracts/blob/master/packages/api3-dao-v1/contracts/TimelockManager.sol",
+      "fields": [
+        {
+          "label": "Source of the API3 tokens (most likely the API3 DAO)",
+          "name": "source",
+          "placeholder": "Address (0x0000...)"
+        },
+        {
+          "label": "The owner for whom the tokens are being locked for",
+          "name": "owner",
+          "placeholder": "Address (0x0000...)"
+        },
+        {
+          "decimals": 18,
+          "label": "Number of API3 tokens to be locked",
+          "name": "amount",
+          "unit": "API3",
+          "placeholder": "Number of tokens (123)"
+        },
+        {
+          "label": "UTC timestamp for when the tokens will be released",
+          "name": "releaseTime",
+          "placeholder": "Timestamp (123...)"
+        }
+      ],
+      "abi": {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "source",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "releaseTime",
+            "type": "uint256"
+          }
+        ],
+        "name": "transferAndLock",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "transferAndLockMultiple",
+      "label": "Transfers and locks API3 tokens in batch",
+      "description": "Transfers and locks amount-many API3 tokens from source for owner to be released at releaseTime in batch",
+      "notes": "https://github.com/api3dao/api3-contracts/blob/master/packages/api3-dao-v1/contracts/TimelockManager.sol",
+      "fields": [
+        {
+          "label": "Source of the API3 tokens (most likely the API3 DAO)",
+          "name": "source",
+          "placeholder": "Address (0x0000...)"
+        },
+        {
+          "label": "The owners for whom the tokens are being locked for",
+          "name": "owners",
+          "placeholder": "Addresses ([0x0000..., 0x0000..., ...])"
+        },
+        {
+          "decimals": 18,
+          "label": "Numbers of API3 tokens to be locked",
+          "name": "amounts",
+          "unit": "API3",
+          "placeholder": "Numbers of tokens ([123, 456, ...])"
+        },
+        {
+          "label": "UTC timestamps for when the tokens will be released",
+          "name": "releaseTimes",
+          "placeholder": "Timestamps ([123, 456, ...])"
+        }
+      ],
+      "abi": {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "source",
+            "type": "address"
+          },
+          {
+            "internalType": "address[]",
+            "name": "owners",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "amounts",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "releaseTimes",
+            "type": "uint256[]"
+          }
+        ],
+        "name": "transferAndLockMultiple",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }
+  ]
+}
