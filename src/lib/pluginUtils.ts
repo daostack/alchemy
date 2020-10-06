@@ -105,7 +105,7 @@ export function pluginName(plugin: IPluginState|IContractInfo, fallback?: string
       name = "Blockchain Interaction";
     }
   } else if (plugin.name === "ContributionRewardExt") {
-    name = rewarderContractName(plugin as IContributionRewardExtState);
+    name = rewarderContractName(plugin as IContributionRewardExtState, false);
     if (!name) {
       name = plugin.name;
     } // else name is the rewarder contract alias, or its name split by camel case
