@@ -1,3 +1,7 @@
+## 0.10.17
+  - Bugs Fixed
+    - Fixed issues with automated update of blockchain data by switching from a websocket to a polling interface with the subgraph
+
 ## 0.10.16
   - Features Added
    - show account holdings even when out of scope of a DAO
