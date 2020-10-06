@@ -1,5 +1,6 @@
 import * as uuid from "uuid";
-import { hideCookieAcceptWindow, gotoDaoPlugins, submit } from "./utils";
+import { hideCookieAcceptWindow, gotoDaoPlugins, submit, setCalendarDate } from "./utils";
+import * as moment from "moment";
 
 const chai = require("chai");
 
@@ -10,7 +11,6 @@ describe("Proposals", () => {
 
   beforeEach(async () => {
     await gotoDaoPlugins("0xeabea104eccbaa46a89bf28dee05c6ec1a8cd759");
-    await hideCookieAcceptWindow();
   });
 
   it("Create a Generic Plugin scheme and vote for it", async () => {
@@ -50,6 +50,15 @@ describe("Proposals", () => {
     await customContractToCallInput.click();
     await customContractToCallInput.setValue("0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf");
 
+    const activationTimeInput = await $("input[name=\"GenericScheme.votingParams.activationTime\"]");
+    await activationTimeInput.waitForExist();
+    await activationTimeInput.scrollIntoView();
+    await setCalendarDate(activationTimeInput, moment().add(15, "seconds").format("MMMM D, YYYY HH:mm:ss"));
+
+    // hack to close any open calendar
+    await customOption.click();
+
+    await hideCookieAcceptWindow();
     await submit();
 
     const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
@@ -68,7 +77,7 @@ describe("Proposals", () => {
 
   });
 
-  it("Create a Generic Plugin proposal", async () => {
+  it("Create a Generic Plugin proposal and vote it", async () => {
 
     const pluginCard = await $("[data-test-id=\"pluginCard-GenericScheme\"]");
     await pluginCard.scrollIntoView();
@@ -90,7 +99,7 @@ describe("Proposals", () => {
 
     const valueInput = await $("*[id=\"valueInput\"]");
     await valueInput.click();
-    await valueInput.setValue("1");
+    await valueInput.setValue("0");
 
     const selectSearchInput = await $("*[id=\"select-search\"]");
     await selectSearchInput.scrollIntoView();
@@ -115,10 +124,22 @@ describe("Proposals", () => {
 
     (await encodedData.getText()).should.be.equal("0x095ea7b3000000000000000000000000853d2d862e2a2c76ef8a4f6ef2b8a9fb3da1f6040000000000000000000000000000000000000000000000000000000000000001");
 
+    await hideCookieAcceptWindow();
     await submit();
 
     const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
     await titleElement.waitForExist();
+    await titleElement.scrollIntoView();
+    await titleElement.click();
+
+    const voteButton = await $("[data-test-id=\"voteFor\"]");
+    await voteButton.waitForDisplayed();
+    await voteButton.click();
+
+    const launchMetaMaskButton = await $("[data-test-id=\"launch-metamask\"]");
+    await launchMetaMaskButton.click();
+    const notification = await $("[data-test-id=\"button-notification-close\"]");
+    await notification.waitForExist({ timeout: 5000 });
 
   });
 });
