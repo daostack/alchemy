@@ -11,7 +11,7 @@ before_install:
   # https://stackoverflow.com/questions/22475849/node-js-error-enospc#32600959
   - echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
   - export COVERALLS_SERVICE_JOB_ID=$( TRAVIS_JOB_ID )
-  - export COVERALLS_SERVICE_NAME="CKEditor5 code coverage"
+  - export COVERALLS_SERVICE_NAME="Alchemy code coverage"
 
 addons:
   chrome: stable
