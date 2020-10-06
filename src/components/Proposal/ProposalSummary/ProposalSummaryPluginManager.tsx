@@ -58,7 +58,7 @@ class ProposalSummary extends React.Component<IProps, IState> {
     const decodedData = proposalState.pluginToRegisterDecodedData;
     let votingParams;
     let contractToCall;
-    if ( pluginName && decodedData && pluginName !== "ReputationFromToken"){ // proposalState.pluginToRemove === NULL_ADDRESS // If Plugin to Add or Plugin to Replace
+    if (pluginName && decodedData && pluginName !== "ReputationFromToken"){ // pluginName && decodedData ---> means the plugin is Add or Replace (not Remove)
       votingParams = decodedData.params[2].value;
       if (pluginName === "GenericScheme"){
         contractToCall = decodedData.params[5].value;
