@@ -4,7 +4,6 @@ import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
-import { DiscussionEmbed } from "disqus-react";
 import { humanProposalTitle, ensureHttps } from "lib/util";
 import Analytics from "lib/analytics";
 import { Page } from "pages";
@@ -30,6 +29,7 @@ import VoteGraph from "./Voting/VoteGraph";
 import VotersModal from "./Voting/VotersModal";
 import * as css from "./ProposalDetails.scss";
 import ProposalDescription from "components/Shared/ProposalDescription";
+import ThreeBoxThreads from "components/Shared/ThreeBoxThreads";
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
@@ -48,11 +48,6 @@ interface IState {
 }
 
 class ProposalDetailsPage extends React.Component<IProps, IState> {
-  /**
-   * Define these here rather than in `render` to minimize rerendering, particularly
-   * of the disqus component
-   **/
-  private disqusConfig = { url: "", identifier: "", title: "" };
   private proposalClass = classNames({
     [css.proposal]: true,
     clearfix: true,
@@ -133,10 +128,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     const tags = proposalState.tags;
 
     const url = ensureHttps(proposalState.url);
-
-    this.disqusConfig.title = proposalState.title;
-    this.disqusConfig.url = process.env.BASE_URL + this.props.location.pathname;
-    this.disqusConfig.identifier = this.props.proposalId;
 
     let currentAccountVote: IProposalOutcome | undefined;
 
@@ -318,8 +309,8 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
         </div>
 
         <h3 className={css.discussionTitle}>Discussion</h3>
-        <div className={css.disqus}>
-          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
+        <div className={css.threebox}>
+          <ThreeBoxThreads threadId={this.props.proposalId} daoState={daoState} currentAccountAddress={this.props.currentAccountAddress}></ThreeBoxThreads>
         </div>
 
         {this.state.showVotersModal ?

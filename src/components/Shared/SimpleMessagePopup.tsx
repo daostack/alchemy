@@ -14,12 +14,15 @@ const mapDispatchToProps = {
 };
 
 export enum EnumButtonSpec {
-  Ok = 1,
-  // eventually will turn this into a confirmation modal, adding OkCancel, Yes/No and stuff
+  OK = 1,
+  YesNo = 2,
 }
 
 export interface ISimpleMessagePopupProps {
-  closeHandler?: (event: any) => void;
+  /**
+   * Invoked for "Yes" and "OK", but not for "No", ESC, or other way of closing the popup.
+   */
+  submitHandler?: (event: any) => void;
   body: string | JSX.Element;
   buttonSpec?: EnumButtonSpec;
   /**
@@ -27,6 +30,7 @@ export interface ISimpleMessagePopupProps {
    */
   hideFooter?: boolean;
   title?: string | JSX.Element;
+  width?: string;
 }
 
 interface IStateProps {
@@ -43,19 +47,21 @@ const mapStateToProps = (state: IRootState): IStateProps => {
 
 class SimpleMessagePopup extends React.Component<IDispatchProps & IStateProps, null> {
 
-  private closeHandler = (event: any) => {
+  private submitHandler = (event: any) => {
     this.props.hideSimpleMessage();
-    if (this.props.options.closeHandler) {
-      this.props.options.closeHandler(event);
-    }
+    this.props.options.submitHandler?.(event);
   }
 
   private renderButtons = (): JSX.Element => {
-    const okButton = (<button className={css.closeButton} onClick={this.closeHandler}>OK</button>);
     switch (this.props.options.buttonSpec) {
-      case EnumButtonSpec.Ok:
+      case EnumButtonSpec.YesNo:
+        return (
+          <><button className={css.noButton} autoFocus onClick={this.props.hideSimpleMessage}>No</button>
+            <button className={css.yesButton} onClick={this.submitHandler}>Yes</button></>
+        );
+      case EnumButtonSpec.OK:
       default:
-        return okButton;
+        return (<button className={css.closeButton} onClick={this.submitHandler}>OK</button>);
     }
   }
 
@@ -70,13 +76,13 @@ class SimpleMessagePopup extends React.Component<IDispatchProps & IStateProps, n
     }
 
     return (
-      <div className={css.modalContainer}>
+      <>
         <ModalPopup
-          closeHandler={this.closeHandler}
+          closeHandler={this.props.hideSimpleMessage}
           header={
             <div className={css.modalHeader}>
               <div className={css.title}>{this.props.options.title ?? "Alchemy"}</div>
-              <div className={css.closeButtonX} onClick={this.closeHandler}><img src={"/assets/images/Icon/close-grey.svg"} />
+              <div className={css.closeButtonX} onClick={this.props.hideSimpleMessage}><img src={"/assets/images/Icon/close-grey.svg"} />
               </div>
             </div>
           }
@@ -87,8 +93,9 @@ class SimpleMessagePopup extends React.Component<IDispatchProps & IStateProps, n
             this.props.options.hideFooter ? undefined :
               <div className={css.modalFooter}>{this.renderButtons()}</div>
           }
+          width={this.props.options.width}
         />
-      </div>
+      </>
     );
   }
 }

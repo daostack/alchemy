@@ -1,0 +1,131 @@
+.container {
+  .awaitingPosts {
+    .body {
+      display: inline-block;
+      color: #0056b3;
+    }
+
+    img {
+      display: inline-block;
+      margin-right: 6px;
+      position: relative;
+      top: 3px;
+    }
+  }
+
+  .startDiscussionButton {
+    margin-bottom: 32px;
+
+    a {
+      padding: 8px 15px;
+      color: $white;
+      background-color: $green-button-color;
+      border-radius: 15px;
+      font-size: 13px;
+      white-space: nowrap;
+
+      &:hover {
+        opacity: 0.8;
+      }
+
+      &.disabled,
+      &.disabled:hover {
+        background-color: $disabled-button-background-color;
+        border-color: rgb(0, 29, 53);
+        cursor: not-allowed;
+      }
+
+      img.loading {
+        position: relative;
+        top: 2px;
+        width: 12px;
+        margin-left: 8px;
+      }
+    }
+  }
+
+  .threeboxposts {
+    display: flex;
+    flex-direction: column;
+    .threeboxpost {
+      margin-bottom: 26px;
+      display: flex;
+
+      .column1 {
+        margin-right: 10px;
+      }
+
+      .column2 {
+        display: flex;
+        flex-direction: column;
+
+        .info {
+          position: relative;
+          bottom: 1px;
+
+          .author {
+            display: block;
+          }
+          .createdOn {
+            font-size: 12px;
+            display: inline-block;
+            margin-right: 8px;
+          }
+          .deletePost {
+            display: inline-block;
+            img {
+              position: relative;
+              top: 1px;
+              height: 13px;
+              cursor: pointer;
+            }
+          }
+        }
+
+        .message {
+          overflow: hidden;
+          white-space: pre-wrap;
+          word-break: break-word;
+          img {
+            max-width: 100%;
+          }
+
+          a {
+            color: #0071ff;
+          }
+        }
+      }
+    }
+  }
+
+  .threeboxCommentInput {
+    margin-bottom: 26px;
+
+    .commentsInput {
+      margin-bottom: 12px;
+    }
+
+    a.submitComments {
+      padding: 3px 8px;
+      // color: $white;
+      background-color: $white-halftone;
+      border: 1px solid #c8ccd0;
+      border-radius: 13px;
+      font-size: 11px;
+      white-space: nowrap;
+
+      &:hover {
+        background-color: $gray-1;
+        color: $white;
+        border-color: transparent;
+      }
+
+      &.disabled,
+      &.disabled:hover {
+        color: $gray-2;
+        border: $disabled-button-border;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

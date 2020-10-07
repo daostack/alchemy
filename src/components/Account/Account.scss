@@ -40,19 +40,11 @@ a.detailView {
 
   .avatar {
     z-index: 1;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     background-color: rgba(255, 255, 255, 0);
     transition: all 0.25s ease;
 
     img {
       transition: all 0.25s ease;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
     }
   }
 
@@ -137,16 +129,6 @@ a.accountName {
 
 .targetAccount:hover {
   z-index: 10000000;
-
-  .avatar {
-    width: 80px;
-    height: 80px;
-
-    img {
-      width: 50px;
-      height: 50px;
-    }
-  }
 
   .accountInfo {
     opacity: 1;

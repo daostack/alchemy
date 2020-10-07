@@ -1,26 +1,29 @@
-import { IDAOState } from "@daostack/arc.js";
+import { IDAOState, Address } from "@daostack/arc.js";
 import * as React from "react";
 import * as css from "./DaoLandingPage.scss";
 import { Page } from "pages";
 import Analytics from "lib/analytics";
 import { Link } from "react-router-dom";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { DiscussionEmbed } from "disqus-react";
 import { showSimpleMessage, targetedNetwork } from "lib/util";
 import customDaoInfo from "../../customDaoInfo";
 import i18next from "i18next";
+import ThreeBoxThreads from "components/Shared/ThreeBoxThreads";
 
 type IExternalProps = {
   daoState: IDAOState;
+  currentAccountAddress: Address;
 };
 
 type IProps = IExternalProps;
 
-export default class DaoLandingPage extends React.Component<IProps, null> {
+export default class DaoLandingPage extends React.Component<IProps> {
 
-  private disqusConfig = { url: "", identifier: "", title: "" };
+  constructor(props: IProps) {
+    super(props);
+  }
 
-  public componentDidMount(): void {
+  public async componentDidMount(): Promise<void> {
     Analytics.track("Page View", {
       "Page Name": Page.DAOLanding,
       "DAO Address": this.props.daoState.id,
@@ -44,10 +47,6 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
   public render(): JSX.Element {
     const daoState = this.props.daoState;
     const customData = customDaoInfo[targetedNetwork()]?.[daoState.id.toLowerCase()];
-
-    this.disqusConfig.url = `${process.env.BASE_URL}/dao/${this.props.daoState.address}/discussion`;
-    this.disqusConfig.identifier = this.props.daoState.address;
-    this.disqusConfig.title = "Discuss " + this.props.daoState.name;
 
     return (
       <div className={css.landingPage}>
@@ -75,9 +74,9 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
           }
 
         </div>
-        <div className={css.wallContainer}>
+        <div className={css.threadsContainer}>
           <div className={css.headerText}>Discuss {daoState.name}</div>
-          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
+          <ThreeBoxThreads threadId={daoState.id} daoState={daoState} currentAccountAddress={this.props.currentAccountAddress}></ThreeBoxThreads>
         </div>
       </div>
     );
