@@ -20,43 +20,75 @@ interface IExternalProps {
 
 type IProps = IExternalProps;
 
+export const renderGpParams = (params: IGenesisProtocolParams): any => {
+
+  const duration = (durationSeconds: number): any => {
+    if (!durationSeconds) {
+      return "";
+    }
+
+    const duration = moment.duration(durationSeconds * 1000);
+
+    const days = Math.floor(duration.asDays());
+    const hours = duration.hours();
+    const minutes = duration.minutes();
+    const seconds = duration.seconds();
+    // there won't ever be milliseconds
+    const colon = <span className={css.colon}>: </span>;
+
+    const first = days ? "days" : hours ? "hours" : minutes ? "minutes" : seconds ? "seconds" : null;
+
+    return <span>
+      {
+        days ? <span className={css.timeSection}><strong>{days} day{days > 1 ? "s" : ""}</strong></span> : ""
+      }
+      {
+        hours ? <span className={css.timeSection}>{first !== "hours" ? colon : ""}<strong>{hours} hour{hours > 1 ? "s" : ""}</strong></span> : ""
+      }
+      {
+        minutes ? <span className={css.timeSection}><span>{first !== "minutes" ? colon : ""}<strong>{minutes} minute{minutes > 1 ? "s" : ""}</strong></span></span> : ""
+      }
+      {
+        seconds ? <span className={css.timeSection}><span>{first !== "seconds" ? colon : ""}<strong>{seconds} second{seconds > 1 ? "s" : ""}</strong></span></span> : ""
+      }
+    </span>;
+  };
+
+  // represent time in locale-independent UTC format
+  const activationTime = moment.unix(params.activationTime).utc();
+
+  return <React.Fragment>
+    <div>Activation Time:</div><div className={css.ellipsis}>{
+      `${ activationTime.format("h:mm A [UTC] on MMMM Do, YYYY")} ${activationTime.isSameOrBefore(moment()) ? "(active)" : "(inactive)"}`
+    }</div>
+    <div>Boosted Vote Period Limit:</div><div>{duration(params.boostedVotePeriodLimit)} ({params.boostedVotePeriodLimit} seconds)</div>
+    <div>DAO Bounty Constant:</div><div>{params.daoBountyConst}</div>
+    <div>Proposal Reputation Reward:</div><div>{fromWei(params.proposingRepReward)} REP</div>
+    <div>Minimum DAO Bounty:</div><div>{fromWei(params.minimumDaoBounty)} GEN</div>
+    <div>Pre-Boosted Vote Period Limit:</div><div>{duration(params.preBoostedVotePeriodLimit)} ({params.preBoostedVotePeriodLimit} seconds)</div>
+    <div>Queued Vote Period Limit:</div><div>{duration(params.queuedVotePeriodLimit)} ({params.queuedVotePeriodLimit} seconds)</div>
+    <div>Queued Vote Required:</div><div>{params.queuedVoteRequiredPercentage}%</div>
+    <div>Quiet Ending Period:</div><div>{duration(params.quietEndingPeriod)} ({params.quietEndingPeriod} seconds)</div>
+    <div>Threshold Constant</div><div>
+      <Tooltip
+        placement="top"
+        overlay={
+          <span>{params.thresholdConst.toString()}</span>
+        }
+        trigger={["hover"]}
+      >
+        <span>{roundUp(params.thresholdConst, 3).toString()}</span>
+      </Tooltip>
+    </div>
+    <div>Voters Reputation Loss:</div><div>{params.votersReputationLossRatio}%</div>
+  </React.Fragment>;
+};
+
 export default class PluginInfo extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
     const { daoState, plugin } = this.props;
     const daoAvatarAddress = daoState.address;
-
-    const duration = (durationSeconds: number): any => {
-      if (!durationSeconds) {
-        return "";
-      }
-
-      const duration = moment.duration(durationSeconds * 1000);
-
-      const days = Math.floor(duration.asDays());
-      const hours = duration.hours();
-      const minutes = duration.minutes();
-      const seconds = duration.seconds();
-      // there won't ever be milliseconds
-      const colon = <span className={css.colon}>: </span>;
-
-      const first = days ? "days" : hours ? "hours" : minutes ? "minutes" : seconds ? "seconds" : null;
-
-      return <span>
-        {
-          days ? <span className={css.timeSection}><strong>{days} day{days > 1 ? "s" : ""}</strong></span> : ""
-        }
-        {
-          hours ? <span className={css.timeSection}>{first !== "hours" ? colon : ""}<strong>{hours} hour{hours > 1 ? "s" : ""}</strong></span> : ""
-        }
-        {
-          minutes ? <span className={css.timeSection}><span>{first !== "minutes" ? colon : ""}<strong>{minutes} minute{minutes > 1 ? "s" : ""}</strong></span></span> : ""
-        }
-        {
-          seconds ? <span className={css.timeSection}><span>{first !== "seconds" ? colon : ""}<strong>{seconds} second{seconds > 1 ? "s" : ""}</strong></span></span> : ""
-        }
-      </span>;
-    };
 
     const renderVotingMachineLink = (votingMachine: Address) => {
       if (votingMachine) {
@@ -68,37 +100,7 @@ export default class PluginInfo extends React.Component<IProps, null> {
         </>;
       }
     };
-    const renderGpParams = (params: IGenesisProtocolParams): any => {
 
-      // represent time in locale-independent UTC format
-      const activationTime = moment.unix(params.activationTime).utc();
-
-      return <React.Fragment>
-        <div>Activation Time:</div><div className={css.ellipsis}>{
-          `${ activationTime.format("h:mm A [UTC] on MMMM Do, YYYY")} ${activationTime.isSameOrBefore(moment()) ? "(active)" : "(inactive)"}`
-        }</div>
-        <div>Boosted Vote Period Limit:</div><div>{duration(params.boostedVotePeriodLimit)} ({params.boostedVotePeriodLimit} seconds)</div>
-        <div>DAO Bounty Constant:</div><div>{params.daoBountyConst}</div>
-        <div>Proposal Reputation Reward:</div><div>{fromWei(params.proposingRepReward)} REP</div>
-        <div>Minimum DAO Bounty:</div><div>{fromWei(params.minimumDaoBounty)} GEN</div>
-        <div>Pre-Boosted Vote Period Limit:</div><div>{duration(params.preBoostedVotePeriodLimit)} ({params.preBoostedVotePeriodLimit} seconds)</div>
-        <div>Queued Vote Period Limit:</div><div>{duration(params.queuedVotePeriodLimit)} ({params.queuedVotePeriodLimit} seconds)</div>
-        <div>Queued Vote Required:</div><div>{params.queuedVoteRequiredPercentage}%</div>
-        <div>Quiet Ending Period:</div><div>{duration(params.quietEndingPeriod)} ({params.quietEndingPeriod} seconds)</div>
-        <div>Threshold Constant</div><div>
-          <Tooltip
-            placement="top"
-            overlay={
-              <span>{params.thresholdConst.toString()}</span>
-            }
-            trigger={["hover"]}
-          >
-            <span>{roundUp(params.thresholdConst, 3).toString()}</span>
-          </Tooltip>
-        </div>
-        <div>Voters Reputation Loss:</div><div>{params.votersReputationLossRatio}%</div>
-      </React.Fragment>;
-    };
 
     const pluginParams = (plugin as any).pluginParams;
     const votingMachine = (
