@@ -50,8 +50,9 @@
     "Validate Address" : "Please enter a valid address",
     "Validate HEX" : "Must be a hex value",
     "Validate Digits" : "Must contain only digits",
-    "Call to Contract": "This proposal will call the following contract:",
-    "No ABI": "No ABI for this contract",
+    "Call to Contract": "This proposal will call the following ",
+    "No ABI": "No ABI found for target contract, please verify the ",
+    "contract": "contract",
     "Add Params": "Add Params",
     "Remove Params": "Remove Params"
 }

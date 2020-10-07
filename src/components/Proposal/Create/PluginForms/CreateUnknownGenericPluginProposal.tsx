@@ -73,6 +73,19 @@ const defaultValues: IFormValues = Object.freeze({
   method: "",
 });
 
+interface INoABIProps {
+  contractToCall: string
+}
+
+const NoABI = (props: INoABIProps) => {
+  return (
+    <div className={css.noABIWrapper}>
+      {i18next.t("No ABI")}
+      <a href={linkToEtherScan(props.contractToCall)} target="_blank" rel="noopener noreferrer">{i18next.t("contract")}</a>
+    </div>
+  );
+};
+
 class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
 
   formModalService: IFormModalService<IFormValues>;
@@ -181,7 +194,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
             {this.state.abiMethods.length > 0 ? <React.Fragment>
               <div className={css.callToContract}>
                 <span>{i18next.t("Call to Contract")}</span>
-                <a href={linkToEtherScan(contractToCall)} target="_blank" rel="noopener noreferrer">{contractToCall}</a>
+                <a href={linkToEtherScan(contractToCall)} target="_blank" rel="noopener noreferrer">{i18next.t("contract")}</a>
               </div>
               <Formik
                 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -404,7 +417,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
                   </Form>
                 }
               />
-            </React.Fragment> : <div>{i18next.t("No ABI")}</div>}
+            </React.Fragment> : <NoABI contractToCall={contractToCall} />}
           </React.Fragment>}
       </div>
     );

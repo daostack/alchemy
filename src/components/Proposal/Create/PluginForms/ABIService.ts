@@ -3,7 +3,7 @@ import { Interface, isHexString } from "ethers/utils";
 import { SortService } from "lib/sortService";
 const Web3 = require("web3");
 import axios from "axios";
-import { isAddress } from "lib/util";
+import { isAddress, targetedNetwork } from "lib/util";
 
 export interface IAllowedAbiItem extends AbiItem {
   name: string
@@ -14,6 +14,22 @@ export interface IAbiItemExtended extends IAllowedAbiItem {
   action: string
   methodSignature: string
 }
+
+/**
+ * Given a contract address returns the URL to fetch the ABI data accroding the current network
+ * @param {string} contractAddress
+ * @returns {string} URL
+ */
+const getUrl = (contractAddress: string): string => {
+  const network = targetedNetwork();
+  if (network === "xdai"){
+    return `https://blockscout.com/poa/xdai/api?module=contract&action=getabi&address=${contractAddress}`;
+  }
+  else {
+    const prefix = (network === "main" || network === "ganache") ? "" : `-${network}`; // we consider 'ganache' as 'main'
+    return `https://api${prefix}.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}&apikey=${process.env.ETHERSCAN_API_KEY}`;
+  }
+};
 
 const getSignatureHash = (signature: string): string => {
   return Web3.utils.keccak256(signature).toString();
@@ -93,7 +109,7 @@ export const validateABIInputs = (data: Array<any>): boolean => {
  * @param {string} contractAddress
  */
 export const getABIByContract = async (contractAddress: string): Promise<Array<any>> => {
-  const url = `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}&apikey=${process.env.ETHERSCAN_API_KEY}`;
+  const url = getUrl(contractAddress);
   try {
     const response = await axios({ url: url, method: "GET" }).then(res => { return res.data; });
     if (response.status === "0") {
