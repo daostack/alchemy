@@ -8,6 +8,16 @@
   text-align: center;
   font-family: "Open Sans";
 
+  .detailsRowsContainer {
+    display: grid;
+    grid-template-columns: 1.1fr 2fr;
+    column-gap: 16px;
+    row-gap: 4px;
+    > div:nth-child(odd) {
+      font-weight: bold;
+    }
+  }
+
   strong {
     font-weight: normal;
   }

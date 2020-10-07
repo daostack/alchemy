@@ -57,6 +57,8 @@ interface IState {
 
 const PAGE_SIZE = 50;
 
+const isRegistered = process.env.SHOW_ALL_DAOS === "true" ? undefined : "registered";
+
 class DaosPage extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
@@ -129,10 +131,10 @@ class DaosPage extends React.Component<IProps, IState> {
       const firstChar = searchString.charAt(0);
       const foundDaos = await combineLatest(
         // eslint-disable-next-line @typescript-eslint/naming-convention
-        arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: searchString } }, { fetchAllData: true }),
+        arc.daos({ orderBy: "name", orderDirection: "asc", where: { register: isRegistered, name_contains: searchString } }, { fetchAllData: true }),
         // If string is all lower case also search for string with first character uppercased so "gen" matches "Gen" too
         // eslint-disable-next-line @typescript-eslint/naming-convention
-        firstChar.toLowerCase() === firstChar ? arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: firstChar.toUpperCase() + searchString.slice(1) } }, { fetchAllData: true }) : of([]),
+        firstChar.toLowerCase() === firstChar ? arc.daos({ orderBy: "name", orderDirection: "asc", where: { register: isRegistered, name_contains: firstChar.toUpperCase() + searchString.slice(1) } }, { fetchAllData: true }) : of([]),
         (data1, data2) => data1.concat(data2),
       ).pipe(first()).toPromise();
       this.setState({ searchDaos: foundDaos });
@@ -187,18 +189,7 @@ class DaosPage extends React.Component<IProps, IState> {
       otherDAOs = otherDAOs.concat(extraFoundDaos);
     }
 
-    // eslint-disable-next-line no-extra-boolean-cast
-    if (process.env.SHOW_ALL_DAOS === "true") {
-      // on staging we show all daos (registered or not)
-      otherDAOs = otherDAOs.filter((d: DAO) => !yourDAOAddresses.includes(d.id) && d.coreState.name.toLowerCase().includes(search));
-    } else {
-      // Otherwise show registered DAOs
-      otherDAOs = otherDAOs.filter((d: DAO) => {
-        return !yourDAOAddresses.includes(d.id) &&
-          d.coreState.name.toLowerCase().includes(search) &&
-          d.coreState.register === "registered";
-      });
-    }
+    otherDAOs = otherDAOs.filter((d: DAO) => !yourDAOAddresses.includes(d.id) && d.coreState.name.toLowerCase().includes(search));
 
     this.sortDaos(otherDAOs);
 
@@ -333,9 +324,8 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
   ) : of([]);
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc" }, { fetchAllData: true, polling: true, pollInterval: GRAPH_POLL_INTERVAL }) : of([]);
-
   return combineLatest(
-    arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0 }, { fetchAllData: true, polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
+    arc.daos({ where: { register: isRegistered }, orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0 }, { fetchAllData: true, polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
     followDAOs,
     memberOfDAOs
   );
