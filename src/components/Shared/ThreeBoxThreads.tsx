@@ -16,7 +16,7 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { IProfilesState, I3BoxThreadPost, I3BoxThread } from "reducers/profilesReducer";
-import * as css from "./ThreeboxThreads.scss";
+import * as css from "./ThreeBoxThreads.scss";
 
 type IExternalProps = {
   currentAccountAddress: Address;
