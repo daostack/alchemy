@@ -1,6 +1,6 @@
 import { IGenericPluginProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
-import { linkToEtherScan, formatTokens } from "lib/util";
+import { linkToEtherScan, formatTokens, baseTokenName } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
@@ -36,7 +36,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
         <span className={css.summaryTitle}>
         Unknown function call
           {sendsETH ?
-            <div className={css.warning}>&gt; Sending {formatTokens(proposalState.value)} ETH &lt;</div>
+            <div className={css.warning}>&gt; Sending {formatTokens(proposalState.value)} {baseTokenName()} &lt;</div>
             : ""
           }
         </span>
@@ -45,7 +45,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
             To contract at:
             <pre><a href={linkToEtherScan(proposalState.contractToCall)} target="_blank" rel="noopener noreferrer">{proposalState.contractToCall}</a></pre>
             sending to contract:
-            <pre className={sendsETH ? css.warning : ""}>{formatTokens(proposalState.value)} ETH</pre>
+            <pre className={sendsETH ? css.warning : ""}>{formatTokens(proposalState.value)} {baseTokenName()}</pre>
           </div>
           : ""
         }

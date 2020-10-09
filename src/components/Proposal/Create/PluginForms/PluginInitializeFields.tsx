@@ -2,7 +2,7 @@
 // a plugin's encoded initialize(...) data.
 
 import * as React from "react";
-import { targetedNetwork, linkToEtherScan } from "lib/util";
+import { targetedNetwork, linkToEtherScan, getLocalTimezone } from "lib/util";
 import { PLUGIN_NAMES } from "lib/pluginUtils";
 import { KNOWNPLUGINS } from "genericPluginRegistry";
 import { IFormValues } from "./CreatePluginManagerProposal";
@@ -10,13 +10,14 @@ import * as css from "../CreateProposal.scss";
 import { Form, ErrorMessage, Field } from "formik";
 import * as validators from "./Validators";
 import i18next from "i18next";
+import { CustomDateInput } from "components/Plugin/ContributionRewardExtRewarders/Competition/CreateProposal";
 
 interface IProps {
   pluginName: keyof typeof PLUGIN_NAMES | "";
   values: IFormValues;
 }
 
-const fieldView = (plugin: string, title: string, field: string, validate?: (value: any) => void, type?: string) => (
+const fieldView = (plugin: string, title: string, field: string, validate?: (value: any) => void, type?: string, component?: any) => (
   <div>
     <label htmlFor={field}>
       <div className={css.requiredMarker}>*</div>
@@ -28,6 +29,7 @@ const fieldView = (plugin: string, title: string, field: string, validate?: (val
       name={`${plugin}.${field}`}
       validate={validate}
       type={type}
+      component={component}
     />
   </div>
 );
@@ -45,7 +47,7 @@ const GenesisProtocolFields = (paramsProp: string) => (
       {fieldView(paramsProp, "Voters Reputation Loss Ratio", "votersReputationLossRatio", validators.validPercentage)}
       {fieldView(paramsProp, "Minimum DAO Bounty", "minimumDaoBounty", value => validators.greaterThan(value, 0))}
       {fieldView(paramsProp, "DAO Bounty Const", "daoBountyConst", value => validators.greaterThan(value, 0))}
-      {fieldView(paramsProp, "Activation Time", "activationTime", validators.futureTime, "datetime-local")}
+      {fieldView(paramsProp, `Activation Time ${getLocalTimezone()}`, "activationTime", validators.futureTime, undefined, CustomDateInput)}
       {fieldView(paramsProp, "Vote on behalf", "voteOnBehalf", (address: string) => validators.address(address, true))}
     </div>
   </Form>
@@ -89,7 +91,7 @@ const GenericSchemeFields: React.FC<IProps> = ({ values }) => {
           component="select"
           className={css.pluginSelect}
         >
-          <option value="">Custom...</option>
+          <option id="custom" value="">Custom...</option>
           {templates.map((template) => (
             <option key={`generic_action_${template.name}_${template.address}`} value={template.address}>
               {template.name}

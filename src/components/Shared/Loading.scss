@@ -1,9 +1,11 @@
 .loading {
+  width: 50px;
+  display: block;
+  margin: auto;
   &.global {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 50px;
   }
 }

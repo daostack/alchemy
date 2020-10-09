@@ -80,7 +80,7 @@ const customStyles = {
   }),
 };
 
-const CustomDateInput: React.SFC<any> = ({ field, form }) => {
+export const CustomDateInput: React.SFC<any> = ({ field, form }) => {
   const onChange = (date: moment.Moment) => {
     form.setFieldValue(field.name, date);
     return true;
