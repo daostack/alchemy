@@ -52,7 +52,7 @@
     "Validate Digits" : "Must contain only digits",
     "Call to Contract": "This proposal will call the following ",
     "No ABI": "No ABI found for target contract, please verify the ",
-    "No Write Methods": "No write methods found for target contract, please verify the ",
+    "No Write Methods": "No write methods found for target ",
     "contract": "contract",
     "Add Params": "Add Params",
     "Remove Params": "Remove Params"
