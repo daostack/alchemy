@@ -34,8 +34,9 @@ interface IDispatchProps {
 
 interface IStateProps {
   loading: boolean
-  tags: Array<string>;
-  abiMethods: any
+  tags: Array<string>
+  abiData: Array<any>
+  abiMethods: Array<any>
   abiInputs: IABIField[]
   callData: string
 }
@@ -75,12 +76,13 @@ const defaultValues: IFormValues = Object.freeze({
 
 interface INoABIProps {
   contractToCall: string
+  abiData: Array<any>
 }
 
 const NoABI = (props: INoABIProps) => {
   return (
     <div className={css.noABIWrapper}>
-      {i18next.t("No ABI")}
+      {props.abiData.length === 0 ? i18next.t("No ABI") : i18next.t("No Write Methods")}
       <a href={linkToEtherScan(props.contractToCall)} target="_blank" rel="noopener noreferrer">{i18next.t("contract")}</a>
     </div>
   );
@@ -93,7 +95,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
-    this.state = { loading: true, tags: [], abiMethods: [], abiInputs: [], callData: "" };
+    this.state = { loading: true, tags: [], abiData: [], abiMethods: [], abiInputs: [], callData: "" };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.formModalService = CreateFormModalService(
@@ -116,7 +118,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
     const contractToCall = (this.props.pluginState as IGenericPluginState).pluginParams.contractToCall;
     const abiData = await getABIByContract(contractToCall);
     const abiMethods = extractABIMethods(abiData);
-    this.setState({ abiMethods: abiMethods, loading: false });
+    this.setState({ abiData: abiData, abiMethods: abiMethods, loading: false });
   }
 
   componentWillUnmount() {
@@ -417,7 +419,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
                   </Form>
                 }
               />
-            </React.Fragment> : <NoABI contractToCall={contractToCall} />}
+            </React.Fragment> : <NoABI contractToCall={contractToCall} abiData={this.state.abiData} />}
           </React.Fragment>}
       </div>
     );
