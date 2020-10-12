@@ -123,6 +123,13 @@ fieldset {
       }
     }
 
+    .encodedData {
+      overflow-wrap: break-word;
+      margin: 5px 0 40px 0px;
+      border: 1px solid;
+      padding: 20px;
+    }
+
     .proposerIsAdminCheckbox {
       label {
         display: inline-block;
@@ -387,6 +394,21 @@ fieldset {
   overflow-y: auto;
   max-height: calc(100vh - 200px);
   padding: 20px 30px 30px 30px;
+}
+
+.noABIWrapper {
+  background-color: $light-red;
+  border: 1px solid $accent-2;
+  border-radius: 5px;
+  padding: 15px;
+}
+
+.callToContract {
+  border: 1px solid $accent-3;
+  padding: 15px;
+  border-radius: 5px;
+  background-color: $light-green;
+  margin-bottom: 20px;
 }
 
 .containerWithSidebar {
@@ -674,10 +696,6 @@ div.description {
         width: 100%;
       }
 
-      .encodedData textarea {
-        border: $gray-border-2;
-        padding: 9px 15px 12px 15px;
-      }
 
       .dates {
         grid-template-columns: 1fr;
