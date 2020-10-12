@@ -29,9 +29,7 @@ async function assert3Box(): Promise<void> {
     return initPromise;
   } else {
     return initPromise = new Promise((resolve) => {
-      console.log("create");
       return Box.create().then((box: typeof Box) => {
-        console.log("getIPFS");
         return Box.getIPFS().then((ipfs: any) => {
           const threeboxDidResolver = getResolver(ipfs);
           didResolver = new Resolver(threeboxDidResolver);
@@ -69,7 +67,6 @@ async function get3Box(accountAddress: Address, dispatch: any, state: any, withS
     }
 
     await assert3Box();
-    console.log("auth");
     await unauthorizedBox.auth([], { address: accountAddress, provider: web3Provider });
     await unauthorizedBox.syncDone;
     /**
@@ -126,8 +123,7 @@ async function addressForDid(did: string): Promise<Address> {
 export async function getThread(threadName?: string): Promise<I3BoxThread> {
   try {
     await assert3Box();
-    console.info("getting thread");
-    return unauthorizedBox.openThread(spaceName, threadName, {firstModerator: THREEBOXTHREADSMODERATOR, members: false});
+    return unauthorizedBox.openThread(spaceName, threadName, { firstModerator: THREEBOXTHREADSMODERATOR, members: false });
   }
   catch (ex) {
     // eslint-disable-next-line no-console
@@ -143,7 +139,6 @@ export async function getThread(threadName?: string): Promise<I3BoxThread> {
 export async function getPosts(thread?: I3BoxThread): Promise<Array<I3BoxThreadPost>> {
   try {
     await assert3Box();
-    console.info("getting posts");
     const posts = (await thread.getPosts()) as Array<I3BoxThreadPost>;
 
     for (const post of posts) {
@@ -190,10 +185,8 @@ export async function joinThread(
     profileState.joinedThreads = {};
   }
   else if (profileState.joinedThreads[threadName]) {
-    console.info(`already joined thread ${profileState.joinedThreads[threadName]}`);
     return profileState.joinedThreads[threadName];
   }
-  console.info("joining thread");
   /**
      * this will create the thread if it doesn't already exist.
      */
@@ -203,8 +196,6 @@ export async function joinThread(
   });
 
   profileState.joinedThreads[threadName] = thread;
-
-  console.info(`joined thread ${profileState.joinedThreads[threadName]}`);
 
   return thread;
 }
@@ -219,7 +210,6 @@ export function subcribeToThread(thread: I3BoxThread, handler: () => void): void
 
 export async function addPost(thread: I3BoxThread, message: string): Promise<void> {
   try {
-    console.info(`posting message ${message}`);
     thread.post(message);
   }
   catch (ex) {
@@ -305,8 +295,8 @@ async function _getProfile(
  * @param accountAddress
  * @param currentAccount
  */
-export function getProfile(accountAddress: string, currentAccount = false):
-(dispatch: Redux.Dispatch<any, any>, getState: () => IRootState) => Promise<void> {
+export function getProfile(accountAddress: string, currentAccount = false):(
+  dispatch: Redux.Dispatch<any, any>, getState: () => IRootState) => Promise<void> {
 
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState): Promise<void> => {
     _getProfile(accountAddress, currentAccount, dispatch);
@@ -496,6 +486,7 @@ export function toggleFollow(accountAddress: string, type: FollowType, id: strin
       } as FollowItemAction);
 
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error("Error (un)following: ", e);
       dispatch(showNotification(NotificationStatus.Failure, `Failed to (un)follow: ${e?.message ?? "unknown error"}`));
       return false;
