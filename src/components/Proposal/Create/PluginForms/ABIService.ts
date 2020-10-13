@@ -83,18 +83,18 @@ export const extractABIMethods = (abi: AbiItem[]): IAbiItemExtended[] => {
  */
 export const validateABIInputs = (data: Array<any>): boolean => {
   for (const input of data) {
-    switch (input.type) {
-      case "address":
+    switch (true) {
+      case input.type.includes("address"):
         if (!isAddress(input.value)) {
           return false;
         }
         break;
-      case "bytes":
+      case input.type.includes("byte"):
         if (!isHexString(input.value)) {
           return false;
         }
         break;
-      case "uint256":
+      case input.type.includes("uint"):
         if (/^\d+$/.test(input.value) === false) {
           return false;
         }

@@ -8,7 +8,25 @@
 }
 
 fieldset {
-  margin: 10px 0px;
+  margin: 30px 0px;
+}
+
+.removeFieldSet {
+  float: right;
+  border: none;
+  color: $accent-2;
+  background: none;
+}
+
+.addFieldSet {
+  border: none;
+  background: none;
+  color: $sky;
+}
+
+.removeFieldSet:hover,
+.addFieldSet:hover {
+  opacity: 0.7;
 }
 
 .createProposalWrapper {
@@ -67,6 +85,7 @@ fieldset {
   }
 
   form {
+    select,
     input {
       width: 100%;
       margin-top: 3px;
@@ -123,11 +142,16 @@ fieldset {
       }
     }
 
+    .addContract {
+      position: relative;
+    }
+
     .encodedData {
       overflow-wrap: break-word;
-      margin: 5px 0 40px 0px;
+      margin: 5px 0 5px 0px; // margin: 5px 0 40px 0px; TEMP
       border: 1px solid;
       padding: 20px;
+      max-width: 480px; // TEMPORARY - NEED TO BE DYNAMIC
     }
 
     .proposerIsAdminCheckbox {

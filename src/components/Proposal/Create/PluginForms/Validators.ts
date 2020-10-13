@@ -1,4 +1,6 @@
-import { isAddress } from "../../../../lib/util";
+import { isAddress } from "lib/util";
+import i18next from "i18next";
+import { isHexString } from "ethers/utils";
 
 const constants = {
   REQUIRED: "Required",
@@ -113,6 +115,53 @@ export const address = (value: string, allowNulls = false): string => {
     error = constants.REQUIRED;
   } else if (!isAddress(value.toString(), allowNulls)) {
     error = constants.VALID_ADDRESS;
+  }
+  return error;
+};
+
+
+/**
+ * Given a value returns error message in case value is less than 0 or no value provided
+ * @param {any} value
+ */
+export const requireValue = (value: any): string => {
+  let error;
+  if (value === "") {
+    error = i18next.t("Required");
+  } else if (value < 0) {
+    error = i18next.t("Valide Non-Negative");
+  }
+  return error;
+};
+
+/**
+ * Given ABI method param type (address, byets32, unit256, ...) and it's value, returns error message in case validation fails or no value provided
+ * @param {string} type
+ * @param {any} value
+ */
+export const validateParam = (type: string, value: any): string => {
+  let error;
+  if (!value) {
+    error = i18next.t("Required");
+  }
+  else {
+    switch (true) {
+      case type.includes("address"):
+        if (!isAddress(value)) {
+          error = i18next.t("Validate Address");
+        }
+        break;
+      case type.includes("byte"):
+        if (!isHexString(value)) {
+          error = i18next.t("Validate HEX");
+        }
+        break;
+      case type.includes("uint"):
+        if (/^\d+$/.test(value) === false) {
+          error = i18next.t("Validate Digits");
+        }
+        break;
+    }
   }
   return error;
 };
