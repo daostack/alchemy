@@ -129,7 +129,7 @@ export const requireValue = (value: any): string => {
   if (value === "") {
     error = i18next.t("Required");
   } else if (value < 0) {
-    error = i18next.t("Valide Non-Negative");
+    error = i18next.t("Validate Non-Negative");
   }
   return error;
 };

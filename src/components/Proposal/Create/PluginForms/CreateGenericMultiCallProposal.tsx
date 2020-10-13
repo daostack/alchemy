@@ -156,7 +156,7 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
 
   /**
    * Given a contract address, checks whether it's valid, not exists in the current contract list and that the contract is verified with valid ABI data and write methods.
-   * If all checks are okay, pushes the contract address to the contract lists, otherwise returns a appropriate message.
+   * If all checks are okay, pushes the contract address to the contract lists, otherwise returns an appropriate message.
    * @param {string} contractToCall
    */
   private verifyContract = async (contractToCall: string) => {
