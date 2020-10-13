@@ -255,9 +255,9 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                 <>
                   <li><a className="externalLink" href="https://alchemy.do" target="_blank" rel="noopener noreferrer">Switch to v2</a></li>
                   {(network === "main") ?
-                    <li><a className="externalLink" href="v1.xdai.alchemy.do" target="_blank" rel="noopener noreferrer">Switch to xDAI</a></li>
+                    <li><a className="externalLink" href="https://v1.xdai.alchemy.do" target="_blank" rel="noopener noreferrer">Switch to xDAI</a></li>
                     : (network === "xdai") ?
-                      <li><a className="externalLink" href="v1.alchemy.do" target="_blank" rel="noopener noreferrer">Switch to Mainnet</a></li>
+                      <li><a className="externalLink" href="https://v1.alchemy.do" target="_blank" rel="noopener noreferrer">Switch to Mainnet</a></li>
                       : ""
                   }
                 </>
