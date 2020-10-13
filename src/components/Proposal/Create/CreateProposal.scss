@@ -1,4 +1,4 @@
-@import "./react-mde.css";
+@import "../../../assets/styles/react-mde.css";
 :global {
   @import "../../../../node_modules/react-datetime/css/react-datetime";
 }
@@ -372,7 +372,7 @@ fieldset {
       font-family: $body-font;
       font-weight: bold;
       transition: all 0.25s ease;
-      background-color: rgba(0, 113, 255, 1);
+      background-color: $secondary-button-color;
       border-radius: 15px;
       color: $white;
 
@@ -647,7 +647,7 @@ fieldset {
   font-family: $body-font;
   font-weight: bold;
   transition: all 0.25s ease;
-  background-color: rgba(0, 113, 255, 1);
+  background-color: $secondary-button-color;
   border-radius: 15px;
   color: $white;
   outline: none;
@@ -689,7 +689,7 @@ div.description {
 
   a,
   a:hover {
-    color: #0071ff;
+    color: $secondary-button-color;
   }
 }
 
@@ -719,7 +719,6 @@ div.description {
         border: none;
         width: 100%;
       }
-
 
       .dates {
         grid-template-columns: 1fr;

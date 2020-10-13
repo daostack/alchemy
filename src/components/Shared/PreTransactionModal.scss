@@ -64,7 +64,7 @@
     margin-right: 10px;
     line-height: 30px;
     padding: 0 25px;
-    color: rgba(0, 113, 255, 1);
+    color: $secondary-button-color;
   }
 }
 
@@ -76,7 +76,7 @@
 
   button.hover {
     color: rgba(18, 46, 91, 1);
-    background-color: rgba(0, 113, 255, 1);
+    background-color: $secondary-button-color;
     width: 20px;
     height: 20px;
     border: 0;
@@ -125,7 +125,7 @@
 .launchMetaMask {
   border-radius: 15px;
   height: 30px;
-  background-color: rgba(0, 113, 255, 1);
+  background-color: $secondary-button-color;
   color: $white;
   border: 0;
   outline: none;

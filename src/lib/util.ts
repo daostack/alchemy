@@ -17,7 +17,6 @@ import BN = require("bn.js");
  */
 import "moment";
 import * as moment from "moment-timezone";
-import { getArc } from "../arc";
 import { Signer } from "ethers";
 import { promisify } from "util";
 import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
@@ -26,6 +25,16 @@ const Web3 = require("web3");
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
 
+/**
+ * define this here because importing arc.ts creates a cirular dependency
+ */
+export function getArc(): Arc {
+  const arc = (window as any).arc as Arc;
+  if (!arc) {
+    throw Error("window.arc is not defined - please call initializeArc first");
+  }
+  return arc;
+}
 
 export const convertDateToPosix = (date: Date): number => {
   return date.getTime() / 1000;
@@ -268,7 +277,7 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean, time
     const timerId = setInterval(async () => {
       if (await test()) { return resolve(); }
     }, 30);
-    setTimeout(() => { clearTimeout(timerId); return reject(new Error("Test timed out..")); }, timeOut);
+    setTimeout(() => { clearTimeout(timerId); return reject(new Error("Timed out awaiting the desired condition")); }, timeOut);
   });
 }
 

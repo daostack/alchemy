@@ -11,7 +11,7 @@
   outline: none;
 
   .spinner {
-    content: '';
+    content: "";
     display: none;
     box-sizing: border-box;
     position: absolute;
@@ -23,7 +23,7 @@
     border-radius: 50%;
     border-top: 2px solid #0076ff;
     border-right: 2px solid transparent;
-    animation: spinner .6s linear infinite;
+    animation: spinner 0.6s linear infinite;
   }
 
   .unfollowText {
@@ -32,8 +32,12 @@
 }
 
 .followButton.isFollowing:hover {
-  .followText { display: none; }
-  .unfollowText { display: inline; }
+  .followText {
+    display: none;
+  }
+  .unfollowText {
+    display: inline;
+  }
 }
 
 .followButton.isFollowing {
@@ -69,10 +73,10 @@
   height: 30px;
   border-radius: 30px;
   border-width: 1px;
-  background-color: #0071ff;
+  background-color: $secondary-button-color;
   padding: 0 15px;
-  color: #0376ff;
-  border-color: #0376ff;
+  color: $accent-1;
+  border-color: $accent-1;
   color: white;
   font-weight: bold;
   font-size: 13px;
@@ -87,11 +91,11 @@
 }
 
 .followButton.bigButton.isFollowing {
-  color: #0071ff;
+  color: $secondary-button-color;
   background-color: white;
 
   .spinner {
-    border-top: 2px solid #0376ff;
+    border-top: 2px solid $accent-1;
   }
 }
 
@@ -106,5 +110,7 @@
 }
 
 @keyframes spinner {
-  to {transform: rotate(360deg);}
+  to {
+    transform: rotate(360deg);
+  }
 }

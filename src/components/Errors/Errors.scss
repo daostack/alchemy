@@ -3,45 +3,45 @@
 }
 
 .notification {
-	width: 680px;
-	text-align: center;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate( -50%, -50%);
+  width: 680px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 
-	h1 {
-		font-size: $headline-2;
-	}
+  h1 {
+    font-size: $headline-2;
+  }
 
-	img {
-		height: 100px;
-	}
+  img {
+    height: 100px;
+  }
 }
 
 .unlockMetamask {
-	position: absolute;
-	right: 40px;
-	top: 20px;
-	font-weight: bold;
-	font-size: $title;
-	color: $accent-1;
+  position: absolute;
+  right: 40px;
+  top: 20px;
+  font-weight: bold;
+  font-size: $title;
+  color: $accent-1;
 
-	.icon {
-		height: 16px;
-	}
+  .icon {
+    height: 16px;
+  }
 }
 
 .downloadMetamask {
-	text-decoration: none;
-	border: 1px solid $accent-1;
-	padding: 15px 10px;
-	text-align: center;
+  text-decoration: none;
+  border: 1px solid $accent-1;
+  padding: 15px 10px;
+  text-align: center;
 }
 
 .link {
-	color: blue;
-	cursor: pointer;
+  color: blue;
+  cursor: pointer;
 }
 
 .errorContainer {
@@ -60,7 +60,7 @@
       padding-bottom: 40px;
 
       .stars {
-        max-width:853px;
+        max-width: 853px;
       }
     }
 
@@ -69,7 +69,7 @@
       font-weight: bold;
       line-height: 0.73;
       letter-spacing: 0.61px;
-      color: #689bd6;
+      color: $title-color;
     }
 
     .description {
@@ -79,18 +79,18 @@
       line-height: 1.19;
       letter-spacing: 0.29px;
       color: #9aa9b5;
-  }
+    }
     .title,
     .description {
       margin: auto;
       margin-bottom: 30px;
-      max-width:600px;
+      max-width: 600px;
     }
-      
+
     .report {
       font-family: "Open Sans";
       font-size: 13px;
-      color: #0071ff;
+      color: $secondary-button-color;
       margin-right: 20px;
       font-weight: 500;
       cursor: pointer;
@@ -109,7 +109,6 @@
       border: none;
     }
 
-    
     button.home:focus {
       outline: none;
     }
