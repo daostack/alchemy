@@ -13,7 +13,7 @@ import Header from "layouts/Header";
 import SidebarMenu from "layouts/SidebarMenu";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification, INotification } from "reducers/notifications";
-import { getCachedAccount, cacheWeb3Info, logout, pollForAccountChanges } from "arc";
+import { getCachedAccount, cacheWeb3Info, logout, pollForAccountChanges, IAccountChangedEvent } from "arc";
 import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { parse } from "query-string";
 import * as React from "react";
@@ -24,7 +24,6 @@ import { ModalContainer } from "react-router-modal";
 import { History } from "history";
 import classNames from "classnames";
 import { captureException, withScope } from "@sentry/browser";
-import { Address } from "@daostack/arc.js";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
 import SimpleMessagePopup, { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
@@ -141,16 +140,20 @@ class AppContainer extends React.Component<IProps, IState> {
      * will only cause it to get the wrong impression and misbehave.
      */
     pollForAccountChanges(accountWasCached ? null : currentAddress).subscribe(
-      (newAddress: Address | null): void => {
+      (changes: IAccountChangedEvent): void => {
+        const { newAccount, previousAccount } = changes;
         // eslint-disable-next-line no-console
-        console.log(`new account: ${newAddress}`);
-        this.props.setCurrentAccount(newAddress);
-        if (newAddress) {
-          cacheWeb3Info(newAddress);
+        console.log(`new account: ${newAccount}`);
+        this.props.setCurrentAccount(newAccount);
+        if (newAccount) {
+          cacheWeb3Info(newAccount);
         } else {
           logout(this.props.showNotification);
-
-          // TODO: save the threebox for each profile separately so we dont have to logout here
+        }
+        /**
+         * in case the previous account was logged into 3Box
+         */
+        if (previousAccount && (newAccount !== previousAccount)) {
           this.props.threeBoxLogout();
         }
       });

@@ -33,7 +33,7 @@
 
   button {
     font-weight: $bold;
-    color: rgba(3, 118, 255, 1);
+    color: $accent-1;
     background-color: rgba(225, 235, 247, 1);
     height: 25px;
     line-height: 14px;
@@ -179,7 +179,7 @@
 .toBoostMessage {
   font-size: 11px;
   letter-spacing: 0.2px;
-  color: #689bd6;
+  color: $title-color;
   margin-left: 2px;
   margin-right: 2px;
 }
@@ -299,7 +299,7 @@
       line-height: 30px;
       font-size: 13px;
       color: white;
-      background-color: #0376ff;
+      background-color: $accent-1;
       border-radius: 15px;
       display: inline-block;
       padding: 0 15px;
@@ -308,7 +308,7 @@
 
     button:first-of-type {
       background-color: rgba(225, 235, 247, 1);
-      color: rgba(0, 113, 255, 1);
+      color: $secondary-button-color;
     }
   }
 }
