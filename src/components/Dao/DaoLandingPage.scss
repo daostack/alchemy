@@ -8,7 +8,7 @@
 
   .infoContainer .titleContainer,
   .threadsContainer .headerText {
-    border-bottom: 1px solid rgba(45, 109, 181, 0.2);
+    border-bottom: 1px solid $subtle-line-color;
     margin-bottom: 30px;
     padding-bottom: 5px;
   }
@@ -31,7 +31,7 @@
       button {
         height: 30px;
         border-radius: 30px;
-        background-color: #0071ff;
+        background-color: $secondary-button-color;
         padding: 0 15px;
         color: $white;
         font-weight: bold;

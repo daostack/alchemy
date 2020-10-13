@@ -67,7 +67,7 @@ button.disabled {
     }
     a {
       white-space: nowrap;
-      color: #0071ff;
+      color: $secondary-button-color;
     }
   }
 
@@ -78,7 +78,7 @@ button.disabled {
   a.attachmentLink,
   a.attachmentLink:visited {
     font-size: 11px;
-    color: rgba(0, 113, 255, 1);
+    color: $secondary-button-color;
     display: inline-block;
     margin-bottom: 15px;
 
@@ -119,7 +119,7 @@ button.disabled {
   }
 
   a {
-    color: #0071ff;
+    color: $secondary-button-color;
   }
 }
 
@@ -181,7 +181,7 @@ button.disabled {
 
     .voters {
       padding-left: 10px;
-      color: rgba(0, 113, 255, 1);
+      color: $secondary-button-color;
       font-size: 11px;
       margin-left: 10px;
       border-left: 1px solid rgba(233, 238, 244, 1);
@@ -282,7 +282,7 @@ button.disabled {
 
   button.shareButton {
     height: 30px;
-    background-color: #0071ff;
+    background-color: $secondary-button-color;
     padding: 0 15px;
     border-radius: 30px;
     border-width: 1px;

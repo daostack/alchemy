@@ -105,7 +105,7 @@ a.blueButton {
     .countdown {
       flex-grow: 0;
       display: inline-block;
-      color: #689bd6;
+      color: $title-color;
       height: 18px;
       font-weight: 500;
       text-align: right;
@@ -151,7 +151,7 @@ a.blueButton {
     padding: 5px;
     text-align: center;
     font-family: "Open Sans";
-    color: #4f6176;
+    color: $grey-blue;
     margin-bottom: 16px;
 
     img {
@@ -182,7 +182,7 @@ a.blueButton {
   .activityContainer {
     display: flex;
     font-size: 13px;
-    color: #4f6176;
+    color: $grey-blue;
     font-family: "Open Sans";
 
     .suggestions {
@@ -222,7 +222,7 @@ a.blueButton {
         padding-right: 12px;
 
         a {
-          color: #0071ff;
+          color: $secondary-button-color;
         }
       }
 
@@ -235,7 +235,7 @@ a.blueButton {
     .name {
       font-size: 28px;
       border-bottom: $gray-border-2;
-      color: #689bd6;
+      color: $title-color;
       margin-bottom: 6px;
       padding-bottom: 16px;
     }
@@ -396,7 +396,7 @@ a.blueButton {
           }
 
           .label {
-            color: #4f6176;
+            color: $grey-blue;
             padding-right: 8px;
           }
 
@@ -413,7 +413,7 @@ a.blueButton {
 
     .heading {
       font-size: 23px;
-      color: #689bd6;
+      color: $title-color;
       width: 100%;
       border-bottom: 1px solid #bfcbd5;
       padding-bottom: 5px;
@@ -534,7 +534,7 @@ a.blueButton {
       width: 100%;
       border-bottom: 1px solid #bfcbd5;
       padding-bottom: 5px;
-      color: #689bd6;
+      color: $title-color;
       margin-bottom: 20px;
     }
 
@@ -547,7 +547,7 @@ a.blueButton {
   .discussionContainer {
     .title {
       font-size: 23px;
-      color: #689bd6;
+      color: $title-color;
       width: 100%;
       border-bottom: 1px solid #bfcbd5;
       padding-bottom: 5px;
@@ -706,7 +706,7 @@ a.blueButton {
       border: none;
       background-color: rgba(225, 235, 247, 1);
       border-radius: 15px;
-      color: rgba(0, 113, 255, 1);
+      color: $secondary-button-color;
     }
 
     .submitProposal {
@@ -719,7 +719,7 @@ a.blueButton {
       font-family: $body-font;
       font-weight: bold;
       transition: all 0.25s ease;
-      background-color: rgba(0, 113, 255, 1);
+      background-color: $secondary-button-color;
       border-radius: 15px;
       color: $white;
 
@@ -889,7 +889,7 @@ a.blueButton {
   .attachmentLink:visited {
     margin-top: 16px;
     font-size: 11px;
-    color: rgba(0, 113, 255, 1);
+    color: $secondary-button-color;
     display: inline-block;
 
     img {

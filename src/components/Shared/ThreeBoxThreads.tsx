@@ -58,7 +58,7 @@ type IProps = IExternalProps & IDispatchProps & IExternalStateProps;
 
 class ThreeBoxThreads extends React.Component<IProps, IStateProps> {
 
-  constructor(props: IProps) {
+  constructor (props: IProps) {
     super(props);
 
     this.state = {

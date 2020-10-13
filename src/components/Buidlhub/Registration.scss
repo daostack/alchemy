@@ -45,7 +45,7 @@
         color: white;
 
         &:hover {
-          background-color: rgba(3, 118, 255, 1);
+          background-color: $accent-1;
           cursor: pointer;
         }
       }
