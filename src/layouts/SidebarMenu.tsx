@@ -95,9 +95,8 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
         <div className={css.daoName}>
           <Link to={"/dao/" + dao.address} onClick={this.handleCloseMenu}>
             <b className={css.daoIcon} style={{ backgroundImage: bgPattern.toDataUrl() }}></b>
-            <em></em>
-            <span>{dao.name}</span>
           </Link>
+          <span>{dao.name}</span>
         </div>
         <div className={css.daoDescription}>
           {dao.name === "dxDAO" ?

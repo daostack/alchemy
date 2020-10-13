@@ -1,60 +1,86 @@
 import * as uuid from "uuid";
-import { getTestAddresses, hideCookieAcceptWindow, ITestAddresses, gotoDaoPlugins } from "./utils";
+import { hideCookieAcceptWindow, gotoDaoPlugins, submit, setCalendarDate } from "./utils";
+import * as moment from "moment";
+
+const chai = require("chai");
+
+global.expect = chai.expect;
+chai.Should();
 
 describe("Proposals", () => {
-  let daoAddress: string;
-  let addresses: ITestAddresses;
 
-  before(async () => {
-    addresses = getTestAddresses();
-    daoAddress = addresses.dao.Avatar.toLowerCase();
-    await hideCookieAcceptWindow();
+  beforeEach(async () => {
+    await gotoDaoPlugins("0xeabea104eccbaa46a89bf28dee05c6ec1a8cd759");
   });
 
-  it("Create a Generic Plugin proposal, vote for it, stake on it", async () => {
+  it("Create a Generic Plugin scheme and vote for it", async () => {
 
-    await gotoDaoPlugins(daoAddress);
+    const createPluginButton = await $("a[data-test-id=\"createProposal\"]");
+    await createPluginButton.waitForExist();
+    await createPluginButton.click();
 
-    const pluginCard = await $("[data-test-id=\"pluginCard-GenericScheme\"]");
-
-    await pluginCard.click();
-
-    const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
-    await createProposalButton.waitForExist();
-
-    await createProposalButton.click();
-
-    const titleInput = await $("*[id=\"titleInput\"]");
-    await titleInput.waitForExist();
+    const addPluginTab = await $("*[data-test-id=\"tab-AddPlugin\"]");
+    await addPluginTab.waitForExist();
+    await addPluginTab.click();
 
     const title = uuid();
+    const titleInput = await $("*[id=\"titleInput\"]");
+    await titleInput.waitForExist();
     await titleInput.setValue(title);
 
-    // using uuid value so that the test will pass also if there is already a proposal with this description
-    // (which must be unique).
     const descriptionInput = await $(".mde-text");
-    await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
+    await descriptionInput.waitForExist();
+    await descriptionInput.setValue(title);
 
-    const callDataInput = await $("*[id=\"callDataInput\"]");
-    await callDataInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
+    const pluginSelect = await $("*[id=\"pluginToAdd\"]");
+    await pluginSelect.waitForExist();
+    await pluginSelect.click();
+    const selectOption = await $("*[id=\"option-GenericScheme\"]");
+    await selectOption.waitForExist();
+    await selectOption.click();
 
-    const valueInput = await $("*[id=\"valueInput\"]");
-    await valueInput.setValue("1");
+    const contractToCallInput = await $("*[id=\"contractToCall\"]");
+    await contractToCallInput.waitForExist();
+    await contractToCallInput.click();
+    const customOption = await $("*[id=\"custom\"]");
+    await customOption.click();
 
-    const createProposalSubmitButton = await $("*[type=\"submit\"]");
-    await createProposalSubmitButton.click();
+    const customContractToCallInput = await $("input[id=\"contractToCall\"]");
+    await customContractToCallInput.waitForExist();
+    await customContractToCallInput.click();
+    await customContractToCallInput.setValue("0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf");
 
-    // check that the proposal appears in the list
-    // test for the title
+    const activationTimeInput = await $("input[name=\"GenericScheme.votingParams.activationTime\"]");
+    await activationTimeInput.waitForExist();
+    await activationTimeInput.scrollIntoView();
+    await setCalendarDate(activationTimeInput, moment().add(15, "seconds").format("MMMM D, YYYY HH:mm:ss"));
+
+    // hack to close any open calendar
+    await customOption.click();
+
+    await hideCookieAcceptWindow();
+    await submit();
+
     const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
     await titleElement.waitForExist();
+    await titleElement.scrollIntoView();
+    await titleElement.click();
+
+    const voteButton = await $("[data-test-id=\"voteFor\"]");
+    await voteButton.waitForDisplayed();
+    await voteButton.click();
+
+    const launchMetaMaskButton = await $("[data-test-id=\"launch-metamask\"]");
+    await launchMetaMaskButton.click();
+    const notification = await $("[data-test-id=\"button-notification-close\"]");
+    await notification.waitForExist({ timeout: 5000 });
 
   });
 
-  it("Fill out a generic plugin proposal form and export it", async () => {
-    await gotoDaoPlugins(daoAddress);
+  it("Create a Generic Plugin proposal and vote it", async () => {
 
     const pluginCard = await $("[data-test-id=\"pluginCard-GenericScheme\"]");
+    await pluginCard.scrollIntoView();
     await pluginCard.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
@@ -68,20 +94,52 @@ describe("Proposals", () => {
     const title = uuid();
     await titleInput.setValue(title);
 
-    // using uuid value so that the test will pass also if there is already a proposal with this description
-    // (which must be unique).
     const descriptionInput = await $(".mde-text");
     await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
-    const callDataInput = await $("*[id=\"callDataInput\"]");
-    await callDataInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
-
     const valueInput = await $("*[id=\"valueInput\"]");
+    await valueInput.click();
     await valueInput.setValue("0");
 
-    const exportProposalSubmitButton = await $("*[id=\"export-proposal\"]");
-    await exportProposalSubmitButton.click();
+    const selectSearchInput = await $("*[id=\"select-search\"]");
+    await selectSearchInput.scrollIntoView();
+    await selectSearchInput.click();
+
+    const elementList = await $("*[id=\"select-search-element-0\"]");
+    await elementList.click();
+
+    const abiInput_1 = await $("*[id=\"abi-input-0\"]");
+    await abiInput_1.scrollIntoView();
+    await abiInput_1.click();
+    await abiInput_1.setValue("0x853D2d862E2a2c76ef8a4F6Ef2b8A9fB3dA1f604");
+
+    const abiInput_2 = await $("*[id=\"abi-input-1\"]");
+    await abiInput_2.scrollIntoView();
+    await abiInput_2.click();
+    await abiInput_2.setValue("1");
+
+    const encodedData = await $("*[id=\"encoded-data\"]");
+    await encodedData.scrollIntoView();
+    await encodedData.click();
+
+    (await encodedData.getText()).should.be.equal("0x095ea7b3000000000000000000000000853d2d862e2a2c76ef8a4f6ef2b8a9fb3da1f6040000000000000000000000000000000000000000000000000000000000000001");
+
+    await hideCookieAcceptWindow();
+    await submit();
+
+    const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
+    await titleElement.waitForExist();
+    await titleElement.scrollIntoView();
+    await titleElement.click();
+
+    const voteButton = await $("[data-test-id=\"voteFor\"]");
+    await voteButton.waitForDisplayed();
+    await voteButton.click();
+
+    const launchMetaMaskButton = await $("[data-test-id=\"launch-metamask\"]");
+    await launchMetaMaskButton.click();
+    const notification = await $("[data-test-id=\"button-notification-close\"]");
+    await notification.waitForExist({ timeout: 5000 });
 
   });
-
 });
