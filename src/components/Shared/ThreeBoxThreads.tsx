@@ -179,22 +179,21 @@ class ThreeBoxThreads extends React.Component<IProps, IStateProps> {
     return (
       <div className={css.container}>
         <div className={css.startDiscussionButton}>
-          {!this.state.joinedThread && (this.state.threeboxPosts !== null) ?
+          {(!this.state.joinedThread && (this.state.threeboxPosts !== null)) &&
             <Tooltip placement="top" trigger={["hover"]} overlay={i18next.t(this.state.threeboxPosts?.length ? "Enable3BoxInteractions" : "CreateFirst3BoxPost")}>
-              <a onClick={this.startDiscussion}>{i18next.t(this.state.threeboxPosts?.length ? "JoinTheConversation" : "StartAConversation")}{this.state.joiningThread ? <img className={css.loading} src="/assets/images/Icon/buttonLoadingWhite.gif" /> : ""}</a>
+              <a onClick={this.startDiscussion}>{i18next.t(this.state.threeboxPosts?.length ? "JoinTheConversation" : "StartAConversation")}{this.state.joiningThread && <img className={css.loading} src="/assets/images/Icon/buttonLoadingWhite.gif" />}</a>
             </Tooltip>
-            : ""
           }
         </div>
 
-        {this.state.joinedThread ?
+        {this.state.joinedThread &&
           <div className={css.threeboxCommentInput}>
             <HelpButton text={i18next.t("CommentHelpText")}></HelpButton>
             <div className={css.commentsInput}>
               <MarkdownInput onChange={this.handleCommentInput}></MarkdownInput>
             </div>
             <a className={`${css.submitComments} ${this.state.hasCommentInput ? "" : css.disabled}`} onClick={this.submitPost}>{i18next.t("Submit3BoxPost")}</a>
-          </div> : ""
+          </div>
         }
         {this.state.threeboxPosts?.length ?
           <div className={css.threeboxposts}>
@@ -207,13 +206,13 @@ class ThreeBoxThreads extends React.Component<IProps, IStateProps> {
                   <div className={css.info}>
                     <div className={css.author}><AccountProfileName accountAddress={post.author} accountProfile={this.props.profiles[post.author]} daoAvatarAddress={daoState.address} /></div>
                     <div className={css.createdOn}>{formatFriendlyDateForLocalTimezone(post.createDate)}</div>
-                    {(this.state.joinedThread && (post.author.toLowerCase() === this.props.currentAccountAddress)) ?
+                    {(this.state.joinedThread && (post.author.toLowerCase() === this.props.currentAccountAddress)) &&
                       <Tooltip placement="top" trigger={["hover"]} overlay={i18next.t("Delete3BoxPost")}>
                         { // eslint-disable-next-line react/jsx-no-bind
                           <div className={css.deletePost} onClick={() => this.deleteCommentConfirmation(post)}><img src="/assets/images/Icon/delete.svg" /></div>
                         }
                       </Tooltip>
-                      : ""}
+                    }
                   </div>
                   <div className={css.message}>{<ProposalDescription description={post.message} />}</div>
                 </div>
@@ -222,9 +221,8 @@ class ThreeBoxThreads extends React.Component<IProps, IStateProps> {
             }
           </div> :
           // eslint-disable-next-line no-constant-condition
-          (this.state.threeboxPosts === null) ?
-            <div className={css.awaitingPosts}><img className={css.loading} src="/assets/images/Icon/buttonLoadingBlue.gif" /><div className={css.body}>Fetching Conversations...</div></div>
-            : ""
+          (this.state.threeboxPosts === null) &&
+          <div className={css.awaitingPosts}><img className={css.loading} src="/assets/images/Icon/buttonLoadingBlue.gif" /><div className={css.body}>Fetching Conversations...</div></div>
         }
       </div>);
   }
