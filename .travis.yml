@@ -48,7 +48,6 @@ jobs:
         - docker-compose logs alchemy || true
         # run integration tests
         - npm run test:integration:headless
-        - npm run report-coverage
         # get some diagnostic info fo debugging travis
         - echo 'Debug info:' && echo -en 'travis_fold:start:script.3\\r'
         - npm run service-status
