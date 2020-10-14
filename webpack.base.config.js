@@ -122,7 +122,7 @@ module.exports = {
       PACKAGE_VERSION: JSON.stringify(require("./package.json").version)
     }),
     new webpack.EnvironmentPlugin({
-      ALCHEMY_URL_V1_XDAI: "https://alchemy-xdai.herokuapp.com/ ", // will be: https://v1.xdai.alchemy.do
+      ALCHEMY_URL_V1_XDAI: "https://v1.xdai.alchemy.do",
       ALCHEMY_URL_V1_MAINNET: "https://v1.alchemy.do",
       ALCHEMY_URL_V2_XDAI: "https://xdai.alchemy.do",
       ALCHEMY_URL_V2_MAINNET: "https://alchemy.do",
