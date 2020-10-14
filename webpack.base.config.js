@@ -122,10 +122,10 @@ module.exports = {
       PACKAGE_VERSION: JSON.stringify(require("./package.json").version)
     }),
     new webpack.EnvironmentPlugin({
-      ALCHEMY_URL_XDAI_V1: "https://v1.xdai.alchemy.do",
-      ALCHEMY_URL_XDAI_V2: "https://xdai.alchemy.do",
-      ALCHEMY_URL_MAINNET_V1: "https://v1.alchemy.do",
-      ALCHEMY_URL_MAINNET_V2: "https://alchemy.do",
+      ALCHEMY_V1_URL_XDAI: "https://v1.xdai.alchemy.do",
+      ALCHEMY_V1_URL_MAINNET: "https://v1.alchemy.do",
+      ALCHEMY_V2_URL_XDAI: "https://xdai.alchemy.do",
+      ALCHEMY_V2_URL_MAINNET: "https://alchemy.do",
     }),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     new MiniCssExtractPlugin()
