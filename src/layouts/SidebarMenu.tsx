@@ -9,7 +9,7 @@ import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { generate } from "geopattern";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWeiToString } from "lib/util";
+import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWeiToString, targetedNetwork } from "lib/util";
 import { parse } from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
@@ -56,7 +56,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 
 class SidebarMenu extends React.Component<IProps, IStateProps> {
 
-  constructor(props: IProps) {
+  constructor (props: IProps) {
     super(props);
   }
 
@@ -81,7 +81,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
   }
 
   private drawNavHeadingLine = () => {
-    return <svg viewBox="0 0 1 2" preserveAspectRatio="none"><line x1="0" y1="0" x2="1" y2="0"/></svg>;
+    return <svg viewBox="0 0 1 2" preserveAspectRatio="none"><line x1="0" y1="0" x2="1" y2="0" /></svg>;
   }
 
   public daoMenu() {
@@ -108,12 +108,12 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               <p><a className="externalLink" href="https://docs.google.com/document/d/1iJZfjmOK1eZHq-flmVF_44dZWNsN-Z2KAeLqW3pLQo8" target="_blank" rel="noopener noreferrer">Learn how to MemeDAO</a></p>
               : dao.name === "ETHBerlin dHack.io" ?
                 <p>
-                For more info join our TG group -
+                  For more info join our TG group -
                   <a className="externalLink" href="https://t.me/dhack0" target="_blank" rel="noopener noreferrer">t.me/dhack0</a>
                 </p>
                 : dao.name === "Identity" ?
                   <p>
-                A curated registry of identities on the Ethereum blockchain.&nbsp;
+                    A curated registry of identities on the Ethereum blockchain.&nbsp;
                     <a className="externalLink" href="https://docs.google.com/document/d/1_aS41bvA6D83aTPv6QNehR3PfIRHJKkELnU76Sds5Xk" target="_blank" rel="noopener noreferrer">How to register.</a>
                   </p>
                   : <p>New to DAOstack? Visit the <a href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">help center</a> to get started.</p>
@@ -189,8 +189,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
         <div className={css.daoHoldings}>
           <ul>
             <li key={"0x0"}>
-              <Tooltip overlay={`${
-                fromWeiToString(dao.reputationTotalSupply)} REP`} placement="right">
+              <Tooltip overlay={`${fromWeiToString(dao.reputationTotalSupply)} REP`} placement="right">
                 <strong>{formatTokens(dao.reputationTotalSupply)} REP</strong>
               </Tooltip>
             </li>
@@ -214,12 +213,15 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
       clearfix: true,
     });
 
+    const network = targetedNetwork();
+    const testNet = !((network === "main") || (network === "xdai"));
+
     return (
       <div className={sidebarClass}>
         <div className={css.menuContent}>
-          { this.props.daoAvatarAddress && this.props.data ? this.daoMenu() : ""}
+          {this.props.daoAvatarAddress && this.props.data ? this.daoMenu() : ""}
 
-          <div className={css.siteLinksWrapper}>
+          <div className={`${css.siteLinksWrapper} ${testNet ? css.testNet : ""}`}>
             <ul>
               <li><Link to="/" onClick={this.handleCloseMenu}>Home</Link></li>
               <li>
@@ -249,6 +251,19 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               <li><a className="externalLink" href="https://daotalk.org/" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
               <li><Link to="/daos/create" onClick={this.handleCloseMenu}>Create A DAO</Link></li>
               <li><Link to="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link></li>
+              {!testNet &&
+                <>
+                  <li><a className="externalLink"
+                    href={(network === "main") ? process.env.ALCHEMY_V1_URL_MAINNET : process.env.ALCHEMY_V1_URL_XDAI}
+                    target="_blank" rel="noopener noreferrer">Switch to v1</a></li>
+                  {(network === "main") ?
+                    <li><a className="externalLink" href={process.env.ALCHEMY_V2_URL_XDAI} target="_blank" rel="noopener noreferrer">Switch to xDAI</a></li>
+                    : (network === "xdai") ?
+                      <li><a className="externalLink" href={process.env.ALCHEMY_V2_URL_MAINNET} target="_blank" rel="noopener noreferrer">Switch to Mainnet</a></li>
+                      : ""
+                  }
+                </>
+              }
               <li className={css.daoStack}>
                 <a className="externalLink" href="http://daostack.io" target="_blank" rel="noopener noreferrer">
                   <img src={(this.props.menuOpen || (this.props.daoAvatarAddress && this.props.data)) ?
@@ -264,7 +279,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
 }
 
 /***** DAO ETH Balance *****/
-interface IEthProps extends ISubscriptionProps<BN|null> {
+interface IEthProps extends ISubscriptionProps<BN | null> {
   dao: IDAOState;
 }
 
@@ -336,7 +351,7 @@ const SubscribedSidebarMenu = withSubscription({
   createObservable: (props: IProps) => {
     if (props.daoAvatarAddress) {
       const arc = getArc();
-      return arc.dao(props.daoAvatarAddress).state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL } );
+      return arc.dao(props.daoAvatarAddress).state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL });
     } else {
       return of(null);
     }
