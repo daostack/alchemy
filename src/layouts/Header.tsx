@@ -180,7 +180,7 @@ class Header extends React.Component<IProps, null> {
 
     return (
       <div className={css.headerContainer}>
-        <div className={css.banner}>Alchemy has been released! Take a look <a
+        <div className={css.banner}>Alchemy 2.0 has been released! Take a look <a
           href={(network === "main") ? process.env.ALCHEMY_V2_URL_MAINNET : process.env.ALCHEMY_V2_URL_XDAI}
           target="_blank" rel="noopener noreferrer">here</a>.</div>
         <nav className={css.header}>
