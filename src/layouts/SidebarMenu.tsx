@@ -254,12 +254,12 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               {!testNet &&
                 <>
                   <li><a className="externalLink"
-                    href={(network === "main") ? process.env.ALCHEMY_URL_V1_MAINNET : process.env.ALCHEMY_URL_V1_XDAI}
+                    href={(network === "main") ? process.env.ALCHEMY_URL_MAINNET_V1 : process.env.ALCHEMY_URL_XDAI_V1}
                     target="_blank" rel="noopener noreferrer">Switch to v1</a></li>
                   {(network === "main") ?
-                    <li><a className="externalLink" href={process.env.ALCHEMY_URL_V2_XDAI} target="_blank" rel="noopener noreferrer">Switch to xDAI</a></li>
+                    <li><a className="externalLink" href={process.env.ALCHEMY_URL_XDAI_V2} target="_blank" rel="noopener noreferrer">Switch to xDAI</a></li>
                     : (network === "xdai") ?
-                      <li><a className="externalLink" href={process.env.ALCHEMY_URL_V2_MAINNET} target="_blank" rel="noopener noreferrer">Switch to Mainnet</a></li>
+                      <li><a className="externalLink" href={process.env.ALCHEMY_URL_MAINNET_V2} target="_blank" rel="noopener noreferrer">Switch to Mainnet</a></li>
                       : ""
                   }
                 </>
