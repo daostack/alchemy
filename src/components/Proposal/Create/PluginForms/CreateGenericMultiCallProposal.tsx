@@ -17,30 +17,14 @@ import { IFormModalService, CreateFormModalService } from "components/Shared/For
 import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 import { getABIByContract, extractABIMethods, encodeABI } from "./ABIService";
 import Loading from "components/Shared/Loading";
-import { any } from "prop-types";
 import { requireValue, validateParam } from "./Validators";
 
-const contracts = [
+const whitelistedContracts = [
   "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf",
   "0x5C5cbaC45b18F990AbcC4b890Bf98d82e9ee58A0",
   "0x24832a7A5408B2b18e71136547d308FCF60B6e71",
   "0x4E073a7E4a2429eCdfEb1324a472dd8e82031F34",
 ];
-
-const initialValues = {
-  contracts: [
-    {
-      address: "",
-      value: 0,
-      abi: any,
-      method: "",
-      methods: [] as any,
-      params: [] as any,
-      values: [] as any,
-      callData: "",
-    },
-  ],
-};
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -62,14 +46,14 @@ interface IStateProps {
   loading: boolean
   tags: Array<string>
   addContractStatus: IAddContractStatus
-  contracts: Array<string>
+  whitelistedContracts: Array<string>
+  userContracts: Array<string>
 }
 
 // interface IABIField {
 //   id: string,
 //   name: string
 //   type: string
-//   inputType: string,
 //   placeholder: string,
 // }
 
@@ -80,11 +64,22 @@ const mapDispatchToProps = {
   showNotification,
 };
 
+interface IContract {
+  address: string // Contract address
+  value: number // Token to send with the proposal
+  abi: any // Contract ABI data
+  methods: any // ABI write methods
+  method: string // Selected method
+  params: any // Method params
+  values: any // Params values
+  callData: string // The encoded data
+}
+
 interface IFormValues {
   description: string;
   title: string;
   url: string;
-  contracts: []
+  contracts: Array<IContract>
   [key: string]: any;
 }
 
@@ -93,7 +88,19 @@ const defaultValues: IFormValues = Object.freeze({
   title: "",
   url: "",
   tags: [],
-  contracts: [],
+  userContracts: [],
+  contracts: [
+    {
+      address: "",
+      value: 0,
+      abi: [] as any,
+      methods: [] as any,
+      method: "",
+      params: [] as any,
+      values: [] as any,
+      callData: "",
+    },
+  ],
 });
 
 
@@ -104,21 +111,25 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
 
   constructor(props: IProps) {
     super(props);
-    this.state = { loading: false, addContractStatus: { error: "", message: "" }, contracts: contracts, tags: [] };
+    this.state = { loading: false, addContractStatus: { error: "", message: "" }, whitelistedContracts: whitelistedContracts, userContracts: [], tags: [] };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.formModalService = CreateFormModalService(
       "CreateGenericMultiCallProposal",
       defaultValues,
-      () => Object.assign(this.currentFormValues, this.state),
+      () => Object.assign(this.currentFormValues, this.state), // this.removeABIDataFromObject(this.currentFormValues)
       (formValues: IFormValues, firstTime: boolean) => {
+        // for (const contract of formValues.contracts) {
+        //   contract.abi = await getABIByContract(contract.address);
+        // }
         this.currentFormValues = formValues;
         if (firstTime) {
           Object.assign(this.state, {
             tags: formValues.tags,
+            userContracts: formValues.userContracts,
           });
         }
-        else { this.setState({ tags: formValues.tags }); }
+        else { this.setState({ tags: formValues.tags, userContracts: formValues.userContracts }); }
       },
       this.props.showNotification);
   }
@@ -127,11 +138,25 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
     this.formModalService.saveCurrentValues();
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any): Promise<void> {
+  public async handleSubmit(formValues: IFormValues, { setSubmitting }: any): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
+    const contractsToCall = [];
+    const callsData = [];
+    const values = [];
+
+    for (const contract of formValues.contracts) {
+      contractsToCall.push(contract.address);
+      callsData.push(contract.callData);
+      values.push(contract.value);
+    }
+
     const proposalValues = {
-      ...values,
+      title: formValues.title,
+      description: formValues.description,
+      contractsToCall: contractsToCall,
+      callsData: callsData,
+      values: values,
       dao: this.props.daoAvatarAddress,
       plugin: this.props.pluginState.address,
       tags: this.state.tags,
@@ -142,13 +167,20 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
 
     Analytics.track("Submit Proposal", {
       "DAO Address": this.props.daoAvatarAddress,
-      "Proposal Title": values.title,
+      "Proposal Title": formValues.title,
       "Plugin Address": this.props.pluginState.address,
       "Plugin Name": this.props.pluginState.name,
     });
 
     this.props.handleClose();
   }
+
+  // private removeABIDataFromObject = (obj: IFormValues) => {
+  //   for (const contract of obj.contracts) {
+  //     contract.abi = [];
+  //   }
+  //   return obj;
+  // }
 
   private onTagsChange = (tags: any[]): void => {
     this.setState({ tags });
@@ -168,7 +200,7 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
     if (!isAddress(contractToCall)) {
       addContractStatus.error = "NOT_VALID_ADDRESS";
       addContractStatus.message = i18next.t("Validate Address");
-    } else if (this.state.contracts.includes(contractToCall)) {
+    } else if (this.state.whitelistedContracts.includes(contractToCall) || this.state.userContracts.includes(contractToCall)) {
       addContractStatus.error = "CONTRACT_EXIST";
       addContractStatus.message = i18next.t("Contract Exist");
     } else {
@@ -176,7 +208,7 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
       const abiData = await getABIByContract(contractToCall);
       const abiMethods = extractABIMethods(abiData);
       if (abiMethods.length > 0) {
-        this.state.contracts.push(contractToCall);
+        this.state.userContracts.push(contractToCall);
         addContractStatus.error = "";
         addContractStatus.message = i18next.t("Contract Add Success");
       } else {
@@ -204,15 +236,13 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
         id: index,
         name: input.name,
         type: input.type,
-        inputType: input.type === "bool" ? "number" : "text",
         placeholder: `${input.name} (${input.type})`,
         methodSignature: input.methodSignature,
       };
     });
     setFieldValue(`contracts.${index}.params`, abiParams);
-    if (abiParams.length === 0) {
-      const encodedData = encodeABI(abi, methodName, []);
-      setFieldValue(`contracts.${index}.callData`, encodedData);
+    if (abiParams.length === 0) { // If no params, generate the encoded data
+      setFieldValue(`contracts.${index}.callData`, encodeABI(abi, methodName, []));
     }
   }
 
@@ -229,9 +259,13 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
 
   public render(): RenderOutput {
     const { handleClose } = this.props;
-    const { loading, addContractStatus } = this.state;
+    const { loading, addContractStatus, userContracts } = this.state;
 
-    const addressesOptions = contracts.map((address, index) => {
+    const whitelistedContractsOptions = whitelistedContracts.map((address, index) => {
+      return <option key={index}>{address}</option>;
+    });
+
+    const userContractsOptions = userContracts.map((address, index) => {
       return <option key={index}>{address}</option>;
     });
 
@@ -240,7 +274,7 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
         <React.Fragment>
           <Formik
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            initialValues={initialValues}
+            initialValues={this.currentFormValues}
             // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues): void => {
               const errors: any = {};
@@ -355,12 +389,13 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
                 </div>
 
                 <FieldArray name="contracts">
-                  {({ insert, remove, push }) => (
+                  {({ insert, remove, push }) => ( // eslint-disable-line @typescript-eslint/no-unused-vars
                     <div>
                       {
                         values.contracts.length > 0 && values.contracts.map((contract: any, index: any) => (
-                          <fieldset>
-                            <button className={css.removeFieldSet} type="button" onClick={() => remove(index)}>Remove</button>
+                          <fieldset key={index}>
+                            {/* eslint-disable-next-line react/jsx-no-bind */}
+                            {values.contracts.length > 1 && <button className={css.removeFieldSet} type="button" onClick={() => remove(index)}>{i18next.t("Remove")}</button>}
 
                             <div>
                               <label htmlFor={`contracts.${index}.value`}>
@@ -369,12 +404,10 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
                                 <ErrorMessage name={`contracts.${index}.value`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                               </label>
                               <Field
-                                id="valueInput"
                                 placeholder={`How much ${baseTokenName()} to transfer with the call`}
                                 name={`contracts.${index}.value`}
                                 type="number"
                                 validate={requireValue}
-                              //className={(touched.contracts[index] as any).value && (errors.contracts[index] as any).value ? css.error : null}
                               />
                             </div>
 
@@ -384,40 +417,45 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
                                 Contract Address
                                 <ErrorMessage name={`contracts.${index}.address`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                               </label>
-                              <Field
-                                onChange={async (e: any) => { setFieldValue(`contracts.${index}.address`, e.target.value); await this.getContractABI(e.target.value, setFieldValue, index) }}
+                              <Field // eslint-disable-next-line react/jsx-no-bind
+                                onChange={async (e: any) => { setFieldValue(`contracts.${index}.address`, e.target.value); await this.getContractABI(e.target.value, setFieldValue, index); }}
                                 component="select"
                                 name={`contracts.${index}.address`}
                                 placeholder="Select contract"
                                 type="text"
                                 validate={requireValue}
-                              //className={(touched.contracts[index] as any).address && (errors.contracts[index] as any).address ? css.error : null}
                               >
                                 <option value="" disabled>{i18next.t("Choose contract")}</option>
-                                {addressesOptions}
+                                <optgroup label={i18next.t("Whitelisted contracts")}>
+                                  {whitelistedContractsOptions}
+                                </optgroup>
+                                {userContractsOptions.length > 0 &&
+                                  <optgroup label={i18next.t("User contracts")}>
+                                    {userContractsOptions}
+                                  </optgroup>
+                                }
                               </Field>
                             </div>
 
                             {
-                              (values.contracts[index] as any).address !== "" &&
+                              values.contracts[index].address !== "" &&
                               <div>
                                 <label htmlFor={`contracts.${index}.method`}>
                                   <div className={css.requiredMarker}>*</div>
                                   Method
                                   <ErrorMessage name={`contracts.${index}.method`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                                 </label>
-                                {(values.contracts[index] as any)?.methods?.length === 0 ? "loading..." :
-                                  <Field
-                                    onChange={(e: any) => { setFieldValue(`contracts.${index}.method`, e.target.value); this.getMethodInputs((values.contracts[index] as any)?.abi, (values.contracts[index] as any)?.methods, e.target.value, setFieldValue, index) }}
+                                {values.contracts[index]?.methods?.length === 0 ? i18next.t("Loading") :
+                                  <Field // eslint-disable-next-line react/jsx-no-bind
+                                    onChange={(e: any) => { setFieldValue(`contracts.${index}.method`, e.target.value); this.getMethodInputs(values.contracts[index].abi, values.contracts[index]?.methods, e.target.value, setFieldValue, index); }}
                                     component="select"
                                     name={`contracts.${index}.method`}
                                     placeholder="Select method"
                                     type="text"
                                     validate={requireValue}
-                                  //className={(touched.contracts[index] as any).method && (errors.contracts[index] as any).method ? css.error : null}
                                   >
                                     <option value="" disabled>{i18next.t("Choose method")}</option>
-                                    {(values.contracts[index] as any)?.methods?.map((method: any, j: any) => (
+                                    {values.contracts[index]?.methods?.map((method: any, j: any) => (
                                       <option key={j}>{method.methodSignature}</option>
                                     ))}
                                   </Field>}
@@ -425,10 +463,10 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
                             }
 
                             {
-                              (values.contracts[index] as any).method !== "" &&
-                              <div>
-                                {(values.contracts[index] as any).params.map((param: any, i: number) => (
-                                  <React.Fragment>
+                              values.contracts[index].method !== "" &&
+                              <div key={index}>
+                                {values.contracts[index].params.map((param: any, i: number) => (
+                                  <React.Fragment key={index}>
                                     <label>
                                       <div className={css.requiredMarker}>*</div>
                                       {param.name}
@@ -439,9 +477,10 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
                                       type="text"
                                       name={`contracts.${index}.values.${i}`}
                                       placeholder={param.placeholder}
-                                      onBlur={(e: any) => { handleBlur(e); this.abiInputChange((values.contracts[index] as any).abi, (values.contracts[index] as any).values, (values.contracts[index] as any).method, (values.contracts[index] as any).params, setFieldValue, index); }}
+                                      // eslint-disable-next-line react/jsx-no-bind
+                                      onBlur={(e: any) => { handleBlur(e); this.abiInputChange(values.contracts[index].abi, values.contracts[index].values, values.contracts[index].method, values.contracts[index].params, setFieldValue, index); }}
+                                      // eslint-disable-next-line react/jsx-no-bind
                                       validate={(e: any) => validateParam(param.type, e)}
-                                    //className={(touched.contracts[index] as any).values[i] && (errors.contracts[index] as any).values[i] ? css.error : null}
                                     />
                                   </React.Fragment>
                                 ))}
@@ -449,14 +488,15 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
                             }
 
                             <label>Encoded Data</label>
-                            <div id="encoded-data" className={css.encodedData}>{(values.contracts[index] as any).callData}</div>
+                            <div id="encoded-data" className={css.encodedData}>{values.contracts[index].callData}</div>
                           </fieldset>
                         ))
                       }
                       <button
                         className={css.addFieldSet}
                         type="button"
-                        onClick={() => push({ address: "", value: "", method: "", values: [], metohds: [], params: [], callData: "" })}>+ Add Another Contract</button>
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onClick={() => push(defaultValues.contracts[0])}>+ Add Another Contract</button>
                     </div>
                   )
                   }
@@ -469,8 +509,8 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
                     </button>
                   </TrainingTooltip>
                   <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
-                    Cancel
-                      </button>
+                    {i18next.t("Cancel")}
+                  </button>
 
                   <ResetFormButton
                     resetToDefaults={this.formModalService?.resetFormToDefaults(resetForm)}
@@ -479,14 +519,13 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
 
                   <TrainingTooltip overlay={i18next.t("Submit Proposal Tooltip")} placement="top">
                     <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                      Submit proposal
-                        </button>
+                      {i18next.t("Submit proposal")}
+                    </button>
                   </TrainingTooltip>
                 </div>
               </Form>
             }
           />
-
         </React.Fragment>
       </div>
     );

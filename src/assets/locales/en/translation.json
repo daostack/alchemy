@@ -72,5 +72,11 @@
   "Contract Add Success": "Contract added successfully!",
   "Contract Exist": "Contract already exist!",
   "Choose contract": "Choose contract",
-  "Choose method": "Choose method"
+  "Choose method": "Choose method",
+  "Loading": "Loading...",
+  "Remove": "Remove",
+  "Cancel": "Cancel",
+  "Submit proposal": "Submit proposal",
+  "Whitelisted contracts": "Whitelisted contracts",
+  "User contracts": "User contracts"
 }

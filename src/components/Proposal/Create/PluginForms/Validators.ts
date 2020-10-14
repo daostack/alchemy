@@ -124,6 +124,7 @@ export const address = (value: string, allowNulls = false): string => {
  * Given a value returns error message in case value is less than 0 or no value provided
  * @param {any} value
  */
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const requireValue = (value: any): string => {
   let error;
   if (value === "") {
@@ -137,9 +138,9 @@ export const requireValue = (value: any): string => {
 /**
  * Given ABI method param type (address, byets32, unit256, ...) and it's value, returns error message in case validation fails or no value provided
  * @param {string} type
- * @param {any} value
+ * @param {string} value
  */
-export const validateParam = (type: string, value: any): string => {
+export const validateParam = (type: string, value: string): string => {
   let error;
   if (!value) {
     error = i18next.t("Required");
