@@ -25,7 +25,7 @@ import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 import ProviderConfigButton from "layouts/ProviderConfigButton";
 import Tooltip from "rc-tooltip";
-import { standardPolling } from "lib/util";
+import { standardPolling, targetedNetwork } from "lib/util";
 
 interface IExternalProps extends RouteComponentProps<any> {
 }
@@ -92,7 +92,7 @@ type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps
 
 class Header extends React.Component<IProps, null> {
 
-  constructor(props: IProps) {
+  constructor (props: IProps) {
     super(props);
     this.toggleDiv = React.createRef();
     this.initializeTrainingTooltipsToggle();
@@ -176,9 +176,13 @@ class Header extends React.Component<IProps, null> {
     const web3ProviderInfo = getWeb3ProviderInfo();
     const web3Provider = getWeb3Provider();
     const trainingTooltipsOn = this.getTrainingTooltipsEnabled();
+    const network = targetedNetwork();
 
     return (
       <div className={css.headerContainer}>
+        <div className={css.banner}>Alchemy has been released! Take a look <a
+          href={(network === "main") ? process.env.ALCHEMY_V2_URL_MAINNET : process.env.ALCHEMY_V2_URL_XDAI}
+          target="_blank" rel="noopener noreferrer">here</a>.</div>
         <nav className={css.header}>
           <div className={css.menuToggle} onClick={this.handleToggleMenu}>
             {this.props.menuOpen ?
@@ -286,7 +290,7 @@ class Header extends React.Component<IProps, null> {
             }
           </div>
         </nav>
-      </div>
+      </div >
     );
   }
 }
