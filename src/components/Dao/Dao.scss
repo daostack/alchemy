@@ -124,35 +124,21 @@ button:hover {
   flex-grow: 2;
   background-color: white;
   padding: 11px 8px;
-  color: rgba(78, 97, 118, 1);
-  font-size: 11px;
-  text-align: left;
+  color: $black;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
   font-family: "Open Sans";
   width: 100%;
 
-  div {
-    padding-left: 15px;
-
-    img {
-      margin-right: 8px;
-    }
-
-    b {
-      color: $accent-3;
-    }
+  a {
+    text-decoration: underline;
   }
 
   .notice::after {
     content: "";
     clear: both;
     display: table;
-  }
-  .closeNotice {
-    position: absolute;
-    border: none;
-    outline: none;
-    right: 6px;
-    top: 13px;
   }
 }
 
@@ -291,24 +277,8 @@ a {
     }
 
     .notice {
-      font-size: 10px;
-      padding-right: 70px;
+      font-size: 11px;
       box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.4);
-
-      div {
-        padding-left: 0;
-
-        img {
-          height: 18px;
-          float: left;
-          position: relative;
-          top: 5px;
-        }
-      }
-
-      .closeNotice {
-        background-color: transparent;
-      }
     }
   }
 

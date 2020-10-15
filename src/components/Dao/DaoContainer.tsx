@@ -23,7 +23,7 @@ import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
 import DaoLandingPage from "components/Dao/DaoLandingPage";
-import { standardPolling } from "lib/util";
+import { standardPolling, targetedNetwork } from "lib/util";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -73,7 +73,7 @@ class DaoContainer extends React.Component<IProps, null> {
     />;
   private daoCrxProposalRoute = (routeProps: any) =>
     <DetailsPageRouter {...routeProps}
-      currentAccountAddress = {this.props.currentAccountAddress}
+      currentAccountAddress={this.props.currentAccountAddress}
       daoState={this.props.data[0]}
       proposalId={routeProps.match.params.proposalId}
     />;
@@ -85,6 +85,7 @@ class DaoContainer extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
     const daoState = this.props.data[0];
+    const network = targetedNetwork();
 
     return (
       <div className={css.outer}>
@@ -99,11 +100,9 @@ class DaoContainer extends React.Component<IProps, null> {
         <div className={css.wrapper}>
           <div className={css.noticeWrapper}>
             <div className={css.noticeBuffer}></div>
-            <div className={css.notice}>
-              <div>
-                <img src="/assets/images/Icon/notice.svg" />
-                Alchemy and Arc are in Alpha. There will be BUGS! We don&apos;t guarantee complete security. *Play at your own risk*
-              </div>
+            <div className={css.notice}>Alchemy 2.0 has been released! Take a look <a
+              href={(network === "main") ? process.env.ALCHEMY_V2_URL_MAINNET : process.env.ALCHEMY_V2_URL_XDAI}
+              target="_blank" rel="noopener noreferrer">here</a>.
             </div>
           </div>
           <Switch>
@@ -144,7 +143,7 @@ class DaoContainer extends React.Component<IProps, null> {
 
 const SubscribedDaoContainer = withSubscription({
   wrappedComponent: DaoContainer,
-  loadingComponent: <Loading/>,
+  loadingComponent: <Loading />,
   errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {

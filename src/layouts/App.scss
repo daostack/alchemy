@@ -23,7 +23,11 @@ body {
 .outer {
   width: 100%;
   height: 100%;
-  padding-top: 50px;
+  padding-top: 82px;
+
+  &.withDAO {
+    padding-top: 50px;
+  }
 }
 
 .container {
@@ -102,412 +106,440 @@ body {
   transition: opacity 1000ms ease-in;
 }
 
-.header {
-  width: 100%;
-  position: fixed;
-  vertical-align: middle;
-  background-color: $navy;
-  height: 50px;
-  z-index: 10;
-  top: 0;
-  color: rgba(255, 255, 255, 1);
-  display: flex;
-
-  /** the following is only meant to apply to the toggle button in the header **/
-  :global {
-    .react-toggle.react-toggle--checked .react-toggle-track {
-      background-color: #0076ff !important;
-    }
-
-    .react-toggle-thumb {
-      background-image: url(/assets/images/Icon/info-i.svg);
-      background-color: transparent !important;
-      background-size: 20px 20px;
-    }
-  }
-
-  .logoContainer {
-    margin: 0 auto;
-    width: 230px;
-  }
-
-  .menu {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    transition: all 0.25s ease;
-
-    img {
-      position: absolute;
-      z-index: 100;
-      left: 15px;
-      top: 10px;
-      height: 30px;
-      transition: all 0.25s ease;
-    }
-  }
-
-  .alchemyLogo {
-    float: left;
-    padding: 9px;
-
-    img {
-      height: 30px;
-    }
-  }
-
-  .version {
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 50px;
-
-    em {
-      font-style: normal;
-    }
-
-    span {
-      color: rgba(255, 255, 255, 0.3);
-    }
-  }
-
-  .alert {
-    color: white;
-    background-color: #44aa44;
+.headerContainer {
+  .banner {
+    position: fixed;
+    display: none;
+    top: 0;
+    height: 32px;
     width: 100%;
-    top: 60px;
-    position: absolute;
+    padding-top: 8px;
+    padding-bottom: 8px;
     text-align: center;
-    font-weight: bold;
-    padding: 2px 0;
+    color: $black;
+    background-color: $banner-background;
+    z-index: 10;
+
+    &.show {
+      display: block;
+    }
   }
 
-  .redemptionsButton {
-    margin: 13px 0 14px 20px;
-  }
-
-  .toggleButton {
-    margin: 13px 0 14px auto;
-  }
-
-  .accountInfoContainer {
-    display: inline-block;
-    padding: 0 15px;
-    height: 50px;
+  .header {
+    width: 100%;
+    position: fixed;
     vertical-align: middle;
-  }
-
-  .accountInfo {
-    position: relative;
-    display: inline-block;
-    text-align: center;
-    width: auto;
-    padding: 0 20px;
-    transition: all 0.25s ease;
+    background-color: $navy;
     height: 50px;
+    z-index: 10;
+    top: 0;
+    color: rgba(255, 255, 255, 1);
+    display: flex;
 
-    > span {
+    /** the following is only meant to apply to the toggle button in the header **/
+    :global {
+      .react-toggle.react-toggle--checked .react-toggle-track {
+        background-color: #0076ff !important;
+      }
+
+      .react-toggle-thumb {
+        background-image: url(/assets/images/Icon/info-i.svg);
+        background-color: transparent !important;
+        background-size: 20px 20px;
+      }
+    }
+
+    .logoContainer {
+      margin: 0 auto;
+      width: 230px;
+    }
+
+    .menu {
+      position: absolute;
+      width: 50px;
       height: 50px;
+      transition: all 0.25s ease;
+
+      img {
+        position: absolute;
+        z-index: 100;
+        left: 15px;
+        top: 10px;
+        height: 30px;
+        transition: all 0.25s ease;
+      }
+    }
+
+    .alchemyLogo {
+      float: left;
+      padding: 9px;
+
+      img {
+        height: 30px;
+      }
+    }
+
+    .version {
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 50px;
+
+      em {
+        font-style: normal;
+      }
+
+      span {
+        color: rgba(255, 255, 255, 0.3);
+      }
+    }
+
+    .alert {
+      color: white;
+      background-color: #44aa44;
+      width: 100%;
+      top: 60px;
+      position: absolute;
+      text-align: center;
+      font-weight: bold;
+      padding: 2px 0;
+    }
+
+    .redemptionsButton {
+      margin: 13px 0 14px 20px;
+    }
+
+    .toggleButton {
+      margin: 13px 0 14px auto;
+    }
+
+    .accountInfoContainer {
       display: inline-block;
+      padding: 0 15px;
+      height: 50px;
       vertical-align: middle;
     }
 
-    .accountImage {
-      border: none;
-      background: transparent;
-      padding: 0;
-      margin: 0 0 0 0;
+    .accountInfo {
       position: relative;
-      top: 14px;
+      display: inline-block;
+      text-align: center;
+      width: auto;
+      padding: 0 20px;
+      transition: all 0.25s ease;
+      height: 50px;
+
+      > span {
+        height: 50px;
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      .accountImage {
+        border: none;
+        background: transparent;
+        padding: 0;
+        margin: 0 0 0 0;
+        position: relative;
+        top: 14px;
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        img {
+          width: 20px;
+          height: 20px;
+          border-radius: 3px;
+        }
+      }
+
+      .profileName {
+        text-align: left;
+        font-size: 13px;
+
+        a {
+          color: rgba(0, 29, 53, 1);
+          padding: 0 0 0 15px;
+        }
+      }
+
+      .wallet {
+        position: absolute;
+        width: 270px;
+        top: 50px;
+        transform: scaleY(0);
+        transform-origin: top;
+        transition: transform 0.25s ease;
+        right: 12px;
+        font-size: 12px;
+        color: rgba(78, 97, 118, 1);
+        background-color: rgba(252, 253, 255, 1);
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.27);
+
+        .walletImage {
+          float: left;
+        }
+
+        .pointer {
+          width: 12px;
+          height: 12px;
+          transform: rotate(45deg);
+          background-color: rgba(252, 253, 255, 1);
+          position: absolute;
+          top: -3px;
+          right: 12px;
+        }
+
+        .walletDetails {
+          position: relative;
+          padding-bottom: 5px;
+          border-bottom: 1px solid rgba(229, 235, 242, 1);
+          padding: 25px;
+
+          .walletImage {
+            &.greyscale img {
+              filter: grayscale(100%);
+            }
+          }
+
+          .fullProfile {
+            text-align: left;
+
+            a {
+              padding: 5px 0 0 15px;
+              color: rgba(1, 112, 255, 1);
+              font-size: 11px;
+              font-weight: bold;
+              font-family: "Open Sans";
+            }
+          }
+        }
+
+        .balances {
+          text-align: left;
+          padding-left: 25px;
+          padding-right: 25px;
+          padding-top: 20px;
+          border-bottom: 1px solid $accent-6;
+          font-size: 11px;
+          color: $body-color;
+          font-weight: normal;
+          font-family: "Open Sans";
+
+          .userBalance,
+          .repBalance {
+            .heading {
+              font-size: 13px;
+              color: $black;
+              margin: 0;
+              margin-bottom: 3px;
+              font-weight: bold;
+            }
+          }
+
+          .noReputation {
+            font-size: 11px;
+            color: rgba(130, 144, 158, 1);
+          }
+
+          .userBalance {
+            padding-bottom: 20px;
+          }
+
+          .repBalance {
+            font-size: 12px;
+            margin-bottom: 20px;
+            background-color: rgba(252, 253, 255, 1);
+            font-weight: normal;
+            font-family: "Open Sans";
+
+            .rep {
+              display: flex;
+
+              .underline {
+                flex-grow: 2;
+                border-bottom: 1px dashed $gray-2;
+                margin-left: 4px;
+                margin-right: 4px;
+              }
+            }
+          }
+        }
+
+        .copyAddress {
+          margin: 2px 0 0 15px;
+          position: relative;
+          overflow: hidden;
+          text-align: right;
+
+          .accountAddress {
+            display: inline-block;
+            max-width: 136px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: rgba(78, 97, 118, 1);
+            font-family: "Open Sans";
+            font-size: 11px;
+          }
+        }
+
+        .testAccounts {
+          padding: 12px;
+          position: relative;
+        }
+
+        select {
+          margin-right: -5px;
+          border: none;
+          background: transparent;
+          position: absolute;
+          width: 177px;
+          top: 12px;
+          opacity: 0;
+          cursor: pointer;
+          z-index: 1;
+          height: 25px;
+        }
+
+        .selectTestAccount {
+          border: 1px solid $white-halftone;
+          padding: 5px 8px;
+          background: none;
+          color: rgba(0, 29, 53, 1);
+          display: block;
+          position: relative;
+          z-index: 0;
+          width: 100%;
+        }
+
+        .logoutButtonContainer {
+          padding-left: 2px;
+          padding-right: 17px;
+          padding-top: 15px;
+          padding-bottom: 18px;
+          text-align: right;
+
+          .web3ProviderLogoutSection {
+            display: flex;
+            padding-left: 18px;
+            align-items: center;
+
+            .provider {
+              text-align: left;
+              flex-grow: 1;
+
+              .title {
+                font-weight: bold;
+                font-size: 13px;
+                color: #001d35;
+                margin-bottom: 2px;
+              }
+
+              .name {
+                font-size: 11px;
+                color: #4e6176;
+                font-weight: normal;
+                font-family: "Open Sans";
+              }
+            }
+
+            .providerconfig {
+              flex-grow: 2;
+              text-align: left;
+            }
+
+            .web3ProviderLogInOut {
+              flex-grow: 1;
+            }
+          }
+        }
+
+        .web3ProviderLogInOut {
+          display: inline-block;
+
+          .text {
+            color: $accent-1;
+            white-space: nowrap;
+            cursor: pointer;
+            display: inline-block;
+            margin-right: 4px;
+          }
+
+          img {
+            top: 2px;
+            position: relative;
+            height: 12px;
+          }
+        }
+      }
+    }
+
+    .accountInfoContainer:hover {
+      background-color: rgba(10, 28, 61, 1);
+
+      + .wallet {
+        transform: scaleY(1);
+      }
+    }
+
+    .wallet:hover {
+      transform: scaleY(1);
+    }
+
+    .etherBalance {
+      display: inline;
+    }
+
+    .openTour {
+      position: relative;
+      top: 2px;
+      padding: 0 10px;
+      display: inline-block;
+      border: none;
+      outline: none;
+      background: none;
 
       &:hover {
         cursor: pointer;
       }
-
-      img {
-        width: 20px;
-        height: 20px;
-        border-radius: 3px;
-      }
     }
 
-    .profileName {
-      text-align: left;
-      font-size: 13px;
-
-      a {
-        color: rgba(0, 29, 53, 1);
-        padding: 0 0 0 15px;
-      }
-    }
-
-    .wallet {
-      position: absolute;
-      width: 270px;
-      top: 50px;
-      transform: scaleY(0);
-      transform-origin: top;
-      transition: transform 0.25s ease;
-      right: 12px;
-      font-size: 12px;
-      color: rgba(78, 97, 118, 1);
-      background-color: rgba(252, 253, 255, 1);
-      border-radius: 0 0 8px 8px;
-      box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.27);
+    .profileLink {
+      display: inline-block;
 
       .walletImage {
-        float: left;
+        &.greyscale img {
+          filter: grayscale(100%);
+        }
       }
 
-      .pointer {
-        width: 12px;
-        height: 12px;
-        transform: rotate(45deg);
-        background-color: rgba(252, 253, 255, 1);
-        position: absolute;
-        top: -3px;
+      a {
+        color: white;
+        font-size: 13px;
+        position: relative;
         right: 12px;
       }
 
-      .walletDetails {
-        position: relative;
-        padding-bottom: 5px;
-        border-bottom: 1px solid rgba(229, 235, 242, 1);
-        padding: 25px;
-
-        .walletImage {
-          &.greyscale img {
-            filter: grayscale(100%);
-          }
-        }
-
-        .fullProfile {
-          text-align: left;
-
-          a {
-            padding: 5px 0 0 15px;
-            color: rgba(1, 112, 255, 1);
-            font-size: 11px;
-            font-weight: bold;
-            font-family: "Open Sans";
-          }
-        }
-      }
-
-      .balances {
-        text-align: left;
-        padding-left: 25px;
-        padding-right: 25px;
-        padding-top: 20px;
-        border-bottom: 1px solid $accent-6;
-        font-size: 11px;
-        color: $body-color;
-        font-weight: normal;
-        font-family: "Open Sans";
-
-        .userBalance,
-        .repBalance {
-          .heading {
-            font-size: 13px;
-            color: $black;
-            margin: 0;
-            margin-bottom: 3px;
-            font-weight: bold;
-          }
-        }
-
-        .noReputation {
-          font-size: 11px;
-          color: rgba(130, 144, 158, 1);
-        }
-
-        .userBalance {
-          padding-bottom: 20px;
-        }
-
-        .repBalance {
-          font-size: 12px;
-          margin-bottom: 20px;
-          background-color: rgba(252, 253, 255, 1);
-          font-weight: normal;
-          font-family: "Open Sans";
-
-          .rep {
-            display: flex;
-
-            .underline {
-              flex-grow: 2;
-              border-bottom: 1px dashed $gray-2;
-              margin-left: 4px;
-              margin-right: 4px;
-            }
-          }
-        }
-      }
-
-      .copyAddress {
-        margin: 2px 0 0 15px;
-        position: relative;
-        overflow: hidden;
-        text-align: right;
-
-        .accountAddress {
-          display: inline-block;
-          max-width: 136px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          color: rgba(78, 97, 118, 1);
-          font-family: "Open Sans";
-          font-size: 11px;
-        }
-      }
-
-      .testAccounts {
-        padding: 12px;
-        position: relative;
-      }
-
-      select {
-        margin-right: -5px;
-        border: none;
-        background: transparent;
-        position: absolute;
-        width: 177px;
-        top: 12px;
-        opacity: 0;
-        cursor: pointer;
-        z-index: 1;
-        height: 25px;
-      }
-
-      .selectTestAccount {
-        border: 1px solid $white-halftone;
-        padding: 5px 8px;
-        background: none;
-        color: rgba(0, 29, 53, 1);
-        display: block;
-        position: relative;
-        z-index: 0;
-        width: 100%;
-      }
-
-      .logoutButtonContainer {
-        padding-left: 2px;
-        padding-right: 17px;
-        padding-top: 15px;
-        padding-bottom: 18px;
-        text-align: right;
-
-        .web3ProviderLogoutSection {
-          display: flex;
-          padding-left: 18px;
-          align-items: center;
-
-          .provider {
-            text-align: left;
-            flex-grow: 1;
-
-            .title {
-              font-weight: bold;
-              font-size: 13px;
-              color: #001d35;
-              margin-bottom: 2px;
-            }
-
-            .name {
-              font-size: 11px;
-              color: #4e6176;
-              font-weight: normal;
-              font-family: "Open Sans";
-            }
-          }
-
-          .providerconfig {
-            flex-grow: 2;
-            text-align: left;
-          }
-
-          .web3ProviderLogInOut {
-            flex-grow: 1;
-          }
-        }
-      }
-
-      .web3ProviderLogInOut {
-        display: inline-block;
-
-        .text {
-          color: $accent-1;
-          white-space: nowrap;
-          cursor: pointer;
-          display: inline-block;
-          margin-right: 4px;
-        }
-
-        img {
-          top: 2px;
-          position: relative;
-          height: 12px;
-        }
+      &.noAccount {
+        margin-right: 10px;
+        opacity: 0.5;
       }
     }
-  }
-
-  .accountInfoContainer:hover {
-    background-color: rgba(10, 28, 61, 1);
-
-    + .wallet {
-      transform: scaleY(1);
-    }
-  }
-
-  .wallet:hover {
-    transform: scaleY(1);
-  }
-
-  .etherBalance {
-    display: inline;
-  }
-
-  .openTour {
-    position: relative;
-    top: 2px;
-    padding: 0 10px;
-    display: inline-block;
-    border: none;
-    outline: none;
-    background: none;
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
-
-  .profileLink {
-    display: inline-block;
-
-    .walletImage {
-      &.greyscale img {
-        filter: grayscale(100%);
-      }
-    }
-
-    a {
-      color: white;
-      font-size: 13px;
-      position: relative;
-      right: 12px;
-    }
-
-    &.noAccount {
-      margin-right: 10px;
-      opacity: 0.5;
+    &:after {
+      clear: both;
+      content: "";
+      display: table;
     }
   }
 }
 
-.header:after {
-  clear: both;
-  content: "";
-  display: table;
+.headerContainer.showBanner {
+  .banner {
+    display: block;
+  }
+  .header {
+    top: 32px;
+  }
 }
 
 .pendingTransactions {
@@ -707,14 +739,39 @@ body {
 
   .headerContainer {
     z-index: 0;
+
+    &:hover {
+      z-index: 1000;
+    }
+
+    .header {
+      .menu {
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+      }
+
+      .redemptionsButton {
+        margin-left: 12px;
+      }
+
+      .toggleButton {
+        margin-left: 52px;
+      }
+
+      .accountInfo {
+        margin-left: auto;
+      }
+
+      .profileLink a {
+        display: none;
+      }
+    }
   }
 
   .outer {
     z-index: 1000000;
-  }
-
-  .headerContainer:hover {
-    z-index: 1000;
   }
 
   .topInfo {
@@ -744,34 +801,9 @@ body {
     }
   }
 
-  .header {
-    .menu {
-      position: absolute;
-      left: 0;
-      right: 0;
-      margin: 0 auto;
-    }
-
-    .redemptionsButton {
-      margin-left: 12px;
-    }
-
-    .toggleButton {
-      margin-left: 52px;
-    }
-
-    .accountInfo {
-      margin-left: auto;
-    }
-  }
-
   .topInfo a,
   .topInfo a:visited {
     color: #001c34;
-  }
-
-  .header .profileLink a {
-    display: none;
   }
 
   .web3ProviderLogin button {
