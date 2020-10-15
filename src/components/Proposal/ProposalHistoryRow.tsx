@@ -95,6 +95,8 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     let currentAccountPrediction = 0;
     let currentAccountStakeAmount = new BN(0);
     let currentAccountVoteAmount = new BN(0);
+    let passed = proposalPassed(proposalState);
+    let failed = proposalFailed(proposalState);
 
     let currentVote: Vote;
     if (votesOfCurrentUser.length > 0) {
@@ -122,8 +124,8 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
 
     const closeReasonClass = classNames({
       [css.closeReason]: true,
-      [css.decisionPassed]: proposalPassed(proposalState),
-      [css.decisionFailed]: proposalFailed(proposalState),
+      [css.decisionPassed]: passed,
+      [css.decisionFailed]: failed,
     });
 
     let closeReason = "Time out";
@@ -174,10 +176,10 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
           />
         </td>
         <td onClick={this.gotoProposal} className={closeReasonClass}>
-          {(proposalPassed(proposalState) || proposalFailed(proposalState)) ?
-            <div className={proposalPassed(proposalState) ? css.decisionPassed : css.decisionFailed}>
-              <img src={`/assets/images/Icon/vote/${proposalPassed(proposalState) ? "for.svg" : "against.svg"}`} />
-              <span>Passed</span>
+          {(passed || failed) ?
+            <div className={passed ? css.decisionPassed : css.decisionFailed}>
+              <img src={`/assets/images/Icon/vote/${passed ? "for.svg" : "against.svg"}`} />
+              <span>{passed ? "Passed" : "Failed"}</span>
               <div className={css.decisionReason}>
                 <span>{closeReason}</span>
               </div>
