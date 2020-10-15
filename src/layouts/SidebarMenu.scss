@@ -3,7 +3,7 @@
   max-width: 250px;
   color: $white;
   position: fixed;
-  top: 82px;
+  top: 50px;
   z-index: 1000;
 
   &:hover {
@@ -358,6 +358,7 @@
 
 .sidebarWrapper.noDAO {
   width: 127px;
+  top: 82px;
 
   .menuContent {
     background-color: transparent;
