@@ -119,9 +119,6 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
       defaultValues,
       () => Object.assign(this.currentFormValues, this.state), // this.removeABIDataFromObject(this.currentFormValues)
       (formValues: IFormValues, firstTime: boolean) => {
-        // for (const contract of formValues.contracts) {
-        //   contract.abi = await getABIByContract(contract.address);
-        // }
         this.currentFormValues = formValues;
         if (firstTime) {
           Object.assign(this.state, {
@@ -133,6 +130,12 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
       },
       this.props.showNotification);
   }
+
+  // componentDidMount() {
+  //   for (const contract of formValues.contracts) {
+  //     contract.abi = await getABIByContract(contract.address);
+  //   }
+  // }
 
   componentWillUnmount() {
     this.formModalService.saveCurrentValues();
@@ -157,6 +160,7 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
       contractsToCall: contractsToCall,
       callsData: callsData,
       values: values,
+      url: formValues.url,
       dao: this.props.daoAvatarAddress,
       plugin: this.props.pluginState.address,
       tags: this.state.tags,
@@ -421,11 +425,10 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
                                 onChange={async (e: any) => { setFieldValue(`contracts.${index}.address`, e.target.value); await this.getContractABI(e.target.value, setFieldValue, index); }}
                                 component="select"
                                 name={`contracts.${index}.address`}
-                                placeholder="Select contract"
                                 type="text"
                                 validate={requireValue}
                               >
-                                <option value="" disabled>{i18next.t("Choose contract")}</option>
+                                <option value="" disabled>-- {i18next.t("Choose contract")} --</option>
                                 <optgroup label={i18next.t("Whitelisted contracts")}>
                                   {whitelistedContractsOptions}
                                 </optgroup>
@@ -450,11 +453,10 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
                                     onChange={(e: any) => { setFieldValue(`contracts.${index}.method`, e.target.value); this.getMethodInputs(values.contracts[index].abi, values.contracts[index]?.methods, e.target.value, setFieldValue, index); }}
                                     component="select"
                                     name={`contracts.${index}.method`}
-                                    placeholder="Select method"
                                     type="text"
                                     validate={requireValue}
                                   >
-                                    <option value="" disabled>{i18next.t("Choose method")}</option>
+                                    <option value="" disabled>-- {i18next.t("Choose method")} --</option>
                                     {values.contracts[index]?.methods?.map((method: any, j: any) => (
                                       <option key={j}>{method.methodSignature}</option>
                                     ))}

@@ -6,11 +6,9 @@ import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
-import { baseTokenName, isValidUrl, isAddress } from "lib/util";
-import { isHexString } from "ethers/utils";
+import { baseTokenName, isValidUrl, linkToEtherScan } from "lib/util";
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-import { SelectSearch } from "components/Shared/SelectSearch";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
@@ -19,7 +17,7 @@ import { IFormModalService, CreateFormModalService } from "components/Shared/For
 import ResetFormButton from "components/Proposal/Create/PluginForms/ResetFormButton";
 import { getABIByContract, extractABIMethods, encodeABI } from "./ABIService";
 import Loading from "components/Shared/Loading";
-import { linkToEtherScan } from "lib/util";
+import { requireValue, validateParam } from "./Validators";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -37,15 +35,12 @@ interface IStateProps {
   tags: Array<string>
   abiData: Array<any>
   abiMethods: Array<any>
-  abiInputs: IABIField[]
-  callData: string
 }
 
 interface IABIField {
   id: string,
   name: string
   type: string
-  inputType: string,
   placeholder: string,
 }
 
@@ -57,12 +52,17 @@ const mapDispatchToProps = {
 };
 
 interface IFormValues {
-  description: string;
-  title: string;
-  url: string;
-  value: number;
-  method: string,
-  [key: string]: any;
+  description: string
+  title: string
+  url: string
+  value: number
+  abi: any
+  methods: Array<any>
+  method: string
+  params: IABIField[]
+  values: any
+  callData: string
+  [key: string]: any
 }
 
 const defaultValues: IFormValues = Object.freeze({
@@ -71,7 +71,12 @@ const defaultValues: IFormValues = Object.freeze({
   url: "",
   value: 0,
   tags: [],
+  abi: [] as any,
+  methods: [] as any,
   method: "",
+  params: [] as any,
+  values: [] as any,
+  callData: "",
 });
 
 interface INoABIProps {
@@ -95,7 +100,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
-    this.state = { loading: true, tags: [], abiData: [], abiMethods: [], abiInputs: [], callData: "" };
+    this.state = { loading: true, tags: [], abiData: [], abiMethods: [] };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.formModalService = CreateFormModalService(
@@ -106,10 +111,10 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
         this.currentFormValues = formValues;
         if (firstTime) {
           Object.assign(this.state, {
-            tags: formValues.tags, abiInputs: this.state.abiInputs, callData: this.state.callData,
+            tags: formValues.tags,
           });
         }
-        else { this.setState({ tags: formValues.tags, abiInputs: [], callData: "" }); }
+        else { this.setState({ tags: formValues.tags }); }
       },
       this.props.showNotification);
   }
@@ -129,11 +134,14 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const proposalValues = {
-      ...values,
+      title: values.title,
+      description: values.description,
+      value: values.value,
+      callData: values.callData,
+      url: values.url,
       dao: this.props.daoAvatarAddress,
       plugin: this.props.pluginState.address,
       tags: this.state.tags,
-      callData: this.state.callData,
     };
 
     setSubmitting(false);
@@ -153,39 +161,37 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
     this.setState({ tags });
   }
 
-  private getEncodedData = (abi: Array<any>, name: string, values: any[]) => {
-    const encodedData = encodeABI(abi, name, values);
-    this.setState({ callData: encodedData });
-  }
-
-  private abiInputChange = (values: any) => {
+  private abiInputChange = (setFieldValue: any, values: any) => {
     const abiValues = [];
-    for (const abiInput of this.state.abiInputs) {
+    for (const abiInput of values.params) {
       abiValues.push({ type: abiInput.type, value: values[abiInput.name] });
     }
-
-    this.getEncodedData(this.state.abiMethods, values.method, abiValues);
+    setFieldValue("callData", encodeABI(values.methods, values.method, abiValues));
   }
 
-  private onSelectChange = (data: any): void => {
-    const abiInputs = data.inputs.map((input: any, index: number) => {
+  private onSelectChange = (values: any, setFieldValue: any, data: any): void => {
+    const abiInputs = data[0].inputs.map((input: any, index: number) => {
       return {
         id: index,
         name: input.name,
         type: input.type,
-        inputType: input.type === "bool" ? "number" : "text",
         placeholder: `${input.name} (${input.type})`,
         methodSignature: input.methodSignature,
       };
     });
 
-    this.setState({ abiInputs: abiInputs, callData: "" });
+    setFieldValue("callData", "");
+    setFieldValue("params", abiInputs);
+
     if (abiInputs.length === 0) {
-      this.getEncodedData(this.state.abiMethods, data.methodSignature, []);
+      setFieldValue("callData", encodeABI(values.methods, data[0].methodSignature, []));
     }
   }
 
   public render(): RenderOutput {
+    const { abiData, abiMethods } = this.state;
+    this.currentFormValues.abi = abiData;
+    this.currentFormValues.methods = abiMethods;
     const { handleClose } = this.props;
     const contractToCall = (this.props.pluginState as IGenericPluginState).pluginParams.contractToCall;
 
@@ -217,45 +223,8 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
                     errors.url = "Invalid URL";
                   }
 
-                  const requireValue = (name: string) => {
-                    if ((values as any)[name] === "") {
-                      errors[name] = "Required";
-                    }
-                  };
-
-                  const nonNegative = (name: string) => {
-                    if ((values as any)[name] < 0) {
-                      errors[name] = "Please enter a non-negative value";
-                    }
-                  };
-
-                  if (this.state.abiInputs) {
-                    for (const abiValue of this.state.abiInputs) {
-                      require(abiValue.name);
-                      switch (abiValue.type) {
-                        case "address":
-                          if (!isAddress(values[abiValue.name])) {
-                            errors[abiValue.name] = i18next.t("Validate Address");
-                          }
-                          break;
-                        case "bytes":
-                          if (!isHexString(values[abiValue.name])) {
-                            errors[abiValue.name] = i18next.t("Validate HEX");
-                          }
-                          break;
-                        case "uint256":
-                          if (/^\d+$/.test(values[abiValue.name]) === false) {
-                            errors[abiValue.name] = i18next.t("Validate Digits");
-                          }
-                          break;
-                      }
-                    }
-                  }
-
                   require("title");
                   require("description");
-                  requireValue("value");
-                  nonNegative("value");
                   require("method");
 
                   return errors;
@@ -349,26 +318,31 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
                         name="value"
                         type="number"
                         className={touched.value && errors.value ? css.error : null}
+                        validate={requireValue}
                       />
                     </div>
 
-                    <SelectSearch
-                      data={this.state.abiMethods}
-                      label="ABI Method"
-                      required
-                      value={values.method}
-                      // eslint-disable-next-line react/jsx-no-bind
-                      onChange={(data: any) => { setFieldValue("method", data.methodSignature); this.onSelectChange(data); }}
-                      name="method"
-                      placeholder="-- Select method --"
-                      errors={errors}
-                      cssForm={css}
-                      touched={touched}
-                      nameOnList="methodSignature"
-                    />
+                    <div>
+                      <label htmlFor="method">
+                        <div className={css.requiredMarker}>*</div>
+                        Method
+                        <ErrorMessage name="method">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      </label>
+                      <Field
+                        id="select-search"
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange={(e: any) => { setFieldValue("method", e.target.value); this.onSelectChange(values, setFieldValue, this.state.abiMethods.filter(method => method.methodSignature === e.target.value)); }}
+                        component="select"
+                        name="method">
+                        <option value="" disabled>-- {i18next.t("Choose method")} --</option>
+                        {this.state.abiMethods.map((method, index) => {
+                          return <option id={`select-search-element-${index}`} key={index}>{method.methodSignature}</option>;
+                        })}
+                      </Field>
+                    </div>
 
                     {
-                      this.state.abiInputs.map((abiInput, index) => {
+                      values.params.map((abiInput, index) => {
                         return (
                           <div key={index} >
                             <label htmlFor={abiInput.name} style={{ width: "100%" }}>
@@ -379,12 +353,13 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
                                 id={`abi-input-${abiInput.id}`}
                                 placeholder={abiInput.placeholder}
                                 name={abiInput.name}
-                                type={abiInput.inputType}
                                 className={touched[abiInput.name] && errors[abiInput.name] ? css.error : null}
                                 // eslint-disable-next-line react/jsx-no-bind
                                 onChange={(e: any) => { setFieldValue(`${abiInput.name}`, e.target.value); }}
                                 // eslint-disable-next-line react/jsx-no-bind
-                                onBlur={(e: any) => { handleBlur(e); this.abiInputChange(values); }}
+                                onBlur={(e: any) => { handleBlur(e); this.abiInputChange(setFieldValue, values); }}
+                                // eslint-disable-next-line react/jsx-no-bind
+                                validate={(e: any) => validateParam(abiInput.type, e)}
                               />
                             </label>
                           </div>
@@ -393,7 +368,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
                     }
 
                     <label>Encoded Data</label>
-                    <div id="encoded-data" className={css.encodedData}>{this.state.callData}</div>
+                    <div id="encoded-data" className={css.encodedData}>{values.callData}</div>
 
                     <div className={css.createProposalActions}>
                       <TrainingTooltip overlay={i18next.t("Export Proposal Tooltip")} placement="top">
