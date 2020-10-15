@@ -95,8 +95,8 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     let currentAccountPrediction = 0;
     let currentAccountStakeAmount = new BN(0);
     let currentAccountVoteAmount = new BN(0);
-    let passed = proposalPassed(proposalState);
-    let failed = proposalFailed(proposalState);
+    const passed = proposalPassed(proposalState);
+    const failed = proposalFailed(proposalState);
 
     let currentVote: Vote;
     if (votesOfCurrentUser.length > 0) {
