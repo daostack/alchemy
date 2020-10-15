@@ -175,7 +175,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
         </td>
         <td onClick={this.gotoProposal} className={closeReasonClass}>
           {(proposalPassed(proposalState) || proposalFailed(proposalState)) ?
-            <div className={css.decisionPassed}>
+            <div className={proposalPassed(proposalState) ? css.decisionPassed : css.decisionFailed}>
               <img src={`/assets/images/Icon/vote/${proposalPassed(proposalState) ? "for.svg" : "against.svg"}`} />
               <span>Passed</span>
               <div className={css.decisionReason}>
