@@ -147,7 +147,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
       <tr className={proposalClass}>
         <td className={css.proposalCreator}>
           <AccountPopup accountAddress={proposalState.proposer} daoState={daoState} width={this.state.isMobile ? 12 : 40} />
-          <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} historyView/>
+          <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} historyView />
         </td>
         <td onClick={this.gotoProposal} className={css.endDate}>
           {closingTime(proposalState) ? closingTime(proposalState).format("MMM D, YYYY") : ""}
@@ -174,31 +174,27 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
           />
         </td>
         <td onClick={this.gotoProposal} className={closeReasonClass}>
-          <div className={css.decisionPassed}>
-            <img src="/assets/images/Icon/vote/for.svg"/>
-            <span>Passed</span>
-            <div className={css.decisionReason}>
-              <span>{closeReason}</span>
-            </div>
-          </div>
-          <div className={css.decisionFailed}>
-            <img src="/assets/images/Icon/vote/against.svg"/>
-            <span>Failed</span>
-            <div className={css.decisionReason}>
-              <span>{closeReason}</span>
-            </div>
-          </div>
+          {(proposalPassed(proposalState) || proposalFailed(proposalState)) ?
+            <div className={css.decisionPassed}>
+              <img src={`/assets/images/Icon/vote/${proposalPassed(proposalState) ? "for.svg" : "against.svg"}`} />
+              <span>Passed</span>
+              <div className={css.decisionReason}>
+                <span>{closeReason}</span>
+              </div>
+            </div> :
+            <div className={css.decisionInProgress}>In Progress</div>
+          }
         </td>
         <td onClick={this.gotoProposal} className={myActionsClass}>
           <div className={css.myVote}>
             <span>{formatTokens(currentAccountVoteAmount, "Rep")}</span>
-            <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg"/>
-            <img className={css.failVote} src="/assets/images/Icon/vote/against-fill.svg"/>
+            <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg" />
+            <img className={css.failVote} src="/assets/images/Icon/vote/against-fill.svg" />
           </div>
           <div className={css.myStake}>
             <span>{formatTokens(currentAccountStakeAmount, "GEN")}</span>
-            <img className={css.forStake} src="/assets/images/Icon/v-small-fill.svg"/>
-            <img className={css.againstStake} src="/assets/images/Icon/x-small-fill.svg"/>
+            <img className={css.forStake} src="/assets/images/Icon/v-small-fill.svg" />
+            <img className={css.againstStake} src="/assets/images/Icon/x-small-fill.svg" />
           </div>
         </td>
       </tr>
@@ -212,7 +208,7 @@ const ConnectedProposalHistoryRow = connect(mapStateToProps)(ProposalHistoryRow)
 export default withSubscription({
   wrappedComponent: ConnectedProposalHistoryRow,
   loadingComponent: (props) => <tr><td>Loading proposal {props.proposal.id.substr(0, 6)}...</td></tr>,
-  errorComponent: (props) => <tr><td>{ props.error.message }</td></tr>,
+  errorComponent: (props) => <tr><td>{props.error.message}</td></tr>,
   checkForUpdate: ["currentAccountAddress"],
   createObservable: (props: IExternalProps) => {
     const proposal = props.proposal;
@@ -226,10 +222,10 @@ export default withSubscription({
     } else {
       return combineLatest(
         proposal.state(),
-        proposal.stakes({ where: { staker: props.currentAccountAddress}}),
-        proposal.votes({ where: { voter: props.currentAccountAddress }}),
+        proposal.stakes({ where: { staker: props.currentAccountAddress } }),
+        proposal.votes({ where: { voter: props.currentAccountAddress } }),
         // we set 'fetchPolicy' to 'cache-only' so as to not send queries for addresses that are not members. The cache is filled higher up.
-        props.daoState.dao.member(props.currentAccountAddress).state({ fetchPolicy: "cache-only"}),
+        props.daoState.dao.member(props.currentAccountAddress).state({ fetchPolicy: "cache-only" }),
       );
     }
   },
