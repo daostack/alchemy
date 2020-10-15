@@ -239,8 +239,8 @@ class DaosPage extends React.Component<IProps, IState> {
             </select>
           </div>
 
-          <div className={css.createDaoButton}>
-            <Link to={"/daos/create"}>
+          <div className={css.createDaoButton} style={{ pointerEvents: "none", opacity: 0.5 }}>
+            <Link style={{ backgroundColor: "gray"}} to={""}>
               {i18next.t("Create A DAO")}
             </Link>
           </div>
