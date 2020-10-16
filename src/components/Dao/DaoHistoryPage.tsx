@@ -31,12 +31,12 @@ type SubscriptionData = Array<Proposal>;
 type IProps = IExternalProps & IState & ISubscriptionProps<SubscriptionData>;
 
 const ProposalsHTML = (props:
-{
-  proposals: Array<Proposal>;
-  history: any;
-  daoState: IDAOState;
-  currentAccountAddress: Address;
-}): React.ReactElement => {
+  {
+    proposals: Array<Proposal>;
+    history: any;
+    daoState: IDAOState;
+    currentAccountAddress: Address;
+  }): React.ReactElement => {
   return <> {
     props.proposals.map((proposal: Proposal) => {
       return (<ProposalHistoryRow key={"proposal_" + proposal.id} history={props.history} proposal={proposal} daoState={props.daoState} currentAccountAddress={props.currentAccountAddress} />);
@@ -141,7 +141,7 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
                   <th>Title</th>
                   <th>Votes</th>
                   <th>Predictions</th>
-                  <th>Status</th>
+                  <th className={css.status}>Status</th>
                   <th>My actions</th>
                 </tr>
               </thead>
