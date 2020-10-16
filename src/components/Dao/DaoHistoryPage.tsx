@@ -200,15 +200,15 @@ export default withSubscription({
             ...StakeFields
           }
           ${Object.values(Proposals)
-        .filter((proposal) => proposal.fragment)
-        .map((proposal) => "..." + proposal.fragment?.name)
-        .join("\n")}
+    .filter((proposal) => proposal.fragment)
+    .map((proposal) => "..." + proposal.fragment?.name)
+    .join("\n")}
         }
       }
       ${Object.values(Proposals)
-        .filter((proposal) => proposal.fragment)
-        .map((proposal) => proposal.fragment?.fragment.loc?.source.body)
-        .join("\n")}
+    .filter((proposal) => proposal.fragment)
+    .map((proposal) => proposal.fragment?.fragment.loc?.source.body)
+    .join("\n")}
       ${Vote.fragments.VoteFields}
       ${Stake.fragments.StakeFields}
       ${Plugin.baseFragment}
@@ -227,8 +227,8 @@ export default withSubscription({
         first: PAGE_SIZE,
         skip: 0,
       },
-        // get and subscribe to all data, so that subcomponents do nto have to send separate queries
-        { fetchAllData: true }),
+      // get and subscribe to all data, so that subcomponents do nto have to send separate queries
+      { fetchAllData: true }),
       from(dao.fetchState())
     );
   },
