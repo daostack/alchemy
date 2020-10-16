@@ -7,6 +7,28 @@
   display: none !important;
 }
 
+fieldset {
+  margin: 30px 0px;
+}
+
+.removeFieldSet {
+  float: right;
+  border: none;
+  color: $accent-2;
+  background: none;
+}
+
+.addFieldSet {
+  border: none;
+  background: none;
+  color: $sky;
+}
+
+.removeFieldSet:hover,
+.addFieldSet:hover {
+  opacity: 0.7;
+}
+
 .createProposalWrapper {
   border-radius: 15px 15px 0 0;
   background-color: $white;
@@ -58,6 +80,7 @@
   }
 
   form {
+    select,
     input {
       width: 100%;
       margin-top: 3px;
@@ -112,6 +135,18 @@
           min-width: 206px; // calendar input
         }
       }
+    }
+
+    .addContract {
+      position: relative;
+    }
+
+    .encodedData {
+      overflow-wrap: break-word;
+      margin: 5px 0 5px 0px;
+      border: 1px solid;
+      padding: 20px;
+      width: 490px; // TEMP - SHOULD BE DYNAMIC
     }
 
     .proposerIsAdminCheckbox {
