@@ -3,6 +3,7 @@ export const ETHDENVER_OPTIMIZATION = true;
 // if this is true, we do get the contractInfos from a locally stored file in ./data instead of from the subgraph
 export const USE_CONTRACTINFOS_CACHE = false;
 export const GRAPH_POLL_INTERVAL = 30000;
+export const THREEBOXTHREADSMODERATOR = "0xd50fc49ff389558d23a76Cf246dA147FF53D8Df8";
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 const Torus = require("@toruslabs/torus-embed");

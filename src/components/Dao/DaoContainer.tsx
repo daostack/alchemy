@@ -60,8 +60,7 @@ class DaoContainer extends React.Component<IProps, null> {
   public subscription: Subscription;
 
   public async componentDidMount() {
-    // TODO: use this once 3box fixes Box.getProfiles
-    //this.props.getProfilesForAddresses(this.props.data[1].map((member) => member.coreState.address));
+    this.props.getProfilesForAddresses(this.props.data[1].map((member) => member.coreState.address));
   }
 
   private daoHistoryRoute = (routeProps: any) => <DaoHistoryPage {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
@@ -81,7 +80,7 @@ class DaoContainer extends React.Component<IProps, null> {
 
   private pluginRoute = (routeProps: any) => <PluginContainer {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
   private daoPluginsRoute = (routeProps: any) => <DaoPluginsPage {...routeProps} daoState={this.props.data[0]} />;
-  private daoLandingRoute = (_routeProps: any) => <DaoLandingPage daoState={this.props.data[0]} />;
+  private daoLandingRoute = (_routeProps: any) => <DaoLandingPage daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress}/>;
   private modalRoute = (route: any) => `/dao/${route.params.daoAvatarAddress}/plugin/${route.params.pluginId}/`;
 
   public render(): RenderOutput {
