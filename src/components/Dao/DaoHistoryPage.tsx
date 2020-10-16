@@ -61,10 +61,10 @@ class DaoHistoryPage extends React.Component<IProps, null> {
           next={fetchMore}
           hasMore={hasMoreToLoad}
           loader=""
-          style={{overflow: "visible"}}
+          style={{ overflow: "visible" }}
           endMessage={null}
         >
-          { proposals.length === 0 ?
+          {proposals.length === 0 ?
             <span>This DAO hasn&apos;t passed any proposals yet. Checkout the <Link to={"/dao/" + daoState.id + "/proposal/"}>DAO&apos;s installed pluginss</Link> for any open proposals.</span> :
             <table className={css.proposalHistoryTable}>
               <thead>
@@ -75,7 +75,7 @@ class DaoHistoryPage extends React.Component<IProps, null> {
                   <th>Title</th>
                   <th>Votes</th>
                   <th>Predictions</th>
-                  <th>Status</th>
+                  <th className={css.status}>Status</th>
                   <th>My actions</th>
                 </tr>
               </thead>
@@ -200,15 +200,15 @@ export default withSubscription({
             ...StakeFields
           }
           ${Object.values(Proposals)
-    .filter((proposal) => proposal.fragment)
-    .map((proposal) => "..." + proposal.fragment?.name)
-    .join("\n")}
+        .filter((proposal) => proposal.fragment)
+        .map((proposal) => "..." + proposal.fragment?.name)
+        .join("\n")}
         }
       }
       ${Object.values(Proposals)
-    .filter((proposal) => proposal.fragment)
-    .map((proposal) => proposal.fragment?.fragment.loc?.source.body)
-    .join("\n")}
+        .filter((proposal) => proposal.fragment)
+        .map((proposal) => proposal.fragment?.fragment.loc?.source.body)
+        .join("\n")}
       ${Vote.fragments.VoteFields}
       ${Stake.fragments.StakeFields}
       ${Plugin.baseFragment}
@@ -227,8 +227,8 @@ export default withSubscription({
         first: PAGE_SIZE,
         skip: 0,
       },
-      // get and subscribe to all data, so that subcomponents do nto have to send separate queries
-      { fetchAllData: true }),
+        // get and subscribe to all data, so that subcomponents do nto have to send separate queries
+        { fetchAllData: true }),
       from(dao.fetchState())
     );
   },
