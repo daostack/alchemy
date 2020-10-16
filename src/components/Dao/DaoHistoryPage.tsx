@@ -30,13 +30,12 @@ interface IState {
 type SubscriptionData = Array<Proposal>;
 type IProps = IExternalProps & IState & ISubscriptionProps<SubscriptionData>;
 
-const ProposalsHTML = (props:
-  {
-    proposals: Array<Proposal>;
-    history: any;
-    daoState: IDAOState;
-    currentAccountAddress: Address;
-  }): React.ReactElement => {
+const ProposalsHTML = (props: {
+  proposals: Array<Proposal>;
+  history: any;
+  daoState: IDAOState;
+  currentAccountAddress: Address;
+}): React.ReactElement => {
   return <> {
     props.proposals.map((proposal: Proposal) => {
       return (<ProposalHistoryRow key={"proposal_" + proposal.id} history={props.history} proposal={proposal} daoState={props.daoState} currentAccountAddress={props.currentAccountAddress} />);
