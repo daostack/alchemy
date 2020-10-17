@@ -14,7 +14,7 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import { getABIByContract, extractABIMethods, encodeABI } from "./ABIService";
-import { requireValue, validateParam } from "./Validators"; 
+import { requireValue, validateParam } from "./Validators";
 
 const whitelistedContracts = [
   "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf",
@@ -35,16 +35,16 @@ interface IDispatchProps {
 }
 
 interface IAddContractStatus {
-  error: string
-  message: string
+  error: string;
+  message: string;
 }
 
 interface IStateProps {
-  loading: boolean
+  loading: boolean;
   tags: Array<string>;
-  addContractStatus: IAddContractStatus
-  whitelistedContracts: Array<string>
-  userContracts: Array<string>
+  addContractStatus: IAddContractStatus;
+  whitelistedContracts: Array<string>;
+  userContracts: Array<string>;
 }
 
 type IProps = IExternalProps & IDispatchProps;
@@ -55,21 +55,21 @@ const mapDispatchToProps = {
 };
 
 interface IContract {
-  address: string // Contract address
-  value: number // Token to send with the proposal
-  abi: any // Contract ABI data
-  methods: any // ABI write methods
-  method: string // Selected method
-  params: any // Method params
-  values: any // Params values
-  callData: string // The encoded data
+  address: string; // Contract address
+  value: number; // Token to send with the proposal
+  abi: any; // Contract ABI data
+  methods: any; // ABI write methods
+  method: string; // Selected method
+  params: any; // Method params
+  values: any; // Params values
+  callData: string; // The encoded data
 }
 
 interface IFormValues {
   description: string;
   title: string;
   url: string;
-  contracts: Array<IContract>
+  contracts: Array<IContract>;
   [key: string]: any;
 }
 
@@ -105,7 +105,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
       tags: this.initialFormValues.tags,
       addContractStatus: { error: "", message: "" },
       whitelistedContracts: whitelistedContracts,
-      userContracts: []
+      userContracts: [],
     };
   }
 
@@ -376,7 +376,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                             <label htmlFor={`contracts.${index}.value`}>
                               <div className={css.requiredMarker}>*</div>
                               {baseTokenName()} Value
-                                <ErrorMessage name={`contracts.${index}.value`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                              <ErrorMessage name={`contracts.${index}.value`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                             </label>
                             <Field
                               placeholder={`How much ${baseTokenName()} to transfer with the call`}
@@ -390,7 +390,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                             <label htmlFor={`contracts.${index}.address`}>
                               <div className={css.requiredMarker}>*</div>
                                 Contract Address
-                                <ErrorMessage name={`contracts.${index}.address`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                              <ErrorMessage name={`contracts.${index}.address`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                             </label>
                             <Field // eslint-disable-next-line react/jsx-no-bind
                               onChange={async (e: any) => { setFieldValue(`contracts.${index}.address`, e.target.value); await this.getContractABI(e.target.value, setFieldValue, index); }}
@@ -417,7 +417,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                               <label htmlFor={`contracts.${index}.method`}>
                                 <div className={css.requiredMarker}>*</div>
                                   Method
-                                  <ErrorMessage name={`contracts.${index}.method`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                                <ErrorMessage name={`contracts.${index}.method`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                               </label>
                               {values.contracts[index]?.methods?.length === 0 ? "Loading..." :
                                 <Field // eslint-disable-next-line react/jsx-no-bind
@@ -451,7 +451,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                                     name={`contracts.${index}.values.${i}`}
                                     placeholder={param.placeholder}
                                     // eslint-disable-next-line react/jsx-no-bind
-                                    onBlur={(e: any) => { handleBlur(e); this.abiInputChange(values.contracts[index].abi, values.contracts[index].values, values.contracts[index].method.split('(')[0], values.contracts[index].params, setFieldValue, index); }}
+                                    onBlur={(e: any) => { handleBlur(e); this.abiInputChange(values.contracts[index].abi, values.contracts[index].values, values.contracts[index].method.split("(")[0], values.contracts[index].params, setFieldValue, index); }}
                                     // eslint-disable-next-line react/jsx-no-bind
                                     validate={(e: any) => validateParam(param.type, e)}
                                   />

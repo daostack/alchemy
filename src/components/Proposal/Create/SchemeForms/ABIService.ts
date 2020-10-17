@@ -5,13 +5,13 @@ import axios from "axios";
 import { isAddress, targetedNetwork } from "lib/util";
 
 export interface IAllowedAbiItem extends AbiItem {
-  name: string
-  type: "function"
+  name: string;
+  type: "function";
 }
 
 export interface IAbiItemExtended extends IAllowedAbiItem {
-  action: string
-  methodSignature: string
+  action: string;
+  methodSignature: string;
 }
 
 /**
