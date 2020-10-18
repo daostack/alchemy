@@ -1,9 +1,9 @@
 import { AbiItem } from "web3-utils";
-import { Interface, isHexString } from "ethers/utils";
+import { Interface } from "ethers/utils";
 import { SortService } from "lib/sortService";
 const Web3 = require("web3");
 import axios from "axios";
-import { isAddress, targetedNetwork } from "lib/util";
+import { targetedNetwork } from "lib/util";
 
 export interface IAllowedAbiItem extends AbiItem {
   name: string
@@ -75,36 +75,6 @@ export const extractABIMethods = (abi: AbiItem[]): IAbiItemExtended[] => {
 };
 
 /**
- * Given array of ABI parameters objects, returns true if all values are valid.
- * Data example:
- * [{ type: address, value: "0x25112235dDA2F775c81f0AA37a2BaeA21B470f65" }]
- * @param {array} data
- * @returns {boolean}
- */
-export const validateABIInputs = (data: Array<any>): boolean => {
-  for (const input of data) {
-    switch (true) {
-      case input.type.includes("address"):
-        if (!isAddress(input.value)) {
-          return false;
-        }
-        break;
-      case input.type.includes("byte"):
-        if (!isHexString(input.value)) {
-          return false;
-        }
-        break;
-      case input.type.includes("uint"):
-        if (/^\d+$/.test(input.value) === false) {
-          return false;
-        }
-        break;
-    }
-  }
-  return true;
-};
-
-/**
  * Given contract address returns it's ABI data.
  * @param {string} contractAddress
  */
@@ -124,22 +94,17 @@ export const getABIByContract = async (contractAddress: string): Promise<Array<a
 };
 
 /**
- * Given ABI, function name and it's parameters values returns the encoded data as string.
+ * Given ABI, function name and it's parameters values returns the encoded data as string, otherwise returns an error.
  * @param {array} abi ABI methods array
  * @param {string} name Method name
- * @param {array} data array of ABI parameters objects. Example: [{ type: address, value: "0x25112235dDA2F775c81f0AA37a2BaeA21B470f65" }]
+ * @param {array} values array of ABI parameters values.
  * @returns {string} The encoded data
  */
-export const encodeABI = (abi: Array<any>, name: string, data: any[]): string => {
-  const interfaceABI = new Interface(abi);
-
-  if (validateABIInputs(data)) {
-    const values = [];
-    for (const input of data) {
-      values.push(input.value);
-    }
+export const encodeABI = (abi: Array<any>, name: string, values: any[]): string => {
+  try {
+    const interfaceABI = new Interface(abi);
     return interfaceABI.functions[name].encode(values);
+  } catch (error) {
+    return error.reason;
   }
-
-  return "";
 };

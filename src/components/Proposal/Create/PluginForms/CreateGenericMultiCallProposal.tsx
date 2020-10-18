@@ -37,8 +37,10 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
+type AddContractError = "NOT_VALID_ADDRESS" | "CONTRACT_EXIST" | "ABI_DATA_ERROR" | "";
+
 interface IAddContractStatus {
-  error: string
+  error: AddContractError
   message: string
 }
 
@@ -93,11 +95,11 @@ const defaultValues: IFormValues = Object.freeze({
     {
       address: "",
       value: 0,
-      abi: [] as any,
-      methods: [] as any,
+      abi: [],
+      methods: [],
       method: "",
-      params: [] as any,
-      values: [] as any,
+      params: [],
+      values: [],
       callData: "",
     },
   ],
@@ -196,7 +198,7 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
    * @param {string} contractToCall
    */
   private verifyContract = async (contractToCall: string) => {
-    const addContractStatus = {
+    const addContractStatus: IAddContractStatus = {
       error: "",
       message: "",
     };
@@ -250,13 +252,8 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
     }
   }
 
-  private abiInputChange = (abi: any, values: any, name: string, params: any, setFieldValue: any, index: number) => {
-    const abiValues = [];
-    for (const [i, abiInput] of params.entries()) {
-      abiValues.push({ type: abiInput.type, value: values[i] });
-    }
-
-    const encodedData = encodeABI(abi, name, abiValues);
+  private abiInputChange = (abi: any, values: any, name: string, setFieldValue: any, index: number) => { // params: any,
+    const encodedData = encodeABI(abi, name, values);
     setFieldValue(`contracts.${index}.callData`, encodedData);
   }
 
@@ -480,7 +477,7 @@ class CreateGenericMultiCallProposal extends React.Component<IProps, IStateProps
                                       name={`contracts.${index}.values.${i}`}
                                       placeholder={param.placeholder}
                                       // eslint-disable-next-line react/jsx-no-bind
-                                      onBlur={(e: any) => { handleBlur(e); this.abiInputChange(values.contracts[index].abi, values.contracts[index].values, values.contracts[index].method, values.contracts[index].params, setFieldValue, index); }}
+                                      onBlur={(e: any) => { handleBlur(e); this.abiInputChange(values.contracts[index].abi, values.contracts[index].values, values.contracts[index].method, setFieldValue, index); }}
                                       // eslint-disable-next-line react/jsx-no-bind
                                       validate={(e: any) => validateParam(param.type, e)}
                                     />

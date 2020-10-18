@@ -71,11 +71,11 @@ const defaultValues: IFormValues = Object.freeze({
   url: "",
   value: 0,
   tags: [],
-  abi: [] as any,
-  methods: [] as any,
+  abi: [],
+  methods: [],
   method: "",
-  params: [] as any,
-  values: [] as any,
+  params: [],
+  values: [],
   callData: "",
 });
 
@@ -164,7 +164,7 @@ class CreateGenericPlugin extends React.Component<IProps, IStateProps> {
   private abiInputChange = (setFieldValue: any, values: any) => {
     const abiValues = [];
     for (const abiInput of values.params) {
-      abiValues.push({ type: abiInput.type, value: values[abiInput.name] });
+      abiValues.push(values[abiInput.name]);
     }
     setFieldValue("callData", encodeABI(values.methods, values.method, abiValues));
   }
