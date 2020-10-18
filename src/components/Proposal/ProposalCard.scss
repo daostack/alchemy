@@ -42,13 +42,14 @@
   margin-bottom: 10px;
   display: inline-block;
   position: relative;
-  box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
-  transition: all .25s ease;
+  box-shadow: 0 0 15px 0 rgba(133, 168, 208, 0.15);
+  transition: all 0.25s ease;
   vertical-align: top;
   z-index: 0;
   cursor: pointer;
 
-  .description, .url {
+  .description,
+  .url {
     display: none;
   }
 }
@@ -64,7 +65,7 @@
   }
 
   strong a {
-    color: rgba(80, 97, 118, 1.000);
+    color: rgba(80, 97, 118, 1);
   }
 
   h3 {
@@ -95,7 +96,7 @@
   img {
     margin-left: 8px;
     height: 12px;
-    opacity: .5;
+    opacity: 0.5;
     position: relative;
     top: -3px;
   }
@@ -108,14 +109,14 @@
 
 .proposal:hover {
   z-index: 9000;
-  box-shadow: 0 0 15px 0 rgba(49, 120, 202, .300);
+  box-shadow: 0 0 15px 0 rgba(49, 120, 202, 0.3);
   overflow: visible;
 }
 
 .voteBox {
   position: relative;
   float: left;
-  border-right: 1px solid rgba(215, 225, 237, 1.000);
+  border-right: 1px solid rgba(215, 225, 237, 1);
   width: 49%;
 }
 
@@ -165,8 +166,8 @@
       font-family: "Open Sans";
       display: inline-block;
       margin: 12px 0 0 18px;
-      opacity: .6;
-      color: rgba(104, 155, 214, 1.000);
+      opacity: 0.6;
+      color: $title-color;
     }
   }
 
@@ -206,7 +207,7 @@
       top: -7px;
       left: 24px;
       opacity: 0;
-      transition: all .25s ease;
+      transition: all 0.25s ease;
       z-index: 100;
       visibility: hidden;
 
@@ -240,8 +241,8 @@
 
 .proposalActions {
   position: relative;
-  transition: all .25s ease;
-  border-top: 1px solid rgba(215, 225, 237, 1.000);
+  transition: all 0.25s ease;
+  border-top: 1px solid rgba(215, 225, 237, 1);
   height: 64px;
   overflow: hidden;
 }

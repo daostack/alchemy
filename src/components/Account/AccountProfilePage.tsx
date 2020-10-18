@@ -111,7 +111,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
     });
   }
 
-  public doUpdateProfile = async() => {
+  public doUpdateProfile = async () => {
     const { currentAccountAddress, updateProfile } = this.props;
     await updateProfile(currentAccountAddress, this.state.name, this.state.description);
   }

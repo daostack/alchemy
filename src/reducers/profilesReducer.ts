@@ -1,11 +1,13 @@
 import * as update from "immutability-helper";
 import { AsyncActionSequence } from "actions/async";
+import moment = require("moment");
 
 export enum ActionTypes {
   GET_PROFILE_DATA = "GET_PROFILE_DATA",
   UPDATE_PROFILE = "UPDATE_PROFILE",
   FOLLOW_ITEM = "FOLLOW_ITEM",
   SAVE_THREEBOX = "SAVE_THREEBOX",
+  ADD_THREEBOX_THREAD = "ADD_THREEBOX_THREAD",
 }
 
 export type FollowType = "daos" | "proposals" | "users";
@@ -16,6 +18,40 @@ export interface IFollowsCollections {
   users: Array<string>,
 }
 
+export interface I3BoxThreadPost {
+  /**
+   * reference to the posters' 3Box coverted to an account address
+   */
+  author: string;
+  /**
+   * "asdf"
+   */
+  message: string;
+  /**
+   * "zdpuAtHovxguZuqPHP5YQmnSyL5T1owJvdFtMQGYJRHKX177i"
+   */
+  postId: string;
+  /**
+   * timestamp as moment.Moment
+   */
+  createDate: moment.Moment;
+  /**
+   * number
+   */
+  timestamp: number;
+}
+
+export interface I3BoxThread {
+  post: (message: string) => void;
+  onUpdate(handler: () => void) : void;
+  getPosts(): Promise<Array<I3BoxThreadPost>>;
+  deletePost(postId: string): Promise<void>;
+}
+
+export interface IJoinedThreads {
+  [threadName: string]: I3BoxThread;
+}
+
 export interface IProfileState {
   description: string;
   ethereumAccountAddress: string;
@@ -23,10 +59,11 @@ export interface IProfileState {
   image?: any;
   name: string;
   socialURLs: any;
+  joinedThreads?: IJoinedThreads;
 }
 
 export interface I3BoxState {
-  threeBox?: any; // To store the opened 3box box so we dont have to wait to open it every time we want to update data in it
+  threeBox?: any; // To store the opened and authorized 3box box so we dont have to wait to open it every time we want to update data in it
   threeBoxSpace?: any; // To store the opened 3box DAOstack space so we dont have to wait to open it every time we want to update data in it
 }
 
@@ -47,7 +84,7 @@ export interface IFollowingPayload {
 export function newProfile(ethereumAccountAddress: string): IProfileState {
   return {
     description: "",
-    ethereumAccountAddress, // assumed already cast to lowercase
+    ethereumAccountAddress,
     follows: {
       daos: [],
       proposals: [],
@@ -87,6 +124,7 @@ const profilesReducer = (
     case ActionTypes.UPDATE_PROFILE: {
       switch (action.sequence) {
         case AsyncActionSequence.Success: {
+          // should be only name and description
           const profilePayload = action.payload as IProfileState;
           const accountAddress = meta.accountAddress?.toLowerCase();
           return update(state, {

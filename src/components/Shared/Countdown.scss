@@ -4,36 +4,35 @@
 }
 
 .detailView {
-	text-align: right;
+  text-align: right;
 
   .label {
     margin-right: 8px;
-		color: $black-halftone;
+    color: $black-halftone;
   }
 
-	.timeSection {
-
+  .timeSection {
     strong {
       font-weight: bold;
       display: inline-block;
     }
-	}
+  }
 }
 
 .percentageContainer {
-	width: 100%;
-	height: 2px;
-	display: none;
-	border-top: 1px solid rgba(105, 164, 231, 1.000);
+  width: 100%;
+  height: 2px;
+  display: none;
+  border-top: 1px solid rgba(105, 164, 231, 1);
 }
 
 .timeSection {
   display: inline-block;
-  color: rgba(104, 155, 214, 1.000);
+  color: $title-color;
 
   strong {
-  	font-weight: normal;
-  	font-family: $body-font;
+    font-weight: normal;
+    font-family: $body-font;
   }
 
   .colon {
@@ -44,10 +43,10 @@
 }
 
 .pluginView .timeSection strong {
-	color: $gray-1;
+  color: $gray-1;
 }
 
 .overTime {
-	margin-left: 8px;
-	display: inline-block;
+  margin-left: 8px;
+  display: inline-block;
 }

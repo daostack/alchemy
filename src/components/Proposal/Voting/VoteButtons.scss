@@ -190,7 +190,7 @@ button.disabled {
 
 .castVote button {
   font-weight: $bold;
-  color: rgba(3, 118, 255, 1);
+  color: $accent-1;
   background-color: rgba(225, 235, 247, 1);
   height: 25px;
   line-height: 25px;
@@ -253,7 +253,7 @@ button.disabled {
     width: auto;
     margin-right: 5px;
     border-radius: 30px;
-    background: #0071ff;
+    background: $secondary-button-color;
     padding: 0 15px;
 
     span {

@@ -1,13 +1,12 @@
 import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
-import { NotificationStatus } from "reducers/notifications";
-import { getNetworkId, getNetworkName, targetedNetwork, isAddress } from "./lib/util";
+import { NotificationStatus, showNotification as showNotificationFunction } from "reducers/notifications";
+import { getNetworkId, getNetworkName, targetedNetwork, isAddress, waitUntilTrue, getArc as utilGetArc } from "./lib/util";
 import { settings, Settings, USE_CONTRACTINFOS_CACHE } from "./settings";
 import { RetryLink } from "apollo-link-retry";
 import { Address, Arc, Web3Client, Web3Provider } from "@daostack/arc.js";
 import { Observable } from "rxjs";
 import { first } from "rxjs/operators";
 import { AsyncSendable, Block } from "ethers/providers";
-import { showNotification as showNotificationFunction } from "./reducers/notifications";
 
 /**
  * This is only set after the user has selected a provider and enabled an account.
@@ -67,11 +66,7 @@ export async function getCurrentBlock(web3?: Web3Client): Promise<Block> {
  * Throws an exception when Arc hasn't yet been initialized!
  */
 export function getArc(): Arc {
-  const arc = (window as any).arc as Arc;
-  if (!arc) {
-    throw Error("window.arc is not defined - please call initializeArc first");
-  }
-  return arc;
+  return utilGetArc();
 }
 
 /**
@@ -132,7 +127,7 @@ export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
       attempts: {
         max: 5,
         retryIf: (error, _operation) => {
-        // eslint-disable-next-line no-console
+          // eslint-disable-next-line no-console
           console.error("error occurred fetching data, retrying...");
           // eslint-disable-next-line no-console
           console.log(error);
@@ -175,8 +170,8 @@ export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
       initializedAccount = await _getCurrentAccountFromArc(arc);
 
       if (!initializedAccount || initializedAccount === "0x0000000000000000000000000000000000000000") {
-      // then something went wrong
-      // eslint-disable-next-line no-console
+        // then something went wrong
+        // eslint-disable-next-line no-console
         console.error("Unable to obtain an account from the provider");
       }
     } else {
@@ -392,7 +387,7 @@ async function enableWeb3Provider(): Promise<void> {
   }
 
   if (!await initializeArc(provider)) {
-  // eslint-disable-next-line no-console
+    // eslint-disable-next-line no-console
     console.error("Unable to initialize Arc");
     throw new Error("Unable to initialize Arc");
   }
@@ -528,11 +523,24 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
   return true;
 }
 
+export const awaitEnabledAccount = async (timeOut = 1000): Promise<Web3Provider> => {
+  let provider = getWeb3Provider();
+  if (!provider) {
+    await waitUntilTrue(() => { return !!(provider = getWeb3Provider()); }, timeOut);
+  }
+  return provider;
+};
+
+export interface IAccountChangedEvent {
+  newAccount: Address | null;
+  previousAccount: Address | null;
+}
+
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
 // Polling is Evil!
 // TODO: check if this (new?) function can replace polling:
 // https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
-export function pollForAccountChanges(currentAccountAddress: Address | null, interval = 2000): Observable<Address> {
+export function pollForAccountChanges(currentAccountAddress: Address | null, interval = 2000): Observable<IAccountChangedEvent> {
   // eslint-disable-next-line no-console
   console.log(`start polling for account changes from: ${currentAccountAddress}`);
   return Observable.create((observer: any): () => void => {
@@ -555,13 +563,13 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
                    */
                   await initializeArc(selectedProvider);
                 }
-                observer.next(account);
+                observer.next({ newAccount: account, previousAccount: prevAccount });
                 // eslint-disable-next-line require-atomic-updates
                 prevAccount = account;
               }
             })
             // eslint-disable-next-line no-console
-            .catch((err): void => {console.error(err ? err.message : "unknown error"); });
+            .catch((err): void => { console.error(err ? err.message : "unknown error"); });
         } catch (ex) {
           // eslint-disable-next-line no-console
           console.error(ex ? ex.message : "unknown error");

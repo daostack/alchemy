@@ -49,7 +49,8 @@ type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const proposalState = ownProps.proposalState;
-  return {...ownProps,
+  return {
+    ...ownProps,
     beneficiaryProfile: proposalState.name === "ContributionReward" ?
       state.profiles[(proposalState as IContributionRewardProposalState).beneficiary] : null,
   };
@@ -133,7 +134,7 @@ class ActionButton extends React.Component<IProps, IState> {
       rewards,
     } = this.props;
 
-    const daoBalances: {[key: string]: BN} = {
+    const daoBalances: { [key: string]: BN } = {
       eth: daoEthBalance,
       externalToken: data && data[0] || new BN(0),
       GEN: data && data[1] || new BN(0),
@@ -179,10 +180,10 @@ class ActionButton extends React.Component<IProps, IState> {
 
     // true if all rewards can be paid.  doesn't imply there are any rewards
     const canRewardAll = (((beneficiaryNumUnredeemedCrRewards === 0) || !daoLacksRequiredCrRewards) &&
-                          ((currentAccountNumUnredeemedGpRewards === 0) || !daoLacksRequiredGpRewards));
+      ((currentAccountNumUnredeemedGpRewards === 0) || !daoLacksRequiredGpRewards));
 
     // true if there exist one or more rewards and not any one of them can be paid
-    let canRewardNone=false;
+    let canRewardNone = false;
     if (daoLacksAllRequiredCrRewards) {
       canRewardNone = daoLacksAllRequiredGpRewards || (currentAccountNumUnredeemedGpRewards === 0);
     } else if (daoLacksAllRequiredGpRewards) {
@@ -202,9 +203,9 @@ class ActionButton extends React.Component<IProps, IState> {
      */
 
     const displayRedeemButton = ((proposalState as any).coreState?.executedAt || proposalState.executedAt) &&
-                        ((currentAccountNumUnredeemedGpRewards > 0) ||
-                        ((((proposalState as any).coreState?.winningOutcome === IProposalOutcome.Pass) || proposalState.winningOutcome) &&
-                        (beneficiaryNumUnredeemedCrRewards > 0)));
+      ((currentAccountNumUnredeemedGpRewards > 0) ||
+        ((((proposalState as any).coreState?.winningOutcome === IProposalOutcome.Pass) || proposalState.winningOutcome) &&
+          (beneficiaryNumUnredeemedCrRewards > 0)));
 
     const redemptionsTip = RedemptionsTip({
       canRewardNone,
@@ -214,7 +215,7 @@ class ActionButton extends React.Component<IProps, IState> {
       daoState: daoState,
       gpRewards,
       id: rewards ? rewards.id : "0",
-      proposal: proposalState.proposal?.entity as any,
+      proposal: proposalState,
     });
 
     const redeemButtonClass = classNames({
@@ -245,24 +246,24 @@ class ActionButton extends React.Component<IProps, IState> {
 
         { proposalState.stage === IProposalStage.Queued && proposalState.upstakeNeededToPreBoost.ltn(0) ?
           <button className={css.preboostButton} onClick={this.handleClickExecute("Pre-Boost")} data-test-id="buttonBoost">
-            <img src="/assets/images/Icon/boost.svg"/>
-            { /* space after <span> is there on purpose */ }
+            <img src="/assets/images/Icon/boost.svg" />
+            { /* space after <span> is there on purpose */}
             <span> Pre-Boost</span>
           </button> :
           proposalState.stage === IProposalStage.PreBoosted && expired && proposalState.downStakeNeededToQueue.lten(0) ?
             <button className={css.unboostButton} onClick={this.handleClickExecute("Un-boost")} data-test-id="buttonBoost">
-              <img src="/assets/images/Icon/boost.svg"/>
+              <img src="/assets/images/Icon/boost.svg" />
               <span> Un-Boost</span>
             </button> :
             proposalState.stage === IProposalStage.PreBoosted && expired ?
               <button className={css.boostButton} onClick={this.handleClickExecute("Boost")} data-test-id="buttonBoost">
-                <img src="/assets/images/Icon/boost.svg"/>
+                <img src="/assets/images/Icon/boost.svg" />
                 <span> Boost</span>
               </button> :
               (proposalState.stage === IProposalStage.Boosted || proposalState.stage === IProposalStage.QuietEndingPeriod) && expired ?
                 <button className={css.executeButton} onClick={this.handleClickExecute("Execute")}>
-                  <img src="/assets/images/Icon/execute.svg"/>
-                  { /* space after <span> is there on purpose */ }
+                  <img src="/assets/images/Icon/execute.svg" />
+                  { /* space after <span> is there on purpose */}
                   <span> Execute</span>
                 </button>
                 : displayRedeemButton ?
@@ -278,8 +279,8 @@ class ActionButton extends React.Component<IProps, IState> {
                           <img src="/assets/images/Icon/redeem.svg" />
                           {
                             (((beneficiaryNumUnredeemedCrRewards > 0) && (currentAccountAddress !== (proposalState as IContributionRewardProposalState).beneficiary)) &&
-                           (currentAccountNumUnredeemedGpRewards === 0)) ?
-                            // note beneficiary can be the current account
+                              (currentAccountNumUnredeemedGpRewards === 0)) ?
+                              // note beneficiary can be the current account
                               " Redeem for beneficiary" : " Redeem"
                           }
                         </button>
@@ -342,7 +343,7 @@ const SubscribedActionButton = withSubscription({
     const crState = props.proposalState as IContributionRewardProposalState;
 
     if (crState.name === "ContributionReward" &&
-        crState.externalTokenReward && !crState.externalTokenReward.isZero()) {
+      crState.externalTokenReward && !crState.externalTokenReward.isZero()) {
 
       if (new BN(crState.externalToken.slice(2), 16).isZero()) {
         // handle an old bug that enabled corrupt proposals

@@ -22,7 +22,7 @@
     padding-bottom: 20px;
 
     .searchBox {
-      color: #4f6176;
+      color: $grey-blue;
       margin-right: 30px;
       border-radius: 20px;
       background: url("../../assets/images/Icon/search.svg") $white no-repeat left 5px center;
@@ -43,13 +43,13 @@
 
       input:-webkit-autofill {
         transition: all 5000s ease-in-out 0s;
-      }      
+      }
     }
 
     .sortWrapper {
       display: flex;
       flex-grow: 1;
-      
+
       .sortSelect {
         -webkit-appearance: none;
         background: transparent;
@@ -103,7 +103,7 @@
 
       a {
         border-radius: 15px;
-        background-color: rgba(3, 118, 255, 1);
+        background-color: $accent-1;
         color: $white;
         font-family: $body-font;
         font-weight: $bold;
@@ -153,7 +153,7 @@
 
         &:hover {
           cursor: pointer;
-          color: rgba(3, 118, 255, 1);
+          color: $accent-1;
         }
       }
     }
