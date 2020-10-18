@@ -1,8 +1,8 @@
-import { AbiItem, isHex } from "web3-utils";
+import { AbiItem } from "web3-utils";
 import { SortService } from "lib/sortService";
 const Web3 = require("web3");
 import axios from "axios";
-import { isAddress, targetedNetwork } from "lib/util";
+import { targetedNetwork } from "lib/util";
 
 export interface IAllowedAbiItem extends AbiItem {
   name: string;
@@ -74,36 +74,6 @@ export const extractABIMethods = (abi: AbiItem[]): IAbiItemExtended[] => {
 };
 
 /**
- * Given array of ABI parameters objects, returns true if all values are valid.
- * Data example:
- * [{ type: address, value: "0x25112235dDA2F775c81f0AA37a2BaeA21B470f65" }]
- * @param {array} data
- * @returns {boolean}
- */
-export const validateABIInputs = (data: Array<any>): boolean => {
-  for (const input of data) {
-    switch (true) {
-      case input.type.includes("address"):
-        if (!isAddress(input.value)) {
-          return false;
-        }
-        break;
-      case input.type.includes("byte"):
-        if (!isHex(input.value)) {
-          return false;
-        }
-        break;
-      case input.type.includes("uint"):
-        if (/^\d+$/.test(input.value) === false) {
-          return false;
-        }
-        break;
-    }
-  }
-  return true;
-};
-
-/**
  * Given contract address returns it's ABI data.
  * @param {string} contractAddress
  */
@@ -123,30 +93,21 @@ export const getABIByContract = async (contractAddress: string): Promise<Array<a
 };
 
 /**
- * Given ABI, function name and it's parameters values returns the encoded data as string.
+ * Given ABI, function name and it's parameters values returns the encoded data as string, otherwise returns an error.
  * @param {array} abi ABI methods array
  * @param {string} name Method name
- * @param {array} data array of ABI parameters objects. Example: [{ type: address, value: "0x25112235dDA2F775c81f0AA37a2BaeA21B470f65" }]
+ * @param {array} values array of ABI parameters values.
  * @returns {string} The encoded data
  */
-export const encodeABI = (abi: Array<any>, name: string, data: any[]): string => {
+export const encodeABI = (abi: Array<any>, name: string, values: Array<any>): string => {
   const web3 = new Web3;
   const contract = new web3.eth.Contract(abi);
   const interfaceABI = contract.options.jsonInterface;
 
-  if (validateABIInputs(data)) {
-    const values = [];
-    for (const input of data) {
-      values.push(input.value);
-    }
-    let methodToSend;
-    for (const method of interfaceABI){
-      if (method.name === name) {
-        methodToSend = method;
-      }
-    }
-    return web3.eth.abi.encodeFunctionCall(methodToSend, values);
+  try {
+    const methodToSend = interfaceABI.filter((method: any) => method.name === name && method.inputs.length === values.length);
+    return web3.eth.abi.encodeFunctionCall(methodToSend[0], values);
+  } catch (error) {
+    return error.reason;
   }
-
-  return "";
 };

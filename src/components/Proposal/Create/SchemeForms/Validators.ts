@@ -1,4 +1,4 @@
-import { isHex } from "web3-utils";
+import { isHexStrict } from "web3-utils";
 import { isAddress } from "lib/util";
 
 /**
@@ -34,7 +34,7 @@ export const validateParam = (type: string, value: string): string => {
         }
         break;
       case type.includes("byte"):
-        if (!isHex(value)) {
+        if (!isHexStrict(value)) {
           error = "Must be a hex value";
         }
         break;

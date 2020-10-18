@@ -34,8 +34,10 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
+type AddContractError = "NOT_VALID_ADDRESS" | "CONTRACT_EXIST" | "ABI_DATA_ERROR" | "";
+
 interface IAddContractStatus {
-  error: string;
+  error: AddContractError;
   message: string;
 }
 
@@ -86,16 +88,17 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
       title: "",
       url: "",
       tags: [],
+      addContract: "",
       userContracts: [],
       contracts: [
         {
           address: "",
           value: 0,
-          abi: [] as any,
-          methods: [] as any,
+          abi: [],
+          methods: [],
           method: "",
-          params: [] as any,
-          values: [] as any,
+          params: [],
+          values: [],
           callData: "",
         },
       ],
@@ -163,7 +166,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
  * @param {string} contractToCall
  */
   private verifyContract = async (contractToCall: string) => {
-    const addContractStatus = {
+    const addContractStatus: IAddContractStatus = {
       error: "",
       message: "",
     };
@@ -217,13 +220,8 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
     }
   }
 
-  private abiInputChange = (abi: any, values: any, name: string, params: any, setFieldValue: any, index: number) => {
-    const abiValues = [];
-    for (const [i, abiInput] of params.entries()) {
-      abiValues.push({ type: abiInput.type, value: values[i] });
-    }
-
-    const encodedData = encodeABI(abi, name, abiValues);
+  private abiInputChange = (abi: any, values: any, name: string, setFieldValue: any, index: number) => {
+    const encodedData = encodeABI(abi, name, values);
     setFieldValue(`contracts.${index}.callData`, encodedData);
   }
 
@@ -437,21 +435,20 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
 
                           {
                             values.contracts[index].method !== "" &&
-                            <div key={index}>
+                            <div>
                               {values.contracts[index].params.map((param: any, i: number) => (
-                                <React.Fragment key={index}>
+                                <React.Fragment key={i}>
                                   <label>
                                     <div className={css.requiredMarker}>*</div>
                                     {param.name}
                                     <ErrorMessage name={`contracts.${index}.values.${i}`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                                   </label>
                                   <Field
-                                    key={i}
                                     type="text"
                                     name={`contracts.${index}.values.${i}`}
                                     placeholder={param.placeholder}
                                     // eslint-disable-next-line react/jsx-no-bind
-                                    onBlur={(e: any) => { handleBlur(e); this.abiInputChange(values.contracts[index].abi, values.contracts[index].values, values.contracts[index].method.split("(")[0], values.contracts[index].params, setFieldValue, index); }}
+                                    onBlur={(e: any) => { handleBlur(e); this.abiInputChange(values.contracts[index].abi, values.contracts[index].values, values.contracts[index].method.split("(")[0], setFieldValue, index); }}
                                     // eslint-disable-next-line react/jsx-no-bind
                                     validate={(e: any) => validateParam(param.type, e)}
                                   />
