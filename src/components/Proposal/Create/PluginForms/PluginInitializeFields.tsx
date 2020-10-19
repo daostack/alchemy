@@ -99,7 +99,7 @@ const GenericSchemeFields: React.FC<IProps> = ({ values }) => {
           ))}
         </Field>
         {(document.getElementById("contractToCall") as HTMLInputElement)?.value === "" &&
-          fieldView("GenericScheme", "Custom Contract To Call", "contractToCall", validators.address)}
+          fieldView("GenericScheme", "Custom Contract To Call", "customContractToCall", validators.address)}
         <a href={linkToEtherScan(contractToCall)} target="_blank" rel="noopener noreferrer">{contractToCall}</a>
       </div>
       {GenesisProtocolFields("GenericScheme.votingParams")}
