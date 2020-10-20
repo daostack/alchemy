@@ -1,4 +1,4 @@
-import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/arc.js";
+import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal, IProposalStage } from "@daostack/arc.js";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -184,7 +184,12 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
                 <span>{closeReason}</span>
               </div>
             </div> :
-            <div className={css.decisionInProgress}>In Progress</div>
+            <div className={css.decisionInProgress}>
+              {(proposalState.stage === IProposalStage.Queued) ? "Queued" :
+                (proposalState.stage === IProposalStage.PreBoosted) ? "PreBoosted" :
+                  ((proposalState.stage === IProposalStage.Boosted) ||
+                   (proposalState.stage === IProposalStage.QuietEndingPeriod)) ? "Boosted" : ""}
+            </div>
           }
         </td>
         <td onClick={this.gotoProposal} className={myActionsClass}>
