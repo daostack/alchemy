@@ -2,7 +2,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-top: -30px; // hack to compensate for DAOContainer's padding, so position:sticky will work right
+  margin-top: -68px; // hack to compensate for DAOContainer's padding, so position:sticky will work right
 
   .paddingTop {
     position: sticky;
@@ -26,7 +26,7 @@
 
       .title {
         color: $title-color;
-        font-size: 2em;
+        font-size: 28px;
         flex-grow: 2;
       }
 
