@@ -39,7 +39,7 @@ describe("Proposals", () => {
     await selectOption.waitForExist();
     await selectOption.click();
 
-    const contractToCallInput = await $("*[id=\"contractToCall\"]");
+    const contractToCallInput = await $("*[id=\"contractToCallSelect\"]");
     await contractToCallInput.waitForExist();
     await contractToCallInput.click();
     const customOption = await $("*[id=\"custom\"]");
