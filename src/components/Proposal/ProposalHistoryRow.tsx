@@ -1,4 +1,4 @@
-import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/arc.js";
+import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal, IProposalStage } from "@daostack/arc.js";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -95,6 +95,8 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     let currentAccountPrediction = 0;
     let currentAccountStakeAmount = new BN(0);
     let currentAccountVoteAmount = new BN(0);
+    const passed = proposalPassed(proposalState);
+    const failed = proposalFailed(proposalState);
 
     let currentVote: Vote;
     if (votesOfCurrentUser.length > 0) {
@@ -122,8 +124,8 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
 
     const closeReasonClass = classNames({
       [css.closeReason]: true,
-      [css.decisionPassed]: proposalPassed(proposalState),
-      [css.decisionFailed]: proposalFailed(proposalState),
+      [css.decisionPassed]: passed,
+      [css.decisionFailed]: failed,
     });
 
     let closeReason = "Time out";
@@ -147,7 +149,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
       <tr className={proposalClass}>
         <td className={css.proposalCreator}>
           <AccountPopup accountAddress={proposalState.proposer} daoState={daoState} width={this.state.isMobile ? 12 : 40} />
-          <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} historyView/>
+          <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} historyView />
         </td>
         <td onClick={this.gotoProposal} className={css.endDate}>
           {closingTime(proposalState) ? closingTime(proposalState).format("MMM D, YYYY") : ""}
@@ -174,31 +176,32 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
           />
         </td>
         <td onClick={this.gotoProposal} className={closeReasonClass}>
-          <div className={css.decisionPassed}>
-            <img src="/assets/images/Icon/vote/for.svg"/>
-            <span>Passed</span>
-            <div className={css.decisionReason}>
-              <span>{closeReason}</span>
+          {(passed || failed) ?
+            <div className={passed ? css.decisionPassed : css.decisionFailed}>
+              <img src={`/assets/images/Icon/vote/${passed ? "for.svg" : "against.svg"}`} />
+              <span>{passed ? "Passed" : "Failed"}</span>
+              <div className={css.decisionReason}>
+                <span>{closeReason}</span>
+              </div>
+            </div> :
+            <div className={css.decisionInProgress}>
+              {(proposalState.stage === IProposalStage.Queued) ? "Queued" :
+                (proposalState.stage === IProposalStage.PreBoosted) ? "PreBoosted" :
+                  ((proposalState.stage === IProposalStage.Boosted) ||
+                   (proposalState.stage === IProposalStage.QuietEndingPeriod)) ? "Boosted" : ""}
             </div>
-          </div>
-          <div className={css.decisionFailed}>
-            <img src="/assets/images/Icon/vote/against.svg"/>
-            <span>Failed</span>
-            <div className={css.decisionReason}>
-              <span>{closeReason}</span>
-            </div>
-          </div>
+          }
         </td>
         <td onClick={this.gotoProposal} className={myActionsClass}>
           <div className={css.myVote}>
             <span>{formatTokens(currentAccountVoteAmount, "Rep")}</span>
-            <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg"/>
-            <img className={css.failVote} src="/assets/images/Icon/vote/against-fill.svg"/>
+            <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg" />
+            <img className={css.failVote} src="/assets/images/Icon/vote/against-fill.svg" />
           </div>
           <div className={css.myStake}>
             <span>{formatTokens(currentAccountStakeAmount, "GEN")}</span>
-            <img className={css.forStake} src="/assets/images/Icon/v-small-fill.svg"/>
-            <img className={css.againstStake} src="/assets/images/Icon/x-small-fill.svg"/>
+            <img className={css.forStake} src="/assets/images/Icon/v-small-fill.svg" />
+            <img className={css.againstStake} src="/assets/images/Icon/x-small-fill.svg" />
           </div>
         </td>
       </tr>
@@ -212,7 +215,7 @@ const ConnectedProposalHistoryRow = connect(mapStateToProps)(ProposalHistoryRow)
 export default withSubscription({
   wrappedComponent: ConnectedProposalHistoryRow,
   loadingComponent: (props) => <tr><td>Loading proposal {props.proposal.id.substr(0, 6)}...</td></tr>,
-  errorComponent: (props) => <tr><td>{ props.error.message }</td></tr>,
+  errorComponent: (props) => <tr><td>{props.error.message}</td></tr>,
   checkForUpdate: ["currentAccountAddress"],
   createObservable: (props: IExternalProps) => {
     const proposal = props.proposal;
@@ -226,10 +229,10 @@ export default withSubscription({
     } else {
       return combineLatest(
         proposal.state(),
-        proposal.stakes({ where: { staker: props.currentAccountAddress}}),
-        proposal.votes({ where: { voter: props.currentAccountAddress }}),
+        proposal.stakes({ where: { staker: props.currentAccountAddress } }),
+        proposal.votes({ where: { voter: props.currentAccountAddress } }),
         // we set 'fetchPolicy' to 'cache-only' so as to not send queries for addresses that are not members. The cache is filled higher up.
-        props.daoState.dao.member(props.currentAccountAddress).state({ fetchPolicy: "cache-only"}),
+        props.daoState.dao.member(props.currentAccountAddress).state({ fetchPolicy: "cache-only" }),
       );
     }
   },

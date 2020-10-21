@@ -30,8 +30,7 @@ interface IState {
 type SubscriptionData = Array<Proposal>;
 type IProps = IExternalProps & IState & ISubscriptionProps<SubscriptionData>;
 
-const ProposalsHTML = (props:
-{
+const ProposalsHTML = (props: {
   proposals: Array<Proposal>;
   history: any;
   daoState: IDAOState;
@@ -141,7 +140,7 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
                   <th>Title</th>
                   <th>Votes</th>
                   <th>Predictions</th>
-                  <th>Status</th>
+                  <th className={css.status}>Status</th>
                   <th>My actions</th>
                 </tr>
               </thead>

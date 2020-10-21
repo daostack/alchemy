@@ -32,28 +32,27 @@
 }
 
 .title {
-  color: rgba(80, 97, 118, 1.000);
+  color: rgba(80, 97, 118, 1);
 
   a {
-    color: rgba(80, 97, 118, 1.000);
+    color: rgba(80, 97, 118, 1);
   }
 
   a:visited {
-    color: rgba(80, 97, 118, 1.000);
+    color: rgba(80, 97, 118, 1);
   }
 }
 
 .closeReason {
-  position: relative;
-
-  .decisionPassed, .decisionFailed {
+  text-align: center;
+  .decisionPassed,
+  .decisionFailed {
     display: none;
 
     img {
+      display: block;
+      margin: auto;
       width: 15px;
-      position: relative;
-      top: 4px;
-      margin-right: 5px;
     }
   }
 
@@ -62,22 +61,35 @@
   }
 }
 
-.closeReason.decisionPassed .decisionPassed, .closeReason.decisionFailed .decisionFailed {
+.closeReason.decisionPassed .decisionPassed,
+.closeReason.decisionFailed .decisionFailed,
+.closeReason .decisionInProgress {
   display: block;
 }
 
-.predictions, .votes, .myActions {
-  .myVote, .myStake, .passVote, .failVote, .forStake, .againstStake {
+.predictions,
+.votes,
+.myActions {
+  .myVote,
+  .myStake,
+  .passVote,
+  .failVote,
+  .forStake,
+  .againstStake {
     display: none;
   }
 }
 
-.myActions.iVoted .myVote, .myActions.iStaked .myStake {
+.myActions.iVoted .myVote,
+.myActions.iStaked .myStake {
   display: block;
   padding-bottom: 5px;
 }
 
-.myActions.forStake .forStake, .myActions.againstStake .againstStake, .myActions.passVote .passVote, .myActions.failVote .failVote {
+.myActions.forStake .forStake,
+.myActions.againstStake .againstStake,
+.myActions.passVote .passVote,
+.myActions.failVote .failVote {
   display: inline-block;
   margin-left: 7px;
   position: relative;
@@ -85,7 +97,7 @@
 }
 
 .myActions {
-  color: rgba(80, 97, 118, 1.000);
+  color: rgba(80, 97, 118, 1);
   padding-top: 10px;
   text-align: center;
 }
@@ -113,6 +125,7 @@
 
     td {
       display: inline-block;
+      text-align: center;
     }
 
     .scheme {
@@ -135,18 +148,6 @@
     padding: 0 0 15px 8px;
     font-weight: bold;
     font-size: 13px;
-  }
-
-  .closeReason {
-
-  }
-
-  .votes {
-
-  }
-
-  .predictions {
-
   }
 
   .closeReason .decisionReason {
