@@ -13,6 +13,7 @@ import { first } from "rxjs/operators";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
 import * as css from "./DaoHistoryPage.scss";
 import { Observable } from "rxjs";
+import i18next from "i18next";
 
 const PAGE_SIZE = 50;
 
@@ -121,7 +122,7 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
           <div className={css.daoHistoryHeader}>History</div>
 
           <div className={css.searchBox.concat(`${this.state.filtering ? ` ${css.filtering}` : ""}`)}>
-            <input type="text" name="search" placeholder="Type and press Enter or Tab to filter proposals by title"
+            <input type="text" name="search" placeholder={i18next.t("Type and press Enter ")}
               onKeyPress={this.onSearchExecute}
               onBlur={this.onSearchExecute}
               onInput={this.onSearchChange} />
@@ -138,7 +139,7 @@ class DaoHistoryPage extends React.Component<IProps, IState> {
         >
           {proposals.length === 0 ?
             this.state.filteredProposalSet ?
-              <span>No proposals found whose title contains the given text.  Note the filter is case-sensitive.</span> :
+              <span>{i18next.t("No Proposals Found")}</span> :
               <span>{this.props.daoState.name} hasn&apos;t created any proposals yet. Go to the <Link to={"/dao/" + daoState.id + "/proposal/"}>DAO&apos;s installed plugins</Link> to create proposals.</span> :
 
             <table className={css.proposalHistoryTable}>
