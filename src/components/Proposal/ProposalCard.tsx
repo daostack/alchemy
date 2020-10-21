@@ -165,7 +165,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     currentAccountAddress={currentAccountAddress}
                     daoState={daoState}
                     daoEthBalance={daoEthBalance}
-                    proposalState={proposal}
+                    proposalState={proposalState}
                     rewards={rewards}
                     expired={expired}
                     parentPage={Page.PluginProposals}
