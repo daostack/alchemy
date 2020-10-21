@@ -18,9 +18,9 @@ import { requireValue, validateParam } from "./Validators";
 
 const whitelistedContracts = [
   "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf",
-  "0x5C5cbaC45b18F990AbcC4b890Bf98d82e9ee58A0",
-  "0x24832a7A5408B2b18e71136547d308FCF60B6e71",
-  "0x4E073a7E4a2429eCdfEb1324a472dd8e82031F34",
+  "0x2c2c1B134F735B3C49936f7a46CF7658458039cc",
+  "0x437C909C44fc8d47dB20Ff4bead90A59905Ce451",
+  "0xb5f6221ea3c0Cb3FC7a3D0d36420311dc69B2f3c",
 ];
 
 interface IExternalProps {
@@ -171,7 +171,10 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
       message: "",
     };
 
-    if (!isAddress(contractToCall)) {
+    if (contractToCall === "") {
+      addContractStatus.error = "";
+      addContractStatus.message = "";
+    } else if (!isAddress(contractToCall)) {
       addContractStatus.error = "NOT_VALID_ADDRESS";
       addContractStatus.message = "Please enter a valid address";
     } else if (this.state.whitelistedContracts.includes(contractToCall) || this.state.userContracts.includes(contractToCall)) {
@@ -344,10 +347,10 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
 
               <div className={css.addContract}>
                 <label htmlFor="addContract">
-                  Add contract
+                  Add a contract not in the whitelist
                 </label>
                 <Field
-                  placeholder="Add contract"
+                  placeholder="Contract address"
                   name="addContract"
                   type="text"
                   // eslint-disable-next-line react/jsx-no-bind
