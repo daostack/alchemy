@@ -53,16 +53,16 @@
 }
 
 .closeReason {
-  position: relative;
+  text-align: center;
 
-  .decisionPassed, .decisionFailed {
+  .decisionPassed,
+  .decisionFailed {
     display: none;
 
     img {
+      display: block;
+      margin: auto;
       width: 15px;
-      position: relative;
-      top: 4px;
-      margin-right: 5px;
     }
   }
 
@@ -71,22 +71,35 @@
   }
 }
 
-.closeReason.decisionPassed .decisionPassed, .closeReason.decisionFailed .decisionFailed {
+.closeReason.decisionPassed .decisionPassed,
+.closeReason.decisionFailed .decisionFailed,
+.closeReason .decisionInProgress {
   display: block;
 }
 
-.predictions, .votes, .myActions {
-  .myVote, .myStake, .passVote, .failVote, .forStake, .againstStake {
+.predictions,
+.votes,
+.myActions {
+  .myVote,
+  .myStake,
+  .passVote,
+  .failVote,
+  .forStake,
+  .againstStake {
     display: none;
   }
 }
 
-.myActions.iVoted .myVote, .myActions.iStaked .myStake {
+.myActions.iVoted .myVote,
+.myActions.iStaked .myStake {
   display: block;
   padding-bottom: 5px;
 }
 
-.myActions.forStake .forStake, .myActions.againstStake .againstStake, .myActions.passVote .passVote, .myActions.failVote .failVote {
+.myActions.forStake .forStake,
+.myActions.againstStake .againstStake,
+.myActions.passVote .passVote,
+.myActions.failVote .failVote {
   display: inline-block;
   margin-left: 7px;
   position: relative;
@@ -122,6 +135,7 @@
 
     td {
       display: inline-block;
+      text-align: center;
     }
 
     .plugin {
