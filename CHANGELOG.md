@@ -1,3 +1,13 @@
+## 1.0.0
+  - Features Added
+    - Show active proposal status on the Proposal History page
+    - Show sidebar links to switch Alchemy versions and between mainnet and xDai
+    - Show Alchemy 2.0 announcement banner
+    
+  - Bugs Fixed
+    - fix display of certain token balances on Proposal cards and details
+    - fix display of contribution rewards in the redemptions tooltip over the Redeem button
+
 ## 0.10.17
   - Bugs Fixed
     - Fixed issues with automated update of blockchain data by switching from a websocket to a polling interface with the subgraph
