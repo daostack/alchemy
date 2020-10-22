@@ -347,7 +347,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
 
               <div className={css.addContract}>
                 <label htmlFor="addContract">
-                  Add a contract not in the whitelist
+                  Add custom contract
                 </label>
                 <Field
                   placeholder="Contract address"
@@ -405,7 +405,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                                 {whitelistedContractsOptions}
                               </optgroup>
                               {userContractsOptions.length > 0 &&
-                                <optgroup label="User contracts">
+                                <optgroup label="Custom contracts">
                                   {userContractsOptions}
                                 </optgroup>
                               }
@@ -461,7 +461,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                           }
 
                           <label>Encoded Data</label>
-                          <div id="encoded-data" className={css.encodedData}>{values.contracts[index].callData}</div>
+                          <div id="encoded-data" className={css.encodedDataMultiCall}>{values.contracts[index].callData}</div>
                         </fieldset>
                       ))
                     }
