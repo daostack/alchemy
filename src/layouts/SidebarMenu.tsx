@@ -284,8 +284,8 @@ interface IEthProps extends ISubscriptionProps<BN | null> {
 }
 
 const ETHBalance = (props: IEthProps) => {
-  const { dao } = props;
-  return <li key="ETH"><strong>{formatTokens(new BN(dao.ethBalance))}</strong> {baseTokenName()}</li>;
+  const { data } = props;
+  return <li key="ETH"><strong>{formatTokens(data)}</strong> {baseTokenName()}</li>;
 };
 
 const SubscribedEthBalance = withSubscription({
@@ -295,8 +295,9 @@ const SubscribedEthBalance = withSubscription({
   checkForUpdate: (oldProps: IEthProps, newProps: IEthProps) => {
     return oldProps.dao.address !== newProps.dao.address;
   },
-  createObservable: async () => {
-    return of(null);
+  createObservable: async (props: IEthProps) => {
+    const arc = getArc();
+    return (await arc.dao(props.dao.address).ethBalance()).pipe(ethErrorHandler());
   },
 });
 
