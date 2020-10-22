@@ -1,4 +1,4 @@
-import { Address, DAO, IDAOState, IProposalStage, AnyProposal, Plugin, Stake, Vote, Proposals } from "@daostack/arc.js";
+import { Address, DAO, IDAOState, AnyProposal, Plugin, Stake, Vote, Proposals } from "@daostack/arc.js";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -9,11 +9,11 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
-import * as Sticky from "react-stickynode";
-import { combineLatest, from } from "rxjs";
 import { first } from "rxjs/operators";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
-import * as css from "./Dao.scss";
+import * as css from "./DaoHistoryPage.scss";
+import { Observable } from "rxjs";
+import i18next from "i18next";
 
 const PAGE_SIZE = 50;
 
@@ -22,50 +22,126 @@ interface IExternalProps extends RouteComponentProps<any> {
   daoState: IDAOState;
 }
 
-type SubscriptionData = [AnyProposal[], IDAOState];
-type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
+interface IState {
+  filteredProposalSet: Array<AnyProposal>;
+  filtering: boolean;
+}
 
-class DaoHistoryPage extends React.Component<IProps, null> {
+type SubscriptionData = AnyProposal[];
+type IProps = IExternalProps & IState & ISubscriptionProps<SubscriptionData>;
+
+const ProposalsHTML = (props: {
+  proposals: Array<AnyProposal>;
+  history: any;
+  daoState: IDAOState;
+  currentAccountAddress: Address;
+}): React.ReactElement => {
+  return <> {
+    props.proposals.map((proposal: AnyProposal) => {
+      return (<ProposalHistoryRow key={"proposal_" + proposal.id} history={props.history} proposal={proposal} daoState={props.daoState} currentAccountAddress={props.currentAccountAddress} />);
+    })
+  }
+  </>;
+};
+
+const proposalsQuery = (daoState: IDAOState, skip: number, titleSearch?: string): Observable<SubscriptionData> => {
+
+  const filter: any = {
+  };
+
+  if (titleSearch?.trim()) {
+    filter["title_contains"] = titleSearch;
+  }
+
+  const arc = getArc();
+  const dao = new DAO(arc, daoState);
+
+  return dao.proposals({
+    where: filter,
+    orderBy: "closingAt",
+    orderDirection: "desc",
+    first: PAGE_SIZE,
+    skip,
+  },
+  // get and subscribe to all data, so that subcomponents do nto have to send separate queries
+  { fetchAllData: true });
+};
+
+class DaoHistoryPage extends React.Component<IProps, IState> {
+
+  private filterString = "";
+
+  constructor(props: IProps) {
+    super(props);
+
+    this.state = {
+      filteredProposalSet: null,
+      filtering: false,
+    };
+  }
 
   public componentDidMount() {
-    const [, daoState] = this.props.data;
 
     Analytics.track("Page View", {
       "Page Name": Page.DAOHistory,
-      "DAO Address": daoState.address,
-      "DAO Name": daoState.name,
+      "DAO Address": this.props.daoState.address,
+      "DAO Name": this.props.daoState.name,
     });
   }
 
+  onSearchChange = (e: any) => {
+    this.filterString = e.target.value;
+  }
+
+  onSearchExecute = async (e: any) => {
+    let foundProposals: Array<AnyProposal>;
+    if ((e.type === "blur") || (e.key === "Enter")) {
+      if (this.filterString?.length) {
+        this.setState({ filtering: true });
+        foundProposals = await proposalsQuery(this.props.daoState, 0, this.filterString).pipe(first()).toPromise();
+      }
+      else {
+        foundProposals = null;
+      }
+      this.setState({ filteredProposalSet: foundProposals, filtering: false });
+    }
+  }
+
   public render(): RenderOutput {
-    const { data, hasMoreToLoad, fetchMore, currentAccountAddress } = this.props;
+    const { data, hasMoreToLoad, fetchMore, currentAccountAddress, daoState } = this.props;
 
-    const [proposals, daoState] = data;
+    const proposals = this.state.filteredProposalSet ?? data;
 
-    const proposalsHTML = proposals.map((proposal: AnyProposal) => {
-      return (<ProposalHistoryRow key={"proposal_" + proposal.id} history={this.props.history} proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} />);
-    });
-
-    return (
-      <div>
+    const result = (
+      <div className={css.container}>
         <BreadcrumbsItem to={"/dao/" + daoState.address + "/history"}>History</BreadcrumbsItem>
 
-        <Sticky enabled top={50} innerZ={10000}>
-          <div className={css.daoHistoryHeader}>
-            History
+        <div className={css.paddingTop}>&nbsp;</div>
+
+        <div className={css.topRow}>
+          <div className={css.daoHistoryHeader}>History</div>
+
+          <div className={css.searchBox.concat(`${this.state.filtering ? ` ${css.filtering}` : ""}`)}>
+            <input type="text" name="search" placeholder={i18next.t("Type and press Enter ")}
+              onKeyPress={this.onSearchExecute}
+              onBlur={this.onSearchExecute}
+              onInput={this.onSearchChange} />
           </div>
-        </Sticky>
+        </div>
 
         <InfiniteScroll
           dataLength={proposals.length} //This is important field to render the next data
           next={fetchMore}
           hasMore={hasMoreToLoad}
           loader=""
-          style={{overflow: "visible"}}
+          style={{ overflow: "visible" }}
           endMessage={null}
         >
-          { proposals.length === 0 ?
-            <span>This DAO hasn&apos;t passed any proposals yet. Checkout the <Link to={"/dao/" + daoState.id + "/proposal/"}>DAO&apos;s installed pluginss</Link> for any open proposals.</span> :
+          {proposals.length === 0 ?
+            this.state.filteredProposalSet ?
+              <span>{i18next.t("No Proposals Found")}</span> :
+              <span>{this.props.daoState.name} hasn&apos;t created any proposals yet. Go to the <Link to={"/dao/" + daoState.id + "/proposal/"}>DAO&apos;s installed plugins</Link> to create proposals.</span> :
+
             <table className={css.proposalHistoryTable}>
               <thead>
                 <tr className={css.proposalHistoryTableHeader}>
@@ -75,12 +151,16 @@ class DaoHistoryPage extends React.Component<IProps, null> {
                   <th>Title</th>
                   <th>Votes</th>
                   <th>Predictions</th>
-                  <th>Status</th>
+                  <th className={css.status}>Status</th>
                   <th>My actions</th>
                 </tr>
               </thead>
               <tbody>
-                {proposalsHTML}
+                <ProposalsHTML
+                  proposals={proposals}
+                  history={this.props.history}
+                  daoState={daoState}
+                  currentAccountAddress={currentAccountAddress} />
               </tbody>
             </table>
           }
@@ -88,6 +168,7 @@ class DaoHistoryPage extends React.Component<IProps, null> {
 
       </div>
     );
+    return result;
   }
 }
 
@@ -123,12 +204,6 @@ export default withSubscription({
           orderDirection: "desc"
           where: {
             dao: "${dao.id}"
-            stage_in: [
-              "${IProposalStage[IProposalStage.ExpiredInQueue]}",
-              "${IProposalStage[IProposalStage.Executed]}",
-              "${IProposalStage[IProposalStage.Queued]}"
-            ]
-            closingAt_lte: "${Math.floor(new Date().getTime() / 1000)}"
           }
         ){
           id
@@ -214,42 +289,13 @@ export default withSubscription({
       ${Plugin.baseFragment}
     `;
     await arc.getObservable(prefetchQuery, { polling: true }).pipe(first()).toPromise();
-    return combineLatest(
-      dao.proposals({
-        where: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed, IProposalStage.Queued],
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          closingAt_lte: Math.floor(new Date().getTime() / 1000),
-        },
-        orderBy: "closingAt",
-        orderDirection: "desc",
-        first: PAGE_SIZE,
-        skip: 0,
-      },
-      // get and subscribe to all data, so that subcomponents do nto have to send separate queries
-      { fetchAllData: true }),
-      from(dao.fetchState())
-    );
+    return proposalsQuery(props.daoState, 0);
   },
 
   // used for hacky pagination tracking
   pageSize: PAGE_SIZE,
 
   getFetchMoreObservable: (props: IExternalProps, data: SubscriptionData) => {
-    const dao = new DAO(getArc(), props.daoState);
-    return dao.proposals({
-      where: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed, IProposalStage.Queued],
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        closingAt_lte: Math.floor(new Date().getTime() / 1000),
-      },
-      orderBy: "closingAt",
-      orderDirection: "desc",
-      first: PAGE_SIZE,
-      skip: data.length,
-    }, { fetchAllData: true } // get and subscribe to all data, so that subcomponents do nto have to send separate queries
-    );
+    return proposalsQuery(props.daoState, data.length);
   },
 });

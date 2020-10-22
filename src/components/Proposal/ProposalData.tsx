@@ -1,6 +1,6 @@
 import { Address, IProposalState, IDAOState, IMemberState, IRewardState, Reward, Stake, Vote, Proposal, Member, IContributionRewardProposalState } from "@daostack/arc.js";
 import { getArc } from "arc";
-import { ethErrorHandler } from "lib/util";
+import { ethErrorHandler, ethBalance } from "lib/util";
 
 import BN = require("bn.js");
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -10,7 +10,7 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { closingTime } from "lib/proposalHelpers";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, of, Observable } from "rxjs";
+import { combineLatest, concat, of, Observable } from "rxjs";
 import { map, mergeMap } from "rxjs/operators";
 import { GRAPH_POLL_INTERVAL } from "../../settings";
 
@@ -32,7 +32,7 @@ interface IStateProps {
   creatorProfile?: IProfileState;
 }
 
-type SubscriptionData = [IProposalState, Vote[], Stake[], IRewardState, IMemberState|null, BN, BN, IDAOState];
+type SubscriptionData = [IProposalState, Vote[], Stake[], IRewardState, IMemberState|null, BN, BN, BN];
 type IPreProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
@@ -107,9 +107,8 @@ class ProposalData extends React.Component<IProps, IState> {
       return <></>;
     }
 
-    const [proposal, votes, stakes, rewards, member, currentAccountGenBalance, currentAccountGenAllowance, daoState] = this.props.data;
+    const [proposal, votes, stakes, rewards, member, daoEthBalance, currentAccountGenBalance, currentAccountGenAllowance] = this.props.data;
     const { beneficiaryProfile, creatorProfile } = this.props;
-    const daoEthBalance = new BN(daoState.ethBalance);
 
     return this.props.children({
       beneficiaryProfile,
@@ -141,7 +140,7 @@ export default withSubscription({
   createObservable: async (props) => {
     const arc = getArc();
     const { currentAccountAddress, daoState, proposalId } = props;
-    const dao = arc.dao(daoState.address);
+    //const dao = arc.dao(daoState.address);
     const proposal = await Proposal.create(arc, proposalId);
     await proposal.fetchState();
     const spender = proposal ? proposal.coreState.votingMachine : "0x0000000000000000000000000000000000000000";
@@ -166,11 +165,12 @@ export default withSubscription({
         // TODO: also need the member state for the proposal proposer and beneficiary
         //      but since we need the proposal state first to get those addresses we will need to
         //      update the client query to load them inline
+        concat(of(new BN("0")), await ethBalance(daoState.address)
+          .pipe(ethErrorHandler())),
         arc.GENToken().balanceOf(currentAccountAddress)
           .pipe(ethErrorHandler()),
         arc.allowance(currentAccountAddress, spender)
-          .pipe(ethErrorHandler()),
-        dao.state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
+          .pipe(ethErrorHandler())
       );
     } else {
       return combineLatest(
@@ -179,9 +179,10 @@ export default withSubscription({
         of([]), // stakes
         of(null), // rewards
         of(null), // current account member state
+        concat(of(new BN(0)), await ethBalance(daoState.address)) // dao eth balance
+          .pipe(ethErrorHandler()),
         of(new BN(0)), // current account gen balance
-        of(null), // current account GEN allowance
-        dao.state({ polling: true, pollInterval: GRAPH_POLL_INTERVAL }),
+        of(null) // current account GEN allowance
       );
     }
   },
