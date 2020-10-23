@@ -16,17 +16,11 @@ import HelpButton from "components/Shared/HelpButton";
 import { getABIByContract, extractABIMethods, encodeABI } from "./ABIService";
 import { requireValue, validateParam } from "./Validators";
 
-const whitelistedContracts = [
-  "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf",
-  "0x2c2c1B134F735B3C49936f7a46CF7658458039cc",
-  "0x437C909C44fc8d47dB20Ff4bead90A59905Ce451",
-  "0xb5f6221ea3c0Cb3FC7a3D0d36420311dc69B2f3c",
-];
-
 interface IExternalProps {
   daoAvatarAddress: string;
   handleClose: () => any;
   scheme: ISchemeState;
+  whitelistedContracts: Array<string>
 }
 
 interface IDispatchProps {
@@ -107,7 +101,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
       loading: false,
       tags: this.initialFormValues.tags,
       addContractStatus: { error: "", message: "" },
-      whitelistedContracts: whitelistedContracts,
+      whitelistedContracts: this.props.whitelistedContracts,
       userContracts: [],
     };
   }
@@ -232,7 +226,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
     const { handleClose } = this.props;
     const { loading, addContractStatus, userContracts } = this.state;
 
-    const whitelistedContractsOptions = whitelistedContracts.map((address, index) => {
+    const whitelistedContractsOptions = this.state.whitelistedContracts.map((address, index) => {
       return <option key={index}>{address}</option>;
     });
 

@@ -416,7 +416,7 @@ fieldset {
   content: "";
   clear: both;
   overflow: auto;
-  height: calc(100% - 40px);
+  max-height: calc(100vh - 200px);
 
   .sidebar {
     width: 199px;

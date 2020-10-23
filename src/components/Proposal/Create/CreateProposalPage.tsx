@@ -140,7 +140,7 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
         createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
       }
     } else if (scheme.name === "GenericSchemeMultiCall") {
-      createSchemeComponent = <CreateGenericMultiCallProposal {...props} />;
+      createSchemeComponent = <CreateGenericMultiCallProposal {...props} whitelistedContracts={scheme.genericSchemeMultiCallParams.contractsWhiteList} />;
     }
 
     return (
