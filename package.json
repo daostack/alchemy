@@ -97,7 +97,7 @@
     "3box": "^1.22.0",
     "3id-resolver": "^1.0.1",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
-    "@daostack/arc.js": "2.0.0-experimental.56",
+    "@daostack/arc.js": "2.0.0-experimental-t.57",
     "@dorgtech/daocreator-ui-experimental": "1.1.13",
     "@portis/web3": "^2.0.0-beta.56",
     "@sentry/browser": "^5.0.8",
