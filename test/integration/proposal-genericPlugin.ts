@@ -10,7 +10,7 @@ chai.Should();
 describe("Proposals", () => {
 
   beforeEach(async () => {
-    await gotoDaoPlugins("0xeabea104eccbaa46a89bf28dee05c6ec1a8cd759");
+    await gotoDaoPlugins("0x257a7385fec13e6e9b7414da641f57975e2872e4");
   });
 
   it("Create a Generic Plugin scheme and vote for it", async () => {
