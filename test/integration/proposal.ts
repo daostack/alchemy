@@ -1,5 +1,5 @@
 import * as uuid from "uuid";
-import { getTestAddresses, hideCookieAcceptWindow, hideTrainingTooltips, gotoDaoPlugins } from "./utils";
+import { getTestAddresses, hideCookieAcceptWindow, gotoDaoPlugins } from "./utils";
 
 describe("Proposals", () => {
   let daoAddress: string;
@@ -8,7 +8,6 @@ describe("Proposals", () => {
   before(() => {
     addresses = getTestAddresses();
     daoAddress = addresses.dao.Avatar.toLowerCase();
-    hideTrainingTooltips();
   });
 
   it("Create a proposal, vote for it, stake on it", async () => {
