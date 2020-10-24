@@ -20,7 +20,7 @@ interface IExternalProps {
   daoAvatarAddress: string;
   handleClose: () => any;
   scheme: ISchemeState;
-  whitelistedContracts: Array<string>
+  whitelistedContracts: Array<string>;
 }
 
 interface IDispatchProps {
