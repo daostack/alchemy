@@ -149,6 +149,13 @@
         height: 14px;
       }
     }
+
+    .multiCallContractDetails {
+      border-bottom: 1px solid gray;
+    }
+    .multiCallContractDetails:last-child {
+      border-bottom: none;
+    }
   }
 
   .summaryDetails ul {

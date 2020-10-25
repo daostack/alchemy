@@ -101,7 +101,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
       loading: false,
       tags: this.initialFormValues.tags,
       addContractStatus: { error: "", message: "" },
-      whitelistedContracts: this.props.whitelistedContracts,
+      whitelistedContracts: this.props.whitelistedContracts ?? [],
       userContracts: [],
     };
   }
