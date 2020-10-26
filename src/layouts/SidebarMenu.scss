@@ -212,7 +212,10 @@
   }
 
   .siteLinksWrapper {
-    height: 270px;
+    min-height: 315px;
+    &.testNet {
+      min-height: 270px;
+    }
     left: 0;
     width: 100%;
     border-top: 2px solid rgba(78, 137, 208, 1);
@@ -354,7 +357,8 @@
 }
 
 .sidebarWrapper.noDAO {
-  width: 125px;
+  width: 127px;
+  top: 82px;
 
   .menuContent {
     background-color: transparent;

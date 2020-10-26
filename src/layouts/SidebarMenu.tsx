@@ -9,7 +9,7 @@ import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { generate } from "geopattern";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWei, ethBalance, linkToEtherScan, standardPolling } from "lib/util";
+import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWei, ethBalance, linkToEtherScan, standardPolling, targetedNetwork } from "lib/util";
 import { parse } from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
@@ -54,7 +54,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 
 class SidebarMenu extends React.Component<IProps, IStateProps> {
 
-  constructor(props: IProps) {
+  constructor (props: IProps) {
     super(props);
   }
 
@@ -213,12 +213,15 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
       clearfix: true,
     });
 
+    const network = targetedNetwork();
+    const testNet = !((network === "main") || (network === "xdai"));
+
     return (
       <div className={sidebarClass}>
         <div className={css.menuContent}>
           {this.props.daoAvatarAddress && this.props.data ? this.daoMenu() : ""}
 
-          <div className={css.siteLinksWrapper}>
+          <div className={`${css.siteLinksWrapper} ${testNet ? css.testNet : ""}`}>
             <ul>
               <li><Link to="/" onClick={this.handleCloseMenu}>Home</Link></li>
               <li>
@@ -248,6 +251,19 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               <li><a className="externalLink" href="https://daotalk.org/" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
               <li><Link to="/daos/create" onClick={this.handleCloseMenu}>Create A DAO</Link></li>
               <li><Link to="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link></li>
+              {!testNet &&
+                <>
+                  <li><a className="externalLink"
+                    href={(network === "main") ? process.env.ALCHEMY_V2_URL_MAINNET : process.env.ALCHEMY_V2_URL_XDAI}
+                    target="_blank" rel="noopener noreferrer">Switch to v2</a></li>
+                  {(network === "main") ?
+                    <li><a className="externalLink" href={process.env.ALCHEMY_V1_URL_XDAI} target="_blank" rel="noopener noreferrer">Switch to xDAI</a></li>
+                    : (network === "xdai") ?
+                      <li><a className="externalLink" href={process.env.ALCHEMY_V1_URL_MAINNET} target="_blank" rel="noopener noreferrer">Switch to Mainnet</a></li>
+                      : ""
+                  }
+                </>
+              }
               <li className={css.daoStack}>
                 <a className="externalLink" href="http://daostack.io" target="_blank" rel="noopener noreferrer">
                   <img src={(this.props.menuOpen || (this.props.daoAvatarAddress && this.props.data)) ?
