@@ -1,6 +1,6 @@
 import { History } from "history";
 import { first, filter, toArray, mergeMap } from "rxjs/operators";
-import { Address, AnyPlugin, DAO, IProposalStage, IDAOState, IPluginState, IProposalState, IProposalOutcome, IContributionRewardExtState, Plugin, IPluginManagerState } from "@daostack/arc.js";
+import { Address, AnyPlugin, DAO, IProposalStage, IDAOState, IPluginState, IProposalState, IProposalOutcome, IContributionRewardExtState, Plugin, IPluginManagerState, IPluginRegistrarState } from "@daostack/arc.js";
 import { getArc, enableWalletProvider } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";
@@ -141,6 +141,7 @@ class PluginContainer extends React.Component<IProps, IState> {
     }
 
     const isActive = getPluginIsActive(pluginState);
+    const activationTime = pluginState.name === "SchemeRegistrar" ? (pluginState as IPluginRegistrarState).pluginParams.voteRegisterParams.activationTime : (pluginState as any).pluginParams.voteParams.activationTime;
     // The next line is temporary until creation of Join and FundingRequest proposals will be available.
     const disabled = pluginState.name === "Join" || pluginState.name === "FundingRequest";
     const isProposalPlugin = Object.keys(PLUGIN_NAMES).includes(pluginState.name);
@@ -228,7 +229,7 @@ class PluginContainer extends React.Component<IProps, IState> {
                   </div>
                   :
                   <div className={css.createProposal}>
-                    {!isActive && <div className={css.activationTime}>{i18next.t("Plugin activation time")} {formatFriendlyDateForLocalTimezone(moment.unix((pluginState as any).pluginParams.voteParams.activationTime))}</div>}
+                    {!isActive && <div className={css.activationTime}>{i18next.t("Plugin activation time")} {formatFriendlyDateForLocalTimezone(moment.unix(activationTime))}</div>}
                     <TrainingTooltip placement="topRight" overlay={i18next.t("New Proposal Button Tooltip")}>
                       <a className={
                         classNames({
