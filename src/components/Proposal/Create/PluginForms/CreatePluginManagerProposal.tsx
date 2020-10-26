@@ -249,18 +249,18 @@ const defaultValues: IFormValues = {
     votingParamsRemove: { ...votingParams },
     permissions: {
       registerPlugins: true,
-      changeConstraints: true,
-      upgradeController: true,
-      genericCall: true,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
     },
   },
   SchemeFactory: {
     votingParams: { ...votingParams },
     permissions: {
       registerPlugins: true,
-      changeConstraints: true,
-      upgradeController: true,
-      genericCall: true,
+      changeConstraints: false,
+      upgradeController: false,
+      genericCall: false,
     },
   },
   ReputationFromToken: {
