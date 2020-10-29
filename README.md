@@ -11,7 +11,7 @@ https://rinkeby.v1.alchemy.do - alchemy v1 on rinkeby
 
 https://kovan.v1.alchemy.do - alchemy v1 on kovan
 
-**Alchemy 2.0**
+**Alchemy 2.0** :fire:
 
 Alchemy v2 source code can be found under [master-2](https://github.com/daostack/alchemy/tree/master-2) branch.
 
