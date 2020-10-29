@@ -6,7 +6,7 @@ import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification, NotificationStatus } from "reducers/notifications";
-import { baseTokenName, isValidUrl, isAddress, linkToEtherScan } from "lib/util";
+import { baseTokenName, isValidUrl, isAddress, linkToEtherScan, getContractName } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -227,11 +227,11 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
     const { loading, addContractStatus, userContracts } = this.state;
 
     const whitelistedContractsOptions = this.state.whitelistedContracts.map((address, index) => {
-      return <option key={index}>{address}</option>;
+      return <option key={index} value={address}>{address} ({getContractName(address)})</option>;
     });
 
     const userContractsOptions = userContracts.map((address, index) => {
-      return <option key={index}>{address}</option>;
+      return <option key={index} value={address}>{address} ({getContractName(address)})</option>;
     });
 
     const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);

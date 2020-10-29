@@ -3,6 +3,7 @@ import { SortService } from "lib/sortService";
 const Web3 = require("web3");
 import axios from "axios";
 import { targetedNetwork } from "lib/util";
+const InputDataDecoder = require("ethereum-input-data-decoder");
 
 export interface IAllowedAbiItem extends AbiItem {
   name: string;
@@ -12,6 +13,13 @@ export interface IAllowedAbiItem extends AbiItem {
 export interface IAbiItemExtended extends IAllowedAbiItem {
   action: string;
   methodSignature: string;
+}
+
+export interface IDecodedData {
+  method: string;
+  inputs: Array<any>;
+  names: Array<string>;
+  types: Array<string>;
 }
 
 /**
@@ -110,4 +118,15 @@ export const encodeABI = (abi: Array<any>, name: string, values: Array<any>): st
   } catch (error) {
     return error.reason;
   }
+};
+
+/**
+ * Given an ABI data and callData returns the decoded data object
+ * @param {Array<any>} abi
+ * @param {string} callData
+ * @returns {IDecodedData} The decoded data
+ */
+export const decodeABI = (abi: Array<any>, callData: string): IDecodedData => {
+  const decoder = new InputDataDecoder(abi);
+  return decoder.decodeData(callData);
 };

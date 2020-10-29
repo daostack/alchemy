@@ -152,6 +152,12 @@
 
     .multiCallContractDetails {
       border-bottom: 1px solid gray;
+      .valueText {
+        font-family: Monaco;
+      }
+      .paramWrapper {
+        margin-top: 5px;
+      }
     }
     .multiCallContractDetails:last-child {
       border-bottom: none;
