@@ -1,6 +1,6 @@
 import { IDAOState, IPluginManagerProposalState, NULL_ADDRESS, IGenesisProtocolParams } from "@daostack/arc.js";
 import classNames from "classnames";
-import { copyToClipboard, getNetworkName, linkToEtherScan, toBaseUnit } from "lib/util";
+import { copyToClipboard, getNetworkName, linkToEtherScan } from "lib/util";
 import { pluginNameAndAddress } from "lib/pluginUtils";
 import * as React from "react";
 import { NotificationStatus, showNotification } from "reducers/notifications";
@@ -44,9 +44,9 @@ const mapVoteParamsToGenesisParams = (votingParams: Array<any>): IGenesisProtoco
     boostedVotePeriodLimit: votingParams[2],
     daoBountyConst: votingParams[9],
     limitExponentValue: 0, // This is not included in the decoded data
-    minimumDaoBounty: toBaseUnit(votingParams[8], 18),
+    minimumDaoBounty: votingParams[8],
     preBoostedVotePeriodLimit: votingParams[3],
-    proposingRepReward: toBaseUnit(votingParams[6], 18),
+    proposingRepReward: votingParams[6],
     queuedVoteRequiredPercentage: votingParams[0],
     queuedVotePeriodLimit: votingParams[1],
     quietEndingPeriod: votingParams[5],
