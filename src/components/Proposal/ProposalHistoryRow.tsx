@@ -15,7 +15,7 @@ import { combineLatest, of } from "rxjs";
 import StakeGraph from "./Staking/StakeGraph";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import * as css from "./ProposalHistoryRow.scss";
-
+import i18next from "i18next";
 import BN = require("bn.js");
 
 interface IExternalProps {
@@ -157,6 +157,8 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
         </td>
         <td onClick={this.gotoProposal} className={css.plugin}>
           {pluginName(proposalState.plugin.entity.coreState)}
+          <br/>
+          {!proposalState.plugin.entity.coreState.isRegistered && <div className={css.unregistered}>({i18next.t("Unregistered")})</div>}
         </td>
         <td onClick={this.gotoProposal} className={css.title}>
           {humanProposalTitle(proposalState)}

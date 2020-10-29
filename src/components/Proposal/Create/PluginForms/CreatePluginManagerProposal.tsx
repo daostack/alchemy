@@ -1,15 +1,13 @@
 /* eslint-disable no-bitwise */
 import { enableWalletProvider, getArc } from "arc";
-
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import TagsSelector from "components/Proposal/Create/PluginForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-import { convertDateToPosix } from "../../../../lib/util";
 import { createProposal } from "actions/arcActions";
 import { showNotification } from "reducers/notifications";
 import Analytics from "lib/analytics";
-import { isValidUrl } from "lib/util";
+import { isValidUrl, toWei } from "lib/util";
 import { GetPluginIsActiveActions, getPluginIsActive, pluginNameAndAddress, PLUGIN_NAMES } from "lib/pluginUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
@@ -63,24 +61,23 @@ interface IGenesisProtocolFormValues {
   votersReputationLossRatio: number;
   minimumDaoBounty: number;
   daoBountyConst: number;
-  activationTime: string;
+  activationTime: moment.Moment;
   voteOnBehalf: string;
   voteParamsHash: string;
 }
 
-
 const gpFormValuesToVotingParams = (genesisProtocolParams: IGenesisProtocolFormValues) => [
-  genesisProtocolParams.queuedVoteRequiredPercentage,
-  genesisProtocolParams.queuedVotePeriodLimit,
-  genesisProtocolParams.boostedVotePeriodLimit,
-  genesisProtocolParams.preBoostedVotePeriodLimit,
-  genesisProtocolParams.thresholdConst,
-  genesisProtocolParams.quietEndingPeriod,
-  genesisProtocolParams.proposingRepReward,
-  genesisProtocolParams.votersReputationLossRatio,
-  genesisProtocolParams.minimumDaoBounty,
-  genesisProtocolParams.daoBountyConst,
-  convertDateToPosix(new Date(genesisProtocolParams.activationTime)),
+  genesisProtocolParams.queuedVoteRequiredPercentage.toString(),
+  genesisProtocolParams.queuedVotePeriodLimit.toString(),
+  genesisProtocolParams.boostedVotePeriodLimit.toString(),
+  genesisProtocolParams.preBoostedVotePeriodLimit.toString(),
+  genesisProtocolParams.thresholdConst.toString(),
+  genesisProtocolParams.quietEndingPeriod.toString(),
+  toWei(Number(genesisProtocolParams.proposingRepReward)).toString(),
+  genesisProtocolParams.votersReputationLossRatio.toString(),
+  toWei(Number(genesisProtocolParams.minimumDaoBounty)).toString(),
+  genesisProtocolParams.daoBountyConst.toString(),
+  moment(genesisProtocolParams.activationTime).unix().toString(), // convert to moment (for test mode)
 ];
 
 export interface IFormValues {
@@ -160,7 +157,7 @@ const votingParams: IGenesisProtocolFormValues = {
   votersReputationLossRatio: 4,
   minimumDaoBounty: 150,
   daoBountyConst: 10,
-  activationTime: moment().add(1, "days").format("MMMM D, YYYY HH:mm"), // default date for the next day
+  activationTime: moment().add(1, "days"), // default date for the next day
   voteOnBehalf: "0x0000000000000000000000000000000000000000",
   voteParamsHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
 };
@@ -289,6 +286,7 @@ class CreatePluginManagerProposal extends React.Component<IProps, IState> {
       currentTab: defaultValues.currentTab,
       tags: [],
     };
+
     this.formModalService = CreateFormModalService(
       "CreatePluginManagerProposal",
       defaultValues,

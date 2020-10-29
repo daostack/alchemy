@@ -9,7 +9,6 @@ import Analytics from "lib/analytics";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-
 import { Link, RouteComponentProps } from "react-router-dom";
 import { closingTime, proposalEnded } from "lib/proposalHelpers";
 import { pluginName } from "lib/pluginUtils";
@@ -30,6 +29,7 @@ import VotersModal from "./Voting/VotersModal";
 import * as css from "./ProposalDetails.scss";
 import ProposalDescription from "components/Shared/ProposalDescription";
 import ThreeBoxThreads from "components/Shared/ThreeBoxThreads";
+import i18next from "i18next";
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
@@ -170,7 +170,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
             <h3 className={css.proposalTitleTop}>
               <Link to={"/dao/" + daoState.address + "/proposal/" + proposalState.id} data-test-id="proposal-title">{humanProposalTitle(proposalState)}</Link>
             </h3>
-
+            {!proposalState.plugin.entity.coreState.isRegistered && <div className={css.unregistered}>({i18next.t("Unregistered Plugin Proposal")})</div>}
             <div className={css.timer + " clearfix"}>
               {!proposalEnded(proposalState) ?
                 <span className={css.content}>
