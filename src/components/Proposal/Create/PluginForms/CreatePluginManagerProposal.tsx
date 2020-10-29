@@ -77,7 +77,7 @@ const gpFormValuesToVotingParams = (genesisProtocolParams: IGenesisProtocolFormV
   genesisProtocolParams.votersReputationLossRatio.toString(),
   toWei(Number(genesisProtocolParams.minimumDaoBounty)).toString(),
   genesisProtocolParams.daoBountyConst.toString(),
-  moment.isMoment(genesisProtocolParams.activationTime) ? genesisProtocolParams.activationTime.unix().toString() : moment(genesisProtocolParams.activationTime).unix().toString(), // hack to work also in tests
+  moment(genesisProtocolParams.activationTime).unix().toString(), // convert to moment (for test mode)
 ];
 
 export interface IFormValues {
