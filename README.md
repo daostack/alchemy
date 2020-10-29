@@ -7,9 +7,9 @@ https://v1.alchemy.do - alchemy v1 on mainnet
 
 https://xdai.v1.alchemy.do - alchemy v1 on xdai 
 
-https://rinkeby.v1.alchemy.do - alchemy v1 on kovan
+https://rinkeby.v1.alchemy.do - alchemy v1 on rinkeby
 
-https://kovan.v1.alchemy.do - alchemy v1 on rinkeby
+https://kovan.v1.alchemy.do - alchemy v1 on kovan
 
 **Alchemy 2.0**
 
