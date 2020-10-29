@@ -223,6 +223,11 @@ button.disabled {
   }
 }
 
+.unregistered {
+  color: $accent-2;
+  margin: 5px 0px;
+}
+
 .proposalActions {
   position: relative;
   transition: all 0.25s ease;
