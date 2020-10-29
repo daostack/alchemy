@@ -53,7 +53,7 @@ describe("Proposals", () => {
     const activationTimeInput = await $("input[name=\"GenericScheme.votingParams.activationTime\"]");
     await activationTimeInput.waitForExist();
     await activationTimeInput.scrollIntoView();
-    await setCalendarDate(activationTimeInput, moment().add(15, "seconds"));
+    await setCalendarDate(activationTimeInput, moment().add(15, "seconds").format("MMMM D, YYYY HH:mm:ss"));
 
     // hack to close any open calendar
     await customOption.click();
