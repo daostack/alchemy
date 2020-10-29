@@ -11,17 +11,17 @@ https://rinkeby.v1.alchemy.do - alchemy v1 on kovan
 
 https://kovan.v1.alchemy.do - alchemy v1 on rinkeby
 
-**Alchemy v2**
+**Alchemy 2.0**
 
 Alchemy v2 source code can be found under [master-2](https://github.com/daostack/alchemy/tree/master-2) branch.
 
-https://alchemy.do - alchemy v2 on mainnet
+https://alchemy.do - alchemy 2.0 on mainnet
 
-https://xdai.alchemy.do - alchemy v2 on xdai 
+https://xdai.alchemy.do - alchemy 2.0 on xdai 
 
-https://rinkeby.alchemy.do - alchemy v2 on kovan
+https://rinkeby.alchemy.do - alchemy 2.0 on kovan
 
-https://kovan.alchemy.do - alchemy v2 on rinkeby
+https://kovan.alchemy.do - alchemy 2.0 on rinkeby
 
 
 
