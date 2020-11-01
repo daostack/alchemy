@@ -113,7 +113,6 @@ export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
   let arc = (window as any).arc as Arc;
 
   try {
-
     const arcSettings = getArcSettings();
 
     if (!provider) {
@@ -124,21 +123,14 @@ export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
 
     // https://www.apollographql.com/docs/link/links/retry/
     const retryLink = new RetryLink({
-      attempts: {
-        max: 5,
-        retryIf: (error, _operation) => {
-          // eslint-disable-next-line no-console
-          console.error("error occurred fetching data, retrying...");
-          // eslint-disable-next-line no-console
-          console.log(error);
-          return !!error;
-        },
+      attempts: (count) => {
+        if (count === 10) {
+          return false;
+        }
+        return true;
       },
-      delay: {
-        initial: 500, // this is the initial time after the first retry
-        // next retries )up to max) will be exponential (i..e after 2*iniitial, etc)
-        jitter: true,
-        max: Infinity,
+      delay: () => {
+        return Math.round(30000 * Math.random());
       },
     });
 
