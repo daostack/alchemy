@@ -59,9 +59,11 @@ const DecodedData = (props: IDecodedDataProps) => {
 
   return (
     <div>
-      {lodaing && "loading..."}
-      <div>Method: <span className={css.valueText}>{decodedData.method}({decodedData.types.join(",")})</span></div>
-      {methodParams}
+      {lodaing ? "loading..." :
+        <React.Fragment>
+          <div>Method: <span className={css.valueText}>{decodedData.method}({decodedData.types.join(",")})</span></div>
+          {methodParams}
+        </React.Fragment>}
     </div>
   );
 };
@@ -74,7 +76,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
     const { proposal, detailView, transactionModal } = this.props;
-    const tokenAmountToSend = proposal.genericSchemeMultiCall.values.reduce((a: BN, b: BN) => new BN(a).add(new BN(b)));
+    const tokenAmountToSend = proposal.genericSchemeMultiCall.values.reduce((a: BN, b: BN) => new BN(a).add(new BN(b))).toString();
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
       [css.transactionModal]: transactionModal,
@@ -84,15 +86,15 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     return (
       <div className={proposalSummaryClass}>
         <span className={css.summaryTitle}>
-          Generic multicall
-          {tokenAmountToSend && <div className={css.warning}>&gt; Sending {tokenAmountToSend.toString()} {baseTokenName()} &lt;</div>}
+          Generic Multicall
+          {eval(tokenAmountToSend) > 0 && <div className={css.warning}>&gt; Sending {tokenAmountToSend} {baseTokenName()} &lt;</div>}
         </span>
         {detailView &&
           <div className={css.summaryDetails}>
             {
               proposal.genericSchemeMultiCall.contractsToCall.map((contract, index) => (
                 <div key={index} className={css.multiCallContractDetails}>
-                  <p>{`Contract #${index}:`} {<a className={css.valueText} href={linkToEtherScan(contract)} target="_blank" rel="noopener noreferrer">{contract} {`(${getContractName(contract)})`}</a>}</p>
+                  <p>{`Contract #${index + 1}:`} {<a className={css.valueText} href={linkToEtherScan(contract)} target="_blank" rel="noopener noreferrer">{contract} {`(${getContractName(contract)})`}</a>}</p>
                   <p>{baseTokenName()} value: <span className={css.valueText}>{proposal.genericSchemeMultiCall.values[index]}</span></p>
                   <DecodedData contract={contract} callData={proposal.genericSchemeMultiCall.callsData[index]} />
                   <p>Raw call data:</p>
