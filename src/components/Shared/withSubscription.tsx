@@ -122,6 +122,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
            * we have to resubscribe in order to keep polling.
            */
           if (error.message.includes("service is overloaded") || error.message.includes("Network error")) {
+            this.subscription.unsubscribe();
             setInterval(() => this.setupSubscription(), GRAPH_POLL_INTERVAL); // NEED TO CHECK IF THERE IS A NEED TO CLEAR INTERVAL
           } else {
             // eslint-disable-next-line no-console
