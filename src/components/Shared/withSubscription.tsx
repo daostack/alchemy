@@ -113,10 +113,16 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
           });
         },
         (error: Error) => {
-          // eslint-disable-next-line no-console
-          console.error(getDisplayName(wrappedComponent), "Error in subscription", error);
-          // this will go to the error page
-          this.setState(() => { throw error; });
+          /**
+           * This condition is a temporary workaround to avoid crashing Alchemy when there is no network or when
+           * The Graph servers are overloaded.
+           */
+          if (!error.message.includes("service is overloaded") && !error.message.includes("Network error")) {
+            // eslint-disable-next-line no-console
+            console.error(getDisplayName(wrappedComponent), "Error in subscription", error);
+            // this will go to the error page
+            this.setState(() => { throw error; });
+          }
         },
         () => { this.setState({
           complete: true,
