@@ -1,6 +1,7 @@
 import * as React from "react";
 import { combineLatest, Observable, Subscription } from "rxjs";
 import { Subtract } from "utility-types";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 function getDisplayName(wrappedComponent: any): string {
   return wrappedComponent.displayName || wrappedComponent.name || "Component";
@@ -117,9 +118,12 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
         (error: Error) => {
           /**
            * This condition is a temporary workaround to avoid crashing Alchemy when there is no network or when
-           * The Graph servers are overloaded.
+           * The Graph servers are overloaded. Since Apollo Client terminates the subscribtion when there is a network error,
+           * we have to resubscribe in order to keep polling.
            */
-          if (!error.message.includes("service is overloaded") && !error.message.includes("Network error")) {
+          if (error.message.includes("service is overloaded") || error.message.includes("Network error")) {
+            setInterval(() => this.setupSubscription(), GRAPH_POLL_INTERVAL); // NEED TO CHECK IF THERE IS A NEED TO CLEAR INTERVAL
+          } else {
             // eslint-disable-next-line no-console
             console.error(getDisplayName(wrappedComponent), "Error in subscription", error);
             // this will go to the error page
