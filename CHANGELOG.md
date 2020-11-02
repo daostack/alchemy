@@ -1,3 +1,7 @@
+## 1.0.1
+  - Bugs Fixed
+    -  Alchemy should not crash when there is a subgraph error (no network or The Graph servers are overloaded)
+
 ## 1.0.0
   - Features Added
     - Show active proposal status on the Proposal History page
