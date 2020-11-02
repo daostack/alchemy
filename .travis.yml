@@ -10,8 +10,6 @@ before_install:
 addons:
   chrome: stable
 
-cache: false
-
 script:
   - docker -v
   - docker-compose -v
