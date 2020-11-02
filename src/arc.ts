@@ -130,6 +130,7 @@ export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
         return true;
       },
       delay: () => {
+        // This will give a random delay between retries between the range of 5 to 30 seconds.
         return Math.floor(Math.random() * (30000 - 5000 + 1) + 5000);
       },
     });
