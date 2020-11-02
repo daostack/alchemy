@@ -130,7 +130,7 @@ export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
         return true;
       },
       delay: () => {
-        return Math.round(30000 * Math.random());
+        return Math.floor(Math.random() * (30000 - 5000 + 1) + 5000);
       },
     });
 
