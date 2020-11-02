@@ -1,6 +1,6 @@
 ## 1.0.1
   - Bugs Fixed
-    -  Alchemy should not crash when there is a subgraph error (no network or The Graph servers are overloaded)
+    -  Alchemy should not crash immediately when there is a subgraph error. It will retry for approximately 2.5 minutes.
 
 ## 1.0.0
   - Features Added
