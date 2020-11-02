@@ -124,12 +124,10 @@ export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
     // https://www.apollographql.com/docs/link/links/retry/
     const retryLink = new RetryLink({
       attempts: (count) => {
-        if (count !== 10) {
-          return false;
-        }
-        return true;
+        return (count !== 10);
       },
       delay: () => {
+        console.log(Math.floor(Math.random() * (30000 - 5000 + 1) + 5000));
         // This will give a random delay between retries between the range of 5 to 30 seconds.
         return Math.floor(Math.random() * (30000 - 5000 + 1) + 5000);
       },
