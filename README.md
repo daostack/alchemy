@@ -2,6 +2,15 @@
 
 [![Build Status](https://travis-ci.org/daostack/alchemy.svg?branch=alchemy-experimental)](https://travis-ci.org/daostack/alchemy)
 
+## URLs
+
+  https://alchemy.do - alchemy 2.0 on mainnet
+
+  https://xdai.alchemy.do - alchemy 2.0 on xdai 
+
+  https://rinkeby.alchemy.do - alchemy 2.0 on rinkeby
+
+  https://kovan.alchemy.do - alchemy 2.0 on kovan
 
 [Alchemy 2.0 Benefits](./docs/alchemy_2_0_benefits.md)
 
