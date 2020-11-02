@@ -12,7 +12,7 @@
 
   https://kovan.alchemy.do - alchemy 2.0 on kovan
 
-[Alchemy 2.0 Benefits](./docs/alchemy_2_0_benefits.md)
+[Alchemy 2.0 Benefits](./docs/alchemy_2_0_Benefits.md)
 
 **Alchemy is a budgeting and resource-allocation tool for decentralized organizations.** It is an interface that enables thousands of individuals to coordinate towards a common purpose, by proposing and deciding on how to spend funds in alignment with their goals and values.
 
