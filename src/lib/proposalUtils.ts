@@ -80,9 +80,8 @@ export function restoreModalFormEntries(name: string): { [key: string]: any } {
   if (valuesString) {
     sessionStorage.removeItem(formValuesKey(name));
     try {
-      const values = JSON.parse(valuesString);
-
-      const processValue = (key: string): void => {
+      const rootValues = JSON.parse(valuesString);
+      const processValue = (values: { [key: string]: any }, key: string): void => {
         const value = values[key];
         // Moment interprets something like "100" as a date
         if (typeof value === "string" && isNaN(value as any)) {
@@ -90,17 +89,18 @@ export function restoreModalFormEntries(name: string): { [key: string]: any } {
           if (date?.isValid()) {
             values[key] = date;
           }
+        } else if (typeof value === "object") {
+          Object.keys(value).map((key: string) => processValue(value, key));
         }
       };
       /**
        * convert ISO date/time strings to Moment object
        */
-      Object.keys(values).map(processValue);
-      return values;
+      Object.keys(rootValues).map((key: string) => processValue(rootValues, key));
+      return rootValues;
     }
     // eslint-disable-next-line no-empty
     catch { }
   }
-
   return {};
 }
