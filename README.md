@@ -2,6 +2,29 @@
 
 [![Build Status](https://travis-ci.org/daostack/alchemy.svg?branch=dev)](https://travis-ci.org/daostack/alchemy)
 
+## URLs
+https://v1.alchemy.do - alchemy v1 on mainnet
+
+https://xdai.v1.alchemy.do - alchemy v1 on xdai 
+
+https://rinkeby.v1.alchemy.do - alchemy v1 on rinkeby
+
+https://kovan.v1.alchemy.do - alchemy v1 on kovan
+
+**Alchemy 2.0** :fire:
+
+Alchemy v2 source code can be found under [master-2](https://github.com/daostack/alchemy/tree/master-2) branch.
+
+https://alchemy.do - alchemy 2.0 on mainnet
+
+https://xdai.alchemy.do - alchemy 2.0 on xdai 
+
+https://rinkeby.alchemy.do - alchemy 2.0 on kovan
+
+https://kovan.alchemy.do - alchemy 2.0 on rinkeby
+
+
+
 **Alchemy is a budgeting and resource-allocation tool for decentralized organizations.** It is an interface that enables thousands of individuals to coordinate towards a common purpose, by proposing and deciding on how to spend funds in alignment with their goals and values.
 
 Some example use cases for Alchemy include decentralized venture funds, charitable funds, innovation funds, a budget proposal system (like Dash but more sophisticated), or prioritizing features for an open-source project.
