@@ -124,7 +124,7 @@ export async function initializeArc(provider?: Web3Provider): Promise<boolean> {
     // https://www.apollographql.com/docs/link/links/retry/
     const retryLink = new RetryLink({
       attempts: (count) => {
-        if (count === 10) {
+        if (count !== 10) {
           return false;
         }
         return true;
