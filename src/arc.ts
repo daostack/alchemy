@@ -134,25 +134,16 @@ export async function initializeArc(provider?: any): Promise<boolean> {
 
     // https://www.apollographql.com/docs/link/links/retry/
     const retryLink = new RetryLink({
-      attempts: {
-        max: 5,
-        retryIf: (error, _operation) => {
-        // eslint-disable-next-line no-console
-          console.error("error occurred fetching data, retrying...");
-          // eslint-disable-next-line no-console
-          console.log(error);
-          return !!error;
-        },
+      attempts: (count) => {
+        return (count !== 10);
       },
-      delay: {
-        initial: 500, // this is the initial time after the first retry
-        // next retries )up to max) will be exponential (i..e after 2*iniitial, etc)
-        jitter: true,
-        max: Infinity,
+      delay: () => {
+        // This will give a random delay between retries between the range of 5 to 30 seconds.
+        return Math.floor(Math.random() * (30000 - 5000 + 1) + 5000);
       },
     });
 
-    arcSettings.retryLink = retryLink;
+    arcSettings.graphqlRetryLink = retryLink;
 
     // if there is no existing arc, we create a new one
     if ((window as any).arc) {
