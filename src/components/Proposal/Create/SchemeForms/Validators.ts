@@ -23,7 +23,7 @@ export const requireValue = (value: any): string => {
  */
 export const validateParam = (type: string, value: string): string => {
   let error;
-  if (!value) {
+  if (!value && type !== "bool") {
     error = "Required";
   }
   else {

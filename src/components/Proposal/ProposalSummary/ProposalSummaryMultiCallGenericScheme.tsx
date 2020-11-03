@@ -33,6 +33,8 @@ const parseParamValue = (type: string, value: any) => {
       return value.toString(10);
     case type.includes("byte"):
       return `0x${buf2hex(value)}`;
+    case type.includes("bool"):
+      return value.toString();
     default:
       return "unsupported type";
   }

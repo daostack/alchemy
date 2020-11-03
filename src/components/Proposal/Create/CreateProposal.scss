@@ -148,6 +148,11 @@ fieldset {
       width: 490px; // TEMP - SHOULD BE DYNAMIC
     }
 
+    input[type=checkbox] {
+      width: 15px;
+      height: auto;
+    } 
+
     .proposerIsAdminCheckbox {
       label {
         display: inline-block;
