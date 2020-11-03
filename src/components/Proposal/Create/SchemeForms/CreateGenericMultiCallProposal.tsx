@@ -101,7 +101,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
       loading: false,
       tags: this.initialFormValues.tags,
       addContractStatus: { error: "", message: "" },
-      whitelistedContracts: this.props.whitelistedContracts ?? [],
+      whitelistedContracts: this.props.whitelistedContracts?.map(contract => { return contract.toLowerCase(); }) ?? [],
       userContracts: [],
     };
   }
@@ -224,14 +224,11 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
 
   public render(): RenderOutput {
     const { handleClose } = this.props;
-    const { loading, addContractStatus, userContracts } = this.state;
+    const { loading, addContractStatus, userContracts, whitelistedContracts } = this.state;
 
-    const whitelistedContractsOptions = this.state.whitelistedContracts.map((address, index) => {
-      return <option key={index} value={address}>{address} ({getContractName(address)})</option>;
-    });
-
-    const userContractsOptions = userContracts.map((address, index) => {
-      return <option key={index} value={address}>{address} ({getContractName(address)})</option>;
+    const contracts = whitelistedContracts.length > 0 ? whitelistedContracts : userContracts;
+    const contractsOptions = contracts.map((address, index) => {
+      return <option key={index} value={address}>{getContractName(address)} ({address})</option>;
     });
 
     const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
@@ -339,6 +336,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                 className={touched.url && errors.url ? css.error : null}
               />
 
+              {whitelistedContracts.length === 0 &&
               <div className={css.addContract}>
                 <label htmlFor="addContract">
                   Add custom contract
@@ -348,7 +346,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                   name="addContract"
                   type="text"
                   // eslint-disable-next-line react/jsx-no-bind
-                  onChange={(e: any) => { setFieldValue("addContract", e.target.value); this.verifyContract(e.target.value); }}
+                  onChange={(e: any) => { setFieldValue("addContract", e.target.value); this.verifyContract(e.target.value.toLowerCase()); }}
                   disabled={loading ? true : false}
                 />
                 {loading ? "Loading..." : addContractStatus.error === "ABI_DATA_ERROR" ?
@@ -356,7 +354,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                     {addContractStatus.message}
                     <a href={linkToEtherScan(values.addContract)} target="_blank" rel="noopener noreferrer">contract</a>
                   </div> : addContractStatus.message}
-              </div>
+              </div>}
 
               <FieldArray name="contracts">
                 {({ insert, remove, push }) => ( // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -395,14 +393,9 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                               validate={requireValue}
                             >
                               <option value="" disabled>-- Choose contract --</option>
-                              <optgroup label="Whitelisted contracts">
-                                {whitelistedContractsOptions}
+                              <optgroup label={whitelistedContracts.length > 0 ? "Whitelisted contracts" : "Custom contracts"}>
+                                {contractsOptions}
                               </optgroup>
-                              {userContractsOptions.length > 0 &&
-                                <optgroup label="Custom contracts">
-                                  {userContractsOptions}
-                                </optgroup>
-                              }
                             </Field>
                           </div>
 

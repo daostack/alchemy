@@ -725,7 +725,7 @@ export const buf2hex = (buffer: Array<any>): string => { // buffer is an ArrayBu
 export const getContractName = (address: string): string => {
   const arc = getArc();
   try {
-    return arc.getContractInfo(address).name;
+    return arc.getContractInfo(address.toLowerCase()).name;
   } catch (e) {
     return "unknown name";
   }

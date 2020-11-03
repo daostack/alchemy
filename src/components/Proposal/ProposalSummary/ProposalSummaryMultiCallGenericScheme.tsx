@@ -87,14 +87,14 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       <div className={proposalSummaryClass}>
         <span className={css.summaryTitle}>
           Generic Multicall
-          {eval(tokenAmountToSend) > 0 && <div className={css.warning}>&gt; Sending {tokenAmountToSend} {baseTokenName()} &lt;</div>}
+          {Number(tokenAmountToSend) > 0 && <div className={css.warning}>&gt; Sending {tokenAmountToSend} {baseTokenName()} &lt;</div>}
         </span>
         {detailView &&
           <div className={css.summaryDetails}>
             {
               proposal.genericSchemeMultiCall.contractsToCall.map((contract, index) => (
                 <div key={index} className={css.multiCallContractDetails}>
-                  <p>{`Contract #${index + 1}:`} {<a className={css.valueText} href={linkToEtherScan(contract)} target="_blank" rel="noopener noreferrer">{contract} {`(${getContractName(contract)})`}</a>}</p>
+                  <p>{`Contract #${index + 1}:`} {<a className={css.valueText} href={linkToEtherScan(contract)} target="_blank" rel="noopener noreferrer">{getContractName(contract)} {`(${contract})`}</a>}</p>
                   <p>{baseTokenName()} value: <span className={css.valueText}>{proposal.genericSchemeMultiCall.values[index]}</span></p>
                   <DecodedData contract={contract} callData={proposal.genericSchemeMultiCall.callsData[index]} />
                   <p>Raw call data:</p>
