@@ -17,9 +17,11 @@ export const requireValue = (value: any): string => {
 };
 
 /**
- * Given ABI method param type (address, byets32, unit256, ...) and it's value, returns error message in case validation fails or no value provided
+ * Given ABI method param type (address, byets32, unit256, ...) and it's value, returns error message in case validation fails or no value provided.
+ * This function is suitable to work with Formik validations.
  * @param {string} type
  * @param {string} value
+ * @returns {undefined | string} undefined if there is no error, otherwise a string representing the error message.
  */
 export const validateParam = (type: string, value: string): string => {
   let error;

@@ -165,26 +165,26 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
       message: "",
     };
 
+    const setAddContractStatus = (errorType: AddContractError, message: string) => {
+      addContractStatus.error = errorType;
+      addContractStatus.message = message;
+    };
+
     if (contractToCall === "") {
-      addContractStatus.error = "";
-      addContractStatus.message = "";
+      setAddContractStatus("", "");
     } else if (!isAddress(contractToCall)) {
-      addContractStatus.error = "NOT_VALID_ADDRESS";
-      addContractStatus.message = "Please enter a valid address";
-    } else if (this.state.whitelistedContracts.includes(contractToCall) || this.state.userContracts.includes(contractToCall)) {
-      addContractStatus.error = "CONTRACT_EXIST";
-      addContractStatus.message = "Contract already exist!";
+      setAddContractStatus("NOT_VALID_ADDRESS", "Please enter a valid address");
+    } else if (this.state.userContracts.includes(contractToCall)) {
+      setAddContractStatus("CONTRACT_EXIST", "Contract already exist!");
     } else {
       this.setState({ loading: true });
       const abiData = await getABIByContract(contractToCall);
       const abiMethods = extractABIMethods(abiData);
       if (abiMethods.length > 0) {
         this.state.userContracts.push(contractToCall);
-        addContractStatus.error = "";
-        addContractStatus.message = "Contract added successfully!";
+        setAddContractStatus("", "Contract added successfully!");
       } else {
-        addContractStatus.error = "ABI_DATA_ERROR";
-        addContractStatus.message = abiData.length === 0 ? "No ABI found for target contract, please verify the " : "No write methods found for target ";
+        setAddContractStatus("ABI_DATA_ERROR", abiData.length === 0 ? "No ABI found for target contract, please verify the " : "No write methods found for target ");
       }
     }
     this.setState({ loading: false, addContractStatus: addContractStatus });
