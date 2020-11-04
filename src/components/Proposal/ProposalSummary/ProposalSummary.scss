@@ -158,6 +158,16 @@
       .paramWrapper {
         margin-top: 5px;
       }
+      .loadingMethodInfo {
+        display: flex;
+        align-items: center;
+        .loader {
+          background: url("../../../assets/images/Icon/buttonLoadingBlue.gif") no-repeat;
+          margin-right: 5px;
+          width: 15px;
+          height: 15px;
+        }
+      }
     }
     .multiCallContractDetails:last-child {
       border-bottom: none;

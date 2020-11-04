@@ -6,7 +6,7 @@ import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification, NotificationStatus } from "reducers/notifications";
-import { baseTokenName, isValidUrl, isAddress, linkToEtherScan, getContractName } from "lib/util";
+import { baseTokenName, isValidUrl, isAddress, linkToEtherScan, getContractName, toWei } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -116,7 +116,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
     for (const contract of formValues.contracts) {
       contractsToCall.push(contract.address);
       callsData.push(contract.callData);
-      values.push(contract.value);
+      values.push(toWei(Number(contract.value)).toString());
     }
 
     const proposalValues = {
