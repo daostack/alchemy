@@ -145,22 +145,22 @@ export async function initializeArc(provider?: any): Promise<boolean> {
 
     arcSettings.graphqlRetryLink = retryLink;
 
-    const graphqlErrHandler = (event) => {
-     if (event.graphQLErrors) {
-       event.graphQLErrors.map((err: any) =>
-         console.log(
-           `[graphql error]: message: ${err.message}, location: ${err.locations}, path: ${err.path}`
-         )
-       )
-       //// retry the request, returning the new observable
-       return event.forward(event.operation);
-     }
-     if (event.networkError) {
-       console.log(`[network error]: ${event.networkError}`)
-     }
-   }
+    const graphqlErrHandler = (event: any) => {
+      if (event.graphQLErrors) {
+        event.graphQLErrors.map((err: any) =>
+          console.log(
+            `[graphql error]: message: ${err.message}, location: ${err.locations}, path: ${err.path}`
+          )
+        );
+        //// ignore the error
+        response.errors = null;
+      }
+      if (event.networkError) {
+        console.log(`[network error]: ${event.networkError}`);
+      }
+    };
 
-   arcSettings.graphqlErrHandler = graphqlErrHandler;
+    arcSettings.graphqlErrHandler = graphqlErrHandler;
 
     // if there is no existing arc, we create a new one
     if ((window as any).arc) {
