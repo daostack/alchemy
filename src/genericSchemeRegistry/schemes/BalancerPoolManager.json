@@ -48,10 +48,10 @@
       "fields": [
         {
           "decimals": 18,
-          "label": "The swap fee is expressed in Wei, as a percentage.",
+          "label": "The swap fee is expressed as a percentage.",
           "name": "amount",
-          "unit": "percentage",
-          "placeholder": "Swap fee (1)"
+          "unit": "%",
+          "placeholder": "Swap fee (1.5)"
         }
       ],
       "abi": {
@@ -73,7 +73,7 @@
     {
       "id": "commitAddToken",
       "label": "Commit add token to the balancer pool",
-      "description": "First step in adding new token to the balancer pool",
+      "description": "First step in adding a new token to the balancer pool",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
@@ -83,17 +83,16 @@
         },
         {
           "decimals": 18,
-          "label": "Balance of the Token to add to the pool.",
+          "label": "Balance of the new Token to add to the pool.",
           "name": "balance",
-          "unit": "unit",
-          "placeholder": "Balance: Amount in Token (1500)"
+          "unit": "token",
+          "placeholder": "Balance in Token (1500)"
         },
         {
           "decimals": 18,
-          "label": "Balance of the Token to add to the pool.",
-          "name": "balance",
-          "unit": "unit",
-          "placeholder": "Swap fee (1.5)"
+          "label": "Expected denormalizedWeight",
+          "name": "Denormalized Weight",
+          "placeholder": "Denormalized Weight (1.5)"
         }
       ],
       "abi": {
@@ -124,7 +123,7 @@
     },
     {
       "id": "applyAddToken",
-      "label": "Add Token commited previously",
+      "label": "Add Token committed by commitAddToken",
       "description": "Second step in adding new token to the balancer pool",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
@@ -169,8 +168,8 @@
     },
     {
       "id": "updateWeight",
-      "label": "Set the a weight",
-      "description": "Set the new weight for the single token",
+      "label": "Set token new weight",
+      "description": "Set the weight of a token",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
@@ -209,27 +208,26 @@
     },
     {
       "id": "updateWeightsGradually",
-      "label": "Sets the new weights",
-      "description": "Sets the new weights that are going to be gradually updated",
+      "label": "Update token weights",
+      "description": "Sets token weights (to be gradually updated)",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
           "label": "New weights",
           "name": "New weights that are going to be gradually updated",
-          "unit": "uint[]",
           "placeholder": "Weight ([10, 20, 10])"
         },
         {
           "decimals": 18,
           "label": "Start block",
-          "name": "Start block",
+          "name": "Start update from block",
           "unit": "unit",
           "placeholder": "Weight (199199)"
         },
         {
           "decimals": 18,
           "label": "End block",
-          "name": "End block",
+          "name": "End update at block",
           "unit": "unit",
           "placeholder": "Weight (399199)"
         }
@@ -276,7 +274,6 @@
         {
           "label": "Max Amounts In",
           "name": "Max amount of asset tokens to spend",
-          "unit": "uint[]",
           "placeholder": "Amounts ([10, 20, 10])"
         }
       ],
@@ -311,13 +308,11 @@
           "decimals": 18,
           "label": "Pool Amount In",
           "name": "Number of pool tokens to redeem",
-          "unit": "uint",
           "placeholder": "Number (1000)"
         },
         {
           "label": "Min Amounts Out",
           "name": "Minimum amount of asset tokens to receive",
-          "unit": "uint[]",
           "placeholder": "Amounts ([10, 20, 10])"
         }
       ],
