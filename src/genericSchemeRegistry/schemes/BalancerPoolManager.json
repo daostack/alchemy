@@ -5,7 +5,7 @@
       ""
     ],
     "kovan": [
-      "0x6cb30414B2B860b9f3b1aF679DF7e51d9b2c7744"
+      "0x5086D91858A5AAC4A770212720B297F38e0DD403"
     ],
     "private": [
       ""
@@ -215,7 +215,7 @@
         {
           "label": "New weights",
           "name": "New weights that are going to be gradually updated",
-          "placeholder": "Weight ([10, 20, 10])"
+          "placeholder": "Weight (10)"
         },
         {
           "decimals": 18,
@@ -274,7 +274,7 @@
         {
           "label": "Max Amounts In",
           "name": "Max amount of asset tokens to spend",
-          "placeholder": "Amounts ([10, 20, 10])"
+          "placeholder": "Amounts (10)"
         }
       ],
       "abi": {
@@ -313,7 +313,7 @@
         {
           "label": "Min Amounts Out",
           "name": "Minimum amount of asset tokens to receive",
-          "placeholder": "Amounts ([10, 20, 10])"
+          "placeholder": "Amounts (10)"
         }
       ],
       "abi": {
