@@ -116,7 +116,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
           // eslint-disable-next-line no-console
           console.error(getDisplayName(wrappedComponent), "Error in subscription", error);
           // this will go to the error page
-          this.setState(() => { throw error; });
+          //this.setState(() => { throw error; });
         },
         () => { this.setState({
           complete: true,
