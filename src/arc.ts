@@ -153,7 +153,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
           )
         );
         //// ignore the error
-        event.response.errors = null;
+        event.response.errors = undefined;
       }
       if (event.networkError) {
         console.log(`[network error]: ${event.networkError}`);
