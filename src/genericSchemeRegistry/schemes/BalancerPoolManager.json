@@ -14,14 +14,14 @@
   "actions": [
     {
       "id": "setPublicSwap",
-      "label": "Set PublicSwap parameter to true/false",
-      "description": "Pause/unpauses the pool",
+      "label": "Set Public Swap",
+      "description": "False to pause the pool",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
           "label": "Set public swap to",
           "name": "public swap",
-          "placeholder": "Boolean (true)"
+          "placeholder": "Boolean (true or false)"
         }
       ],
       "abi": {
@@ -48,7 +48,7 @@
       "fields": [
         {
           "decimals": 18,
-          "label": "The swap fee is expressed as a percentage.",
+          "label": "Set swap fee to",
           "name": "amount",
           "unit": "%",
           "placeholder": "Swap fee (1.5)"
@@ -72,7 +72,7 @@
     },
     {
       "id": "commitAddToken",
-      "label": "Commit add token to the balancer pool",
+      "label": "Add token",
       "description": "First step in adding a new token to the balancer pool",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
@@ -83,10 +83,10 @@
         },
         {
           "decimals": 18,
-          "label": "Balance of the new Token to add to the pool.",
+          "label": "Balance of the new token to add to the pool",
           "name": "balance",
           "unit": "token",
-          "placeholder": "Balance in Token (1500)"
+          "placeholder": "Balance in token (1500)"
         },
         {
           "decimals": 18,
@@ -123,8 +123,8 @@
     },
     {
       "id": "applyAddToken",
-      "label": "Add Token committed by commitAddToken",
-      "description": "Second step in adding new token to the balancer pool",
+      "label": "Confirm add token",
+      "description": "Second step in adding a new token to the balancer pool",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
       ],
@@ -140,8 +140,8 @@
     },
     {
       "id": "removeToken",
-      "label": "Remove Token",
-      "description": "Remove token from the pool by address",
+      "label": "Remove token",
+      "description": "Remove a token from the pool",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
@@ -168,7 +168,7 @@
     },
     {
       "id": "updateWeight",
-      "label": "Set token new weight",
+      "label": "New weight",
       "description": "Set the weight of a token",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
@@ -179,7 +179,7 @@
         },
         {
           "decimals": 18,
-          "label": "New weight of the Token.",
+          "label": "New weight",
           "name": "new weight",
           "unit": "unit",
           "placeholder": "Weight (1500)"
@@ -208,28 +208,28 @@
     },
     {
       "id": "updateWeightsGradually",
-      "label": "Update token weights",
+      "label": "Update weights",
       "description": "Sets token weights (to be gradually updated)",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
-          "label": "New weights",
+          "label": "New weights in wei",
           "name": "New weights that are going to be gradually updated",
-          "placeholder": "Weight (10)"
+          "placeholder": "Weight (1000000000000000000)"
         },
         {
           "decimals": 18,
           "label": "Start block",
           "name": "Start update from block",
           "unit": "unit",
-          "placeholder": "Weight (199199)"
+          "placeholder": "Block number (199199)"
         },
         {
           "decimals": 18,
           "label": "End block",
           "name": "End update at block",
           "unit": "unit",
-          "placeholder": "Weight (399199)"
+          "placeholder": "Block number (399199)"
         }
       ],
       "abi": {
@@ -266,15 +266,15 @@
       "fields": [
         {
           "decimals": 18,
-          "label": "Pool Amount Out",
+          "label": "Pool tokens to recieve",
           "name": "Number of pool tokens to receive",
           "unit": "uint",
           "placeholder": "Number (1000)"
         },
         {
-          "label": "Max Amounts In",
+          "label": "Max tokens to add in wei",
           "name": "Max amount of asset tokens to spend",
-          "placeholder": "Amounts (10)"
+          "placeholder": "Amount (2000000000000000000)"
         }
       ],
       "abi": {
@@ -306,14 +306,14 @@
       "fields": [
         {
           "decimals": 18,
-          "label": "Pool Amount In",
+          "label": "Pool tokens to redeem",
           "name": "Number of pool tokens to redeem",
           "placeholder": "Number (1000)"
         },
         {
-          "label": "Min Amounts Out",
+          "label": "Max amount of asset tokens to receive in wei",
           "name": "Minimum amount of asset tokens to receive",
-          "placeholder": "Amounts (10)"
+          "placeholder": "Amount (2000000000000000000)"
         }
       ],
       "abi": {
