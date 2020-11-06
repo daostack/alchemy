@@ -14,7 +14,7 @@ const registryLookupInfo = require("./schemes/RegistryLookup.json");
 const co2kenInfo = require("./schemes/CO2ken.json");
 const dXTokenRegistry = require("./schemes/dXTokenRegistry.json");
 const dXswapGovernance = require("./schemes/DXswapGovernance.json");
-const balancerPoolManager = require("./schemes/BalancerPoolManager.json")
+const balancerPoolManager = require("./schemes/BalancerPoolManager.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
@@ -27,7 +27,7 @@ const KNOWNSCHEMES = [
   registryLookupInfo,
   dXTokenRegistry,
   dXswapGovernance,
-  balancerPoolManager
+  balancerPoolManager,
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
