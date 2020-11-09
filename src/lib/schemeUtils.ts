@@ -134,7 +134,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       /**
        * this will be "pretty"
        */
-      name = rewarderContractName(scheme as ISchemeState);
+      name = rewarderContractName(scheme as ISchemeState, false);
     } else {
       name = alias ?? splitCamelCase(scheme.name);
     }
