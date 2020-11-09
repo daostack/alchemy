@@ -37,7 +37,7 @@ export const validateParam = (type: string, value: string): string => {
         break;
       case type.includes("byte"):
         if (!isHexStrict(value)) {
-          error = "Must be a hex value";
+          error = "Must be an hex";
         }
         break;
       case type.includes("uint"):
