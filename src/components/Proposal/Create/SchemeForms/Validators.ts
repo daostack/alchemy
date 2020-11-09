@@ -4,6 +4,7 @@ import { isAddress } from "lib/util";
 /**
  * Given a value returns error message in case value is less than 0 or no value provided
  * @param {any} value
+ * @returns {undefined | string} undefined if there is no error, otherwise a "Required" string.
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const requireValue = (value: any): string => {
@@ -37,7 +38,7 @@ export const validateParam = (type: string, value: string): string => {
         break;
       case type.includes("byte"):
         if (!isHexStrict(value)) {
-          error = "Must be an hex";
+          error = "Must be an hex value";
         }
         break;
       case type.includes("uint"):
