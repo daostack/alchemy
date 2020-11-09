@@ -50,6 +50,7 @@ export const KNOWN_SCHEME_NAMES = [
   "UGenericScheme",
   "Competition",
   "ContributionRewardExt",
+  "GenericSchemeMultiCall",
 ];
 
 export const PROPOSAL_SCHEME_NAMES = [
@@ -59,6 +60,7 @@ export const PROPOSAL_SCHEME_NAMES = [
   "UGenericScheme",
   "Competition",
   "ContributionRewardExt",
+  "GenericSchemeMultiCall",
 ];
 
 /**

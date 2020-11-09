@@ -3,6 +3,7 @@ import { getArc } from "arc";
 import CreateKnownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateKnownGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "components/Proposal/Create/SchemeForms/CreateSchemeRegistrarProposal";
 import CreateUnknownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateUnknownGenericSchemeProposal";
+import CreateGenericMultiCallProposal from "components/Proposal/Create/SchemeForms/CreateGenericMultiCallProposal";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
@@ -138,6 +139,8 @@ class CreateProposalPage extends React.Component<IProps, IStateProps> {
       } else {
         createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
       }
+    } else if (scheme.name === "GenericSchemeMultiCall") {
+      createSchemeComponent = <CreateGenericMultiCallProposal {...props} whitelistedContracts={scheme.genericSchemeMultiCallParams.contractsWhiteList} />;
     }
 
     return (

@@ -8,6 +8,7 @@ import ProposalSummaryContributionReward from "./ProposalSummaryContributionRewa
 import ProposalSummaryKnownGenericScheme from "./ProposalSummaryKnownGenericScheme";
 import ProposalSummarySchemeRegistrar from "./ProposalSummarySchemeRegistrar";
 import ProposalSummaryUnknownGenericScheme from "./ProposalSummaryUnknownGenericScheme";
+import ProposalSummaryMultiCallGenericScheme from "./ProposalSummaryMultiCallGenericScheme";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;
@@ -41,7 +42,8 @@ export default class ProposalSummary extends React.Component<IProps> {
       } else {
         return <ProposalSummaryUnknownGenericScheme {...this.props} />;
       }
-
+    } else if (proposal.type === IProposalType.GenericSchemeMultiCall) {
+      return <ProposalSummaryMultiCallGenericScheme {...this.props} />;
     } else {
       return <div className={proposalSummaryClass}>Unknown proposal type</div>;
     }
