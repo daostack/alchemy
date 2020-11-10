@@ -1,6 +1,7 @@
 ## 1.0.2
   - Features Added
     - Support Multi-call Generic Scheme
+    - Use subgraph v40_0 and arc.js 0.2.76
 
   - Bugs Fixed
     - Fix competiotion tab crash
