@@ -14,7 +14,7 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import { getABIByContract, extractABIMethods, encodeABI } from "./ABIService";
-import { requireValue, validateParam } from "./Validators";
+import { requireValue, validateParam, isArrayParameter, typeArrayPlaceholder } from "./Validators";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -203,30 +203,18 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
     setFieldValue(`contracts.${index}.values`, ""); // reset
     setFieldValue(`contracts.${index}.callData`, ""); // reset
     const selectedMethod = methods.filter(method => method.methodSignature === methodName);
-    let isOnlyBooleanInputs = true;
     const abiParams = selectedMethod[0].inputs.map((input: any, j: number) => {
-      /**
-       * For some reason the default value in Formik checkbox is undefined.
-       * This is a hack to set the default value to false.
-       */
-      if (input.type === "bool") {
-        setFieldValue(`contracts.${index}.values.${j}`, false);
-      } else { // We have at least one non-boolean input
-        isOnlyBooleanInputs = false;
-      }
       return {
         id: j,
         name: input.name,
         type: input.type,
-        placeholder: `${input.name} (${input.type})`,
+        placeholder: `${input.name} (${input.type}) ${isArrayParameter(input.type) ? typeArrayPlaceholder(input.type) : ""}`,
         methodSignature: input.methodSignature,
       };
     });
     setFieldValue(`contracts.${index}.params`, abiParams);
     if (abiParams.length === 0) { // If no params, generate the encoded data
       setFieldValue(`contracts.${index}.callData`, encodeABI(abi, selectedMethod[0].name, []));
-    } else if (isOnlyBooleanInputs) {
-      setFieldValue(`contracts.${index}.callData`, encodeABI(abi, selectedMethod[0].name, new Array(abiParams.length).fill(false)));
     }
   }
 
@@ -447,7 +435,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                                     <ErrorMessage name={`contracts.${index}.values.${i}`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                                   </label>
                                   <Field
-                                    type={param.type === "bool" ? "checkbox" : "text"}
+                                    type="text"
                                     name={`contracts.${index}.values.${i}`}
                                     placeholder={param.placeholder}
                                     // eslint-disable-next-line react/jsx-no-bind
@@ -455,7 +443,6 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                                     // eslint-disable-next-line react/jsx-no-bind
                                     validate={(e: any) => validateParam(param.type, e)}
                                   />
-                                  {param.type === "bool" && `${values.contracts[index].values[i]}`}
                                 </React.Fragment>
                               ))}
                             </div>

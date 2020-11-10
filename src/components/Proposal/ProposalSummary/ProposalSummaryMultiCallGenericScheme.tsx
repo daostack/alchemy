@@ -7,6 +7,7 @@ import * as css from "./ProposalSummary.scss";
 import BN = require("bn.js");
 import CopyToClipboard from "components/Shared/CopyToClipboard";
 import { getABIByContract, decodeABI, IDecodedData } from "../Create/SchemeForms/ABIService";
+import * as Validators from "../Create/SchemeForms/Validators";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;
@@ -26,18 +27,32 @@ interface IDecodedDataProps {
 }
 
 const parseParamValue = (type: string, value: any) => {
-  switch (true){
-    case type.includes("address"):
-      return `0x${value}`;
-    case type.includes("uint"):
-      return value.toString(10);
-    case type.includes("byte"):
-      return `0x${buf2hex(value)}`;
-    case type.includes("bool"):
-      return value.toString();
-    default:
-      return "unsupported type";
+  if (Validators.isAddressType(type)) {
+    if (Validators.isArrayParameter(type)) {
+      value = value.map((element: any) => {
+        return `0x${element}\n`;
+      });
+      return value;
+    }
+    return `0x${value}`;
   }
+  if (Validators.isBooleanType(type)) {
+    return value.toString();
+  }
+  if (Validators.isUintType(type) || Validators.isIntType(type)) {
+    return value.toString(10);
+  }
+  if (Validators.isByteType(type)) {
+    if (Validators.isArrayParameter(type)) {
+      value = value.map((element: any) => {
+        return `0x${buf2hex(element)}\n`;
+      });
+      return value;
+    }
+    return `0x${buf2hex(value)}`;
+  }
+
+  return value;
 };
 
 

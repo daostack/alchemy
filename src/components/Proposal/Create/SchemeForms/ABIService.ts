@@ -112,9 +112,27 @@ export const encodeABI = (abi: Array<any>, name: string, values: Array<any>): st
   const contract = new web3.eth.Contract(abi);
   const interfaceABI = contract.options.jsonInterface;
 
+  const isArrayParameter = (parameter: string): boolean => /^\[.*\]$/.test(parameter);
+
+  let parsedValues = [];
+  if (values) {
+    parsedValues = values.map(value => {
+      if (isArrayParameter(value)) {
+        try {
+          return JSON.parse(value);
+        } catch (e) { return; }
+      } else if (value === "true" || value === "false") {
+        try {
+          return JSON.parse(value);
+        } catch (e) { return; }
+      }
+      return value;
+    });
+  }
+
   try {
     const methodToSend = interfaceABI.filter((method: any) => method.name === name && method.inputs.length === values.length);
-    return web3.eth.abi.encodeFunctionCall(methodToSend[0], values);
+    return web3.eth.abi.encodeFunctionCall(methodToSend[0], parsedValues);
   } catch (error) {
     return error.reason;
   }
