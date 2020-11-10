@@ -1,3 +1,11 @@
+## 1.0.2
+  - Features Added
+    - Support Multi-call Generic Scheme
+
+  - Bugs Fixed
+    - Fix competiotion tab crash
+    - Better name for some Competition plugins
+
 ## 1.0.1
   - Bugs Fixed
     -  Alchemy should not crash immediately when there is a subgraph error. It will retry for approximately 2.5 minutes.
