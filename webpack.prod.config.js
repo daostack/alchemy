@@ -109,6 +109,7 @@ plugins: [
       ARC_IPFSPROVIDER_PROTOCOL : "",
       ARC_IPFSPROVIDER_API_PATH : "",
       INFURA_ID : "",
+      ETHERSCAN_API_KEY : "",
       MIXPANEL_TOKEN: "",
     }),
 
