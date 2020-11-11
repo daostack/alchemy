@@ -71,14 +71,14 @@ const DecodedData = (props: IDecodedDataProps) => {
   }, []);
 
   const methodParams = decodedData.names.map((param: string, index: number) => {
-    return <div key={index} className={css.paramWrapper}>{param}: <span className={css.valueText}>{parseParamValue(decodedData.types[index], decodedData.inputs[index])}</span></div>;
+    return <div key={index} className={css.paramWrapper}>{param}: <pre>{parseParamValue(decodedData.types[index], decodedData.inputs[index])}</pre></div>;
   });
 
   return (
     <div>
       {lodaing ? <div className={css.loadingMethodInfo}><div className={css.loader} /><i>Loading method info...</i></div> :
         <React.Fragment>
-          <div>Method: <span className={css.valueText}>{decodedData.method}({decodedData.types.join(",")})</span></div>
+          <div>Method: <pre>{decodedData.method}({decodedData.types.join(",")})</pre></div>
           {methodParams}
         </React.Fragment>}
     </div>
@@ -111,7 +111,8 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
             {
               proposal.genericSchemeMultiCall.contractsToCall.map((contract, index) => (
                 <div key={index} className={css.multiCallContractDetails}>
-                  <p>{`Contract #${index + 1}:`} {<a className={css.valueText} href={linkToEtherScan(contract)} target="_blank" rel="noopener noreferrer">{getContractName(contract)} {`(${contract})`}</a>}</p>
+                  <p><b>{`#${index + 1}`}</b></p>
+                  <p>Contract: <a className={css.valueText} href={linkToEtherScan(contract)} target="_blank" rel="noopener noreferrer">{getContractName(contract)} {`(${contract})`}</a></p>
                   <p>{baseTokenName()} value: <span className={css.valueText}>{fromWei(proposal.genericSchemeMultiCall.values[index])}</span></p>
                   <DecodedData contract={contract} callData={proposal.genericSchemeMultiCall.callsData[index]} />
                   <p>Raw call data:</p>
