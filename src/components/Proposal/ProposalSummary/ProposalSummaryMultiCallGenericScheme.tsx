@@ -55,6 +55,12 @@ const parseParamValue = (type: string, value: any) => {
   return value;
 };
 
+const parseMethodSignature = (decodedData: IDecodedData): string => {
+  const params = decodedData.names.map((name, index) => {
+    return `${name}: ${decodedData.types[index]}`;
+  });
+  return `${decodedData.method} (${params})`;
+};
 
 const DecodedData = (props: IDecodedDataProps) => {
   const [lodaing, setLoading] = React.useState(false);
@@ -78,7 +84,7 @@ const DecodedData = (props: IDecodedDataProps) => {
     <div>
       {lodaing ? <div className={css.loadingMethodInfo}><div className={css.loader} /><i>Loading method info...</i></div> :
         <React.Fragment>
-          <div>Method: <pre>{decodedData.method}({decodedData.types.join(",")})</pre></div>
+          <div>Method: <pre>{parseMethodSignature(decodedData)}</pre></div>
           {methodParams}
         </React.Fragment>}
     </div>
