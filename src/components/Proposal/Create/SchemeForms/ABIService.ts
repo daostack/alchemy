@@ -4,6 +4,7 @@ const Web3 = require("web3");
 import axios from "axios";
 import { targetedNetwork } from "lib/util";
 const InputDataDecoder = require("ethereum-input-data-decoder");
+import { isArrayParameter } from "./Validators";
 
 export interface IAllowedAbiItem extends AbiItem {
   name: string;
@@ -112,9 +113,25 @@ export const encodeABI = (abi: Array<any>, name: string, values: Array<any>): st
   const contract = new web3.eth.Contract(abi);
   const interfaceABI = contract.options.jsonInterface;
 
+  /**
+   * The web3 encodeFunctionCall expects arrays and booleans as objects and not as strings.
+   * If we have parameters that represent an array or a boolean value, parse them to objects.
+   */
+  let parsedValues = [];
+  if (values) {
+    parsedValues = values.map(value => {
+      if (isArrayParameter(value) || value === "true" || value === "false") {
+        try {
+          return JSON.parse(value);
+        } catch (e) { return; }
+      }
+      return value;
+    });
+  }
+
   try {
     const methodToSend = interfaceABI.filter((method: any) => method.name === name && method.inputs.length === values.length);
-    return web3.eth.abi.encodeFunctionCall(methodToSend[0], values);
+    return web3.eth.abi.encodeFunctionCall(methodToSend[0], parsedValues);
   } catch (error) {
     return error.reason;
   }

@@ -7,6 +7,7 @@ import * as css from "./ProposalSummary.scss";
 import BN = require("bn.js");
 import CopyToClipboard from "components/Shared/CopyToClipboard";
 import { getABIByContract, decodeABI, IDecodedData } from "../Create/SchemeForms/ABIService";
+import * as Validators from "../Create/SchemeForms/Validators";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;
@@ -26,20 +27,40 @@ interface IDecodedDataProps {
 }
 
 const parseParamValue = (type: string, value: any) => {
-  switch (true){
-    case type.includes("address"):
-      return `0x${value}`;
-    case type.includes("uint"):
-      return value.toString(10);
-    case type.includes("byte"):
-      return `0x${buf2hex(value)}`;
-    case type.includes("bool"):
-      return value.toString();
-    default:
-      return "unsupported type";
+  if (Validators.isAddressType(type)) {
+    if (Validators.isArrayParameter(type)) {
+      value = value.map((element: any) => {
+        return `0x${element}\n`;
+      });
+      return value;
+    }
+    return `0x${value}`;
   }
+  if (Validators.isBooleanType(type)) {
+    return value.toString();
+  }
+  if (Validators.isUintType(type) || Validators.isIntType(type)) {
+    return value.toString(10);
+  }
+  if (Validators.isByteType(type)) {
+    if (Validators.isArrayParameter(type)) {
+      value = value.map((element: any) => {
+        return `0x${buf2hex(element)}\n`;
+      });
+      return value;
+    }
+    return `0x${buf2hex(value)}`;
+  }
+
+  return value;
 };
 
+const parseMethodSignature = (decodedData: IDecodedData): string => {
+  const params = decodedData.names.map((name, index) => {
+    return `${name}: ${decodedData.types[index]}`;
+  });
+  return `${decodedData.method} (${params})`;
+};
 
 const DecodedData = (props: IDecodedDataProps) => {
   const [lodaing, setLoading] = React.useState(false);
@@ -56,14 +77,14 @@ const DecodedData = (props: IDecodedDataProps) => {
   }, []);
 
   const methodParams = decodedData.names.map((param: string, index: number) => {
-    return <div key={index} className={css.paramWrapper}>{param}: <span className={css.valueText}>{parseParamValue(decodedData.types[index], decodedData.inputs[index])}</span></div>;
+    return <div key={index} className={css.paramWrapper}>{param}: <pre>{parseParamValue(decodedData.types[index], decodedData.inputs[index])}</pre></div>;
   });
 
   return (
     <div>
       {lodaing ? <div className={css.loadingMethodInfo}><div className={css.loader} /><i>Loading method info...</i></div> :
         <React.Fragment>
-          <div>Method: <span className={css.valueText}>{decodedData.method}({decodedData.types.join(",")})</span></div>
+          <div>Method: <pre>{parseMethodSignature(decodedData)}</pre></div>
           {methodParams}
         </React.Fragment>}
     </div>
@@ -96,7 +117,8 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
             {
               proposal.genericSchemeMultiCall.contractsToCall.map((contract, index) => (
                 <div key={index} className={css.multiCallContractDetails}>
-                  <p>{`Contract #${index + 1}:`} {<a className={css.valueText} href={linkToEtherScan(contract)} target="_blank" rel="noopener noreferrer">{getContractName(contract)} {`(${contract})`}</a>}</p>
+                  <p><b>{`#${index + 1}`}</b></p>
+                  <p>Contract: <a className={css.valueText} href={linkToEtherScan(contract)} target="_blank" rel="noopener noreferrer">{getContractName(contract)} {`(${contract})`}</a></p>
                   <p>{baseTokenName()} value: <span className={css.valueText}>{fromWei(proposal.genericSchemeMultiCall.values[index])}</span></p>
                   <DecodedData contract={contract} callData={proposal.genericSchemeMultiCall.callsData[index]} />
                   <p>Raw call data:</p>

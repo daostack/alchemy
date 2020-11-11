@@ -14,7 +14,7 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import { getABIByContract, extractABIMethods, encodeABI } from "./ABIService";
-import { requireValue, validateParam } from "./Validators";
+import * as Validators from "./Validators";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -68,6 +68,35 @@ interface IFormValues {
   contracts: Array<IContract>;
   [key: string]: any;
 }
+
+/**
+ * Given an array input type returns an input example string.
+ * @param {string} type The input type (e.g. unit256[], bool[], address[], ...)
+ * @returns {string} Input example string
+ */
+const typeArrayPlaceholder = (type: string): string => {
+  if (Validators.isAddressType(type)) {
+    return "e.g: ['0xACa94ef8bD5ffEE41947b4585a84BdA5a3d3DA6E','0x1dF62f291b2E969fB0849d99D9Ce41e2F137006e']";
+  }
+
+  if (Validators.isBooleanType(type)) {
+    return "e.g: [true, false, false, true]";
+  }
+
+  if (Validators.isUintType(type)) {
+    return "e.g: [1000, 212, 320000022, 23]";
+  }
+
+  if (Validators.isIntType(type)) {
+    return "e.g: [1000, -212, 1232, -1]";
+  }
+
+  if (Validators.isByteType(type)) {
+    return "e.g: ['0xc00000000000000000000000000000000000', '0xc00000000000000000000000000000000001']";
+  }
+
+  return "e.g: ['first value', 'second value', 'third value']";
+};
 
 class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> {
 
@@ -203,30 +232,18 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
     setFieldValue(`contracts.${index}.values`, ""); // reset
     setFieldValue(`contracts.${index}.callData`, ""); // reset
     const selectedMethod = methods.filter(method => method.methodSignature === methodName);
-    let isOnlyBooleanInputs = true;
     const abiParams = selectedMethod[0].inputs.map((input: any, j: number) => {
-      /**
-       * For some reason the default value in Formik checkbox is undefined.
-       * This is a hack to set the default value to false.
-       */
-      if (input.type === "bool") {
-        setFieldValue(`contracts.${index}.values.${j}`, false);
-      } else { // We have at least one non-boolean input
-        isOnlyBooleanInputs = false;
-      }
       return {
         id: j,
         name: input.name,
         type: input.type,
-        placeholder: `${input.name} (${input.type})`,
+        placeholder: `${input.name} (${input.type}) ${Validators.isArrayParameter(input.type) ? typeArrayPlaceholder(input.type) : ""}`,
         methodSignature: input.methodSignature,
       };
     });
     setFieldValue(`contracts.${index}.params`, abiParams);
     if (abiParams.length === 0) { // If no params, generate the encoded data
       setFieldValue(`contracts.${index}.callData`, encodeABI(abi, selectedMethod[0].name, []));
-    } else if (isOnlyBooleanInputs) {
-      setFieldValue(`contracts.${index}.callData`, encodeABI(abi, selectedMethod[0].name, new Array(abiParams.length).fill(false)));
     }
   }
 
@@ -388,7 +405,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                               placeholder={`How much ${baseTokenName()} to transfer with the call`}
                               name={`contracts.${index}.value`}
                               type="number"
-                              validate={requireValue}
+                              validate={Validators.requireValue}
                             />
                           </div>
 
@@ -403,7 +420,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                               component="select"
                               name={`contracts.${index}.address`}
                               type="text"
-                              validate={requireValue}
+                              validate={Validators.requireValue}
                             >
                               <option value="" disabled>-- Choose contract --</option>
                               <optgroup label={whitelistedContracts.length > 0 ? "Whitelisted contracts" : "Custom contracts"}>
@@ -426,7 +443,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                                   component="select"
                                   name={`contracts.${index}.method`}
                                   type="text"
-                                  validate={requireValue}
+                                  validate={Validators.requireValue}
                                 >
                                   <option value="" disabled>-- Choose method --</option>
                                   {values.contracts[index]?.methods?.map((method: any, j: any) => (
@@ -447,15 +464,14 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                                     <ErrorMessage name={`contracts.${index}.values.${i}`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                                   </label>
                                   <Field
-                                    type={param.type === "bool" ? "checkbox" : "text"}
+                                    type="text"
                                     name={`contracts.${index}.values.${i}`}
                                     placeholder={param.placeholder}
                                     // eslint-disable-next-line react/jsx-no-bind
                                     onBlur={(e: any) => { handleBlur(e); this.abiInputChange(values.contracts[index].abi, values.contracts[index].values, values.contracts[index].method.split("(")[0], setFieldValue, index); }}
                                     // eslint-disable-next-line react/jsx-no-bind
-                                    validate={(e: any) => validateParam(param.type, e)}
+                                    validate={(e: any) => Validators.validateParam(param.type, e)}
                                   />
-                                  {param.type === "bool" && `${values.contracts[index].values[i]}`}
                                 </React.Fragment>
                               ))}
                             </div>
