@@ -1,6 +1,7 @@
 import * as React from "react";
 import { combineLatest, Observable, Subscription } from "rxjs";
 import { Subtract } from "utility-types";
+import { GRAPH_POLL_INTERVAL } from "../../settings";
 
 function getDisplayName(wrappedComponent: any): string {
   return wrappedComponent.displayName || wrappedComponent.name || "Component";
@@ -116,7 +117,16 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
           // eslint-disable-next-line no-console
           console.error(getDisplayName(wrappedComponent), "Error in subscription", error);
           // this will go to the error page
-          this.setState(() => { throw error; });
+          /**
+           * The below condition is a workaround to avoid crashing Alchemy when a GraphQL error or a Network error occurs.
+           * This is due to the way Apollo Client works when such an error occurs - it fails and terminates the observable including the polling.
+           */
+          if (error.message.includes("GraphQL") || error.message.includes("Network")) {
+            this.subscription.unsubscribe();
+            setTimeout(this.setupSubscription.bind(this, observable), GRAPH_POLL_INTERVAL);
+          } else {
+            this.setState(() => { throw error; });
+          }
         },
         () => { this.setState({
           complete: true,
