@@ -93,7 +93,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       };
     }
 
-    public async setupSubscription(observable?: Observable<any>) {
+    public async setupSubscription(observable?: Observable<any>, currentAttempt = 0) {
 
       this.teardownSubscription();
 
@@ -114,17 +114,18 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
           });
         },
         (error: Error) => {
-          // eslint-disable-next-line no-console
-          console.error(getDisplayName(wrappedComponent), "Error in subscription", error);
-          // this will go to the error page
           /**
            * The below condition is a workaround to avoid crashing Alchemy when a GraphQL error or a Network error occurs.
            * This is due to the way Apollo Client works when such an error occurs - it fails and terminates the observable including the polling.
            */
-          if (error.message.includes("GraphQL") || error.message.includes("Network")) {
+          if ((error.message.includes("GraphQL") || error.message.includes("Network")) && currentAttempt < 10) {
+            currentAttempt ++;
             this.subscription.unsubscribe();
-            setTimeout(this.setupSubscription.bind(this, observable), GRAPH_POLL_INTERVAL);
+            setTimeout(this.setupSubscription.bind(this, observable, currentAttempt), GRAPH_POLL_INTERVAL);
           } else {
+            // eslint-disable-next-line no-console
+            console.error(getDisplayName(wrappedComponent), "Error in subscription", error);
+            // this will go to the error page
             this.setState(() => { throw error; });
           }
         },

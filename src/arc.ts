@@ -152,7 +152,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       },
     });
 
-    arcSettings.retryLink = retryLink;
+    arcSettings.graphqlRetryLink = retryLink;
 
     // if there is no existing arc, we create a new one
     if ((window as any).arc) {
