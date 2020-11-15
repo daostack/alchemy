@@ -229,6 +229,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   <Link to="/feed" onClick={this.handleCloseMenu}>Feed</Link>
                 </TrainingTooltip>
               </li>
+              <li><a className="externalLink" href="https://xgen.daostack.io/" target="_blank" rel="noopener noreferrer">xGEN / GEN</a></li>
               <li>
                 <a>$ Buy GEN</a>
                 <ul>
