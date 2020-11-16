@@ -108,6 +108,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
 
       this.subscription = this.observable.subscribe(
         (next: ObservableType) => {
+          currentAttempt = 0; // reset on success
           this.setState({
             data: next,
             isLoading: false,
