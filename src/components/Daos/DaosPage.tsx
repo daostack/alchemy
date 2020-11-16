@@ -1,5 +1,5 @@
 import { DAO, DAOFieldsFragment } from "@daostack/arc.js";
-import { getArc } from "arc";
+import { getArcs } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
@@ -20,7 +20,8 @@ import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 import BHubReg from "../Buidlhub/Registration";
 
-type SubscriptionData = [DAO[], DAO[], DAO[]];
+
+type SubscriptionData = DAO[][];
 
 interface IStateProps {
   currentAccountAddress: string;
@@ -93,17 +94,21 @@ class DaosPage extends React.Component<IProps, IState> {
 
     // If search string greater than 2 search on server for any other DAOs not yet loaded that match this search
     if (searchString.length > 2) {
-      const arc = getArc();
+      const arcs = getArcs();
       const firstChar = searchString.charAt(0);
-      const foundDaos = await combineLatest(
+
+      const daosData = [];
+      for (const network in arcs) {
+        const arc = arcs[network];
         // eslint-disable-next-line @typescript-eslint/camelcase
-        arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: searchString } }, { fetchAllData: true }),
+        daosData.push(arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: searchString } }, { fetchAllData: true }));
         // If string is all lower case also search for string with first character uppercased so "gen" matches "Gen" too
         // eslint-disable-next-line @typescript-eslint/camelcase
-        firstChar.toLowerCase() === firstChar ? arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: firstChar.toUpperCase() + searchString.slice(1) } }, { fetchAllData: true }) : of([]),
-        (data1, data2) => data1.concat(data2),
-      ).pipe(first()).toPromise();
-      this.setState({ searchDaos: foundDaos });
+        daosData.push(firstChar.toLowerCase() === firstChar ? arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: firstChar.toUpperCase() + searchString.slice(1) } }, { fetchAllData: true }) : of([]));
+      }
+
+      const foundDaos = await combineLatest(daosData).pipe(first()).toPromise();
+      this.setState({ searchDaos: foundDaos as DAO[] });
     } else {
       this.setState({ searchDaos: [] });
     }
@@ -114,11 +119,11 @@ class DaosPage extends React.Component<IProps, IState> {
     const search = this.state.search.length > 2 ? this.state.search.toLowerCase() : "";
 
     // Always show DAOs that the current user is a member of or follows first
-    const yourDAOs = data[1].concat(data[2]).filter(d => d.staticState.name.toLowerCase().includes(search)).sort((a, b) => a.staticState.name.localeCompare(b.staticState.name));
+    const yourDAOs = data[1].concat(data[2]).concat(data[4]).concat(data[5]).filter(d => d.staticState.name.toLowerCase().includes(search)).sort((a, b) => a.staticState.name.localeCompare(b.staticState.name));
     const yourDAOAddresses = yourDAOs.map(dao => dao.id);
 
     // Then all the rest of the DAOs
-    let otherDAOs = data[0];
+    let otherDAOs = data[0].concat(data[3]);
     // Add any DAOs found from searching the server to the list
     if (this.state.searchDaos.length > 0) {
       // make sure we don't add duplicate DAOs to the list
@@ -223,9 +228,7 @@ class DaosPage extends React.Component<IProps, IState> {
 }
 
 const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData = null) => {
-  const arc = getArc();
   const { currentAccountAddress, followingDAOs } = props;
-
   // TODO: right now we don't handle a user following or being a member of more than 100 DAOs
   //       it was too hard to figure out the UI with infinite scrolling in this case we would need a different UI
 
@@ -245,15 +248,21 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
     }
     ${DAOFieldsFragment}
   `;
-  const memberOfDAOs = currentAccountAddress ? arc.getObservableList(memberDAOsquery, (r: any) => createDaoStateFromQuery(r.dao).dao, standardPolling()) : of([]);
-  // eslint-disable-next-line @typescript-eslint/camelcase
-  const followDAOs = followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc" }, standardPolling(true)) : of([]);
 
-  return combineLatest(
-    arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0 }, standardPolling(true)),
-    followDAOs,
-    memberOfDAOs
-  );
+
+
+  const arcs = getArcs();
+  const daosData = [];
+
+  for (const network in arcs) {
+    const arc = arcs[network];
+    daosData.push(arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0 }, standardPolling(true)));
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    daosData.push(followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc" }, standardPolling(true)) : of([]));
+    daosData.push(currentAccountAddress ? arc.getObservableList(memberDAOsquery, (r: any) => createDaoStateFromQuery(r.dao).dao, standardPolling()) : of([]));
+  }
+
+  return combineLatest(daosData);
 };
 
 const SubscribedDaosPage = withSubscription({
@@ -272,7 +281,7 @@ const SubscribedDaosPage = withSubscription({
   getFetchMoreObservable: createSubscriptionObservable,
 
   fetchMoreCombine: (prevData: SubscriptionData, newData: SubscriptionData) => {
-    return [prevData[0].concat(newData[0]), prevData[1], prevData[2]] as SubscriptionData;
+    return [prevData[0].concat(newData[0]), prevData[1], prevData[2], prevData[3].concat(newData[3]), prevData[4], prevData[5]] as SubscriptionData;
   },
 });
 

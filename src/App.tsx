@@ -12,6 +12,7 @@ import { ConnectedRouter } from "react-router-redux";
 import { ThroughProvider } from "react-through";
 import * as css from "./layouts/App.scss";
 import { history, default as store } from "./configureStore";
+import { Networks } from "./lib/util";
 
 export class App extends React.Component<{}, {
   arcIsInitialized: boolean;
@@ -42,42 +43,47 @@ export class App extends React.Component<{}, {
   }
 
   public async componentDidMount (): Promise<void> {
+    const networks = ["main", "xdai"];
+    (window as any).arcs = {};
     // Do this here because we need to have initialized Arc first.  This will
     // not create a provider for the app, rather will just initialize Arc with a
     // readonly provider with no account, internal only to it.
     const totalNumberOfAttempts = 3; /// we will try 3 times to init arc before actually throwing an error
     let numberOfAttempts = 0;
-    let success = false;
-    const initArc = async () => {
-      success = await initializeArc();
-      if (!success) {
-        throw Error("Initialize arc failed for an unknown reason (see the console)...");
-      }
-      this.setState({ arcIsInitialized: true });
-    };
-    while (!success) {
-      try {
-        await initArc();
-      } catch (err) {
-        this.setState({ retryingArc: true });
-        // eslint-disable-next-line no-console
-        numberOfAttempts += 1;
-        // retry
-        if (numberOfAttempts >= totalNumberOfAttempts) {
-          const msg = "Could not connect to the network; please retry later...";
-          this.setState({ error: msg});
-          throw Error(msg);
+    //let success = false; //new Array(networks.length).fill(false);
+    for (const network of networks) {
+      let success = false;
+      const initArc = async (network: Networks) => {
+        success = await initializeArc(undefined, network);
+        if (!success) {
+          throw Error("Initialize arc failed for an unknown reason (see the console)...");
         }
-        // eslint-disable-next-line no-console
-        console.error("Could not connect..");
-        // eslint-disable-next-line no-console
-        console.error(err);
-        // eslint-disable-next-line no-console
-        console.log(`retrying (attempt ${numberOfAttempts} of ${totalNumberOfAttempts})`);
-        await sleep(2000);
+      };
+      while (!success) {
+        try {
+          await initArc(network as Networks);
+        } catch (err) {
+          this.setState({ retryingArc: true });
+          // eslint-disable-next-line no-console
+          numberOfAttempts += 1;
+          // retry
+          if (numberOfAttempts >= totalNumberOfAttempts) {
+            const msg = "Could not connect to the network; please retry later...";
+            this.setState({ error: msg});
+            throw Error(msg);
+          }
+          // eslint-disable-next-line no-console
+          console.error("Could not connect..");
+          // eslint-disable-next-line no-console
+          console.error(err);
+          // eslint-disable-next-line no-console
+          console.log(`retrying (attempt ${numberOfAttempts} of ${totalNumberOfAttempts})`);
+          await sleep(2000);
+        }
       }
     }
 
+    this.setState({ arcIsInitialized: true });
 
     let GOOGLE_ANALYTICS_ID: string;
     switch (process.env.NODE_ENV) {
