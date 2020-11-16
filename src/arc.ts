@@ -1,5 +1,5 @@
 import { NotificationStatus } from "reducers/notifications";
-import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
+import { getNetworkId, getNetworkName, targetedNetwork, Networks } from "./lib/util";
 import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
 import { RetryLink } from "apollo-link-retry";
 import { Address, Arc } from "@daostack/arc.js";
@@ -21,9 +21,9 @@ let initializedAccount: Address;
 /**
  * return the default Arc configuration given the execution environment
  */
-export function getArcSettings(): any {
-  const network = targetedNetwork();
-  const arcSettings = settings[network];
+export function getArcSettings(network?: Networks): any {
+  const networks = network || targetedNetwork();
+  const arcSettings = settings[networks];
   return arcSettings;
 }
 
@@ -74,12 +74,20 @@ export async function getCurrentBlock(web3?: any): Promise<any> {
  * Returns the Arc instance
  * Throws an exception when Arc hasn't yet been initialized!
  */
-export function getArc(): Arc {
-  const arc = (window as any).arc;
+export function getArc(network = "main"): Arc {
+  const arc = (window as any).arcs[network];
   if (!arc) {
-    throw Error("window.arc is not defined - please call initializeArc first");
+    throw Error(`window.arc is not defined for ${network} - please call initializeArc first`);
   }
   return arc;
+}
+
+export function getArcs(): any {
+  const arcs = (window as any).arcs;
+  if (!arcs) {
+    throw Error("window.arcs is not defined - please call initializeArc first");
+  }
+  return arcs;
 }
 
 /**
@@ -115,14 +123,13 @@ export function providerHasConfigUi(provider?: any): any | undefined {
  * initialize Arc.  Does not throw exceptions, returns boolean success.
  * @param provider Optional web3Provider
  */
-export async function initializeArc(provider?: any): Promise<boolean> {
-
+export async function initializeArc(provider?: any, network?: Networks): Promise<boolean> {
   let success = false;
   let arc: any;
 
   try {
 
-    const arcSettings = getArcSettings();
+    const arcSettings = getArcSettings(network);
 
     if (provider) {
       arcSettings.web3Provider = provider;
@@ -146,16 +153,17 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     arcSettings.graphqlRetryLink = retryLink;
 
     // if there is no existing arc, we create a new one
-    if ((window as any).arc) {
-      arc = (window as any).arc;
+    if ((window as any).arcs[network]) {
+      arc = (window as any).arcs[network];
       arc.web3 = new Web3(provider);
-    } else {
+    }
+    else {
       arc = new Arc(arcSettings);
     }
 
     let contractInfos;
     if (USE_CONTRACTINFOS_CACHE) {
-      contractInfos = require(`data/contractInfos-${targetedNetwork()}.json`);
+      contractInfos = require(`data/contractInfos-${network || targetedNetwork()}.json`);
       arc.setContractInfos(contractInfos);
     } else {
       try {
@@ -196,7 +204,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     console.error(reason ? reason.message : "unknown error");
   }
 
-  (window as any).arc = success ? arc : null;
+  (window as any).arcs[network] = success ? arc : null;
 
   return success;
 }
