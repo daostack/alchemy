@@ -54,7 +54,7 @@ export class App extends React.Component<{}, {
     for (const network of networks) {
       let success = false;
       const initArc = async (network: Networks) => {
-        success = await initializeArc(undefined, network);
+        success = await initializeArc(network);
         if (!success) {
           throw Error("Initialize arc failed for an unknown reason (see the console)...");
         }
