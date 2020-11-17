@@ -1,7 +1,4 @@
-import * as chai from "chai";
 import { getContractAddresses, hideCookieAcceptWindow } from "./utils";
-
-chai.should();
 
 describe("Header redemptions button", () => {
   it("shouldn't be there if the user isn't logged in", async () => {
@@ -36,7 +33,7 @@ describe("Header redemptions button", () => {
       // though we're already logged in.
       const connectButton = await $("[data-test-id=\"connectButton\"]");
       await connectButton.click();
-      await connectButton.waitForDisplayed(undefined, true);
+      await connectButton.waitForDisplayed(undefined);
 
       const redemptionsButton = await $("[data-test-id=\"redemptionsButton\"]");
       await redemptionsButton.click();
@@ -49,7 +46,7 @@ describe("Header redemptions button", () => {
 });
 
 describe("Redemptions page", () => {
-  let testAddresses;
+  let testAddresses: any;
 
   before(() => {
     testAddresses = getContractAddresses();
