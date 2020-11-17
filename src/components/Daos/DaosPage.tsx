@@ -259,7 +259,7 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
     daosData.push(arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0 }, standardPolling(true)));
     // eslint-disable-next-line @typescript-eslint/camelcase
     daosData.push(followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc" }, standardPolling(true)) : of([]));
-    daosData.push(currentAccountAddress ? arc.getObservableList(memberDAOsquery, (r: any) => createDaoStateFromQuery(r.dao).dao, standardPolling()) : of([]));
+    daosData.push(currentAccountAddress ? arc.getObservableList(memberDAOsquery, (r: any) => createDaoStateFromQuery(r.dao, network).dao, standardPolling()) : of([]));
   }
 
   return combineLatest(daosData);

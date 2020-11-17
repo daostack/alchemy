@@ -1,5 +1,5 @@
 import { NotificationStatus } from "reducers/notifications";
-import { getNetworkId, getNetworkName, targetedNetwork, Networks } from "./lib/util";
+import { getNetworkId, getNetworkName, targetedNetwork, Networks, getNetworkByProvider } from "./lib/util";
 import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
 import { Address, Arc } from "@daostack/arc.js";
 import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
@@ -17,6 +17,8 @@ let selectedProvider: any;
 let web3Modal: Web3Modal;
 let initializedAccount: Address;
 
+
+
 /**
  * return the default Arc configuration given the execution environment
  */
@@ -29,8 +31,8 @@ export function getArcSettings(network?: Networks): any {
 /**
  * Return the web3 in current use by Arc.
  */
-function getWeb3(): any {
-  const arc = (window as any).arc;
+function getWeb3(network = "xdai"): any {
+  const arc = (window as any).arcs[network];
   const web3 = arc ? arc.web3 : null;
   return web3;
 }
@@ -38,35 +40,13 @@ function getWeb3(): any {
 /**
  * Return the default account in current use by Arc.
  */
-async function _getCurrentAccountFromProvider(web3?: any): Promise<string> {
-  web3 = web3 || getWeb3();
+async function _getCurrentAccountFromProvider(web3?: any, network = "xdai"): Promise<string> {
+  web3 = web3 || getWeb3(network);
   if (!web3) {
     return null;
   }
   const accounts = await web3.eth.getAccounts();
   return accounts[0] ? accounts[0].toLowerCase() : null;
-}
-
-/**
- * Return the most recently synced block from web3, or null with no web3 or error
- */
-export async function getCurrentBlock(web3?: any): Promise<any> {
-  web3 = web3 || getWeb3();
-  if (!web3) {
-    return null;
-  }
-  try {
-    // need the `await` so exceptions will be caught here
-    return await web3.eth.getBlock("latest");
-  } catch (ex) {
-    /**
-     * This often happens with the error:  "connection not open on send()".
-     * See: https://github.com/ethereum/web3.js/issues/1354
-     */
-    // eslint-disable-next-line no-console
-    console.log(`getCurrentBlock: web3.eth.getBlock failed: ${ex.message}`);
-    return null;
-  }
 }
 
 /**
@@ -122,7 +102,7 @@ export function providerHasConfigUi(provider?: any): any | undefined {
  * initialize Arc.  Does not throw exceptions, returns boolean success.
  * @param provider Optional web3Provider
  */
-export async function initializeArc(provider?: any, network?: Networks): Promise<boolean> {
+export async function initializeArc(network: Networks, provider?: any): Promise<boolean> {
   let success = false;
   let arc: any;
 
@@ -162,7 +142,7 @@ export async function initializeArc(provider?: any, network?: Networks): Promise
     success = !!contractInfos;
 
     if (success) {
-      initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
+      initializedAccount = await _getCurrentAccountFromProvider(arc.web3, network);
 
       if (!initializedAccount) {
       // then something went wrong
@@ -370,7 +350,7 @@ async function enableWeb3Provider(): Promise<void> {
     throw new Error("Unable to enable provider");
   }
 
-  if (!await initializeArc(provider)) {
+  if (!await initializeArc(getNetworkByProvider(provider), provider)) {
   // eslint-disable-next-line no-console
     console.error("Unable to initialize Arc");
     throw new Error("Unable to initialize Arc");
@@ -393,7 +373,7 @@ async function getCurrentAccountFromProvider(): Promise<Address | null> {
      */
     return null;
   }
-  return _getCurrentAccountFromProvider();
+  return _getCurrentAccountFromProvider(undefined, getNetworkByProvider(selectedProvider));
 }
 
 /**
@@ -412,7 +392,7 @@ export async function logout(showNotification?: any): Promise<boolean> {
     // eslint-disable-next-line require-atomic-updates
     selectedProvider = undefined;
 
-    success = await initializeArc();
+    success = await initializeArc(networkName);
 
     if (!success) {
       const msg = `Unable to disconnect from : ${networkName}`;
@@ -536,7 +516,7 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
                    * Also handles how the Burner provider switches from a Fortmatic address to the
                    * burner address at the time of connecting.
                    */
-                  await initializeArc(selectedProvider);
+                  await initializeArc(getNetworkByProvider(selectedProvider), selectedProvider);
                 }
                 observer.next(account);
                 // eslint-disable-next-line require-atomic-updates

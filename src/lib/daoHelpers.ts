@@ -24,8 +24,8 @@ export interface IDAOData {
   reputationHoldersCount: number;
 }
 
-export function createDaoStateFromQuery(queryData: IDAOData): IDAOState {
-  const arc = getArc();
+export function createDaoStateFromQuery(queryData: IDAOData, network: string): IDAOState {
+  const arc = getArc(network);
   const reputation = new Reputation(queryData.nativeReputation.id, arc);
   const token = new Token(queryData.nativeToken.id, arc);
   const daoSpec = {

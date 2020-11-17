@@ -139,7 +139,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
       }
       proposalsPerDao.get(proposal.dao.id).push(proposal);
       if (!daoStatePerAddress.get(proposal.dao.id)) {
-        daoStatePerAddress.set(proposal.dao.id, createDaoStateFromQuery(proposal.dao));
+        daoStatePerAddress.set(proposal.dao.id, createDaoStateFromQuery(proposal.dao, undefined));
       }
     });
 

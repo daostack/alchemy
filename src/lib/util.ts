@@ -260,6 +260,17 @@ export function sleep(milliseconds: number): Promise<void> {
 }
 
 /**
+ *
+ * @param provider
+ */
+export const getNetworkByProvider = (provider: any): Networks => {
+  if (provider.chainId === "0x64" || provider.chainId === "100") {
+    return "xdai";
+  }
+  return "main";
+};
+
+/**
  * return network id, independent of the presence of Arc
  * @param web3Provider
  */
