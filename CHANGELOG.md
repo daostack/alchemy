@@ -2,10 +2,13 @@
   - Features Added
     - Support Multi-call Generic Scheme
     - Use subgraph v40_0 and arc.js 0.2.76
+    - Added xGEN / GEN bridge
 
   - Bugs Fixed
     - Fix competiotion tab crash
     - Better name for some Competition plugins
+    - Fix wrong link when sharing a proposal
+    - Ignore Network and GraphQL errors up to 10 attempts in a row
 
 ## 1.0.1
   - Bugs Fixed
