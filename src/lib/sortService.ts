@@ -1,5 +1,5 @@
-import BN = require("bn.js");
-import moment = require("moment-timezone");
+import * as BN from "bn.js";
+import * as moment from "moment-timezone";
 
 export enum SortOrder {
   ASC = 1,

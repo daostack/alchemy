@@ -8,7 +8,7 @@ import {
 import { of, Observable, Observer } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 /**
  * gotta load moment in order to use moment-timezone directly
  */

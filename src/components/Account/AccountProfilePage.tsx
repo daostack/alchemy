@@ -1,7 +1,7 @@
 import { IDAOState, IMemberState, DAO } from "@daostack/arc.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import { getProfile, updateProfile } from "actions/profilesActions";
 import { getArc, enableWalletProvider } from "arc";
 import classNames from "classnames";

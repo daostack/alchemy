@@ -12,7 +12,7 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 
 import * as css from "./Account.scss";
 

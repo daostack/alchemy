@@ -3,7 +3,7 @@ import { hideMenu } from "actions/uiActions";
 import { getArc } from "arc";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import classNames from "classnames";
 import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
