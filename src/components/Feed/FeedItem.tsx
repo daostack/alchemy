@@ -1,11 +1,11 @@
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
 import { generate } from "geopattern";
 import { fromWei } from "lib/util";
 
-import moment = require("moment");
+import * as moment from "moment";
 import { Link } from "react-router-dom";
 import { IProfileState } from "reducers/profilesReducer";
 import * as React from "react";

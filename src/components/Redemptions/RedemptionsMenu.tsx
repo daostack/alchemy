@@ -2,7 +2,7 @@ import { Address, IDAOState, IProposalState, IRewardState, Proposal, Reward } fr
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import ActionButton from "components/Proposal/ActionButton";
 import RedemptionsString from "components/Proposal/RedemptionsString";

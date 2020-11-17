@@ -4,7 +4,7 @@ import { linkToEtherScan, baseTokenName, truncateWithEllipses, buf2hex, getContr
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import CopyToClipboard from "components/Shared/CopyToClipboard";
 import { getABIByContract, decodeABI, IDecodedData } from "../Create/SchemeForms/ABIService";
 import * as Validators from "../Create/SchemeForms/Validators";
