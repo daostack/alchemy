@@ -272,6 +272,27 @@ export const getNetworkByProvider = (provider: any): Networks => {
 
 /**
  *
+ * @param dao
+ */
+export const getNetworkByDAO = (DAO: any): Networks => {
+  const arcs = getArcs();
+  for (const network in arcs) {
+    const arc = arcs[network];
+    try {
+      for (const dao of arc.daos) {
+        if (DAO.id === dao.id) {
+          return network as Networks;
+        }
+      }
+    } catch (error) {
+      
+    }
+  }
+  return undefined;
+}
+
+/**
+ *
  * @param daoAddress
  */
 export const getNetworkByAddress = (daoAddress: string): Networks => {
