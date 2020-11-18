@@ -76,7 +76,7 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
     };
 
     setSubmitting(false);
-    await this.props.createProposal(proposalValues);
+    await this.props.createProposal(proposalValues, this.props.daoAvatarAddress);
 
     Analytics.track("Submit Proposal", {
       "DAO Address": this.props.daoAvatarAddress,

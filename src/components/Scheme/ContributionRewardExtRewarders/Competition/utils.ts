@@ -14,6 +14,7 @@ import { IRootState } from "reducers";
 import { Observable, of } from "rxjs";
 import { map, mergeMap, toArray, first } from "rxjs/operators";
 import { GRAPH_POLL_INTERVAL } from "../../../../settings";
+import { getNetworkByAddress } from "lib/util";
 
 /**
  * Defined in the order that Competition cards should be sorted in the List component.
@@ -113,11 +114,11 @@ export interface ICreateSubmissionOptions {
 
 const standardPolling = (poll: boolean, fetchAllData = false) => { return { polling: poll, pollInterval: GRAPH_POLL_INTERVAL, fetchAllData }; };
 
-export const createCompetitionSubmission = (proposalId: string, options: ICreateSubmissionOptions): ThunkAction<any, IRootState, null> => {
+export const createCompetitionSubmission = (proposalId: string, options: ICreateSubmissionOptions, daoAddress: any): ThunkAction<any, IRootState, null> => {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Create Submission");
-      const competition = new Competition(proposalId, getArc());
+      const competition = new Competition(proposalId, getArc(getNetworkByAddress(daoAddress)));
       await competition.createSuggestion(options).subscribe(...observer);
     } catch (err) {
       // eslint-disable-next-line no-console

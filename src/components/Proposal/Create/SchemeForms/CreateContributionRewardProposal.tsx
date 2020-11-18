@@ -9,7 +9,7 @@ import UserSearchField from "components/Shared/UserSearchField";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Analytics from "lib/analytics";
-import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
+import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress, getNetworkByAddress } from "lib/util";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
@@ -94,7 +94,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       beneficiary: "",
       description: "",
       ethReward: 0,
-      externalTokenAddress: getArc().GENToken().address,
+      externalTokenAddress: getArc(getNetworkByAddress(props.daoAvatarAddress)).GENToken().address,
       externalTokenReward: 0,
       nativeTokenReward: 0,
       reputationReward: 0,
@@ -140,7 +140,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     };
 
     setSubmitting(false);
-    await this.props.createProposal(proposalValues);
+    await this.props.createProposal(proposalValues, this.props.daoAvatarAddress);
 
     Analytics.track("Submit Proposal", {
       "DAO Address": this.props.daoAvatarAddress,
@@ -174,7 +174,6 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       return null;
     }
     const dao = data;
-    const arc = getArc();
 
     return (
       <div className={css.containerNoSidebar}>
@@ -201,7 +200,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               errors.title = "Title is too long (max 120 characters)";
             }
 
-            if (values.beneficiary && !arc.web3.utils.isAddress(values.beneficiary)) {
+            if (values.beneficiary && !isAddress(values.beneficiary)) {
               errors.beneficiary = "Invalid address";
             }
 
@@ -422,7 +421,7 @@ const SubscribedCreateContributionReward = withSubscription({
   wrappedComponent: CreateContributionReward,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(props.daoAvatarAddress));
     return arc.dao(props.daoAvatarAddress).state();
   },
 });

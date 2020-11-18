@@ -11,7 +11,7 @@ import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
 import * as React from "react";
 import { combineLatest } from "rxjs";
-
+import { getNetworkByAddress } from "lib/util";
 import * as css from "./Feed.scss";
 
 interface IStateProps {
@@ -63,8 +63,8 @@ const SubscribedUserFeedItem = withSubscription({
   checkForUpdate: ["event"],
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
     const { event } = props;
+    const arc = getArc(getNetworkByAddress(event.dao.id));
     const dao = arc.dao(event.dao.id);
 
     return combineLatest(

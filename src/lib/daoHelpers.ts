@@ -1,6 +1,7 @@
 import { DAO, IDAOState, Reputation, Token } from "@daostack/arc.js";
 import { getArc } from "arc";
 import BN = require("bn.js");
+import { Networks } from "./util"; 
 
 // TODO: all this should really be in the client library, after new client is done i will move it there if its not already
 
@@ -24,7 +25,7 @@ export interface IDAOData {
   reputationHoldersCount: number;
 }
 
-export function createDaoStateFromQuery(queryData: IDAOData, network: string): IDAOState {
+export function createDaoStateFromQuery(queryData: IDAOData, network: Networks): IDAOState {
   const arc = getArc(network);
   const reputation = new Reputation(queryData.nativeReputation.id, arc);
   const token = new Token(queryData.nativeToken.id, arc);

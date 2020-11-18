@@ -89,7 +89,7 @@ class StakeButtons extends React.Component<IProps, IState> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const { approveStakingGens } = this.props;
-    approveStakingGens(this.props.proposal.votingMachine);
+    approveStakingGens(this.props.proposal.votingMachine, this.props.dao.id);
 
     Analytics.track("Enable predictions");
 

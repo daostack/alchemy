@@ -32,7 +32,7 @@ export function getArcSettings(network?: Networks): any {
 /**
  * Return the web3 in current use by Arc.
  */
-function getWeb3(network = "xdai"): any {
+function getWeb3(network: Networks): any {
   const arc = (window as any).arcs[network];
   const web3 = arc ? arc.web3 : null;
   return web3;
@@ -41,8 +41,8 @@ function getWeb3(network = "xdai"): any {
 /**
  * Return the default account in current use by Arc.
  */
-async function _getCurrentAccountFromProvider(web3?: any, network = "xdai"): Promise<string> {
-  web3 = web3 || getWeb3(network);
+async function _getCurrentAccountFromProvider(network: Networks, web3?: any): Promise<string> {
+  web3 = web3 || getWeb3(network as Networks);
   if (!web3) {
     return null;
   }
@@ -54,7 +54,10 @@ async function _getCurrentAccountFromProvider(web3?: any, network = "xdai"): Pro
  * Returns the Arc instance
  * Throws an exception when Arc hasn't yet been initialized!
  */
-export function getArc(network = "main"): Arc {
+export function getArc(network?: Networks): Arc {
+  if (network === undefined) {
+    network = "xdai";
+  }
   const arc = (window as any).arcs[network];
   if (!arc) {
     throw Error(`window.arc is not defined for ${network} - please call initializeArc first`);
@@ -156,7 +159,7 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
     success = !!contractInfos;
 
     if (success) {
-      initializedAccount = await _getCurrentAccountFromProvider(arc.web3, network);
+      initializedAccount = await _getCurrentAccountFromProvider(network, arc.web3);
 
       if (!initializedAccount) {
       // then something went wrong
@@ -387,7 +390,7 @@ async function getCurrentAccountFromProvider(): Promise<Address | null> {
      */
     return null;
   }
-  return _getCurrentAccountFromProvider(undefined, getNetworkByProvider(selectedProvider));
+  return _getCurrentAccountFromProvider(getNetworkByProvider(selectedProvider));
 }
 
 /**

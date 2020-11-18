@@ -13,7 +13,7 @@ import { first } from "rxjs/operators";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
 import * as css from "./DaoHistoryPage.scss";
 import { Observable } from "rxjs";
-import { standardPolling } from "lib/util";
+import { standardPolling, getNetworkByAddress } from "lib/util";
 
 const PAGE_SIZE = 50;
 
@@ -170,7 +170,7 @@ export default withSubscription({
   checkForUpdate: [],
 
   createObservable: async (props: IExternalProps) => {
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(props.daoState.address));
     const dao = props.daoState.dao;
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server

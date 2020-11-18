@@ -20,7 +20,7 @@ import { mergeMap } from "rxjs/operators";
 import * as css from "./DaoSchemesPage.scss";
 import ProposalSchemeCard from "./ProposalSchemeCard";
 import SimpleSchemeCard from "./SimpleSchemeCard";
-import { standardPolling } from "lib/util";
+import { standardPolling, getNetworkByAddress } from "lib/util";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -147,7 +147,7 @@ const SubscribedDaoSchemesPage = withSubscription({
   errorComponent: (props) => <span>{props.error.message}</span>,
   checkForUpdate: [],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(props.daoState.address));
     const dao = props.daoState.dao;
 
     return combineLatest(

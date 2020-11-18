@@ -9,7 +9,7 @@ import { of } from "rxjs";
 import { map } from "rxjs/operators";
 import RedemptionsMenu from "./RedemptionsMenu";
 import * as css from "./RedemptionsButton.scss";
-import { standardPolling } from "lib/util";
+import { standardPolling, getNetworkByAddress } from "lib/util";
 
 interface IExternalProps {
   currentAccountAddress?: Address;
@@ -88,7 +88,7 @@ export default withSubscription({
       return of(null);
     }
 
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(currentAccountAddress));
     const redeemableProposalsQuery = gql`query proposalsWithUnclaimedRewards
       {
         proposals(where: {

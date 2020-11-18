@@ -1,6 +1,6 @@
 import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Reward, Stake, Vote } from "@daostack/arc.js";
 import { getArc } from "arc";
-import { ethErrorHandler, ethBalance, standardPolling } from "lib/util";
+import { ethErrorHandler, ethBalance, standardPolling, getNetworkByAddress } from "lib/util";
 
 import BN = require("bn.js");
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -116,7 +116,7 @@ export default withSubscription({
   checkForUpdate: ["currentAccountAddress", "proposalId"],
 
   createObservable: async (props) => {
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(props.daoState.id));
     const { currentAccountAddress, daoState, proposalId } = props;
     const arcDao = daoState.dao;
     const proposal = arc.proposal(proposalId);

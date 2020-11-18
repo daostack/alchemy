@@ -7,7 +7,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import ActionButton from "components/Proposal/ActionButton";
 import RedemptionsString from "components/Proposal/RedemptionsString";
 import ProposalSummary from "components/Proposal/ProposalSummary";
-import { ethErrorHandler, humanProposalTitle, ethBalance, standardPolling } from "lib/util";
+import { ethErrorHandler, humanProposalTitle, ethBalance, standardPolling, getNetworkByAddress } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -109,6 +109,7 @@ const SubscribedRedemptionsMenu = withSubscription({
   errorComponent: (props) => <div className={css.menu}>{props.error.message}</div>,
   checkForUpdate: ["redeemableProposals"],
   createObservable: (props: IExternalProps) => {
+    // getArcs with loop
     const arc = getArc();
     return combineLatest(
       props.redeemableProposals.map(proposalData => (
@@ -196,7 +197,7 @@ const SubscribedMenuItemContent = withSubscription({
   checkForUpdate: [], // Parent component will rerender anyway.
   createObservable: (props: IMenuItemProps) => {
     const { currentAccountAddress, proposal } = props;
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(currentAccountAddress));
     const dao = arc.dao(proposal.dao.id);
     const daoEthBalance = concat(of(new BN("0")), ethBalance(proposal.dao.id)).pipe(ethErrorHandler());
     const rewards = proposal.proposal.rewards({ where: { beneficiary: currentAccountAddress } })

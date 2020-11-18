@@ -4,7 +4,7 @@ import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { humanProposalTitle, standardPolling } from "lib/util";
+import { humanProposalTitle, standardPolling, getNetworkByAddress } from "lib/util";
 import { schemeName } from "lib/schemeUtils";
 import * as React from "react";
 import { Link } from "react-router-dom";
@@ -88,7 +88,7 @@ export default withSubscription({
   },
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(props.dao.address));
     const dao = arc.dao(props.dao.address);
     return combineLatest(
       props.scheme.state(standardPolling()),

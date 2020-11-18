@@ -6,7 +6,7 @@ import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import { Link } from "react-router-dom";
-
+import { getNetworkByAddress } from "lib/util";
 import * as css from "./Feed.scss";
 
 type SubscriptionData = IDAOState;
@@ -43,8 +43,8 @@ const SubscribedDaoFeedItem = withSubscription({
   checkForUpdate: ["event"],
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
     const { event } = props;
+    const arc = getArc(getNetworkByAddress(event.dao.id));
     const dao = arc.dao(event.dao.id);
     return dao.state();
   },

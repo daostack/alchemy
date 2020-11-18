@@ -10,7 +10,7 @@ describe("Proposals", () => {
   beforeEach(async () => {
     // we need to find a DAO with a competition scheme
     // TODO: create a test_env with a nameed DAO so we can find it consistently
-    arc = await getArc();
+    arc = await getArc(dao.id);
     await arc.fetchContractInfos();
     const ARC_VERSION = "0.0.1-rc.43";
     const contributionRewardExtContract = await arc.getContractInfoByName("ContributionRewardExt", ARC_VERSION);

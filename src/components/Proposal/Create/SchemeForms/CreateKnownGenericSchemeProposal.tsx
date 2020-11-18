@@ -15,7 +15,7 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as arcActions from "actions/arcActions";
 
 import Analytics from "lib/analytics";
-import { isValidUrl } from "lib/util";
+import { isValidUrl, getNetworkByAddress } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
@@ -137,7 +137,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     };
 
     try {
-      await this.props.createProposal(proposalValues);
+      await this.props.createProposal(proposalValues, this.props.daoAvatarAddress);
     } catch (err) {
       showNotification(NotificationStatus.Failure, err.message);
       throw err;
@@ -282,7 +282,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
     const { handleClose } = this.props;
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(this.props.daoAvatarAddress));
 
     const actions = this.state.actions;
     const currentAction = this.state.currentAction;
