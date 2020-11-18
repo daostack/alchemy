@@ -14,7 +14,7 @@ import * as BN from "bn.js";
  */
 import "moment";
 import * as moment from "moment-timezone";
-import { getArc } from "../arc";
+import { getArc, getArcs } from "../arc";
 import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
 import { GRAPH_POLL_INTERVAL } from "../settings";
 
@@ -128,7 +128,7 @@ export function toWei(amount: number): BN {
    * toFixed to avoid the sci notation that javascript creates for large and small numbers.
    * toWei barfs on it.
    */
-  return new BN(getArc().web3.utils.toWei(amount.toFixed(18).toString(), "ether"));
+  return new BN(Web3.utils.toWei(amount.toFixed(18).toString(), "ether"));
 }
 
 export type Networks = "main" | "rinkeby" | "ganache" | "xdai" | "kovan";
@@ -271,6 +271,25 @@ export const getNetworkByProvider = (provider: any): Networks => {
 };
 
 /**
+ *
+ * @param daoAddress
+ */
+export const getNetworkByAddress = (daoAddress: string): Networks => {
+  const arcs = getArcs();
+  for (const network in arcs) {
+    const arc = arcs[network];
+    try {
+      if (arc.getContractInfo(daoAddress, undefined, "readonly") !== null) {
+        return network as Networks;
+      }
+    } catch (error) {
+      
+    }
+  }
+  return undefined;
+}
+
+/**
  * return network id, independent of the presence of Arc
  * @param web3Provider
  */
@@ -279,7 +298,7 @@ export async function getNetworkId(web3Provider?: any): Promise<string> {
   let web3: any;
 
   try {
-    arc = getArc();
+    arc = getArc(getNetworkByProvider(web3Provider));
   } catch {
     // Do nothing
   }
@@ -338,7 +357,7 @@ export async function getNetworkName(id?: string): Promise<Networks> {
 
 export function linkToEtherScan(address: Address, tokenHoldings = false) {
   let prefix = "";
-  const arc = getArc();
+  const arc = getArc(getNetworkByAddress(address));
   switch (arc.web3.currentProvider.__networkId) {
     case "4":
       prefix = "rinkeby.";
@@ -542,7 +561,7 @@ export function ensureHttps(url: string) {
 }
 
 export function isAddress(address: Address, allowNulls = false): boolean {
-  return getArc().web3.utils.isAddress(address) && (allowNulls || (Number(address) > 0));
+  return Web3.utils.isAddress(address) && (allowNulls || (Number(address) > 0));
 }
 
 export interface ICountdown {
@@ -618,7 +637,7 @@ let ethBalancePollingInterval: any | undefined = undefined;
 
 export function ethBalance(address: Address): Observable<BN> {
 
-  const arc = getArc();
+  const arc = getArc(getNetworkByAddress(address));
 
   /**
    * With a few minor enhancements, this code is virtually the same logic
@@ -733,8 +752,8 @@ export const buf2hex = (buffer: Array<any>): string => { // buffer is an ArrayBu
  * @param {string} address
  * @returns {string} Contract name
  */
-export const getContractName = (address: string): string => {
-  const arc = getArc();
+export const getContractName = (address: string, daoAddress: string): string => {
+  const arc = getArc(getNetworkByAddress(daoAddress));
   try {
     return arc.getContractInfo(address.toLowerCase()).name;
   } catch (e) {

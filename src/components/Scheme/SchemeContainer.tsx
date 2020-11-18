@@ -22,7 +22,7 @@ import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
 import SchemeOpenBountyPage from "./SchemeOpenBountyPage";
 import * as css from "./Scheme.scss";
-import { standardPolling } from "lib/util";
+import { standardPolling, getNetworkByAddress } from "lib/util";
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -254,7 +254,7 @@ const SubscribedSchemeContainer = withSubscription({
   errorComponent: null,
   checkForUpdate: ["schemeId"],
   createObservable: async (props: IProps) => {
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(props.daoState.id));
     const scheme = arc.scheme(props.schemeId) as any;
 
     // TODO: this may NOT be the best place to do this - we'd like to do this higher up

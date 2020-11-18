@@ -5,7 +5,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import FollowButton from "components/Shared/FollowButton";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { humanProposalTitle } from "lib/util";
+import { humanProposalTitle, getNetworkByAddress } from "lib/util";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
@@ -76,8 +76,8 @@ const SubscribedProposalFeedItem = withSubscription({
   checkForUpdate: ["event"],
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
     const { event } = props;
+    const arc = getArc(getNetworkByAddress(event.dao.id));
     const dao = arc.dao(event.dao.id);
 
     return dao.state();

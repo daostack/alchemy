@@ -12,7 +12,7 @@ import ThreeboxModal from "components/Shared/ThreeboxModal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { Field, Formik, FormikProps } from "formik";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, genName, formatTokens, ethBalance, standardPolling } from "lib/util";
+import { baseTokenName, ethErrorHandler, genName, formatTokens, ethBalance, standardPolling, getNetworkByAddress } from "lib/util";
 import CopyToClipboard, { IconColor } from "components/Shared/CopyToClipboard";
 import { Page } from "pages";
 import { parse } from "query-string";
@@ -317,9 +317,8 @@ const SubscribedAccountProfilePage = withSubscription({
   },
 
   createObservable: (props: IProps) => {
-    const arc = getArc();
-
     const queryValues = parse(props.location.search);
+    const arc = getArc(getNetworkByAddress(queryValues.daoAvatarAddress as string));
     const daoAvatarAddress = queryValues.daoAvatarAddress as string;
     const accountAddress = props.match.params.accountAddress;
     let dao: DAO;

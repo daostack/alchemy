@@ -23,7 +23,7 @@ import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
 import DaoLandingPage from "components/Dao/DaoLandingPage";
-import { standardPolling, targetedNetwork } from "lib/util";
+import { standardPolling, targetedNetwork, getNetworkByAddress } from "lib/util";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -147,8 +147,8 @@ const SubscribedDaoContainer = withSubscription({
   errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
     const daoAddress = props.match.params.daoAvatarAddress;
+    const arc = getArc(getNetworkByAddress(daoAddress));
     const dao = arc.dao(daoAddress);
     const observable = combineLatest(
       dao.state(standardPolling(true)), // DAO state

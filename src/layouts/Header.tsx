@@ -25,7 +25,7 @@ import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 import ProviderConfigButton from "layouts/ProviderConfigButton";
 import Tooltip from "rc-tooltip";
-import { standardPolling, targetedNetwork } from "lib/util";
+import { standardPolling, targetedNetwork, getNetworkByAddress } from "lib/util";
 
 interface IExternalProps extends RouteComponentProps<any> {
 }
@@ -303,7 +303,7 @@ const SubscribedHeader = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IProps) => {
     if (props.daoAvatarAddress) {
-      const arc = getArc();
+      const arc = getArc(getNetworkByAddress(props.daoAvatarAddress));
       // subscribe if only to get DAO reputation supply updates
       return arc.dao(props.daoAvatarAddress).state(standardPolling());
     } else {

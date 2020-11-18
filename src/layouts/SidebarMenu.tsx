@@ -9,7 +9,7 @@ import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { generate } from "geopattern";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWei, ethBalance, linkToEtherScan, standardPolling, targetedNetwork } from "lib/util";
+import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWei, ethBalance, linkToEtherScan, standardPolling, targetedNetwork, getNetworkByAddress } from "lib/util";
 import { parse } from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
@@ -333,7 +333,7 @@ const SubscribedTokenBalance = withSubscription({
 
     await daoState.dao.members({ first: 1000, skip: 0 }).pipe(first()).toPromise();
 
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(props.dao.address));
     const token = new Token(props.tokenAddress, arc);
     return token.balanceOf(props.dao.address).pipe(ethErrorHandler());
   },
@@ -345,7 +345,7 @@ const SubscribedSidebarMenu = withSubscription({
   loadingComponent: <div></div>,
   createObservable: (props: IProps) => {
     if (props.daoAvatarAddress) {
-      const arc = getArc();
+      const arc = getArc(getNetworkByAddress(props.daoAvatarAddress));
       return arc.dao(props.daoAvatarAddress).state(standardPolling());
     } else {
       return of(null);

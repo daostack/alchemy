@@ -15,7 +15,7 @@ import { IRootState } from "reducers";
 import { combineLatest, of } from "rxjs";
 import { first } from "rxjs/operators";
 import cn from "classnames";
-import { showSimpleMessage, standardPolling } from "lib/util";
+import { showSimpleMessage, standardPolling, Networks } from "lib/util";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 import BHubReg from "../Buidlhub/Registration";
@@ -43,7 +43,7 @@ interface IState {
   searchDaos: DAO[];
 }
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 200;
 
 class DaosPage extends React.Component<IProps, IState> {
 
@@ -136,7 +136,7 @@ class DaosPage extends React.Component<IProps, IState> {
     // eslint-disable-next-line no-extra-boolean-cast
     if (process.env.SHOW_ALL_DAOS === "true") {
       // on staging we show all daos (registered or not)
-      otherDAOs = otherDAOs.filter((d: DAO) => !yourDAOAddresses.includes(d.id) && d.staticState.name.toLowerCase().includes(search));
+      otherDAOs = otherDAOs.filter((d: DAO) => !yourDAOAddresses.includes(d.id) && d.staticState !== undefined && d.staticState.name.toLowerCase().includes(search));
     } else {
       // Otherwise show registered DAOs
       otherDAOs = otherDAOs.filter((d: DAO) => {
@@ -259,7 +259,7 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
     daosData.push(arc.daos({ orderBy: "name", orderDirection: "asc", first: PAGE_SIZE, skip: data ? data[0].length : 0 }, standardPolling(true)));
     // eslint-disable-next-line @typescript-eslint/camelcase
     daosData.push(followingDAOs.length ? arc.daos({ where: { id_in: followingDAOs }, orderBy: "name", orderDirection: "asc" }, standardPolling(true)) : of([]));
-    daosData.push(currentAccountAddress ? arc.getObservableList(memberDAOsquery, (r: any) => createDaoStateFromQuery(r.dao, network).dao, standardPolling()) : of([]));
+    daosData.push(currentAccountAddress ? arc.getObservableList(memberDAOsquery, (r: any) => createDaoStateFromQuery(r.dao, network as Networks).dao, standardPolling()) : of([]));
   }
 
   return combineLatest(daosData);

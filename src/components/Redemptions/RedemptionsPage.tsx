@@ -8,7 +8,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import gql from "graphql-tag";
 import Analytics from "lib/analytics";
 import { createDaoStateFromQuery, IDAOData } from "lib/daoHelpers";
-import { baseTokenName, formatTokens, genName, standardPolling, tokenDecimals, tokenSymbol } from "lib/util";
+import { baseTokenName, formatTokens, genName, standardPolling, tokenDecimals, tokenSymbol, getNetworkByAddress } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -129,7 +129,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
   private renderProposalsPerDAO(): RenderOutput[] {
     const { currentAccountAddress, data: proposals } = this.props;
 
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(currentAccountAddress));
 
     const daoStatePerAddress = new Map<Address, IDAOState>();
     const proposalsPerDao = new Map<Address, IProposalData[]>();
@@ -240,7 +240,7 @@ const SubscribedRedemptionsPage = withSubscription({
       return of(null);
     }
 
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(currentAccountAddress));
     const query = gql`query proposalsWithUnclaimedRewards
       {
         proposals(

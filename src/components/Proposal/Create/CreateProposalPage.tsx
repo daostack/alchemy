@@ -19,6 +19,7 @@ import { CrxRewarderComponentType, getCrxRewarderComponent, rewarderContractName
 import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
 import { schemeName } from "lib/schemeUtils";
 import * as css from "./CreateProposal.scss";
+import { getNetworkByAddress } from "lib/util";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -162,7 +163,7 @@ const SubscribedCreateProposalPage = withSubscription({
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalStateProps) => {
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(props.daoAvatarAddress));
     const scheme = arc.scheme(props.schemeId);
     return scheme.state();
   },

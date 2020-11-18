@@ -9,7 +9,7 @@ import { getArc } from "arc";
 import AccountImage from "components/Account/AccountImage";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-
+import { getNetworkByAddress } from "lib/util";
 import * as css from "./UserSearchField.scss";
 
 interface IExternalProps {
@@ -146,7 +146,7 @@ const SubscribedUserSearchField = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(props.daoAvatarAddress));
     return arc.dao(props.daoAvatarAddress).members();
   },
 });

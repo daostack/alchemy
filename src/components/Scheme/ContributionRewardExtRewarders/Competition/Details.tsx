@@ -140,7 +140,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   }
 
   private submitNewSubmissionModal = async (options: ICreateSubmissionOptions): Promise<void> => {
-    await this.props.createCompetitionSubmission(this.props.proposalState.id, options);
+    await this.props.createCompetitionSubmission(this.props.proposalState.id, options, this.props.proposalState.dao.id);
 
     this.setState({ showingCreateSubmission: false });
     this.props.history.replace(`/dao/${this.props.daoState.address}/crx/proposal/${this.props.proposalState.id}`);

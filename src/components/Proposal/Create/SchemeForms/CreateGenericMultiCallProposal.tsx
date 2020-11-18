@@ -161,7 +161,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
     };
 
     setSubmitting(false);
-    await this.props.createProposal(proposalValues);
+    await this.props.createProposal(proposalValues, this.props.daoAvatarAddress);
 
     Analytics.track("Submit Proposal", {
       "DAO Address": this.props.daoAvatarAddress,
@@ -258,7 +258,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
 
     const contracts = whitelistedContracts.length > 0 ? whitelistedContracts : userContracts;
     const contractsOptions = contracts.map((address, index) => {
-      return <option key={index} value={address}>{getContractName(address)} ({address})</option>;
+      return <option key={index} value={address}>{getContractName(address, this.props.daoAvatarAddress)} ({address})</option>;
     });
 
     const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);

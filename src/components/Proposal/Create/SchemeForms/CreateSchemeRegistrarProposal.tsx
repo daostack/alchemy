@@ -9,7 +9,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { createProposal } from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
-import { isValidUrl } from "lib/util";
+import { isValidUrl, getNetworkByAddress } from "lib/util";
 import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSIONS, schemeNameAndAddress, SchemePermissions, schemeNameFromAddress } from "lib/schemeUtils";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
@@ -103,7 +103,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
   }
 
   public handleChangeScheme = (e: any) => {
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(e.targer.value));
     try {
       // If we know about this contract then require the minimum permissions for it
       const contractInfo = arc.getContractInfo(e.target.value);
@@ -161,7 +161,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       tags: this.state.tags,
     };
     setSubmitting(false);
-    await this.props.createProposal(proposalValues);
+    await this.props.createProposal(proposalValues, this.props.daoAvatarAddress);
     Analytics.track("Submit Proposal", {
       "DAO Address": this.props.daoAvatarAddress,
       "Proposal Title": values.title,
@@ -200,7 +200,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
     const { currentTab, requiredPermissions, showForm } = this.state;
 
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(this.props.scheme.dao));
 
     const addSchemeButtonClass = classNames({
       [css.addSchemeButton]: true,
@@ -589,7 +589,7 @@ const SubscribedCreateSchemeRegistrarProposal = withSubscription({
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(props.daoAvatarAddress));
     return arc.dao(props.daoAvatarAddress).schemes({ where: { isRegistered: true } }, { fetchAllData: true });
   },
 });

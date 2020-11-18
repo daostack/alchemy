@@ -4,7 +4,7 @@ import { enableWalletProvider, getArc } from "arc";
 import classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Analytics from "lib/analytics";
-import { AccountClaimableRewardsType, getCRRewards, getGpRewards, ethErrorHandler, fromWei } from "lib/util";
+import { AccountClaimableRewardsType, getCRRewards, getGpRewards, ethErrorHandler, fromWei, getNetworkByAddress } from "lib/util";
 import { Page } from "pages";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -322,7 +322,7 @@ const SubscribedActionButton = withSubscription({
   createObservable: (props: IProps) => {
     let externalTokenObservable: Observable<BN>;
 
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(props.daoState.id));
     const genToken = arc.GENToken();
 
     if (props.proposalState.contributionReward &&

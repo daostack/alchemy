@@ -12,7 +12,7 @@ import { IProfileState, IProfilesState } from "reducers/profilesReducer";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import VoteGraph from "./VoteGraph";
-
+import { getNetworkByAddress } from "lib/util"; 
 import * as css from "./VotersModal.scss";
 
 /*** VoteRow Component ***/
@@ -187,7 +187,7 @@ const voterModalWithSubscriptions = withSubscription({
   checkForUpdate: [],
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
+    const arc = getArc(getNetworkByAddress(props.dao.dao.id));
     const dao = arc.dao(props.dao.address);
     const proposalId = props.proposal.id;
     const proposal = dao.proposal(proposalId);
