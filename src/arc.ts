@@ -5,8 +5,13 @@ import { RetryLink } from "apollo-link-retry";
 import { Address, Arc } from "@daostack/arc.js";
 import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
 import { Observable } from "rxjs";
+import gql from 'graphql-tag'
 
 const Web3 = require("web3");
+
+interface IDAO {
+  id: string
+}
 
 /**
  * This is only set after the user has selected a provider and enabled an account.
@@ -188,6 +193,14 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
   }
 
   (window as any).arcs[network] = success ? arc : null;
+
+  const query = gql`query AllDaos {
+    daos (first: 1000) {
+      id
+    }
+  }`
+  const daos = await arc.sendQuery(query, {});
+  (window as any).daos[network] = daos.data.daos as IDAO[];
 
   return success;
 }
