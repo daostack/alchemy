@@ -76,7 +76,7 @@ interface IFormValues {
  */
 const typeArrayPlaceholder = (type: string): string => {
   if (Validators.isAddressType(type)) {
-    return "e.g: ['0xACa94ef8bD5ffEE41947b4585a84BdA5a3d3DA6E','0x1dF62f291b2E969fB0849d99D9Ce41e2F137006e']";
+    return "e.g: [\"0xACa94ef8bD5ffEE41947b4585a84BdA5a3d3DA6E\",\"0x1dF62f291b2E969fB0849d99D9Ce41e2F137006e\"]";
   }
 
   if (Validators.isBooleanType(type)) {
@@ -92,10 +92,10 @@ const typeArrayPlaceholder = (type: string): string => {
   }
 
   if (Validators.isByteType(type)) {
-    return "e.g: ['0xc00000000000000000000000000000000000', '0xc00000000000000000000000000000000001']";
+    return "e.g: [\"0xc00000000000000000000000000000000000\", \"0xc00000000000000000000000000000000001\"]";
   }
 
-  return "e.g: ['first value', 'second value', 'third value']";
+  return "e.g: [\"first value\", \"second value\", \"third value\"]";
 };
 
 class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> {
