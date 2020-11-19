@@ -2,14 +2,14 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { IDAOState, ISchemeState, Address } from "@daostack/arc.js";
 import { createProposal } from "actions/arcActions";
-import { enableWalletProvider, getArc } from "arc";
+import { enableWalletProvider } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UserSearchField from "components/Shared/UserSearchField";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Analytics from "lib/analytics";
-import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress, getNetworkByAddress } from "lib/util";
+import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress, getArcByDAOAddress } from "lib/util";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
@@ -94,7 +94,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       beneficiary: "",
       description: "",
       ethReward: 0,
-      externalTokenAddress: getArc(getNetworkByAddress(props.daoAvatarAddress)).GENToken().address,
+      externalTokenAddress: getArcByDAOAddress(props.daoAvatarAddress).GENToken().address,
       externalTokenReward: 0,
       nativeTokenReward: 0,
       reputationReward: 0,
@@ -421,7 +421,7 @@ const SubscribedCreateContributionReward = withSubscription({
   wrappedComponent: CreateContributionReward,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc(getNetworkByAddress(props.daoAvatarAddress));
+    const arc = getArcByDAOAddress(props.daoAvatarAddress);
     return arc.dao(props.daoAvatarAddress).state();
   },
 });

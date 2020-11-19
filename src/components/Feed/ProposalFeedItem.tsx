@@ -1,11 +1,10 @@
 import { IDAOState } from "@daostack/arc.js";
-import { getArc } from "arc";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import FollowButton from "components/Shared/FollowButton";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { humanProposalTitle, getNetworkByAddress } from "lib/util";
+import { humanProposalTitle, getArcByDAOAddress } from "lib/util";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
@@ -77,7 +76,7 @@ const SubscribedProposalFeedItem = withSubscription({
 
   createObservable: (props: IExternalProps) => {
     const { event } = props;
-    const arc = getArc(getNetworkByAddress(event.dao.id));
+    const arc = getArcByDAOAddress(event.dao.id);
     const dao = arc.dao(event.dao.id);
 
     return dao.state();
@@ -85,4 +84,3 @@ const SubscribedProposalFeedItem = withSubscription({
 });
 
 export default connect(mapStateToProps)(SubscribedProposalFeedItem);
-

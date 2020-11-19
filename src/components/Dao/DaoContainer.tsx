@@ -1,6 +1,5 @@
 import { IDAOState, Member } from "@daostack/arc.js";
 import { getProfilesForAddresses } from "actions/profilesActions";
-import { getArc } from "arc";
 import CreateProposalPage from "components/Proposal/Create/CreateProposalPage";
 import ProposalDetailsPage from "components/Proposal/ProposalDetailsPage";
 import SchemeContainer from "components/Scheme/SchemeContainer";
@@ -23,7 +22,7 @@ import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
 import DaoLandingPage from "components/Dao/DaoLandingPage";
-import { standardPolling, targetedNetwork, getNetworkByAddress } from "lib/util";
+import { standardPolling, targetedNetwork, getArcByDAOAddress } from "lib/util";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -148,7 +147,7 @@ const SubscribedDaoContainer = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
     const daoAddress = props.match.params.daoAvatarAddress;
-    const arc = getArc(getNetworkByAddress(daoAddress));
+    const arc = getArcByDAOAddress(daoAddress);
     const dao = arc.dao(daoAddress);
     const observable = combineLatest(
       dao.state(standardPolling(true)), // DAO state

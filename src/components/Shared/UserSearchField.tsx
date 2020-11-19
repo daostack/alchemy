@@ -5,11 +5,10 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { IProfilesState, IProfileState } from "reducers/profilesReducer";
 import { first } from "rxjs/operators";
-import { getArc } from "arc";
 import AccountImage from "components/Account/AccountImage";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { getNetworkByAddress } from "lib/util";
+import { getArcByDAOAddress } from "lib/util";
 import * as css from "./UserSearchField.scss";
 
 interface IExternalProps {
@@ -146,7 +145,7 @@ const SubscribedUserSearchField = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArc(getNetworkByAddress(props.daoAvatarAddress));
+    const arc = getArcByDAOAddress(props.daoAvatarAddress);
     return arc.dao(props.daoAvatarAddress).members();
   },
 });

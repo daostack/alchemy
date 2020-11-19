@@ -1,10 +1,10 @@
 import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Token } from "@daostack/arc.js";
 import { executeProposal, redeemProposal } from "actions/arcActions";
-import { enableWalletProvider, getArc } from "arc";
+import { enableWalletProvider } from "arc";
 import classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Analytics from "lib/analytics";
-import { AccountClaimableRewardsType, getCRRewards, getGpRewards, ethErrorHandler, fromWei, getNetworkByAddress } from "lib/util";
+import { AccountClaimableRewardsType, getCRRewards, getGpRewards, ethErrorHandler, fromWei, getArcByDAOAddress } from "lib/util";
 import { Page } from "pages";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -322,7 +322,7 @@ const SubscribedActionButton = withSubscription({
   createObservable: (props: IProps) => {
     let externalTokenObservable: Observable<BN>;
 
-    const arc = getArc(getNetworkByAddress(props.daoState.id));
+    const arc = getArcByDAOAddress(props.daoState.id);
     const genToken = arc.GENToken();
 
     if (props.proposalState.contributionReward &&

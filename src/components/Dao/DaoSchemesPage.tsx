@@ -1,5 +1,5 @@
 import { CompetitionScheme, IDAOState, ISchemeState, Scheme } from "@daostack/arc.js";
-import { enableWalletProvider, getArc } from "arc";
+import { enableWalletProvider } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -20,7 +20,7 @@ import { mergeMap } from "rxjs/operators";
 import * as css from "./DaoSchemesPage.scss";
 import ProposalSchemeCard from "./ProposalSchemeCard";
 import SimpleSchemeCard from "./SimpleSchemeCard";
-import { standardPolling, getNetworkByAddress } from "lib/util";
+import { standardPolling, getArcByDAOAddress } from "lib/util";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -147,7 +147,7 @@ const SubscribedDaoSchemesPage = withSubscription({
   errorComponent: (props) => <span>{props.error.message}</span>,
   checkForUpdate: [],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc(getNetworkByAddress(props.daoState.address));
+    const arc = getArcByDAOAddress(props.daoState.address);
     const dao = props.daoState.dao;
 
     return combineLatest(
