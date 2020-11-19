@@ -11,8 +11,7 @@ import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import "moment";
 import * as moment from "moment-timezone";
 
-import { getArc } from "../arc";
-import { getNetworkByAddress, splitCamelCase } from "lib/util";
+import { getArcByAddress, splitCamelCase } from "lib/util";
 
 export enum SchemePermissions {
   None = 0,
@@ -88,7 +87,7 @@ export const PROPOSAL_SCHEME_NAMES = [
 
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   let name: string;
-  const contractInfo = (scheme as IContractInfo).alias ? scheme as IContractInfo : getArc(getNetworkByAddress(scheme.address)).getContractInfo(scheme.address);
+  const contractInfo = (scheme as IContractInfo).alias ? scheme as IContractInfo : getArcByAddress(scheme.address).getContractInfo(scheme.address);
 
   const alias = contractInfo?.alias;
 
@@ -149,7 +148,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
  * @return         [description]
  */
 export function schemeNameFromAddress(address: string) {
-  const arc = getArc(getNetworkByAddress(address));
+  const arc = getArcByAddress(address);
   try {
     const contractInfo = arc.getContractInfo(address);
     const name = schemeName(contractInfo);

@@ -1,6 +1,6 @@
 import * as uiActions from "actions/uiActions";
 import { threeBoxLogout } from "actions/profilesActions";
-import { enableWalletProvider, getAccountIsEnabled, getArc, logout, getWeb3ProviderInfo, getWeb3Provider, providerHasConfigUi } from "arc";
+import { enableWalletProvider, getAccountIsEnabled, logout, getWeb3ProviderInfo, getWeb3Provider, providerHasConfigUi } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -25,7 +25,7 @@ import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 import ProviderConfigButton from "layouts/ProviderConfigButton";
 import Tooltip from "rc-tooltip";
-import { standardPolling, targetedNetwork, getNetworkByAddress } from "lib/util";
+import { standardPolling, targetedNetwork, getArcByDAOAddress } from "lib/util";
 
 interface IExternalProps extends RouteComponentProps<any> {
 }
@@ -303,7 +303,7 @@ const SubscribedHeader = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IProps) => {
     if (props.daoAvatarAddress) {
-      const arc = getArc(getNetworkByAddress(props.daoAvatarAddress));
+      const arc = getArcByDAOAddress(props.daoAvatarAddress);
       // subscribe if only to get DAO reputation supply updates
       return arc.dao(props.daoAvatarAddress).state(standardPolling());
     } else {
