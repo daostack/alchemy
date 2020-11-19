@@ -2,7 +2,7 @@ import BN = require("bn.js");
 import * as React from "react";
 
 import { IDAOState, IProposalState } from "@daostack/arc.js";
-import { baseTokenName, formatTokens, tokenDetails } from "lib/util";
+import { baseTokenName, formatTokens, tokenDetails, getNetworkByDAOAddress } from "lib/util";
 
 import Reputation from "components/Account/Reputation";
 
@@ -19,10 +19,10 @@ export default class RewardsString extends React.Component<IProps, null> {
     const contributionReward = proposal.contributionReward;
     const rewards = [];
     if (contributionReward.ethReward && contributionReward.ethReward.gt(new BN(0))) {
-      rewards.push(formatTokens(contributionReward.ethReward, baseTokenName()));
+      rewards.push(formatTokens(contributionReward.ethReward, baseTokenName(getNetworkByDAOAddress(dao.address))));
     }
     if (contributionReward.externalToken && contributionReward.externalTokenReward && contributionReward.externalTokenReward.gt(new BN(0))) {
-      const tokenData = tokenDetails(contributionReward.externalToken);
+      const tokenData = tokenDetails(contributionReward.externalToken, getNetworkByDAOAddress(this.props.dao.address));
       rewards.push(formatTokens(contributionReward.externalTokenReward, tokenData ? tokenData["symbol"] : "?", tokenData ? tokenData["decimals"] : 18));
     }
     if (contributionReward.nativeTokenReward && contributionReward.nativeTokenReward.gt(new BN(0))) {

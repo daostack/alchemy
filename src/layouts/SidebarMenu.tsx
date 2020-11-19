@@ -8,7 +8,7 @@ import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { generate } from "geopattern";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWei, ethBalance, linkToEtherScan, standardPolling, targetedNetwork, getArcByDAOAddress} from "lib/util";
+import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWei, ethBalance, linkToEtherScan, standardPolling, targetedNetwork, getArcByDAOAddress, getNetworkByDAOAddress} from "lib/util";
 import { parse } from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
@@ -96,6 +96,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
             <span>{dao.name}</span>
           </Link>
         </div>
+        <div className={css.daoNetwork}>Network: {getNetworkByDAOAddress(dao.address)}</div>
         <div className={css.daoDescription}>
           {dao.name === "dxDAO" ?
             <p>
@@ -195,7 +196,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
 
             <SubscribedEthBalance dao={dao} />
 
-            {Object.keys(supportedTokens()).map((tokenAddress) => {
+            {Object.keys(supportedTokens(getNetworkByDAOAddress(dao.address))).map((tokenAddress) => {
               return <SubscribedTokenBalance tokenAddress={tokenAddress} dao={dao} key={"token_" + tokenAddress} />;
             })}
           </ul>
@@ -284,7 +285,7 @@ interface IEthProps extends ISubscriptionProps<BN | null> {
 
 const ETHBalance = (props: IEthProps) => {
   const { data } = props;
-  return <li key="ETH"><strong>{formatTokens(data)}</strong> {baseTokenName()}</li>;
+  return <li key="ETH"><strong>{formatTokens(data)}</strong> {baseTokenName(getNetworkByDAOAddress(props.dao.address))}</li>;
 };
 
 const SubscribedEthBalance = withSubscription({
@@ -307,7 +308,7 @@ interface ITokenProps extends ISubscriptionProps<any> {
 const TokenBalance = (props: ITokenProps) => {
   const { data, error, isLoading, tokenAddress } = props;
 
-  const tokenData = supportedTokens()[tokenAddress];
+  const tokenData = supportedTokens(getNetworkByDAOAddress(props.dao.address))[tokenAddress];
   if (isLoading || error || ((data === null || isNaN(data) || data.isZero()) && tokenData.symbol !== genName())) {
     return null;
   }

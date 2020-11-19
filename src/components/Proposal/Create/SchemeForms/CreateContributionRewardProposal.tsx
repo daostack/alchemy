@@ -9,7 +9,7 @@ import UserSearchField from "components/Shared/UserSearchField";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Analytics from "lib/analytics";
-import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress, getArcByDAOAddress } from "lib/util";
+import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
@@ -110,7 +110,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
   private fnDescription = (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoAvatarAddress))) { return; }
 
     if (!values.beneficiary) {
       values.beneficiary = this.props.currentAccountAddress;
@@ -118,7 +118,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
 
-    const externalTokenDetails = tokenDetails(values.externalTokenAddress);
+    const externalTokenDetails = tokenDetails(values.externalTokenAddress, getNetworkByDAOAddress(this.props.daoAvatarAddress));
     let externalTokenReward;
 
     // If we know the decimals for the token then multiply by that
@@ -314,12 +314,12 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               <div className={css.rewards}>
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
-                    {baseTokenName()} Reward
+                    {baseTokenName(getNetworkByDAOAddress(dao.address))} Reward
                     <ErrorMessage name="ethReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
                     id="ethRewardInput"
-                    placeholder={`How much ${baseTokenName()} to reward`}
+                    placeholder={`How much ${baseTokenName(getNetworkByDAOAddress(dao.address))} to reward`}
                     name="ethReward"
                     type="number"
                     className={touched.ethReward && errors.ethReward ? css.error : null}
@@ -365,8 +365,8 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                         id="externalTokenAddress"
                         name="externalTokenAddress"
                         component={SelectField}
-                        options={Object.keys(supportedTokens()).map((tokenAddress) => {
-                          const token = supportedTokens()[tokenAddress];
+                        options={Object.keys(supportedTokens(getNetworkByDAOAddress(dao.address))).map((tokenAddress) => {
+                          const token = supportedTokens(getNetworkByDAOAddress(dao.address))[tokenAddress];
                           return { value: tokenAddress, label: token["symbol"] };
                         })}
                       />
