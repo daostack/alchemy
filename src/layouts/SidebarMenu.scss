@@ -74,9 +74,17 @@
     }
   }
 
-  .daoNetwork {
+  .daoNetworkWrapper {
     margin: 0px 20px 10px;
     width: fit-content;
+    display: flex;
+    align-items: center;
+    .networkName {
+      border: 1px solid;
+      border-radius: 15px;
+      padding: 0px 10px;
+      margin: 0 10px;
+    }
   }
 
   .followButton {

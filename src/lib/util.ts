@@ -177,7 +177,7 @@ export function supportedTokens(network: Networks) {
     [getArc(network).GENToken().address]: {
       decimals: 18,
       name: "DAOstack GEN",
-      symbol: genName(),
+      symbol: genName(network),
     }, ...tokens[network]["tokens"],
   };
 }
@@ -261,8 +261,9 @@ export function sleep(milliseconds: number): Promise<void> {
 }
 
 /**
- *
- * @param provider
+ * Given a provider returns the network
+ * @param {any} provider
+ * @returns {Networks}
  */
 export const getNetworkByProvider = (provider: any): Networks => {
   if (provider.chainId === "0x64" || provider.chainId === "100") {
@@ -272,10 +273,11 @@ export const getNetworkByProvider = (provider: any): Networks => {
 };
 
 /**
- *
- * @param daoAddress
+ * Given a DAO address returns it's network
+ * @param {string} daoAddress
+ * @returns {Networks}
  */
-export const getNetworkByDAOAddress = (daoAddress: any): Networks => {
+export const getNetworkByDAOAddress = (daoAddress: string): Networks => {
   const daos = getDAOs();
   for (const network in daos) {
     if (daos[network][daoAddress] !== undefined) {
@@ -286,18 +288,20 @@ export const getNetworkByDAOAddress = (daoAddress: any): Networks => {
 };
 
 /**
- *
+ * Given a DAO address returns it's Arc object
  * @param daoAddress
+ * @returns {Arc}
  */
-export const getArcByDAOAddress = (daoAddress: any): Arc => {
+export const getArcByDAOAddress = (daoAddress: string): Arc => {
   const network = getNetworkByDAOAddress(daoAddress);
   return network ? getArcs()[network] : undefined;
 };
 
 
 /**
- *
- * @param daoAddress
+ * Given an address returns the network
+ * @param {string} daoAddress
+ * @returns {Networks}
  */
 export const getNetworkByAddress = (daoAddress: string): Networks => {
   const arcs = getArcs();
