@@ -12,7 +12,7 @@ import ThreeboxModal from "components/Shared/ThreeboxModal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { Field, Formik, FormikProps } from "formik";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, genName, formatTokens, ethBalance, standardPolling, getArcByDAOAddress } from "lib/util";
+import { baseTokenName, ethErrorHandler, genName, formatTokens, ethBalance, standardPolling, getArcByDAOAddress, getNetworkByDAOAddress} from "lib/util";
 import CopyToClipboard, { IconColor } from "components/Shared/CopyToClipboard";
 import { Page } from "pages";
 import { parse } from "query-string";
@@ -287,8 +287,8 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                         {(accountInfo && dao)
                           ? <div><strong>Rep. Score</strong><br /><Reputation reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /> </div>
                           : ""}
-                        <div><strong>{genName()}:</strong><br /><span>{formatTokens(genBalance)}</span></div>
-                        <div><strong>{baseTokenName()}:</strong><br /><span>{formatTokens(ethBalance)}</span></div>
+                        <div><strong>{genName(getNetworkByDAOAddress(dao.address))}:</strong><br /><span>{formatTokens(genBalance)}</span></div>
+                        <div><strong>{baseTokenName(getNetworkByDAOAddress(dao.address))}:</strong><br /><span>{formatTokens(ethBalance)}</span></div>
                       </div>
                       <div>
                         <strong>ETH Address:</strong><br />

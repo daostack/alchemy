@@ -164,21 +164,21 @@ export function targetedNetwork(): Networks {
   }
 }
 
-export function baseTokenName() {
-  return tokens[targetedNetwork()]["baseTokenName"];
+export function baseTokenName(network?: Networks) {
+  return tokens[network || targetedNetwork()]["baseTokenName"];
 }
 
-export function genName() {
-  return tokens[targetedNetwork()]["genName"];
+export function genName(network?: Networks) {
+  return tokens[network || targetedNetwork()]["genName"];
 }
 
-export function supportedTokens() {
+export function supportedTokens(network: Networks) {
   return {
-    [getArc().GENToken().address]: {
+    [getArc(network).GENToken().address]: {
       decimals: 18,
       name: "DAOstack GEN",
       symbol: genName(),
-    }, ...tokens[targetedNetwork()]["tokens"],
+    }, ...tokens[network]["tokens"],
   };
 }
 
@@ -233,17 +233,17 @@ export function formatTokens(amountWei: BN | null, symbol?: string, decimals = 1
   return toSignedString(returnString);
 }
 
-export function tokenDetails(tokenAddress: string) {
-  return supportedTokens()[tokenAddress.toLowerCase()];
+export function tokenDetails(tokenAddress: string, network?: Networks) {
+  return supportedTokens(network)[tokenAddress.toLowerCase()];
 }
 
-export function tokenSymbol(tokenAddress: string) {
-  const token = supportedTokens()[tokenAddress.toLowerCase()];
+export function tokenSymbol(tokenAddress: string, network?: Networks) {
+  const token = supportedTokens(network)[tokenAddress.toLowerCase()];
   return token ? token["symbol"] : "?";
 }
 
-export function tokenDecimals(tokenAddress: string) {
-  const token = supportedTokens()[tokenAddress.toLowerCase()];
+export function tokenDecimals(tokenAddress: string, network?: Networks) {
+  const token = supportedTokens(network)[tokenAddress.toLowerCase()];
   return token ? token["decimals"] : 18;
 }
 
@@ -278,7 +278,7 @@ export const getNetworkByProvider = (provider: any): Networks => {
 export const getNetworkByDAOAddress = (daoAddress: any): Networks => {
   const daos = getDAOs();
   for (const network in daos) {
-    if (daoAddress === daos[network].id) {
+    if (daos[network][daoAddress] !== undefined) {
       return network as Networks;
     }
   }

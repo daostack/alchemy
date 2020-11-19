@@ -6,7 +6,7 @@ import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification, NotificationStatus } from "reducers/notifications";
-import { baseTokenName, isValidUrl, isAddress, linkToEtherScan, getContractName, toWei } from "lib/util";
+import { baseTokenName, isValidUrl, isAddress, linkToEtherScan, getContractName, toWei, getNetworkByDAOAddress } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -398,11 +398,11 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                           <div>
                             <label htmlFor={`contracts.${index}.value`}>
                               <div className={css.requiredMarker}>*</div>
-                              {baseTokenName()} Value
+                              {baseTokenName(getNetworkByDAOAddress(this.props.daoAvatarAddress))} Value
                               <ErrorMessage name={`contracts.${index}.value`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                             </label>
                             <Field
-                              placeholder={`How much ${baseTokenName()} to transfer with the call`}
+                              placeholder={`How much ${baseTokenName(getNetworkByDAOAddress(this.props.daoAvatarAddress))} to transfer with the call`}
                               name={`contracts.${index}.value`}
                               type="number"
                               validate={Validators.requireValue}

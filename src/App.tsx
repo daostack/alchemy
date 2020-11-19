@@ -45,6 +45,7 @@ export class App extends React.Component<{}, {
   public async componentDidMount (): Promise<void> {
     const networks = ["main", "xdai"];
     (window as any).arcs = {};
+    (window as any).daos = {};
     // Do this here because we need to have initialized Arc first.  This will
     // not create a provider for the app, rather will just initialize Arc with a
     // readonly provider with no account, internal only to it.

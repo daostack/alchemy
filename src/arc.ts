@@ -1,16 +1,12 @@
 import { NotificationStatus } from "reducers/notifications";
 import { getNetworkId, getNetworkName, targetedNetwork, Networks, getNetworkByProvider } from "./lib/util";
-import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
+import { settings } from "./settings";
 import { Address, Arc } from "@daostack/arc.js";
 import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
 import { Observable } from "rxjs";
-import gql from 'graphql-tag'
+import gql from "graphql-tag";
 
 const Web3 = require("web3");
-
-interface IDAO {
-  id: string
-}
 
 /**
  * This is only set after the user has selected a provider and enabled an account.
@@ -142,7 +138,7 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
       arc = new Arc(arcSettings);
     }
 
-   let contractInfos;
+    let contractInfos;
 
     try {
       contractInfos = await arc.fetchContractInfos();
@@ -155,17 +151,21 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
      daos (first: 1000) {
        id
      }
-    }`
+    }`;
     const daos = await arc.sendQuery(query, {});
 
-    if (daos != undefined) {
-      (window as any).daos[network] = daos.data.daos as IDAO[];
+    if (daos !== undefined) {
+      const daosMap = {} as any;
+      for (const dao of daos.data.daos) {
+        daosMap[dao.id] = network;
+      }
+      (window as any).daos[network] = daosMap;
     } else {
       // eslint-disable-next-line no-console
       console.error(`Error fetching daos from: ${network}`);
     }
 
-    success = !!contractInfos &&  !!daos;
+    success = !!contractInfos && !!daos;
 
     if (success) {
       initializedAccount = await _getCurrentAccountFromProvider(network, arc.web3);
@@ -209,12 +209,12 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
  * @param provider web3Provider
  * @return the expected network nameif not correct
 */
-async function ensureCorrectNetwork(provider: any): Promise<void> {
+async function ensureCorrectNetwork(provider: any, network?: Networks): Promise<void> {
 
   /**
    * It is required that the provider be the correct one for the current platform
    */
-  const expectedNetworkName = targetedNetwork();
+  const expectedNetworkName = network || targetedNetwork();
 
   // TODO: we should not use the network NAME but the network ID to identify the network...
   const networkName = await getProviderNetworkName(provider);
@@ -288,7 +288,7 @@ function inTesting(): boolean {
  * Side-effect is that `selectedProvider` will be set on success.
  * @returns Throws exception on error.
  */
-async function enableWeb3Provider(): Promise<void> {
+async function enableWeb3Provider(network?: Networks): Promise<void> {
   if (selectedProvider) {
     return;
   }
@@ -359,7 +359,7 @@ async function enableWeb3Provider(): Promise<void> {
   /**
    * bail if provider is not correct for the current platform
    */
-  await ensureCorrectNetwork(provider);
+  await ensureCorrectNetwork(provider, network);
 
   /**
  * now ensure that the user has connected to a network and enabled access to the account,
@@ -453,7 +453,7 @@ export function getAccountIsEnabled(): boolean {
  * @param options `IEnableWWalletProviderParams`
  * @returns Promise of true on success
  */
-export async function enableWalletProvider(options: IEnableWalletProviderParams): Promise<boolean> {
+export async function enableWalletProvider(options: IEnableWalletProviderParams, network?: Networks): Promise<boolean> {
   try {
 
     if (inTesting()) {
@@ -469,7 +469,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
     }
 
     if (!selectedProvider) {
-      await enableWeb3Provider();
+      await enableWeb3Provider(network);
       if (!selectedProvider) {
         // something went wrong somewhere
         throw new Error("Unable to connect to a wallet");
@@ -487,7 +487,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
        * Metamask to a different network without us knowing.  Just in that case, check here.
        */
       try {
-        await ensureCorrectNetwork(selectedProvider);
+        await ensureCorrectNetwork(selectedProvider, network);
       } catch (ex) {
         /**
          * This will result in completely logging out the user and clearing the cached provider,

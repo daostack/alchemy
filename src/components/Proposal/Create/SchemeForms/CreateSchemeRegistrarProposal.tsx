@@ -9,7 +9,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { createProposal } from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
-import { isValidUrl, getNetworkByAddress } from "lib/util";
+import { isValidUrl, getNetworkByAddress, getArcByAddress } from "lib/util";
 import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSIONS, schemeNameAndAddress, SchemePermissions, schemeNameFromAddress } from "lib/schemeUtils";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
@@ -103,11 +103,13 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
   }
 
   public handleChangeScheme = (e: any) => {
-    const arc = getArc(getNetworkByAddress(e.targer.value));
     try {
+      const arc = getArcByAddress(e.target.value);
       // If we know about this contract then require the minimum permissions for it
-      const contractInfo = arc.getContractInfo(e.target.value);
-      this.setState({ requiredPermissions: REQUIRED_SCHEME_PERMISSIONS[contractInfo.name] });
+      if (arc !== undefined){
+        const contractInfo = arc.getContractInfo(e.target.value);
+        this.setState({ requiredPermissions: REQUIRED_SCHEME_PERMISSIONS[contractInfo.name] });
+      }
       /* eslint-disable-next-line no-empty */
     } catch (e) { }
   }
