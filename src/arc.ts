@@ -51,8 +51,10 @@ async function _getCurrentAccountFromProvider(network: Networks, web3?: any): Pr
 }
 
 /**
- * Returns the Arc instance
+ * Returns an Arc instance by Netowrk.
  * Throws an exception when Arc hasn't yet been initialized!
+ * @param {Networks} network
+ * @returns {Arc}
  */
 export function getArc(network?: Networks): Arc {
   if (network === undefined) {
@@ -65,6 +67,9 @@ export function getArc(network?: Networks): Arc {
   return arc;
 }
 
+/**
+ * Returns the arcs object
+ */
 export function getArcs(): any {
   const arcs = (window as any).arcs;
   if (!arcs) {
@@ -72,6 +77,10 @@ export function getArcs(): any {
   }
   return arcs;
 }
+
+/**
+ * Returns daos object (which hold all daos from all networks)
+ */
 export function getDAOs(): any {
   const daos = (window as any).daos;
   if (!daos) {

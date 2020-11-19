@@ -51,7 +51,6 @@ export class App extends React.Component<{}, {
     // readonly provider with no account, internal only to it.
     const totalNumberOfAttempts = 3; /// we will try 3 times to init arc before actually throwing an error
     let numberOfAttempts = 0;
-    //let success = false; //new Array(networks.length).fill(false);
     for (const network of networks) {
       let success = false;
       const initArc = async (network: Networks) => {

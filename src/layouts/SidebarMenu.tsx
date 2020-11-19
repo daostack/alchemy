@@ -96,7 +96,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
             <span>{dao.name}</span>
           </Link>
         </div>
-        <div className={css.daoNetwork}>Network: {getNetworkByDAOAddress(dao.address)}</div>
+        <div className={css.daoNetworkWrapper}>Network: <div className={css.networkName}>{getNetworkByDAOAddress(dao.address)}</div></div>
         <div className={css.daoDescription}>
           {dao.name === "dxDAO" ?
             <p>
@@ -310,7 +310,7 @@ const TokenBalance = (props: ITokenProps) => {
   const { data, error, isLoading, tokenAddress } = props;
 
   const tokenData = supportedTokens(getNetworkByDAOAddress(props.dao.address))[tokenAddress];
-  if (isLoading || error || ((data === null || isNaN(data) || data.isZero()) && tokenData.symbol !== genName())) {
+  if (isLoading || error || ((data === null || isNaN(data) || data.isZero()) && tokenData.symbol !== genName(getNetworkByDAOAddress(props.dao.address)))) {
     return null;
   }
 
