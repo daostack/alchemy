@@ -1,6 +1,7 @@
 import { promisify } from "util";
 import {
   Address,
+  Arc,
   IProposalStage,
   IProposalState,
   IRewardState,
@@ -288,7 +289,7 @@ export const getNetworkByDAOAddress = (daoAddress: any): Networks => {
  *
  * @param daoAddress
  */
-export const getArcByDAOAddress = (daoAddress: any): Networks => {
+export const getArcByDAOAddress = (daoAddress: any): Arc => {
   const network = getNetworkByDAOAddress(daoAddress);
   return network ? getArcs()[network] : undefined;
 };
@@ -318,7 +319,7 @@ export const getNetworkByAddress = (daoAddress: string): Networks => {
  *
  * @param daoAddress
  */
-export const getArcByAddress = (daoAddress: any): Networks => {
+export const getArcByAddress = (daoAddress: any): Arc => {
   const network = getNetworkByAddress(daoAddress);
   return network ? getArcs()[network] : undefined;
 };
