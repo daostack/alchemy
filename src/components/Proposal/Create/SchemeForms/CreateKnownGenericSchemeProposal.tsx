@@ -2,7 +2,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { IProposalType, ISchemeState } from "@daostack/arc.js";
-import { enableWalletProvider, getArc } from "arc";
+import { enableWalletProvider } from "arc";
 
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import * as classNames from "classnames";
@@ -15,7 +15,7 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as arcActions from "actions/arcActions";
 
 import Analytics from "lib/analytics";
-import { isValidUrl, getNetworkByAddress } from "lib/util";
+import { isValidUrl, getArcByDAOAddress } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
@@ -282,7 +282,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
     const { handleClose } = this.props;
-    const arc = getArc(getNetworkByAddress(this.props.daoAvatarAddress));
+    const arc = getArcByDAOAddress(this.props.daoAvatarAddress);
 
     const actions = this.state.actions;
     const currentAction = this.state.currentAction;
