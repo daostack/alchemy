@@ -1,0 +1,341 @@
+{
+  "name": "BalancerPoolManager",
+  "addresses": {
+    "main": [
+      ""
+    ],
+    "kovan": [
+      "0x5086d91858a5aac4a770212720b297f38e0dd403"
+    ],
+    "private": [
+      ""
+    ]
+  },
+  "actions": [
+    {
+      "id": "setPublicSwap",
+      "label": "Set Public Swap",
+      "description": "False to pause the pool",
+      "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
+      "fields": [
+        {
+          "label": "Set public swap to",
+          "name": "public swap",
+          "placeholder": "Boolean (true or false)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "bool",
+            "name": "publicSwap",
+            "type": "bool"
+          }
+        ],
+        "name": "setPublicSwap",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }
+    },
+    {
+      "id": "setSwapFee",
+      "label": "Set Swap Fee",
+      "description": "Update the Swap Fee",
+      "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
+      "fields": [
+        {
+          "decimals": 18,
+          "label": "Set swap fee to",
+          "name": "amount",
+          "unit": "%",
+          "placeholder": "Swap fee (1.5)"
+        }
+      ],
+      "abi": {
+          "constant": false,
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "swapFee",
+              "type": "uint256"
+            }
+          ],
+          "name": "setSwapFee",
+          "outputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
+          }
+    },
+    {
+      "id": "commitAddToken",
+      "label": "Add token",
+      "description": "First step in adding a new token to the balancer pool",
+      "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
+      "fields": [
+        {
+          "label": "Token address",
+          "name": "token",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "decimals": 18,
+          "label": "Balance of the new token to add to the pool",
+          "name": "balance",
+          "unit": "token",
+          "placeholder": "Balance in token (1500)"
+        },
+        {
+          "decimals": 18,
+          "label": "Expected denormalizedWeight",
+          "name": "Denormalized Weight",
+          "placeholder": "Denormalized Weight (1.5)"
+        }
+      ],
+      "abi": {
+          "constant": false,
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "balance",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "denormalizedWeight",
+              "type": "uint256"
+            }
+          ],
+          "name": "commitAddToken",
+          "outputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
+          }
+    },
+    {
+      "id": "applyAddToken",
+      "label": "Confirm add token",
+      "description": "Second step in adding a new token to the balancer pool",
+      "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
+      "fields": [
+      ],
+      "abi": {
+          "constant": false,
+          "inputs": [],
+          "name": "applyAddToken",
+          "outputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
+          }
+    },
+    {
+      "id": "removeToken",
+      "label": "Remove token",
+      "description": "Remove a token from the pool",
+      "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
+      "fields": [
+        {
+          "label": "Token address",
+          "name": "token",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+          "constant": false,
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            }
+          ],
+          "name": "removeToken",
+          "outputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
+      }
+    },
+    {
+      "id": "updateWeight",
+      "label": "New weight",
+      "description": "Set the weight of a token",
+      "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
+      "fields": [
+        {
+          "label": "Token address",
+          "name": "token",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "decimals": 18,
+          "label": "New weight",
+          "name": "new weight",
+          "unit": "unit",
+          "placeholder": "Weight (1500)"
+        }
+      ],
+      "abi": {
+          "constant": false,
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "newWeight",
+              "type": "uint256"
+            }
+          ],
+          "name": "updateWeight",
+          "outputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
+      }
+    },
+    {
+      "id": "updateWeightsGradually",
+      "label": "Update weights",
+      "description": "Sets token weights (to be gradually updated)",
+      "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
+      "fields": [
+        {
+          "label": "New weights in wei",
+          "name": "New weights that are going to be gradually updated",
+          "placeholder": "Weight (1000000000000000000)"
+        },
+        {
+          "decimals": 18,
+          "label": "Start block",
+          "name": "Start update from block",
+          "unit": "unit",
+          "placeholder": "Block number (199199)"
+        },
+        {
+          "decimals": 18,
+          "label": "End block",
+          "name": "End update at block",
+          "unit": "unit",
+          "placeholder": "Block number (399199)"
+        }
+      ],
+      "abi": {
+      "constant": false,
+      "inputs": [
+              {
+                "internalType": "uint256[]",
+                "name": "newWeights",
+                "type": "uint256[]"
+              },
+              {
+                "internalType": "uint256",
+                "name": "startBlock",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "endBlock",
+                "type": "uint256"
+              }
+            ],
+            "name": "updateWeightsGradually",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+            }
+    },
+    {
+      "id": "joinPool",
+      "label": "Join pool",
+      "description": "Joins the pool by adding more tokens",
+      "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
+      "fields": [
+        {
+          "decimals": 18,
+          "label": "Pool tokens to recieve",
+          "name": "Number of pool tokens to receive",
+          "unit": "uint",
+          "placeholder": "Number (1000)"
+        },
+        {
+          "label": "Max tokens to add in wei",
+          "name": "Max amount of asset tokens to spend",
+          "placeholder": "Amount (2000000000000000000)"
+        }
+      ],
+      "abi": {
+          "constant": false,
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "poolAmountOut",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "maxAmountsIn",
+              "type": "uint256[]"
+            }
+          ],
+          "name": "joinPool",
+          "outputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      },
+    {
+      "id": "exitPool",
+      "label": "Exit pool",
+      "description": "Exits the pool by redeeming the tokens",
+      "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
+      "fields": [
+        {
+          "decimals": 18,
+          "label": "Pool tokens to redeem",
+          "name": "Number of pool tokens to redeem",
+          "placeholder": "Number (1000)"
+        },
+        {
+          "label": "Max amount of asset tokens to receive in wei",
+          "name": "Minimum amount of asset tokens to receive",
+          "placeholder": "Amount (2000000000000000000)"
+        }
+      ],
+      "abi": {
+          "constant": false,
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "poolAmountIn",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "minAmountsOut",
+              "type": "uint256[]"
+            }
+          ],
+          "name": "exitPool",
+          "outputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      }
+  ]
+}
