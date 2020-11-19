@@ -77,6 +77,13 @@ export function getArcs(): any {
   }
   return arcs;
 }
+export function getDAOs(): any {
+  const daos = (window as any).daos;
+  if (!daos) {
+    throw Error("window.daos is not defined - please call initializeArc first");
+  }
+  return daos;
+}
 
 /**
  * Return currently-selected and fully-enabled web3Provider (an account can be presumed to exist).
@@ -149,19 +156,30 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
       arc = new Arc(arcSettings);
     }
 
-    let contractInfos;
-    if (USE_CONTRACTINFOS_CACHE) {
-      contractInfos = require(`data/contractInfos-${network || targetedNetwork()}.json`);
-      arc.setContractInfos(contractInfos);
-    } else {
-      try {
-        contractInfos = await arc.fetchContractInfos();
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error(`Error fetching contractinfos: ${err.message}`);
-      }
+   let contractInfos;
+
+    try {
+      contractInfos = await arc.fetchContractInfos();
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(`Error fetching contractinfos: ${err.message}`);
     }
-    success = !!contractInfos;
+
+    const query = gql`query AllDaos {
+     daos (first: 1000) {
+       id
+     }
+    }`
+    const daos = await arc.sendQuery(query, {});
+
+    if (daos != undefined) {
+      (window as any).daos[network] = daos.data.daos as IDAO[];
+    } else {
+      // eslint-disable-next-line no-console
+      console.error(`Error fetching daos from: ${network}`);
+    }
+
+    success = !!contractInfos &&  !!daos;
 
     if (success) {
       initializedAccount = await _getCurrentAccountFromProvider(network, arc.web3);
@@ -193,14 +211,6 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
   }
 
   (window as any).arcs[network] = success ? arc : null;
-
-  const query = gql`query AllDaos {
-    daos (first: 1000) {
-      id
-    }
-  }`
-  const daos = await arc.sendQuery(query, {});
-  (window as any).daos[network] = daos.data.daos as IDAO[];
 
   return success;
 }

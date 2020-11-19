@@ -14,7 +14,7 @@ import BN = require("bn.js");
  */
 import "moment";
 import * as moment from "moment-timezone";
-import { getArc, getArcs } from "../arc";
+import { getArc, getArcs, getDAOs} from "../arc";
 import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
 import { GRAPH_POLL_INTERVAL } from "../settings";
 
@@ -272,24 +272,27 @@ export const getNetworkByProvider = (provider: any): Networks => {
 
 /**
  *
- * @param dao
+ * @param daoAddress
  */
-export const getNetworkByDAO = (DAO: any): Networks => {
-  const arcs = getArcs();
-  for (const network in arcs) {
-    const arc = arcs[network];
-    try {
-      for (const dao of arc.daos) {
-        if (DAO.id === dao.id) {
-          return network as Networks;
-        }
-      }
-    } catch (error) {
-      
+export const getNetworkByDAOAddress = (daoAddress: any): Networks => {
+  const daos = getDAOs();
+  for (const network in daos) {
+    if (daoAddress === daos[network].id) {
+      return network as Networks;
     }
   }
   return undefined;
-}
+};
+
+/**
+ *
+ * @param daoAddress
+ */
+export const getArcByDAOAddress = (daoAddress: any): Networks => {
+  const network = getNetworkByDAOAddress(daoAddress);
+  return network ? getArcs()[network] : undefined;
+};
+
 
 /**
  *
@@ -303,12 +306,23 @@ export const getNetworkByAddress = (daoAddress: string): Networks => {
       if (arc.getContractInfo(daoAddress, undefined, "readonly") !== null) {
         return network as Networks;
       }
+      // eslint-disable-next-line no-empty
     } catch (error) {
-      
+
     }
   }
   return undefined;
-}
+};
+
+/**
+ *
+ * @param daoAddress
+ */
+export const getArcByAddress = (daoAddress: any): Networks => {
+  const network = getNetworkByAddress(daoAddress);
+  return network ? getArcs()[network] : undefined;
+};
+
 
 /**
  * return network id, independent of the presence of Arc
