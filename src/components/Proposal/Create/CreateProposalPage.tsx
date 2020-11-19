@@ -1,5 +1,4 @@
 import { ISchemeState, Address } from "@daostack/arc.js";
-import { getArc } from "arc";
 import CreateKnownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateKnownGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "components/Proposal/Create/SchemeForms/CreateSchemeRegistrarProposal";
 import CreateUnknownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateUnknownGenericSchemeProposal";
@@ -19,7 +18,7 @@ import { CrxRewarderComponentType, getCrxRewarderComponent, rewarderContractName
 import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
 import { schemeName } from "lib/schemeUtils";
 import * as css from "./CreateProposal.scss";
-import { getNetworkByAddress } from "lib/util";
+import { getArcByDAOAddress } from "lib/util";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -163,7 +162,7 @@ const SubscribedCreateProposalPage = withSubscription({
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalStateProps) => {
-    const arc = getArc(getNetworkByAddress(props.daoAvatarAddress));
+    const arc = getArcByDAOAddress(props.daoAvatarAddress);
     const scheme = arc.scheme(props.schemeId);
     return scheme.state();
   },

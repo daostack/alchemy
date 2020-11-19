@@ -1,5 +1,4 @@
 import { Address, IDAOState, Proposal, Vote, Scheme, Stake, DAO } from "@daostack/arc.js";
-import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
@@ -13,7 +12,7 @@ import { first } from "rxjs/operators";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
 import * as css from "./DaoHistoryPage.scss";
 import { Observable } from "rxjs";
-import { standardPolling, getNetworkByAddress } from "lib/util";
+import { standardPolling, getArcByDAOAddress } from "lib/util";
 
 const PAGE_SIZE = 50;
 
@@ -170,7 +169,7 @@ export default withSubscription({
   checkForUpdate: [],
 
   createObservable: async (props: IExternalProps) => {
-    const arc = getArc(getNetworkByAddress(props.daoState.address));
+    const arc = getArcByDAOAddress(props.daoState.address);
     const dao = props.daoState.dao;
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server

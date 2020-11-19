@@ -1,5 +1,4 @@
 import { IDAOState, IMemberState } from "@daostack/arc.js";
-import { getArc } from "arc";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import FollowButton from "components/Shared/FollowButton";
@@ -11,7 +10,7 @@ import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
 import * as React from "react";
 import { combineLatest } from "rxjs";
-import { getNetworkByAddress } from "lib/util";
+import { getArcByDAOAddress } from "lib/util";
 import * as css from "./Feed.scss";
 
 interface IStateProps {
@@ -64,7 +63,7 @@ const SubscribedUserFeedItem = withSubscription({
 
   createObservable: (props: IExternalProps) => {
     const { event } = props;
-    const arc = getArc(getNetworkByAddress(event.dao.id));
+    const arc = getArcByDAOAddress(event.dao.id);
     const dao = arc.dao(event.dao.id);
 
     return combineLatest(

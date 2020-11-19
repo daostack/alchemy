@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import * as BN from "bn.js";
 import { getProfile, updateProfile } from "actions/profilesActions";
-import { getArc, enableWalletProvider } from "arc";
+import { enableWalletProvider } from "arc";
 import classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import Reputation from "components/Account/Reputation";
@@ -12,7 +12,7 @@ import ThreeboxModal from "components/Shared/ThreeboxModal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { Field, Formik, FormikProps } from "formik";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, genName, formatTokens, ethBalance, standardPolling, getNetworkByAddress } from "lib/util";
+import { baseTokenName, ethErrorHandler, genName, formatTokens, ethBalance, standardPolling, getArcByDAOAddress } from "lib/util";
 import CopyToClipboard, { IconColor } from "components/Shared/CopyToClipboard";
 import { Page } from "pages";
 import { parse } from "query-string";
@@ -318,7 +318,7 @@ const SubscribedAccountProfilePage = withSubscription({
 
   createObservable: (props: IProps) => {
     const queryValues = parse(props.location.search);
-    const arc = getArc(getNetworkByAddress(queryValues.daoAvatarAddress as string));
+    const arc = getArcByDAOAddress(queryValues.daoAvatarAddress as string);
     const daoAvatarAddress = queryValues.daoAvatarAddress as string;
     const accountAddress = props.match.params.accountAddress;
     let dao: DAO;
