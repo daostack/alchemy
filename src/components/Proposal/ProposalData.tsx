@@ -137,7 +137,7 @@ export default withSubscription({
         // TODO: also need the member state for the proposal proposer and beneficiary
         //      but since we need the proposal state first to get those addresses we will need to
         //      update the arc.js query to load them inline
-        concat(of(new BN("0")), ethBalance(daoState.address))
+        concat(of(new BN("0")), ethBalance(daoState.address, getArcByDAOAddress(daoState.address)))
           .pipe(ethErrorHandler()),
         arc.GENToken().balanceOf(currentAccountAddress)
           .pipe(ethErrorHandler()),
@@ -151,7 +151,7 @@ export default withSubscription({
         of([]), // stakes
         of(null), // rewards
         of(null), // current account member state
-        concat(of(new BN(0)), ethBalance(daoState.address)) // dao eth balance
+        concat(of(new BN(0)), ethBalance(daoState.address, getArcByDAOAddress(daoState.address))) // dao eth balance
           .pipe(ethErrorHandler()),
         of(new BN(0)), // current account gen balance
         of(null), // current account GEN allowance

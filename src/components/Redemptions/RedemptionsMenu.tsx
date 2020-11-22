@@ -7,7 +7,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import ActionButton from "components/Proposal/ActionButton";
 import RedemptionsString from "components/Proposal/RedemptionsString";
 import ProposalSummary from "components/Proposal/ProposalSummary";
-import { ethErrorHandler, humanProposalTitle, ethBalance, standardPolling, getNetworkByAddress } from "lib/util";
+import { ethErrorHandler, humanProposalTitle, ethBalance, standardPolling, getNetworkByAddress, getArcByDAOAddress } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -199,7 +199,7 @@ const SubscribedMenuItemContent = withSubscription({
     const { currentAccountAddress, proposal } = props;
     const arc = getArc(getNetworkByAddress(currentAccountAddress));
     const dao = arc.dao(proposal.dao.id);
-    const daoEthBalance = concat(of(new BN("0")), ethBalance(proposal.dao.id)).pipe(ethErrorHandler());
+    const daoEthBalance = concat(of(new BN("0")), ethBalance(proposal.dao.id, getArcByDAOAddress(proposal.dao.id))).pipe(ethErrorHandler());
     const rewards = proposal.proposal.rewards({ where: { beneficiary: currentAccountAddress } })
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
