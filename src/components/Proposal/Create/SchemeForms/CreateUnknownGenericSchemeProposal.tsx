@@ -6,7 +6,7 @@ import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification, NotificationStatus } from "reducers/notifications";
-import { baseTokenName, isValidUrl, getNetworkByDAOAddress } from "lib/util";
+import { baseTokenName, isValidUrl, getNetworkByDAOAddress, getArcByDAOAddress } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -100,6 +100,7 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
 
   public render(): RenderOutput {
     const { handleClose } = this.props;
+    const network = getNetworkByDAOAddress(this.props.daoAvatarAddress);
 
     const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
@@ -208,7 +209,7 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
 
               <div className={css.tagSelectorContainer}>
-                <TagsSelector onChange={this.onTagsChange}></TagsSelector>
+                <TagsSelector onChange={this.onTagsChange} arc={getArcByDAOAddress(this.props.daoAvatarAddress)}></TagsSelector>
               </div>
 
               <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
@@ -245,12 +246,12 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
                 <div>
                   <label htmlFor="value">
                     <div className={css.requiredMarker}>*</div>
-                    {baseTokenName(getNetworkByDAOAddress(this.props.daoAvatarAddress))} Value
+                    {baseTokenName(network)} Value
                     <ErrorMessage name="value">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
                     id="valueInput"
-                    placeholder={`How much ${baseTokenName(getNetworkByDAOAddress(this.props.daoAvatarAddress))} to transfer with the call`}
+                    placeholder={`How much ${baseTokenName(network)} to transfer with the call`}
                     name="value"
                     type="number"
                     className={touched.value && errors.value ? css.error : null}

@@ -4,7 +4,7 @@ import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
-import { humanProposalTitle } from "lib/util";
+import { getArcByDAOAddress, humanProposalTitle } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import TrackVisibility from "react-on-screen";
@@ -225,7 +225,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
               </h3>
 
               { tags && tags.length ? <div className={css.tagsContainer}>
-                <TagsSelector readOnly tags={tags}></TagsSelector>
+                <TagsSelector readOnly tags={tags} arc={getArcByDAOAddress(daoState.address)}></TagsSelector>
               </div> : "" }
             </Link>
 

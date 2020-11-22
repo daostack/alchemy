@@ -6,7 +6,7 @@ import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification, NotificationStatus } from "reducers/notifications";
-import { baseTokenName, isValidUrl, isAddress, linkToEtherScan, getContractName, toWei, getNetworkByDAOAddress } from "lib/util";
+import { baseTokenName, isValidUrl, isAddress, linkToEtherScan, getContractName, toWei, getNetworkByDAOAddress, getArcByDAOAddress} from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -255,7 +255,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
   public render(): RenderOutput {
     const { handleClose } = this.props;
     const { loading, addContractStatus, userContracts, whitelistedContracts } = this.state;
-
+    const network = getNetworkByDAOAddress(this.props.daoAvatarAddress);
     const contracts = whitelistedContracts.length > 0 ? whitelistedContracts : userContracts;
     const contractsOptions = contracts.map((address, index) => {
       return <option key={index} value={address}>{getContractName(address, this.props.daoAvatarAddress)} ({address})</option>;
@@ -348,7 +348,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
               </TrainingTooltip>
 
               <div className={css.tagSelectorContainer}>
-                <TagsSelector onChange={this.onTagsChange}></TagsSelector>
+                <TagsSelector onChange={this.onTagsChange} arc={getArcByDAOAddress(this.props.daoAvatarAddress)}></TagsSelector>
               </div>
 
               <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
@@ -398,11 +398,11 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                           <div>
                             <label htmlFor={`contracts.${index}.value`}>
                               <div className={css.requiredMarker}>*</div>
-                              {baseTokenName(getNetworkByDAOAddress(this.props.daoAvatarAddress))} Value
+                              {baseTokenName(network)} Value
                               <ErrorMessage name={`contracts.${index}.value`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                             </label>
                             <Field
-                              placeholder={`How much ${baseTokenName(getNetworkByDAOAddress(this.props.daoAvatarAddress))} to transfer with the call`}
+                              placeholder={`How much ${baseTokenName(network)} to transfer with the call`}
                               name={`contracts.${index}.value`}
                               type="number"
                               validate={Validators.requireValue}

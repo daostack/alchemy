@@ -137,7 +137,7 @@ class FeedPage extends React.Component<IProps, null> {
 }
 
 const getFeedObservable = (props: IStateProps, existingData?: SubscriptionData) => {
-  const arc = getArc();
+  const arc = getArc("xdai"); // TO DO: XDAI
   const { currentAccountProfile } = props;
 
   if (!currentAccountProfile) {

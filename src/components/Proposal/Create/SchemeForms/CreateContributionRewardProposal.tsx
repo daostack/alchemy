@@ -276,7 +276,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
 
               <div className={css.tagSelectorContainer}>
-                <TagsSelector onChange={this.onTagsChange()} tags={this.state.tags}></TagsSelector>
+                <TagsSelector onChange={this.onTagsChange()} tags={this.state.tags} arc={getArcByDAOAddress(dao.address)}></TagsSelector>
               </div>
 
               <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">

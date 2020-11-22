@@ -3,7 +3,7 @@ import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, getLocalTimezone, getNetworkByAddress, getNetworkByDAOAddress } from "lib/util";
+import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, getLocalTimezone, getNetworkByAddress, getNetworkByDAOAddress, getArcByDAOAddress } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
@@ -151,11 +151,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
   }
 
   public handleSubmit = async (values: IFormValues, { _setSubmitting }: any ): Promise<void> => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoAvatarAddress))) {
+    const network = getNetworkByDAOAddress(this.props.daoAvatarAddress);
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, network)) {
       return;
     }
 
-    const externalTokenDetails = tokenDetails(values.externalTokenAddress, getNetworkByDAOAddress(this.props.daoAvatarAddress));
+    const externalTokenDetails = tokenDetails(values.externalTokenAddress, network);
     let externalTokenReward;
 
     // If we know the decimals for the token then multiply by that
@@ -221,6 +222,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     }
     const dao = data;
     const localTimezone = getLocalTimezone();
+    const network = getNetworkByDAOAddress(this.props.daoAvatarAddress);
 
     return (
       <div className={css.containerNoSidebar}>
@@ -400,7 +402,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
 
               <div className={css.tagSelectorContainer}>
-                <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
+                <TagsSelector onChange={this.onTagsChange} tags={this.state.tags} arc={getArcByDAOAddress(this.props.daoAvatarAddress)}></TagsSelector>
               </div>
 
               <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
@@ -493,12 +495,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               <div className={css.rewards}>
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
-                    {baseTokenName(getNetworkByDAOAddress(this.props.daoAvatarAddress))} Reward to split
+                    {baseTokenName(network)} Reward to split
                     <ErrorMessage name="ethReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
                     id="ethRewardInput"
-                    placeholder={`How much ${baseTokenName(getNetworkByDAOAddress(this.props.daoAvatarAddress))} to reward`}
+                    placeholder={`How much ${baseTokenName(network)} to reward`}
                     name="ethReward"
                     type="number"
                     className={touched.ethReward && errors.ethReward ? css.error : null}
@@ -544,8 +546,8 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                         id="externalTokenAddress"
                         name="externalTokenAddress"
                         component={SelectField}
-                        options={Object.keys(supportedTokens(getNetworkByDAOAddress(dao.address))).map((tokenAddress) => {
-                          const token = supportedTokens(getNetworkByDAOAddress(dao.address))[tokenAddress];
+                        options={Object.keys(supportedTokens(network)).map((tokenAddress) => {
+                          const token = supportedTokens(network)[tokenAddress];
                           return { value: tokenAddress, label: token["symbol"] };
                         })}
                       />
