@@ -196,7 +196,7 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
       if (!initializedAccount) {
       // then something went wrong
       // eslint-disable-next-line no-console
-        console.error("Unable to obtain an account from the provider");
+        console.error(`Unable to obtain an account from the provider in ${network}`);
       }
     } else {
       initializedAccount = null;

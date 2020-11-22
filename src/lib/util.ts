@@ -664,7 +664,7 @@ export function initializeUtils(options: IInitializeOptions) {
 export const splitCamelCase = (str: string): string => `${str[0].toUpperCase()}${str.slice(1).replace(/([a-z])([A-Z])/g, "$1 $2")}`;
 
 interface IObservedAccounts {
-  [address: string]: {
+  [addressAndNetwork: string]: {
     observable?: Observable<BN>;
     observer?: Observer<BN>;
     lastBalance?: string;
@@ -675,35 +675,33 @@ interface IObservedAccounts {
 const ethBalanceObservedAccounts: IObservedAccounts = {};
 let ethBalancePollingInterval: any | undefined = undefined;
 
-export function ethBalance(address: Address): Observable<BN> {
-
-  const arc = getArc(getNetworkByAddress(address));
+export function ethBalance(address: Address, arc: Arc, network?: Networks): Observable<BN> {
 
   /**
    * With a few minor enhancements, this code is virtually the same logic
    * as arc.js uses when it creates a wss subscription to efficiently watch
    * for changes in eth balances.
    */
-  if (!ethBalanceObservedAccounts[address]) {
-    ethBalanceObservedAccounts[address] = {
+  if (!ethBalanceObservedAccounts[`${network}_${address}`]) {
+    ethBalanceObservedAccounts[`${network}_${address}`] = {
       subscriptionsCount: 1,
     };
   }
   /**
    * don't poll more than once for any given address
    */
-  if (ethBalanceObservedAccounts[address].observable) {
-    ++ethBalanceObservedAccounts[address].subscriptionsCount;
-    return ethBalanceObservedAccounts[address].observable as Observable<BN>;
+  if (ethBalanceObservedAccounts[`${network}_${address}`].observable) {
+    ++ethBalanceObservedAccounts[`${network}_${address}`].subscriptionsCount;
+    return ethBalanceObservedAccounts[`${network}_${address}`].observable as Observable<BN>;
   }
 
   const observable = Observable.create(async (observer: Observer<BN>) => {
 
-    ethBalanceObservedAccounts[address].observer = observer;
+    ethBalanceObservedAccounts[`${network}_${address}`].observer = observer;
 
     await arc.web3.eth.getBalance(address)
       .then((currentBalance: string) => {
-        const accInfo = ethBalanceObservedAccounts[address];
+        const accInfo = ethBalanceObservedAccounts[`${network}_${address}`];
         (accInfo.observer as Observer<BN>).next(new BN(currentBalance));
         accInfo.lastBalance = currentBalance;
       })
@@ -712,7 +710,7 @@ export function ethBalance(address: Address): Observable<BN> {
     if (!ethBalancePollingInterval) {
       ethBalancePollingInterval = setInterval(async () => {
         Object.keys(ethBalanceObservedAccounts).forEach(async (addr) => {
-          const accInfo = ethBalanceObservedAccounts[addr];
+          const accInfo = ethBalanceObservedAccounts[`${network}_${address}`];
           try {
             const balance = await arc.web3.eth.getBalance(addr);
             if (balance !== accInfo.lastBalance) {
@@ -734,9 +732,9 @@ export function ethBalance(address: Address): Observable<BN> {
        * Or it may be a flaw in how we are using `combineLatest`.
        * Either way, it is a memory/resource leak.
        */
-      --ethBalanceObservedAccounts[address].subscriptionsCount;
-      if (ethBalanceObservedAccounts[address].subscriptionsCount <= 0) {
-        delete ethBalanceObservedAccounts[address];
+      --ethBalanceObservedAccounts[`${network}_${address}`].subscriptionsCount;
+      if (ethBalanceObservedAccounts[`${network}_${address}`].subscriptionsCount <= 0) {
+        delete ethBalanceObservedAccounts[`${network}_${address}`];
       }
       if (Object.keys(ethBalanceObservedAccounts).length === 0 && ethBalancePollingInterval) {
         clearTimeout(ethBalancePollingInterval);
@@ -745,7 +743,7 @@ export function ethBalance(address: Address): Observable<BN> {
     };
   });
 
-  ethBalanceObservedAccounts[address].observable = observable;
+  ethBalanceObservedAccounts[`${network}_${address}`].observable = observable;
 
   return observable.pipe(map((item: any) => new BN(item)));
 }

@@ -296,7 +296,7 @@ const SubscribedEthBalance = withSubscription({
     return oldProps.dao.address !== newProps.dao.address;
   },
   createObservable: (props: IEthProps) => {
-    return ethBalance(props.dao.address).pipe(ethErrorHandler());
+    return ethBalance(props.dao.address, getArcByDAOAddress(props.dao.address)).pipe(ethErrorHandler());
   },
 });
 

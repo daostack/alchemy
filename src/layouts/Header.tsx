@@ -1,7 +1,6 @@
 import * as uiActions from "actions/uiActions";
 import { threeBoxLogout } from "actions/profilesActions";
 import { enableWalletProvider, getAccountIsEnabled, logout, getWeb3ProviderInfo, getWeb3Provider, providerHasConfigUi } from "arc";
-import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import RedemptionsButton from "components/Redemptions/RedemptionsButton";
@@ -25,7 +24,8 @@ import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 import ProviderConfigButton from "layouts/ProviderConfigButton";
 import Tooltip from "rc-tooltip";
-import { standardPolling, targetedNetwork, getArcByDAOAddress } from "lib/util";
+import { standardPolling, getArcByDAOAddress, getNetworkByDAOAddress, Networks } from "lib/util";
+import AccountBalancesWrapper from "components/Account/AccountBalancesWrapper";
 
 interface IExternalProps extends RouteComponentProps<any> {
 }
@@ -118,14 +118,14 @@ class Header extends React.Component<IProps, null> {
     enableWalletProvider({
       suppressNotifyOnSuccess: true,
       showNotification: this.props.showNotification,
-    });
+    }, getNetworkByDAOAddress(this.props.daoAvatarAddress));
   }
 
   public handleConnect = async (_event: any): Promise<void> => {
     enableWalletProvider({
       suppressNotifyOnSuccess: true,
       showNotification: this.props.showNotification,
-    });
+    }, getNetworkByDAOAddress(this.props.daoAvatarAddress));
   }
 
   public handleClickLogout = async (_event: any): Promise<void> => {
@@ -176,7 +176,8 @@ class Header extends React.Component<IProps, null> {
     const web3ProviderInfo = getWeb3ProviderInfo();
     const web3Provider = getWeb3Provider();
     const trainingTooltipsOn = this.getTrainingTooltipsEnabled();
-    const network = targetedNetwork();
+
+    let network: Networks;
     const inDAO = !!daoAvatarAddress;
 
     return (
@@ -252,7 +253,7 @@ class Header extends React.Component<IProps, null> {
                       </Link>
                     </div>
                   </div>
-                  <AccountBalances dao={dao} address={currentAccountAddress} />
+                  <AccountBalancesWrapper dao={dao} currentAccountAddress={currentAccountAddress} />
                   <div className={css.logoutButtonContainer}>
                     {accountIsEnabled ?
                       <div className={css.web3ProviderLogoutSection}>
