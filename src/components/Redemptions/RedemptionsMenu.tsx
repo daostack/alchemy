@@ -110,7 +110,7 @@ const SubscribedRedemptionsMenu = withSubscription({
   checkForUpdate: ["redeemableProposals"],
   createObservable: (props: IExternalProps) => {
     // getArcs with loop
-    const arc = getArc();
+    const arc = getArc("xdai"); // TO DO: XDAI need to loop over the arcs
     return combineLatest(
       props.redeemableProposals.map(proposalData => (
         new Proposal(proposalData.id, arc).state()

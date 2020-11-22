@@ -43,7 +43,7 @@ export class App extends React.Component<{}, {
   }
 
   public async componentDidMount (): Promise<void> {
-    const networks = ["main", "xdai"];
+    const networks = ["rinkeby", "xdai"];
     (window as any).arcs = {};
     (window as any).daos = {};
     // Do this here because we need to have initialized Arc first.  This will

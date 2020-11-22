@@ -56,10 +56,7 @@ async function _getCurrentAccountFromProvider(network: Networks, web3?: any): Pr
  * @param {Networks} network
  * @returns {Arc}
  */
-export function getArc(network?: Networks): Arc {
-  if (network === undefined) {
-    network = "xdai";
-  }
+export function getArc(network: Networks): Arc {
   const arc = (window as any).arcs[network];
   if (!arc) {
     throw Error(`window.arc is not defined for ${network} - please call initializeArc first`);

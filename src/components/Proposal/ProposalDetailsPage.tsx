@@ -5,7 +5,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
 import { DiscussionEmbed } from "disqus-react";
-import { humanProposalTitle, ensureHttps, formatFriendlyDateForLocalTimezone, safeMoment } from "lib/util";
+import { humanProposalTitle, ensureHttps, formatFriendlyDateForLocalTimezone, safeMoment, getArcByDAOAddress } from "lib/util";
 import { schemeName } from "lib/schemeUtils";
 import Analytics from "lib/analytics";
 import { Page } from "pages";
@@ -209,7 +209,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
             </div>
 
             {tags && tags.length ? <div className={css.tagsContainer}>
-              <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
+              <TagsSelector readOnly darkTheme tags={tags} arc={getArcByDAOAddress(daoState.address)}></TagsSelector>
             </div> : ""}
 
             <div className={css.buttonBar}>

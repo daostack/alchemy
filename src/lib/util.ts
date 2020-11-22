@@ -397,7 +397,10 @@ export async function getNetworkName(id?: string): Promise<Networks> {
 
 export function linkToEtherScan(address: Address, tokenHoldings = false) {
   let prefix = "";
-  const arc = getArc(getNetworkByAddress(address));
+  let arc = getArcByDAOAddress(address);
+  if (!arc) {
+    arc = getArcByAddress(address);
+  }
   switch (arc.web3.currentProvider.__networkId) {
     case "4":
       prefix = "rinkeby.";

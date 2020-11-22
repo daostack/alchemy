@@ -3,7 +3,8 @@ import { ICompetitionProposalState,
   CompetitionSuggestion,
   ICompetitionSuggestionState,
   CompetitionVote,
-  Address } from "@daostack/arc.js";
+  Address,
+  Arc } from "@daostack/arc.js";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 
@@ -130,13 +131,14 @@ export const createCompetitionSubmission = (proposalId: string, options: ICreate
 
 export interface IVoteSubmissionOptions {
   id: string; // actual id, not the counter
+  arc: Arc;
 }
 
 export const voteForSubmission = (options: IVoteSubmissionOptions): ThunkAction<any, IRootState, null> => {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Vote Submission");
-      const submission = new CompetitionSuggestion(options.id, getArc());
+      const submission = new CompetitionSuggestion(options.id, options.arc);
 
       await submission.vote().subscribe(...observer);
     } catch (err) {
@@ -155,7 +157,7 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions): ThunkActio
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Redeem Submission");
-      const submission = new CompetitionSuggestion(options.id, getArc());
+      const submission = new CompetitionSuggestion(options.id, options.arc);
 
       await submission.redeem().subscribe(...observer);
     } catch (err) {
@@ -166,9 +168,9 @@ export const redeemForSubmission = (options: IVoteSubmissionOptions): ThunkActio
   };
 };
 
-export const getProposalSubmissions = (proposalId: string, subscribe = false): Observable<Array<ICompetitionSuggestionState>> => {
+export const getProposalSubmissions = (proposalId: string, subscribe = false, arc: Arc): Observable<Array<ICompetitionSuggestionState>> => {
   // fetchAllData so .state() comes from cache
-  const competition = new Competition(proposalId, getArc());
+  const competition = new Competition(proposalId, arc);
   return competition.suggestions({}, standardPolling(subscribe, true))
     .pipe(
       mergeMap(submissions => of(submissions).pipe(
@@ -178,31 +180,31 @@ export const getProposalSubmissions = (proposalId: string, subscribe = false): O
       )));
 };
 
-export const getSubmission = (id: string, subscribe = false): Observable<ICompetitionSuggestionState> => {
-  const submission = new CompetitionSuggestion(id, getArc());
+export const getSubmission = (id: string, subscribe = false, arc: Arc): Observable<ICompetitionSuggestionState> => {
+  const submission = new CompetitionSuggestion(id, arc);
   return submission.state(standardPolling(subscribe));
 };
 
-export const getCompetitionVotes = (competitionId: string, voterAddress: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
-  const competition = new Competition(competitionId, getArc());
+export const getCompetitionVotes = (competitionId: string, voterAddress: Address, subscribe = false, arc: Arc): Observable<Array<CompetitionVote>> => {
+  const competition = new Competition(competitionId, arc);
   /**
    * none of the current uses require the vote state
    */
   return competition.votes({ where: { voter: voterAddress } }, standardPolling(subscribe, true));
 };
 
-const getSubmissionVotes = (submissionId: string, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
+const getSubmissionVotes = (submissionId: string, arc: Arc, voterAddress?: Address, subscribe = false): Observable<Array<CompetitionVote>> => {
   // submissionId is the actual id, not the count
-  const submission = new CompetitionSuggestion(submissionId, getArc());
+  const submission = new CompetitionSuggestion(submissionId, arc);
   return submission.votes(voterAddress ? { where: { voter: voterAddress } } : {}, standardPolling(subscribe, true));
 };
 
-export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: string, subscribe = false): Observable<boolean> => {
+export const getSubmissionVoterHasVoted = (submissionId: string, voterAddress: string, subscribe = false, arc: Arc): Observable<boolean> => {
   if (!voterAddress) {
     return of(false);
   }
   // submissionId is the actual id, not the count
-  return getSubmissionVotes(submissionId, voterAddress, subscribe)
+  return getSubmissionVotes(submissionId, arc, voterAddress, subscribe)
     .pipe(map((votes: Array<CompetitionVote>) => !!votes.length));
 };
 

@@ -9,7 +9,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { createProposal } from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
-import { isValidUrl, getNetworkByAddress, getArcByAddress } from "lib/util";
+import { isValidUrl, getNetworkByAddress, getArcByAddress, getArcByDAOAddress } from "lib/util";
 import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSIONS, schemeNameAndAddress, SchemePermissions, schemeNameFromAddress } from "lib/schemeUtils";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
@@ -399,7 +399,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                     </TrainingTooltip>
 
                     <div className={css.tagSelectorContainer}>
-                      <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
+                      <TagsSelector onChange={this.onTagsChange} tags={this.state.tags} arc={getArcByDAOAddress(this.props.daoAvatarAddress)}></TagsSelector>
                     </div>
 
                     <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">

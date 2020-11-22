@@ -1,6 +1,6 @@
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
-import { humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens, isAddress } from "lib/util";
+import { humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens, isAddress, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import { schemeName } from "lib/schemeUtils";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
@@ -164,9 +164,9 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   private voteOnSubmission = async (): Promise<void> => {
     const { showNotification } = this.props;
 
-    if (!await enableWalletProvider({ showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification }, getNetworkByDAOAddress(this.props.daoState.address))) { return; }
 
-    await this.props.voteForSubmission({ id: this.state.showingSubmissionDetails.id });
+    await this.props.voteForSubmission({ id: this.state.showingSubmissionDetails.id, arc: getArcByDAOAddress(this.props.daoState.address) });
     // this.state.votedSuggestions.add(this.state.showingSubmissionDetails.id);
     // this.setState({ votedSuggestions: this.state.votedSuggestions });
   }
@@ -174,9 +174,9 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
   private redeemSubmission = async (): Promise<void> => {
     const { showNotification } = this.props;
 
-    if (!await enableWalletProvider({ showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification }, getNetworkByDAOAddress(this.props.daoState.address))) { return; }
 
-    await this.props.redeemForSubmission({ id: this.state.showingSubmissionDetails.id });
+    await this.props.redeemForSubmission({ id: this.state.showingSubmissionDetails.id, arc: getArcByDAOAddress(this.props.daoState.address) });
   }
 
   private distributionsHtml() {
@@ -315,7 +315,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
         <div className={css.middleSection}>
           <div className={css.leftSection}>
             {tags && tags.length ? <div className={css.tagsContainer}>
-              <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
+              <TagsSelector readOnly darkTheme tags={tags} arc={getArcByDAOAddress(daoState.address)}></TagsSelector>
             </div> : ""}
 
             <div className={classNames({ [css.description]: true, [css.hasSubmissions]: hasSubmissions })}>
@@ -447,12 +447,12 @@ export default withSubscription({
     // // eslint-disable-next-line @typescript-eslint/no-empty-function
     // await arc.getObservable(cacheQuery, standardPolling()).subscribe(() => {});
     // end cache priming
-
+    const arc = getArcByDAOAddress(props.daoState.address);
     return combineLatest(
       // we do not need to subscribe here (second argument = false), because we already subscribed in the line above
-      getProposalSubmissions(props.proposalState.id, true),
+      getProposalSubmissions(props.proposalState.id, true, arc),
       // the next construction gets the suggestions for which the user has voted
-      props.currentAccountAddress ? getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true)
+      props.currentAccountAddress ? getCompetitionVotes(props.proposalState.id, props.currentAccountAddress, true, arc)
         .pipe(
           map((votes: Array<CompetitionVote>) => {
             const set = new Set<string>();

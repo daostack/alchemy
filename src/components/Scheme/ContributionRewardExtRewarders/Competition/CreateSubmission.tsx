@@ -1,6 +1,6 @@
 import { IDAOState, IProposalState, Address } from "@daostack/arc.js";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { isValidUrl, getNetworkByAddress } from "lib/util";
+import { isValidUrl, getNetworkByAddress, getArcByDAOAddress} from "lib/util";
 import * as React from "react";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -177,7 +177,7 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
 
               <div className={css.tagSelectorContainer}>
-                <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
+                <TagsSelector onChange={this.onTagsChange} tags={this.state.tags} arc={getArcByDAOAddress(this.props.daoState.address)}></TagsSelector>
               </div>
 
               <TrainingTooltip overlay="Link to the fully detailed description of your submission" placement="right">

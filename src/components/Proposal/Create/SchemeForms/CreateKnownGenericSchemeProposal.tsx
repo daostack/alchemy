@@ -433,7 +433,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   </label>
 
                   <div className={css.tagSelectorContainer}>
-                    <TagsSelector onChange={this.onTagsChange} tags={this.state.tags}></TagsSelector>
+                    <TagsSelector onChange={this.onTagsChange} tags={this.state.tags} arc={arc}></TagsSelector>
                   </div>
 
                   <label htmlFor="urlInput">
