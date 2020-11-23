@@ -2,7 +2,7 @@ import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, S
 import { approveStakingGens, stakeProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import classNames from "classnames";
 import Analytics from "lib/analytics";
 import { formatTokens, getNetworkByDAOAddress } from "lib/util";

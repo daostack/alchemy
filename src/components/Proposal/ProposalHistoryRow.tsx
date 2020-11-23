@@ -15,7 +15,7 @@ import StakeGraph from "./Staking/StakeGraph";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import * as css from "./ProposalHistoryRow.scss";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 
 interface IExternalProps {
   proposal: Proposal;

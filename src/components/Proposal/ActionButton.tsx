@@ -17,7 +17,7 @@ import { of, combineLatest, Observable } from "rxjs";
 import * as css from "./ActionButton.scss";
 import RedemptionsTip from "./RedemptionsTip";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 
 interface IExternalProps {
   currentAccountAddress?: Address;

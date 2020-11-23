@@ -1,5 +1,5 @@
 // tslint:disable:max-classes-per-file
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import { Networks, targetedNetwork } from "lib/util";
 
 const Web3 = require("web3");

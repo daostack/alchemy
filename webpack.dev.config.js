@@ -24,6 +24,7 @@ module.exports = merge(baseConfig, {
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, 'dist'),
+    chunkFilename: '[id]-[name].chunk.js',
     // necessary for HMR to know where to load the hot update chunks
     publicPath: '/'
   },

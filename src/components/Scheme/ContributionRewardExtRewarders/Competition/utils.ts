@@ -8,7 +8,7 @@ import { ICompetitionProposalState,
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 
-import moment = require("moment");
+import * as moment from "moment";
 import { getArc } from "arc";
 import { operationNotifierObserver } from "actions/arcActions";
 import { IRootState } from "reducers";

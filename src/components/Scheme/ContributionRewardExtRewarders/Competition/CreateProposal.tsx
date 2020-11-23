@@ -16,8 +16,8 @@ import { checkTotalPercent } from "lib/util";
 import * as Datetime from "react-datetime";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
-import moment = require("moment");
-import BN = require("bn.js");
+import * as moment from "moment";
+import * as BN from "bn.js";
 import HelpButton from "components/Shared/HelpButton";
 
 interface IExternalProps {

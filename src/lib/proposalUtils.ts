@@ -1,5 +1,5 @@
 import { copyToClipboard } from "./util";
-import moment = require("moment-timezone");
+import * as moment from "moment-timezone";
 
 const cloneDeep = require("clone-deep");
 
