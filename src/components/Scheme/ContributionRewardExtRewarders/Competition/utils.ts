@@ -15,7 +15,7 @@ import { IRootState } from "reducers";
 import { Observable, of } from "rxjs";
 import { map, mergeMap, toArray, first } from "rxjs/operators";
 import { GRAPH_POLL_INTERVAL } from "../../../../settings";
-import { getNetworkByAddress } from "lib/util";
+import { getNetworkByDAOAddress } from "lib/util";
 
 /**
  * Defined in the order that Competition cards should be sorted in the List component.
@@ -119,7 +119,7 @@ export const createCompetitionSubmission = (proposalId: string, options: ICreate
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
       const observer = operationNotifierObserver(dispatch, "Create Submission");
-      const competition = new Competition(proposalId, getArc(getNetworkByAddress(daoAddress)));
+      const competition = new Competition(proposalId, getArc(getNetworkByDAOAddress(daoAddress)));
       await competition.createSuggestion(options).subscribe(...observer);
     } catch (err) {
       // eslint-disable-next-line no-console

@@ -15,7 +15,7 @@ import * as BN from "bn.js";
  */
 import "moment";
 import * as moment from "moment-timezone";
-import { getArc, getArcs, getDAOs} from "../arc";
+import { getArc, getArcs, getDAOs } from "../arc";
 import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
 import { GRAPH_POLL_INTERVAL } from "../settings";
 
@@ -134,12 +134,16 @@ export function toWei(amount: number): BN {
 
 export type Networks = "main" | "rinkeby" | "ganache" | "xdai" | "kovan";
 
+export const targetNetworks = (): Networks[] => {
+  return process.env.NETWORKS.split("*") as Networks[];
+};
+
 /**
  * Get the network id to which the current build expects connect.
  * Note this doesn't belong in arc.ts else a circular module dependency is created.
  */
 export function targetedNetwork(): Networks {
-  switch (process.env.NETWORK) {
+  switch (targetNetworks()[0] as string) {
     case "test":
     case "ganache":
     case "private": {
@@ -260,16 +264,12 @@ export function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve: () => void): any => setTimeout(resolve, milliseconds));
 }
 
-/**
- * Given a provider returns the network
- * @param {any} provider
- * @returns {Networks}
- */
-export const getNetworkByProvider = (provider: any): Networks => {
-  if (provider.chainId === "0x64" || provider.chainId === "100") {
-    return "xdai";
+export const getArcByProvider = async (provider: any): Promise<Arc> => {
+  if (!provider || !provider.chainId) {
+    return null;
   }
-  return "main";
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  return getArc(await getNetworkName());
 };
 
 /**
@@ -338,7 +338,7 @@ export async function getNetworkId(web3Provider?: any): Promise<string> {
   let web3: any;
 
   try {
-    arc = getArc(getNetworkByProvider(web3Provider));
+    arc = await getArcByProvider(web3Provider);
   } catch {
     // Do nothing
   }
@@ -370,6 +370,7 @@ export async function getNetworkName(id?: string): Promise<Networks> {
 
   switch (id) {
     case "main":
+    case "0x1":
     case "1":
       return "main";
     // case "morden":
@@ -380,11 +381,14 @@ export async function getNetworkName(id?: string): Promise<Networks> {
     //   return "ropsten";
     case "rinkeby":
     case "4":
+    case "0x4":
       return "rinkeby";
     case "xdai":
+    case "0x64":
     case "100":
       return "xdai";
     case "kovan":
+    case "0x2a":
     case "42":
       return "kovan";
     case "private":
@@ -395,28 +399,23 @@ export async function getNetworkName(id?: string): Promise<Networks> {
   }
 }
 
-export function linkToEtherScan(address: Address, tokenHoldings = false) {
-  let prefix = "";
-  let arc = getArcByDAOAddress(address);
-  if (!arc) {
-    arc = getArcByAddress(address);
+export function linkToEtherScan(address: Address, network: Networks, tokenHoldings = false) {
+
+  if (network === "xdai") {
+    return tokenHoldings ?
+      `https://blockscout.com/poa/xdai/address/${address}/tokens` :
+      `https://blockscout.com/poa/xdai/${address.length > 42 ? "tx" : "address"}/${address}`;
+  } else {
+    let prefix = "";
+    if (network !== "main") {
+      prefix = `${network}.`;
+    }
+    return tokenHoldings ?
+      `https://${prefix}etherscan.io/tokenholdings?a=${address}` :
+      `https://${prefix}etherscan.io/address/${address}`;
   }
-  switch (arc.web3.currentProvider.__networkId) {
-    case "4":
-      prefix = "rinkeby.";
-      break;
-    case "42":
-      prefix = "kovan.";
-      break;
-    case "100": // xdai
-      return tokenHoldings ?
-        `https://blockscout.com/poa/xdai/address/${address}/tokens` :
-        `https://blockscout.com/poa/xdai/${address.length > 42 ? "tx" : "address"}/${address}`;
-  }
-  return tokenHoldings ?
-    `https://${prefix}etherscan.io/tokenholdings?a=${address}` :
-    `https://${prefix}etherscan.io/address/${address}`;
 }
+
 
 export type AccountClaimableRewardsType = { [key: string]: BN };
 /**
@@ -775,8 +774,7 @@ export function safeMoment(dateSpecifier: moment.Moment | Date | number | string
   }
 }
 
-export const standardPolling = (fetchAllData = false) =>
-{ return { polling: true, pollInterval: GRAPH_POLL_INTERVAL, fetchAllData }; };
+export const standardPolling = (fetchAllData = false) => { return { polling: true, pollInterval: GRAPH_POLL_INTERVAL, fetchAllData }; };
 
 
 /**
@@ -794,7 +792,7 @@ export const buf2hex = (buffer: Array<any>): string => { // buffer is an ArrayBu
  * @returns {string} Contract name
  */
 export const getContractName = (address: string, daoAddress: string): string => {
-  const arc = getArc(getNetworkByAddress(daoAddress));
+  const arc = getArc(getNetworkByDAOAddress(daoAddress));
   try {
     return arc.getContractInfo(address.toLowerCase()).name;
   } catch (e) {

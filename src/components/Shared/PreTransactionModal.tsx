@@ -8,7 +8,7 @@ import ProposalSummary from "components/Proposal/ProposalSummary";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Analytics from "lib/analytics";
 import { Page } from "pages";
-import { formatTokens, fromWei, getExchangesList, humanProposalTitle } from "lib/util";
+import { formatTokens, fromWei, getExchangesList, getNetworkByDAOAddress, humanProposalTitle } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -81,7 +81,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
 
   private handleClickAction = async (): Promise<void> => {
     const { actionType, showNotification } = this.props;
-    if (!await enableWalletProvider({ showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification }, getNetworkByDAOAddress(this.props.dao.address))) { return; }
 
     if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
       this.props.action(this.state.stakeAmount);

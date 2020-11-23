@@ -132,7 +132,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
 
     const { showNotification } = this.props;
 
-    if (!await enableWalletProvider({ showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification }, getNetworkByDAOAddress(this.props.proposalState.dao.id))) { return; }
 
     this.setState({ showingCreateSubmission: true });
 

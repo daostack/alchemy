@@ -84,7 +84,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
   public daoMenu() {
     const dao = this.props.data;
 
-    const daoHoldingsAddress = linkToEtherScan(dao.address, true);
+    const daoHoldingsAddress = linkToEtherScan(dao.address, getNetworkByDAOAddress(dao.address), true);
     const bgPattern = generate(dao.address + dao.name);
 
     return (
@@ -291,7 +291,7 @@ const ETHBalance = (props: IEthProps) => {
 
 const SubscribedEthBalance = withSubscription({
   wrappedComponent: ETHBalance,
-  loadingComponent: <li key="ETH">... {baseTokenName()}</li>,
+  loadingComponent: <li key="ETH">... (x)Gen</li>,
   errorComponent: null,
   checkForUpdate: (oldProps: IEthProps, newProps: IEthProps) => {
     return oldProps.dao.address !== newProps.dao.address;

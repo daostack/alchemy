@@ -1,14 +1,13 @@
 import { Address, DAOFieldsFragment, IContributionReward, IDAOState, IRewardState, Proposal } from "@daostack/arc.js";
-import { enableWalletProvider, getArc } from "arc";
+import { enableWalletProvider, getArcs } from "arc";
 import { redeemProposal } from "actions/arcActions";
-
 import * as BN from "bn.js";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
 import Analytics from "lib/analytics";
 import { createDaoStateFromQuery, IDAOData } from "lib/daoHelpers";
-import { baseTokenName, formatTokens, genName, standardPolling, tokenDecimals, tokenSymbol, getNetworkByAddress } from "lib/util";
+import { baseTokenName, formatTokens, genName, getArcByDAOAddress, getNetworkByDAOAddress, standardPolling, tokenDecimals, tokenSymbol } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -16,8 +15,8 @@ import { connect } from "react-redux";
 import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
-import { of } from "rxjs";
-import { map } from "rxjs/operators";
+import { of, concat } from "rxjs";
+import { map, first } from "rxjs/operators";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./RedemptionsPage.scss";
 
@@ -129,8 +128,6 @@ class RedemptionsPage extends React.Component<IProps, null> {
   private renderProposalsPerDAO(): RenderOutput[] {
     const { currentAccountAddress, data: proposals } = this.props;
 
-    const arc = getArc(getNetworkByAddress(currentAccountAddress));
-
     const daoStatePerAddress = new Map<Address, IDAOState>();
     const proposalsPerDao = new Map<Address, IProposalData[]>();
     proposals.forEach(proposal => {
@@ -139,7 +136,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
       }
       proposalsPerDao.get(proposal.dao.id).push(proposal);
       if (!daoStatePerAddress.get(proposal.dao.id)) {
-        daoStatePerAddress.set(proposal.dao.id, createDaoStateFromQuery(proposal.dao, undefined));
+        daoStatePerAddress.set(proposal.dao.id, createDaoStateFromQuery(proposal.dao, getNetworkByDAOAddress(proposal.dao.id)));
       }
     });
 
@@ -153,7 +150,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
               key={"proposal_" + proposal.id}
               currentAccountAddress={currentAccountAddress}
               daoState={daoState}
-              proposal={new Proposal(proposal.id, arc)}
+              proposal={new Proposal(proposal.id, getArcByDAOAddress(daoAddress))}
             />;
           })}
         </div>
@@ -240,7 +237,8 @@ const SubscribedRedemptionsPage = withSubscription({
       return of(null);
     }
 
-    const arc = getArc(getNetworkByAddress(currentAccountAddress));
+    const proposals = [];
+    const arcs = getArcs();
     const query = gql`query proposalsWithUnclaimedRewards
       {
         proposals(
@@ -276,9 +274,11 @@ const SubscribedRedemptionsPage = withSubscription({
       }
       ${DAOFieldsFragment}
     `;
-    const proposals = arc.getObservable(query, standardPolling())
-      .pipe(map((result: any) => result.data.proposals));
-    return proposals;
+    for (const network in arcs) {
+      proposals.push(arcs[network].getObservable(query, standardPolling())
+        .pipe(map((result: any) => result.data.proposals)));
+    }
+    return concat(proposals).pipe(first()).toPromise();
   },
 });
 

@@ -8,7 +8,6 @@ import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
 import { IRootState } from "reducers";
 import { FollowType, IProfileState } from "reducers/profilesReducer";
-
 import * as css from "./FollowButton.scss";
 
 interface IExternalProps {

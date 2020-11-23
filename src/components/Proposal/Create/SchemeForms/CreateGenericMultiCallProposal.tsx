@@ -136,7 +136,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
   }
 
   public async handleSubmit(formValues: IFormValues, { setSubmitting }: any): Promise<void> {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoAvatarAddress))) { return; }
 
     const contractsToCall = [];
     const callsData = [];
@@ -382,7 +382,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                 {loading ? "Loading..." : addContractStatus.error === "ABI_DATA_ERROR" ?
                   <div>
                     {addContractStatus.message}
-                    <a href={linkToEtherScan(values.addContract)} target="_blank" rel="noopener noreferrer">contract</a>
+                    <a href={linkToEtherScan(values.addContract, getNetworkByDAOAddress(this.props.daoAvatarAddress))} target="_blank" rel="noopener noreferrer">contract</a>
                   </div> : addContractStatus.message}
               </div>}
 

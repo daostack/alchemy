@@ -1,5 +1,5 @@
 import { NotificationStatus } from "reducers/notifications";
-import { getNetworkId, getNetworkName, targetedNetwork, Networks, getNetworkByProvider } from "./lib/util";
+import { getNetworkId, getNetworkName, targetedNetwork, Networks } from "./lib/util";
 import { settings } from "./settings";
 import { Address, Arc } from "@daostack/arc.js";
 import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
@@ -382,7 +382,7 @@ async function enableWeb3Provider(network?: Networks): Promise<void> {
     throw new Error("Unable to enable provider");
   }
 
-  if (!await initializeArc(getNetworkByProvider(provider), provider)) {
+  if (!await initializeArc(await getNetworkName(provider.chainId), provider)) {
   // eslint-disable-next-line no-console
     console.error("Unable to initialize Arc");
     throw new Error("Unable to initialize Arc");
@@ -405,7 +405,7 @@ async function getCurrentAccountFromProvider(): Promise<Address | null> {
      */
     return null;
   }
-  return _getCurrentAccountFromProvider(getNetworkByProvider(selectedProvider));
+  return _getCurrentAccountFromProvider(await getNetworkName(selectedProvider.chainId));
 }
 
 /**
@@ -459,7 +459,7 @@ export function getAccountIsEnabled(): boolean {
  * @param options `IEnableWWalletProviderParams`
  * @returns Promise of true on success
  */
-export async function enableWalletProvider(options: IEnableWalletProviderParams, network?: Networks): Promise<boolean> {
+export async function enableWalletProvider(options: IEnableWalletProviderParams, network = "xdai" as Networks): Promise<boolean> {
   try {
 
     if (inTesting()) {
@@ -548,7 +548,7 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
                    * Also handles how the Burner provider switches from a Fortmatic address to the
                    * burner address at the time of connecting.
                    */
-                  await initializeArc(getNetworkByProvider(selectedProvider), selectedProvider);
+                  await initializeArc(await getNetworkName(selectedProvider.chainId), selectedProvider);
                 }
                 observer.next(account);
                 // eslint-disable-next-line require-atomic-updates

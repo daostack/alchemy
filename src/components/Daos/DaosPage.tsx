@@ -15,7 +15,7 @@ import { IRootState } from "reducers";
 import { combineLatest, of } from "rxjs";
 import { first } from "rxjs/operators";
 import cn from "classnames";
-import { showSimpleMessage, standardPolling, Networks } from "lib/util";
+import { showSimpleMessage, standardPolling, Networks, targetNetworks } from "lib/util";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 import BHubReg from "../Buidlhub/Registration";
@@ -188,7 +188,7 @@ class DaosPage extends React.Component<IProps, IState> {
               <div className={css.headerTitle}>
                 <h2 data-test-id="header-all-daos">
                   Your DAOs
-                  {process.env.NETWORK !== "xdai" ?
+                  {targetNetworks().length > 1 ?
                     <i className={cn("fa fa-envelope", css.emailIcon)} onClick={this.registerForMonitoring} />
                     : ""}
                 </h2>

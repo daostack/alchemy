@@ -3,7 +3,7 @@ import * as arcActions from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, getLocalTimezone, getNetworkByAddress, getNetworkByDAOAddress, getArcByDAOAddress } from "lib/util";
+import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, getLocalTimezone, getNetworkByDAOAddress, getArcByDAOAddress } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
@@ -117,7 +117,7 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
   constructor(props: IProps) {
     super(props);
 
-    const arc = getArc(getNetworkByAddress(props.daoAvatarAddress));
+    const arc = getArc(getNetworkByDAOAddress(props.daoAvatarAddress));
     const now = moment();
 
     this.initialFormValues = importUrlValues<IFormValues>({
@@ -656,7 +656,7 @@ const SubscribedCreateContributionRewardExProposal = withSubscription({
   wrappedComponent: CreateProposal,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc(getNetworkByAddress(props.daoAvatarAddress));
+    const arc = getArc(getNetworkByDAOAddress(props.daoAvatarAddress));
     return arc.dao(props.daoAvatarAddress).state();
   },
 });

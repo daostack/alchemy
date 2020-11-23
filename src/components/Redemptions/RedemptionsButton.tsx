@@ -1,21 +1,21 @@
 import { Address } from "@daostack/arc.js";
-import { getArc } from "arc";
+import { getArcs } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
 import * as React from "react";
 import Tooltip from "rc-tooltip";
 import { Link } from "react-router-dom";
-import { of } from "rxjs";
-import { map } from "rxjs/operators";
+import { of, concat } from "rxjs";
+import { map, first } from "rxjs/operators";
 import RedemptionsMenu from "./RedemptionsMenu";
 import * as css from "./RedemptionsButton.scss";
-import { standardPolling, getNetworkByAddress } from "lib/util";
+import { standardPolling } from "lib/util";
 
 interface IExternalProps {
   currentAccountAddress?: Address;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<any[]>;
+type IProps = IExternalProps & ISubscriptionProps<any[][]>;
 
 class RedemptionsButton extends React.Component<IProps, null> {
   private menu = React.createRef<Tooltip>()
@@ -88,16 +88,22 @@ export default withSubscription({
       return of(null);
     }
 
-    const arc = getArc(getNetworkByAddress(currentAccountAddress));
+    const quaries = [];
+    const arcs = getArcs();
     const redeemableProposalsQuery = gql`query proposalsWithUnclaimedRewards
       {
         proposals(where: {
           accountsWithUnclaimedRewards_contains: ["${currentAccountAddress}"]
         }) {
           id
+          dao { id }
         }
       }`;
-    return arc.getObservable(redeemableProposalsQuery, standardPolling())
-      .pipe(map((result: any) => result.data.proposals));
+    for (const network in arcs) {
+      quaries.push(arcs[network].getObservable(redeemableProposalsQuery, standardPolling())
+        .pipe(map((result: any) => result.data.proposals)));
+    }
+    return concat(quaries).pipe(first()).toPromise();
   },
+
 });

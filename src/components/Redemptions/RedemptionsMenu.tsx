@@ -1,5 +1,5 @@
 import { Address, IDAOState, IProposalState, IRewardState, Proposal, Reward } from "@daostack/arc.js";
-import { enableWalletProvider, getArc } from "arc";
+import { enableWalletProvider } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
 import * as BN from "bn.js";
@@ -7,7 +7,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import ActionButton from "components/Proposal/ActionButton";
 import RedemptionsString from "components/Proposal/RedemptionsString";
 import ProposalSummary from "components/Proposal/ProposalSummary";
-import { ethErrorHandler, humanProposalTitle, ethBalance, standardPolling, getNetworkByAddress, getArcByDAOAddress } from "lib/util";
+import { ethErrorHandler, humanProposalTitle, ethBalance, standardPolling, getArcByDAOAddress } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -109,11 +109,9 @@ const SubscribedRedemptionsMenu = withSubscription({
   errorComponent: (props) => <div className={css.menu}>{props.error.message}</div>,
   checkForUpdate: ["redeemableProposals"],
   createObservable: (props: IExternalProps) => {
-    // getArcs with loop
-    const arc = getArc("xdai"); // TO DO: XDAI need to loop over the arcs
     return combineLatest(
       props.redeemableProposals.map(proposalData => (
-        new Proposal(proposalData.id, arc).state()
+        new Proposal(proposalData.id, getArcByDAOAddress(proposalData.dao.id)).state()
       ))
     ).pipe(defaultIfEmpty([]));
   },
@@ -197,9 +195,9 @@ const SubscribedMenuItemContent = withSubscription({
   checkForUpdate: [], // Parent component will rerender anyway.
   createObservable: (props: IMenuItemProps) => {
     const { currentAccountAddress, proposal } = props;
-    const arc = getArc(getNetworkByAddress(currentAccountAddress));
+    const arc = getArcByDAOAddress(proposal.dao.id);
     const dao = arc.dao(proposal.dao.id);
-    const daoEthBalance = concat(of(new BN("0")), ethBalance(proposal.dao.id, getArcByDAOAddress(proposal.dao.id))).pipe(ethErrorHandler());
+    const daoEthBalance = concat(of(new BN("0")), ethBalance(proposal.dao.id, arc)).pipe(ethErrorHandler());
     const rewards = proposal.proposal.rewards({ where: { beneficiary: currentAccountAddress } })
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));

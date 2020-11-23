@@ -12,7 +12,7 @@ import { ConnectedRouter } from "react-router-redux";
 import { ThroughProvider } from "react-through";
 import * as css from "./layouts/App.scss";
 import { history, default as store } from "./configureStore";
-import { Networks } from "./lib/util";
+import { Networks, targetNetworks } from "./lib/util";
 
 export class App extends React.Component<{}, {
   arcIsInitialized: boolean;
@@ -43,7 +43,7 @@ export class App extends React.Component<{}, {
   }
 
   public async componentDidMount (): Promise<void> {
-    const networks = ["rinkeby", "xdai"];
+    const networks = targetNetworks();
     (window as any).arcs = {};
     (window as any).daos = {};
     // Do this here because we need to have initialized Arc first.  This will

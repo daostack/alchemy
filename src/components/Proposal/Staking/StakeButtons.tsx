@@ -5,7 +5,7 @@ import { enableWalletProvider } from "arc";
 import * as BN from "bn.js";
 import classNames from "classnames";
 import Analytics from "lib/analytics";
-import { formatTokens } from "lib/util";
+import { formatTokens, getNetworkByDAOAddress } from "lib/util";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import { Page } from "pages";
 import Tooltip from "rc-tooltip";
@@ -63,7 +63,7 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public showApprovalModal = async (_event: any): Promise<void> => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.dao.address))) { return; }
 
     this.setState({ showApproveModal: true });
   }
@@ -77,7 +77,7 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public showPreStakeModal = (prediction: number): (_event: any) => void => async (_event: any): Promise<void> => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.dao.address))) { return; }
     this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
   }
 
@@ -86,7 +86,7 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public handleClickPreApprove = async (_event: any): Promise<void> => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.dao.address))) { return; }
 
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.proposal.votingMachine, this.props.dao.id);
