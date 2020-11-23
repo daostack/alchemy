@@ -10,7 +10,7 @@ import ThreeboxModal from "components/Shared/ThreeboxModal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { Field, Formik, FormikProps } from "formik";
 import Analytics from "lib/analytics";
-import { standardPolling, getArcByDAOAddress } from "lib/util";
+import { standardPolling, getArcByDAOAddress, getNetworkByDAOAddress} from "lib/util";
 import CopyToClipboard, { IconColor } from "components/Shared/CopyToClipboard";
 import { Page } from "pages";
 import { parse } from "query-string";
@@ -117,7 +117,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
   public handleFormSubmit = async (values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> => {
     const { currentAccountAddress, showNotification, updateProfile } = this.props;
 
-    if (!await enableWalletProvider({ showNotification })) { setSubmitting(false); return; }
+    if (!await enableWalletProvider({ showNotification }, getNetworkByDAOAddress(this.props.daoAvatarAddress))) { setSubmitting(false); return; }
 
     if (this.props.threeBox || parseInt(localStorage.getItem("dontShowThreeboxModal"))) {
       await updateProfile(currentAccountAddress, values.name, values.description);

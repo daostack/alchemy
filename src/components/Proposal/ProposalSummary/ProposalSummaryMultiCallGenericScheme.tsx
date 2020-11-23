@@ -118,7 +118,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
               proposal.genericSchemeMultiCall.contractsToCall.map((contract, index) => (
                 <div key={index} className={css.multiCallContractDetails}>
                   <p><b>{`#${index + 1}`}</b></p>
-                  <p>Contract: <a className={css.valueText} href={linkToEtherScan(contract)} target="_blank" rel="noopener noreferrer">{getContractName(contract, this.props.dao.dao.id)} {`(${contract})`}</a></p>
+                  <p>Contract: <a className={css.valueText} href={linkToEtherScan(contract, getNetworkByDAOAddress(this.props.dao.address))} target="_blank" rel="noopener noreferrer">{getContractName(contract, this.props.dao.dao.id)} {`(${contract})`}</a></p>
                   <p>{baseTokenName(getNetworkByDAOAddress(this.props.dao.address))} value: <span className={css.valueText}>{fromWei(proposal.genericSchemeMultiCall.values[index])}</span></p>
                   <DecodedData contract={contract} callData={proposal.genericSchemeMultiCall.callsData[index]} />
                   <p>Raw call data:</p>

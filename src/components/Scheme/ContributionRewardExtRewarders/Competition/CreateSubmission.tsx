@@ -1,6 +1,6 @@
 import { IDAOState, IProposalState, Address } from "@daostack/arc.js";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { isValidUrl, getNetworkByAddress, getArcByDAOAddress} from "lib/util";
+import { isValidUrl, getNetworkByDAOAddress, getArcByDAOAddress} from "lib/util";
 import * as React from "react";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -83,7 +83,7 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
 
   public render(): RenderOutput {
     const { handleCancel, proposalState } = this.props;
-    const arc = getArc(getNetworkByAddress(this.props.daoState.dao.id));
+    const arc = getArc(getNetworkByDAOAddress(this.props.daoState.dao.id));
 
     return (
       <div className={css.createSubmissionForm}>

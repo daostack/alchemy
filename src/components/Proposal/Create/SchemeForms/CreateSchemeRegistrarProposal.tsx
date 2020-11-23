@@ -9,7 +9,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { createProposal } from "actions/arcActions";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import Analytics from "lib/analytics";
-import { isValidUrl, getNetworkByAddress, getArcByAddress, getArcByDAOAddress } from "lib/util";
+import { isValidUrl, getNetworkByDAOAddress, getArcByAddress, getArcByDAOAddress } from "lib/util";
 import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSIONS, schemeNameAndAddress, SchemePermissions, schemeNameFromAddress } from "lib/schemeUtils";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
@@ -115,7 +115,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any): Promise<void> {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoAvatarAddress))) { return; }
 
     let permissions = 1;
     if (values.permissions.registerSchemes) {
@@ -202,7 +202,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
     const { currentTab, requiredPermissions, showForm } = this.state;
 
-    const arc = getArc(getNetworkByAddress(this.props.scheme.dao));
+    const arc = getArc(getNetworkByDAOAddress(this.props.scheme.dao));
 
     const addSchemeButtonClass = classNames({
       [css.addSchemeButton]: true,
@@ -591,7 +591,7 @@ const SubscribedCreateSchemeRegistrarProposal = withSubscription({
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc(getNetworkByAddress(props.daoAvatarAddress));
+    const arc = getArc(getNetworkByDAOAddress(props.daoAvatarAddress));
     return arc.dao(props.daoAvatarAddress).schemes({ where: { isRegistered: true } }, { fetchAllData: true });
   },
 });

@@ -15,7 +15,7 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as arcActions from "actions/arcActions";
 
 import Analytics from "lib/analytics";
-import { isValidUrl, getArcByDAOAddress } from "lib/util";
+import { isValidUrl, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
@@ -98,7 +98,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
   private handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
 
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoAvatarAddress))) { return; }
 
     const currentAction = this.state.currentAction;
     const callValues = [];

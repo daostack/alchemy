@@ -67,7 +67,7 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoAvatarAddress))) { return; }
 
     const proposalValues = {...values,
       dao: this.props.daoAvatarAddress,

@@ -111,7 +111,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
   };
 
   private handleEditPlugin = async (e: any) => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoState.address))) { return; }
 
     this.props.history.push(`/dao/${this.props.daoState.id}/scheme/${this.props.data[1].id}/proposals/create/?currentTab=editScheme`);
     e.preventDefault();
