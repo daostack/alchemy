@@ -16,7 +16,7 @@ const AccountBalancesWrapper = (props: IProps) => {
   if (!dao){
     const arcs = getArcs();
     for (const net in arcs) {
-      accountBalances.push(<AccountBalances dao={null} arc={arcs[net]} network={net as Networks} address={currentAccountAddress} />);
+      accountBalances.push(<AccountBalances key={net} dao={null} arc={arcs[net]} network={net as Networks} address={currentAccountAddress} />);
     }
   } else {
     network = getNetworkByDAOAddress(dao.address);

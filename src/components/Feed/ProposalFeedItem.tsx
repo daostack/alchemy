@@ -4,7 +4,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import FollowButton from "components/Shared/FollowButton";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { humanProposalTitle, getArcByDAOAddress } from "lib/util";
+import { humanProposalTitle, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
@@ -53,7 +53,7 @@ const ProposalFeedItem = (props: IProps) => {
         <h3>{humanProposalTitle(event.proposal)}</h3>
       </Link>
 
-      <div className={css.followButton}><FollowButton id={event.proposal.id} type="proposals" /></div>
+      <div className={css.followButton}><FollowButton id={event.proposal.id} type="proposals" network={getNetworkByDAOAddress(dao.address)} /></div>
 
       <div className={css.proposalDescription}>
         { event.proposal.description ?

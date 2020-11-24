@@ -260,7 +260,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                         }
                       </div>
                     </div>
-                    { editing ? "" : <div className={css.followButton}><FollowButton id={accountAddress} type="users" /></div> }
+                    { editing ? "" : <div className={css.followButton}><FollowButton id={accountAddress} type="users" network={getNetworkByDAOAddress(this.props.daoAvatarAddress)} /></div> }
                     {Object.keys(accountProfile.socialURLs).length === 0 ? " " :
                       <div className={css.socialLogins}>
                         <h3>Social Verification</h3>

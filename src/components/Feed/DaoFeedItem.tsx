@@ -5,7 +5,7 @@ import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { getArcByDAOAddress } from "lib/util";
+import { getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import * as css from "./Feed.scss";
 
 type SubscriptionData = IDAOState;
@@ -27,7 +27,7 @@ const DaoFeedItem = (props: IProps) => {
       <Link to={"/dao/" + dao.address} className={css.daoName}>
         <span>{dao.name}</span>
       </Link>
-      <div className={css.followButton}><FollowButton id={event.dao.id} type="daos" /></div>
+      <div className={css.followButton}><FollowButton id={event.dao.id} type="daos" network={getNetworkByDAOAddress(dao.address)} /></div>
       <br/>
       <span>{dao.memberCount} DAO Members</span>
     </div>
