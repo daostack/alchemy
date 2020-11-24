@@ -119,7 +119,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
       showNotification,
     } = this.props;
 
-    if (!await enableWalletProvider({ showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification }, "xdai")) { return; }
 
     proposals.forEach(proposal => {
       redeemProposal(proposal.dao.id, proposal.id, currentAccountAddress);

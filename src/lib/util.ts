@@ -395,6 +395,7 @@ export async function getNetworkName(id?: string): Promise<Networks> {
     case "42":
       return "kovan";
     case "private":
+    case "0x539":
     case "1512051714758":
       return "ganache";
     default:

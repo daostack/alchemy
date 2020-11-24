@@ -10,7 +10,7 @@ import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
 import * as React from "react";
 import { combineLatest } from "rxjs";
-import { getArcByDAOAddress } from "lib/util";
+import { getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import * as css from "./Feed.scss";
 
 interface IStateProps {
@@ -45,7 +45,7 @@ const UserFeedItem = (props: IProps) => {
         <span className={css.reputation}><Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={member.reputation} /></span>
       </div>
 
-      <div className={css.followButton}><FollowButton id={event.user} type="users" /></div>
+      <div className={css.followButton}><FollowButton id={event.user} type="users" network={getNetworkByDAOAddress(dao.address)} /></div>
 
       <div className={css.bio}>
         Bio: {profile ? profile.description : "N/A"}

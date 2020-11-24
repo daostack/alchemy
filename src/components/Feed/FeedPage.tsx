@@ -49,7 +49,7 @@ class FeedPage extends React.Component<IProps, null> {
     enableWalletProvider({
       suppressNotifyOnSuccess: true,
       showNotification: this.props.showNotification,
-    });
+    }, "xdai");
   }
 
   public renderEmptyFeed() {

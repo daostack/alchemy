@@ -118,7 +118,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   : <p>New to DAOstack? Visit the <a href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">help center</a> to get started.</p>
           }
         </div>
-        <div className={css.followButton}><FollowButton id={dao.address} type="daos" style="white" /></div>
+        <div className={css.followButton}><FollowButton id={dao.address} type="daos" style="white" network={getNetworkByDAOAddress(dao.address)} /></div>
         <div className={css.daoNavHeading}><div>DAO Menu</div>{this.drawNavHeadingLine()}</div>
         <div className={css.daoNavigation}>
           <ul>

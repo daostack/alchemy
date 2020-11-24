@@ -459,7 +459,7 @@ export function getAccountIsEnabled(): boolean {
  * @param options `IEnableWWalletProviderParams`
  * @returns Promise of true on success
  */
-export async function enableWalletProvider(options: IEnableWalletProviderParams, network = "xdai" as Networks): Promise<boolean> {
+export async function enableWalletProvider(options: IEnableWalletProviderParams, network: Networks): Promise<boolean> {
   try {
 
     if (inTesting()) {
