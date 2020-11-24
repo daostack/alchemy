@@ -175,7 +175,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                     <ProposalCountdown proposal={proposal} detailView /> :
                     <span className={css.closedTime}>
                       {proposal.stage === IProposalStage.Queued ? "Expired" :
-                        proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
+                        proposal.stage === IProposalStage.PreBoosted ? "Ready to Unboost" :
                           "Closed"}&nbsp;
                       {closingTime(proposal).format("MMM D, YYYY")}
                     </span>
