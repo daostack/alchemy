@@ -534,12 +534,12 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
     let prevAccount = currentAccountAddress;
     let running = false;
 
-    function poll(): void {
+    async function poll(): Promise<void> {
 
       if (!running) {
         running = true;
         try {
-          getCurrentAccountFromProvider()
+          await getCurrentAccountFromProvider()
             .then(async (account: Address | null): Promise<void> => {
               if (prevAccount !== account) {
                 if (account && initializedAccount && (account !== initializedAccount)) {
