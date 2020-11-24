@@ -135,6 +135,9 @@ export function toWei(amount: number): BN {
 export type Networks = "main" | "rinkeby" | "ganache" | "xdai" | "kovan";
 
 export const targetNetworks = (): Networks[] => {
+  if (process.env.NETWORKS.includes("private")) {
+    return ["ganache"];
+  }
   return process.env.NETWORKS.split("*") as Networks[];
 };
 

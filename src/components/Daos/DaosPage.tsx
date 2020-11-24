@@ -118,12 +118,30 @@ class DaosPage extends React.Component<IProps, IState> {
     const { data, fetchMore } = this.props;
     const search = this.state.search.length > 2 ? this.state.search.toLowerCase() : "";
 
+    let yourDAOs = [] as DAO[];
+    let otherDAOs = [] as DAO[];
+
+    /**
+     * data is an array that holds all DAOs from all networks in the following way:
+     *  - arrays in indexes in a multiples of 3 contain all DAOs (e.g. data[0], data[3], data[6], ...)
+     *  - arrays in other indexes (e.g. data[1], data[2], data[4], data[5], ...) contain all followingDAOs and memberDAOs.
+     *  In the below loop we will combine all DAOs to *otherDAOs* and followingDAOs and memberDAOs to *yourDAOs*;
+     */
+    for (const [index, set] of data.entries()) {
+      if (index % 3 === 0) {
+        otherDAOs.push(set as any);
+      }
+      else yourDAOs.push(set as any);
+    }
+
+    // Combine all sub-arrays into one array.
+    yourDAOs = [].concat(...yourDAOs);
+    otherDAOs = [].concat(...otherDAOs);
+
     // Always show DAOs that the current user is a member of or follows first
-    const yourDAOs = data[1].concat(data[2]).concat(data[4]).concat(data[5]).filter(d => d.staticState.name.toLowerCase().includes(search)).sort((a, b) => a.staticState.name.localeCompare(b.staticState.name));
+    yourDAOs = yourDAOs.filter(d => d.staticState.name.toLowerCase().includes(search)).sort((a, b) => a.staticState.name.localeCompare(b.staticState.name));
     const yourDAOAddresses = yourDAOs.map(dao => dao.id);
 
-    // Then all the rest of the DAOs
-    let otherDAOs = data[0].concat(data[3]);
     // Add any DAOs found from searching the server to the list
     if (this.state.searchDaos.length > 0) {
       // make sure we don't add duplicate DAOs to the list
