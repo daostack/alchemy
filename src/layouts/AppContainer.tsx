@@ -29,7 +29,6 @@ const AccountProfilePage = lazy(() => import("components/Account/AccountProfileP
 const DaosPage = lazy(() => import("components/Daos/DaosPage"));
 const DaoCreator = lazy(() => import("components/DaoCreator"));
 const DaoContainer = lazy(() => import("components/Dao/DaoContainer"));
-const FeedPage = lazy(() => import("components/Feed/FeedPage"));
 const RedemptionsPage = lazy(() => import("components/Redemptions/RedemptionsPage"));
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -236,7 +235,6 @@ class AppContainer extends React.Component<IProps, IState> {
                   <Route path="/profile/:accountAddress" component={AccountProfilePage} />
                   <Route path="/redemptions" component={RedemptionsPage} />
                   <Route path="/daos" component={DaosPage} />
-                  <Route path="/feed" component={FeedPage} />
                   <Route path="/" component={DaosPage} />
                 </Switch>
               </Suspense>

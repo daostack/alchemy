@@ -13,6 +13,7 @@ describe("Header redemptions button", () => {
     const loginButton = await $("[data-test-id=\"loginButton\"]");
     await loginButton.click();
 
+    await hideCookieAcceptWindow();
     const redemptionsButton = await $("[data-test-id=\"redemptionsButton\"]");
     await redemptionsButton.waitForDisplayed();
     await redemptionsButton.click();

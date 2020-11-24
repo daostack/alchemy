@@ -224,11 +224,6 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
           <div className={`${css.siteLinksWrapper} ${testNet ? css.testNet : ""}`}>
             <ul>
               <li><Link to="/" onClick={this.handleCloseMenu}>Home</Link></li>
-              <li>
-                <TrainingTooltip overlay="See a feed of recent updates to DAOs you follow" placement="right">
-                  <Link to="/feed" onClick={this.handleCloseMenu}>Feed</Link>
-                </TrainingTooltip>
-              </li>
               <li><a className="externalLink" href="https://xgen.daostack.io/" target="_blank" rel="noopener noreferrer">xGEN / GEN</a></li>
               <li>
                 <a>$ Buy GEN</a>
