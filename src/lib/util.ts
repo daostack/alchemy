@@ -41,6 +41,16 @@ export function checkTotalPercent(split: any) {
 
 }
 
+export const getDAONameByID = (daoAddress: string): string => {
+  const daos = getDAOs();
+  for (const network in daos) {
+    if (daos[network][daoAddress] !== undefined) {
+      return daos[network][daoAddress];
+    }
+  }
+  return undefined;
+};
+
 export function addSeconds(date: Date, seconds: number) {
   date.setTime(date.getTime() + seconds);
   return date;

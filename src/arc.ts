@@ -153,9 +153,11 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
       console.error(`Error fetching contractinfos: ${err.message}`);
     }
 
+    // TO DO: bring all daos with loop (if more than 1000)
     const query = gql`query AllDaos {
      daos (first: 1000) {
        id
+       name
      }
     }`;
     const daos = await arc.sendQuery(query, {});
@@ -163,7 +165,7 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
     if (daos !== undefined) {
       const daosMap = {} as any;
       for (const dao of daos.data.daos) {
-        daosMap[dao.id] = network;
+        daosMap[dao.id] = dao.name;
       }
       (window as any).daos[network] = daosMap;
     } else {
