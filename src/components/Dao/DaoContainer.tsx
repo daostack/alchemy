@@ -22,7 +22,7 @@ import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
 import DaoLandingPage from "components/Dao/DaoLandingPage";
-import { standardPolling, targetedNetwork, getArcByDAOAddress } from "lib/util";
+import { standardPolling, targetedNetwork, getArcByDAOAddress, getDAONameByID } from "lib/util";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -30,6 +30,7 @@ interface IStateProps {
   currentAccountAddress: string;
   currentAccountProfile: IProfileState;
   daoAvatarAddress: string;
+  followingDaosAddresses: Array<any>;
 }
 
 interface IDispatchProps {
@@ -45,6 +46,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
     currentAccountAddress: state.web3.currentAccountAddress,
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
+    followingDaosAddresses: state.profiles[state.web3.currentAccountAddress]?.follows.daos,
   };
 };
 
@@ -81,15 +83,29 @@ class DaoContainer extends React.Component<IProps, null> {
   private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} daoState={this.props.data[0]} />;
   private daoLandingRoute = (_routeProps: any) => <DaoLandingPage daoState={this.props.data[0]} />;
   private modalRoute = (route: any) => `/dao/${route.params.daoAvatarAddress}/scheme/${route.params.schemeId}/`;
+  private onFollwingDaosListChange = (daoAddress: string, history: any) => history.push(`/dao/${daoAddress}`);
 
   public render(): RenderOutput {
     const daoState = this.props.data[0];
     const network = targetedNetwork();
+    const { followingDaosAddresses } = this.props;
+
+    const followingDaos = followingDaosAddresses?.map(daoAddress => {
+      return { address: daoAddress, name: getDAONameByID(daoAddress) };
+    });
+
+    const followingDaosOptions = followingDaos?.map(dao => {
+      return <option key={dao.address} selected={dao.address === daoState.address ? true : false} value={dao.address}>{dao.name}</option>;
+    });
+
+    if (!followingDaosAddresses?.includes(daoState.address)) {
+      followingDaosOptions?.push(<option selected value={daoState.address}>{daoState.name}</option>);
+    }
 
     return (
       <div className={css.outer}>
         <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
-        <BreadcrumbsItem to={"/dao/" + daoState.address}>{daoState.name}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`${window.location}`}><select className={css.follwingDaosList} onChange={(e) => this.onFollwingDaosListChange(e.target.value, this.props.history)}>{followingDaosOptions}</select></BreadcrumbsItem>
         <Helmet>
           <meta name="description" content={daoState.name + " | Managed on Alchemy by DAOstack"} />
           <meta name="og:description" content={daoState.name + " | Managed on Alchemy by DAOstack"} />

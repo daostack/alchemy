@@ -299,7 +299,7 @@ const SubscribedDaosPage = withSubscription({
   getFetchMoreObservable: createSubscriptionObservable,
 
   fetchMoreCombine: (prevData: SubscriptionData, newData: SubscriptionData) => {
-    return [prevData[0].concat(newData[0]), prevData[1], prevData[2], prevData[3].concat(newData[3]), prevData[4], prevData[5]] as SubscriptionData;
+    return [].concat(...prevData, ...newData);
   },
 });
 

@@ -4,7 +4,6 @@ import * as css from "./DaoLandingPage.scss";
 import { Page } from "pages";
 import Analytics from "lib/analytics";
 import { Link } from "react-router-dom";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { DiscussionEmbed } from "disqus-react";
 import { showSimpleMessage, targetedNetwork } from "lib/util";
 import customDaoInfo from "../../customDaoInfo";
@@ -50,9 +49,6 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.landingPage}>
-
-        <BreadcrumbsItem to={"/dao/" + daoState.address}>{daoState.name}</BreadcrumbsItem>
-
         <div className={css.infoContainer}>
           <div className={css.titleContainer}>
             <div className={css.row}>
