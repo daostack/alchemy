@@ -79,7 +79,7 @@
     "test:unit": "jest"
   },
   "dependencies": {
-    "3box": "1.22.2",
+    "3box": "1.20.2",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
     "@daostack/arc.js": "0.2.76",
     "@dorgtech/daocreator-ui": "^1.0.13",
