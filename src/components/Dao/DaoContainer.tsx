@@ -10,7 +10,6 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
-//@ts-ignore
 import { ModalRoute } from "react-router-modal";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
@@ -127,7 +126,8 @@ class DaoContainer extends React.Component<IProps, IState> {
     const { followingDaosAddresses } = this.props;
     const { memberDaos } = this.state;
 
-    const followingDaos = followingDaosAddresses?.map(daoAddress => {
+    const followingDaos = followingDaosAddresses?.filter(address => getDAONameByID(address) !== undefined)
+    .map(daoAddress => {
       return { id: daoAddress, name: getDAONameByID(daoAddress) };
     });
 
