@@ -181,7 +181,7 @@
           "decimals": 18,
           "label": "Token Weight (%)",
           "name": "new weight",
-          "unit": "unit",
+          "unit": "uint",
           "placeholder": "Enter 20.5% as 20.5"
         }
       ],
@@ -218,17 +218,15 @@
           "placeholder": "Weight (1000000000000000000)"
         },
         {
-          "decimals": 18,
           "label": "Start block",
           "name": "Start update from block",
-          "unit": "unit",
+          "unit": "uint",
           "placeholder": "Block number (199199)"
         },
         {
-          "decimals": 18,
           "label": "End block",
           "name": "End update at block",
-          "unit": "unit",
+          "unit": "uint",
           "placeholder": "Block number (399199)"
         }
       ],
