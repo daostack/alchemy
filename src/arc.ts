@@ -1,5 +1,5 @@
 import { NotificationStatus } from "reducers/notifications";
-import { getNetworkId, getNetworkName, targetedNetwork, Networks } from "./lib/util";
+import { getNetworkId, getNetworkName, targetedNetwork, targetNetworks, Networks } from "./lib/util";
 import { settings } from "./settings";
 import { Address, Arc } from "@daostack/arc.js";
 import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
@@ -222,13 +222,13 @@ async function ensureCorrectNetwork(provider: any, network?: Networks): Promise<
   /**
    * It is required that the provider be the correct one for the current platform
    */
-  const expectedNetworkName = network || targetedNetwork();
+  const expectedNetworkNames = network || targetNetworks();
 
   // TODO: we should not use the network NAME but the network ID to identify the network...
   const networkName = await getProviderNetworkName(provider);
 
-  if (networkName !== expectedNetworkName) {
-    if (expectedNetworkName === "xdai") {
+  if (!expectedNetworkNames.includes(networkName as Networks)) {
+    if (expectedNetworkNames.includes("xdai")) {
       // TODO: xdai is reporting network 'unknown (100)` , it seems
       if (networkName === "unknown (100)") {
         // we are fine, mayby
@@ -236,8 +236,8 @@ async function ensureCorrectNetwork(provider: any, network?: Networks): Promise<
       }
     }
     // eslint-disable-next-line no-console
-    console.error(`connected to the wrong network, should be ${expectedNetworkName} (instead of "${networkName}")`);
-    throw new Error(`Please connect your wallet provider to ${expectedNetworkName}`);
+    console.error(`connected to the wrong network, should be ${expectedNetworkNames} (instead of "${networkName}")`);
+    throw new Error(`Please connect your wallet provider to ${(expectedNetworkNames as Array<any>).join(" or ")}`);
   }
 }
 
@@ -422,7 +422,7 @@ export async function logout(showNotification?: any): Promise<boolean> {
 
   if (selectedProvider) {
     // clearing this, initializeArc will be made to use the default readonly web3Provider
-    const networkName = await getNetworkName();
+    const networkName = await getNetworkName(selectedProvider.chainId);
     // eslint-disable-next-line require-atomic-updates
     selectedProvider = undefined;
 
