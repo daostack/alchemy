@@ -7,6 +7,7 @@ import { Observable } from "rxjs";
 import gql from "graphql-tag";
 
 const Web3 = require("web3");
+const MAX_BATCH_QUERY = 1000;
 
 /**
  * This is only set after the user has selected a provider and enabled an account.
@@ -115,6 +116,30 @@ export function providerHasConfigUi(provider?: any): any | undefined {
   return provider && provider.isTorus;
 }
 
+async function getAllDaos(arc: Arc): Promise<any> {
+  const allDaos = [];
+  let daos = [];
+  let skip = 0;
+
+  do {
+    const query = gql`
+    query AllDaos {
+      daos(first: ${MAX_BATCH_QUERY} skip: ${skip * MAX_BATCH_QUERY}) {
+        id
+        name
+      }
+    }
+  `;
+    const response = await arc.sendQuery(query, {});
+    daos = response.data.daos as any[];
+    if (daos.length > 0) {
+      allDaos.push(...daos);
+    }
+    skip++;
+  } while (daos.length === MAX_BATCH_QUERY);
+  return allDaos;
+}
+
 /**
  * initialize Arc.  Does not throw exceptions, returns boolean success.
  * @param provider Optional web3Provider
@@ -153,18 +178,11 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
       console.error(`Error fetching contractinfos: ${err.message}`);
     }
 
-    // TO DO: bring all daos with loop (if more than 1000)
-    const query = gql`query AllDaos {
-     daos (first: 1000) {
-       id
-       name
-     }
-    }`;
-    const daos = await arc.sendQuery(query, {});
+    const daos = await getAllDaos(arc);
 
     if (daos !== undefined) {
       const daosMap = {} as any;
-      for (const dao of daos.data.daos) {
+      for (const dao of daos) {
         daosMap[dao.id] = dao.name;
       }
       (window as any).daos[network] = daosMap;
@@ -222,7 +240,7 @@ async function ensureCorrectNetwork(provider: any, network?: Networks): Promise<
   /**
    * It is required that the provider be the correct one for the current platform
    */
-  const expectedNetworkNames = network || targetNetworks();
+  const expectedNetworkNames = network?[network]: targetNetworks();
 
   // TODO: we should not use the network NAME but the network ID to identify the network...
   const networkName = await getProviderNetworkName(provider);
