@@ -140,7 +140,7 @@ class DaoContainer extends React.Component<IProps, IState> {
     });
 
     if (!myDaosAddresses.includes(daoState.id)){
-      myDaosOptions.push(<option key={daoState.id} selected value={daoState.id}>{daoState.name}</option>);
+      myDaosOptions?.push(<option key={daoState.id} selected value={daoState.id}>{daoState.name}</option>);
     }
 
     return (
