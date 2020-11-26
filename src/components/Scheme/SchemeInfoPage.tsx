@@ -104,7 +104,8 @@ export default class SchemeInfo extends React.Component<IProps, null> {
       (scheme.genericSchemeParams && scheme.genericSchemeParams.votingMachine) ||
       (scheme.uGenericSchemeParams && scheme.uGenericSchemeParams.votingMachine) ||
       (scheme.contributionRewardParams && scheme.contributionRewardParams.votingMachine) ||
-      (scheme.schemeRegistrarParams && scheme.schemeRegistrarParams.votingMachine)
+      (scheme.schemeRegistrarParams && scheme.schemeRegistrarParams.votingMachine) ||
+      (scheme.contributionRewardExtParams && scheme.contributionRewardExtParams.votingMachine)
     );
     return <div>
       <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>Info</BreadcrumbsItem>
@@ -164,6 +165,18 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         </div>
       </div>
 
+      {scheme.schemeParams ?
+        <div className={css.schemeInfoContainer}>
+          <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
+          <div className={css.infoCardContent}>
+            <div className={css.gpRowsContainer}>
+              {renderVotingMachineLink(votingMachine)}
+              {renderGpParams(scheme.schemeParams.voteParams)}
+            </div>
+          </div>
+        </div>
+        : ""
+      }
       {scheme.contributionRewardParams || scheme.genericSchemeParams ?
         <div className={css.schemeInfoContainer}>
           <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
