@@ -38,7 +38,7 @@
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function"
-    }
+      }
     },
     {
       "id": "setSwapFee",
@@ -55,20 +55,20 @@
         }
       ],
       "abi": {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "swapFee",
-              "type": "uint256"
-            }
-          ],
-          "name": "setSwapFee",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "swapFee",
+            "type": "uint256"
           }
+        ],
+        "name": "setSwapFee",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
     },
     {
       "id": "commitAddToken",
@@ -96,47 +96,46 @@
         }
       ],
       "abi": {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "token",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "balance",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "denormalizedWeight",
-              "type": "uint256"
-            }
-          ],
-          "name": "commitAddToken",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "balance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "denormalizedWeight",
+            "type": "uint256"
           }
+        ],
+        "name": "commitAddToken",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
     },
     {
       "id": "applyAddToken",
       "label": "Confirm add token",
       "description": "Second step in adding a new token to the balancer pool",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
-      "fields": [
-      ],
+      "fields": [],
       "abi": {
-          "constant": false,
-          "inputs": [],
-          "name": "applyAddToken",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-          }
+        "constant": false,
+        "inputs": [],
+        "name": "applyAddToken",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
     },
     {
       "id": "removeToken",
@@ -151,19 +150,19 @@
         }
       ],
       "abi": {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "token",
-              "type": "address"
-            }
-          ],
-          "name": "removeToken",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          }
+        ],
+        "name": "removeToken",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
       }
     },
     {
@@ -186,24 +185,24 @@
         }
       ],
       "abi": {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "token",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "newWeight",
-              "type": "uint256"
-            }
-          ],
-          "name": "updateWeight",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "newWeight",
+            "type": "uint256"
+          }
+        ],
+        "name": "updateWeight",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
       }
     },
     {
@@ -233,30 +232,30 @@
         }
       ],
       "abi": {
-      "constant": false,
-      "inputs": [
-              {
-                "internalType": "uint256[]",
-                "name": "newWeights",
-                "type": "uint256[]"
-              },
-              {
-                "internalType": "uint256",
-                "name": "startBlock",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "endBlock",
-                "type": "uint256"
-              }
-            ],
-            "name": "updateWeightsGradually",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-            }
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "uint256[]",
+            "name": "newWeights",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "startBlock",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endBlock",
+            "type": "uint256"
+          }
+        ],
+        "name": "updateWeightsGradually",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
     },
     {
       "id": "joinPool",
@@ -272,32 +271,33 @@
           "placeholder": "Number (1000)"
         },
         {
+          "decimals": 18,
           "label": "Max tokens to add in wei",
           "name": "Max amount of asset tokens to spend",
           "placeholder": "Amount (2000000000000000000)"
         }
       ],
       "abi": {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "poolAmountOut",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256[]",
-              "name": "maxAmountsIn",
-              "type": "uint256[]"
-            }
-          ],
-          "name": "joinPool",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      },
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "poolAmountOut",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "maxAmountsIn",
+            "type": "uint256[]"
+          }
+        ],
+        "name": "joinPool",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
     {
       "id": "exitPool",
       "label": "Exit pool",
@@ -311,31 +311,32 @@
           "placeholder": "Number (1000)"
         },
         {
+          "decimals": 18,
           "label": "Max amount of asset tokens to receive in wei",
           "name": "Minimum amount of asset tokens to receive",
           "placeholder": "Amount (2000000000000000000)"
         }
       ],
       "abi": {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "poolAmountIn",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256[]",
-              "name": "minAmountsOut",
-              "type": "uint256[]"
-            }
-          ],
-          "name": "exitPool",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "poolAmountIn",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "minAmountsOut",
+            "type": "uint256[]"
+          }
+        ],
+        "name": "exitPool",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
       }
+    }
   ]
 }
