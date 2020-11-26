@@ -214,6 +214,19 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         </div>
         : ""
       }
+
+      {scheme.genericSchemeMultiCallParams ?
+        <div className={css.schemeInfoContainer}>
+          <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
+          <div className={css.infoCardContent}>
+            <div className={css.gpRowsContainer}>
+              {renderVotingMachineLink(votingMachine)}
+              {renderGpParams(scheme.genericSchemeMultiCallParams.voteParams)}
+            </div>
+          </div>
+        </div>
+        : ""
+      }
     </div>;
   }
 }

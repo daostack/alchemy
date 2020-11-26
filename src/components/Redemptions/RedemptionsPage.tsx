@@ -2,7 +2,7 @@ import { Address, DAOFieldsFragment, IContributionReward, IDAOState, IRewardStat
 import { enableWalletProvider, getArc } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";

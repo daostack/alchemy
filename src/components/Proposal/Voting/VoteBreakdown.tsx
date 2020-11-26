@@ -1,7 +1,7 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalState } from "@daostack/arc.js";
 import { enableWalletProvider } from "arc";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import classNames from "classnames";
 import Reputation from "components/Account/Reputation";
 import * as React from "react";

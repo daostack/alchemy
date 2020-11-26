@@ -1,13 +1,7 @@
 import * as uiActions from "actions/uiActions";
 import { threeBoxLogout } from "actions/profilesActions";
 import { setCurrentAccount } from "actions/web3Actions";
-import AccountProfilePage from "components/Account/AccountProfilePage";
-import DaosPage from "components/Daos/DaosPage";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
-import DaoCreator from "components/DaoCreator";
-import DaoContainer from "components/Dao/DaoContainer";
-import FeedPage from "components/Feed/FeedPage";
-import RedemptionsPage from "components/Redemptions/RedemptionsPage";
 import Analytics from "lib/analytics";
 import Header from "layouts/Header";
 import SidebarMenu from "layouts/SidebarMenu";
@@ -17,6 +11,7 @@ import { getCachedAccount, cacheWeb3Info, logout, pollForAccountChanges } from "
 import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { parse } from "query-string";
 import * as React from "react";
+import { lazy, Suspense } from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { matchPath, Link, Route, RouteComponentProps, Switch } from "react-router-dom";
@@ -29,6 +24,13 @@ import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
 import SimpleMessagePopup, { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
 import { initializeUtils } from "lib/util";
+
+const AccountProfilePage = lazy(() => import("components/Account/AccountProfilePage"));
+const DaosPage = lazy(() => import("components/Daos/DaosPage"));
+const DaoCreator = lazy(() => import("components/DaoCreator"));
+const DaoContainer = lazy(() => import("components/Dao/DaoContainer"));
+const FeedPage = lazy(() => import("components/Feed/FeedPage"));
+const RedemptionsPage = lazy(() => import("components/Redemptions/RedemptionsPage"));
 
 interface IExternalProps extends RouteComponentProps<any> {
   history: History;
@@ -227,15 +229,17 @@ class AppContainer extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.contentWrapper}>
-              <Switch>
-                <Route path="/daos/create" component={DaoCreator} />
-                <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
-                <Route path="/profile/:accountAddress" component={AccountProfilePage} />
-                <Route path="/redemptions" component={RedemptionsPage} />
-                <Route path="/daos" component={DaosPage} />
-                <Route path="/feed" component={FeedPage} />
-                <Route path="/" component={DaosPage} />
-              </Switch>
+              <Suspense fallback={<div>loading...</div>}>
+                <Switch>
+                  <Route path="/daos/create" component={DaoCreator} />
+                  <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
+                  <Route path="/profile/:accountAddress" component={AccountProfilePage} />
+                  <Route path="/redemptions" component={RedemptionsPage} />
+                  <Route path="/daos" component={DaosPage} />
+                  <Route path="/feed" component={FeedPage} />
+                  <Route path="/" component={DaosPage} />
+                </Switch>
+              </Suspense>
             </div>
 
             <ModalContainer

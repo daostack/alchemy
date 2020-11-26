@@ -1,4 +1,4 @@
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import { formatTokens } from "lib/util";
 import * as React from "react";
 import * as css from "./Account.scss";

@@ -1,4 +1,4 @@
-import classNames = require("classnames");
+import * as classNames from "classnames";
 import { copyToClipboard } from "lib/util";
 import * as React from "react";
 import Linkify from "react-linkify";

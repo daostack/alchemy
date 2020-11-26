@@ -2,7 +2,7 @@ import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IPr
 import { voteOnProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import classNames from "classnames";
 import Reputation from "components/Account/Reputation";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
