@@ -2,6 +2,10 @@
 
 [![Build Status](https://travis-ci.org/daostack/alchemy.svg?branch=dev)](https://travis-ci.org/daostack/alchemy)
 
+[![pipeline status](https://gitlab.com/daostack/alchemy/badges/dev/pipeline.svg)](https://gitlab.com/daostack/alchemy/-/commits/dev)
+
+[![coverage report](https://gitlab.com/daostack/alchemy/badges/dev/coverage.svg)](https://gitlab.com/daostack/alchemy/-/commits/dev)
+
 ## URLs
 https://v1.alchemy.do - alchemy v1 on mainnet
 

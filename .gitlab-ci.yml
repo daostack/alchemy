@@ -1,0 +1,114 @@
+stages:
+  - Install
+  - Tests
+  - After e2e Tests
+  - Build
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+
+before_script:
+  - npm -v
+  - node -v
+  - npm install --ignore-scripts --prefer-offline
+
+Check Docker Compose:
+  stage: Install
+  interruptible: true
+  resource_group: docker-compose
+  before_script:
+    - ''
+  cache: {}
+  script:
+    - docker -v
+    - docker-compose -v
+    - echo "rebuild docker-compose ONLY if config was changed"
+    - cmp --silent docker-compose.yml ~/.runner-cache/docker-compose.yml ||
+      bash -c 'docker-compose down
+      && docker-compose build
+      && docker-compose up -d
+      && mkdir -p ~/.runner-cache
+      && rm -rf ~/.runner-cache/docker-compose.yml
+      && cp docker-compose.yml ~/.runner-cache/'
+    - bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' 127.0.0.1:3000)" != "200" ]]; do
+      if [[ $i < 31 ]] ;
+      then i=$((i+1)) && sleep 5 && echo "slep... $i";
+      else exit 1; fi
+      ; done'
+  needs: []
+  only:
+    variables:
+      - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
+
+Static Tests:
+  stage: Tests
+  interruptible: true
+  script:
+    - npm run lint -- --quiet
+    - npm run test:unit -- --forceExit
+  needs: []
+  only:
+    variables:
+      - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
+
+e2e Tests Suite 1:
+  stage: Tests
+  interruptible: true
+  script:
+    - npm run test:i1
+  needs: ["Check Docker Compose"]
+  when: on_success
+  retry: 2
+  only:
+    variables:
+      - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
+
+e2e Tests Suite 2:
+  stage: Tests
+  interruptible: true
+  script:
+    - npm run test:i2
+  needs: ["Check Docker Compose"]
+  when: on_success
+  retry: 2
+  only:
+    variables:
+      - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
+
+
+e2e Tests Suite 3:
+  stage: Tests
+  interruptible: true
+  script:
+    - npm run test:i3
+  needs: ["Check Docker Compose"]
+  when: on_success
+  retry: 2
+  only:
+    variables:
+      - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
+
+Test Docker Services:
+  stage: After e2e Tests
+  interruptible: true
+  script:
+    - npm run service-status
+    - ./scripts/checkDaos.sh
+  needs: [ "e2e Tests Suite 1", "e2e Tests Suite 2", "e2e Tests Suite 3" ]
+  when: on_success
+  retry: 2
+  only:
+    variables:
+      - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
+
+Build:
+  stage: Build
+  interruptible: true
+  script:
+    - npm run build-travis
+  needs: []
+  only:
+    variables:
+      - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
