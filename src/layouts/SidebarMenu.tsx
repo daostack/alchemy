@@ -3,7 +3,7 @@ import { hideMenu } from "actions/uiActions";
 import { getArc } from "arc";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import classNames from "classnames";
 import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -229,6 +229,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   <Link to="/feed" onClick={this.handleCloseMenu}>Feed</Link>
                 </TrainingTooltip>
               </li>
+              <li><a className="externalLink" href="https://xgen.daostack.io/" target="_blank" rel="noopener noreferrer">xGEN / GEN</a></li>
               <li>
                 <a>$ Buy GEN</a>
                 <ul>

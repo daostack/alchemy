@@ -1,6 +1,6 @@
 import { IProposalStage, IProposalState } from "@daostack/arc.js";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import classNames from "classnames";
 import { fromWei } from "lib/util";
 import * as React from "react";

@@ -2,7 +2,7 @@ import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Reward,
 import { getArc } from "arc";
 import { ethErrorHandler, ethBalance, standardPolling } from "lib/util";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as moment from "moment";
 import * as React from "react";

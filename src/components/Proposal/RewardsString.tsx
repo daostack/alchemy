@@ -1,4 +1,4 @@
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import * as React from "react";
 
 import { IDAOState, IProposalState } from "@daostack/arc.js";

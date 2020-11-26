@@ -9,7 +9,6 @@ import { getArc } from "arc";
 import { CompetitionStatusEnum, CompetitionStatus } from "./utils";
 import Card from "./Card";
 import * as css from "./Competitions.scss";
-import { standardPolling } from "lib/util";
 
 interface IExternalProps {
   daoState: IDAOState;
@@ -127,7 +126,7 @@ export default withSubscription({
           suggestions {
             ...CompetitionSuggestionFields
           }
-          votes { 
+          votes {
             ...CompetitionVoteFields
           }
         }
@@ -138,7 +137,7 @@ export default withSubscription({
     `;
 
     const arc = await getArc();
-    await arc.sendQuery(cacheQuery, standardPolling());
+    await arc.sendQuery(cacheQuery);
     // end cache priming
 
     // TODO: next lines can use some cleanup up
@@ -148,4 +147,3 @@ export default withSubscription({
     );
   },
 });
-

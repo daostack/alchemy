@@ -15,7 +15,7 @@
     },
     "settings": {
       "react": {
-        "version": "detect", // React version. "detect" automatically picks the version you have installed.
+        "version": "detect" // React version. "detect" automatically picks the version you have installed.
       }
     },
     "rules": {
@@ -72,11 +72,12 @@
         "comma-dangle": ["error" ,"always-multiline"],
         "semi": ["error", "always"],
         "eol-last": "error",
-        "eqeqeq": "error",
+        "eqeqeq": "error"
     },
     "parser": "@typescript-eslint/parser",
     "plugins": ["@typescript-eslint", "react"],
     "parserOptions": {
       "project": "./tsconfig.eslint.json"
-    }
+    },
+    "ignorePatterns": ["test/**/*.conf.js"]
 }

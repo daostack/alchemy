@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/arc.js";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import Reputation from "components/Account/Reputation";
 import { baseTokenName, genName, getCRRewards, getGpRewards, formatTokens, tokenDecimals, tokenSymbol } from "lib/util";
 import * as React from "react";

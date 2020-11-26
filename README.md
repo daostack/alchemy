@@ -13,7 +13,7 @@ https://kovan.v1.alchemy.do - alchemy v1 on kovan
 
 **Alchemy 2.0** :fire:
 
-Alchemy v2 source code can be found under [master-2](https://github.com/daostack/alchemy/tree/master-2) branch.
+Alchemy 2.0 source code can be found [here](https://github.com/daostack/alchemy_2).
 
 https://alchemy.do - alchemy 2.0 on mainnet
 

@@ -6,7 +6,6 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
-const WebpackShellPlugin = require('webpack-shell-plugin');
 
 const baseConfig = require('./webpack.base.config.js');
 
@@ -18,13 +17,11 @@ const config = merge(baseConfig, {
   entry: {
     // the entry point of our app
     app: __dirname + '/src/index.tsx',
-    // 'ipfs-http-client': ['ipfs-http-client'],
-    // '@daostack/migration': ['@daostack/migration/']
   },
 
   output: {
     filename: "[name].bundle-[hash:8].js",
-    chunkFilename: '[name].bundle-[hash:8].js',
+    chunkFilename: '[id].chunk-[hash:8].js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
   },
@@ -40,20 +37,6 @@ const config = merge(baseConfig, {
     ],
     splitChunks: {
       chunks: 'all',
-      cacheGroups: {
-        // "ipfs-http-client": {
-        //   chunks: "initial",
-        //   test: "ipfs-http-client",
-        //   name: "ipfs-http-client",
-        //   enforce: true
-        // },
-        // "@daostack/migration": {
-        //   chunks: "initial",
-        //   test: "@daostack/migration",
-        //   name: "@daostack/migration",
-        //   enforce: true
-        // }
-      }
     }
   },
 
@@ -84,7 +67,7 @@ const config = merge(baseConfig, {
     ],
   },
 
-plugins: [
+  plugins: [
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
@@ -109,6 +92,7 @@ plugins: [
       ARC_IPFSPROVIDER_PROTOCOL : "",
       ARC_IPFSPROVIDER_API_PATH : "",
       INFURA_ID : "",
+      ETHERSCAN_API_KEY : "",
       MIXPANEL_TOKEN: "",
     }),
 
@@ -120,7 +104,9 @@ plugins: [
 
 if (process.env.ANALYZE) {
   const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-  config.plugins.push(new BundleAnalyzerPlugin());
+  config.plugins.push(new BundleAnalyzerPlugin({
+    analyzerMode: 'static',
+  }));
 }
 
 module.exports = config;

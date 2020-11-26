@@ -4,7 +4,6 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const ENV = process.env.NODE_ENV || "development";
 const isProd = ENV === "production";
-const isDev = ENV === "development";
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const basePath = process.cwd();

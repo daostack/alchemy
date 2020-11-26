@@ -1,4 +1,4 @@
-import Box = require("3box");
+import * as Box from "3box";
 
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
 import { getWeb3Provider } from "arc";

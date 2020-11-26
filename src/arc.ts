@@ -1,7 +1,6 @@
 import { NotificationStatus } from "reducers/notifications";
 import { getNetworkId, getNetworkName, targetedNetwork } from "./lib/util";
 import { settings, USE_CONTRACTINFOS_CACHE } from "./settings";
-import { RetryLink } from "apollo-link-retry";
 import { Address, Arc } from "@daostack/arc.js";
 import Web3Modal, { getProviderInfo, IProviderInfo } from "web3modal";
 import { Observable } from "rxjs";
@@ -131,19 +130,6 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     }
 
     const readonly = typeof provider === "string";
-
-    // https://www.apollographql.com/docs/link/links/retry/
-    const retryLink = new RetryLink({
-      attempts: (count) => {
-        return (count !== 10);
-      },
-      delay: () => {
-        // This will give a random delay between retries between the range of 5 to 30 seconds.
-        return Math.floor(Math.random() * (30000 - 5000 + 1) + 5000);
-      },
-    });
-
-    arcSettings.graphqlRetryLink = retryLink;
 
     // if there is no existing arc, we create a new one
     if ((window as any).arc) {

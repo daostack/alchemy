@@ -8,7 +8,7 @@ import {
 import { of, Observable, Observer } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 /**
  * gotta load moment in order to use moment-timezone directly
  */
@@ -706,3 +706,27 @@ export function safeMoment(dateSpecifier: moment.Moment | Date | number | string
 
 export const standardPolling = (fetchAllData = false) =>
 { return { polling: true, pollInterval: GRAPH_POLL_INTERVAL, fetchAllData }; };
+
+
+/**
+ * Given an ArrayBuffer returns Hex string
+ * @param {Array<any>} buffer
+ * @returns {string} Hex string
+ */
+export const buf2hex = (buffer: Array<any>): string => { // buffer is an ArrayBuffer
+  return Array.prototype.map.call(new Uint8Array(buffer), (x: any) => ("00" + x.toString(16)).slice(-2)).join("");
+};
+
+/**
+ * Given a contract address returns the contract name if available.
+ * @param {string} address
+ * @returns {string} Contract name
+ */
+export const getContractName = (address: string): string => {
+  const arc = getArc();
+  try {
+    return arc.getContractInfo(address.toLowerCase()).name;
+  } catch (e) {
+    return "unknown name";
+  }
+};

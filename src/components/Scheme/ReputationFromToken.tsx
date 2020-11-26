@@ -20,7 +20,7 @@ import { showNotification } from "reducers/notifications";
 import * as schemeCss from "./Scheme.scss";
 import * as css from "./ReputationFromToken.scss";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 
 interface IExternalProps extends RouteComponentProps<any> {
   daoAvatarAddress: Address;

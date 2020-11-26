@@ -24,6 +24,7 @@ module.exports = merge(baseConfig, {
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, 'dist'),
+    chunkFilename: '[id]-[name].chunk.js',
     // necessary for HMR to know where to load the hot update chunks
     publicPath: '/'
   },
@@ -104,6 +105,7 @@ module.exports = merge(baseConfig, {
       ARC_IPFSPROVIDER_PROTOCOL : "",
       ARC_IPFSPROVIDER_API_PATH : "",
       INFURA_ID : "",
+      ETHERSCAN_API_KEY : "",
       MIXPANEL_TOKEN: ""
     }),
   ]
