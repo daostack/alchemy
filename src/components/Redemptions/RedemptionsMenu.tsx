@@ -1,5 +1,5 @@
 import { Address, IDAOState, IProposalState, IRewardState, Proposal, Reward } from "@daostack/arc.js";
-import { enableWalletProvider } from "arc";
+import { enableWalletProvider, getProviderNetworkName} from "arc";
 import { redeemProposal } from "actions/arcActions";
 
 import * as BN from "bn.js";
@@ -7,7 +7,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import ActionButton from "components/Proposal/ActionButton";
 import RedemptionsString from "components/Proposal/RedemptionsString";
 import ProposalSummary from "components/Proposal/ProposalSummary";
-import { ethErrorHandler, humanProposalTitle, ethBalance, standardPolling, getArcByDAOAddress } from "lib/util";
+import { ethErrorHandler, humanProposalTitle, ethBalance, standardPolling, getArcByDAOAddress, getNetworkByDAOAddress, Networks } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -95,10 +95,14 @@ class RedemptionsMenu extends React.Component<IProps, null> {
       showNotification,
     } = this.props;
 
-    if (!await enableWalletProvider({ showNotification }, "xdai")) { return; }
+    const network = await getProviderNetworkName() as Networks;
+
+    if (!await enableWalletProvider({ showNotification }, network)) { return; }
 
     redeemableProposals.forEach(proposal => {
-      redeemProposal(proposal.dao.id, proposal.id, currentAccountAddress);
+      if (getNetworkByDAOAddress(proposal.dao.id) === network) {
+        redeemProposal(proposal.dao.id, proposal.id, currentAccountAddress);
+      }
     });
   }
 }
