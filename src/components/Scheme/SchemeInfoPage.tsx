@@ -63,7 +63,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         return <>
           <div>Address:</div>
           <div>
-            <a href={linkToEtherScan(votingMachine)} target="_blank" rel="noopener noreferrer">{ votingMachine }</a>
+            <a href={linkToEtherScan(votingMachine)} target="_blank" rel="noopener noreferrer">{votingMachine}</a>
           </div>
         </>;
       }
@@ -75,7 +75,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
 
       return <React.Fragment>
         <div>Activation Time:</div><div className={css.ellipsis}>{
-          `${ activationTime.format("h:mm A [UTC] on MMMM Do, YYYY")} ${activationTime.isSameOrBefore(moment()) ? "(active)" : "(inactive)"}`
+          `${activationTime.format("h:mm A [UTC] on MMMM Do, YYYY")} ${activationTime.isSameOrBefore(moment()) ? "(active)" : "(inactive)"}`
         }</div>
         <div>Boosted Vote Period Limit:</div><div>{duration(params.boostedVotePeriodLimit)} ({params.boostedVotePeriodLimit} seconds)</div>
         <div>DAO Bounty Constant:</div><div>{params.daoBountyConst}</div>
@@ -119,7 +119,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
               <div className={css.addressHash}>{scheme.address}</div>
               <CopyToClipboard value={scheme.address} />
             </div>
-            { scheme.genericSchemeParams ?
+            {scheme.genericSchemeParams ?
               <>
                 <div>will call this contract: <a href={linkToEtherScan(scheme.genericSchemeParams.contractToCall)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></div>
                 <div>
@@ -128,7 +128,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
                 </div>
               </> : undefined
             }
-            { scheme.uGenericSchemeParams ?
+            {scheme.uGenericSchemeParams ?
               <>
                 <div>will call this contract: <a href={linkToEtherScan(scheme.uGenericSchemeParams.contractToCall)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></div>
                 <div>
@@ -165,18 +165,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         </div>
       </div>
 
-      {scheme.schemeParams ?
-        <div className={css.schemeInfoContainer}>
-          <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
-          <div className={css.infoCardContent}>
-            <div className={css.gpRowsContainer}>
-              {renderVotingMachineLink(votingMachine)}
-              {renderGpParams(scheme.schemeParams.voteParams)}
-            </div>
-          </div>
-        </div>
-        : ""
-      }
+
       {scheme.contributionRewardParams || scheme.genericSchemeParams ?
         <div className={css.schemeInfoContainer}>
           <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
@@ -189,7 +178,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         </div>
         : ""
       }
-      { scheme.uGenericSchemeParams ?
+      {scheme.uGenericSchemeParams ?
         <div className={css.schemeInfoContainer}>
           <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
           <div className={css.infoCardContent}>
@@ -235,6 +224,19 @@ export default class SchemeInfo extends React.Component<IProps, null> {
             <div className={css.gpRowsContainer}>
               {renderVotingMachineLink(votingMachine)}
               {renderGpParams(scheme.genericSchemeMultiCallParams.voteParams)}
+            </div>
+          </div>
+        </div>
+        : ""
+      }
+
+      {scheme.contributionRewardExtParams ?
+        <div className={css.schemeInfoContainer}>
+          <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
+          <div className={css.infoCardContent}>
+            <div className={css.gpRowsContainer}>
+              {renderVotingMachineLink(votingMachine)}
+              {renderGpParams(scheme.schemeParams.voteParams)}
             </div>
           </div>
         </div>
