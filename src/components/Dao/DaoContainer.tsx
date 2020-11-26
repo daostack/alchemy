@@ -23,6 +23,8 @@ import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
 import DaoLandingPage from "components/Dao/DaoLandingPage";
 import { standardPolling, targetedNetwork, getArcByDAOAddress, getDAONameByID } from "lib/util";
+import gql from "graphql-tag";
+import { getArcs } from "arc";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -31,6 +33,10 @@ interface IStateProps {
   currentAccountProfile: IProfileState;
   daoAvatarAddress: string;
   followingDaosAddresses: Array<any>;
+}
+
+interface IState {
+  memberDaos: Array<any>;
 }
 
 interface IDispatchProps {
@@ -55,13 +61,43 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-class DaoContainer extends React.Component<IProps, null> {
+class DaoContainer extends React.Component<IProps, IState> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      memberDaos: [],
+    };
+  }
   public daoSubscription: any;
   public subscription: Subscription;
 
   public async componentDidMount() {
     // TODO: use this once 3box fixes Box.getProfiles
     //this.props.getProfilesForAddresses(this.props.data[1].map((member) => member.staticState.address));
+    const { followingDaosAddresses } = this.props;
+    const memberQuery = gql` query memberDaos {
+      reputationHolders (where: {
+        address: "${this.props.currentAccountAddress}"
+        ${followingDaosAddresses.length ? "dao_not_in: [" + followingDaosAddresses.map(dao => "\"" + dao + "\"").join(",") + "]" : ""}
+      }) {
+        dao {
+          id
+          name
+        }
+      }
+    }`;
+
+    const arcs = getArcs();
+    const memberDaosData = [];
+    for (const network in arcs) {
+      const arc = arcs[network];
+      const daos = await arc.sendQuery(memberQuery);
+      memberDaosData.push(daos.data.reputationHolders);
+    }
+    const memberDaos = [].concat(...memberDaosData).map(dao => {
+      return { id: dao.dao.id, name: dao.dao.name };
+    });
+    this.setState({ memberDaos: memberDaos });
   }
 
   private daoHistoryRoute = (routeProps: any) => <DaoHistoryPage {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
@@ -89,23 +125,28 @@ class DaoContainer extends React.Component<IProps, null> {
     const daoState = this.props.data[0];
     const network = targetedNetwork();
     const { followingDaosAddresses } = this.props;
+    const { memberDaos } = this.state;
 
     const followingDaos = followingDaosAddresses?.map(daoAddress => {
-      return { address: daoAddress, name: getDAONameByID(daoAddress) };
+      return { id: daoAddress, name: getDAONameByID(daoAddress) };
     });
 
-    const followingDaosOptions = followingDaos?.map(dao => {
-      return <option key={dao.address} selected={dao.address === daoState.address ? true : false} value={dao.address}>{dao.name}</option>;
+    const myDaos = followingDaos?.concat(memberDaos);
+
+    const myDaosAddresses = [] as any;
+    const myDaosOptions = myDaos?.map(dao => {
+      myDaosAddresses.push(dao.id);
+      return <option key={dao.id} selected={dao.id === daoState.address ? true : false} value={dao.id}>{dao.name}</option>;
     });
 
-    if (!followingDaosAddresses?.includes(daoState.address)) {
-      followingDaosOptions?.push(<option selected value={daoState.address}>{daoState.name}</option>);
+    if (!myDaosAddresses.includes(daoState.id)){
+      myDaosOptions.push(<option key={daoState.id} selected value={daoState.id}>{daoState.name}</option>);
     }
 
     return (
       <div className={css.outer}>
         <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
-        <BreadcrumbsItem to={`${window.location}`}><select className={css.follwingDaosList} onChange={(e) => this.onFollwingDaosListChange(e.target.value, this.props.history)}>{followingDaosOptions}</select></BreadcrumbsItem>
+        <BreadcrumbsItem to={`${window.location}`}><select className={css.follwingDaosList} onChange={(e) => this.onFollwingDaosListChange(e.target.value, this.props.history)}>{myDaosOptions}</select></BreadcrumbsItem>
         <Helmet>
           <meta name="description" content={daoState.name + " | Managed on Alchemy by DAOstack"} />
           <meta name="og:description" content={daoState.name + " | Managed on Alchemy by DAOstack"} />

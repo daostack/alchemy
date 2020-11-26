@@ -282,7 +282,7 @@ export const getArcByProvider = async (provider: any): Promise<Arc> => {
     return null;
   }
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
-  return getArc(await getNetworkName());
+  return getArc(await getNetworkName(provider.chainId));
 };
 
 /**
@@ -349,6 +349,7 @@ export const getArcByAddress = (daoAddress: any): Arc => {
 export async function getNetworkId(web3Provider?: any): Promise<string> {
   let arc: any;
   let web3: any;
+  const network = targetedNetwork();
 
   try {
     arc = await getArcByProvider(web3Provider);
@@ -361,9 +362,9 @@ export async function getNetworkId(web3Provider?: any): Promise<string> {
    */
   if (arc && arc.web3 && (!web3Provider || (arc.web3.currentProvider === web3Provider))) {
     web3 = arc.web3;
-  } else if ((window as any).web3 &&
-    (!web3Provider || ((window as any).web3.currentProvider === web3Provider))) {
-    web3 = (window as any).web3;
+  } else if (network && (window as any).arcs[network].web3 &&
+    (!web3Provider || ((window as any).arcs[network].web3.currentProvider === web3Provider))) {
+    web3 = (window as any).arcs[network].web3;
   } else if (web3Provider) {
     web3 = new Web3(web3Provider);
   }

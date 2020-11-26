@@ -93,7 +93,7 @@ export function getWeb3Provider(): any | undefined {
   return selectedProvider;
 }
 
-async function getProviderNetworkName(provider?: any): Promise<string> {
+export async function getProviderNetworkName(provider?: any): Promise<string> {
   provider = provider || selectedProvider;
   if (!provider) { return null; }
   const networkId = await getNetworkId(provider);

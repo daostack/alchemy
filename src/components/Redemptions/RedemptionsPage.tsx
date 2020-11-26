@@ -1,5 +1,5 @@
 import { Address, DAOFieldsFragment, IContributionReward, IDAOState, IRewardState, Proposal } from "@daostack/arc.js";
-import { enableWalletProvider, getArcs } from "arc";
+import { enableWalletProvider, getArcs, getProviderNetworkName } from "arc";
 import { redeemProposal } from "actions/arcActions";
 import * as BN from "bn.js";
 import Loading from "components/Shared/Loading";
@@ -7,7 +7,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import gql from "graphql-tag";
 import Analytics from "lib/analytics";
 import { createDaoStateFromQuery, IDAOData } from "lib/daoHelpers";
-import { baseTokenName, formatTokens, genName, getArcByDAOAddress, getNetworkByDAOAddress, standardPolling, tokenDecimals, tokenSymbol } from "lib/util";
+import { baseTokenName, formatTokens, genName, getArcByDAOAddress, getNetworkByDAOAddress, standardPolling, tokenDecimals, tokenSymbol, Networks } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -118,10 +118,14 @@ class RedemptionsPage extends React.Component<IProps, null> {
       showNotification,
     } = this.props;
 
-    if (!await enableWalletProvider({ showNotification }, "xdai")) { return; }
+    const network = await getProviderNetworkName() as Networks;
+
+    if (!await enableWalletProvider({ showNotification }, network)) { return; }
 
     proposals.forEach(proposal => {
-      redeemProposal(proposal.dao.id, proposal.id, currentAccountAddress);
+      if (getNetworkByDAOAddress(proposal.dao.id) === network) {
+        redeemProposal(proposal.dao.id, proposal.id, currentAccountAddress);
+      }
     });
   }
 
