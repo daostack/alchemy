@@ -1,5 +1,5 @@
 import { Address, DAOFieldsFragment, IContributionReward, IDAOState, IRewardState, Proposal } from "@daostack/arc.js";
-import { enableWalletProvider, getArcs, getProviderNetworkName } from "arc";
+import { enableWalletProvider, getArcs } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
 import * as BN from "bn.js";
@@ -23,11 +23,13 @@ import * as css from "./RedemptionsPage.scss";
 
 interface IStateProps {
   currentAccountAddress: string;
+  network: Networks;
 }
 
 const mapStateToProps = (state: IRootState) => {
   return {
     currentAccountAddress: state.web3.currentAccountAddress,
+    network: state.web3.networkName,
   };
 };
 
@@ -89,7 +91,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
                   onClick={this.redeemAll}
                 >
                   <img src="/assets/images/Icon/redeem.svg" />
-                Redeem all
+                Redeem all from {this.props.network}
                 </button>
               </div>
               : ""
@@ -119,12 +121,10 @@ class RedemptionsPage extends React.Component<IProps, null> {
       showNotification,
     } = this.props;
 
-    const network = await getProviderNetworkName() as Networks;
-
-    if (!await enableWalletProvider({ showNotification }, network)) { return; }
+    if (!await enableWalletProvider({ showNotification }, this.props.network)) { return; }
 
     proposals.forEach(proposal => {
-      if (getNetworkByDAOAddress(proposal.dao.id) === network) {
+      if (getNetworkByDAOAddress(proposal.dao.id) === this.props.network) {
         redeemProposal(proposal.dao.id, proposal.id, currentAccountAddress);
       }
     });

@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/browser";
 import { getProfile } from "actions/profilesActions";
-import { getWeb3ProviderInfo } from "arc";
+import { getWeb3ProviderInfo, getProviderNetworkName } from "arc";
 import Analytics from "lib/analytics";
 import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
 
@@ -13,6 +13,7 @@ export function setCurrentAccount(accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: Function) => {
     const payload = {
       currentAccountAddress: accountAddress,
+      networkName: await getProviderNetworkName(),
     };
 
     const action = {
