@@ -43,7 +43,7 @@ interface IState {
   searchDaos: DAO[];
 }
 
-const PAGE_SIZE = 200;
+const PAGE_SIZE = 100;
 
 class DaosPage extends React.Component<IProps, IState> {
 
@@ -107,7 +107,9 @@ class DaosPage extends React.Component<IProps, IState> {
         daosData.push(firstChar.toLowerCase() === firstChar ? arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: firstChar.toUpperCase() + searchString.slice(1) } }, { fetchAllData: true }) : of([]));
       }
 
-      const foundDaos = await combineLatest(daosData).pipe(first()).toPromise();
+      let foundDaos = await combineLatest(daosData).pipe(first()).toPromise() as DAO[];
+      // create flat array (combine all sub-arrays into one array)
+      foundDaos = [].concat(...foundDaos);
       this.setState({ searchDaos: foundDaos as DAO[] });
     } else {
       this.setState({ searchDaos: [] });
