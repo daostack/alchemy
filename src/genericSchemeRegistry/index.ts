@@ -98,7 +98,6 @@ export class ActionField {
   }
 
   private transformValue(value: string, web3: any): string | boolean {
-
     if (Object.prototype.hasOwnProperty.call(value, "trim")) {
       value = (value as string).trim();
     }
@@ -108,7 +107,7 @@ export class ActionField {
     }
     /**
      * Note that if this is an array item, the field's one `decimals` value applies
-     * to all items in the array.
+     * to all items in the array.  Same for `transformation`.
      */
     else if (this.decimals) {
       return (new BN(value as string).mul(new BN(10).pow(new BN(this.decimals)))).toString();
