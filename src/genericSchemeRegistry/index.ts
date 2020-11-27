@@ -30,7 +30,7 @@ const KNOWNSCHEMES = [
   balancerPoolManager,
 ];
 
-const SCHEMEADDRESSES: { [network: string]: { [address: string]: any } } = {
+const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
   main: {},
   rinkeby: {},
   kovan: {},
@@ -52,7 +52,7 @@ for (const schemeInfo of KNOWNSCHEMES) {
 interface IABISpec {
   constant: boolean;
   name: string;
-  inputs: { name: string; type: string }[];
+  inputs: { name: string; type: string}[];
   outputs: any[];
   payable: boolean;
   stateMutability: string;
@@ -235,9 +235,9 @@ export class GenericSchemeInfo {
    * returns: an object containing the action, and the decoded values.
    * It returns 'undefined' if the action could not be found
    */
-  public decodeCallData(callData: string): { action: IActionSpec; values: any[] } {
+  public decodeCallData(callData: string): { action: IActionSpec; values: any[]} {
     const web3 = new Web3();
-    let action: undefined | IActionSpec;
+    let action: undefined|IActionSpec;
     for (const act of this.actions()) {
       const encodedFunctionSignature = web3.eth.abi.encodeFunctionSignature(act.abi);
       if (callData.startsWith(encodedFunctionSignature)) {
@@ -257,7 +257,7 @@ export class GenericSchemeInfo {
     }
 
     if (action) {
-      return { action, values };
+      return { action, values};
     } else {
       throw Error("Could not find a known action that corresponds with these callData");
     }
