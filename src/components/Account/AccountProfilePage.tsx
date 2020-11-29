@@ -25,7 +25,6 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import Loading from "components/Shared/Loading";
 import * as css from "./Account.scss";
-import AccountBalancesWrapper from "components/Account/AccountBalancesWrapper";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -286,7 +285,6 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                         {(accountInfo && dao)
                           ? <div><strong>Rep. Score</strong><br /><Reputation reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /> </div>
                           : ""}
-                        <AccountBalancesWrapper dao={dao} currentAccountAddress={currentAccountAddress} />
                       </div>
                       <div>
                         <strong>ETH Address:</strong><br />

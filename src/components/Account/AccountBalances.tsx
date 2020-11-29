@@ -42,13 +42,9 @@ class AccountBalances extends React.Component<IProps, null> {
         }
         { currentAccountAddress ?
           <div className={css.userBalance}>
-            <div className={css.heading}>Holdings - {network}</div>
-            <div>
-              <AccountBalance tokenSymbol={baseTokenName(network)} balance={ethBalance} accountAddress={currentAccountAddress} />
-            </div>
-            <div>
-              <AccountBalance tokenSymbol={genName(network)} balance={genBalance} accountAddress={currentAccountAddress} />
-            </div>
+            <div className={css.heading}>Holdings</div>
+            <AccountBalance tokenSymbol={baseTokenName(network)} balance={ethBalance} accountAddress={currentAccountAddress} />
+            <AccountBalance tokenSymbol={genName(network)} balance={genBalance} accountAddress={currentAccountAddress} />
           </div>
           : "" }
       </div>

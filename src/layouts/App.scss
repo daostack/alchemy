@@ -328,6 +328,8 @@ body {
 
           .userBalance,
           .repBalance {
+            display: flex;
+            flex-direction: column;
             .heading {
               font-size: 13px;
               color: $black;
@@ -410,6 +412,18 @@ body {
           position: relative;
           z-index: 0;
           width: 100%;
+        }
+
+        .currentNetwork{
+          border-bottom: 1px solid $accent-6;
+          padding: 20px;
+          text-align: start;
+          .title {
+            font-weight: bold;
+            font-size: 13px;
+            color: #001d35;
+            margin-bottom: 2px;
+          }
         }
 
         .logoutButtonContainer {
