@@ -2,7 +2,6 @@ import { DAO, IDAOState, Reputation, Token } from "@daostack/arc.js";
 import { getArc } from "arc";
 import { Networks } from "./util";
 import * as BN from "bn.js";
-import { Networks } from "./util";
 
 // TODO: all this should really be in the client library, after new client is done i will move it there if its not already
 

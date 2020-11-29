@@ -95,7 +95,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
           </Link>
           <span>{dao.name}</span>
         </div>
-        <div className={css.daoNetworkWrapper}>Network: <div className={css.networkName}>{getNetworkByDAOAddress(dao.address)}</div></div>
+        <div className={css.daoNetworkWrapper}>Network: {getNetworkByDAOAddress(dao.address)}</div>
         <div className={css.daoDescription}>
           {dao.name === "dxDAO" ?
             <p>

@@ -515,11 +515,6 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams,
       try {
         await ensureCorrectNetwork(selectedProvider, network);
       } catch (ex) {
-        /**
-         * This will result in completely logging out the user and clearing the cached provider,
-         * thus enabling them to have a choice of providers when they triy to log in again.
-         */
-        await logout(options.showNotification);
         throw new Error(ex);
       }
     }
