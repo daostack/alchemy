@@ -43,7 +43,7 @@ interface IState {
   searchDaos: DAO[];
 }
 
-const PAGE_SIZE = 200;
+const PAGE_SIZE = 100;
 
 class DaosPage extends React.Component<IProps, IState> {
 
@@ -107,7 +107,9 @@ class DaosPage extends React.Component<IProps, IState> {
         daosData.push(firstChar.toLowerCase() === firstChar ? arc.daos({ orderBy: "name", orderDirection: "asc", where: { name_contains: firstChar.toUpperCase() + searchString.slice(1) } }, { fetchAllData: true }) : of([]));
       }
 
-      const foundDaos = await combineLatest(daosData).pipe(first()).toPromise();
+      let foundDaos = await combineLatest(daosData).pipe(first()).toPromise() as DAO[];
+      // create flat array (combine all sub-arrays into one array)
+      foundDaos = [].concat(...foundDaos);
       this.setState({ searchDaos: foundDaos as DAO[] });
     } else {
       this.setState({ searchDaos: [] });
@@ -140,6 +142,16 @@ class DaosPage extends React.Component<IProps, IState> {
 
     // Always show DAOs that the current user is a member of or follows first
     yourDAOs = yourDAOs.filter(d => d.staticState.name.toLowerCase().includes(search)).sort((a, b) => a.staticState.name.localeCompare(b.staticState.name));
+    const tempMap = {} as any;
+    //exclude duplicates
+    yourDAOs = yourDAOs.filter((dao) => {
+      if (!tempMap[dao.id]) {
+        tempMap[dao.id] = true;
+        return true;
+      }
+      return false;
+    });
+
     const yourDAOAddresses = yourDAOs.map(dao => dao.id);
 
     // Add any DAOs found from searching the server to the list

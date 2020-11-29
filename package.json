@@ -52,8 +52,8 @@
     ]
   },
   "scripts": {
-    "analyze": "NODE_ENV=production NETWORK=main ANALYZE=1 node --max_old_space_size=4096 node_modules/.bin/webpack --config webpack.prod.config.js --progress --colors",
-    "analyze:build": "NODE_ENV=production ANALYZE=1 NETWORK=private node --max_old_space_size=4096 node_modules/.bin/webpack --config webpack.prod.config.js",
+    "analyze:build": "NODE_ENV=production ANALYZE=1 NETWORKS=private node --max_old_space_size=4096 node_modules/.bin/webpack --config webpack.prod.config.js",
+    "analyze": "NODE_ENV=production NETWORKS=main ANALYZE=1 node --max_old_space_size=4096 node_modules/.bin/webpack --config webpack.prod.config.js --progress --colors",
     "build": "webpack --config webpack.prod.config.js",
     "build-dev": "node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config webpack.dev.config.js",
     "build-travis": "cross-env NODE_ENV=production NETWORKS=main node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config webpack.prod.config.js",

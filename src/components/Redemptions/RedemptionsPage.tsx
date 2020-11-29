@@ -1,7 +1,6 @@
 import { Address, DAOFieldsFragment, IContributionReward, IDAOState, IRewardState, Proposal } from "@daostack/arc.js";
 import { enableWalletProvider, getArcs } from "arc";
 import { redeemProposal } from "actions/arcActions";
-
 import * as BN from "bn.js";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
