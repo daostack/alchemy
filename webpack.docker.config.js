@@ -68,7 +68,8 @@ module.exports = merge(baseConfig, {
           { // compiles Sass to CSS
             loader: "sass-loader",
             options: {
-              sourceMap: true
+              sourceMap: true,
+              cache: false,
             }
           },
           { // Load global scss files in every other scss file without an @import needed
