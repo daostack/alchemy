@@ -1,5 +1,5 @@
 {
-  "name": "BalancerPoolManager",
+  "name": "Liquidity Pool Manager",
   "addresses": {
     "main": [
       ""
@@ -15,14 +15,13 @@
     {
       "id": "setPublicSwap",
       "label": "Enable or Pause Pool",
-      "description": "<p><b>Pause the pool</b> to prevent traders from using it to exchange tokens. Liquidity providers will still be able to withdraw their liquidity from the pool.</p><p><a href=\"https://primepool.eth.link\" target=\"_blank\" rel=\"noopener noreferrer\">&gt;&nbsp;&gt;&nbsp;More Instructions&nbsp;&lt;&nbsp;&lt</a></p>",
+      "description": "<p><b>Pause the pool</b> Pausing the pool prevents traders from using it to exchange tokens. Liquidity providers will still be able to withdraw their liquidity from the pool.</p><p><a href=\"https://primepool.eth.link\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
           "labelTrue": "Enable",
           "labelFalse": "Pause",
-          "name": "publicSwap",
-          "placeholder": "Boolean (true or false)"
+          "name": "publicSwap"
         }
       ],
       "abi": {
@@ -44,15 +43,14 @@
     {
       "id": "setSwapFee",
       "label": "Set Pool Fee",
-      "description": "<p><b>Set Pool Fee</b> The pool’s swap fee is a percentage amount collected from traders who use the pool to trade. It is collected by the pool’s liquidity providers. A low fee ensures that the pool is a competitive liquidity source, yet a high fee earns more for liquidity providers.  A standard fee for many pools ranges between 0-10%</p>",
+      "description": "<p><b>Set Pool Fee</b> The pool’s swap fee is a percentage amount collected from traders who use the pool to trade. It is collected by the pool’s liquidity providers. A low fee ensures that the pool is a competitive liquidity source, yet a high fee earns more for liquidity providers.</p><p>A standard fee for many pools ranges between 0-10%</p><p><a href=\"https://primepool.eth.link\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
           "decimals": 18,
           "label": "Pool Fee (%)",
           "name": "amount",
-          "unit": "%",
-          "placeholder": "Pool Fee (enter 1.5% as 1.5)"
+          "placeholder": "Percentage as a fraction (enter 1.5% as .015)"
         }
       ],
       "abi": {
@@ -74,26 +72,26 @@
     {
       "id": "commitAddToken",
       "label": "Add Token (pt. 1)",
-      "description": "<p><b>Initiate adding a new token to the pool</b> Note that after the token has been added via pt. 1, a second proposal, using <b>Add Token (pt. 2)</b>, will need to be submitted to complete the addition. You must use <b>Add Token (pt. 2)</b> to complete a token addition, otherwise, each token added with pt. 1 will be overwritten by next use of pt. 1.</p>",
+      "description": "<p><b>Initiate adding a new token to the pool</b> After requesting to add a token in this step (pt. 1), a second proposal, using <b>Add Token (pt. 2)</b>, must be submitted to complete the addition. Otherwise, each token added with pt. 1 will be overwritten by next use of pt. 1.</p><p><a href=\"https://primepool.eth.link\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
           "label": "Token Address",
           "name": "token",
-          "placeholder": "Address (0x0000…)"
+          "placeholder": "Address, like 0x0000…"
         },
         {
           "decimals": 18,
-          "label": "Number of Tokens To Add",
+          "label": "Amount of Tokens To Add",
           "name": "balance",
           "unit": "token",
-          "placeholder": "As a number like 1500"
+          "placeholder": "Tokens, like 1000.25"
         },
         {
           "decimals": 18,
           "label": "Token Weight (%)",
           "name": "denormalizedWeight",
-          "placeholder": "Enter 20.5% as 20.5"
+          "placeholder": "Percentage as a fraction (enter 20.5% as .205)"
         }
       ],
       "abi": {
@@ -125,7 +123,7 @@
     {
       "id": "applyAddToken",
       "label": "Add Token (pt. 2)",
-      "description": "<p><b>Finish adding a token to the pool</b> After you have submitted a proposal to add a new token to the pool using <b>Add Token (pt. 1)</b>, a second proposal is required to finalize the addition. Only the most recent token added via pt. 1 can be finalized.</p>",
+      "description": "<p><b>Finish adding a token to the pool</b> After you have submitted a proposal to add a new token to the pool using <b>Add Token (pt. 1)</b>, this step is required to finalize the addition. Only the most recent token added via pt. 1 can be finalized.</p><p><a href=\"https://primepool.eth.link\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [],
       "abi": {
@@ -141,13 +139,13 @@
     {
       "id": "removeToken",
       "label": "Remove token",
-      "description": "<p><b>Remove a selected token from the pool<b></p>",
+      "description": "<p><b>Remove a selected token from the pool</b></p><p><a href=\"https://primepool.eth.link\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
           "label": "Token address",
           "name": "token",
-          "placeholder": "Address (0x0000…)"
+          "placeholder": "Address, like 0x0000…"
         }
       ],
       "abi": {
@@ -169,20 +167,20 @@
     {
       "id": "updateWeight",
       "label": "Change Token Weight",
-      "description": "<p><b>Change the weight of a given token within the pool</b> The weight of a token is the percentage of the pool that the new token comprises relative to all the other tokens in the pool — e.g., entering \"20\" will mean that the new token will comprise 20% of the sum of all token weights in the pool. It is recommended to only make small weight adjustments using this option.</p><p>For larger adjustments, please use <b>Update Weights Over Time</b>. To add a new token, use <b>Add Token (pt. 1)</b> instead.</p>",
+      "description": "<p><b>Change the weight of a given token within the pool</b> The weight of a token is the percentage of the pool that the new token comprises relative to all the other tokens in the pool — e.g., entering \".20\" will mean that the new token will comprise 20% of the sum of all token weights in the pool. It is recommended to only make small weight adjustments using this option.</p><p>For larger adjustments, please use <b>Update Weights Over Time</b>. To add a new token, use <b>Add Token (pt. 1)</b> instead.</p><p><a href=\"https://primepool.eth.link\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
           "label": "Token address",
           "name": "token",
-          "placeholder": "Address (0x0000…)"
+          "placeholder": "Address, like 0x0000…"
         },
         {
           "decimals": 18,
           "label": "Token Weight (%)",
           "name": "new weight",
           "unit": "uint",
-          "placeholder": "Enter 20.5% as 20.5"
+          "placeholder": "Percentage as a fraction (enter 20.5% as .205)"
         }
       ],
       "abi": {
@@ -209,25 +207,26 @@
     {
       "id": "updateWeightsGradually",
       "label": "Update Weights Over Time",
-      "description": "<p><b>Update Weights Over Time</b> Update the weights of pool tokens over a given period. This is recommended for large weight adjustments, otherwise use <b>Change Token Weight</b>.</p>",
+      "description": "<p><b>Update Weights Over Time</b> Update the weights of pool tokens over a given period. This is recommended for large weight adjustments, otherwise use <b>Change Token Weight</b>.</p><p>You must enter a weight for every token in the pool in the sequence required by the pool. For the PrimeDAO Balancer Pool the sequence of token weights is 1: PRIME, 2: WETH</p><p><a href=\"https://primepool.eth.link\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
-          "label": "New weights in wei",
+          "decimals": 18,
+          "label": "Token weight, in the correct sequence",
           "name": "New weights that are going to be gradually updated",
-          "placeholder": "Weight (1000000000000000000)"
+          "placeholder": "Percentage (enter 20.5% as .205)"
         },
         {
           "label": "Start block",
           "name": "Start update from block",
           "unit": "uint",
-          "placeholder": "Block number (199199)"
+          "placeholder": "Block number, like 199199"
         },
         {
           "label": "End block",
           "name": "End update at block",
           "unit": "uint",
-          "placeholder": "Block number (399199)"
+          "placeholder": "Block number, like 399199"
         }
       ],
       "abi": {
@@ -259,20 +258,20 @@
     {
       "id": "joinPool",
       "label": "Add Liquidity",
-      "description": "<p><b>Add liquidity</b> to the pool from the DAO. By adding liquidity, the DAO gains exposure to the pool, and begins to earn passive income as a liquidity provider.  Each share is weighted by the assets that make up the pool.</p>",
+      "description": "<p><b>Add liquidity</b> to the pool from the DAO. By adding liquidity, the DAO gains exposure to the pool and begins to earn passive income as a liquidity provider. Each pool share is weighted by the assets that make up the pool.</p><p>You must enter the amount of each token in the sequence required by the pool. For the PrimeDAO Balancer Pool the sequence of tokens is 1: PRIME, 2: WETH</p><p><a href=\"https://primepool.eth.link\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
           "decimals": 18,
-          "label": "Pool shares desired",
-          "name": "Number of pool tokens to receive",
+          "label": "Desired amount of pool shares",
+          "name": "Desired amount of pool shares",
           "unit": "uint",
-          "placeholder": "Number (1000)"
+          "placeholder": "Amount of pool shares, like 1000.25"
         },
         {
-          "label": "Max tokens to add in wei",
-          "name": "Max amount of asset tokens to spend",
-          "placeholder": "Amount (2000000000000000000)"
+          "label": "Maximum amount of tokens, in the correct sequence",
+          "name": "Maximum amount of tokens",
+          "placeholder": "Amount of tokens, like 200.5"
         }
       ],
       "abi": {
@@ -299,19 +298,19 @@
     {
       "id": "exitPool",
       "label": "Withdraw Liquidity",
-      "description": "<p><b>Withdraw liquidity</b> from the pool to the DAO. In order to withdraw liquidity, the DAO must redeem liquidity pool tokens for a given pool.</p>",
+      "description": "<p><b>Withdraw liquidity</b> from the pool to the DAO. In order to withdraw liquidity, the DAO must redeem the pool shares for a given pool.</p><p>You must enter one weight per pool token, in the sequence required by the pool. The percentages must together sum to 100.  For the PrimeDAO Balancer Pool the sequence of tokens is 1: PRIME, 2: WETH</p><p><a href=\"https://primepool.eth.link\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
           "decimals": 18,
-          "label": "Pool tokens to redeem",
-          "name": "Number of pool tokens to redeem",
-          "placeholder": "The number of tokens (1000)"
+          "label": "Amount of pool shares to redeem",
+          "name": "Amount of pool shares to redeem",
+          "placeholder": "Amount of pool shares, like 1000.25"
         },
         {
-          "label": "Max amount of asset tokens to receive in wei",
-          "name": "Minimum amount of asset tokens to receive",
-          "placeholder": "Amount (2000000000000000000)"
+          "label": "Minimum amount of tokens, in the correct sequence",
+          "name": "Minimum amount of tokens",
+          "placeholder": "Amount of tokens, like 200.5"
         }
       ],
       "abi": {
