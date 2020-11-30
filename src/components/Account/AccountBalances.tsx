@@ -29,7 +29,7 @@ class AccountBalances extends React.Component<IProps, null> {
       <div className={css.balances}>
         { (dao && currentAccountState) ?
           <div className={css.repBalance}>
-            <div className={css.heading}>Reputation</div>
+            <div className={css.title}>Reputation</div>
             <div className={css.rep}>
               <div>{dao.name}</div>
               <div className={css.underline}></div>
@@ -41,8 +41,8 @@ class AccountBalances extends React.Component<IProps, null> {
             </div> : ""
         }
         { currentAccountAddress ?
-          <div className={css.userBalance}>
-            <div className={css.heading}>Holdings</div>
+          <div className={css.holdingsBalace}>
+            <div className={css.title}>Holdings</div>
             <AccountBalance tokenSymbol={baseTokenName(network)} balance={ethBalance} accountAddress={currentAccountAddress} />
             <AccountBalance tokenSymbol={genName(network)} balance={genBalance} accountAddress={currentAccountAddress} />
           </div>
