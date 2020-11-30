@@ -3,11 +3,11 @@
   display: block;
   position: relative;
   background-color: $white;
-  transition: all .25s ease;
+  transition: all 0.25s ease;
   line-height: 13px;
 
   &:hover {
-    background-color: rgba(233, 238, 244, 1.000);
+    background-color: rgba(233, 238, 244, 1);
 
     button {
       opacity: 1;
@@ -27,38 +27,40 @@
 
   &.pending {
     .transactionBorder {
-      background-color: rgba(0, 118, 255, 1.000);
+      background-color: rgba(0, 118, 255, 1);
     }
 
     .statusIcon .pending {
-      background-color: rgba(0, 118, 255, 1.000);
+      background-color: rgba(0, 118, 255, 1);
       display: inline-block;
     }
   }
 
   &.success {
     .transactionBorder {
-      background-color: rgba(0, 190, 144, 1.000);
+      background-color: rgba(0, 190, 144, 1);
     }
 
     .statusIcon .success {
-      background-color: rgba(0, 190, 144, 1.000);
+      background-color: rgba(0, 190, 144, 1);
       display: inline-block;
     }
   }
 
   &.error {
     .transactionBorder {
-      background-color: rgba(246, 80, 80, 1.000);
+      background-color: rgba(246, 80, 80, 1);
     }
 
     .statusIcon .error {
-      background-color: rgba(246, 80, 80, 1.000);
+      background-color: rgba(246, 80, 80, 1);
       display: inline-block;
     }
   }
 
-  .pending, .success, .error {
+  .pending,
+  .success,
+  .error {
     display: none;
   }
 
@@ -96,7 +98,7 @@
     outline: none;
     border: none;
     background: none;
-    opacity: .6;
+    opacity: 0.6;
 
     img {
       width: 11px;
@@ -104,17 +106,17 @@
   }
 
   .notificationControls {
-    width: 11px;
-    height: 11px;
     position: absolute;
-    right: 15px;
-    top: 50%;
+    right: 10px;
+    top: 20px;
     transform: translateY(-50%);
     text-align: center;
   }
 }
 
-.pendingTransaction.success .success, .pendingTransaction.pending .pending, .pendingTransaction.error .error {
+.pendingTransaction.success .success,
+.pendingTransaction.pending .pending,
+.pendingTransaction.error .error {
   display: inline;
 }
 
@@ -132,7 +134,8 @@
     top: 6px;
   }
 
-  .transactionMessage, .notificationControls {
+  .transactionMessage,
+  .notificationControls {
     display: none;
   }
 }
@@ -159,5 +162,7 @@
 }
 
 @keyframes disappear {
-  to {width: 0%;}
+  to {
+    width: 0%;
+  }
 }
