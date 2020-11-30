@@ -269,6 +269,7 @@
           "placeholder": "Amount of pool shares, like 1000.25"
         },
         {
+          "decimals": 18,
           "label": "Maximum amount of tokens, in the correct sequence",
           "name": "Maximum amount of tokens",
           "placeholder": "Amount of tokens, like 200.5"
@@ -308,6 +309,7 @@
           "placeholder": "Amount of pool shares, like 1000.25"
         },
         {
+          "decimals": 18,
           "label": "Minimum amount of tokens, in the correct sequence",
           "name": "Minimum amount of tokens",
           "placeholder": "Amount of tokens, like 200.5"
