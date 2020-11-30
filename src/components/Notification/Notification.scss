@@ -7,7 +7,7 @@
   line-height: 13px;
 
   &:hover {
-    background-color: rgba(233, 238, 244, 1);
+    background-color: $notifications-hover-white;
 
     button {
       opacity: 1;
@@ -27,33 +27,33 @@
 
   &.pending {
     .transactionBorder {
-      background-color: rgba(0, 118, 255, 1);
+      background-color: $accent-0;
     }
 
     .statusIcon .pending {
-      background-color: rgba(0, 118, 255, 1);
+      background-color: $accent-0;
       display: inline-block;
     }
   }
 
   &.success {
     .transactionBorder {
-      background-color: rgba(0, 190, 144, 1);
+      background-color: $accent-3;
     }
 
     .statusIcon .success {
-      background-color: rgba(0, 190, 144, 1);
+      background-color: $accent-3;
       display: inline-block;
     }
   }
 
   &.error {
     .transactionBorder {
-      background-color: rgba(246, 80, 80, 1);
+      background-color: $accent-2;
     }
 
     .statusIcon .error {
-      background-color: rgba(246, 80, 80, 1);
+      background-color: $accent-2;
       display: inline-block;
     }
   }

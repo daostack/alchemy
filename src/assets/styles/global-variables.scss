@@ -54,6 +54,7 @@ $max-width: 1080px;
 
 $navy: rgba(18, 46, 91, 1);
 $sky: rgba(49, 120, 202, 1);
+$accent-0: rgba(3, 118, 255, 1); /* white blue */
 $accent-1: rgba(3, 118, 255, 1); /* Bright blue */
 $accent-2: rgba(246, 80, 80, 1); /* Red */
 $accent-3: rgba(0, 190, 144, 1); /* Green */
@@ -68,3 +69,5 @@ $gray-1: rgba(154, 169, 181, 1);
 $gray-2: rgba(191, 203, 213, 1);
 $gray-border-2: 1px solid $gray-2;
 $banner-background: #d5d8ba;
+
+$notifications-hover-white: rgba(233, 238, 244, 1);
