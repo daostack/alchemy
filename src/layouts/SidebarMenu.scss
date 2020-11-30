@@ -18,7 +18,7 @@
   flex-direction: column;
   background-color: $sky;
 
-  .daoName {
+  .daoNameWrapper {
     display: flex;
     align-items: center;
     padding: 20px;
@@ -29,6 +29,11 @@
       height: 40px;
       display: inline-block;
       border-radius: 40px;
+    }
+
+    .daoName {
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     a {

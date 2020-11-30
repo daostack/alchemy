@@ -89,11 +89,11 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
 
     return (
       <>
-        <div className={css.daoName}>
+        <div className={css.daoNameWrapper}>
           <Link to={"/dao/" + dao.address} onClick={this.handleCloseMenu}>
             <b className={css.daoIcon} style={{ backgroundImage: bgPattern.toDataUrl() }}></b>
           </Link>
-          <span>{dao.name}</span>
+          <div className={css.daoName} title={dao.name}>{dao.name}</div>
         </div>
         <div className={css.daoNetworkWrapper}>Network: {getNetworkByDAOAddress(dao.address)}</div>
         <div className={css.daoDescription}>
