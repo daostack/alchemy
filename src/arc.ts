@@ -184,7 +184,7 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
     const daos = await getAllDaos(arc);
 
     if (daos !== undefined) {
-      const daosMap = {} as any;
+      const daosMap: {[key in string]: string} = {};
       for (const dao of daos) {
         daosMap[dao.id] = dao.name;
       }
@@ -541,10 +541,8 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams,
   return true;
 }
 
-// cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
 // Polling is Evil!
-// TODO: check if this (new?) function can replace polling:
-// https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
+// TO DO: See https://github.com/daostack/alchemy/issues/2295.
 export function pollForAccountChanges(currentAccountAddress: Address | null, interval = 2000): Observable<Address> {
   // eslint-disable-next-line no-console
   console.log(`start polling for account changes from: ${currentAccountAddress}`);

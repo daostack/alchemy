@@ -144,7 +144,7 @@ class DaosPage extends React.Component<IProps, IState> {
 
     // Always show DAOs that the current user is a member of or follows first
     yourDAOs = yourDAOs.filter(d => d.staticState.name.toLowerCase().includes(search)).sort((a, b) => a.staticState.name.localeCompare(b.staticState.name));
-    const tempMap = {} as any;
+    const tempMap: {[key in string]: boolean} = {};
     //exclude duplicates
     yourDAOs = yourDAOs.filter((dao) => {
       if (!tempMap[dao.id]) {
