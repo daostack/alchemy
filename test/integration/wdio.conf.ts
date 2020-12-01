@@ -10,29 +10,6 @@ const drivers = {
 
 const config: WebdriverIO.Config = {
   specs: ["./test/integration/*.e2e.ts"],
-  suites: {
-    suite1: [
-      "./test/integration/daos.e2e.ts",
-      "./test/integration/feed.e2e.ts",
-      "./test/integration/history.e2e.ts",
-      "./test/integration/members.e2e.ts",
-      "./test/integration/profile.e2e.ts",
-    ],
-    suite2: [
-      "./test/integration/proposal.e2e.ts",
-      "./test/integration/proposal-competition.e2e.ts",
-      "./test/integration/proposal-genericScheme.e2e.ts",
-      "./test/integration/proposal-genericSchemeDutchx.e2e.ts",
-      "./test/integration/proposal-genericSchemeEnsPublicResolver.e2e.ts",
-    ],
-    suite3: [
-      "./test/integration/proposal-genericSchemeEnsRegistry.e2e.ts",
-      "./test/integration/proposal-genericSchemeRegistryLookup.e2e.ts",
-      "./test/integration/proposal-genericSchemeStandardBounties.e2e.ts",
-      "./test/integration/proposal-schemeregistrar.e2e.ts",
-      "./test/integration/rewards.e2e.ts",
-    ],
-  },
   maxInstances: 1,
   capabilities: [
     {
@@ -56,6 +33,7 @@ const config: WebdriverIO.Config = {
       args: {drivers},
     }],
   ],
+
   framework: "mocha",
   reporters: ["dot", "spec"],
   mochaOpts: {
