@@ -136,17 +136,18 @@ class AppContainer extends React.Component<IProps, IState> {
 
     initializeUtils({ showSimpleMessage: this.showSimpleMessage });
 
-    // Listen to network changes in MetaMask
-    window.ethereum.on("chainChanged", async (chainId: string) => {
-      this.props.setCurrentAccount(getCachedAccount(), await getNetworkName(chainId));
-    });
-
-    // TO DO: Listen to account changes in MetaMask instead id polling!
-    //window.ethereum.on("accountsChanged", (accounts: Array<any>) => {
-    // Handle the new accounts, or lack thereof.
-    // "accounts" will always be an array, but it can be empty.
-    // The current account is at accounts[0]
-    //});
+    if (window.ethereum) {
+      // Listen to network changes in MetaMask
+      window.ethereum.on("chainChanged", async (chainId: string) => {
+        this.props.setCurrentAccount(getCachedAccount(), await getNetworkName(chainId));
+      });
+      // TO DO: Listen to account changes in MetaMask instead of polling!
+      //window.ethereum.on("accountsChanged", (accounts: Array<any>) => {
+      // Handle the new accounts, or lack thereof.
+      // "accounts" will always be an array, but it can be empty.
+      // The current account is at accounts[0]
+      //});
+    }
 
     /**
      * Only supply currentAddress if it was obtained from a provider.  The poll
