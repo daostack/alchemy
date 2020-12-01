@@ -26,10 +26,11 @@ Check Docker Compose:
     - docker -v
     - docker-compose -v
     - echo "rebuild docker-compose ONLY if config was changed"
+    - npm i node-fetch -g
     - cmp --silent docker-compose.yml ~/.runner-cache/docker-compose.yml ||
       bash -c 'docker-compose down
       && docker-compose build
-      && docker-compose up -d
+      && docker-compose -f docker-compose.yml -f docker-compose.docker.yml up -d
       && mkdir -p ~/.runner-cache
       && rm -rf ~/.runner-cache/docker-compose.yml
       && cp docker-compose.yml ~/.runner-cache/'
@@ -38,6 +39,7 @@ Check Docker Compose:
       then i=$((i+1)) && sleep 5 && echo "slep... $i";
       else exit 1; fi
       ; done'
+    - npm i node-fetch --prefer-offline
     - npm run service-status
   needs: []
   only:
@@ -99,6 +101,7 @@ Test Docker Services:
     - ''
   cache: {}
   script:
+    - npm i node-fetch --prefer-offline
     - npm run service-status
     - ./scripts/checkDaos.sh
   needs: [ "e2e Tests Suite 1", "e2e Tests Suite 2", "e2e Tests Suite 3" ]
