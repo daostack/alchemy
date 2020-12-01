@@ -12,6 +12,7 @@ cache:
 before_script:
   - npm -v
   - node -v
+  - echo "test"
   - npm install --prefer-offline
 
 Check Docker Compose:
