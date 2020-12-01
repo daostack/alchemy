@@ -146,7 +146,8 @@ class DaoContainer extends React.Component<IProps, IState> {
     return (
       <div className={css.outer}>
         <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
-        <BreadcrumbsItem to={`${window.location}`}><select className={css.follwingDaosList} onChange={(e) => this.onFollwingDaosListChange(e.target.value, this.props.history)}>{myDaosOptions}</select></BreadcrumbsItem>
+        {/* A BreadcrumbsItem position is determined according the path depth, so it has to be at least /daos/. In order to prevent redirection we use preventDefault */}
+        <BreadcrumbsItem onClick={(e: any) => { e.preventDefault(); }} to="/daos/"><select className={css.follwingDaosList} onChange={(e) => this.onFollwingDaosListChange(e.target.value, this.props.history)}>{myDaosOptions}</select></BreadcrumbsItem>
         <Helmet>
           <meta name="description" content={daoState.name + " | Managed on Alchemy by DAOstack"} />
           <meta name="og:description" content={daoState.name + " | Managed on Alchemy by DAOstack"} />
