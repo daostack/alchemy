@@ -362,9 +362,9 @@ export async function getNetworkId(web3Provider?: any): Promise<string> {
    */
   if (arc && arc.web3 && (!web3Provider || (arc.web3.currentProvider === web3Provider))) {
     web3 = arc.web3;
-  } else if (network && (window as any).arcs[network].web3 &&
-    (!web3Provider || ((window as any).arcs[network].web3.currentProvider === web3Provider))) {
-    web3 = (window as any).arcs[network].web3;
+  } else if (network && window.arcs[network].web3 &&
+    (!web3Provider || (window.arcs[network].web3.currentProvider === web3Provider))) {
+    web3 = window.arcs[network].web3;
   } else if (web3Provider) {
     web3 = new Web3(web3Provider);
   }

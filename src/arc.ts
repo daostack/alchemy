@@ -19,7 +19,10 @@ let selectedProvider: any;
 let web3Modal: Web3Modal;
 let initializedAccount: Address;
 
-
+interface IDAO {
+  id: string;
+  name: string;
+}
 
 /**
  * return the default Arc configuration given the execution environment
@@ -34,7 +37,7 @@ export function getArcSettings(network?: Networks): any {
  * Return the web3 in current use by Arc.
  */
 function getWeb3(network: Networks): any {
-  const arc = (window as any).arcs[network];
+  const arc = window.arcs[network];
   const web3 = arc ? arc.web3 : null;
   return web3;
 }
@@ -58,7 +61,7 @@ async function _getCurrentAccountFromProvider(network: Networks, web3?: any): Pr
  * @returns {Arc}
  */
 export function getArc(network: Networks): Arc {
-  const arc = (window as any).arcs[network];
+  const arc = window.arcs[network];
   if (!arc) {
     throw Error(`window.arc is not defined for ${network} - please call initializeArc first`);
   }
@@ -69,7 +72,7 @@ export function getArc(network: Networks): Arc {
  * Returns the arcs object
  */
 export function getArcs(): any {
-  const arcs = (window as any).arcs;
+  const arcs = window.arcs;
   if (!arcs) {
     throw Error("window.arcs is not defined - please call initializeArc first");
   }
@@ -80,7 +83,7 @@ export function getArcs(): any {
  * Returns daos object (which hold all daos from all networks)
  */
 export function getDAOs(): any {
-  const daos = (window as any).daos;
+  const daos = window.daos;
   if (!daos) {
     throw Error("window.daos is not defined - please call initializeArc first");
   }
@@ -116,7 +119,7 @@ export function providerHasConfigUi(provider?: any): any | undefined {
   return provider && provider.isTorus;
 }
 
-async function getAllDaos(arc: Arc): Promise<any> {
+async function getAllDaos(arc: Arc): Promise<Array<IDAO>> {
   const allDaos = [];
   let daos = [];
   let skip = 0;
@@ -131,7 +134,7 @@ async function getAllDaos(arc: Arc): Promise<any> {
     }
   `;
     const response = await arc.sendQuery(query, {});
-    daos = response.data.daos as any[];
+    daos = response.data.daos as Array<IDAO>;
     if (daos.length > 0) {
       allDaos.push(...daos);
     }
@@ -161,8 +164,8 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
     const readonly = typeof provider === "string";
 
     // if there is no existing arc, we create a new one
-    if ((window as any).arcs[network]) {
-      arc = (window as any).arcs[network];
+    if (window.arcs[network]) {
+      arc = window.arcs[network];
       arc.web3 = new Web3(provider);
     }
     else {
@@ -185,7 +188,7 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
       for (const dao of daos) {
         daosMap[dao.id] = dao.name;
       }
-      (window as any).daos[network] = daosMap;
+      window.daos[network] = daosMap;
     } else {
       // eslint-disable-next-line no-console
       console.error(`Error fetching daos from: ${network}`);
@@ -210,9 +213,9 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
       // save for future reference
       // eslint-disable-next-line require-atomic-updates
       provider.__networkId = await getNetworkId(provider);
-      if ((window as any).ethereum) {
+      if (window.ethereum) {
         // if this is metamask this should prevent a browser refresh when the network changes
-        (window as any).ethereum.autoRefreshOnNetworkChange = false;
+        window.ethereum.autoRefreshOnNetworkChange = false;
       }
       // eslint-disable-next-line no-console
       console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
@@ -222,7 +225,7 @@ export async function initializeArc(network: Networks, provider?: any): Promise<
     console.error(reason ? reason.message : "unknown error");
   }
 
-  (window as any).arcs[network] = success ? arc : null;
+  window.arcs[network] = success ? arc : null;
 
   return success;
 }

@@ -13,6 +13,15 @@ import { ThroughProvider } from "react-through";
 import * as css from "./layouts/App.scss";
 import { history, default as store } from "./configureStore";
 import { Networks, targetNetworks } from "./lib/util";
+import Arc from "@daostack/arc.js";
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/interface-name-prefix
+  interface Window {
+    arcs: {[key: string]: Arc};
+    daos: {[key: string]: {[key: string]: string}};
+  }
+}
 
 export class App extends React.Component<{}, {
   arcIsInitialized: boolean;
@@ -44,8 +53,8 @@ export class App extends React.Component<{}, {
 
   public async componentDidMount (): Promise<void> {
     const networks = targetNetworks();
-    (window as any).arcs = {};
-    (window as any).daos = {};
+    window.arcs = {};
+    window.daos = {};
     // Do this here because we need to have initialized Arc first.  This will
     // not create a provider for the app, rather will just initialize Arc with a
     // readonly provider with no account, internal only to it.
@@ -64,7 +73,6 @@ export class App extends React.Component<{}, {
           await initArc(network as Networks);
         } catch (err) {
           this.setState({ retryingArc: true });
-          // eslint-disable-next-line no-console
           numberOfAttempts += 1;
           // retry
           if (numberOfAttempts >= totalNumberOfAttempts) {
