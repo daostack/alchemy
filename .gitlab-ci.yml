@@ -38,6 +38,7 @@ Check Docker Compose:
       then i=$((i+1)) && sleep 5 && echo "slep... $i";
       else exit 1; fi
       ; done'
+    - npm run service-status
   needs: []
   only:
     variables:
@@ -94,6 +95,9 @@ e2e Tests Suite 3:
 Test Docker Services:
   stage: After e2e Tests
   interruptible: true
+  before_script:
+    - ''
+  cache: {}
   script:
     - npm run service-status
     - ./scripts/checkDaos.sh
