@@ -1,8 +1,8 @@
 stages:
   - Install
   - Tests
-  - After e2e Tests
   - Build
+  - After e2e Tests
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -12,7 +12,6 @@ cache:
 before_script:
   - npm -v
   - node -v
-  - echo "test"
   - npm install --prefer-offline
 
 Check Docker Compose:
@@ -26,7 +25,6 @@ Check Docker Compose:
     - docker -v
     - docker-compose -v
     - echo "rebuild docker-compose ONLY if config was changed"
-    - npm i node-fetch -g
     - cmp --silent docker-compose.yml ~/.runner-cache/docker-compose.yml ||
       bash -c 'docker-compose down
       && docker-compose build
@@ -39,7 +37,7 @@ Check Docker Compose:
       then i=$((i+1)) && sleep 5 && echo "slep... $i";
       else exit 1; fi
       ; done'
-    - npm i node-fetch --prefer-offline
+    - npm install --no-package-lock --no-save --quiet node-fetch --prefer-offline
     - npm run service-status
   needs: []
   only:
@@ -101,7 +99,7 @@ Test Docker Services:
     - ''
   cache: {}
   script:
-    - npm i node-fetch --prefer-offline
+    - npm install --no-package-lock --no-save --quiet node-fetch --prefer-offline
     - npm run service-status
     - ./scripts/checkDaos.sh
   needs: [ "e2e Tests Suite 1", "e2e Tests Suite 2", "e2e Tests Suite 3" ]
