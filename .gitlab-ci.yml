@@ -1,6 +1,7 @@
 stages:
   - Install
-  - Tests
+  - Static Tests
+  - e2e Tests
   - Build
   - After e2e Tests
 
@@ -45,7 +46,7 @@ Check Docker Compose:
       - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
 
 Static Tests:
-  stage: Tests
+  stage: Static Tests
   interruptible: true
   script:
     - npm run lint -- --quiet
@@ -56,11 +57,11 @@ Static Tests:
       - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
 
 e2e Tests Suite 1:
-  stage: Tests
+  stage: e2e Tests
   interruptible: true
   script:
     - npm run test:i1
-  needs: ["Check Docker Compose"]
+  needs: ["Static Tests", "Check Docker Compose"]
   when: on_success
   retry: 2
   only:
@@ -68,11 +69,11 @@ e2e Tests Suite 1:
       - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
 
 e2e Tests Suite 2:
-  stage: Tests
+  stage: e2e Tests
   interruptible: true
   script:
     - npm run test:i2
-  needs: ["Check Docker Compose"]
+  needs: ["Static Tests", "Check Docker Compose"]
   when: on_success
   retry: 2
   only:
@@ -81,11 +82,11 @@ e2e Tests Suite 2:
 
 
 e2e Tests Suite 3:
-  stage: Tests
+  stage: e2e Tests
   interruptible: true
   script:
     - npm run test:i3
-  needs: ["Check Docker Compose"]
+  needs: ["Static Tests", "Check Docker Compose"]
   when: on_success
   retry: 2
   only:
@@ -114,7 +115,7 @@ Build:
   interruptible: true
   script:
     - npm run build-travis
-  needs: []
+  needs: ["Static Tests"]
   only:
     variables:
       - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
