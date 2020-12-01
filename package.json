@@ -75,9 +75,6 @@
     "test": "wdio ./test/integration/wdio.conf.js",
     "test:integration": "wdio ./test/integration/wdio.conf.js --inspect",
     "test:integration:headless": "wdio ./test/integration/wdio-headless.conf.js",
-    "test:i1": "wdio ./test/integration/wdio-headless.conf.js --suite suite1",
-    "test:i2": "wdio ./test/integration/wdio-headless.conf.js --suite suite2",
-    "test:i3": "wdio ./test/integration/wdio-headless.conf.js --suite suite3",
     "test:i": "wdio ./test/integration/wdio-headless.conf.js",
     "test:unit": "jest"
   },
