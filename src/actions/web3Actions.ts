@@ -9,11 +9,11 @@ import { IAsyncAction } from "./async";
 
 export type ConnectAction = IAsyncAction<"WEB3_CONNECT", void, IWeb3State>;
 
-export function setCurrentAccount(accountAddress: string) {
+export function setCurrentAccount(accountAddress: string, network?: string) {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: Function) => {
     const payload = {
       currentAccountAddress: accountAddress,
-      networkName: await getProviderNetworkName(),
+      networkName: network || await getProviderNetworkName(),
     };
 
     const action = {

@@ -23,7 +23,7 @@ import { Address } from "@daostack/arc.js";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
 import SimpleMessagePopup, { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
-import { initializeUtils } from "lib/util";
+import { initializeUtils, getNetworkName } from "lib/util";
 
 const AccountProfilePage = lazy(() => import("components/Account/AccountProfilePage"));
 const DaosPage = lazy(() => import("components/Daos/DaosPage"));
@@ -135,6 +135,18 @@ class AppContainer extends React.Component<IProps, IState> {
     this.props.setCurrentAccount(currentAddress);
 
     initializeUtils({ showSimpleMessage: this.showSimpleMessage });
+
+    // Listen to network changes in MetaMask
+    window.ethereum.on("chainChanged", async (chainId: string) => {
+      this.props.setCurrentAccount(getCachedAccount(), await getNetworkName(chainId));
+    });
+
+    // TO DO: Listen to account changes in MetaMask instead id polling!
+    //window.ethereum.on("accountsChanged", (accounts: Array<any>) => {
+    // Handle the new accounts, or lack thereof.
+    // "accounts" will always be an array, but it can be empty.
+    // The current account is at accounts[0]
+    //});
 
     /**
      * Only supply currentAddress if it was obtained from a provider.  The poll
