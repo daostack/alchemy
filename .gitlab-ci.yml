@@ -8,12 +8,12 @@ stages:
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
-    - node_modules/
+    - .npm/
 
 before_script:
   - npm -v
   - node -v
-  - npm ci --prefer-offline
+  - npm ci --cache .npm --prefer-offline
 
 Check Docker Compose:
   stage: Install
