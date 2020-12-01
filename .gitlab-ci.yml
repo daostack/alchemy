@@ -13,7 +13,7 @@ cache:
 before_script:
   - npm -v
   - node -v
-  - npm ci --cache .npm --prefer-offline
+  - npm install --cache .npm --prefer-offline
 
 Check Docker Compose:
   stage: Install
