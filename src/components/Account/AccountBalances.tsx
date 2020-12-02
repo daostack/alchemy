@@ -62,11 +62,14 @@ export default withSubscription({
   },
 
   createObservable: ({ dao, arc, address, network }: IExternalProps) => {
+    if (!arc) {
+      return of([]);
+    }
     return combineLatest(
       address,
       (address && dao && dao.dao.member(address).state( standardPolling())) || of(null),
       ethBalance(address, arc, network).pipe(ethErrorHandler()),
-      arc.GENToken().balanceOf(address).pipe(ethErrorHandler()),
+      arc?.GENToken().balanceOf(address).pipe(ethErrorHandler()),
     );
   },
 });
