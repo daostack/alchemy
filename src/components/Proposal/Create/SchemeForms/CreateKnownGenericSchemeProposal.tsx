@@ -20,7 +20,7 @@ import { exportUrl, importUrlValues } from "lib/proposalUtils";
 
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-import * as css from "../CreateProposal.scss";
+import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 

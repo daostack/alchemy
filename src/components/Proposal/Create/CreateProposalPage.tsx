@@ -1,22 +1,24 @@
-import { ISchemeState, Address } from "@daostack/arc.js";
-import CreateKnownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateKnownGenericSchemeProposal";
-import CreateSchemeRegistrarProposal from "components/Proposal/Create/SchemeForms/CreateSchemeRegistrarProposal";
-import CreateUnknownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateUnknownGenericSchemeProposal";
-import CreateGenericMultiCallProposal from "components/Proposal/Create/SchemeForms/CreateGenericMultiCallProposal";
-import Loading from "components/Shared/Loading";
-import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import * as React from "react";
+
+import { History } from "history";
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { RouteComponentProps } from "react-router-dom";
+import { Page } from "pages";
+
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import Analytics from "lib/analytics";
-import { History } from "history";
-import { Page } from "pages";
-import * as React from "react";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { connect } from "react-redux";
-import { IRootState } from "reducers";
-import { RouteComponentProps } from "react-router-dom";
-import { CrxRewarderComponentType, getCrxRewarderComponent, rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
-import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
 import { schemeName } from "lib/schemeUtils";
+
+import { ISchemeState, Address } from "@daostack/arc.js";
+import { CrxRewarderComponentType, getCrxRewarderComponent, rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
+import { ISubscriptionProps } from "components/Shared/withSubscription";
+
+import CreateKnownGenericSchemeProposal from "./SchemeForms/CreateKnownGenericSchemeProposal";
+import CreateSchemeRegistrarProposal from "./SchemeForms/CreateSchemeRegistrarProposal";
+import CreateUnknownGenericSchemeProposal from "./SchemeForms/CreateUnknownGenericSchemeProposal";
+import CreateGenericMultiCallProposal from "./SchemeForms/CreateGenericMultiCallProposal";
+import CreateContributionRewardProposal from "./SchemeForms/CreateContributionRewardProposal";
+
 import * as css from "./CreateProposal.scss";
 import { getArcByDAOAddress } from "lib/util";
 
@@ -35,16 +37,7 @@ interface IStateProps {
 
 type IProps = IExternalProps & IExternalStateProps & ISubscriptionProps<ISchemeState>;
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IExternalStateProps => {
-  return {
-    ...ownProps,
-    currentAccountAddress: state.web3.currentAccountAddress,
-    daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
-    schemeId: ownProps.match.params.schemeId,
-  };
-};
-
-class CreateProposalPage extends React.Component<IProps, IStateProps> {
+export class CreateProposalPage extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);

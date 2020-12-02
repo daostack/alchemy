@@ -17,7 +17,7 @@ import classNames from "classnames";
 import { IProposalType, ISchemeState, Scheme } from "@daostack/arc.js";
 import { connect } from "react-redux";
 import * as React from "react";
-import * as css from "../CreateProposal.scss";
+import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 

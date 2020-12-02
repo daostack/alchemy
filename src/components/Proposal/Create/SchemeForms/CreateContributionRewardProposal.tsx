@@ -12,7 +12,7 @@ import Analytics from "lib/analytics";
 import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
-import * as css from "../CreateProposal.scss";
+import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 
