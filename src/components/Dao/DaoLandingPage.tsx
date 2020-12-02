@@ -15,7 +15,6 @@ type IExternalProps = {
 type IProps = IExternalProps;
 
 export default class DaoLandingPage extends React.Component<IProps, null> {
-
   private disqusConfig = { url: "", identifier: "", title: "" };
 
   public componentDidMount() {
@@ -27,21 +26,34 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
   }
 
   private handleEditContent = () => {
-    showSimpleMessage(
-      {
-        title: "Edit Home Page",
-        body:
-          <>
-            <div>Editing the content on this DAO’s home page will soon be possible via proposal. Stay tuned!</div>
-            <div>For now, if you need a change made to a DAO’s home page content, please contact us at <a href="https://support@daostack.zendesk.com" target="_blank" rel="noopener noreferrer">support@daostack.zendesk.com</a></div>
-          </>,
-      }
-    );
-  }
+    showSimpleMessage({
+      title: "Edit Home Page",
+      body: (
+        <>
+          <div>
+            Editing the content on this DAO’s home page will soon be possible
+            via proposal. Stay tuned!
+          </div>
+          <div>
+            For now, if you need a change made to a DAO’s home page content,
+            please contact us at{" "}
+            <a
+              href="https://support@daostack.zendesk.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              support@daostack.zendesk.com
+            </a>
+          </div>
+        </>
+      ),
+    });
+  };
 
   public render() {
     const daoState = this.props.daoState;
-    const customData = customDaoInfo[targetedNetwork()]?.[daoState.id.toLowerCase()];
+    const customData =
+      customDaoInfo[targetedNetwork()]?.[daoState.id.toLowerCase()];
 
     this.disqusConfig.url = `${process.env.BASE_URL}/dao/${this.props.daoState.address}/discussion`;
     this.disqusConfig.identifier = this.props.daoState.address;
@@ -59,20 +71,28 @@ export default class DaoLandingPage extends React.Component<IProps, null> {
             </div>
           </div>
 
-          {customData ?
+          {customData ? (
             <>{customData}</>
-            :
+          ) : (
             <>
-              <div>Welcome to {daoState.name}, a decentralized organization built on DAOstack.</div>
-              <div>Visit the <Link to={`/dao/${daoState.id}/schemes/`}>Proposals page</Link> to
-                make a proposal to the DAO or vote on existing proposals.</div>
+              <div>
+                Welcome to {daoState.name}, a decentralized organization built
+                on DAOstack.
+              </div>
+              <div>
+                Visit the{" "}
+                <Link to={`/dao/${daoState.id}/schemes/`}>Proposals page</Link>{" "}
+                to make a proposal to the DAO or vote on existing proposals.
+              </div>
             </>
-          }
-
+          )}
         </div>
         <div className={css.wallContainer}>
           <div className={css.headerText}>Discuss {daoState.name}</div>
-          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig} />
+          <DiscussionEmbed
+            shortname={process.env.DISQUS_SITE}
+            config={this.disqusConfig}
+          />
         </div>
       </div>
     );

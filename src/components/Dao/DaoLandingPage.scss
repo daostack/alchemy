@@ -49,6 +49,14 @@
     div {
       margin-bottom: 16px;
     }
+    a {
+      color: $blue-link;
+      &:hover,
+      &:focus,
+      &:active {
+        color: $blue-link;
+      }
+    }
   }
 
   .wallContainer {
