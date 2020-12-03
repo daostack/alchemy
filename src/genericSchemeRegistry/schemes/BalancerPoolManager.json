@@ -72,7 +72,7 @@
     {
       "id": "commitAddToken",
       "label": "Add Token (pt. 1)",
-      "description": "<p><b>Initiate adding a new token to the pool</b> After requesting to add a token in this step (pt. 1), a second proposal, using <b>Add Token (pt. 2)</b>, must be submitted to complete the addition. Otherwise, each token added with pt. 1 will be overwritten by next use of pt. 1.</p><p><a href=\"https://docs.primedao.io/primedao/products/poolmanager\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
+      "description": "<p><b>Initiate adding a new token to the pool</b> After requesting to add a token in this step (pt. 1), a second proposal, using <b>Add Token (pt. 2)</b>, must be submitted to complete the addition. Otherwise, each token added with pt. 1 will be overwritten by next use of pt. 1.</p><p>The token weight should be a \"denormalized\" number >= 1.0 and <= 49.0.  Please refer to the following instructions for more information.</p><p><a href=\"https://docs.primedao.io/primedao/products/poolmanager\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
@@ -89,9 +89,9 @@
         },
         {
           "decimals": 18,
-          "label": "Token Weight (%)",
+          "label": "Token Weight",
           "name": "denormalizedWeight",
-          "placeholder": "Percentage as a fraction (enter 20.5% as .205)"
+          "placeholder": "Any number >= 1.0 and <= 49.0"
         }
       ],
       "abi": {
@@ -167,7 +167,7 @@
     {
       "id": "updateWeight",
       "label": "Change Token Weight",
-      "description": "<p><b>Change the weight of a given token within the pool</b> The weight of a token is a number >= 1 and <= 49. It transforms to the percentage of the pool that the new token comprises relative to the value of all the other tokens in the pool — e.g., entering \"38\" will mean that the new token will comprise 95% of the token in the pool. It is recommended to only make small weight adjustments using this option.</p><p>For larger adjustments, please use <b>Update Weights Over Time</b>. To add a new token, use <b>Add Token (pt. 1)</b> instead.</p><p><a href=\"https://docs.primedao.io/primedao/products/poolmanager\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
+      "description": "<p><b>Change the weight of a given token within the pool</b> Changing the weight of a token triggers the transfer of the tokens to/from the pool from/to the DAO. It is recommended to only make small weight adjustments using this option.</p><p>For larger adjustments, please use <b>Update Weights Over Time</b>. To add a new token, use <b>Add Token (pt. 1)</b> instead.</p><p>The token weight should be a \"denormalized\" number >= 1.0 and <= 49.0.  Please refer to the following instructions for more information.</p><p><a href=\"https://docs.primedao.io/primedao/products/poolmanager\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
@@ -207,7 +207,7 @@
     {
       "id": "updateWeightsGradually",
       "label": "Update Weights Over Time",
-      "description": "<p><b>Update Weights Over Time</b> Update the weights of pool tokens over a given period. This is recommended for large weight adjustments, otherwise use <b>Change Token Weight</b>.</p><p>You must enter a weight for every token in the pool in the sequence required by the pool. For the PrimeDAO Balancer Pool the sequence of token weights is 1: PRIME, 2: WETH</p><p><a href=\"https://docs.primedao.io/primedao/products/poolmanager\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
+      "description": "<p><b>Update Weights Over Time</b> This option enables the usage of one of the main Smart Pool features such as bootstrapping liquidity. Update Weights Over time allows to gradually change weights of the tokens presented in the pool.</p><p>You must enter a weight for every token in the pool in the sequence required by the pool. For more information, please refer to the following instructions.</p><p><a href=\"https://docs.primedao.io/primedao/products/poolmanager\" target=\"_blank\" rel=\"noopener noreferrer\">More Instructions</a></p>",
       "notes": "https://github.com/PrimeDAO/monorepo/blob/master/packages/contracts/contracts/schemes/BalancerProxy.sol",
       "fields": [
         {
