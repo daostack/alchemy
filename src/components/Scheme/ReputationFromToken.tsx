@@ -9,7 +9,7 @@ import { NotificationStatus } from "reducers/notifications";
 import { redeemReputationFromToken } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { fromWei } from "lib/util";
+import { fromWei, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import { schemeName } from "lib/schemeUtils";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -70,7 +70,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     const queryValues = parse(this.props.location.search);
     let pk = queryValues["pk"] as string;
     if (pk) {
-      const arc = getArc();
+      const arc = getArc(getNetworkByDAOAddress(this.props.daoAvatarAddress));
       if (!pk.startsWith("0x")) {
         pk = `0x${pk}`;
       }
@@ -96,7 +96,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     if (redeemerAddress) {
       const schemeState = this.props.schemeState;
       const schemeAddress = schemeState.address;
-      const arc = getArc();
+      const arc = getArc(getNetworkByDAOAddress(this.props.daoAvatarAddress));
       const schemeContract = await arc.getContract(schemeAddress);
       const tokenContractAddress = await schemeContract.methods.tokenContract().call();
       const tokenContract = new Token(tokenContractAddress, arc);
@@ -135,14 +135,14 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
     // only connect to wallet if we do not have a private key to sign with
     if (!this.state.privateKey &&
-      !await enableWalletProvider({ showNotification: this.props.showNotification })) {
+      !await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoAvatarAddress))) {
       setSubmitting(false);
       return;
     }
 
     const schemeState = this.props.schemeState;
     const schemeAddress = schemeState.address;
-    const arc = getArc();
+    const arc = getArcByDAOAddress(this.props.daoAvatarAddress);
     const schemeContract = await arc.getContract(schemeAddress);
     const alreadyRedeemed = await schemeContract.methods.redeems(this.state.redeemerAddress).call();
     if (alreadyRedeemed) {
@@ -271,7 +271,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     const { daoAvatarAddress, schemeState, currentAccountAddress } = this.props;
     const redeemerAddress = this.state.redeemerAddress;
 
-    const arc = getArc();
+    const arc = getArc(getNetworkByDAOAddress(daoAvatarAddress));
 
     return (
       <div className={schemeCss.schemeContainer}>

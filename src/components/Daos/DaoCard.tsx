@@ -3,6 +3,7 @@ import classNames from "classnames";
 import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { generate } from "geopattern";
+import { getNetworkByDAOAddress } from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
 import { Link } from "react-router-dom";
@@ -44,7 +45,7 @@ const DaoCard = (props: IProps) => {
         </div>
 
         <span className={css.followButton}>
-          <FollowButton id={dao.id} type="daos" style="white" />
+          <FollowButton id={dao.id} type="daos" style="white" network={getNetworkByDAOAddress(daoState.address)} />
         </span>
 
         <div className={"clearfix " + css.daoInfoContainer}>

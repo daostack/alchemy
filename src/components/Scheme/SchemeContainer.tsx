@@ -1,7 +1,7 @@
 import { History } from "history";
 import { first, filter, toArray, mergeMap } from "rxjs/operators";
 import { Address, CompetitionScheme, IProposalStage, IDAOState, ISchemeState, IProposalState, IProposalOutcome, Scheme } from "@daostack/arc.js";
-import { getArc, enableWalletProvider } from "arc";
+import { enableWalletProvider } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -22,7 +22,7 @@ import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
 import SchemeOpenBountyPage from "./SchemeOpenBountyPage";
 import * as css from "./Scheme.scss";
-import { standardPolling } from "lib/util";
+import { standardPolling, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -103,7 +103,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
   }
 
   private handleNewProposal = async (e: any): Promise<void> => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoState.address))) { return; }
 
     this.props.history.push(`/dao/${this.props.daoState.address}/scheme/${this.props.schemeId}/proposals/create/`);
 
@@ -111,7 +111,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
   };
 
   private handleEditPlugin = async (e: any) => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoState.address))) { return; }
 
     this.props.history.push(`/dao/${this.props.daoState.id}/scheme/${this.props.data[1].id}/proposals/create/?currentTab=editScheme`);
     e.preventDefault();
@@ -254,7 +254,7 @@ const SubscribedSchemeContainer = withSubscription({
   errorComponent: null,
   checkForUpdate: ["schemeId"],
   createObservable: async (props: IProps) => {
-    const arc = getArc();
+    const arc = getArcByDAOAddress(props.daoState.id);
     const scheme = arc.scheme(props.schemeId) as any;
 
     // TODO: this may NOT be the best place to do this - we'd like to do this higher up

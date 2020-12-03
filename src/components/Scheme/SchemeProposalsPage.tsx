@@ -18,7 +18,7 @@ import { showNotification } from "reducers/notifications";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./SchemeProposals.scss";
-import { standardPolling } from "lib/util";
+import { standardPolling, getNetworkByDAOAddress } from "lib/util";
 
 // For infinite scrolling
 const PAGE_SIZE_QUEUED = 100;
@@ -341,7 +341,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
   },
 
   createObservable: async (props: IExternalProps) => {
-    const arc = getArc();
+    const arc = getArc(getNetworkByDAOAddress(props.daoState.id));
     const dao = props.daoState.dao;
     const schemeId = props.scheme.id;
 

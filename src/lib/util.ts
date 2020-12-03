@@ -1,6 +1,7 @@
 import { promisify } from "util";
 import {
   Address,
+  Arc,
   IProposalStage,
   IProposalState,
   IRewardState,
@@ -14,7 +15,7 @@ import * as BN from "bn.js";
  */
 import "moment";
 import * as moment from "moment-timezone";
-import { getArc } from "../arc";
+import { getArc, getArcs, getDAOs } from "../arc";
 import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
 import { GRAPH_POLL_INTERVAL } from "../settings";
 
@@ -39,6 +40,16 @@ export function checkTotalPercent(split: any) {
   return (sum === 100.0);
 
 }
+
+export const getDAONameByID = (daoAddress: string): string => {
+  const daos = getDAOs();
+  for (const network in daos) {
+    if (daos[network][daoAddress] !== undefined) {
+      return daos[network][daoAddress];
+    }
+  }
+  return undefined;
+};
 
 export function addSeconds(date: Date, seconds: number) {
   date.setTime(date.getTime() + seconds);
@@ -128,17 +139,24 @@ export function toWei(amount: number): BN {
    * toFixed to avoid the sci notation that javascript creates for large and small numbers.
    * toWei barfs on it.
    */
-  return new BN(getArc().web3.utils.toWei(amount.toFixed(18).toString(), "ether"));
+  return new BN(Web3.utils.toWei(amount.toFixed(18).toString(), "ether"));
 }
 
 export type Networks = "main" | "rinkeby" | "ganache" | "xdai" | "kovan";
+
+export const targetNetworks = (): Networks[] => {
+  if (process.env.NETWORKS.includes("private")) {
+    return ["ganache"];
+  }
+  return process.env.NETWORKS.split("*") as Networks[];
+};
 
 /**
  * Get the network id to which the current build expects connect.
  * Note this doesn't belong in arc.ts else a circular module dependency is created.
  */
 export function targetedNetwork(): Networks {
-  switch (process.env.NETWORK) {
+  switch (targetNetworks()[0] as string) {
     case "test":
     case "ganache":
     case "private": {
@@ -163,21 +181,21 @@ export function targetedNetwork(): Networks {
   }
 }
 
-export function baseTokenName() {
-  return tokens[targetedNetwork()]["baseTokenName"];
+export function baseTokenName(network?: Networks) {
+  return tokens[network || targetedNetwork()]["baseTokenName"];
 }
 
-export function genName() {
-  return tokens[targetedNetwork()]["genName"];
+export function genName(network?: Networks) {
+  return tokens[network || targetedNetwork()]["genName"];
 }
 
-export function supportedTokens() {
+export function supportedTokens(network: Networks) {
   return {
-    [getArc().GENToken().address]: {
+    [getArc(network).GENToken().address]: {
       decimals: 18,
       name: "DAOstack GEN",
-      symbol: genName(),
-    }, ...tokens[targetedNetwork()]["tokens"],
+      symbol: genName(network),
+    }, ...tokens[network]["tokens"],
   };
 }
 
@@ -232,17 +250,17 @@ export function formatTokens(amountWei: BN | null, symbol?: string, decimals = 1
   return toSignedString(returnString);
 }
 
-export function tokenDetails(tokenAddress: string) {
-  return supportedTokens()[tokenAddress.toLowerCase()];
+export function tokenDetails(tokenAddress: string, network?: Networks) {
+  return supportedTokens(network)[tokenAddress.toLowerCase()];
 }
 
-export function tokenSymbol(tokenAddress: string) {
-  const token = supportedTokens()[tokenAddress.toLowerCase()];
+export function tokenSymbol(tokenAddress: string, network?: Networks) {
+  const token = supportedTokens(network)[tokenAddress.toLowerCase()];
   return token ? token["symbol"] : "?";
 }
 
-export function tokenDecimals(tokenAddress: string) {
-  const token = supportedTokens()[tokenAddress.toLowerCase()];
+export function tokenDecimals(tokenAddress: string, network?: Networks) {
+  const token = supportedTokens(network)[tokenAddress.toLowerCase()];
   return token ? token["decimals"] : 18;
 }
 
@@ -259,6 +277,71 @@ export function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve: () => void): any => setTimeout(resolve, milliseconds));
 }
 
+export const getArcByProvider = async (provider: any): Promise<Arc> => {
+  if (!provider || !provider.chainId) {
+    return null;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  return getArc(await getNetworkName(provider.chainId));
+};
+
+/**
+ * Given a DAO address returns it's network
+ * @param {string} daoAddress
+ * @returns {Networks}
+ */
+export const getNetworkByDAOAddress = (daoAddress: string): Networks => {
+  const daos = getDAOs();
+  for (const network in daos) {
+    if (daos[network][daoAddress] !== undefined) {
+      return network as Networks;
+    }
+  }
+  return undefined;
+};
+
+/**
+ * Given a DAO address returns it's Arc object
+ * @param daoAddress
+ * @returns {Arc}
+ */
+export const getArcByDAOAddress = (daoAddress: string): Arc => {
+  const network = getNetworkByDAOAddress(daoAddress);
+  return network ? getArcs()[network] : undefined;
+};
+
+
+/**
+ * Given an address returns the network
+ * @param {string} daoAddress
+ * @returns {Networks}
+ */
+export const getNetworkByAddress = (daoAddress: string): Networks => {
+  const arcs = getArcs();
+  for (const network in arcs) {
+    const arc = arcs[network];
+    try {
+      if (arc.getContractInfo(daoAddress, undefined, "readonly") !== null) {
+        return network as Networks;
+      }
+      // eslint-disable-next-line no-empty
+    } catch (error) {
+
+    }
+  }
+  return undefined;
+};
+
+/**
+ *
+ * @param daoAddress
+ */
+export const getArcByAddress = (daoAddress: any): Arc => {
+  const network = getNetworkByAddress(daoAddress);
+  return network ? getArcs()[network] : undefined;
+};
+
+
 /**
  * return network id, independent of the presence of Arc
  * @param web3Provider
@@ -266,9 +349,10 @@ export function sleep(milliseconds: number): Promise<void> {
 export async function getNetworkId(web3Provider?: any): Promise<string> {
   let arc: any;
   let web3: any;
+  const network = targetedNetwork();
 
   try {
-    arc = getArc();
+    arc = await getArcByProvider(web3Provider);
   } catch {
     // Do nothing
   }
@@ -278,9 +362,9 @@ export async function getNetworkId(web3Provider?: any): Promise<string> {
    */
   if (arc && arc.web3 && (!web3Provider || (arc.web3.currentProvider === web3Provider))) {
     web3 = arc.web3;
-  } else if ((window as any).web3 &&
-    (!web3Provider || ((window as any).web3.currentProvider === web3Provider))) {
-    web3 = (window as any).web3;
+  } else if (network && window.arcs[network].web3 &&
+    (!web3Provider || (window.arcs[network].web3.currentProvider === web3Provider))) {
+    web3 = window.arcs[network].web3;
   } else if (web3Provider) {
     web3 = new Web3(web3Provider);
   }
@@ -300,6 +384,7 @@ export async function getNetworkName(id?: string): Promise<Networks> {
 
   switch (id) {
     case "main":
+    case "0x1":
     case "1":
       return "main";
     // case "morden":
@@ -310,14 +395,18 @@ export async function getNetworkName(id?: string): Promise<Networks> {
     //   return "ropsten";
     case "rinkeby":
     case "4":
+    case "0x4":
       return "rinkeby";
     case "xdai":
+    case "0x64":
     case "100":
       return "xdai";
     case "kovan":
+    case "0x2a":
     case "42":
       return "kovan";
     case "private":
+    case "0x539":
     case "1512051714758":
       return "ganache";
     default:
@@ -325,25 +414,23 @@ export async function getNetworkName(id?: string): Promise<Networks> {
   }
 }
 
-export function linkToEtherScan(address: Address, tokenHoldings = false) {
-  let prefix = "";
-  const arc = getArc();
-  switch (arc.web3.currentProvider.__networkId) {
-    case "4":
-      prefix = "rinkeby.";
-      break;
-    case "42":
-      prefix = "kovan.";
-      break;
-    case "100": // xdai
-      return tokenHoldings ?
-        `https://blockscout.com/poa/xdai/address/${address}/tokens` :
-        `https://blockscout.com/poa/xdai/${address.length > 42 ? "tx" : "address"}/${address}`;
+export function linkToEtherScan(address: Address, network: Networks, tokenHoldings = false) {
+
+  if (network === "xdai") {
+    return tokenHoldings ?
+      `https://blockscout.com/poa/xdai/address/${address}/tokens` :
+      `https://blockscout.com/poa/xdai/${address.length > 42 ? "tx" : "address"}/${address}`;
+  } else {
+    let prefix = "";
+    if (network !== "main") {
+      prefix = `${network}.`;
+    }
+    return tokenHoldings ?
+      `https://${prefix}etherscan.io/tokenholdings?a=${address}` :
+      `https://${prefix}etherscan.io/address/${address}`;
   }
-  return tokenHoldings ?
-    `https://${prefix}etherscan.io/tokenholdings?a=${address}` :
-    `https://${prefix}etherscan.io/address/${address}`;
 }
+
 
 export type AccountClaimableRewardsType = { [key: string]: BN };
 /**
@@ -531,7 +618,7 @@ export function ensureHttps(url: string) {
 }
 
 export function isAddress(address: Address, allowNulls = false): boolean {
-  return getArc().web3.utils.isAddress(address) && (allowNulls || (Number(address) > 0));
+  return Web3.utils.isAddress(address) && (allowNulls || (Number(address) > 0));
 }
 
 export interface ICountdown {
@@ -594,7 +681,7 @@ export function initializeUtils(options: IInitializeOptions) {
 export const splitCamelCase = (str: string): string => `${str[0].toUpperCase()}${str.slice(1).replace(/([a-z])([A-Z])/g, "$1 $2")}`;
 
 interface IObservedAccounts {
-  [address: string]: {
+  [addressAndNetwork: string]: {
     observable?: Observable<BN>;
     observer?: Observer<BN>;
     lastBalance?: string;
@@ -605,35 +692,33 @@ interface IObservedAccounts {
 const ethBalanceObservedAccounts: IObservedAccounts = {};
 let ethBalancePollingInterval: any | undefined = undefined;
 
-export function ethBalance(address: Address): Observable<BN> {
-
-  const arc = getArc();
+export function ethBalance(address: Address, arc: Arc, network?: Networks): Observable<BN> {
 
   /**
    * With a few minor enhancements, this code is virtually the same logic
    * as arc.js uses when it creates a wss subscription to efficiently watch
    * for changes in eth balances.
    */
-  if (!ethBalanceObservedAccounts[address]) {
-    ethBalanceObservedAccounts[address] = {
+  if (!ethBalanceObservedAccounts[`${network}_${address}`]) {
+    ethBalanceObservedAccounts[`${network}_${address}`] = {
       subscriptionsCount: 1,
     };
   }
   /**
    * don't poll more than once for any given address
    */
-  if (ethBalanceObservedAccounts[address].observable) {
-    ++ethBalanceObservedAccounts[address].subscriptionsCount;
-    return ethBalanceObservedAccounts[address].observable as Observable<BN>;
+  if (ethBalanceObservedAccounts[`${network}_${address}`].observable) {
+    ++ethBalanceObservedAccounts[`${network}_${address}`].subscriptionsCount;
+    return ethBalanceObservedAccounts[`${network}_${address}`].observable as Observable<BN>;
   }
 
   const observable = Observable.create(async (observer: Observer<BN>) => {
 
-    ethBalanceObservedAccounts[address].observer = observer;
+    ethBalanceObservedAccounts[`${network}_${address}`].observer = observer;
 
     await arc.web3.eth.getBalance(address)
       .then((currentBalance: string) => {
-        const accInfo = ethBalanceObservedAccounts[address];
+        const accInfo = ethBalanceObservedAccounts[`${network}_${address}`];
         (accInfo.observer as Observer<BN>).next(new BN(currentBalance));
         accInfo.lastBalance = currentBalance;
       })
@@ -642,7 +727,7 @@ export function ethBalance(address: Address): Observable<BN> {
     if (!ethBalancePollingInterval) {
       ethBalancePollingInterval = setInterval(async () => {
         Object.keys(ethBalanceObservedAccounts).forEach(async (addr) => {
-          const accInfo = ethBalanceObservedAccounts[addr];
+          const accInfo = ethBalanceObservedAccounts[`${network}_${address}`];
           try {
             const balance = await arc.web3.eth.getBalance(addr);
             if (balance !== accInfo.lastBalance) {
@@ -664,9 +749,9 @@ export function ethBalance(address: Address): Observable<BN> {
        * Or it may be a flaw in how we are using `combineLatest`.
        * Either way, it is a memory/resource leak.
        */
-      --ethBalanceObservedAccounts[address].subscriptionsCount;
-      if (ethBalanceObservedAccounts[address].subscriptionsCount <= 0) {
-        delete ethBalanceObservedAccounts[address];
+      --ethBalanceObservedAccounts[`${network}_${address}`].subscriptionsCount;
+      if (ethBalanceObservedAccounts[`${network}_${address}`].subscriptionsCount <= 0) {
+        delete ethBalanceObservedAccounts[`${network}_${address}`];
       }
       if (Object.keys(ethBalanceObservedAccounts).length === 0 && ethBalancePollingInterval) {
         clearTimeout(ethBalancePollingInterval);
@@ -675,7 +760,7 @@ export function ethBalance(address: Address): Observable<BN> {
     };
   });
 
-  ethBalanceObservedAccounts[address].observable = observable;
+  ethBalanceObservedAccounts[`${network}_${address}`].observable = observable;
 
   return observable.pipe(map((item: any) => new BN(item)));
 }
@@ -704,8 +789,7 @@ export function safeMoment(dateSpecifier: moment.Moment | Date | number | string
   }
 }
 
-export const standardPolling = (fetchAllData = false) =>
-{ return { polling: true, pollInterval: GRAPH_POLL_INTERVAL, fetchAllData }; };
+export const standardPolling = (fetchAllData = false) => { return { polling: true, pollInterval: GRAPH_POLL_INTERVAL, fetchAllData }; };
 
 
 /**
@@ -722,8 +806,8 @@ export const buf2hex = (buffer: Array<any>): string => { // buffer is an ArrayBu
  * @param {string} address
  * @returns {string} Contract name
  */
-export const getContractName = (address: string): string => {
-  const arc = getArc();
+export const getContractName = (address: string, daoAddress: string): string => {
+  const arc = getArc(getNetworkByDAOAddress(daoAddress));
   try {
     return arc.getContractInfo(address.toLowerCase()).name;
   } catch (e) {

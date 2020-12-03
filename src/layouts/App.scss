@@ -11,6 +11,13 @@ $header-height: 100px;
   src: url("/assets/fonts/GaramondPremrPro-Disp.woff");
 }
 
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
+
 body {
   font-family: "AccordBold", sans-serif;
   font-weight: 300;
@@ -227,6 +234,14 @@ body {
       transition: all 0.25s ease;
       height: 50px;
 
+      .title {
+        font-weight: bold;
+        font-size: 13px;
+        color: #001d35;
+        margin-bottom: 2px;
+        font-family: 'AccordBold';
+      }
+
       > span {
         height: 50px;
         display: inline-block;
@@ -317,17 +332,16 @@ body {
 
         .balances {
           text-align: left;
-          padding-left: 25px;
-          padding-right: 25px;
-          padding-top: 20px;
+          padding: 20px;
           border-bottom: 1px solid $accent-6;
           font-size: 11px;
           color: $body-color;
           font-weight: normal;
           font-family: "Open Sans";
 
-          .userBalance,
           .repBalance {
+            display: flex;
+            flex-direction: column;
             .heading {
               font-size: 13px;
               color: $black;
@@ -340,10 +354,6 @@ body {
           .noReputation {
             font-size: 11px;
             color: rgba(130, 144, 158, 1);
-          }
-
-          .userBalance {
-            padding-bottom: 20px;
           }
 
           .repBalance {
@@ -363,6 +373,11 @@ body {
                 margin-right: 4px;
               }
             }
+          }
+
+          .holdingsBalace {
+            display: flex;
+            flex-direction: column;
           }
         }
 
@@ -412,6 +427,12 @@ body {
           width: 100%;
         }
 
+        .currentNetwork {
+          border-bottom: 1px solid $accent-6;
+          padding: 20px;
+          text-align: start;
+        }
+
         .logoutButtonContainer {
           padding-left: 2px;
           padding-right: 17px;
@@ -427,13 +448,6 @@ body {
             .provider {
               text-align: left;
               flex-grow: 1;
-
-              .title {
-                font-weight: bold;
-                font-size: 13px;
-                color: #001d35;
-                margin-bottom: 2px;
-              }
 
               .name {
                 font-size: 11px;

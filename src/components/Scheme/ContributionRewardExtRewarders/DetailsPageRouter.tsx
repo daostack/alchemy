@@ -5,7 +5,7 @@ import { getArc } from "arc";
 import { IDAOState, IProposalState, Address } from "@daostack/arc.js";
 import Loading from "components/Shared/Loading";
 import { getCrxRewarderComponent, CrxRewarderComponentType } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
-import { standardPolling } from "lib/util";
+import { standardPolling, getNetworkByDAOAddress } from "lib/util";
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
@@ -68,7 +68,7 @@ export default withSubscription({
   errorComponent: null,
   checkForUpdate: [],
   createObservable: (props: IProps) => {
-    const arc = getArc();
+    const arc = getArc(getNetworkByDAOAddress(props.daoState.id));
     return arc.proposal(props.proposalId).state(standardPolling());
   },
 });

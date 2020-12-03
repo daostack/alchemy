@@ -5,7 +5,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
 import { DiscussionEmbed } from "disqus-react";
-import { humanProposalTitle, ensureHttps, formatFriendlyDateForLocalTimezone, safeMoment } from "lib/util";
+import { humanProposalTitle, ensureHttps, formatFriendlyDateForLocalTimezone, safeMoment, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import { schemeName } from "lib/schemeUtils";
 import Analytics from "lib/analytics";
 import { Page } from "pages";
@@ -209,7 +209,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
             </div>
 
             {tags && tags.length ? <div className={css.tagsContainer}>
-              <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
+              <TagsSelector readOnly darkTheme tags={tags} arc={getArcByDAOAddress(daoState.address)}></TagsSelector>
             </div> : ""}
 
             <div className={css.buttonBar}>
@@ -234,7 +234,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 <span>Share</span>
               </button>
 
-              <div className={css.followButton}><FollowButton type="proposals" id={proposal.id} style="bigButton" /></div>
+              <div className={css.followButton}><FollowButton type="proposals" id={proposal.id} style="bigButton" network={getNetworkByDAOAddress(daoState.address)} /></div>
             </div>
           </div>
 

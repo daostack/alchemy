@@ -1,6 +1,6 @@
 import { IDAOState, IProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
-import { linkToEtherScan, baseTokenName, truncateWithEllipses, buf2hex, getContractName, fromWei } from "lib/util";
+import { linkToEtherScan, baseTokenName, truncateWithEllipses, buf2hex, getContractName, fromWei, getNetworkByDAOAddress } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
@@ -110,7 +110,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       <div className={proposalSummaryClass}>
         <span className={css.summaryTitle}>
           Generic Multicall
-          {fromWei(tokenAmountToSend) > 0 && <div className={css.warning}>&gt; Sending {fromWei(tokenAmountToSend)} {baseTokenName()} &lt;</div>}
+          {fromWei(tokenAmountToSend) > 0 && <div className={css.warning}>&gt; Sending {fromWei(tokenAmountToSend)} {baseTokenName(getNetworkByDAOAddress(this.props.dao.address))} &lt;</div>}
         </span>
         {detailView &&
           <div className={css.summaryDetails}>
@@ -118,8 +118,8 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
               proposal.genericSchemeMultiCall.contractsToCall.map((contract, index) => (
                 <div key={index} className={css.multiCallContractDetails}>
                   <p><b>{`#${index + 1}`}</b></p>
-                  <p>Contract: <a className={css.valueText} href={linkToEtherScan(contract)} target="_blank" rel="noopener noreferrer">{getContractName(contract)} {`(${contract})`}</a></p>
-                  <p>{baseTokenName()} value: <span className={css.valueText}>{fromWei(proposal.genericSchemeMultiCall.values[index])}</span></p>
+                  <p>Contract: <a className={css.valueText} href={linkToEtherScan(contract, getNetworkByDAOAddress(this.props.dao.address))} target="_blank" rel="noopener noreferrer">{getContractName(contract, this.props.dao.dao.id)} {`(${contract})`}</a></p>
+                  <p>{baseTokenName(getNetworkByDAOAddress(this.props.dao.address))} value: <span className={css.valueText}>{fromWei(proposal.genericSchemeMultiCall.values[index])}</span></p>
                   <DecodedData contract={contract} callData={proposal.genericSchemeMultiCall.callsData[index]} />
                   <p>Raw call data:</p>
                   <pre>{truncateWithEllipses(proposal.genericSchemeMultiCall.callsData[index], 66)}<CopyToClipboard value={proposal.genericSchemeMultiCall.callsData[index]} /></pre>

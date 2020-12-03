@@ -2,7 +2,7 @@ import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/arc.
 
 import * as BN from "bn.js";
 import Reputation from "components/Account/Reputation";
-import { baseTokenName, genName, getCRRewards, getGpRewards, formatTokens, tokenDecimals, tokenSymbol } from "lib/util";
+import { baseTokenName, genName, getCRRewards, getGpRewards, formatTokens, tokenDecimals, tokenSymbol, getNetworkByDAOAddress } from "lib/util";
 import * as React from "react";
 import * as css from "./RedemptionsString.scss";
 
@@ -47,10 +47,10 @@ export default class RedemptionsString extends React.Component<IProps, null> {
     if (contributionReward && currentAccountAddress === contributionReward.beneficiary) {
       const rewards = getCRRewards(proposal);
       if (rewards.ethReward && rewards.ethReward.gt(zero)) {
-        rewardComponents.push(formatTokens(rewards.ethReward, baseTokenName()));
+        rewardComponents.push(formatTokens(rewards.ethReward, baseTokenName(getNetworkByDAOAddress(dao.address))));
       }
       if (rewards.externalTokenReward && rewards.externalTokenReward.gt(zero)) {
-        rewardComponents.push(formatTokens(rewards.externalTokenReward, tokenSymbol(contributionReward.externalToken), tokenDecimals(contributionReward.externalToken)));
+        rewardComponents.push(formatTokens(rewards.externalTokenReward, tokenSymbol(contributionReward.externalToken, getNetworkByDAOAddress(this.props.dao.id)), tokenDecimals(contributionReward.externalToken, getNetworkByDAOAddress(this.props.dao.id))));
       }
       if (rewards.nativeTokenReward && rewards.nativeTokenReward.gt(zero)) {
         rewardComponents.push(formatTokens(rewards.nativeTokenReward, dao.tokenSymbol));

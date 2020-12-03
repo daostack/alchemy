@@ -1,6 +1,5 @@
 /* eslint-disable no-bitwise */
-import {
-  Address,
+import { // Address,
   IContractInfo,
   ISchemeState} from "@daostack/arc.js";
 import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
@@ -12,8 +11,7 @@ import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import "moment";
 import * as moment from "moment-timezone";
 
-import { getArc } from "../arc";
-import { splitCamelCase } from "lib/util";
+import { getArcByAddress, splitCamelCase } from "lib/util";
 
 export enum SchemePermissions {
   None = 0,
@@ -63,33 +61,33 @@ export const PROPOSAL_SCHEME_NAMES = [
   "GenericSchemeMultiCall",
 ];
 
-/**
- * return true if the address is the address of a known scheme (which we know how to represent)
- * @param  address [description]
- * @return         [description]
- */
-export function isKnownScheme(address: Address) {
-  const arc = getArc();
-  let contractInfo;
-  try {
-    contractInfo = arc.getContractInfo(address);
-  } catch (err) {
-    if (err.message.match(/no contract/i)) {
-      return false;
-    }
-    throw err;
-  }
+// /**
+//  * return true if the address is the address of a known scheme (which we know how to represent)
+//  * @param  address [description]
+//  * @return         [description]
+//  */
+// export function isKnownScheme(address: Address) {
+//   const arc = getArc();
+//   let contractInfo;
+//   try {
+//     contractInfo = arc.getContractInfo(address);
+//   } catch (err) {
+//     if (err.message.match(/no contract/i)) {
+//       return false;
+//     }
+//     throw err;
+//   }
 
-  if (KNOWN_SCHEME_NAMES.includes(contractInfo.name)) {
-    return true;
-  } else {
-    return false;
-  }
-}
+//   if (KNOWN_SCHEME_NAMES.includes(contractInfo.name)) {
+//     return true;
+//   } else {
+//     return false;
+//   }
+// }
 
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   let name: string;
-  const contractInfo = (scheme as IContractInfo).alias ? scheme as IContractInfo : getArc().getContractInfo(scheme.address);
+  const contractInfo = (scheme as IContractInfo).alias ? scheme as IContractInfo : getArcByAddress(scheme.address).getContractInfo(scheme.address);
 
   const alias = contractInfo?.alias;
 
@@ -150,7 +148,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
  * @return         [description]
  */
 export function schemeNameFromAddress(address: string) {
-  const arc = getArc();
+  const arc = getArcByAddress(address);
   try {
     const contractInfo = arc.getContractInfo(address);
     const name = schemeName(contractInfo);
