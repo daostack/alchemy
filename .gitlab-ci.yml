@@ -41,4 +41,4 @@ Single Test For Performance:
     - npm run build-travis
   only:
     variables:
-      - $CI_EXTERNAL_PULL_REQUEST_IID
+      - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
