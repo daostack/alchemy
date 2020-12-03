@@ -1,0 +1,96 @@
+stages:
+  - Install
+  - Static Tests
+  - e2e Tests
+  - Build
+  - After e2e Tests
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm/
+
+before_script:
+  - npm -v
+  - node -v
+  - npm install --cache .npm --prefer-offline
+
+Check Docker Compose:
+  stage: Install
+  interruptible: true
+  resource_group: docker-compose
+  before_script:
+    - ''
+  cache: {}
+  script:
+    - docker -v
+    - docker-compose -v
+    - echo "rebuild docker-compose ONLY if config was changed"
+    - cmp --silent docker-compose.yml ~/.runner-cache/docker-compose.yml ||
+      bash -c 'docker-compose down
+      && docker-compose build
+      && docker-compose -f docker-compose.yml -f docker-compose.docker.yml up -d
+      && mkdir -p ~/.runner-cache
+      && rm -rf ~/.runner-cache/docker-compose.yml
+      && cp docker-compose.yml ~/.runner-cache/'
+    - bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' 127.0.0.1:3000)" != "200" ]]; do
+      if [[ $i < 31 ]] ;
+      then i=$((i+1)) && sleep 5 && echo "slep... $i";
+      else exit 1; fi
+      ; done'
+    - npm install --no-package-lock --no-save --quiet node-fetch --prefer-offline
+    - npm run service-status
+  needs: []
+  only:
+    variables:
+      - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
+
+Static Tests:
+  stage: Static Tests
+  interruptible: true
+  script:
+    - npm run lint -- --quiet
+    - npm run test:unit -- --forceExit
+  needs: []
+  only:
+    variables:
+      - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
+
+e2e Tests:
+  stage: e2e Tests
+  interruptible: true
+  script:
+    - npm run test:i
+  needs: ["Check Docker Compose"]
+  when: on_success
+  retry: 2
+  only:
+    variables:
+      - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
+
+Test Docker Services:
+  stage: After e2e Tests
+  interruptible: true
+  before_script:
+    - ''
+  cache: {}
+  script:
+    - npm install --no-package-lock --no-save --quiet node-fetch --prefer-offline
+    - npm run service-status
+    - ./scripts/checkDaos.sh
+  needs: [ "e2e Tests" ]
+  when: on_success
+  retry: 2
+  only:
+    variables:
+      - '$CI_EXTERNAL_PULL_REQUEST_IID == null'
+
+Build:
+  stage: Build
+  interruptible: true
+  script:
+    - npm run build-travis
+  needs: ["Static Tests"]
+  only:
+    variables:
+      - '$CI_EXTERNAL_PULL_REQUEST_IID == null'

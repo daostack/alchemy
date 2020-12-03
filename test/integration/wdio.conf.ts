@@ -29,8 +29,8 @@ const config: WebdriverIO.Config = {
   services: [
     ["selenium-standalone", {
       logPath: "logs",
-      installArgs: { drivers },
-      args: { drivers },
+      installArgs: {drivers},
+      args: {drivers},
     }],
   ],
 
