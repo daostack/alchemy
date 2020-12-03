@@ -14,7 +14,7 @@ Executing these four steps for each React component is quite expensive (just thi
 So the approach we are taking in Alchemy is the following.
 
 *to avoid the cost of step 2.:*
-Fetch the data that is used by many subcomponents in a single query, before those components are rendered. When those subcomponents are rendered, they will be able to get their data directly  from the cache, and so will avoid a server request in step 2. An example of that pattern is found in the `DaoHistoryPage.tsx`
+Fetch the data that is used by many subcomponents in a single query, before those components are rendered. When those subcomponents are rendered, they will be able to get their data directly  from the cache, and so will avoid a server request in step 2.
 
 *To avoid the cost of step 4:*
 The line `arcSettings.graphqlSubscribeToQueries = false;` overrides arc.js default behavior to open a subscription for each query. So, by default, step 4 is skipped. Instead, we insert, in strategic places, subscriptions to relatively big queries, that will update the cache only for the data that we need.

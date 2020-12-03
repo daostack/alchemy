@@ -17,10 +17,9 @@ import { IProfileState } from "reducers/profilesReducer";
 import DetailsPageRouter from "components/Scheme/ContributionRewardExtRewarders/DetailsPageRouter";
 import { combineLatest, Subscription } from "rxjs";
 import DaoSchemesPage from "./DaoSchemesPage";
-import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
-import DaoLandingPage from "components/Dao/DaoLandingPage";
+import DaoProposalsPage from "components/Dao/DaoProposalsPage";
 import { standardPolling, targetedNetwork, getArcByDAOAddress, getDAONameByID } from "lib/util";
 import gql from "graphql-tag";
 import { getArcs } from "arc";
@@ -77,7 +76,7 @@ class DaoContainer extends React.Component<IProps, IState> {
     const memberQuery = gql` query memberDaos {
       reputationHolders (where: {
         address: "${this.props.currentAccountAddress}"
-        ${followingDaosAddresses.length ? "dao_not_in: [" + followingDaosAddresses.map(dao => "\"" + dao + "\"").join(",") + "]" : ""}
+        ${followingDaosAddresses?.length ? "dao_not_in: [" + followingDaosAddresses.map(dao => "\"" + dao + "\"").join(",") + "]" : ""}
       }) {
         dao {
           id
@@ -99,7 +98,6 @@ class DaoContainer extends React.Component<IProps, IState> {
     this.setState({ memberDaos: memberDaos });
   }
 
-  private daoHistoryRoute = (routeProps: any) => <DaoHistoryPage {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
   private daoMembersRoute = (routeProps: any) => <DaoMembersPage {...routeProps} daoState={this.props.data[0]} />;
   private daoProposalRoute = (routeProps: any) =>
     <ProposalDetailsPage {...routeProps}
@@ -116,7 +114,7 @@ class DaoContainer extends React.Component<IProps, IState> {
 
   private schemeRoute = (routeProps: any) => <SchemeContainer {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
   private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} daoState={this.props.data[0]} />;
-  private daoLandingRoute = (_routeProps: any) => <DaoLandingPage daoState={this.props.data[0]} />;
+  private daoProposalsRoute = (routeProps: any) => <DaoProposalsPage {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
   private modalRoute = (route: any) => `/dao/${route.params.daoAvatarAddress}/scheme/${route.params.schemeId}/`;
   private onFollwingDaosListChange = (daoAddress: string, history: any) => history.push(`/dao/${daoAddress}`);
 
@@ -164,15 +162,13 @@ class DaoContainer extends React.Component<IProps, IState> {
           </div>
           <Switch>
             <Route exact path="/dao/:daoAvatarAddress"
-              render={this.daoLandingRoute} />
-            <Route exact path="/dao/:daoAvatarAddress/history"
-              render={this.daoHistoryRoute} />
+              render={this.daoProposalsRoute} />
+
             <Route exact path="/dao/:daoAvatarAddress/members"
               render={this.daoMembersRoute} />
 
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
-              render={this.daoProposalRoute}
-            />
+              render={this.daoProposalRoute} />
 
             <Route path="/dao/:daoAvatarAddress/crx/proposal/:proposalId"
               render={this.daoCrxProposalRoute} />
@@ -182,8 +178,6 @@ class DaoContainer extends React.Component<IProps, IState> {
 
             <Route exact path="/dao/:daoAvatarAddress/schemes"
               render={this.daoSchemesRoute} />
-
-            <Route path="/dao/:daoAvatarAddress" render={this.daoLandingRoute} />
           </Switch>
 
           <ModalRoute

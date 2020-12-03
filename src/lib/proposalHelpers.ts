@@ -1,5 +1,4 @@
 import * as moment from "moment";
-
 import { IProposalOutcome, IProposalStage, IProposalState } from "@daostack/arc.js";
 
 export interface IRedemptionState {
@@ -18,19 +17,65 @@ export interface IRedemptionState {
   voterReputation: number;
 }
 
+type ProposalStatus = "Passing" | "Failing" | "Executable" | "Executed" | "Failed";
+
+export const castProposalStageToNumber = (stage: string): IProposalStage => {
+  switch (stage) {
+    case "ExpiredInQueue":
+      return 0;
+    case "Queued":
+      return 2;
+    case "PreBoosted":
+      return 3;
+    case "Boosted":
+      return 4;
+    case "QuietEndingPeriod":
+      return 5;
+    case "Executed":
+      return 1;
+  }
+};
+
 export const closingTime = (proposal: IProposalState) => {
-  switch (proposal.stage) {
+  let stage = proposal.stage;
+  if (typeof proposal.stage === "string") {
+    stage = castProposalStageToNumber(proposal.stage);
+  }
+  switch (stage) {
     case IProposalStage.ExpiredInQueue:
     case IProposalStage.Queued:
-      return moment((proposal.createdAt + proposal.genesisProtocolParams.queuedVotePeriodLimit) * 1000);
+      return moment((Number(proposal.createdAt) + Number(proposal.genesisProtocolParams.queuedVotePeriodLimit)) * 1000);
     case IProposalStage.PreBoosted:
-      return moment((proposal.preBoostedAt + proposal.genesisProtocolParams.preBoostedVotePeriodLimit) * 1000);
+      return moment((Number(proposal.preBoostedAt) + Number(proposal.genesisProtocolParams.preBoostedVotePeriodLimit)) * 1000);
     case IProposalStage.Boosted:
-      return moment((proposal.boostedAt + proposal.genesisProtocolParams.boostedVotePeriodLimit) * 1000);
+      return moment((Number(proposal.boostedAt) + Number(proposal.genesisProtocolParams.boostedVotePeriodLimit)) * 1000);
     case IProposalStage.QuietEndingPeriod:
-      return moment((proposal.quietEndingPeriodBeganAt + proposal.genesisProtocolParams.quietEndingPeriod) * 1000);
+      return moment((Number(proposal.quietEndingPeriodBeganAt) + Number(proposal.genesisProtocolParams.quietEndingPeriod)) * 1000);
     case IProposalStage.Executed:
-      return moment(proposal.executedAt * 1000);
+      return moment(Number(proposal.executedAt) * 1000);
+  }
+};
+
+export const calculateProposalStatus = (proposal: IProposalState): ProposalStatus => {
+  const { winningOutcome, executedAt } = proposal;
+  const endDateMoment = moment(closingTime(proposal));
+  const now = new Date();
+  const complete = endDateMoment.diff(now) <= 0 ? true : false;
+
+  if (String(winningOutcome) === "Pass") {
+    if (!complete) {
+      return "Passing";
+    }
+    if (executedAt) {
+      return "Executed";
+    }
+    return "Executable";
+
+  } else {
+    if (!complete) {
+      return "Failing";
+    }
+    return "Failed";
   }
 };
 
