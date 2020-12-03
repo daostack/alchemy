@@ -3,6 +3,7 @@ node_js: 12.18.4
 addons:
   apt:
     update: true
+  chrome: stable
 bundler_args: "--jobs=4 --retry=3"
 
 before_install:
