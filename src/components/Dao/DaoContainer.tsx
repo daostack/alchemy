@@ -77,7 +77,7 @@ class DaoContainer extends React.Component<IProps, IState> {
     const memberQuery = gql` query memberDaos {
       reputationHolders (where: {
         address: "${this.props.currentAccountAddress}"
-        ${followingDaosAddresses.length ? "dao_not_in: [" + followingDaosAddresses.map(dao => "\"" + dao + "\"").join(",") + "]" : ""}
+        ${(followingDaosAddresses && followingDaosAddresses.length) ? "dao_not_in: [" + followingDaosAddresses.map(dao => "\"" + dao + "\"").join(",") + "]" : ""}
       }) {
         dao {
           id
