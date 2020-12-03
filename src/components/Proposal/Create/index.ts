@@ -4,7 +4,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
 
 import { Address } from "@daostack/arc.js";
-import { getArc } from "arc";
+import { getArcByDAOAddress } from "lib/util";
 
 import withSubscription from "components/Shared/withSubscription";
 import Loading from "components/Shared/Loading";
@@ -35,7 +35,7 @@ const SubscribedCreateProposalPage: any = withSubscription<any, any>({
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalStateProps) => {
-    const arc = getArc();
+    const arc = getArcByDAOAddress(props.daoAvatarAddress);
     const scheme = arc.scheme(props.schemeId);
     return scheme.state();
   },

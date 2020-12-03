@@ -20,7 +20,6 @@ import CreateGenericMultiCallProposal from "./SchemeForms/CreateGenericMultiCall
 import CreateContributionRewardProposal from "./SchemeForms/CreateContributionRewardProposal";
 
 import * as css from "./CreateProposal.scss";
-import { getArcByDAOAddress } from "lib/util";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -148,17 +147,3 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
     );
   }
 }
-
-const SubscribedCreateProposalPage = withSubscription({
-  wrappedComponent: CreateProposalPage,
-  loadingComponent: <Loading/>,
-  errorComponent: null,
-  checkForUpdate: ["daoAvatarAddress"],
-  createObservable: (props: IExternalStateProps) => {
-    const arc = getArcByDAOAddress(props.daoAvatarAddress);
-    const scheme = arc.scheme(props.schemeId);
-    return scheme.state();
-  },
-});
-
-export default connect(mapStateToProps)(SubscribedCreateProposalPage);
