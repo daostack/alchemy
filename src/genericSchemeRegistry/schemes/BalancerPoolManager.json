@@ -2,7 +2,7 @@
   "name": "Liquidity Pool Manager",
   "addresses": {
     "main": [
-      "0x34441fA51bd02AC54A02FB7cE0172690C6d49913"
+      "0x34441fa51bd02ac54a02fb7ce0172690c6d49913"
     ],
     "kovan": [
       "0x5086d91858a5aac4a770212720b297f38e0dd403"
