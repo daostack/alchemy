@@ -148,7 +148,6 @@ export const targetNetworks = (): Networks[] => {
   if (process.env.NETWORKS.includes("private")) {
     return ["ganache"];
   }
-
   return process.env.NETWORKS.split("*") as Networks[];
 };
 
