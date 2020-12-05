@@ -50,7 +50,7 @@ class DaoCreator extends React.Component<IProps> {
           }}
           noDAOstackLogo
           redirectURL={process.env.BASE_URL}
-          networks={process.env.NETWORKS}
+          networks={process.env.NETWORKS.replace("main", "mainnet")}
         />
       </React.Suspense>
     );
