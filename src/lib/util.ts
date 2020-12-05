@@ -148,7 +148,15 @@ export const targetNetworks = (): Networks[] => {
   if (process.env.NETWORKS.includes("private")) {
     return ["ganache"];
   }
-  return process.env.NETWORKS.split("*") as Networks[];
+
+  const networks = process.env.NETWORKS.split("*") as Networks[];
+  for (const [i, network] of networks.entries()) {
+    if (network === "mainnet" as Networks ) {
+      networks[i] = "main";
+      break;
+    }
+  }
+  return networks;
 };
 
 /**
