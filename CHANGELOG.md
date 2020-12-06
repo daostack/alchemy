@@ -15,7 +15,7 @@
     - Detect wallet network change in account menu
     - Show missing GP params in competition schemes
   
-  - Features removed
+  - Features Removed
     - Feed Page
     - Dao History Page
 
