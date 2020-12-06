@@ -137,6 +137,7 @@ export function proposalFailed(proposal: IProposalState) {
  * Sorts the proposals by:
  * - "Executable" proposals first
  * - Then by closing time, most recent to least.
+ * The function assumes that the proposals are already ordered by "closingAt" in descending order.
  * @param proposalA
  * @param proposalB
  */
