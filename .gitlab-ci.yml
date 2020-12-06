@@ -35,7 +35,7 @@ Single Test For Performance:
     - npm run service-status
     - npm run lint -- --quiet
     - npm run test:unit -- --forceExit
-    - npm run test:i
+    - npm run test:integration:headless
     - npm run service-status
     - ./scripts/checkDaos.sh
     - npm run build-travis
