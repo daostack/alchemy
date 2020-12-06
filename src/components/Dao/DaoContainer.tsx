@@ -1,6 +1,6 @@
 import { IDAOState, Member } from "@daostack/arc.js";
 import { getProfilesForAddresses } from "actions/profilesActions";
-import CreateProposalPage from "components/Proposal/Create/CreateProposalPage";
+import CreateProposalPage from "components/Proposal/Create";
 import ProposalDetailsPage from "components/Proposal/ProposalDetailsPage";
 import SchemeContainer from "components/Scheme/SchemeContainer";
 import Loading from "components/Shared/Loading";

@@ -135,6 +135,11 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
       createSchemeComponent = <CreateGenericMultiCallProposal {...props} whitelistedContracts={scheme.genericSchemeMultiCallParams.contractsWhiteList} />;
     }
 
+    console.log("render", {
+      scheme,
+      createSchemeComponent: createSchemeComponent.type,
+      s: this.state.createCrxProposalComponent,
+    });
     return (
       <div className={css.createProposalWrapper}>
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/create`}>Create {schemeTitle} Proposal</BreadcrumbsItem>
