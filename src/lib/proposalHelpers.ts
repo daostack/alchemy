@@ -1,5 +1,5 @@
 import * as moment from "moment";
-import { IProposalOutcome, IProposalStage, IProposalState } from "@daostack/arc.js";
+import { IProposalOutcome, IProposalStage, IProposalState, Proposal } from "@daostack/arc.js";
 
 export interface IRedemptionState {
   accountAddress: string;
@@ -17,12 +17,34 @@ export interface IRedemptionState {
   voterReputation: number;
 }
 
-type ProposalStatus = "Passing" | "Failing" | "Executable" | "Executed" | "Failed";
 
-export const castProposalStageToNumber = (stage: string): IProposalStage => {
+/**
+ * Proposal Status:
+ * - Passing: On track to pass if nothing changes
+ * - Failing: On track to fail if nothing changes
+ * - Executable: Passed and hasn't been executed yet
+ * - Executed: Passed and executed.
+ * - Failed: Failed due to votes or running out of time before reaching quorum/boosting
+ */
+export const enum IProposalStatus {
+  Passing = "Passing",
+  Failing = "Failing",
+  Executable = "Executable",
+  Executed = "Executed",
+  Failed = "Failed"
+}
+
+/**
+ * This function converts Proposal Stage from it's string representation to it's number representation.
+ * @param {string} stage Proposal stage string representation
+ * @returns {IProposalStage} Proposal stage number representation
+ */
+export const castProposalStageToNumberRepresentation = (stage: string): IProposalStage => {
   switch (stage) {
     case "ExpiredInQueue":
       return 0;
+    case "Executed":
+      return 1;
     case "Queued":
       return 2;
     case "PreBoosted":
@@ -31,15 +53,13 @@ export const castProposalStageToNumber = (stage: string): IProposalStage => {
       return 4;
     case "QuietEndingPeriod":
       return 5;
-    case "Executed":
-      return 1;
   }
 };
 
 export const closingTime = (proposal: IProposalState) => {
   let stage = proposal.stage;
   if (typeof proposal.stage === "string") {
-    stage = castProposalStageToNumber(proposal.stage);
+    stage = castProposalStageToNumberRepresentation(proposal.stage);
   }
   switch (stage) {
     case IProposalStage.ExpiredInQueue:
@@ -56,7 +76,12 @@ export const closingTime = (proposal: IProposalState) => {
   }
 };
 
-export const calculateProposalStatus = (proposal: IProposalState): ProposalStatus => {
+/**
+ * Given a proposal, calculates the proposal status.
+ * @param {IProposalState} proposal
+ * @returns {ProposalStatus}
+ */
+export const calculateProposalStatus = (proposal: IProposalState): IProposalStatus => {
   const { winningOutcome, executedAt } = proposal;
   const endDateMoment = moment(closingTime(proposal));
   const now = new Date();
@@ -64,18 +89,18 @@ export const calculateProposalStatus = (proposal: IProposalState): ProposalStatu
 
   if (String(winningOutcome) === "Pass") {
     if (!complete) {
-      return "Passing";
+      return IProposalStatus.Passing;
     }
     if (executedAt) {
-      return "Executed";
+      return IProposalStatus.Executed;
     }
-    return "Executable";
+    return IProposalStatus.Executable;
 
   } else {
     if (!complete) {
-      return "Failing";
+      return IProposalStatus.Failing;
     }
-    return "Failed";
+    return IProposalStatus.Failed;
   }
 };
 
@@ -107,3 +132,22 @@ export function proposalFailed(proposal: IProposalState) {
   );
   return res;
 }
+
+/**
+ * Sorts the proposals by:
+ * - "Executable" proposals first
+ * - Then by closing time, most recent to least.
+ * @param proposalA
+ * @param proposalB
+ */
+export const sortProposals = (proposalA: Proposal, proposalB: Proposal) => {
+  const proposalAStatus = calculateProposalStatus(proposalA.staticState as IProposalState);
+  const proposalBStatus = calculateProposalStatus(proposalB.staticState as IProposalState);
+  if (proposalAStatus === IProposalStatus.Executable && proposalBStatus !== IProposalStatus.Executable) {
+    return -1;
+  }
+  if ((proposalAStatus === IProposalStatus.Passing || proposalAStatus === IProposalStatus.Failing) && proposalBStatus !== IProposalStatus.Executable) {
+    return -1;
+  }
+  return 1;
+};

@@ -1,6 +1,6 @@
 import { Proposal, IProposalState } from "@daostack/arc.js";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
-import { calculateProposalStatus } from "lib/proposalHelpers";
+import { calculateProposalStatus, IProposalStatus } from "lib/proposalHelpers";
 import { schemeName } from "lib/schemeUtils";
 import * as React from "react";
 import * as css from "./ProposalRow.scss";
@@ -20,10 +20,9 @@ const ProposalRow = (props: IProps) => {
 
   const statusLabelClass = classNames({
     [css.statusLabel]: true,
-    [css.passing]: status === "Passing",
-    [css.failing]: status === "Failing",
+    [css.passing]: status === IProposalStatus.Passing,
+    [css.failing]: status === IProposalStatus.Failing,
   });
-
 
   return (
     <tr className={css.row} onClick={() => window.open(`/dao/${dao.id}/proposal/${id}`)}>
@@ -42,4 +41,3 @@ const ProposalRow = (props: IProps) => {
 };
 
 export default ProposalRow;
-//{data.length > 0 && <div className={css.searchBox.concat(`${filtering ? ` ${css.filtering}` : ""}`)}>

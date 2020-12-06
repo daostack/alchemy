@@ -9,6 +9,8 @@ import { Observable } from "rxjs";
 import ProposalRow from "components/Proposal/ProposalRow";
 import { RouteComponentProps } from "react-router-dom";
 import { first } from "rxjs/operators";
+import { isAddress } from "lib/util";
+import { sortProposals } from "lib/proposalHelpers";
 
 const PAGE_SIZE = 50;
 
@@ -24,7 +26,11 @@ const proposalsQuery = (dao: DAO, skip: number, titleSearch?: string): Observabl
   };
 
   if (titleSearch?.trim()) {
-    filter["title_contains"] = titleSearch;
+    if (isAddress(titleSearch)) {
+      filter["proposer"] = titleSearch;
+    } else {
+      filter["title_contains"] = titleSearch;
+    }
   }
 
   return dao.proposals({
@@ -39,15 +45,15 @@ const proposalsQuery = (dao: DAO, skip: number, titleSearch?: string): Observabl
 const DaoProposalsPage = (props: IProps) => {
   const { data, hasMoreToLoad, fetchMore, daoState } = props;
   const [filtering, setFiltering] = React.useState(false);
-  const [filterString, setFilterString] = React.useState("");
   const [filteredProposalSet, setFilteredProposalSet] = React.useState(null);
 
   const onSearchExecute = async (e: any) => {
     let foundProposals: Array<Proposal>;
     if ((e.type === "blur") || (e.key === "Enter")) {
-      if (filterString?.length) {
+      if (e.target.value?.length) {
         setFiltering(true);
-        foundProposals = await proposalsQuery(props.daoState.dao, 0, filterString).pipe(first()).toPromise();
+        foundProposals = await proposalsQuery(props.daoState.dao, 0, e.target.value).pipe(first()).toPromise();
+        foundProposals.sort(sortProposals);
       }
       else {
         foundProposals = null;
@@ -57,7 +63,7 @@ const DaoProposalsPage = (props: IProps) => {
     }
   };
 
-  const proposals = (filteredProposalSet ?? data).map((proposal: Proposal) => {
+  const proposals = (filteredProposalSet ?? data).sort(sortProposals).map((proposal: Proposal) => {
     return <ProposalRow key={proposal.id} data={proposal} history={props.history} />;
   });
 
@@ -67,16 +73,18 @@ const DaoProposalsPage = (props: IProps) => {
       <div className={css.topBarWrapper}>
         <div className={css.top}>
           <h1 className={css.title}>Proposals</h1>
-          <div className={css.createProposalButton}
+          <div
+            // Temporary until https://github.com/daostack/alchemy/issues/2292 is ready.
+            style={{ pointerEvents: "none", backgroundColor: "gray"}}
+            className={css.createProposalButton}
             data-test-id="createProposal">
-            + New Proposal
+            + New Proposal (WIP)
           </div>
         </div>
         {data.length > 0 && <div className={css.searchBox.concat(`${filtering ? ` ${css.filtering}` : ""}`)}>
-          <input type="text" name="search" placeholder="Type and press Enter or Tab to filter proposals by title"
+          <input type="text" name="search" placeholder="Type and press Enter or Tab to filter proposals by title or proposer address"
             onKeyPress={onSearchExecute}
-            onBlur={onSearchExecute}
-            onInput={(e: any) => setFilterString(e.target.value)} />
+            onBlur={onSearchExecute} />
         </div>}
       </div>
       <InfiniteScroll
@@ -89,7 +97,7 @@ const DaoProposalsPage = (props: IProps) => {
         <div className={css.tableContainer}>
           {
             data.length > 0 ?
-              filteredProposalSet?.length === 0 ? <span>No proposals found whose title contains the given text.  Note the filter is case-sensitive.</span> :
+              filteredProposalSet?.length === 0 ? <span>No proposals found whose title contains the given text or proposer address.  Note the filter is case-sensitive.</span> :
                 <table>
                   <thead>
                     <tr>
