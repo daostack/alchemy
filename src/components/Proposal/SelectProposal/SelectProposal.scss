@@ -1,0 +1,63 @@
+.modalWindow {
+  border-radius: 15px 15px 0 0;
+  background-color: $white;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: $shadow-3;
+  min-width: 500px;
+
+  .header {
+    background-color: $navy;
+    border-radius: 15px 15px 0 0;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    color: $white;
+    height: 40px;
+    opacity: 1;
+    font-family: $body-font;
+    font-weight: $normal;
+
+    span {
+      position: relative;
+      font-size: 16px;
+      font-weight: normal;
+      left: 13px;
+
+      b {
+        font-weight: normal;
+        opacity: 0.5;
+        font-size: 14px;
+      }
+    }
+
+    .closeButton {
+      background: none;
+      border: none;
+      position: absolute;
+      right: 10px;
+      color: white;
+      font-size: 28px;
+    }
+
+    .editIcon {
+      display: inline-block;
+      margin: 10px;
+    }
+  }
+}
+
+@media only screen and (max-width: 475px) {
+  .modalWindow {
+    top: 0;
+    left: 0;
+    transform: translate(0, 0);
+    height: 100%;
+
+    .header {
+      border-radius: 0 0 0 0;
+    }
+  }
+}

@@ -24,6 +24,8 @@ import { standardPolling, targetedNetwork, getArcByDAOAddress, getDAONameByID } 
 import gql from "graphql-tag";
 import { getArcs } from "arc";
 
+import SelectProposal from "components/Proposal/SelectProposal";
+
 type IExternalProps = RouteComponentProps<any>;
 
 interface IStateProps {
@@ -115,7 +117,9 @@ class DaoContainer extends React.Component<IProps, IState> {
   private schemeRoute = (routeProps: any) => <SchemeContainer {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
   private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} daoState={this.props.data[0]} />;
   private daoProposalsRoute = (routeProps: any) => <DaoProposalsPage {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
-  private modalRoute = (route: any) => `/dao/${route.params.daoAvatarAddress}/scheme/${route.params.schemeId}/`;
+  private selectProposalTypeRoute = (routeProps: any) => <SelectProposal {...routeProps} daoState={this.props.data[0]} />;
+  private modalRouteSelectProposalType = (route: any) => `/dao/${route.params.daoAvatarAddress}/schemes`;
+  private modalRouteCreateProposal = (route: any) => `/dao/${route.params.daoAvatarAddress}/scheme/${route.params.schemeId}/`;
   private onFollwingDaosListChange = (daoAddress: string, history: any) => history.push(`/dao/${daoAddress}`);
 
   public render(): RenderOutput {
@@ -181,8 +185,14 @@ class DaoContainer extends React.Component<IProps, IState> {
           </Switch>
 
           <ModalRoute
+            path="/dao/:daoAvatarAddress/schemes/select-proposal-type"
+            parentPath={this.modalRouteSelectProposalType}
+            component={this.selectProposalTypeRoute}
+          />
+
+          <ModalRoute
             path="/dao/:daoAvatarAddress/scheme/:schemeId/proposals/create"
-            parentPath={this.modalRoute}
+            parentPath={this.modalRouteCreateProposal}
             component={CreateProposalPage}
           />
 

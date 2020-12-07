@@ -61,6 +61,15 @@ class DaoSchemesPage extends React.Component<IProps, null> {
     });
   }
 
+  public handleSelectProposalType = async (): Promise<void> => {
+    const { showNotification, daoState } = this.props;
+    const daoAvatarAddress = daoState.address;
+
+    if (!await enableWalletProvider({ showNotification }, getNetworkByDAOAddress(this.props.daoState.address))) { return; }
+
+    this.props.history.push(`/dao/${daoAvatarAddress}/schemes/select-proposal-type/`);
+  };
+
   public handleNewProposal = (schemeId: string) => async (): Promise<void> => {
     const { showNotification, daoState } = this.props;
     const daoAvatarAddress = daoState.address;
