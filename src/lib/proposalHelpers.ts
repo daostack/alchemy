@@ -1,5 +1,5 @@
 import * as moment from "moment";
-import { IProposalOutcome, IProposalStage, IProposalState, Proposal } from "@daostack/arc.js";
+import { IProposalOutcome, IProposalStage, IProposalState } from "@daostack/arc.js";
 
 export interface IRedemptionState {
   accountAddress: string;
@@ -132,23 +132,3 @@ export function proposalFailed(proposal: IProposalState) {
   );
   return res;
 }
-
-/**
- * Sorts the proposals by:
- * - "Executable" proposals first
- * - Then by closing time, most recent to least.
- * The function assumes that the proposals are already ordered by "closingAt" in descending order.
- * @param proposalA
- * @param proposalB
- */
-export const sortProposals = (proposalA: Proposal, proposalB: Proposal) => {
-  const proposalAStatus = calculateProposalStatus(proposalA.staticState as IProposalState);
-  const proposalBStatus = calculateProposalStatus(proposalB.staticState as IProposalState);
-  if (proposalAStatus === IProposalStatus.Executable && proposalBStatus !== IProposalStatus.Executable) {
-    return -1;
-  }
-  if ((proposalAStatus === IProposalStatus.Passing || proposalAStatus === IProposalStatus.Failing) && proposalBStatus !== IProposalStatus.Executable) {
-    return -1;
-  }
-  return 1;
-};

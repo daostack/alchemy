@@ -10,7 +10,7 @@ import ProposalRow from "components/Proposal/ProposalRow";
 import { RouteComponentProps } from "react-router-dom";
 import { first } from "rxjs/operators";
 import { isAddress } from "lib/util";
-import { sortProposals } from "lib/proposalHelpers";
+import moment from "moment-timezone";
 
 const PAGE_SIZE = 50;
 
@@ -21,11 +21,24 @@ type IExternalProps = {
   currentAccountAddress: Address;
 } & RouteComponentProps<any>;
 
+type OrderDirection = "asc" | "desc";
+
 const proposalsQuery = (dao: DAO, skip: number, titleSearch?: string): Observable<Array<Proposal>> => {
   const filter: any = {
   };
 
+  let orderDirection: OrderDirection = "asc";
+
+  if (!titleSearch) {
+    if (skip === 0 || skip === PAGE_SIZE) {
+      filter["closingAt_gt"] = moment().unix();
+    } else if (skip < PAGE_SIZE) {
+      filter["closingAt_lt"] = moment().unix();
+    }
+  }
+
   if (titleSearch?.trim()) {
+    orderDirection = "desc";
     if (isAddress(titleSearch)) {
       filter["proposer"] = titleSearch;
     } else {
@@ -36,8 +49,8 @@ const proposalsQuery = (dao: DAO, skip: number, titleSearch?: string): Observabl
   return dao.proposals({
     where: filter,
     orderBy: "closingAt",
-    orderDirection: "desc",
-    first: PAGE_SIZE,
+    orderDirection: orderDirection,
+    first: titleSearch ? undefined : PAGE_SIZE, // TEMPORARY UNTIL WE PASS "titleSearch" in line 143
     skip,
   }, { fetchAllData: true });
 };
@@ -45,15 +58,15 @@ const proposalsQuery = (dao: DAO, skip: number, titleSearch?: string): Observabl
 const DaoProposalsPage = (props: IProps) => {
   const { data, hasMoreToLoad, fetchMore, daoState } = props;
   const [filtering, setFiltering] = React.useState(false);
+  const [filterString, setFilterString] = React.useState("");
   const [filteredProposalSet, setFilteredProposalSet] = React.useState(null);
 
   const onSearchExecute = async (e: any) => {
     let foundProposals: Array<Proposal>;
     if ((e.type === "blur") || (e.key === "Enter")) {
-      if (e.target.value?.length) {
+      if (filterString?.length) {
         setFiltering(true);
-        foundProposals = await proposalsQuery(props.daoState.dao, 0, e.target.value).pipe(first()).toPromise();
-        foundProposals.sort(sortProposals);
+        foundProposals = await proposalsQuery(props.daoState.dao, 0, filterString).pipe(first()).toPromise();
       }
       else {
         foundProposals = null;
@@ -63,7 +76,7 @@ const DaoProposalsPage = (props: IProps) => {
     }
   };
 
-  const proposals = (filteredProposalSet ?? data).sort(sortProposals).map((proposal: Proposal) => {
+  const proposals = (filteredProposalSet ?? data).map((proposal: Proposal) => {
     return <ProposalRow key={proposal.id} data={proposal} history={props.history} />;
   });
 
@@ -84,7 +97,8 @@ const DaoProposalsPage = (props: IProps) => {
         {data.length > 0 && <div className={css.searchBox.concat(`${filtering ? ` ${css.filtering}` : ""}`)}>
           <input type="text" name="search" placeholder="Type and press Enter or Tab to filter proposals by title or proposer address"
             onKeyPress={onSearchExecute}
-            onBlur={onSearchExecute} />
+            onBlur={onSearchExecute}
+            onChange={(e) => setFilterString(e.target.value)} />
         </div>}
       </div>
       <InfiniteScroll
