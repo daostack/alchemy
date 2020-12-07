@@ -202,7 +202,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
     const { currentTab, requiredPermissions, showForm } = this.state;
 
-    const arc = getArc(getNetworkByDAOAddress(this.props.scheme.dao));
+    const arc = getArcByDAOAddress(this.props.daoAvatarAddress);
 
     const addSchemeButtonClass = classNames({
       [css.addSchemeButton]: true,
@@ -326,11 +326,6 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                   errors.otherScheme = "Invalid address";
                 }
 
-                const parametersHashPattern = /0x([\da-f]){64}/i;
-                if (currentTab !== "removeScheme" && values.parametersHash && !parametersHashPattern.test(values.parametersHash)) {
-                  errors.parametersHash = "Invalid parameters hash";
-                }
-
                 if (!isValidUrl(values.url)) {
                   errors.url = "Invalid URL";
                 }
@@ -399,7 +394,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                     </TrainingTooltip>
 
                     <div className={css.tagSelectorContainer}>
-                      <TagsSelector onChange={this.onTagsChange} tags={this.state.tags} arc={getArcByDAOAddress(this.props.daoAvatarAddress)}></TagsSelector>
+                      <TagsSelector onChange={this.onTagsChange} tags={this.state.tags} arc={arc}></TagsSelector>
                     </div>
 
                     <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
@@ -471,6 +466,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                           placeholder="e.g. 0x0000000000000000000000000000000000000000000000000000000000001234"
                           name="parametersHash"
                           className={touched.parametersHash && errors.parametersHash ? css.error : null}
+                          validate={async () => { if (!(await arc.verifyParametersHash(this.props.scheme.address, values.parametersHash))) { return "Invalid parameters hash"; } }}
                         />
                       </div>
                       <div className={css.permissions}>
