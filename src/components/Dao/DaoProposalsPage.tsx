@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as css from "./DaoProposalsPage.scss";
-import { Address, DAO, IDAOState, Proposal } from "@daostack/arc.js";
+import { Address, IDAOState, Proposal } from "@daostack/arc.js";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import Loading from "components/Shared/Loading";
@@ -23,16 +23,18 @@ type IExternalProps = {
 
 type OrderDirection = "asc" | "desc";
 
-const proposalsQuery = (dao: DAO, skip: number, titleSearch?: string): Observable<Array<Proposal>> => {
+
+const proposalsQuery = (dao: IDAOState, skip: number, titleSearch?: string): Observable<Array<Proposal>> => {
   const filter: any = {
   };
 
   let orderDirection: OrderDirection = "asc";
 
   if (!titleSearch) {
-    if (skip === 0 || skip === PAGE_SIZE) {
+    if (skip % PAGE_SIZE === 0) {
       filter["closingAt_gt"] = moment().unix();
-    } else if (skip < PAGE_SIZE) {
+    } else {
+      skip -= dao.numberOfQueuedProposals + dao.numberOfPreBoostedProposals + dao.numberOfBoostedProposals;
       filter["closingAt_lt"] = moment().unix();
     }
   }
@@ -46,7 +48,7 @@ const proposalsQuery = (dao: DAO, skip: number, titleSearch?: string): Observabl
     }
   }
 
-  return dao.proposals({
+  return dao.dao.proposals({
     where: filter,
     orderBy: "closingAt",
     orderDirection: orderDirection,
@@ -66,7 +68,7 @@ const DaoProposalsPage = (props: IProps) => {
     if ((e.type === "blur") || (e.key === "Enter")) {
       if (filterString?.length) {
         setFiltering(true);
-        foundProposals = await proposalsQuery(props.daoState.dao, 0, filterString).pipe(first()).toPromise();
+        foundProposals = await proposalsQuery(props.daoState, 0, filterString).pipe(first()).toPromise();
       }
       else {
         foundProposals = null;
@@ -75,6 +77,8 @@ const DaoProposalsPage = (props: IProps) => {
       setFiltering(false);
     }
   };
+
+
 
   const proposals = (filteredProposalSet ?? data).map((proposal: Proposal) => {
     return <ProposalRow key={proposal.id} data={proposal} history={props.history} />;
@@ -139,12 +143,10 @@ export default withSubscription({
   errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["daoState"],
   createObservable: async (props: IProps) => {
-    const dao = props.daoState.dao;
-    return proposalsQuery(dao, 0);
+    return proposalsQuery(props.daoState as IDAOState, 0);
   },
   pageSize: PAGE_SIZE,
   getFetchMoreObservable: (props: IProps, data: SubscriptionData) => {
-    const dao = props.daoState.dao;
-    return proposalsQuery(dao, data.length);
+    return proposalsQuery(props.daoState as IDAOState, data.length);
   },
 });

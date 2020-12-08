@@ -31,7 +31,7 @@ const ProposalRow = (props: IProps) => {
         {tagsLables.length > 0 && <div className={css.tagsWrapper}>{tagsLables}</div>}
       </td>
       <td>{schemeName(scheme) ?? "Unknown"}</td>
-      <td>{boostedAt && <div className={css.boostedWrapper}><img width="12px" src="/assets/images/Icon/boosted.svg" /> <span className={css.boostedLabel}>Boosted</span></div>}</td>
+      <td>{boostedAt && (status === IProposalStatus.Passing || status === IProposalStatus.Failing) && <div className={css.boostedWrapper}><img width="12px" src="/assets/images/Icon/boosted.svg" /> <span className={css.boostedLabel}>Boosted</span></div>}</td>
       <td className={css.statusWrapper}>
         <div className={statusLabelClass}>{status}</div>
         <div className={css.statusTime}><ProposalCountdown proposal={props.data.staticState as IProposalState} schemeView /></div>
