@@ -139,7 +139,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
   } else {
     name = alias ?? fallback;
   }
-  return name;
+  return name || scheme.name;
 }
 
 /**

@@ -107,7 +107,9 @@ class DaoSchemesPage extends React.Component<IProps, null> {
 
         {!unknownSchemes ? "" :
           <Fade key={"schemes unknown"}>
-            <UnknownSchemeCard schemes={unknownSchemes} />
+            <div style={{width: "47.5%"}}>
+              <UnknownSchemeCard schemes={unknownSchemes} />
+            </div>
           </Fade>
         }
       </TransitionGroup>
