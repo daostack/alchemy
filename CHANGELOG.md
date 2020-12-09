@@ -1,7 +1,6 @@
 ## 1.0.3
   - Features Added
     - Support multiple networks
-    - Brand new Proposals Page
     - Select following and member DAOs from header
     - Support an array of decimals in genericSchemeRegistry
 
@@ -9,7 +8,7 @@
     - Better DAO name styles on sidebar
     - Loading speed and vulnerabilities fixes
     - Integration tests typescript supporting was added
-    - Use subgraph v41_1
+    - Use subgraph v41_1 and arc.js 0.2.77
 
   - Bugs Fixed
     - Detect wallet network change in account menu
@@ -17,7 +16,6 @@
   
   - Features Removed
     - Feed Page
-    - Dao History Page
 
 ## 1.0.2
   - Features Added
