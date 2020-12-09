@@ -18,6 +18,7 @@ type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 type IExternalProps = {
   daoState: IDAOState;
   currentAccountAddress: Address;
+  onCreateProposal: () => void;
 } & RouteComponentProps<any>;
 
 const proposalsQuery = (dao: IDAOState, skip: number, titleSearch?: string): Observable<Array<Proposal>> => {
@@ -42,7 +43,7 @@ const proposalsQuery = (dao: IDAOState, skip: number, titleSearch?: string): Obs
 };
 
 const DaoProposalsPage = (props: IProps) => {
-  const { data, hasMoreToLoad, fetchMore, daoState } = props;
+  const { data, hasMoreToLoad, fetchMore, daoState, onCreateProposal } = props;
   const [filtering, setFiltering] = React.useState(false);
   const [filterString, setFilterString] = React.useState("");
   const [filteredProposalSet, setFilteredProposalSet] = React.useState(null);
@@ -75,11 +76,10 @@ const DaoProposalsPage = (props: IProps) => {
         <div className={css.top}>
           <h1 className={css.title}>Proposals</h1>
           <div
-            // Temporary until https://github.com/daostack/alchemy/issues/2292 is ready.
-            style={{ pointerEvents: "none", backgroundColor: "gray"}}
             className={css.createProposalButton}
+            onClick={onCreateProposal}
             data-test-id="createProposal">
-            + New Proposal (WIP)
+            + New Proposal
           </div>
         </div>
         {data.length > 0 && <div className={css.searchBox.concat(`${filtering ? ` ${css.filtering}` : ""}`)}>

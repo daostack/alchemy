@@ -9,25 +9,29 @@ import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import Analytics from "lib/analytics";
 import { schemeName } from "lib/schemeUtils";
 
-import { ISchemeState, Address } from "@daostack/arc.js";
+import { ISchemeState, Address, DAO } from "@daostack/arc.js";
 import { CrxRewarderComponentType, getCrxRewarderComponent, rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import { ISubscriptionProps } from "components/Shared/withSubscription";
+import Loading from "components/Shared/Loading";
 
 import CreateKnownGenericSchemeProposal from "./SchemeForms/CreateKnownGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "./SchemeForms/CreateSchemeRegistrarProposal";
 import CreateUnknownGenericSchemeProposal from "./SchemeForms/CreateUnknownGenericSchemeProposal";
 import CreateGenericMultiCallProposal from "./SchemeForms/CreateGenericMultiCallProposal";
 import CreateContributionRewardProposal from "./SchemeForms/CreateContributionRewardProposal";
+import SelectProposal from "./SelectProposal";
 
 import * as css from "./CreateProposal.scss";
 
 type IExternalProps = RouteComponentProps<any>;
 
 interface IExternalStateProps {
+  dao: DAO;
   currentAccountAddress: Address;
   daoAvatarAddress: string;
   history: History;
   schemeId: string;
+  parentPath: string;
 }
 
 interface IStateProps {
@@ -45,14 +49,17 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
     };
   }
 
-  public handleClose = (e: any) => {
-    e.preventDefault();
+  public handleClose = (e?: any) => {
+    if (e?.preventDefault) {
+      e.preventDefault();
+    }
     this.doClose();
   }
 
   public doClose = () => {
-    const { daoAvatarAddress, history, schemeId } = this.props;
-    history.push("/dao/" + daoAvatarAddress + "/scheme/" + schemeId);
+    const { history, parentPath } = this.props;
+
+    history.push(parentPath);
   }
 
   public async componentDidMount() {
@@ -87,18 +94,24 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
     }
   }
 
-  public render(): RenderOutput {
+  private getCreateSchemeComponent = (): [JSX.Element, string] => {
     const { daoAvatarAddress, currentAccountAddress } = this.props;
+
     const scheme = this.props.data;
+
+    if (!scheme) {
+      return [null, "select proposal type"];
+    }
+
+    const schemeTitle = this.state.createCrxProposalComponent ? rewarderContractName(scheme) : schemeName(scheme);
 
     let createSchemeComponent = <div />;
     const props = {
       currentAccountAddress,
       daoAvatarAddress,
-      handleClose: this.doClose,
+      handleClose: this.handleClose,
       scheme,
     };
-    const schemeTitle = this.state.createCrxProposalComponent ? rewarderContractName(scheme) : schemeName(scheme);
 
     if (this.state.createCrxProposalComponent) {
       createSchemeComponent = <this.state.createCrxProposalComponent {...props} />;
@@ -135,14 +148,32 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
       createSchemeComponent = <CreateGenericMultiCallProposal {...props} whitelistedContracts={scheme.genericSchemeMultiCallParams.contractsWhiteList} />;
     }
 
+    return [createSchemeComponent, schemeTitle];
+  }
+
+  public render(): RenderOutput {
+    const { daoAvatarAddress, match, location, history, dao, data: schema, parentPath } = this.props;
+    const [createSchemeComponent, schemeTitle] = this.getCreateSchemeComponent();
+
     return (
       <div className={css.createProposalWrapper}>
-        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/create`}>Create {schemeTitle} Proposal</BreadcrumbsItem>
+        <BreadcrumbsItem to={parentPath + "/proposals/create"}>Create {schemeTitle} Proposal</BreadcrumbsItem>
         <h2 className={css.header}>
           <span>+ New proposal <b>| {schemeTitle}</b></span>
           <button className={css.closeButton} aria-label="Close Create Proposal Modal" onClick={this.handleClose}>&times;</button>
         </h2>
-        { createSchemeComponent }
+        <div className={css.createProposalContent}>
+          <SelectProposal
+            schema={schema}
+            dao={dao}
+            match={match}
+            location={location}
+            history={history}
+            daoAvatarAddress={daoAvatarAddress}
+          />
+          {Boolean(!createSchemeComponent) && <div className={css.loadingWrap}><Loading inline /></div>}
+          { createSchemeComponent }
+        </div>
       </div>
     );
   }

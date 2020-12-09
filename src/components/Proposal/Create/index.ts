@@ -2,6 +2,7 @@ import { History } from "history";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
+import { of } from "rxjs";
 
 import { Address } from "@daostack/arc.js";
 import { getArcByDAOAddress } from "lib/util";
@@ -33,11 +34,15 @@ const SubscribedCreateProposalPage: any = withSubscription<any, any>({
   wrappedComponent: CreateProposalPage,
   loadingComponent: Loading,
   errorComponent: null,
-  checkForUpdate: ["daoAvatarAddress"],
+  checkForUpdate: ["daoAvatarAddress", "schemeId"],
   createObservable: (props: IExternalStateProps) => {
     const arc = getArcByDAOAddress(props.daoAvatarAddress);
-    const scheme = arc.scheme(props.schemeId);
-    return scheme.state();
+    if (props.schemeId) {
+      const scheme = arc.scheme(props.schemeId);
+      return scheme.state();
+    }
+
+    return of(null);
   },
 });
 
