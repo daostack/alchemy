@@ -27,11 +27,11 @@
 
   &.pending {
     .transactionBorder {
-      background-color: $accent-0;
+      background-color: $accent-1;
     }
 
     .statusIcon .pending {
-      background-color: $accent-0;
+      background-color: $accent-1;
       display: inline-block;
     }
   }

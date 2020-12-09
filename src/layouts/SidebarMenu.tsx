@@ -122,20 +122,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
         <div className={css.daoNavigation}>
           <ul>
             <li>
-              <Link to={`/dao/${dao.address}`} onClick={this.handleCloseMenu} data-test-id="daohome">
-                <span className={css.menuDot} />
-                <span className={
-                  classNames({
-                    [css.notification]: true,
-                    [css.homeNotification]: true,
-                  })
-                }></span>
-                <img src="/assets/images/Icon/menu/home.svg" />
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to={`/dao/${dao.address}/schemes`} onClick={this.handleCloseMenu} data-test-id="daoschemes">
+              <Link to={`/dao/${dao.address}`} onClick={this.handleCloseMenu} data-test-id="daoschemes">
                 <span className={css.menuDot} />
                 <span className={
                   classNames({
@@ -145,6 +132,19 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                 }></span>
                 <img src="/assets/images/Icon/menu/chat.svg" />
                 Proposals
+              </Link>
+            </li>
+            <li>
+              <Link to={`/dao/${dao.address}/schemes`} onClick={this.handleCloseMenu}>
+                <span className={css.menuDot} />
+                <span className={
+                  classNames({
+                    [css.notification]: true,
+                    [css.historyNotification]: true,
+                  })
+                }></span>
+                <img src="/assets/images/Icon/menu/history.svg" />
+                Plugins
               </Link>
             </li>
             <li>
@@ -161,19 +161,6 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   Members
                 </Link>
               </TrainingTooltip>
-            </li>
-            <li>
-              <Link to={"/dao/" + dao.address + "/history/"} onClick={this.handleCloseMenu}>
-                <span className={css.menuDot} />
-                <span className={
-                  classNames({
-                    [css.notification]: true,
-                    [css.historyNotification]: true,
-                  })
-                }></span>
-                <img src="/assets/images/Icon/menu/history.svg" />
-                History
-              </Link>
             </li>
           </ul>
         </div>
