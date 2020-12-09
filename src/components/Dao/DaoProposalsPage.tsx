@@ -10,7 +10,6 @@ import ProposalRow from "components/Proposal/ProposalRow";
 import { RouteComponentProps } from "react-router-dom";
 import { first } from "rxjs/operators";
 import { isAddress } from "lib/util";
-import moment from "moment-timezone";
 
 const PAGE_SIZE = 50;
 
@@ -21,26 +20,11 @@ type IExternalProps = {
   currentAccountAddress: Address;
 } & RouteComponentProps<any>;
 
-type OrderDirection = "asc" | "desc";
-
-
 const proposalsQuery = (dao: IDAOState, skip: number, titleSearch?: string): Observable<Array<Proposal>> => {
   const filter: any = {
   };
 
-  let orderDirection: OrderDirection = "asc";
-
-  if (!titleSearch) {
-    if (skip % PAGE_SIZE === 0) {
-      filter["closingAt_gt"] = moment().unix();
-    } else {
-      skip -= dao.numberOfQueuedProposals + dao.numberOfPreBoostedProposals + dao.numberOfBoostedProposals;
-      filter["closingAt_lt"] = moment().unix();
-    }
-  }
-
   if (titleSearch?.trim()) {
-    orderDirection = "desc";
     if (isAddress(titleSearch)) {
       filter["proposer"] = titleSearch;
     } else {
@@ -51,7 +35,7 @@ const proposalsQuery = (dao: IDAOState, skip: number, titleSearch?: string): Obs
   return dao.dao.proposals({
     where: filter,
     orderBy: "closingAt",
-    orderDirection: orderDirection,
+    orderDirection: "desc",
     first: titleSearch ? undefined : PAGE_SIZE, // TEMPORARY UNTIL WE PASS "titleSearch" in line 143
     skip,
   }, { fetchAllData: true });
