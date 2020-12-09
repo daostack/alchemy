@@ -8,6 +8,7 @@
   "include": [
     "test/**/*.ts",
     "test/**/*.js",
+    "test/**/**/*.js",
     "src/**/*.js",
     "src/**/*.ts",
     "src/**/*.tsx",

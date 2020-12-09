@@ -1,5 +1,5 @@
 import { CompetitionScheme, IDAOState, ISchemeState, Scheme } from "@daostack/arc.js";
-import { enableWalletProvider, getArc } from "arc";
+import { enableWalletProvider } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -20,7 +20,7 @@ import { mergeMap } from "rxjs/operators";
 import * as css from "./DaoSchemesPage.scss";
 import ProposalSchemeCard from "./ProposalSchemeCard";
 import SimpleSchemeCard from "./SimpleSchemeCard";
-import { standardPolling } from "lib/util";
+import { standardPolling, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -65,7 +65,7 @@ class DaoSchemesPage extends React.Component<IProps, null> {
     const { showNotification, daoState } = this.props;
     const daoAvatarAddress = daoState.address;
 
-    if (!await enableWalletProvider({ showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification }, getNetworkByDAOAddress(this.props.daoState.address))) { return; }
 
     this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
   };
@@ -147,7 +147,7 @@ const SubscribedDaoSchemesPage = withSubscription({
   errorComponent: (props) => <span>{props.error.message}</span>,
   checkForUpdate: [],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
+    const arc = getArcByDAOAddress(props.daoState.address);
     const dao = props.daoState.dao;
 
     return combineLatest(

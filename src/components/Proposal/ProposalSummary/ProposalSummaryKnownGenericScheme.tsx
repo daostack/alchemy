@@ -1,7 +1,7 @@
 import { IDAOState, IProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
-import { linkToEtherScan, formatTokens, truncateWithEllipses } from "lib/util";
+import { linkToEtherScan, formatTokens, truncateWithEllipses, getNetworkByDAOAddress } from "lib/util";
 import CopyToClipboard from "components/Shared/CopyToClipboard";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
@@ -42,6 +42,7 @@ export default class ProposalSummary extends React.Component<IProps> {
 
   public render(): RenderOutput {
     const { proposal, detailView, transactionModal, genericSchemeInfo } = this.props;
+    const network = getNetworkByDAOAddress(this.props.dao.address);
     if (genericSchemeInfo.specs.name === "DutchX") {
       return <ProposalSummaryDutchX {...this.props} />;
     } else if (genericSchemeInfo.specs.name === "Standard Bounties") {
@@ -71,7 +72,7 @@ export default class ProposalSummary extends React.Component<IProps> {
           </span>
           {detailView ?
             <div className={css.summaryDetails}>
-              To contract at: <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)} target="_blank" rel="noopener noreferrer">{proposal.genericScheme.contractToCall}</a></pre>
+              To contract at: <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall, network)} target="_blank" rel="noopener noreferrer">{proposal.genericScheme.contractToCall}</a></pre>
               with callData: <pre>{truncateWithEllipses(proposal.genericScheme.callData, 42)}<CopyToClipboard value={proposal.genericScheme.callData} /></pre>
             </div>
             : ""
@@ -111,7 +112,7 @@ export default class ProposalSummary extends React.Component<IProps> {
             })}
           </pre>
           on contract at:
-          <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
+          <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall, network)}>{proposal.genericScheme.contractToCall}</a></pre>
           sending to contract:
           <pre className={sendsETH ? css.warning : ""}>{formatTokens(proposal.genericScheme.value)} ETH</pre>
 

@@ -1,6 +1,5 @@
 import { IDAOState, Member } from "@daostack/arc.js";
 import { getProfilesForAddresses } from "actions/profilesActions";
-import { getArc } from "arc";
 import CreateProposalPage from "components/Proposal/Create/CreateProposalPage";
 import ProposalDetailsPage from "components/Proposal/ProposalDetailsPage";
 import SchemeContainer from "components/Scheme/SchemeContainer";
@@ -11,7 +10,6 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
-//@ts-ignore
 import { ModalRoute } from "react-router-modal";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
@@ -23,7 +21,9 @@ import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
 import DaoLandingPage from "components/Dao/DaoLandingPage";
-import { standardPolling, targetedNetwork } from "lib/util";
+import { standardPolling, targetedNetwork, getArcByDAOAddress, getDAONameByID } from "lib/util";
+import gql from "graphql-tag";
+import { getArcs } from "arc";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -31,6 +31,11 @@ interface IStateProps {
   currentAccountAddress: string;
   currentAccountProfile: IProfileState;
   daoAvatarAddress: string;
+  followingDaosAddresses: Array<any>;
+}
+
+interface IState {
+  memberDaos: Array<any>;
 }
 
 interface IDispatchProps {
@@ -46,6 +51,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
     currentAccountAddress: state.web3.currentAccountAddress,
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
+    followingDaosAddresses: state.profiles[state.web3.currentAccountAddress]?.follows.daos,
   };
 };
 
@@ -54,13 +60,43 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-class DaoContainer extends React.Component<IProps, null> {
+class DaoContainer extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      memberDaos: [],
+    };
+  }
   public daoSubscription: any;
   public subscription: Subscription;
 
   public async componentDidMount() {
     // TODO: use this once 3box fixes Box.getProfiles
     //this.props.getProfilesForAddresses(this.props.data[1].map((member) => member.staticState.address));
+    const { followingDaosAddresses } = this.props;
+    const memberQuery = gql` query memberDaos {
+      reputationHolders (where: {
+        address: "${this.props.currentAccountAddress}"
+        ${(followingDaosAddresses && followingDaosAddresses.length) ? "dao_not_in: [" + followingDaosAddresses.map(dao => "\"" + dao + "\"").join(",") + "]" : ""}
+      }) {
+        dao {
+          id
+          name
+        }
+      }
+    }`;
+
+    const arcs = getArcs();
+    const memberDaosData = [];
+    for (const network in arcs) {
+      const arc = arcs[network];
+      const daos = await arc.sendQuery(memberQuery);
+      memberDaosData.push(daos.data.reputationHolders);
+    }
+    const memberDaos = [].concat(...memberDaosData).map(dao => {
+      return { id: dao.dao.id, name: dao.dao.name };
+    });
+    this.setState({ memberDaos: memberDaos });
   }
 
   private daoHistoryRoute = (routeProps: any) => <DaoHistoryPage {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
@@ -82,15 +118,36 @@ class DaoContainer extends React.Component<IProps, null> {
   private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} daoState={this.props.data[0]} />;
   private daoLandingRoute = (_routeProps: any) => <DaoLandingPage daoState={this.props.data[0]} />;
   private modalRoute = (route: any) => `/dao/${route.params.daoAvatarAddress}/scheme/${route.params.schemeId}/`;
+  private onFollwingDaosListChange = (daoAddress: string, history: any) => history.push(`/dao/${daoAddress}`);
 
   public render(): RenderOutput {
     const daoState = this.props.data[0];
     const network = targetedNetwork();
+    const { followingDaosAddresses } = this.props;
+    const { memberDaos } = this.state;
+
+    const followingDaos = followingDaosAddresses?.filter(address => getDAONameByID(address) !== undefined)
+    .map(daoAddress => {
+      return { id: daoAddress, name: getDAONameByID(daoAddress) };
+    });
+
+    const myDaos = followingDaos?.concat(memberDaos);
+
+    const myDaosAddresses = [] as any;
+    const myDaosOptions = myDaos?.map(dao => {
+      myDaosAddresses.push(dao.id);
+      return <option key={dao.id} selected={dao.id === daoState.address ? true : false} value={dao.id}>{dao.name}</option>;
+    });
+
+    if (!myDaosAddresses.includes(daoState.id)){
+      myDaosOptions?.push(<option key={daoState.id} selected value={daoState.id}>{daoState.name}</option>);
+    }
 
     return (
       <div className={css.outer}>
         <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
-        <BreadcrumbsItem to={"/dao/" + daoState.address}>{daoState.name}</BreadcrumbsItem>
+        {/* A BreadcrumbsItem position is determined according the path depth, so it has to be at least /daos/. In order to prevent redirection we use preventDefault */}
+        <BreadcrumbsItem onClick={(e: any) => { e.preventDefault(); }} to="/daos/"><select className={css.follwingDaosList} onChange={(e) => this.onFollwingDaosListChange(e.target.value, this.props.history)}>{myDaosOptions}</select></BreadcrumbsItem>
         <Helmet>
           <meta name="description" content={daoState.name + " | Managed on Alchemy by DAOstack"} />
           <meta name="og:description" content={daoState.name + " | Managed on Alchemy by DAOstack"} />
@@ -147,8 +204,8 @@ const SubscribedDaoContainer = withSubscription({
   errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
     const daoAddress = props.match.params.daoAvatarAddress;
+    const arc = getArcByDAOAddress(daoAddress);
     const dao = arc.dao(daoAddress);
     const observable = combineLatest(
       dao.state(standardPolling(true)), // DAO state

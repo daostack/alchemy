@@ -1,9 +1,8 @@
 import * as React from "react";
 import { WithContext as ReactTags, Tag } from "react-tag-input";
 import classNames from "classnames";
-import { Tag as TagEntity } from "@daostack/arc.js";
+import Arc, { Tag as TagEntity } from "@daostack/arc.js";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { getArc } from "arc";
 import { RefObject } from "react";
 import { map } from "rxjs/operators";
 import { ITagState } from "@daostack/arc.js/dist/types/tag";
@@ -20,6 +19,7 @@ interface IExternalProps {
    * tags to start with
    */
   tags?: Array<string>;
+  arc: Arc;
 }
 
 interface IStateProps {
@@ -158,12 +158,11 @@ export default withSubscription({
   checkForUpdate: () => { return false; },
   createObservable: (_props: IExternalProps) => {
 
-    const arc = getArc();
     /**
      * Returns an array of ITagState.
      * Ask for `first: 1000` to raise the minimum from the default of 100 to the max of 1000
      */
-    return arc.tags({ first: 1000 }, { })
+    return _props.arc.tags({ first: 1000 }, { })
       .pipe(
         map((tags: Array<TagEntity>) => tags.map(tag => tag.staticState))
       );

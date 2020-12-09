@@ -17,3 +17,7 @@ subgraph.yaml
 build/
 *.scss.d.ts
 *.ps1
+.idea
+.npm
+
+test/integration/.dist

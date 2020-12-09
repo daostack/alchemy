@@ -2,14 +2,14 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { IDAOState, ISchemeState, Address } from "@daostack/arc.js";
 import { createProposal } from "actions/arcActions";
-import { enableWalletProvider, getArc } from "arc";
+import { enableWalletProvider } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UserSearchField from "components/Shared/UserSearchField";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Analytics from "lib/analytics";
-import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
+import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "../CreateProposal.scss";
@@ -94,7 +94,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       beneficiary: "",
       description: "",
       ethReward: 0,
-      externalTokenAddress: getArc().GENToken().address,
+      externalTokenAddress: getArcByDAOAddress(props.daoAvatarAddress).GENToken().address,
       externalTokenReward: 0,
       nativeTokenReward: 0,
       reputationReward: 0,
@@ -110,7 +110,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
   private fnDescription = (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoAvatarAddress))) { return; }
 
     if (!values.beneficiary) {
       values.beneficiary = this.props.currentAccountAddress;
@@ -118,7 +118,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
 
-    const externalTokenDetails = tokenDetails(values.externalTokenAddress);
+    const externalTokenDetails = tokenDetails(values.externalTokenAddress, getNetworkByDAOAddress(this.props.daoAvatarAddress));
     let externalTokenReward;
 
     // If we know the decimals for the token then multiply by that
@@ -140,7 +140,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     };
 
     setSubmitting(false);
-    await this.props.createProposal(proposalValues);
+    await this.props.createProposal(proposalValues, this.props.daoAvatarAddress);
 
     Analytics.track("Submit Proposal", {
       "DAO Address": this.props.daoAvatarAddress,
@@ -174,7 +174,6 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       return null;
     }
     const dao = data;
-    const arc = getArc();
 
     return (
       <div className={css.containerNoSidebar}>
@@ -201,7 +200,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               errors.title = "Title is too long (max 120 characters)";
             }
 
-            if (values.beneficiary && !arc.web3.utils.isAddress(values.beneficiary)) {
+            if (values.beneficiary && !isAddress(values.beneficiary)) {
               errors.beneficiary = "Invalid address";
             }
 
@@ -277,7 +276,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
 
               <div className={css.tagSelectorContainer}>
-                <TagsSelector onChange={this.onTagsChange()} tags={this.state.tags}></TagsSelector>
+                <TagsSelector onChange={this.onTagsChange()} tags={this.state.tags} arc={getArcByDAOAddress(dao.address)}></TagsSelector>
               </div>
 
               <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
@@ -315,12 +314,12 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               <div className={css.rewards}>
                 <div className={css.reward}>
                   <label htmlFor="ethRewardInput">
-                    {baseTokenName()} Reward
+                    {baseTokenName(getNetworkByDAOAddress(dao.address))} Reward
                     <ErrorMessage name="ethReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
                     id="ethRewardInput"
-                    placeholder={`How much ${baseTokenName()} to reward`}
+                    placeholder={`How much ${baseTokenName(getNetworkByDAOAddress(dao.address))} to reward`}
                     name="ethReward"
                     type="number"
                     className={touched.ethReward && errors.ethReward ? css.error : null}
@@ -366,8 +365,8 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                         id="externalTokenAddress"
                         name="externalTokenAddress"
                         component={SelectField}
-                        options={Object.keys(supportedTokens()).map((tokenAddress) => {
-                          const token = supportedTokens()[tokenAddress];
+                        options={Object.keys(supportedTokens(getNetworkByDAOAddress(dao.address))).map((tokenAddress) => {
+                          const token = supportedTokens(getNetworkByDAOAddress(dao.address))[tokenAddress];
                           return { value: tokenAddress, label: token["symbol"] };
                         })}
                       />
@@ -422,7 +421,7 @@ const SubscribedCreateContributionReward = withSubscription({
   wrappedComponent: CreateContributionReward,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
+    const arc = getArcByDAOAddress(props.daoAvatarAddress);
     return arc.dao(props.daoAvatarAddress).state();
   },
 });

@@ -1,0 +1,18 @@
+language: node_js
+node_js: 12.18.4
+addons:
+  apt:
+    update: true
+bundler_args: "--jobs=4 --retry=3"
+
+before_install:
+  - sudo apt-get install -y libsecret-1-dev curl
+
+script:
+  # check lint
+  - npm run lint -- --quiet
+  # unit tests
+  - npm run test:unit -- --forceExit
+
+  # see if the app builds correctly
+  - npm run build-travis

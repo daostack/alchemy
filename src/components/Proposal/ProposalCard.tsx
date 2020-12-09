@@ -4,7 +4,7 @@ import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
-import { humanProposalTitle } from "lib/util";
+import { getArcByDAOAddress, getNetworkByDAOAddress, humanProposalTitle } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import TrackVisibility from "react-on-screen";
@@ -178,7 +178,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   <TrackVisibility partialVisibility={false} offset={-116}>{({ isVisible }) =>
                     <div className={classNames({[css.menu]: true, [css.leftMenu]: !isVisible })}>
                       <div className={css.followButton}>
-                        <FollowButton id={proposal.id} type="proposals" />
+                        <FollowButton id={proposal.id} type="proposals" network={getNetworkByDAOAddress(daoState.address)} />
                       </div>
 
                       <VoteButtons
@@ -225,7 +225,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
               </h3>
 
               { tags && tags.length ? <div className={css.tagsContainer}>
-                <TagsSelector readOnly tags={tags}></TagsSelector>
+                <TagsSelector readOnly tags={tags} arc={getArcByDAOAddress(daoState.address)}></TagsSelector>
               </div> : "" }
             </Link>
 

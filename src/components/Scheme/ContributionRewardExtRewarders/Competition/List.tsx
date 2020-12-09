@@ -9,6 +9,7 @@ import { getArc } from "arc";
 import { CompetitionStatusEnum, CompetitionStatus } from "./utils";
 import Card from "./Card";
 import * as css from "./Competitions.scss";
+import { getNetworkByDAOAddress } from "lib/util";
 
 interface IExternalProps {
   daoState: IDAOState;
@@ -136,7 +137,7 @@ export default withSubscription({
     ${CompetitionVote.fragments.CompetitionVoteFields}
     `;
 
-    const arc = await getArc();
+    const arc = await getArc(getNetworkByDAOAddress(props.daoState.dao.id));
     await arc.sendQuery(cacheQuery);
     // end cache priming
 

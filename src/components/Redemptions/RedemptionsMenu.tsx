@@ -1,13 +1,13 @@
 import { Address, IDAOState, IProposalState, IRewardState, Proposal, Reward } from "@daostack/arc.js";
-import { enableWalletProvider, getArc } from "arc";
+import { enableWalletProvider } from "arc";
 import { redeemProposal } from "actions/arcActions";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import ActionButton from "components/Proposal/ActionButton";
 import RedemptionsString from "components/Proposal/RedemptionsString";
 import ProposalSummary from "components/Proposal/ProposalSummary";
-import { ethErrorHandler, humanProposalTitle, ethBalance, standardPolling } from "lib/util";
+import { ethErrorHandler, humanProposalTitle, ethBalance, standardPolling, getArcByDAOAddress, getNetworkByDAOAddress, Networks } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -26,11 +26,13 @@ interface IExternalProps {
 
 interface IStateProps {
   currentAccountAddress: Address;
+  network: Networks;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps) => {
   return {
     currentAccountAddress: state.web3.currentAccountAddress,
+    network: state.web3.networkName,
     ...ownProps,
   };
 };
@@ -81,7 +83,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
           disabled={redeemableProposals.length === 0}
         >
           <img src="/assets/images/Icon/redeem.svg" />
-          Redeem all {redeemableProposals.length > 0 ? redeemableProposals.length : ""}
+          Redeem all from {this.props.network} {redeemableProposals.length > 0 ? redeemableProposals.length : ""}
         </button>
       </div>
     </div>;
@@ -95,10 +97,12 @@ class RedemptionsMenu extends React.Component<IProps, null> {
       showNotification,
     } = this.props;
 
-    if (!await enableWalletProvider({ showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification }, this.props.network)) { return; }
 
     redeemableProposals.forEach(proposal => {
-      redeemProposal(proposal.dao.id, proposal.id, currentAccountAddress);
+      if (getNetworkByDAOAddress(proposal.dao.id) === this.props.network) {
+        redeemProposal(proposal.dao.id, proposal.id, currentAccountAddress);
+      }
     });
   }
 }
@@ -109,10 +113,9 @@ const SubscribedRedemptionsMenu = withSubscription({
   errorComponent: (props) => <div className={css.menu}>{props.error.message}</div>,
   checkForUpdate: ["redeemableProposals"],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
     return combineLatest(
       props.redeemableProposals.map(proposalData => (
-        new Proposal(proposalData.id, arc).state()
+        new Proposal(proposalData.id, getArcByDAOAddress(proposalData.dao.id)).state()
       ))
     ).pipe(defaultIfEmpty([]));
   },
@@ -196,9 +199,9 @@ const SubscribedMenuItemContent = withSubscription({
   checkForUpdate: [], // Parent component will rerender anyway.
   createObservable: (props: IMenuItemProps) => {
     const { currentAccountAddress, proposal } = props;
-    const arc = getArc();
+    const arc = getArcByDAOAddress(proposal.dao.id);
     const dao = arc.dao(proposal.dao.id);
-    const daoEthBalance = concat(of(new BN("0")), ethBalance(proposal.dao.id)).pipe(ethErrorHandler());
+    const daoEthBalance = concat(of(new BN("0")), ethBalance(proposal.dao.id, arc)).pipe(ethErrorHandler());
     const rewards = proposal.proposal.rewards({ where: { beneficiary: currentAccountAddress } })
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));

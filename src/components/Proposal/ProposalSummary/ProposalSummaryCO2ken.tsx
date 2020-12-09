@@ -1,6 +1,6 @@
 import { IProposalState } from "@daostack/arc.js";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
 import { formatTokens, truncateWithEllipses } from "lib/util";

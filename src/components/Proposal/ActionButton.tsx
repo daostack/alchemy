@@ -1,10 +1,10 @@
 import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Token } from "@daostack/arc.js";
 import { executeProposal, redeemProposal } from "actions/arcActions";
-import { enableWalletProvider, getArc } from "arc";
+import { enableWalletProvider } from "arc";
 import classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Analytics from "lib/analytics";
-import { AccountClaimableRewardsType, getCRRewards, getGpRewards, ethErrorHandler, fromWei } from "lib/util";
+import { AccountClaimableRewardsType, getCRRewards, getGpRewards, ethErrorHandler, fromWei, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import { Page } from "pages";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -17,7 +17,7 @@ import { of, combineLatest, Observable } from "rxjs";
 import * as css from "./ActionButton.scss";
 import RedemptionsTip from "./RedemptionsTip";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 
 interface IExternalProps {
   currentAccountAddress?: Address;
@@ -77,7 +77,7 @@ class ActionButton extends React.Component<IProps, IState> {
   private handleClickExecute = (type: string) => async (e: any): Promise<void> => {
     e.preventDefault();
 
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoState.address))) { return; }
 
     const { currentAccountAddress, daoState, parentPage, proposalState } = this.props;
 
@@ -100,7 +100,7 @@ class ActionButton extends React.Component<IProps, IState> {
   private handleClickRedeem = async (e: any): Promise<void> => {
     e.preventDefault();
 
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoState.address))) { return; }
 
     this.props.onClick?.();
 
@@ -286,7 +286,7 @@ class ActionButton extends React.Component<IProps, IState> {
 
   private handleRedeemProposal = (contributionRewards: AccountClaimableRewardsType, gpRewards: AccountClaimableRewardsType) => async (): Promise<void> => {
     // may not be required, but just in case
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoState.address))) { return; }
 
     const {
       currentAccountAddress,
@@ -322,7 +322,7 @@ const SubscribedActionButton = withSubscription({
   createObservable: (props: IProps) => {
     let externalTokenObservable: Observable<BN>;
 
-    const arc = getArc();
+    const arc = getArcByDAOAddress(props.daoState.id);
     const genToken = arc.GENToken();
 
     if (props.proposalState.contributionReward &&

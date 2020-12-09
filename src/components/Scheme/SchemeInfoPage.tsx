@@ -4,7 +4,7 @@ import { History } from "history";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState, IGenesisProtocolParams, IDAOState } from "@daostack/arc.js";
-import { fromWei, linkToEtherScan, roundUp } from "lib/util";
+import { fromWei, getNetworkByDAOAddress, linkToEtherScan, roundUp } from "lib/util";
 import CopyToClipboard from "components/Shared/CopyToClipboard";
 import { schemeName } from "lib/schemeUtils";
 import * as moment from "moment";
@@ -25,6 +25,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
   public render(): RenderOutput {
     const { daoState, scheme } = this.props;
     const daoAvatarAddress = daoState.address;
+    const network = getNetworkByDAOAddress(daoAvatarAddress);
 
     const duration = (durationSeconds: number): any => {
       if (!durationSeconds) {
@@ -63,7 +64,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         return <>
           <div>Address:</div>
           <div>
-            <a href={linkToEtherScan(votingMachine)} target="_blank" rel="noopener noreferrer">{ votingMachine }</a>
+            <a href={linkToEtherScan(votingMachine, network)} target="_blank" rel="noopener noreferrer">{ votingMachine }</a>
           </div>
         </>;
       }
@@ -75,7 +76,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
 
       return <React.Fragment>
         <div>Activation Time:</div><div className={css.ellipsis}>{
-          `${ activationTime.format("h:mm A [UTC] on MMMM Do, YYYY")} ${activationTime.isSameOrBefore(moment()) ? "(active)" : "(inactive)"}`
+          `${activationTime.format("h:mm A [UTC] on MMMM Do, YYYY")} ${activationTime.isSameOrBefore(moment()) ? "(active)" : "(inactive)"}`
         }</div>
         <div>Boosted Vote Period Limit:</div><div>{duration(params.boostedVotePeriodLimit)} ({params.boostedVotePeriodLimit} seconds)</div>
         <div>DAO Bounty Constant:</div><div>{params.daoBountyConst}</div>
@@ -104,7 +105,8 @@ export default class SchemeInfo extends React.Component<IProps, null> {
       (scheme.genericSchemeParams && scheme.genericSchemeParams.votingMachine) ||
       (scheme.uGenericSchemeParams && scheme.uGenericSchemeParams.votingMachine) ||
       (scheme.contributionRewardParams && scheme.contributionRewardParams.votingMachine) ||
-      (scheme.schemeRegistrarParams && scheme.schemeRegistrarParams.votingMachine)
+      (scheme.schemeRegistrarParams && scheme.schemeRegistrarParams.votingMachine) ||
+      (scheme.contributionRewardExtParams && scheme.contributionRewardExtParams.votingMachine)
     );
     return <div>
       <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>Info</BreadcrumbsItem>
@@ -113,23 +115,23 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         <h3>{schemeName(scheme, scheme.address)}</h3>
         <div className={css.infoCardContent}>
           <div className={css.infoRowsContainer}>
-            <div>Address of plugin: <a href={linkToEtherScan(scheme.address)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></div>
+            <div>Address of plugin: <a href={linkToEtherScan(scheme.address, network)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></div>
             <div>
               <div className={css.addressHash}>{scheme.address}</div>
               <CopyToClipboard value={scheme.address} />
             </div>
-            { scheme.genericSchemeParams ?
+            {scheme.genericSchemeParams ?
               <>
-                <div>will call this contract: <a href={linkToEtherScan(scheme.genericSchemeParams.contractToCall)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></div>
+                <div>will call this contract: <a href={linkToEtherScan(scheme.genericSchemeParams.contractToCall, network)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></div>
                 <div>
                   <div className={css.addressHash}>{scheme.genericSchemeParams.contractToCall}</div>
                   <CopyToClipboard value={scheme.genericSchemeParams.contractToCall} />
                 </div>
               </> : undefined
             }
-            { scheme.uGenericSchemeParams ?
+            {scheme.uGenericSchemeParams ?
               <>
-                <div>will call this contract: <a href={linkToEtherScan(scheme.uGenericSchemeParams.contractToCall)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></div>
+                <div>will call this contract: <a href={linkToEtherScan(scheme.uGenericSchemeParams.contractToCall, network)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></div>
                 <div>
                   <div className={css.addressHash}>{scheme.uGenericSchemeParams.contractToCall}</div>
                   <CopyToClipboard value={scheme.uGenericSchemeParams.contractToCall} />
@@ -164,6 +166,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         </div>
       </div>
 
+
       {scheme.contributionRewardParams || scheme.genericSchemeParams ?
         <div className={css.schemeInfoContainer}>
           <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
@@ -176,7 +179,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         </div>
         : ""
       }
-      { scheme.uGenericSchemeParams ?
+      {scheme.uGenericSchemeParams ?
         <div className={css.schemeInfoContainer}>
           <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
           <div className={css.infoCardContent}>
@@ -227,7 +230,19 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         </div>
         : ""
       }
+
+      {scheme.contributionRewardExtParams ?
+        <div className={css.schemeInfoContainer}>
+          <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
+          <div className={css.infoCardContent}>
+            <div className={css.gpRowsContainer}>
+              {renderVotingMachineLink(votingMachine)}
+              {renderGpParams(scheme.schemeParams.voteParams)}
+            </div>
+          </div>
+        </div>
+        : ""
+      }
     </div>;
   }
 }
-

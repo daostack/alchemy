@@ -1,4 +1,4 @@
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import { IDAOState, IMemberState, Member } from "@daostack/arc.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccountImage from "components/Account/AccountImage";
