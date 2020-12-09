@@ -9,6 +9,7 @@
     - Loading speed and vulnerabilities fixes
     - Integration tests typescript supporting was added
     - Use subgraph v41_1 and arc.js 0.2.77
+    - Update BalancerPoolManager.json scheme
 
   - Bugs Fixed
     - Detect wallet network change in account menu
