@@ -14,7 +14,7 @@ import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSION
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
-import { IProposalType, ISchemeState, Scheme } from "@daostack/arc.js";
+import Arc, { IProposalType, ISchemeState, Scheme } from "@daostack/arc.js";
 import { connect } from "react-redux";
 import * as React from "react";
 import * as css from "../CreateProposal.scss";
@@ -193,6 +193,16 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     };
     exportUrl(values);
     this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
+  }
+
+  private async verifyParametersHash(arc: Arc, schemeAddress: string, parametersHash: string): Promise<string | undefined> {
+    const parametersHashPattern = /0x([\da-f]){64}/i;
+    if (!parametersHashPattern.test(parametersHash)) {
+      return "Invalid parameters hash";
+    }
+    if (!(await arc.verifyParametersHash(schemeAddress, parametersHash))) {
+      return "Scheme parameters not set";
+    }
   }
 
   public render(): RenderOutput {
@@ -466,7 +476,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                           placeholder="e.g. 0x0000000000000000000000000000000000000000000000000000000000001234"
                           name="parametersHash"
                           className={touched.parametersHash && errors.parametersHash ? css.error : null}
-                          validate={async () => { if (!(await arc.verifyParametersHash(this.props.scheme.address, values.parametersHash))) { return "Invalid parameters hash"; } }}
+                          validate={async () => { return await this.verifyParametersHash(arc, this.props.scheme.address, values.parametersHash); }}
                         />
                       </div>
                       <div className={css.permissions}>
