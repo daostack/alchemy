@@ -10,6 +10,9 @@ interface IProps {
 
 export const SelectProposalLabel: React.FC<IProps> = ({ label, value }) => {
   return (
-    <div key={value}>{schemeName(label)}</div>
+    <div key={value}>
+      <span>{schemeName(label)}</span>
+      <span>{label.id}</span>
+    </div>
   );
 };
