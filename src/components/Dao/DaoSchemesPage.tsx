@@ -106,10 +106,10 @@ class DaoSchemesPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.wrapper}>
-        <BreadcrumbsItem to={`/dao/${dao.address}/schemes`}>Proposal Plugins</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${dao.address}/schemes`}>Plugins</BreadcrumbsItem>
 
         <Sticky enabled top={50} innerZ={10000}>
-          <h1>Proposal Plugins</h1>
+          <h1>Plugins</h1>
           { schemeManager ?
             <TrainingTooltip placement="topLeft" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
               <a className={

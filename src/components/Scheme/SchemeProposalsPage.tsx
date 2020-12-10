@@ -281,7 +281,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
     return (
       <>
-        <BreadcrumbsItem to={`/dao/${daoState.address}/schemes`}>Proposal Plugins</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${daoState.address}/schemes`}>Plugins</BreadcrumbsItem>
         <BreadcrumbsItem to={`/dao/${daoState.address}/scheme/${scheme.id}`}>{schemeFriendlyName}</BreadcrumbsItem>
 
         {(allProposals.length === 0)

@@ -1,5 +1,5 @@
 import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Token } from "@daostack/arc.js";
-import { executeProposal, redeemProposal } from "actions/arcActions";
+import { executeProposal, redeemProposal, executeCalls } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 import classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
@@ -16,7 +16,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import { of, combineLatest, Observable } from "rxjs";
 import * as css from "./ActionButton.scss";
 import RedemptionsTip from "./RedemptionsTip";
-
+import { proposalPassed } from "lib/proposalHelpers";
 import * as BN from "bn.js";
 
 interface IExternalProps {
@@ -43,6 +43,7 @@ interface IDispatchProps {
   executeProposal: typeof executeProposal;
   redeemProposal: typeof redeemProposal;
   showNotification: typeof showNotification;
+  executeCalls: typeof executeCalls;
 }
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[BN, BN]>;
@@ -58,6 +59,7 @@ const mapDispatchToProps = {
   redeemProposal,
   executeProposal,
   showNotification,
+  executeCalls,
 };
 
 interface IState {
@@ -81,7 +83,11 @@ class ActionButton extends React.Component<IProps, IState> {
 
     const { currentAccountAddress, daoState, parentPage, proposalState } = this.props;
 
-    await this.props.executeProposal(daoState.address, proposalState.id, currentAccountAddress);
+    if (type === "ExecuteCalls") {
+      await this.props.executeCalls(daoState.address, proposalState.id);
+    } else {
+      await this.props.executeProposal(daoState.address, proposalState.id, currentAccountAddress);
+    }
 
     Analytics.track("Transition Proposal", {
       "DAO Address": daoState.address,
@@ -209,6 +215,10 @@ class ActionButton extends React.Component<IProps, IState> {
       proposal: proposalState,
     });
 
+    const showExecuteCallsButton = (proposalState.genericScheme && !proposalState.genericScheme.executed) ||
+      (proposalState.genericSchemeMultiCall && !proposalState.genericSchemeMultiCall.executed)
+      && proposalPassed(proposalState);
+
     const redeemButtonClass = classNames({
       [css.redeemButton]: true,
     });
@@ -280,6 +290,10 @@ class ActionButton extends React.Component<IProps, IState> {
                   </div>
                   : ""
         }
+        {showExecuteCallsButton && <button className={css.executeButton} onClick={this.handleClickExecute("ExecuteCalls")}>
+          <img src="/assets/images/Icon/execute.svg" />
+          <span>Execute Calls</span>
+        </button>}
       </div>
     );
   }

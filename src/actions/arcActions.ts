@@ -71,6 +71,20 @@ export function executeProposal(avatarAddress: string, proposalId: string, _acco
   };
 }
 
+export function executeCalls(avatarAddress: string, proposalId: string) {
+  return async (dispatch: Redux.Dispatch<any, any>) => {
+    try {
+      const arc = getArcByDAOAddress(avatarAddress);
+      const observer = operationNotifierObserver(dispatch, "Execute calls");
+      const proposalObj = await arc.dao(avatarAddress).proposal(proposalId);
+      return await proposalObj.executeCalls().subscribe(...observer);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  };
+}
+
 export type VoteAction = IAsyncAction<"ARC_VOTE", {
   avatarAddress: string;
   proposalId: string;

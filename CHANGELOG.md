@@ -1,10 +1,22 @@
 ## 1.0.3
   - Features Added
-    - First loading speed improvement
-    - Pages loading process was split to several chunk which is improved UX
+    - Support multiple networks
+    - Select following and member DAOs from header
+    - Support an array of decimals in genericSchemeRegistry
+
+  - Improvements
+    - Better DAO name styles on sidebar
+    - Loading speed and vulnerabilities fixes
+    - Integration tests typescript supporting was added
+    - Use subgraph v41_1 and arc.js 0.2.77
+    - Update BalancerPoolManager.json scheme
 
   - Bugs Fixed
-    - Integration tests typescript supporting was added
+    - Detect wallet network change in account menu
+    - Show missing GP params in competition schemes
+  
+  - Features Removed
+    - Feed Page
 
 ## 1.0.2
   - Features Added
