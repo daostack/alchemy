@@ -8,12 +8,13 @@
     - Better DAO name styles on sidebar
     - Loading speed and vulnerabilities fixes
     - Integration tests typescript supporting was added
-    - Use subgraph v41_1 and arc.js 0.2.77
+    - Use subgraph v41_1 and arc.js 0.2.78
     - Update BalancerPoolManager.json scheme
 
   - Bugs Fixed
     - Detect wallet network change in account menu
     - Show missing GP params in competition schemes
+    - Added missing functionality for multi-call execute calls
   
   - Features Removed
     - Feed Page
