@@ -77,10 +77,18 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
      * with this CrExt scheme (if it is a CrExt scheme -- very cheap if not a CrExt).
      */
     if (!this.state.createCrxProposalComponent) {
-      Object.assign(newState, { createCrxProposalComponent: await getCrxRewarderComponent(this.props.data, CrxRewarderComponentType.CreateProposal) });
+      const scheme = this.props.data;
+      Object.assign(newState, { createCrxProposalComponent: await getCrxRewarderComponent(scheme, CrxRewarderComponentType.CreateProposal) });
     }
 
     this.setState(newState);
+  }
+
+  public async componentDidUpdate(prevProps: Readonly<IProps>) {
+    if (prevProps.data?.id !== this.props.data?.id) {
+      const scheme = this.props.data;
+      this.setState({ createCrxProposalComponent: await getCrxRewarderComponent(scheme, CrxRewarderComponentType.CreateProposal) });
+    }
   }
 
   public componentWillUnmount(){
@@ -152,7 +160,7 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
   }
 
   public render(): RenderOutput {
-    const { daoAvatarAddress, match, location, history, dao, data: schema, parentPath } = this.props;
+    const { daoAvatarAddress, match, location, history, dao, data: scheme, parentPath } = this.props;
     const [createSchemeComponent, schemeTitle] = this.getCreateSchemeComponent();
 
     return (
@@ -164,7 +172,7 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
         </h2>
         <div className={css.createProposalContent}>
           <SelectProposal
-            schema={schema}
+            scheme={scheme}
             dao={dao}
             match={match}
             location={location}

@@ -14,7 +14,7 @@ import { ISubscriptionProps } from "components/Shared/withSubscription";
 export interface IExternalSelectProposalProps extends RouteComponentProps<{ daoAvatarAddress: string }>, ISubscriptionProps<any> {
   dao: DAO;
   daoAvatarAddress: string;
-  schema?: ISchemeState;
+  scheme?: ISchemeState;
 }
 
 interface IProps extends IExternalSelectProposalProps {
@@ -22,7 +22,7 @@ interface IProps extends IExternalSelectProposalProps {
 }
 
 export const SelectProposal: React.FC<IProps> = ({
-  schema,
+  scheme,
   daoAvatarAddress,
   data: schemes,
   history,
@@ -38,10 +38,10 @@ export const SelectProposal: React.FC<IProps> = ({
   }, [schemes]);
 
   useEffect(() => {
-    if (!schema && knownSchemes?.length) {
+    if (!scheme && knownSchemes?.length) {
       handleChange({ value: knownSchemes[0].staticState.id });
     }
-  }, [handleChange, schema, knownSchemes]);
+  }, [handleChange, scheme, knownSchemes]);
 
   const unknownSchemes = useMemo(() => {
     return schemes.filter((scheme: Scheme) => KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) === -1);
@@ -55,12 +55,12 @@ export const SelectProposal: React.FC<IProps> = ({
   }, [knownSchemes]);
 
   const currentOption = useMemo(() => {
-    if (schema?.id) {
-      return options.find(el => el.value === schema.id);
+    if (scheme?.id) {
+      return options.find(el => el.value === scheme.id);
     }
 
     return undefined;
-  }, [options, schema]);
+  }, [options, scheme]);
 
   return (
     <div className={css.body}>
