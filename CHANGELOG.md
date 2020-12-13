@@ -5,6 +5,7 @@
   - Improvements
     - Verify parameters hash
     - Whitelist PrimeDAO Token
+    - Use subgraph v41_3
 
   - Features Removed
     - Dao History Page
