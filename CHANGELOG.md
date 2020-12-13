@@ -1,3 +1,14 @@
+## 1.0.4
+  - Features Added
+    - Brand new Proposals Page
+
+  - Improvements
+    - Verify parameters hash
+    - Whitelist PrimeDAO Token
+
+  - Features Removed
+    - Dao History Page
+
 ## 1.0.3
   - Features Added
     - Support multiple networks
