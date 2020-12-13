@@ -1,4 +1,4 @@
-import { Address, DAOFieldsFragment, IContributionReward, IDAOState, IProposalStage, IRewardState, Proposal } from "@daostack/arc.js";
+import { Address, DAOFieldsFragment, IContributionReward, IDAOState, IRewardState, Proposal } from "@daostack/arc.js";
 import { enableWalletProvider, getArcs } from "arc";
 import { redeemProposal } from "actions/arcActions";
 import * as BN from "bn.js";
@@ -247,8 +247,7 @@ const SubscribedRedemptionsPage = withSubscription({
       {
         proposals(
           where: {
-            accountsWithUnclaimedRewards_contains: ["${currentAccountAddress}"],
-            stage_in: ["${IProposalStage.Executed}"]
+            accountsWithUnclaimedRewards_contains: ["${currentAccountAddress}"]
           },
           orderBy: closingAt
         ) {
