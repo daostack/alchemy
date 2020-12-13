@@ -1,5 +1,5 @@
 import * as uuid from "uuid";
-import { getContractAddresses, hideCookieAcceptWindow, gotoDaoSchemes } from "./utils";
+import { getContractAddresses, hideCookieAcceptWindow, gotoDaoSchemes, wait} from "./utils";
 
 describe("SchemeRegistrar Proposals", () => {
   let daoAddress: string;
@@ -43,9 +43,13 @@ describe("SchemeRegistrar Proposals", () => {
     const parametersHashInput = await $("*[id=\"parametersHashInput\"]");
     await parametersHashInput.setValue("0x2b7a98e1a7d694990f2313a8b82e7f029df96de61f3c1b849b3db862ed5fe7b4");
 
-
-
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
+    /**
+     * The below is a workaround to wait until verifyParametersHash function is finished.
+     * Ideally, we need to disable the submit button and click on it only if there are no errors in the form,
+     * however this raises new issues and should be handled separately.
+     */
+    await wait(1000);
     await createProposalSubmitButton.click();
 
     // check that the proposal appears in the list

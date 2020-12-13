@@ -465,7 +465,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         </Field>
                       </div>
 
-                      <div className={css.parametersHash}>
+                      {currentTab !== "removeScheme" && <div className={css.parametersHash}>
                         <label htmlFor="parametersHashInput">
                           <div className={css.requiredMarker}>*</div>
                           Parameters Hash
@@ -478,7 +478,8 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                           className={touched.parametersHash && errors.parametersHash ? css.error : null}
                           validate={async () => { return await this.verifyParametersHash(arc, this.props.scheme.address, values.parametersHash); }}
                         />
-                      </div>
+                      </div>}
+
                       <div className={css.permissions}>
                         <div className={css.permissionsLabel}>
                           Permissions

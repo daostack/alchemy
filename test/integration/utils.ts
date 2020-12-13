@@ -78,3 +78,13 @@ export const setCalendarDate = async (element: any, date: string): Promise<void>
 export async function gotoDaoSchemes(daoAddress: string): Promise<any> {
   return browser.url(`/dao/${daoAddress}/schemes`);
 }
+
+/**
+ * This function waits the number of milliseconds provided.
+ * @param {number} ms The milliseconds to wait
+ */
+export async function wait(ms: number) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
