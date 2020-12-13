@@ -347,6 +347,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 export default function ProposalDetailsPageData(props: IExternalProps) {
   const { currentAccountAddress, daoState, proposalId } = props;
   return <ProposalData currentAccountAddress={currentAccountAddress} daoState={daoState} proposalId={proposalId}>
-    {proposalData => <ProposalDetailsPage {...props} {...proposalData} />}
+    {(proposalData: any) => <ProposalDetailsPage {...props} {...proposalData} />}
   </ProposalData>;
 }

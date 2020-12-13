@@ -53,7 +53,7 @@ interface IWithSubscriptionOptions<Props extends ISubscriptionProps<ObservableTy
   /**
    * Optional component to display while waiting for the first bit of data to arrive
    */
-  loadingComponent?: React.ReactElement<any> | React.ComponentType<Props>;
+  loadingComponent?: React.ReactElement<any> | React.ComponentType<Props> | ((props: Props) => JSX.Element);
   /**
    * Optional as a hacky way to determine if when paging there is more data to load.
    */

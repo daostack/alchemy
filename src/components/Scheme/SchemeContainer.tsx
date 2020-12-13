@@ -33,6 +33,7 @@ interface IExternalProps extends RouteComponentProps<any> {
   history: History;
   daoState: IDAOState;
   schemeManager: ISchemeState;
+  onCreateProposal: (id: string) => void;
 }
 
 interface IExternalState {
@@ -103,11 +104,11 @@ class SchemeContainer extends React.Component<IProps, IState> {
   }
 
   private handleNewProposal = async (e: any): Promise<void> => {
+    e.preventDefault();
+
     if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoState.address))) { return; }
 
-    this.props.history.push(`/dao/${this.props.daoState.address}/scheme/${this.props.schemeId}/proposals/create/`);
-
-    e.preventDefault();
+    this.props.onCreateProposal(this.props.schemeId);
   };
 
   private handleEditPlugin = async (e: any) => {

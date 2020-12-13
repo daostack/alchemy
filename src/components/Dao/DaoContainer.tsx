@@ -1,6 +1,6 @@
 import { IDAOState, Member } from "@daostack/arc.js";
 import { getProfilesForAddresses } from "actions/profilesActions";
-import CreateProposalPage from "components/Proposal/Create/CreateProposalPage";
+import CreateProposalPage from "components/Proposal/Create";
 import ProposalDetailsPage from "components/Proposal/ProposalDetailsPage";
 import SchemeContainer from "components/Scheme/SchemeContainer";
 import Loading from "components/Shared/Loading";
@@ -20,9 +20,9 @@ import DaoSchemesPage from "./DaoSchemesPage";
 import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
 import DaoProposalsPage from "components/Dao/DaoProposalsPage";
-import { standardPolling, targetedNetwork, getArcByDAOAddress, getDAONameByID } from "lib/util";
+import { standardPolling, targetedNetwork, getArcByDAOAddress, getDAONameByID, getNetworkByDAOAddress } from "lib/util";
 import gql from "graphql-tag";
-import { getArcs } from "arc";
+import { enableWalletProvider, getArcs } from "arc";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -35,6 +35,8 @@ interface IStateProps {
 
 interface IState {
   memberDaos: Array<any>;
+  modalParentPath: string;
+  schemeId: string|null;
 }
 
 interface IDispatchProps {
@@ -64,6 +66,8 @@ class DaoContainer extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       memberDaos: [],
+      modalParentPath: "/dao/:daoAvatarAddress",
+      schemeId: "",
     };
   }
   public daoSubscription: any;
@@ -98,6 +102,28 @@ class DaoContainer extends React.Component<IProps, IState> {
     this.setState({ memberDaos: memberDaos });
   }
 
+  public handleNewProposal = async (schemeId?: string): Promise<void> => {
+    const { showNotification, daoAvatarAddress } = this.props;
+
+    if (!await enableWalletProvider({ showNotification }, getNetworkByDAOAddress(daoAvatarAddress))) { return; }
+
+    if (typeof schemeId === "string") {
+      this.setState(() => ({
+        modalParentPath: "/dao/:daoAvatarAddress/scheme/:schemeId",
+        schemeId,
+      }), () => {
+        this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
+      });
+    } else {
+      this.setState(() => ({
+        modalParentPath: "/dao/:daoAvatarAddress",
+        schemeId: "",
+      }), () => {
+        this.props.history.push(`/dao/${daoAvatarAddress}/proposals/create`);
+      });
+    }
+  };
+
   private daoMembersRoute = (routeProps: any) => <DaoMembersPage {...routeProps} daoState={this.props.data[0]} />;
   private daoProposalRoute = (routeProps: any) =>
     <ProposalDetailsPage {...routeProps}
@@ -112,10 +138,35 @@ class DaoContainer extends React.Component<IProps, IState> {
       proposalId={routeProps.match.params.proposalId}
     />;
 
-  private schemeRoute = (routeProps: any) => <SchemeContainer {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
+  private schemeRoute = (routeProps: any) => (
+    <SchemeContainer
+      {...routeProps}
+      daoState={this.props.data[0]}
+      currentAccountAddress={this.props.currentAccountAddress}
+      onCreateProposal={this.handleNewProposal}
+    />
+  );
   private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} daoState={this.props.data[0]} />;
-  private daoProposalsRoute = (routeProps: any) => <DaoProposalsPage {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
-  private modalRoute = (route: any) => `/dao/${route.params.daoAvatarAddress}/scheme/${route.params.schemeId}/`;
+  private daoProposalsRoute = (routeProps: any) => (
+    <DaoProposalsPage
+      {...routeProps}
+      daoState={this.props.data[0]}
+      currentAccountAddress={this.props.currentAccountAddress}
+      onCreateProposal={this.handleNewProposal}
+    />
+  );
+  private createProposalRoute = (routeProps: any) => (
+    <CreateProposalPage
+      {...routeProps}
+      dao={this.props.data[0].dao}
+      currentAccountAddress={this.props.currentAccountAddress}
+    />
+  );
+  private modalRouteCreateProposal = (route: any) => {
+    return this.state.modalParentPath
+      .replace(":daoAvatarAddress", route.params.daoAvatarAddress)
+      .replace(":schemeId", this.state.schemeId);
+  };
   private onFollwingDaosListChange = (daoAddress: string, history: any) => history.push(`/dao/${daoAddress}`);
 
   public render(): RenderOutput {
@@ -161,9 +212,6 @@ class DaoContainer extends React.Component<IProps, IState> {
             </div>
           </div>
           <Switch>
-            <Route exact path="/dao/:daoAvatarAddress"
-              render={this.daoProposalsRoute} />
-
             <Route exact path="/dao/:daoAvatarAddress/members"
               render={this.daoMembersRoute} />
 
@@ -173,17 +221,27 @@ class DaoContainer extends React.Component<IProps, IState> {
             <Route path="/dao/:daoAvatarAddress/crx/proposal/:proposalId"
               render={this.daoCrxProposalRoute} />
 
-            <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
+            <Route exact={!this.state.schemeId} path="/dao/:daoAvatarAddress/scheme/:schemeId"
               render={this.schemeRoute} />
 
             <Route exact path="/dao/:daoAvatarAddress/schemes"
               render={this.daoSchemesRoute} />
+
+            <Route path="/dao/:daoAvatarAddress"
+              render={this.daoProposalsRoute}
+            />
           </Switch>
 
           <ModalRoute
+            path="/dao/:daoAvatarAddress/proposals/create"
+            parentPath={this.modalRouteCreateProposal}
+            component={this.createProposalRoute}
+          />
+
+          <ModalRoute
             path="/dao/:daoAvatarAddress/scheme/:schemeId/proposals/create"
-            parentPath={this.modalRoute}
-            component={CreateProposalPage}
+            parentPath={this.modalRouteCreateProposal}
+            component={this.createProposalRoute}
           />
 
         </div>
