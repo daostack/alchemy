@@ -1,9 +1,10 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalState } from "@daostack/arc.js";
 import { enableWalletProvider } from "arc";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import classNames from "classnames";
 import Reputation from "components/Account/Reputation";
+import { getNetworkByDAOAddress } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
@@ -46,7 +47,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
   }
 
   public async handleClickVote(vote: number, _event: any): Promise<void> {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoState.id))) { return; }
 
     if (this.props.currentAccountState.reputation.gt(new BN(0))) {
       this.setState({ showPreVoteModal: true, currentVote: vote });

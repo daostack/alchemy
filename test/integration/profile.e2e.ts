@@ -1,13 +1,11 @@
-import * as chai from "chai";
-import { getContractAddresses, userAddresses } from "./utils";
+import { getContractAddresses, userAddresses, hideCookieAcceptWindow} from "./utils";
 
 describe("Profile page", () => {
   let addresses;
-  let daoAddress;
+  let daoAddress: string;
   const userAddress = userAddresses[0];
 
   before(async () => {
-    chai.Should();
     addresses = getContractAddresses();
     daoAddress = addresses.dao.Avatar.toLowerCase();
   });
@@ -24,6 +22,7 @@ describe("Profile page", () => {
     const loginButton = await $("*[data-test-id=\"loginButton\"]");
     await loginButton.click();
 
+    await hideCookieAcceptWindow();
     const title = await browser.getTitle();
     title.should.be.equal("Alchemy | DAOstack");
     const profileContainer = await $("*[data-test-id=\"profile-container\"]");

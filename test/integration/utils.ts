@@ -10,11 +10,6 @@ const settings = {
   txSenderServiceUrl: "https://tx-sender-service.herokuapp.com/send-tx",
 };
 
-const chai = require("chai");
-
-global.expect = chai.expect;
-chai.Should();
-
 export const LATEST_ARC_VERSION = "0.0.1-rc.19";
 // because we do not have a "real" dutchX test, we'll just choose one (older) version
 // not thtat the correct address (migration.private.base[VERSION_FOR_DUTCHX_TEST]. GEenericScheme)
@@ -66,7 +61,7 @@ export function getArc() {
  */
 export async function hideCookieAcceptWindow(): Promise<void> {
   const acceptCookiesButton = await $("*[data-test-id=\"acceptCookiesButton\"]");
-  if (!acceptCookiesButton.error && await acceptCookiesButton.isDisplayedInViewport()) {
+  if (!(acceptCookiesButton as any).error && await (acceptCookiesButton as any).isDisplayedInViewport()) {
     await acceptCookiesButton.click();
   }
 }

@@ -6,13 +6,13 @@ export enum ActionTypes {
 export interface IWeb3State {
   accounts: string[];
   currentAccountAddress: string | null;
-  networkId: number;
+  networkName: string;
 }
 
 const initialState: IWeb3State = {
   accounts: [],
   currentAccountAddress: null,
-  networkId: 0, // unknown network
+  networkName: "", // unknown network
 };
 
 const web3Reducer = (state = initialState, action: any) => {

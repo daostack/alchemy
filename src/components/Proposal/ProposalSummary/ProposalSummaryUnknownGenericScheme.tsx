@@ -1,6 +1,6 @@
 import { IDAOState, IProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
-import { linkToEtherScan, formatTokens } from "lib/util";
+import { linkToEtherScan, formatTokens, getNetworkByDAOAddress } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
@@ -44,7 +44,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
         {detailView ?
           <div className={css.summaryDetails}>
             To contract at:
-            <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)} target="_blank" rel="noopener noreferrer">{proposal.genericScheme.contractToCall}</a></pre>
+            <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall, getNetworkByDAOAddress(this.props.dao.address))} target="_blank" rel="noopener noreferrer">{proposal.genericScheme.contractToCall}</a></pre>
             sending to contract:
             <pre className={sendsETH ? css.warning : ""}>{formatTokens(proposal.genericScheme.value)} ETH</pre>
           </div>

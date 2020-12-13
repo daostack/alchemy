@@ -11,6 +11,11 @@ exports.config = {
       args: ["--headless", "--disable-gpu", "--window-size=1920,1080"],
     },
   }],
+  services: [
+    ["chromedriver", {
+      args: ["--silent"],
+    }],
+  ],
   waitforTimeout: 900000, // 15 minutes
   mochaOpts: {
     ...config.mochaOpts,

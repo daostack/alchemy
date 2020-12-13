@@ -1,17 +1,18 @@
-import { Address, IDAOState, IMemberState } from "@daostack/arc.js";
-import { baseTokenName, ethErrorHandler, genName, ethBalance, standardPolling } from "lib/util";
+import Arc, { Address, IDAOState, IMemberState } from "@daostack/arc.js";
+import { baseTokenName, ethErrorHandler, genName, ethBalance, standardPolling, Networks } from "lib/util";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import AccountBalance from "components/Account/AccountBalance";
 import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as css from "layouts/App.scss";
 import * as React from "react";
 import { combineLatest, of } from "rxjs";
-import { getArc } from "arc";
 
 interface IExternalProps {
   dao?: IDAOState;
+  arc: Arc;
+  network: Networks;
   address: Address;
 }
 
@@ -20,7 +21,7 @@ type IProps = IExternalProps & ISubscriptionProps<[Address, IMemberState, BN|nul
 class AccountBalances extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
-    const { dao, data } = this.props;
+    const { dao, data, network } = this.props;
 
     const [currentAccountAddress, currentAccountState, ethBalance, genBalance] = data;
 
@@ -28,7 +29,7 @@ class AccountBalances extends React.Component<IProps, null> {
       <div className={css.balances}>
         { (dao && currentAccountState) ?
           <div className={css.repBalance}>
-            <div className={css.heading}>Reputation</div>
+            <div className={css.title}>Reputation</div>
             <div className={css.rep}>
               <div>{dao.name}</div>
               <div className={css.underline}></div>
@@ -40,14 +41,10 @@ class AccountBalances extends React.Component<IProps, null> {
             </div> : ""
         }
         { currentAccountAddress ?
-          <div className={css.userBalance}>
-            <div className={css.heading}>Holdings</div>
-            <div>
-              <AccountBalance tokenSymbol={baseTokenName()} balance={ethBalance} accountAddress={currentAccountAddress} />
-            </div>
-            <div>
-              <AccountBalance tokenSymbol={genName()} balance={genBalance} accountAddress={currentAccountAddress} />
-            </div>
+          <div className={css.holdingsBalace}>
+            <div className={css.title}>Holdings</div>
+            <AccountBalance tokenSymbol={baseTokenName(network)} balance={ethBalance} accountAddress={currentAccountAddress} />
+            <AccountBalance tokenSymbol={genName(network)} balance={genBalance} accountAddress={currentAccountAddress} />
           </div>
           : "" }
       </div>
@@ -64,14 +61,15 @@ export default withSubscription({
     return oldProps.address !== newProps.address || (oldProps.dao && oldProps.dao.address) !== (newProps.dao && newProps.dao.address);
   },
 
-  createObservable: ({ dao, address }: IExternalProps) => {
-    const arc = getArc();
-
+  createObservable: ({ dao, arc, address, network }: IExternalProps) => {
+    if (!arc) {
+      return of([]);
+    }
     return combineLatest(
       address,
       (address && dao && dao.dao.member(address).state( standardPolling())) || of(null),
-      ethBalance(address).pipe(ethErrorHandler()),
-      arc.GENToken().balanceOf(address).pipe(ethErrorHandler()),
+      ethBalance(address, arc, network).pipe(ethErrorHandler()),
+      arc?.GENToken().balanceOf(address).pipe(ethErrorHandler()),
     );
   },
 });

@@ -1,9 +1,7 @@
 import { IDAOState, IMemberState, DAO } from "@daostack/arc.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import BN = require("bn.js");
 import { getProfile, updateProfile } from "actions/profilesActions";
-import { getArc, enableWalletProvider } from "arc";
+import { enableWalletProvider } from "arc";
 import classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import Reputation from "components/Account/Reputation";
@@ -12,7 +10,7 @@ import ThreeboxModal from "components/Shared/ThreeboxModal";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { Field, Formik, FormikProps } from "formik";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, genName, formatTokens, ethBalance, standardPolling } from "lib/util";
+import { standardPolling, getArcByDAOAddress, getNetworkByDAOAddress} from "lib/util";
 import CopyToClipboard, { IconColor } from "components/Shared/CopyToClipboard";
 import { Page } from "pages";
 import { parse } from "query-string";
@@ -44,7 +42,7 @@ interface IDispatchProps {
   updateProfile: typeof updateProfile;
 }
 
-type SubscriptionData = [IDAOState, IMemberState, BN|null, BN|null];
+type SubscriptionData = [IDAOState, IMemberState];
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
@@ -118,7 +116,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
   public handleFormSubmit = async (values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> => {
     const { currentAccountAddress, showNotification, updateProfile } = this.props;
 
-    if (!await enableWalletProvider({ showNotification })) { setSubmitting(false); return; }
+    if (!await enableWalletProvider({ showNotification }, getNetworkByDAOAddress(this.props.daoAvatarAddress))) { setSubmitting(false); return; }
 
     if (this.props.threeBox || parseInt(localStorage.getItem("dontShowThreeboxModal"))) {
       await updateProfile(currentAccountAddress, values.name, values.description);
@@ -134,7 +132,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
   }
 
   public render(): RenderOutput {
-    const [dao, accountInfo, ethBalance, genBalance] = this.props.data;
+    const [dao, accountInfo] = this.props.data;
 
     const { accountAddress, accountProfile, currentAccountAddress } = this.props;
 
@@ -261,7 +259,7 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                         }
                       </div>
                     </div>
-                    { editing ? "" : <div className={css.followButton}><FollowButton id={accountAddress} type="users" /></div> }
+                    { editing ? "" : <div className={css.followButton}><FollowButton id={accountAddress} type="users" network={getNetworkByDAOAddress(this.props.daoAvatarAddress)} /></div> }
                     {Object.keys(accountProfile.socialURLs).length === 0 ? " " :
                       <div className={css.socialLogins}>
                         <h3>Social Verification</h3>
@@ -287,8 +285,6 @@ class AccountProfilePage extends React.Component<IProps, IState> {
                         {(accountInfo && dao)
                           ? <div><strong>Rep. Score</strong><br /><Reputation reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /> </div>
                           : ""}
-                        <div><strong>{genName()}:</strong><br /><span>{formatTokens(genBalance)}</span></div>
-                        <div><strong>{baseTokenName()}:</strong><br /><span>{formatTokens(ethBalance)}</span></div>
                       </div>
                       <div>
                         <strong>ETH Address:</strong><br />
@@ -317,13 +313,12 @@ const SubscribedAccountProfilePage = withSubscription({
   },
 
   createObservable: (props: IProps) => {
-    const arc = getArc();
-
     const queryValues = parse(props.location.search);
     const daoAvatarAddress = queryValues.daoAvatarAddress as string;
     const accountAddress = props.match.params.accountAddress;
     let dao: DAO;
     if (daoAvatarAddress) {
+      const arc = getArcByDAOAddress(queryValues.daoAvatarAddress as string);
       dao = arc.dao(daoAvatarAddress);
     }
 
@@ -331,10 +326,6 @@ const SubscribedAccountProfilePage = withSubscription({
       // subscribe if only to to get DAO reputation supply updates
       daoAvatarAddress ? dao.state( standardPolling()) : of(null),
       daoAvatarAddress ? dao.member(accountAddress).state() : of(null),
-      ethBalance(accountAddress)
-        .pipe(ethErrorHandler()),
-      arc.GENToken().balanceOf(accountAddress)
-        .pipe(ethErrorHandler())
     );
   },
 });

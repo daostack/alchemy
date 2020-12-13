@@ -1,7 +1,6 @@
 import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/arc.js";
 import { IAsyncAction } from "actions/async";
-import { getArc } from "arc";
-import { toWei } from "lib/util";
+import { toWei, getArcByDAOAddress } from "lib/util";
 import { IRedemptionState } from "lib/proposalHelpers";
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
@@ -38,10 +37,10 @@ export const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, tx
   ];
 };
 
-export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAction<any, IRootState, null> {
+export function createProposal(proposalOptions: IProposalCreateOptions, daoAvatarAddress: string): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
     try {
-      const arc = getArc();
+      const arc = getArcByDAOAddress(daoAvatarAddress);
 
       const dao = new DAO(proposalOptions.dao, arc);
 
@@ -57,7 +56,7 @@ export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAc
 
 export function executeProposal(avatarAddress: string, proposalId: string, _accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    const arc = getArc();
+    const arc = getArcByDAOAddress(avatarAddress);
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
     const proposalObj = await arc.dao(avatarAddress).proposal(proposalId);
 
@@ -69,6 +68,20 @@ export function executeProposal(avatarAddress: string, proposalId: string, _acco
       return await proposalObj.execute().subscribe(...observer);
     };
     await proposalObj.claimRewards(null).subscribe(...observer);
+  };
+}
+
+export function executeCalls(avatarAddress: string, proposalId: string) {
+  return async (dispatch: Redux.Dispatch<any, any>) => {
+    try {
+      const arc = getArcByDAOAddress(avatarAddress);
+      const observer = operationNotifierObserver(dispatch, "Execute calls");
+      const proposalObj = await arc.dao(avatarAddress).proposal(proposalId);
+      return await proposalObj.executeCalls().subscribe(...observer);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   };
 }
 
@@ -86,7 +99,7 @@ export type VoteAction = IAsyncAction<"ARC_VOTE", {
 
 export function voteOnProposal(daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
-    const arc = getArc();
+    const arc = getArcByDAOAddress(daoAvatarAddress);
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Vote");
     await proposalObj.vote(voteOption).subscribe(...observer);
@@ -106,7 +119,7 @@ export type StakeAction = IAsyncAction<"ARC_STAKE", {
 
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
   return async (dispatch: Redux.Dispatch<any, any>, ) => {
-    const arc = getArc();
+    const arc = getArcByDAOAddress(daoAvatarAddress);
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Stake");
     await proposalObj.stake(prediction, toWei(stakeAmount)).subscribe(...observer);
@@ -114,9 +127,9 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
 }
 
 // Approve transfer of 100000 GENs from accountAddress to the GenesisProtocol contract for use in staking
-export function approveStakingGens(spender: Address) {
+export function approveStakingGens(spender: Address, daoId: any) {
   return async (dispatch: Redux.Dispatch<any, any>, ) => {
-    const arc = getArc();
+    const arc = getArcByDAOAddress(daoId);
     const observer = operationNotifierObserver(dispatch, "Approve GEN");
     await arc.approveForStaking(spender, toWei(100000)).subscribe(...observer);
   };
@@ -137,7 +150,7 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
 
 export function redeemProposal(daoAvatarAddress: string, proposalId: string, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    const arc = getArc();
+    const arc = getArcByDAOAddress(daoAvatarAddress);
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Reward");
     await proposalObj.claimRewards(accountAddress).subscribe(...observer);
@@ -146,7 +159,7 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
 
 export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string, privateKey: string|undefined, redeemerAddress: Address|undefined, redemptionSucceededCallback: () => void) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    const arc = getArc();
+    const arc = getArcByDAOAddress(redeemerAddress);
 
     // ensure that scheme.ReputationFromToken is set
     await scheme.fetchStaticState();

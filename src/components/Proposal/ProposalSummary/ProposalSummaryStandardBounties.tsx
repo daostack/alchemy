@@ -1,7 +1,7 @@
 import { IProposalState } from "@daostack/arc.js";
 import * as classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
-import { linkToEtherScan, truncateWithEllipses } from "lib/util";
+import { getNetworkByDAOAddress, linkToEtherScan, truncateWithEllipses } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
 import CopyToClipboard from "components/Shared/CopyToClipboard";
@@ -29,6 +29,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
   public render(): RenderOutput {
 
     const { proposal, detailView, genericSchemeInfo, transactionModal } = this.props;
+    const network = getNetworkByDAOAddress(proposal.dao.id);
     let decodedCallData: any;
 
     try {
@@ -69,16 +70,16 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   Amount funded: {web3.utils.fromWei(decodedCallData.values[7])} {decodedCallData.values[6].toString() === "0" ? "ETH" : "tokens"}.
                 </div>
                 <div>
-                  Token Address: <a href={linkToEtherScan(decodedCallData.values[5])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[5]}</a>
+                  Token Address: <a href={linkToEtherScan(decodedCallData.values[5], network)} target="_blank" rel="noopener noreferrer">{decodedCallData.values[5]}</a>
                 </div>
                 <div>
-                  Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                  Sender: <a href={linkToEtherScan(decodedCallData.values[0], network)} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
                 </div>
                 <div>
-                  Issuer: <a href={linkToEtherScan(decodedCallData.values[1])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[1]}</a>
+                  Issuer: <a href={linkToEtherScan(decodedCallData.values[1], network)} target="_blank" rel="noopener noreferrer">{decodedCallData.values[1]}</a>
                 </div>
                 <div>
-                  Approver: <a href={linkToEtherScan(decodedCallData.values[2])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[2]}</a>
+                  Approver: <a href={linkToEtherScan(decodedCallData.values[2], network)} target="_blank" rel="noopener noreferrer">{decodedCallData.values[2]}</a>
                 </div>
                 {this.rawCallData(proposal)}
               </div>
@@ -100,7 +101,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   Bounty ID: {decodedCallData.values[1]}
                 </div>
                 <div>
-                  Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                  Sender: <a href={linkToEtherScan(decodedCallData.values[0], network)} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
                 </div>
                 {this.rawCallData(proposal)}
               </div>
@@ -121,12 +122,12 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <ul>
                   {decodedCallData.values[3].map((addr: string) => (
                     <li key={addr}>
-                      <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
+                      <a href={linkToEtherScan(addr, network)} target="_blank" rel="noopener noreferrer">{addr}</a>
                     </li>
                   ))}
                 </ul>
                 <div>
-                  Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                  Sender: <a href={linkToEtherScan(decodedCallData.values[0], network)} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
                 </div>
                 <div>
                   Bounty ID: {decodedCallData.values[1]}
@@ -151,7 +152,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   Draining {web3.utils.fromWei(decodedCallData.values[3])} amount of tokens for bounty ID {decodedCallData.values[1]}.
                 </div>
                 <div>
-                  Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                  Sender: <a href={linkToEtherScan(decodedCallData.values[0], network)} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
                 </div>
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
@@ -173,7 +174,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   Accepting submission ID {decodedCallData.values[2]} for bounty ID {decodedCallData.values[1]} of {web3.utils.fromWei(decodedCallData.values[4])} tokens.
                 </div>
                 <div>
-                  Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                  Sender: <a href={linkToEtherScan(decodedCallData.values[0], network)} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
                 </div>
                 <div>
                   Approver ID: {decodedCallData.values[3]}
@@ -200,7 +201,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <ul>
                   {decodedCallData.values[3].map((addr: string) => (
                     <li key={addr}>
-                      <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
+                      <a href={linkToEtherScan(addr, network)} target="_blank" rel="noopener noreferrer">{addr}</a>
                     </li>
                   ))}
                 </ul>
@@ -210,7 +211,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <ul>
                   {decodedCallData.values[4].map((addr: string) => (
                     <li key={addr}>
-                      <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
+                      <a href={linkToEtherScan(addr, network)} target="_blank" rel="noopener noreferrer">{addr}</a>
                     </li>
                   ))}
                 </ul>
@@ -221,7 +222,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   Change bounty deadline to {(new Date(parseInt(decodedCallData.values[6], 10)*1000)).toString()}
                 </div>
                 <div>
-                  Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                  Sender: <a href={linkToEtherScan(decodedCallData.values[0], network)} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
                 </div>
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
@@ -243,7 +244,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   Change details of bounty ID  {decodedCallData.values[1]} to <a href={`https://ipfs.io/ipfs/${decodedCallData.values[3]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[3]}</a>.
                 </div>
                 <div>
-                  Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                  Sender: <a href={linkToEtherScan(decodedCallData.values[0], network)} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
                 </div>
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
@@ -265,7 +266,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   Change deadline of bounty ID {decodedCallData.values[1]} to {(new Date(parseInt(decodedCallData.values[3], 10)*1000)).toString()}
                 </div>
                 <div>
-                  Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                  Sender: <a href={linkToEtherScan(decodedCallData.values[0], network)} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
                 </div>
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
@@ -289,7 +290,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <ul>
                   {decodedCallData.values[2].map((addr: string) => (
                     <li key={addr}>
-                      <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
+                      <a href={linkToEtherScan(addr, network)} target="_blank" rel="noopener noreferrer">{addr}</a>
                     </li>
                   ))}
                 </ul>
@@ -297,7 +298,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   and send {web3.utils.fromWei(decodedCallData.values[5])} tokens for bounty ID {decodedCallData.values[1]}.
                 </div>
                 <div>
-                  Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                  Sender: <a href={linkToEtherScan(decodedCallData.values[0], network)} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
                 </div>
                 <div>
                   Approver ID: {decodedCallData.values[4]}
@@ -324,7 +325,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <ul>
                   {decodedCallData.values[3].map((addr: string) => (
                     <li key={addr}>
-                      <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
+                      <a href={linkToEtherScan(addr, network)} target="_blank" rel="noopener noreferrer">{addr}</a>
                     </li>
                   ))}
                 </ul>
@@ -332,7 +333,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   Bounty ID: {decodedCallData.values[1]}
                 </div>
                 <div>
-                  Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                  Sender: <a href={linkToEtherScan(decodedCallData.values[0], network)} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
                 </div>
                 <div>
                   Issuer ID: {decodedCallData.values[2]}
@@ -356,7 +357,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                 <ul>
                   {decodedCallData.values[3].map((addr: string) => (
                     <li key={addr}>
-                      <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
+                      <a href={linkToEtherScan(addr, network)} target="_blank" rel="noopener noreferrer">{addr}</a>
                     </li>
                   ))}
                 </ul>
@@ -364,7 +365,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   Bounty ID: {decodedCallData.values[1]}
                 </div>
                 <div>
-                  Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                  Sender: <a href={linkToEtherScan(decodedCallData.values[0], network)} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
                 </div>
                 <div>
                   Issuer ID: {decodedCallData.values[2]}

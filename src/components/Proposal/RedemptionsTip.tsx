@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalState, IProposalOutcome } from "@daostack/arc.js";
 import Reputation from "components/Account/Reputation";
-import { baseTokenName, formatTokens, fromWei, genName, tokenDecimals, tokenSymbol, AccountClaimableRewardsType } from "lib/util";
+import { baseTokenName, formatTokens, fromWei, genName, tokenDecimals, tokenSymbol, AccountClaimableRewardsType, getNetworkByDAOAddress } from "lib/util";
 import * as React from "react";
 import * as css from "./RedemptionsTip.scss";
 
@@ -79,12 +79,12 @@ export default (props: IProps) => {
           <ul>
             {contributionRewards["eth"] ?
               <li>
-                {formatTokens(contributionReward.ethReward, baseTokenName())}
+                {formatTokens(contributionReward.ethReward, baseTokenName(getNetworkByDAOAddress(dao.address)))}
               </li> : ""
             }
             {contributionRewards["externalToken"] ?
               <li>
-                {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken), tokenDecimals(contributionReward.externalToken))}
+                {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken, getNetworkByDAOAddress(dao.id)), tokenDecimals(contributionReward.externalToken, getNetworkByDAOAddress(dao.id)))}
               </li> : ""
             }
             {contributionRewards["rep"] ? <li><Reputation reputation={contributionRewards["rep"]} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}

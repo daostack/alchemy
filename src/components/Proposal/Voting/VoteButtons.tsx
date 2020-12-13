@@ -2,12 +2,12 @@ import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IPr
 import { voteOnProposal } from "actions/arcActions";
 import { enableWalletProvider } from "arc";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import classNames from "classnames";
 import Reputation from "components/Account/Reputation";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Analytics from "lib/analytics";
-import { fromWei, targetedNetwork } from "lib/util";
+import { fromWei, getNetworkByDAOAddress, targetedNetwork } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -56,7 +56,7 @@ class VoteButtons extends React.Component<IProps, IState> {
   }
 
   public handleClickVote = (vote: number) => async (): Promise<void> => {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.dao.id))) { return; }
 
     const currentAccountState = this.props.currentAccountState;
     if (currentAccountState.reputation.gt(new BN(0))) {

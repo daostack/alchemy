@@ -1,5 +1,5 @@
 // tslint:disable:max-classes-per-file
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import { Networks, targetedNetwork } from "lib/util";
 
 const Web3 = require("web3");
@@ -96,40 +96,56 @@ export class ActionField {
     this.placeholder = options.placeholder;
     this.transformation = options.transformation;
   }
+
+  private transformValue(value: string, web3: any): string | boolean {
+    if (Object.prototype.hasOwnProperty.call(value, "trim")) {
+      value = (value as string).trim();
+    }
+
+    if (this.type === "bool") {
+      return parseInt(value as string, 10) === 1;
+    }
+    /**
+     * Note that if this is an array item, the field's one `decimals` value applies
+     * to all items in the array.  Same for `transformation`.
+     */
+    else if (this.decimals) {
+      return (new BN(value as string).mul(new BN(10).pow(new BN(this.decimals)))).toString();
+    }
+    else {
+      switch (this.transformation) {
+        case "namehash": {
+          return namehash.hash(value);
+        }
+        case "keccak256": {
+          return web3.utils.keccak256(value);
+        }
+        case "toWei": {
+          return web3.utils.toWei(value.toString(), "ether").toString();
+        }
+        default:
+          return value;
+      }
+    }
+  }
+
   /**
    * the value to pass to the contract call (as calculated from the user's input data)
    * @return [description]
    */
-  public callValue(userValue: string|string[]) {
-    if (Array.isArray(userValue)) {
-      userValue = userValue.map((val: string) => Object.prototype.hasOwnProperty.call(val, "trim") ? val.trim() : val);
-    } else if (Object.prototype.hasOwnProperty.call(userValue, "trim")) {
-      userValue = userValue.trim();
-    }
-
-    if (this.type === "bool") {
-      return parseInt(userValue as string, 10) === 1;
-    }
-
-    if (this.decimals) {
-      return (new BN(userValue as string).mul(new BN(10).pow(new BN(this.decimals)))).toString();
-    }
+  public callValue(userValue: string | Array<string>): string | boolean | Array<string | boolean> {
+    let returnValue: string | boolean | Array<string | boolean> = userValue;
 
     const web3 = new Web3();
 
-    switch (this.transformation) {
-      case "namehash": {
-        return namehash.hash(userValue);
-      }
-      case "keccak256": {
-        return web3.utils.keccak256(userValue);
-      }
-      case "toWei": {
-        return web3.utils.toWei(userValue.toString(), "ether").toString();
-      }
+    if (Array.isArray(returnValue)) {
+      returnValue = (returnValue as Array<string>).map((val: string): string | boolean => {
+        return this.transformValue(val, web3);
+      });
+    } else {
+      returnValue = this.transformValue(returnValue, web3);
     }
-
-    return userValue;
+    return returnValue;
   }
 }
 

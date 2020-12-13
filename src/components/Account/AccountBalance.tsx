@@ -1,7 +1,6 @@
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import { formatTokens } from "lib/util";
 import * as React from "react";
-import * as css from "./Account.scss";
 
 interface IProps {
   accountAddress: string;
@@ -19,7 +18,7 @@ export default class Balance extends React.Component<IProps, null> {
     const { balance, tokenSymbol } = this.props;
 
     return (
-      <span className={css.accountBalance}>
+      <span>
         {formatTokens(balance, tokenSymbol)}
       </span>
     );

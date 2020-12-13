@@ -1,15 +1,14 @@
 import { IDAOState, Token } from "@daostack/arc.js";
 import { hideMenu } from "actions/uiActions";
-import { getArc } from "arc";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 
-import BN = require("bn.js");
+import * as BN from "bn.js";
 import classNames from "classnames";
 import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { generate } from "geopattern";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWei, ethBalance, linkToEtherScan, standardPolling, targetedNetwork } from "lib/util";
+import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWei, ethBalance, linkToEtherScan, standardPolling, targetedNetwork, getArcByDAOAddress, getNetworkByDAOAddress} from "lib/util";
 import { parse } from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
@@ -85,18 +84,18 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
   public daoMenu() {
     const dao = this.props.data;
 
-    const daoHoldingsAddress = linkToEtherScan(dao.address, true);
+    const daoHoldingsAddress = linkToEtherScan(dao.address, getNetworkByDAOAddress(dao.address), true);
     const bgPattern = generate(dao.address + dao.name);
 
     return (
       <>
-        <div className={css.daoName}>
+        <div className={css.daoNameWrapper}>
           <Link to={"/dao/" + dao.address} onClick={this.handleCloseMenu}>
             <b className={css.daoIcon} style={{ backgroundImage: bgPattern.toDataUrl() }}></b>
-            <em></em>
-            <span>{dao.name}</span>
           </Link>
+          <div className={css.daoName} title={dao.name}>{dao.name}</div>
         </div>
+        <div className={css.daoNetworkWrapper}>Network: {getNetworkByDAOAddress(dao.address)}</div>
         <div className={css.daoDescription}>
           {dao.name === "dxDAO" ?
             <p>
@@ -118,7 +117,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   : <p>New to DAOstack? Visit the <a href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">help center</a> to get started.</p>
           }
         </div>
-        <div className={css.followButton}><FollowButton id={dao.address} type="daos" style="white" /></div>
+        <div className={css.followButton}><FollowButton id={dao.address} type="daos" style="white" network={getNetworkByDAOAddress(dao.address)} /></div>
         <div className={css.daoNavHeading}><div>DAO Menu</div>{this.drawNavHeadingLine()}</div>
         <div className={css.daoNavigation}>
           <ul>
@@ -196,7 +195,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
 
             <SubscribedEthBalance dao={dao} />
 
-            {Object.keys(supportedTokens()).map((tokenAddress) => {
+            {Object.keys(supportedTokens(getNetworkByDAOAddress(dao.address))).map((tokenAddress) => {
               return <SubscribedTokenBalance tokenAddress={tokenAddress} dao={dao} key={"token_" + tokenAddress} />;
             })}
           </ul>
@@ -224,11 +223,6 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
           <div className={`${css.siteLinksWrapper} ${testNet ? css.testNet : ""}`}>
             <ul>
               <li><Link to="/" onClick={this.handleCloseMenu}>Home</Link></li>
-              <li>
-                <TrainingTooltip overlay="See a feed of recent updates to DAOs you follow" placement="right">
-                  <Link to="/feed" onClick={this.handleCloseMenu}>Feed</Link>
-                </TrainingTooltip>
-              </li>
               <li><a className="externalLink" href="https://xgen.daostack.io/" target="_blank" rel="noopener noreferrer">xGEN / GEN</a></li>
               <li>
                 <a>$ Buy GEN</a>
@@ -286,18 +280,18 @@ interface IEthProps extends ISubscriptionProps<BN | null> {
 
 const ETHBalance = (props: IEthProps) => {
   const { data } = props;
-  return <li key="ETH"><strong>{formatTokens(data)}</strong> {baseTokenName()}</li>;
+  return <li key="ETH"><strong>{formatTokens(data)}</strong> {baseTokenName(getNetworkByDAOAddress(props.dao.address))}</li>;
 };
 
 const SubscribedEthBalance = withSubscription({
   wrappedComponent: ETHBalance,
-  loadingComponent: <li key="ETH">... {baseTokenName()}</li>,
+  loadingComponent: <li key="ETH">... (x)Gen</li>,
   errorComponent: null,
   checkForUpdate: (oldProps: IEthProps, newProps: IEthProps) => {
     return oldProps.dao.address !== newProps.dao.address;
   },
   createObservable: (props: IEthProps) => {
-    return ethBalance(props.dao.address).pipe(ethErrorHandler());
+    return ethBalance(props.dao.address, getArcByDAOAddress(props.dao.address)).pipe(ethErrorHandler());
   },
 });
 
@@ -309,8 +303,8 @@ interface ITokenProps extends ISubscriptionProps<any> {
 const TokenBalance = (props: ITokenProps) => {
   const { data, error, isLoading, tokenAddress } = props;
 
-  const tokenData = supportedTokens()[tokenAddress];
-  if (isLoading || error || ((data === null || isNaN(data) || data.isZero()) && tokenData.symbol !== genName())) {
+  const tokenData = supportedTokens(getNetworkByDAOAddress(props.dao.address))[tokenAddress];
+  if (isLoading || error || ((data === null || isNaN(data) || data.isZero()) && tokenData.symbol !== genName(getNetworkByDAOAddress(props.dao.address)))) {
     return null;
   }
 
@@ -333,7 +327,7 @@ const SubscribedTokenBalance = withSubscription({
 
     await daoState.dao.members({ first: 1000, skip: 0 }).pipe(first()).toPromise();
 
-    const arc = getArc();
+    const arc = getArcByDAOAddress(props.dao.address);
     const token = new Token(props.tokenAddress, arc);
     return token.balanceOf(props.dao.address).pipe(ethErrorHandler());
   },
@@ -345,7 +339,7 @@ const SubscribedSidebarMenu = withSubscription({
   loadingComponent: <div></div>,
   createObservable: (props: IProps) => {
     if (props.daoAvatarAddress) {
-      const arc = getArc();
+      const arc = getArcByDAOAddress(props.daoAvatarAddress);
       return arc.dao(props.daoAvatarAddress).state(standardPolling());
     } else {
       return of(null);
