@@ -160,7 +160,7 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
   }
 
   public render(): RenderOutput {
-    const { daoAvatarAddress, match, location, history, dao, data: scheme, parentPath } = this.props;
+    const { daoAvatarAddress, match, location, history, dao, data: scheme, parentPath, isLoading } = this.props;
     const [createSchemeComponent, schemeTitle] = this.getCreateSchemeComponent();
 
     return (
@@ -179,7 +179,7 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
             history={history}
             daoAvatarAddress={daoAvatarAddress}
           />
-          {Boolean(!createSchemeComponent) && <div className={css.loadingWrap}><Loading inline /></div>}
+          {Boolean(!createSchemeComponent || isLoading) && <div className={css.loadingWrap}><Loading inline /></div>}
           { createSchemeComponent }
         </div>
       </div>

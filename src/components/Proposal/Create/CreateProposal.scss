@@ -40,7 +40,7 @@ fieldset {
 .createProposalContent {
   min-height: 500px;
   max-height: calc(100vh - 56px);
-  overflow: auto;
+  overflow: hidden;
 }
 
 .createProposalWrapper {

@@ -135,6 +135,14 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
     };
   }
 
+  componentDidUpdate(prevProps: Readonly<IProps>) {
+    if (prevProps.whitelistedContracts !== this.props.whitelistedContracts) {
+      this.setState({
+        whitelistedContracts: this.props.whitelistedContracts?.map(contract => { return contract.toLowerCase(); }) ?? [],
+      });
+    }
+  }
+
   public async handleSubmit(formValues: IFormValues, { setSubmitting }: any): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoAvatarAddress))) { return; }
 

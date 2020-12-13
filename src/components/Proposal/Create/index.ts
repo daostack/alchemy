@@ -8,7 +8,6 @@ import { Address } from "@daostack/arc.js";
 import { getArcByDAOAddress } from "lib/util";
 
 import withSubscription from "components/Shared/withSubscription";
-import Loading from "components/Shared/Loading";
 
 import { CreateProposalPage } from "./CreateProposalPage";
 
@@ -32,7 +31,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 
 const SubscribedCreateProposalPage: any = withSubscription<any, any>({
   wrappedComponent: CreateProposalPage,
-  loadingComponent: Loading,
+  loadingComponent: null,
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress", "schemeId"],
   createObservable: (props: IExternalStateProps) => {
