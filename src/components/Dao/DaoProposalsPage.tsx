@@ -36,7 +36,7 @@ const proposalsQuery = (dao: IDAOState, skip: number, titleSearch?: string): Obs
   return dao.dao.proposals({
     where: filter,
     orderBy: "closingAt",
-    orderDirection: "desc",
+    orderDirection: "asc",
     first: titleSearch ? undefined : PAGE_SIZE, // TEMPORARY UNTIL WE PASS "titleSearch" in line 143
     skip,
   }, { fetchAllData: true });

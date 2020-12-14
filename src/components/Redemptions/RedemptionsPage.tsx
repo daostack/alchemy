@@ -247,7 +247,8 @@ const SubscribedRedemptionsPage = withSubscription({
       {
         proposals(
           where: {
-            accountsWithUnclaimedRewards_contains: ["${currentAccountAddress}"]
+            accountsWithUnclaimedRewards_contains: ["${currentAccountAddress}"],
+            stage_in:["Executed"]
           },
           orderBy: closingAt
         ) {
