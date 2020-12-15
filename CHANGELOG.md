@@ -7,6 +7,9 @@
     - Whitelist PrimeDAO Token
     - Use subgraph v41_3
 
+  - Bugs Fixed
+    - Execute Calls button is displayed in Generic Scheme before it passed
+
   - Features Removed
     - Dao History Page
 
