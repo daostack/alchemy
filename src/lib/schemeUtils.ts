@@ -1,7 +1,8 @@
 /* eslint-disable no-bitwise */
 import { // Address,
   IContractInfo,
-  ISchemeState, Scheme
+  ISchemeState,
+  Scheme,
 } from "@daostack/arc.js";
 import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
