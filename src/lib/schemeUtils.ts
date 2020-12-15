@@ -1,7 +1,9 @@
 /* eslint-disable no-bitwise */
 import { // Address,
   IContractInfo,
-  ISchemeState} from "@daostack/arc.js";
+  ISchemeState,
+  Scheme,
+} from "@daostack/arc.js";
 import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 
@@ -50,6 +52,14 @@ export const KNOWN_SCHEME_NAMES = [
   "ContributionRewardExt",
   "GenericSchemeMultiCall",
 ];
+
+export const getKnownSchemes = (schemes: Scheme[]) => {
+  return (schemes || []).filter((scheme: Scheme) => scheme.staticState.name !== "ContributionReward" && KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) >= 0);
+};
+
+export const getUnknownSchemes = (schemes: Scheme[]) => {
+  return (schemes || []).filter((scheme: Scheme) => scheme?.staticState?.name === "ContributionReward" || KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) === -1);
+};
 
 export const PROPOSAL_SCHEME_NAMES = [
   "ContributionReward",

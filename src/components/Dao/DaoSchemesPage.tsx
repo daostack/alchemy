@@ -6,7 +6,12 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UnknownSchemeCard from "components/Dao/UnknownSchemeCard";
 import Analytics from "lib/analytics";
-import { getSchemeIsActive, KNOWN_SCHEME_NAMES, PROPOSAL_SCHEME_NAMES } from "lib/schemeUtils";
+import {
+  getKnownSchemes,
+  getSchemeIsActive,
+  getUnknownSchemes,
+  PROPOSAL_SCHEME_NAMES,
+} from "lib/schemeUtils";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -76,8 +81,8 @@ class DaoSchemesPage extends React.Component<IProps, null> {
     const allSchemes = data[0];
 
     const contributionReward = allSchemes.filter((scheme: Scheme) => scheme.staticState.name === "ContributionReward");
-    const knownSchemes = allSchemes.filter((scheme: Scheme) => scheme.staticState.name !== "ContributionReward" && KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) >= 0);
-    const unknownSchemes = allSchemes.filter((scheme: Scheme) => KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) === -1 );
+    const knownSchemes = getKnownSchemes(allSchemes);
+    const unknownSchemes = getUnknownSchemes(allSchemes);
     const allKnownSchemes = [...contributionReward, ...knownSchemes];
 
     const schemeManager = data[1];
