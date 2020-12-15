@@ -143,7 +143,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                     [css.historyNotification]: true,
                   })
                 }></span>
-                <img src="/assets/images/Icon/menu/history.svg" />
+                <img src="/assets/images/Icon/menu/plugins.svg" />
                 Plugins
               </Link>
             </li>
