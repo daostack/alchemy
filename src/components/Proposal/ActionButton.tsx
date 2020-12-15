@@ -215,8 +215,8 @@ class ActionButton extends React.Component<IProps, IState> {
       proposal: proposalState,
     });
 
-    const showExecuteCallsButton = (proposalState.genericScheme && !proposalState.genericScheme.executed) ||
-      (proposalState.genericSchemeMultiCall && !proposalState.genericSchemeMultiCall.executed)
+    const showExecuteCallsButton = ((proposalState.genericScheme && !proposalState.genericScheme.executed) ||
+      (proposalState.genericSchemeMultiCall && !proposalState.genericSchemeMultiCall.executed))
       && proposalPassed(proposalState);
 
     const redeemButtonClass = classNames({
