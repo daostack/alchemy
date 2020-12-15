@@ -76,7 +76,7 @@ const DaoProposalsPage = (props: IProps) => {
       <div className={css.topBarWrapper}>
         <div className={css.top}>
           <h1 className={css.title}>Proposals</h1>
-          {schemesLength && (
+          {Boolean(schemesLength) && (
             <div
               className={css.createProposalButton}
               onClick={onCreateProposal}
