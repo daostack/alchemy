@@ -1,4 +1,4 @@
-import { IDAOState, Member } from "@daostack/arc.js";
+import { IDAOState, Member, Scheme } from "@daostack/arc.js";
 import { getProfilesForAddresses } from "actions/profilesActions";
 import CreateProposalPage from "components/Proposal/Create";
 import ProposalDetailsPage from "components/Proposal/ProposalDetailsPage";
@@ -44,7 +44,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[IDAOState, Member[]]>;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[IDAOState, Member[], Scheme[]]>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
@@ -151,6 +151,7 @@ class DaoContainer extends React.Component<IProps, IState> {
     <DaoProposalsPage
       {...routeProps}
       daoState={this.props.data[0]}
+      schemesLength={this.props.data[2]?.length}
       currentAccountAddress={this.props.currentAccountAddress}
       onCreateProposal={this.handleNewProposal}
     />
@@ -261,7 +262,8 @@ const SubscribedDaoContainer = withSubscription({
     const dao = arc.dao(daoAddress);
     const observable = combineLatest(
       dao.state(standardPolling(true)), // DAO state
-      dao.members()
+      dao.members(),
+      dao.schemes({ where: { isRegistered: true } }, standardPolling(true)),
     );
     return observable;
   },
