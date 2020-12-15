@@ -311,7 +311,15 @@ const SubscribedDaosPage = withSubscription({
   getFetchMoreObservable: createSubscriptionObservable,
 
   fetchMoreCombine: (prevData: SubscriptionData, newData: SubscriptionData) => {
-    return [prevData[0].concat(newData[0]), prevData[1], prevData[2]];
+    const array = [] as any;
+    for (const [index] of prevData.entries()) {
+      if (index % 3 === 0){
+        array[index] = prevData[index].concat(newData[index]);
+      } else {
+        array[index] = prevData[index];
+      }
+    }
+    return array;
   },
 });
 
