@@ -54,11 +54,11 @@ export const KNOWN_SCHEME_NAMES = [
 ];
 
 export const getKnownSchemes = (schemes: Scheme[]) => {
-  return (schemes || []).filter((scheme: Scheme) => scheme.staticState.name !== "ContributionReward" && KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) >= 0);
+  return (schemes || []).filter((scheme: Scheme) => KNOWN_SCHEME_NAMES.indexOf(scheme?.staticState?.name) >= 0);
 };
 
 export const getUnknownSchemes = (schemes: Scheme[]) => {
-  return (schemes || []).filter((scheme: Scheme) => scheme?.staticState?.name === "ContributionReward" || KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) === -1);
+  return (schemes || []).filter((scheme: Scheme) => KNOWN_SCHEME_NAMES.indexOf(scheme?.staticState?.name) === -1);
 };
 
 export const PROPOSAL_SCHEME_NAMES = [
