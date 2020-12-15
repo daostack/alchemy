@@ -108,7 +108,7 @@ const ConnectedProposalData = connect(mapStateToProps, null)(ProposalData);
 export default withSubscription({
   wrappedComponent: ConnectedProposalData,
   // TODO: we might want a different one for each child component, how to pass in to here?
-  loadingComponent: (props) => <div className={css.loading}>Loading proposal {props.proposalId.substr(0, 6)} ...</div>,
+  loadingComponent: (props: any) => <div className={css.loading}>Loading proposal {props.proposalId.substr(0, 6)} ...</div>,
   // TODO: we might want a different one for each child component, how to pass in to here?
   errorComponent: (props) => <div>{props.error.message}</div>,
 

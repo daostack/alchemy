@@ -1,7 +1,9 @@
 /* eslint-disable no-bitwise */
 import { // Address,
   IContractInfo,
-  ISchemeState} from "@daostack/arc.js";
+  ISchemeState,
+  Scheme,
+} from "@daostack/arc.js";
 import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 
@@ -51,6 +53,14 @@ export const KNOWN_SCHEME_NAMES = [
   "GenericSchemeMultiCall",
 ];
 
+export const getKnownSchemes = (schemes: Scheme[]) => {
+  return (schemes || []).filter((scheme: Scheme) => scheme.staticState.name !== "ContributionReward" && KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) >= 0);
+};
+
+export const getUnknownSchemes = (schemes: Scheme[]) => {
+  return (schemes || []).filter((scheme: Scheme) => scheme?.staticState?.name === "ContributionReward" || KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) === -1);
+};
+
 export const PROPOSAL_SCHEME_NAMES = [
   "ContributionReward",
   "GenericScheme",
@@ -87,7 +97,7 @@ export const PROPOSAL_SCHEME_NAMES = [
 
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   let name: string;
-  const contractInfo = (scheme as IContractInfo).alias ? scheme as IContractInfo : getArcByAddress(scheme.address).getContractInfo(scheme.address);
+  const contractInfo = (scheme as IContractInfo).alias ? scheme as IContractInfo : getArcByAddress(scheme.address)?.getContractInfo(scheme.address);
 
   const alias = contractInfo?.alias;
 
@@ -139,7 +149,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
   } else {
     name = alias ?? fallback;
   }
-  return name;
+  return name || scheme.name;
 }
 
 /**

@@ -6,7 +6,12 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UnknownSchemeCard from "components/Dao/UnknownSchemeCard";
 import Analytics from "lib/analytics";
-import { getSchemeIsActive, KNOWN_SCHEME_NAMES, PROPOSAL_SCHEME_NAMES } from "lib/schemeUtils";
+import {
+  getKnownSchemes,
+  getSchemeIsActive,
+  getUnknownSchemes,
+  PROPOSAL_SCHEME_NAMES,
+} from "lib/schemeUtils";
 import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -76,8 +81,8 @@ class DaoSchemesPage extends React.Component<IProps, null> {
     const allSchemes = data[0];
 
     const contributionReward = allSchemes.filter((scheme: Scheme) => scheme.staticState.name === "ContributionReward");
-    const knownSchemes = allSchemes.filter((scheme: Scheme) => scheme.staticState.name !== "ContributionReward" && KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) >= 0);
-    const unknownSchemes = allSchemes.filter((scheme: Scheme) => KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) === -1 );
+    const knownSchemes = getKnownSchemes(allSchemes);
+    const unknownSchemes = getUnknownSchemes(allSchemes);
     const allKnownSchemes = [...contributionReward, ...knownSchemes];
 
     const schemeManager = data[1];
@@ -106,10 +111,10 @@ class DaoSchemesPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.wrapper}>
-        <BreadcrumbsItem to={`/dao/${dao.address}/schemes`}>Proposal Plugins</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${dao.address}/schemes`}>Plugins</BreadcrumbsItem>
 
         <Sticky enabled top={50} innerZ={10000}>
-          <h1>Proposal Plugins</h1>
+          <h1>Plugins</h1>
           { schemeManager ?
             <TrainingTooltip placement="topLeft" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
               <a className={

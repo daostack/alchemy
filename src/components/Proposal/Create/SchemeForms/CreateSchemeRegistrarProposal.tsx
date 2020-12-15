@@ -14,10 +14,10 @@ import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSION
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import classNames from "classnames";
-import { IProposalType, ISchemeState, Scheme } from "@daostack/arc.js";
+import Arc, { IProposalType, ISchemeState, Scheme } from "@daostack/arc.js";
 import { connect } from "react-redux";
 import * as React from "react";
-import * as css from "../CreateProposal.scss";
+import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 
@@ -195,6 +195,16 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
   }
 
+  private async verifyParametersHash(arc: Arc, schemeAddress: string, parametersHash: string): Promise<string | undefined> {
+    const parametersHashPattern = /0x([\da-f]){64}/i;
+    if (!parametersHashPattern.test(parametersHash)) {
+      return "Invalid parameters hash";
+    }
+    if (!(await arc.verifyParametersHash(schemeAddress, parametersHash))) {
+      return "Scheme parameters not set";
+    }
+  }
+
   public render(): RenderOutput {
     // "schemes" are the schemes registered in this DAO
     const schemes = this.props.data;
@@ -202,7 +212,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
     const { currentTab, requiredPermissions, showForm } = this.state;
 
-    const arc = getArc(getNetworkByDAOAddress(this.props.scheme.dao));
+    const arc = getArcByDAOAddress(this.props.daoAvatarAddress);
 
     const addSchemeButtonClass = classNames({
       [css.addSchemeButton]: true,
@@ -326,11 +336,6 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                   errors.otherScheme = "Invalid address";
                 }
 
-                const parametersHashPattern = /0x([\da-f]){64}/i;
-                if (currentTab !== "removeScheme" && values.parametersHash && !parametersHashPattern.test(values.parametersHash)) {
-                  errors.parametersHash = "Invalid parameters hash";
-                }
-
                 if (!isValidUrl(values.url)) {
                   errors.url = "Invalid URL";
                 }
@@ -399,7 +404,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                     </TrainingTooltip>
 
                     <div className={css.tagSelectorContainer}>
-                      <TagsSelector onChange={this.onTagsChange} tags={this.state.tags} arc={getArcByDAOAddress(this.props.daoAvatarAddress)}></TagsSelector>
+                      <TagsSelector onChange={this.onTagsChange} tags={this.state.tags} arc={arc}></TagsSelector>
                     </div>
 
                     <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
@@ -460,7 +465,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         </Field>
                       </div>
 
-                      <div className={css.parametersHash}>
+                      {currentTab !== "removeScheme" && <div className={css.parametersHash}>
                         <label htmlFor="parametersHashInput">
                           <div className={css.requiredMarker}>*</div>
                           Parameters Hash
@@ -471,8 +476,10 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                           placeholder="e.g. 0x0000000000000000000000000000000000000000000000000000000000001234"
                           name="parametersHash"
                           className={touched.parametersHash && errors.parametersHash ? css.error : null}
+                          validate={async () => { return await this.verifyParametersHash(arc, this.props.scheme.address, values.parametersHash); }}
                         />
-                      </div>
+                      </div>}
+
                       <div className={css.permissions}>
                         <div className={css.permissionsLabel}>
                           Permissions

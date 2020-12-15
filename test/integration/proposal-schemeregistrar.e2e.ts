@@ -1,5 +1,5 @@
 import * as uuid from "uuid";
-import { getContractAddresses, hideCookieAcceptWindow, gotoDaoSchemes } from "./utils";
+import { getContractAddresses, hideCookieAcceptWindow, gotoDaoSchemes, wait} from "./utils";
 
 describe("SchemeRegistrar Proposals", () => {
   let daoAddress: string;
@@ -38,15 +38,18 @@ describe("SchemeRegistrar Proposals", () => {
     await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
     const schemeToAddInput = await $("*[id=\"schemeToAddInput\"]");
-    await schemeToAddInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
+    await schemeToAddInput.setValue("0xb2287ca4a461a9bb73817fdd38fd14b59b8fb714");
 
     const parametersHashInput = await $("*[id=\"parametersHashInput\"]");
-    await parametersHashInput.setValue("0x0000000000000000000000000000000000000000000000000000000000001234");
-
-    // const registerOtherSchemesInput = await $("*[id=\"registerOtherSchemesInput\"]");
-    // await registerOtherSchemesInput.setValue(true);
+    await parametersHashInput.setValue("0x2b7a98e1a7d694990f2313a8b82e7f029df96de61f3c1b849b3db862ed5fe7b4");
 
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
+    /**
+     * The below is a workaround to wait until verifyParametersHash function is finished.
+     * Ideally, we need to disable the submit button and click on it only if there are no errors in the form,
+     * however this raises new issues and should be handled separately.
+     */
+    await wait(1000);
     await createProposalSubmitButton.click();
 
     // check that the proposal appears in the list
@@ -85,7 +88,7 @@ describe("SchemeRegistrar Proposals", () => {
     await schemeToEditInput.selectByIndex(2);
 
     const parametersHashInput = await $("*[id=\"parametersHashInput\"]");
-    await parametersHashInput.setValue("0x0000000000000000000000000000000000000000000000000000000000001234");
+    await parametersHashInput.setValue("0x2b7a98e1a7d694990f2313a8b82e7f029df96de61f3c1b849b3db862ed5fe7b4");
 
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
     await createProposalSubmitButton.click();
