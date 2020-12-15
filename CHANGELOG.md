@@ -1,3 +1,18 @@
+## 1.0.4
+  - Features Added
+    - Brand new Proposals Page
+
+  - Improvements
+    - Verify parameters hash
+    - Whitelist PrimeDAO Token
+    - Use subgraph v41_3
+
+  - Bugs Fixed
+    - Execute Calls button is displayed in Generic Scheme before it passed
+
+  - Features Removed
+    - Dao History Page
+
 ## 1.0.3
   - Features Added
     - Support multiple networks
