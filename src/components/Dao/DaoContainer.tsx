@@ -23,6 +23,7 @@ import DaoProposalsPage from "components/Dao/DaoProposalsPage";
 import { standardPolling, targetedNetwork, getArcByDAOAddress, getDAONameByID, getNetworkByDAOAddress } from "lib/util";
 import gql from "graphql-tag";
 import { enableWalletProvider, getArcs } from "arc";
+import { getKnownSchemes } from "lib/schemeUtils";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -151,7 +152,7 @@ class DaoContainer extends React.Component<IProps, IState> {
     <DaoProposalsPage
       {...routeProps}
       daoState={this.props.data[0]}
-      schemesLength={this.props.data[2]?.length}
+      schemesLength={getKnownSchemes(this.props.data[2]).length}
       currentAccountAddress={this.props.currentAccountAddress}
       onCreateProposal={this.handleNewProposal}
     />

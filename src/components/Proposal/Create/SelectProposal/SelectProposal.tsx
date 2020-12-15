@@ -4,7 +4,7 @@ import { RouteComponentProps } from "react-router-dom";
 
 import { DAO, ISchemeState, Scheme } from "@daostack/arc.js";
 
-import { KNOWN_SCHEME_NAMES } from "lib/schemeUtils";
+import { getKnownSchemes, getUnknownSchemes } from "lib/schemeUtils";
 import Select from "react-select";
 
 import SelectProposalLabel from "components/Proposal/Create/SelectProposal/SelectProposalLabel";
@@ -34,7 +34,7 @@ export const SelectProposal: React.FC<IProps> = ({
   }, [daoAvatarAddress, history, match]);
 
   const knownSchemes = useMemo(() => {
-    return schemes.filter((scheme: Scheme) => KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) >= 0);
+    return getKnownSchemes(schemes);
   }, [schemes]);
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export const SelectProposal: React.FC<IProps> = ({
   }, [handleChange, scheme, knownSchemes]);
 
   const unknownSchemes = useMemo(() => {
-    return schemes.filter((scheme: Scheme) => KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) === -1);
+    return getUnknownSchemes(schemes);
   }, [schemes]);
 
   const options = useMemo(() => {
