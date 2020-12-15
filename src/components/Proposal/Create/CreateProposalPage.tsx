@@ -180,7 +180,9 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
             daoAvatarAddress={daoAvatarAddress}
           />
           {Boolean(!createSchemeComponent || isLoading) && <div className={css.loadingWrap}><Loading inline /></div>}
-          { createSchemeComponent }
+          <div key={scheme?.id}>
+            { createSchemeComponent }
+          </div>
         </div>
       </div>
     );
