@@ -90,7 +90,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
                   onClick={this.redeemAll}
                 >
                   <img src="/assets/images/Icon/redeem.svg" />
-                Redeem all from {this.props.network}
+                Redeem {this.props.network && `all from ${this.props.network}`}
                 </button>
               </div>
               : ""
