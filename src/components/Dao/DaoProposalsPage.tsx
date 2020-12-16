@@ -86,7 +86,7 @@ const DaoProposalsPage = (props: IProps) => {
           )}
         </div>
         {data.length > 0 && <div className={css.searchBox.concat(`${filtering ? ` ${css.filtering}` : ""}`)}>
-          <input type="text" name="search" placeholder="Type and press Enter or Tab to filter proposals by title or proposer address"
+          <input type="text" name="search" placeholder="Search by title or proposer address"
             onKeyPress={onSearchExecute}
             onBlur={onSearchExecute}
             onChange={(e) => setFilterString(e.target.value)} />

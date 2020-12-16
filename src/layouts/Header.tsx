@@ -179,13 +179,9 @@ class Header extends React.Component<IProps, null> {
     const web3ProviderInfo = getWeb3ProviderInfo();
     const web3Provider = getWeb3Provider();
     const trainingTooltipsOn = this.getTrainingTooltipsEnabled();
-    const inDAO = !!daoAvatarAddress;
 
     return (
-      <div className={`${css.headerContainer} ${inDAO ? "" : css.showBanner}`}>
-        <div className={css.banner}>Alchemy 2.0 has been released! Take a look <a
-          href={(network === "main") ? process.env.ALCHEMY_V2_URL_MAINNET : process.env.ALCHEMY_V2_URL_XDAI}
-          target="_blank" rel="noopener noreferrer">here</a>.</div>
+      <div className={css.headerContainer}>
         <nav className={css.header}>
           <div className={css.menuToggle} onClick={this.handleToggleMenu}>
             {this.props.menuOpen ?

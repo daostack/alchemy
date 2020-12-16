@@ -63,7 +63,6 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
   }
 
   public async componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyPress, false);
 
     Analytics.track("Page View", {
       "Page Name": Page.CreateProposal,
@@ -88,17 +87,6 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
     if (prevProps.data?.id !== this.props.data?.id) {
       const scheme = this.props.data;
       this.setState({ createCrxProposalComponent: await getCrxRewarderComponent(scheme, CrxRewarderComponentType.CreateProposal) });
-    }
-  }
-
-  public componentWillUnmount(){
-    document.removeEventListener("keydown", this.handleKeyPress, false);
-  }
-
-  private handleKeyPress = (e: any) => {
-    // Close modal on ESC key press
-    if (e.keyCode === 27) {
-      this.doClose();
     }
   }
 

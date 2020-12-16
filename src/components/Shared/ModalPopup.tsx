@@ -12,27 +12,12 @@ interface IProps {
 
 export default class ModalPopup extends React.Component<IProps, null> {
 
-  public async componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyPress, false);
-  }
-
-  public componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleKeyPress, false);
-  }
-
-  private handleKeyPress = (e: any) => {
-    // Close modal on ESC key press
-    if (e.keyCode === 27) {
-      this.props.closeHandler(e);
-    }
-  }
-
   public render(): RenderOutput {
-    const { closeHandler, body, footer, header, width } = this.props;
+    const { body, footer, header } = this.props;
 
     return (
-      <Modal onBackdropClick={closeHandler}>
-        <div className={css.modalWindow} style={{ width: width ?? "60%" }} >
+      <Modal>
+        <div className={css.modalWindow}>
           <div className={css.header}>{header}</div>
           <div className={css.body}>{body}</div>
           {footer ? <div className={css.footer}>{footer}</div> : ""}
