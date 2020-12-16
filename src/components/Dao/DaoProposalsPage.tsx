@@ -9,7 +9,7 @@ import { Observable } from "rxjs";
 import ProposalRow from "components/Proposal/ProposalRow";
 import { RouteComponentProps } from "react-router-dom";
 import { first } from "rxjs/operators";
-import { isAddress } from "lib/util";
+import { isAddress, standardPolling } from "lib/util";
 
 const PAGE_SIZE = 50;
 
@@ -40,7 +40,7 @@ const proposalsQuery = (dao: IDAOState, skip: number, titleSearch?: string): Obs
     orderDirection: "asc",
     first: titleSearch ? undefined : PAGE_SIZE, // TEMPORARY UNTIL WE PASS "titleSearch" in line 143
     skip,
-  }, { fetchAllData: true });
+  }, standardPolling(true));
 };
 
 const DaoProposalsPage = (props: IProps) => {
@@ -86,7 +86,7 @@ const DaoProposalsPage = (props: IProps) => {
           )}
         </div>
         {data.length > 0 && <div className={css.searchBox.concat(`${filtering ? ` ${css.filtering}` : ""}`)}>
-          <input type="text" name="search" placeholder="Type and press Enter or Tab to filter proposals by title or proposer address"
+          <input type="text" name="search" placeholder="Search by title or proposer address"
             onKeyPress={onSearchExecute}
             onBlur={onSearchExecute}
             onChange={(e) => setFilterString(e.target.value)} />

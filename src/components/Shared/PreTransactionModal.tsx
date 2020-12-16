@@ -295,7 +295,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     }
 
     return (
-      <Modal onBackdropClick={this.props.closeAction}>
+      <Modal>
         <div className={css.metaMaskModal}>
           <div className={modalWindowClass}>
             <div className={css.transactionHeader + " clearfix " + actionTypeClass}>
