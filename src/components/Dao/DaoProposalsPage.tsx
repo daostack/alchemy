@@ -9,7 +9,7 @@ import { Observable } from "rxjs";
 import ProposalRow from "components/Proposal/ProposalRow";
 import { RouteComponentProps } from "react-router-dom";
 import { first } from "rxjs/operators";
-import { isAddress } from "lib/util";
+import { isAddress, standardPolling } from "lib/util";
 
 const PAGE_SIZE = 50;
 
@@ -40,7 +40,7 @@ const proposalsQuery = (dao: IDAOState, skip: number, titleSearch?: string): Obs
     orderDirection: "asc",
     first: titleSearch ? undefined : PAGE_SIZE, // TEMPORARY UNTIL WE PASS "titleSearch" in line 143
     skip,
-  }, { fetchAllData: true });
+  }, standardPolling(true));
 };
 
 const DaoProposalsPage = (props: IProps) => {
