@@ -20,7 +20,7 @@ import DaoSchemesPage from "./DaoSchemesPage";
 import DaoMembersPage from "./DaoMembersPage";
 import * as css from "./Dao.scss";
 import DaoProposalsPage from "components/Dao/DaoProposalsPage";
-import { standardPolling, targetedNetwork, getArcByDAOAddress, getDAONameByID, getNetworkByDAOAddress } from "lib/util";
+import { standardPolling, getArcByDAOAddress, getDAONameByID, getNetworkByDAOAddress } from "lib/util";
 import gql from "graphql-tag";
 import { enableWalletProvider, getArcs } from "arc";
 import { getKnownSchemes } from "lib/schemeUtils";
@@ -173,7 +173,6 @@ class DaoContainer extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
     const daoState = this.props.data[0];
-    const network = targetedNetwork();
     const { followingDaosAddresses } = this.props;
     const { memberDaos } = this.state;
 
@@ -206,13 +205,6 @@ class DaoContainer extends React.Component<IProps, IState> {
         </Helmet>
 
         <div className={css.wrapper}>
-          <div className={css.noticeWrapper}>
-            <div className={css.noticeBuffer}></div>
-            <div className={css.notice}>Alchemy 2.0 has been released! Take a look <a
-              href={(network === "main") ? process.env.ALCHEMY_V2_URL_MAINNET : process.env.ALCHEMY_V2_URL_XDAI}
-              target="_blank" rel="noopener noreferrer">here</a>.
-            </div>
-          </div>
           <Switch>
             <Route exact path="/dao/:daoAvatarAddress/members"
               render={this.daoMembersRoute} />

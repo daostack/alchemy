@@ -83,7 +83,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
           disabled={redeemableProposals.length === 0}
         >
           <img src="/assets/images/Icon/redeem.svg" />
-          Redeem all from {this.props.network} {redeemableProposals.length > 0 ? redeemableProposals.length : ""}
+          Redeem {this.props.network && `all from ${this.props.network}`} ({redeemableProposals.length})
         </button>
       </div>
     </div>;

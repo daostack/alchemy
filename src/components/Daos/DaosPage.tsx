@@ -198,8 +198,6 @@ class DaosPage extends React.Component<IProps, IState> {
       <div className={css.wrapper}>
         <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
 
-        <div className={css.paddingTop}>&nbsp;</div>
-
         <div className={css.topRow}>
           <div className={css.searchBox}>
             <input type="text" name="search" placeholder="Search DAOs" onChange={this.onSearchChange} value={this.state.search} />

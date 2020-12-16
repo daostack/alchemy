@@ -82,12 +82,15 @@ export const closingTime = (proposal: IProposalState) => {
  * @returns {ProposalStatus}
  */
 export const calculateProposalStatus = (proposal: IProposalState): IProposalStatus => {
-  const { winningOutcome, executedAt } = proposal;
+  const { winningOutcome, executedAt, boostedAt } = proposal;
   const endDateMoment = moment(closingTime(proposal));
   const now = new Date();
   const complete = endDateMoment.diff(now) <= 0 ? true : false;
 
   if (String(winningOutcome) === "Pass") {
+    if (!boostedAt && !complete) {
+      return IProposalStatus.Failing;
+    }
     if (!complete) {
       return IProposalStatus.Passing;
     }

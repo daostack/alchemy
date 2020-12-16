@@ -1,3 +1,9 @@
+:global {
+  body.react-router-modal__modal-open {
+    overflow: hidden;
+  }
+}
+
 .modalWindow {
   position: absolute;
   left: 50%;

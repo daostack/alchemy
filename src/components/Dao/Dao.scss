@@ -6,7 +6,6 @@ button:hover {
   flex-grow: 2;
   padding: 30px 50px 100px 50px;
   overflow: visible;
-  z-index: 0;
   position: relative;
 }
 
@@ -109,44 +108,6 @@ button:hover {
   }
 }
 
-.noticeWrapper {
-  width: 100%;
-  position: fixed;
-  display: flex;
-  height: 40px;
-  bottom: 0;
-  left: 0;
-  z-index: 100000;
-}
-
-.noticeBuffer {
-  min-width: 250px;
-  max-width: 250px;
-  flex-grow: 1;
-  height: 100%;
-}
-
-.notice {
-  flex-grow: 2;
-  background-color: white;
-  padding: 11px 8px;
-  color: $black;
-  font-size: 12px;
-  font-weight: 500;
-  text-align: center;
-  font-family: "Open Sans";
-  width: 100%;
-
-  a {
-    text-decoration: underline;
-  }
-
-  .notice::after {
-    content: "";
-    clear: both;
-    display: table;
-  }
-}
 
 .membersContainer {
   margin: 10px auto;
@@ -273,19 +234,6 @@ a {
 
   .wrapper {
     padding: 50px 0 100px 0;
-  }
-
-  .noticeWrapper {
-    height: 52px;
-
-    .noticeBuffer {
-      display: none;
-    }
-
-    .notice {
-      font-size: 11px;
-      box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.4);
-    }
   }
 
   .reputationAmounts {

@@ -4,20 +4,13 @@
   display: flex;
   flex-direction: column;
 
-  .paddingTop {
-    position: sticky;
-    top: 82px;
-    height: 35px;
-    z-index: 2;
-    background-color: #e5ebf2;
-  }
-
   .topRow {
     display: flex;
     position: sticky;
-    top: 117px;
+    top: 50px;
     z-index: 2;
     background-color: rgba(229, 235, 242, 1);
+    padding-top: 30px;
 
     .searchBox {
       flex-grow: 2;
@@ -56,7 +49,7 @@
   .otherDaos {
     .headerWrapper {
       position: sticky;
-      top: 170px;
+      top: 132px;
       z-index: 1;
     }
 
