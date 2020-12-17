@@ -38,9 +38,9 @@ fieldset {
 }
 
 .createProposalContent {
-  min-height: 500px;
-  max-height: calc(100vh - 56px);
+  height: calc(100% - 40px);
   overflow: hidden;
+  position: relative;
 }
 
 .createProposalWrapper {
@@ -51,7 +51,9 @@ fieldset {
   left: 50%;
   transform: translate(-50%, -50%);
   box-shadow: $shadow-3;
-  min-width: 622px;
+  min-width: 736px;
+  height: 854px;
+  overflow: hidden;
 
   .header {
     background-color: $navy;
@@ -802,4 +804,13 @@ div.description {
       }
     }
   }
+}
+
+.createSchemeComponentWrap {
+  display: flex;
+  justify-content: flex-end;
+  position: absolute;
+  top: 98px;
+  width: 100%;
+  height: calc(100% - 98px);
 }

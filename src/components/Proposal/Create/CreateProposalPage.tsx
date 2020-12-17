@@ -168,7 +168,7 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
             daoAvatarAddress={daoAvatarAddress}
           />
           {Boolean(!createSchemeComponent || isLoading) && <div className={css.loadingWrap}><Loading inline /></div>}
-          <div key={scheme?.id}>
+          <div key={scheme?.id} className={css.createSchemeComponentWrap}>
             { createSchemeComponent }
           </div>
         </div>

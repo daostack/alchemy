@@ -27,6 +27,7 @@ export const SelectProposal: React.FC<IProps> = ({
   data: schemes,
   history,
   match,
+  isLoading,
 }) => {
   const handleChange = useCallback((el) => {
     const schemeId = el.value;
@@ -61,6 +62,12 @@ export const SelectProposal: React.FC<IProps> = ({
 
     return undefined;
   }, [options, scheme]);
+
+  if (isLoading) {
+    return (
+      <div className={css.center}>...</div>
+    );
+  }
 
   return (
     <div className={css.body}>
