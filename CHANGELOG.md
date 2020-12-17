@@ -5,7 +5,9 @@
   - Improvements
     - Verify parameters hash
     - Whitelist PrimeDAO Token
-    - Use subgraph v41_3
+    - Use subgraph v41_3 and arc.js 0.2.79
+    - Some UI/UX improvements
+    - Alchemy 2.0 banners are removed
 
   - Bugs Fixed
     - Execute Calls button is displayed in Generic Scheme before it passed
