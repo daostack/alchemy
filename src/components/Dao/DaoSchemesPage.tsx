@@ -19,7 +19,7 @@ import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { connect } from "react-redux";
-import { showNotification } from "reducers/notifications";
+import { showNotification } from "@store/notifications/notifications.reducer";
 import { combineLatest, Observable, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import * as css from "./DaoSchemesPage.scss";

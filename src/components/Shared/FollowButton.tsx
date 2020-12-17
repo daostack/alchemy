@@ -1,13 +1,13 @@
-import { toggleFollow } from "actions/profilesActions";
+import { toggleFollow } from "@store/profiles/profilesActions";
 import { enableWalletProvider } from "arc";
 import classNames from "classnames";
 import ThreeboxModal from "components/Shared/ThreeboxModal";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
-import { showNotification } from "reducers/notifications";
-import { IRootState } from "reducers";
-import { FollowType, IProfileState } from "reducers/profilesReducer";
+import { showNotification } from "@store/notifications/notifications.reducer";
+import { IRootState } from "@store";
+import { FollowType, IProfileState } from "@store/profiles/profilesReducer";
 import { Networks } from "lib/util";
 import * as css from "./FollowButton.scss";
 

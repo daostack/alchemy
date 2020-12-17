@@ -1,5 +1,5 @@
 import { IDAOState, Member } from "@daostack/arc.js";
-import { getProfile } from "actions/profilesActions";
+import { getProfile } from "@store/profiles/profilesActions";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import Analytics from "lib/analytics";
@@ -10,8 +10,8 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
-import { IRootState } from "reducers";
-import { IProfilesState } from "reducers/profilesReducer";
+import { IRootState } from "@store";
+import { IProfilesState } from "@store/profiles/profilesReducer";
 
 import DaoMember from "./DaoMember";
 import * as css from "./Dao.scss";

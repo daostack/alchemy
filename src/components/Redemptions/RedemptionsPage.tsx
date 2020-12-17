@@ -1,6 +1,6 @@
 import { Address, DAOFieldsFragment, IContributionReward, IDAOState, IRewardState, Proposal } from "@daostack/arc.js";
 import { enableWalletProvider, getArcs } from "arc";
-import { redeemProposal } from "actions/arcActions";
+import { redeemProposal } from "@store/arc/arcActions";
 import * as BN from "bn.js";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -13,8 +13,8 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import * as Sticky from "react-stickynode";
-import { IRootState } from "reducers";
-import { showNotification } from "reducers/notifications";
+import { IRootState } from "@store";
+import { showNotification } from "@store/notifications/notifications.reducer";
 import { of, concat } from "rxjs";
 import { map, first } from "rxjs/operators";
 import ProposalCard from "../Proposal/ProposalCard";

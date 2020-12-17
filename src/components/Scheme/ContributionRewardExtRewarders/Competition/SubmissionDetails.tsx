@@ -4,12 +4,12 @@ import * as React from "react";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
 import { ensureHttps, formatFriendlyDateForLocalTimezone, formatTokens, getArcByDAOAddress } from "lib/util";
-import { IRootState } from "reducers";
+import { IRootState } from "@store";
 import { connect } from "react-redux";
 import classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
-import { IProfilesState } from "reducers/profilesReducer";
+import { IProfilesState } from "@store/profiles/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import Tooltip from "rc-tooltip";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";

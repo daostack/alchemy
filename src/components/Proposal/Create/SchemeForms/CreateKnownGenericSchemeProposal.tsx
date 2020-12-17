@@ -10,9 +10,9 @@ import Interweave from "interweave";
 
 import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";
 
-import { IRootState } from "reducers";
-import { NotificationStatus, showNotification } from "reducers/notifications";
-import * as arcActions from "actions/arcActions";
+import { IRootState } from "@store";
+import { NotificationStatus, showNotification } from "@store/notifications/notifications.reducer";
+import * as arcActions from "@store/arc/arcActions";
 
 import Analytics from "lib/analytics";
 import { isValidUrl, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";

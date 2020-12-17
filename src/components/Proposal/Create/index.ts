@@ -1,7 +1,7 @@
 import { History } from "history";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
-import { IRootState } from "reducers";
+import { IRootState } from "@store";
 import { of } from "rxjs";
 
 import { Address } from "@daostack/arc.js";
