@@ -4,6 +4,7 @@ import { getContractAddresses, hideCookieAcceptWindow, gotoDaoSchemes, wait} fro
 describe("SchemeRegistrar Proposals", () => {
   let daoAddress: string;
   let addresses;
+  const GOOD_PARAMS_HASH = "0x7603c16050b9322f37cb156f90baecdd28edbaef67aac17d1164aabf408d35e2";
 
   before(() => {
     addresses = getContractAddresses();
@@ -41,7 +42,7 @@ describe("SchemeRegistrar Proposals", () => {
     await schemeToAddInput.setValue("0xb2287ca4a461a9bb73817fdd38fd14b59b8fb714");
 
     const parametersHashInput = await $("*[id=\"parametersHashInput\"]");
-    await parametersHashInput.setValue("0x2b7a98e1a7d694990f2313a8b82e7f029df96de61f3c1b849b3db862ed5fe7b4");
+    await parametersHashInput.setValue(GOOD_PARAMS_HASH);
 
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
     /**
@@ -88,7 +89,7 @@ describe("SchemeRegistrar Proposals", () => {
     await schemeToEditInput.selectByIndex(2);
 
     const parametersHashInput = await $("*[id=\"parametersHashInput\"]");
-    await parametersHashInput.setValue("0x2b7a98e1a7d694990f2313a8b82e7f029df96de61f3c1b849b3db862ed5fe7b4");
+    await parametersHashInput.setValue(GOOD_PARAMS_HASH);
 
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
     await createProposalSubmitButton.click();
