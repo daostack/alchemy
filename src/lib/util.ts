@@ -382,6 +382,10 @@ export async function getNetworkName(id?: string): Promise<Networks> {
     id = await getNetworkId();
   }
 
+  if (typeof id !== "string") {
+    id = "" + id;
+  }
+
   switch (id) {
     case "main":
     case "0x1":
