@@ -163,8 +163,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
   }
 
   private renderTotalRewards(): RenderOutput {
-    const { currentAccountAddress, data: proposals } = this.props;
-
+    const { network, currentAccountAddress, data: proposals } = this.props;
     const genReward = new BN(0);
     const ethReward = new BN(0);
     const externalTokenRewards: { [symbol: string]: BN } = {};
@@ -209,10 +208,10 @@ class RedemptionsPage extends React.Component<IProps, null> {
 
     const totalRewards: any[] = [];
     if (!ethReward.isZero()) {
-      totalRewards.push(formatTokens(ethReward, baseTokenName()));
+      totalRewards.push(formatTokens(ethReward, baseTokenName(network)));
     }
     if (!genReward.isZero()) {
-      totalRewards.push(formatTokens(genReward, genName()));
+      totalRewards.push(formatTokens(genReward, genName(network)));
     }
     Object.keys(externalTokenRewards).forEach((tokenAddress) => {
       totalRewards.push(formatTokens(externalTokenRewards[tokenAddress], tokenSymbol(tokenAddress), tokenDecimals(tokenAddress)));

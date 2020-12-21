@@ -330,7 +330,7 @@ async function enableWeb3Provider(network?: Networks): Promise<void> {
   if (!web3Modal) {
     _web3Modal = new Web3Modal({
       cacheProvider: true,
-      providerOptions: getArcSettings().web3ConnectProviderOptions,
+      providerOptions: getArcSettings(network).web3ConnectProviderOptions,
     });
 
     // eslint-disable-next-line require-atomic-updates

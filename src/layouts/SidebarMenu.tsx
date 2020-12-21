@@ -199,7 +199,7 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
       clearfix: true,
     });
 
-    const network = targetedNetwork();
+    const network = this.props.daoAvatarAddress ? this.props.daoAvatarAddress : targetedNetwork();
     const testNet = !((network === "main") || (network === "xdai"));
 
     return (

@@ -22,6 +22,7 @@ import CreateContributionRewardProposal from "./SchemeForms/CreateContributionRe
 import SelectProposal from "./SelectProposal";
 
 import * as css from "./CreateProposal.scss";
+import { getNetworkByDAOAddress } from "lib/util";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -109,6 +110,8 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
       scheme,
     };
 
+    const network = getNetworkByDAOAddress(daoAvatarAddress);
+
     if (this.state.createCrxProposalComponent) {
       createSchemeComponent = <this.state.createCrxProposalComponent {...props} />;
     } else if (scheme.name === "ContributionReward") {
@@ -126,7 +129,7 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
       } else {
         throw Error("No contractToCall for this genericScheme was found!");
       }
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall, network);
       if (genericSchemeInfo) {
         createSchemeComponent = <CreateKnownGenericSchemeProposal {...props} genericSchemeInfo={genericSchemeInfo} />;
       } else {
@@ -134,7 +137,7 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
       }
     } else if (scheme.name === "UGenericScheme") {
       const genericSchemeRegistry = new GenericSchemeRegistry();
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(props.scheme.uGenericSchemeParams.contractToCall);
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(props.scheme.uGenericSchemeParams.contractToCall, network);
       if (genericSchemeInfo) {
         createSchemeComponent = <CreateKnownGenericSchemeProposal {...props} genericSchemeInfo={genericSchemeInfo} />;
       } else {
