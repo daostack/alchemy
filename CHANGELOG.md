@@ -12,6 +12,7 @@
   - Bugs Fixed
     - Execute Calls button is displayed in Generic Scheme proposal before it passed
     - Issue connecting to WalletConnect
+    - Can't create multi-call proposal in some cases due to old migration version
 
   - Features Removed
     - Dao History Page
