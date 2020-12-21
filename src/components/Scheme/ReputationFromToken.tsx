@@ -195,7 +195,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       // send the transaction and get notifications
       if (contract) {
         // more information on this service is here: https://github.com/dOrgTech/TxPayerService
-        const txServiceUrl = getArcSettings().txSenderServiceUrl;
+        const txServiceUrl = getArcSettings(getNetworkByDAOAddress(this.props.daoAvatarAddress)).txSenderServiceUrl;
         const data = {
           to: schemeState.address,
           methodAbi: {
@@ -270,8 +270,9 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   public render(): RenderOutput {
     const { daoAvatarAddress, schemeState, currentAccountAddress } = this.props;
     const redeemerAddress = this.state.redeemerAddress;
+    const network = getNetworkByDAOAddress(daoAvatarAddress);
+    const arc = getArc(network);
 
-    const arc = getArc(getNetworkByDAOAddress(daoAvatarAddress));
 
     return (
       <div className={schemeCss.schemeContainer}>
@@ -344,7 +345,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                     <img src="/assets/images/Icon/redeem.svg"/> Redeem
                   </button>
                 </div>
-                { getArcSettings().txSenderServiceUrl ?
+                { getArcSettings(network).txSenderServiceUrl ?
                   <div className={schemeCss.redemptionButton}>
                     <div>Or try our new experimental feature:</div>
                     <button type="submit"

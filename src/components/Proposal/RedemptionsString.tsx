@@ -61,7 +61,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
     }
 
     if (gen.gt(zero)) {
-      rewardComponents.push(formatTokens(gen, genName()));
+      rewardComponents.push(formatTokens(gen, genName(getNetworkByDAOAddress(dao.address))));
     }
 
     if (reputation.gt(zero)) {
