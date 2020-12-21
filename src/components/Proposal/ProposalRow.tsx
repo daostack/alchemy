@@ -35,7 +35,7 @@ const ProposalRow = (props: IProps) => {
       <td>{boostedAt && (status === IProposalStatus.Passing || status === IProposalStatus.Failing) && <div className={css.boostedWrapper}><img width="12px" src="/assets/images/Icon/boosted.svg" /> <span className={css.boostedLabel}>Boosted</span></div>}</td>
       <td className={css.statusWrapper}>
         <div className={statusLabelClass}>{status}</div>
-        {showCountdown && <div className={css.statusTime}><ProposalCountdown proposal={props.data.staticState as IProposalState} schemeView /></div>}
+        {showCountdown && <div className={css.statusTime}><ProposalCountdown proposal={props.data.staticState as IProposalState} schemeView proposalsPage /></div>}
       </td>
     </tr>
   );

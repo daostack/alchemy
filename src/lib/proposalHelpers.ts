@@ -56,7 +56,7 @@ export const castProposalStageToNumberRepresentation = (stage: string): IProposa
   }
 };
 
-export const closingTime = (proposal: IProposalState) => {
+export const closingTime = (proposal: IProposalState, proposalsPage?: boolean) => {
   let stage = proposal.stage;
   if (typeof proposal.stage === "string") {
     stage = castProposalStageToNumberRepresentation(proposal.stage);
@@ -66,6 +66,9 @@ export const closingTime = (proposal: IProposalState) => {
     case IProposalStage.Queued:
       return moment((Number(proposal.createdAt) + Number(proposal.genesisProtocolParams.queuedVotePeriodLimit)) * 1000);
     case IProposalStage.PreBoosted:
+      if (proposalsPage) {
+        return moment((Number(proposal.createdAt) + Number(proposal.genesisProtocolParams.queuedVotePeriodLimit)) * 1000);
+      }
       return moment((Number(proposal.preBoostedAt) + Number(proposal.genesisProtocolParams.preBoostedVotePeriodLimit)) * 1000);
     case IProposalStage.Boosted:
       return moment((Number(proposal.boostedAt) + Number(proposal.genesisProtocolParams.boostedVotePeriodLimit)) * 1000);
