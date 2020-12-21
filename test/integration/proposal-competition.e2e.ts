@@ -10,15 +10,15 @@ describe("Proposals", () => {
   beforeEach(async () => {
     // we need to find a DAO with a competition scheme
     arc = await getArc();
+    await arc.fetchContractInfos();
     // find the corresponding scheme object
     const contributionRewardExts = await arc
-      .schemes({where: {name: `ContributionRewardExt` }}).pipe(first()).toPromise();
+      .schemes({where: {name: "ContributionRewardExt" }}).pipe(first()).toPromise();
 
     const contributionRewardExt = contributionRewardExts[0];
     const contributionRewardExtState = await contributionRewardExt.state().pipe(first()).toPromise();
     dao = await new DAO(contributionRewardExtState.dao, arc);
   });
-
 
   it("Create a Competition Scheme proposal, vote for it, stake on it", async () => {
     await gotoDaoSchemes(dao.id);
