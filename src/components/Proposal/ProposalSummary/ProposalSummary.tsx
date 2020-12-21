@@ -9,6 +9,7 @@ import ProposalSummaryKnownGenericScheme from "./ProposalSummaryKnownGenericSche
 import ProposalSummarySchemeRegistrar from "./ProposalSummarySchemeRegistrar";
 import ProposalSummaryUnknownGenericScheme from "./ProposalSummaryUnknownGenericScheme";
 import ProposalSummaryMultiCallGenericScheme from "./ProposalSummaryMultiCallGenericScheme";
+import { getNetworkByDAOAddress } from "lib/util";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;
@@ -22,7 +23,7 @@ export default class ProposalSummary extends React.Component<IProps> {
 
   public render(): RenderOutput {
 
-    const { proposal, detailView, transactionModal } = this.props;
+    const { proposal, detailView, transactionModal, dao } = this.props;
 
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
@@ -36,7 +37,7 @@ export default class ProposalSummary extends React.Component<IProps> {
       return <ProposalSummarySchemeRegistrar {...this.props} />;
     } else if (proposal.type === IProposalType.GenericScheme) {
       const genericSchemeRegistry = new GenericSchemeRegistry();
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(proposal.genericScheme.contractToCall);
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(proposal.genericScheme.contractToCall, getNetworkByDAOAddress(dao.address));
       if (genericSchemeInfo) {
         return <ProposalSummaryKnownGenericScheme {...this.props} genericSchemeInfo={genericSchemeInfo} />;
       } else {

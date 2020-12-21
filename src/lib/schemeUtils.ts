@@ -13,7 +13,7 @@ import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import "moment";
 import * as moment from "moment-timezone";
 
-import { getArcByAddress, splitCamelCase } from "lib/util";
+import { getArcByAddress, getNetworkByDAOAddress, splitCamelCase } from "lib/util";
 
 export enum SchemePermissions {
   None = 0,
@@ -113,7 +113,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       } else {
         contractToCall = schemeState.uGenericSchemeParams.contractToCall;
       }
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall, getNetworkByDAOAddress(schemeState.dao));
       if (genericSchemeInfo) {
         name = genericSchemeInfo.specs.name;
       } else {

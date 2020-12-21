@@ -6,7 +6,7 @@ import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification, NotificationStatus } from "reducers/notifications";
-import { baseTokenName, isValidUrl, isAddress, linkToEtherScan, getContractName, toWei, getNetworkByDAOAddress, getArcByDAOAddress} from "lib/util";
+import { baseTokenName, isValidUrl, isAddress, linkToEtherScan, getContractName, toWei, getNetworkByDAOAddress, getArcByDAOAddress, Networks} from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
@@ -188,7 +188,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
  * If all checks are okay, pushes the contract address to the contract lists, otherwise returns an appropriate message.
  * @param {string} contractToCall
  */
-  private verifyContract = async (contractToCall: string) => {
+  private verifyContract = async (contractToCall: string, network: Networks) => {
     const addContractStatus: IAddContractStatus = {
       error: "",
       message: "",
@@ -207,7 +207,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
       setAddContractStatus("CONTRACT_EXIST", "Contract already exist!");
     } else {
       this.setState({ loading: true });
-      const abiData = await getABIByContract(contractToCall);
+      const abiData = await getABIByContract(contractToCall, network);
       const abiMethods = extractABIMethods(abiData);
       if (abiMethods.length > 0) {
         this.state.userContracts.push(contractToCall);
@@ -219,10 +219,10 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
     this.setState({ loading: false, addContractStatus: addContractStatus });
   }
 
-  private getContractABI = async (contractToCall: string, setFieldValue: any, index: number) => {
+  private getContractABI = async (contractToCall: string, setFieldValue: any, index: number, network: Networks) => {
     setFieldValue(`contracts.${index}.method`, ""); // reset
     setFieldValue(`contracts.${index}.callData`, ""); // reset
-    const abiData = await getABIByContract(contractToCall);
+    const abiData = await getABIByContract(contractToCall, network);
     const abiMethods = extractABIMethods(abiData);
     setFieldValue(`contracts.${index}.abi`, abiData);
     setFieldValue(`contracts.${index}.methods`, abiMethods);
@@ -376,7 +376,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                   name="addContract"
                   type="text"
                   // eslint-disable-next-line react/jsx-no-bind
-                  onChange={(e: any) => { setFieldValue("addContract", e.target.value); this.verifyContract(e.target.value.toLowerCase()); }}
+                  onChange={(e: any) => { setFieldValue("addContract", e.target.value); this.verifyContract(e.target.value.toLowerCase(), network); }}
                   disabled={loading ? true : false}
                 />
                 {loading ? "Loading..." : addContractStatus.error === "ABI_DATA_ERROR" ?
@@ -416,7 +416,7 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                               <ErrorMessage name={`contracts.${index}.address`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                             </label>
                             <Field // eslint-disable-next-line react/jsx-no-bind
-                              onChange={async (e: any) => { setFieldValue(`contracts.${index}.address`, e.target.value); await this.getContractABI(e.target.value, setFieldValue, index); }}
+                              onChange={async (e: any) => { setFieldValue(`contracts.${index}.address`, e.target.value); await this.getContractABI(e.target.value, setFieldValue, index, network); }}
                               component="select"
                               name={`contracts.${index}.address`}
                               type="text"

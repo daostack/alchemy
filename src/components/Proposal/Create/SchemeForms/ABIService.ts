@@ -2,7 +2,7 @@ import { AbiItem } from "web3-utils";
 import { SortService } from "lib/sortService";
 const Web3 = require("web3");
 import axios from "axios";
-import { targetedNetwork } from "lib/util";
+import { Networks } from "lib/util";
 const InputDataDecoder = require("ethereum-input-data-decoder");
 import { isArrayParameter } from "./Validators";
 
@@ -28,8 +28,7 @@ export interface IDecodedData {
  * @param {string} contractAddress
  * @returns {string} URL
  */
-const getUrl = (contractAddress: string): string => {
-  const network = targetedNetwork();
+const getUrl = (contractAddress: string, network: Networks): string => {
   if (network === "xdai"){
     return `https://blockscout.com/poa/xdai/api?module=contract&action=getabi&address=${contractAddress}`;
   }
@@ -83,11 +82,12 @@ export const extractABIMethods = (abi: AbiItem[]): IAbiItemExtended[] => {
 };
 
 /**
- * Given contract address returns it's ABI data.
+ * Given contract address and current network returns it's ABI data.
  * @param {string} contractAddress
+ * @param {Networks} network
  */
-export const getABIByContract = async (contractAddress: string): Promise<Array<any>> => {
-  const url = getUrl(contractAddress);
+export const getABIByContract = async (contractAddress: string, network: Networks): Promise<Array<any>> => {
+  const url = getUrl(contractAddress, network);
   try {
     const response = await axios({ url: url, method: "GET" }).then(res => { return res.data; });
     if (response.status === "0") {
