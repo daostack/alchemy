@@ -5,10 +5,14 @@
   - Improvements
     - Verify parameters hash
     - Whitelist PrimeDAO Token
-    - Use subgraph v41_3
+    - Use subgraph v41_4 and arc.js 0.2.80
+    - Some UI/UX improvements
+    - Alchemy 2.0 banners are removed
 
   - Bugs Fixed
-    - Execute Calls button is displayed in Generic Scheme before it passed
+    - Execute Calls button is displayed in Generic Scheme proposal before it passed
+    - Issue connecting to WalletConnect
+    - Can't create multi-call proposal in some cases due to old migration version
 
   - Features Removed
     - Dao History Page
