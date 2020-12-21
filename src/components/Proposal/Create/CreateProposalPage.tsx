@@ -32,6 +32,7 @@ interface IExternalStateProps {
   history: History;
   schemeId: string;
   parentPath: string;
+  onBackToParent: (parentPath: string) => void;
 }
 
 interface IStateProps {
@@ -57,9 +58,8 @@ export class CreateProposalPage extends React.Component<IProps, IStateProps> {
   }
 
   public doClose = () => {
-    const { history, parentPath } = this.props;
-
-    history.push(parentPath);
+    const { onBackToParent, parentPath } = this.props;
+    onBackToParent(parentPath);
   }
 
   public async componentDidMount() {
