@@ -269,7 +269,7 @@ const SubscribedDaoContainer = withSubscription({
   errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
-    const daoAddress = props.match.params.daoAvatarAddress;
+    const daoAddress = props.match.params.daoAvatarAddress?.toLowerCase();
     const arc = getArcByDAOAddress(daoAddress);
     const dao = arc.dao(daoAddress);
     const observable = combineLatest(

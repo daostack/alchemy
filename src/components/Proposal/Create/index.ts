@@ -35,7 +35,7 @@ const SubscribedCreateProposalPage: any = withSubscription<any, any>({
   errorComponent: null,
   checkForUpdate: ["daoAvatarAddress", "schemeId"],
   createObservable: (props: IExternalStateProps) => {
-    const arc = getArcByDAOAddress(props.daoAvatarAddress);
+    const arc = getArcByDAOAddress(props.daoAvatarAddress?.toLowerCase());
     if (props.schemeId) {
       const scheme = arc.scheme(props.schemeId);
       return scheme.state();

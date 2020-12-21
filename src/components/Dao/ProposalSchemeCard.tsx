@@ -87,8 +87,9 @@ export default withSubscription({
   },
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArcByDAOAddress(props.dao.address);
-    const dao = arc.dao(props.dao.address);
+    const address = props.dao.address?.toLowerCase();
+    const arc = getArcByDAOAddress(address);
+    const dao = arc.dao(address);
     return combineLatest(
       props.scheme.state(standardPolling()),
       dao.proposals({ where: {

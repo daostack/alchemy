@@ -265,7 +265,7 @@ const createSubscriptionObservable = (props: IStateProps, data: SubscriptionData
   const memberDAOsquery = gql`
     query ReputationHolderSearch {
       reputationHolders(where: {
-          address: "${currentAccountAddress}"
+          address: "${currentAccountAddress?.toLowerCase()}"
           ${followingDAOs.length ? "dao_not_in: [" + followingDAOs.map(dao => "\"" + dao + "\"").join(",") + "]" : ""}
         },
       ) {

@@ -656,8 +656,9 @@ const SubscribedCreateContributionRewardExProposal = withSubscription({
   wrappedComponent: CreateProposal,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
-    const arc = getArc(getNetworkByDAOAddress(props.daoAvatarAddress));
-    return arc.dao(props.daoAvatarAddress).state();
+    const daoAvatarAddress = props.daoAvatarAddress?.toLowerCase();
+    const arc = getArc(getNetworkByDAOAddress(daoAvatarAddress));
+    return arc.dao(daoAvatarAddress).state();
   },
 });
 

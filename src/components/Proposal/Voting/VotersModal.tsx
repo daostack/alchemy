@@ -186,9 +186,9 @@ const voterModalWithSubscriptions = withSubscription({
   checkForUpdate: [],
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArcByDAOAddress(props.dao.dao.id);
-    const dao = arc.dao(props.dao.address);
-    const proposalId = props.proposal.id;
+    const arc = getArcByDAOAddress(props.dao.dao.id?.toLowerCase());
+    const dao = arc.dao(props.dao.address?.toLowerCase());
+    const proposalId = props.proposal.id?.toLowerCase();
     const proposal = dao.proposal(proposalId);
     // subscribe is false by default
     return proposal.votes({}, { });

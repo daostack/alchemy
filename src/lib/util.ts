@@ -44,7 +44,7 @@ export function checkTotalPercent(split: any) {
 export const getDAONameByID = (_daoAddress: string): string => {
   const daos = getDAOs();
   for (const network in daos) {
-    const daoAddress = _daoAddress.toLowerCase();
+    const daoAddress = _daoAddress?.toLowerCase();
     if (daos[network][daoAddress] !== undefined) {
       return daos[network][daoAddress];
     }
@@ -294,7 +294,7 @@ export const getArcByProvider = async (provider: any): Promise<Arc> => {
 export const getNetworkByDAOAddress = (daoAddress: string): Networks => {
   const daos = getDAOs();
   for (const network in daos) {
-    if (daos[network][daoAddress.toLowerCase()] !== undefined) {
+    if (daos[network][daoAddress?.toLowerCase()] !== undefined) {
       return network as Networks;
     }
   }
@@ -307,7 +307,7 @@ export const getNetworkByDAOAddress = (daoAddress: string): Networks => {
  * @returns {Arc}
  */
 export const getArcByDAOAddress = (daoAddress: string): Arc => {
-  const network = getNetworkByDAOAddress(daoAddress.toLowerCase());
+  const network = getNetworkByDAOAddress(daoAddress?.toLowerCase());
   return network ? getArcs()[network] : undefined;
 };
 
@@ -322,7 +322,7 @@ export const getNetworkByAddress = (_daoAddress: string): Networks => {
   for (const network in arcs) {
     const arc = arcs[network];
     try {
-      const daoAddress = _daoAddress.toLowerCase();
+      const daoAddress = _daoAddress?.toLowerCase();
       if (arc.getContractInfo(daoAddress, undefined, "readonly") !== null) {
         return network as Networks;
       }
@@ -625,6 +625,7 @@ export function ensureHttps(url: string) {
 
 export function isAddress(_address: Address, allowNulls = false): boolean {
   const address = _address?.toLowerCase();
+  console.log("after lower case address", { address });
   return Web3.utils.isAddress(address) && (allowNulls || (Number(address) > 0));
 }
 
@@ -816,7 +817,7 @@ export const buf2hex = (buffer: Array<any>): string => { // buffer is an ArrayBu
 export const getContractName = (address: string, daoAddress: string): string => {
   const arc = getArc(getNetworkByDAOAddress(daoAddress));
   try {
-    return arc.getContractInfo(address.toLowerCase()).name;
+    return arc.getContractInfo(address?.toLowerCase()).name;
   } catch (e) {
     return "unknown name";
   }

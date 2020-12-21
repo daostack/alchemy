@@ -65,11 +65,12 @@ export default withSubscription({
     if (!arc) {
       return of([]);
     }
+    const addrs = address?.toLowerCase();
     return combineLatest(
-      address,
-      (address && dao && dao.dao.member(address).state( standardPolling())) || of(null),
-      ethBalance(address, arc, network).pipe(ethErrorHandler()),
-      arc?.GENToken().balanceOf(address).pipe(ethErrorHandler()),
+      addrs,
+      (addrs && dao && dao.dao.member(addrs).state( standardPolling())) || of(null),
+      ethBalance(addrs, arc, network).pipe(ethErrorHandler()),
+      arc?.GENToken().balanceOf(addrs).pipe(ethErrorHandler()),
     );
   },
 });

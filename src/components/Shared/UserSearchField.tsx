@@ -145,8 +145,9 @@ const SubscribedUserSearchField = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArcByDAOAddress(props.daoAvatarAddress);
-    return arc.dao(props.daoAvatarAddress).members();
+    const daoAvatarAddress = props.daoAvatarAddress?.toLowerCase();
+    const arc = getArcByDAOAddress(daoAvatarAddress);
+    return arc.dao(daoAvatarAddress).members();
   },
 });
 

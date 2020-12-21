@@ -54,8 +54,9 @@ export function createProposal(proposalOptions: IProposalCreateOptions, daoAvata
   };
 }
 
-export function executeProposal(avatarAddress: string, proposalId: string, _accountAddress: string) {
+export function executeProposal(_avatarAddress: string, proposalId: string, _accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
+    const avatarAddress = _avatarAddress?.toLowerCase();
     const arc = getArcByDAOAddress(avatarAddress);
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
     const proposalObj = await arc.dao(avatarAddress).proposal(proposalId);
@@ -71,9 +72,10 @@ export function executeProposal(avatarAddress: string, proposalId: string, _acco
   };
 }
 
-export function executeCalls(avatarAddress: string, proposalId: string) {
+export function executeCalls(_avatarAddress: string, proposalId: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     try {
+      const avatarAddress = _avatarAddress?.toLowerCase();
       const arc = getArcByDAOAddress(avatarAddress);
       const observer = operationNotifierObserver(dispatch, "Execute calls");
       const proposalObj = await arc.dao(avatarAddress).proposal(proposalId);
@@ -97,8 +99,9 @@ export type VoteAction = IAsyncAction<"ARC_VOTE", {
   voter: any;
 }>;
 
-export function voteOnProposal(daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) {
+export function voteOnProposal(_daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) {
   return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
+    const daoAvatarAddress = _daoAvatarAddress?.toLowerCase();
     const arc = getArcByDAOAddress(daoAvatarAddress);
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Vote");
@@ -117,8 +120,9 @@ export type StakeAction = IAsyncAction<"ARC_STAKE", {
   proposal: any;
 }>;
 
-export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
+export function stakeProposal(_daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
   return async (dispatch: Redux.Dispatch<any, any>, ) => {
+    const daoAvatarAddress = _daoAvatarAddress?.toLowerCase();
     const arc = getArcByDAOAddress(daoAvatarAddress);
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Stake");
@@ -148,8 +152,9 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
   currentAccountRedemptions: IRedemptionState;
 }>;
 
-export function redeemProposal(daoAvatarAddress: string, proposalId: string, accountAddress: string) {
+export function redeemProposal(_daoAvatarAddress: string, proposalId: string, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
+    const daoAvatarAddress = _daoAvatarAddress?.toLowerCase();
     const arc = getArcByDAOAddress(daoAvatarAddress);
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Reward");

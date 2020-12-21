@@ -421,8 +421,9 @@ const SubscribedCreateContributionReward = withSubscription({
   wrappedComponent: CreateContributionReward,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
-    const arc = getArcByDAOAddress(props.daoAvatarAddress);
-    return arc.dao(props.daoAvatarAddress).state();
+    const daoAvatarAddress = props.daoAvatarAddress?.toLowerCase();
+    const arc = getArcByDAOAddress(daoAvatarAddress);
+    return arc.dao(daoAvatarAddress).state();
   },
 });
 

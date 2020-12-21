@@ -314,8 +314,8 @@ const SubscribedAccountProfilePage = withSubscription({
 
   createObservable: (props: IProps) => {
     const queryValues = parse(props.location.search);
-    const daoAvatarAddress = queryValues.daoAvatarAddress as string;
-    const accountAddress = props.match.params.accountAddress;
+    const daoAvatarAddress = queryValues.daoAvatarAddress?.toLocaleString();
+    const accountAddress = props.match.params.accountAddress?.toLowerCase();
     let dao: DAO;
     if (daoAvatarAddress) {
       const arc = getArcByDAOAddress(queryValues.daoAvatarAddress as string);

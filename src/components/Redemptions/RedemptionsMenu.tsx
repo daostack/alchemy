@@ -199,8 +199,9 @@ const SubscribedMenuItemContent = withSubscription({
   checkForUpdate: [], // Parent component will rerender anyway.
   createObservable: (props: IMenuItemProps) => {
     const { currentAccountAddress, proposal } = props;
-    const arc = getArcByDAOAddress(proposal.dao.id);
-    const dao = arc.dao(proposal.dao.id);
+    const proposalDaoId = proposal.dao.id?.toLowerCase();
+    const arc = getArcByDAOAddress(proposalDaoId);
+    const dao = arc.dao(proposalDaoId);
     const daoEthBalance = concat(of(new BN("0")), ethBalance(proposal.dao.id, arc)).pipe(ethErrorHandler());
     const rewards = proposal.proposal.rewards({ where: { beneficiary: currentAccountAddress } })
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))

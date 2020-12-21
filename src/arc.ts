@@ -266,7 +266,7 @@ const ACCOUNT_STORAGEKEY = "currentAddress";
 
 export function cacheWeb3Info(account: Address): void {
   if (account) {
-    localStorage.setItem(ACCOUNT_STORAGEKEY, account);
+    localStorage.setItem(ACCOUNT_STORAGEKEY, account.toLowerCase());
   } else {
     localStorage.removeItem(ACCOUNT_STORAGEKEY);
   }
