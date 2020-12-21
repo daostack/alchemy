@@ -81,7 +81,7 @@
   "dependencies": {
     "3box": "1.20.2",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
-    "@daostack/arc.js": "0.2.78",
+    "@daostack/arc.js": "0.2.80",
     "@dorgtech/daocreator-ui": "1.0.21",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
@@ -144,12 +144,12 @@
     "rxjs": "6.4.0",
     "ts-node": "^5.0.1",
     "utility-types": "^3.10.0",
-    "web3": "1.3.0",
+    "web3": "1.3.1",
     "web3modal": "1.9.1"
   },
   "devDependencies": {
     "@babel/plugin-syntax-dynamic-import": "^7.7.4",
-    "@daostack/migration": "0.0.1-rc.47-v0",
+    "@daostack/migration": "0.0.1-rc.53-v0",
     "@storybook/addon-info": "^5.0.10",
     "@storybook/react": "^5.0.10",
     "@types/chai": "4.2.14",

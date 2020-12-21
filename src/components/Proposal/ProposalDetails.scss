@@ -1,3 +1,7 @@
+code {
+  white-space: pre-line;
+}
+
 button.disabled {
   cursor: not-allowed !important;
 }
@@ -26,7 +30,6 @@ button.disabled {
 
 .wrapper {
   width: 100%;
-  max-width: 1440px;
 }
 
 .clickable {

@@ -34,10 +34,16 @@ interface IStateProps {
   followingDaosAddresses: Array<any>;
 }
 
+enum PROPOSAL_WINDOW_TYPE {
+  PROPOSAL_LIST = "PROPOSAL_LIST",
+  SPECIFIC_PLUGIN = "SPECIFIC_PLUGIN",
+}
+
 interface IState {
   memberDaos: Array<any>;
   modalParentPath: string;
   schemeId: string|null;
+  proposalWindowType: PROPOSAL_WINDOW_TYPE|null;
 }
 
 interface IDispatchProps {
@@ -69,6 +75,7 @@ class DaoContainer extends React.Component<IProps, IState> {
       memberDaos: [],
       modalParentPath: "/dao/:daoAvatarAddress",
       schemeId: "",
+      proposalWindowType: null,
     };
   }
   public daoSubscription: any;
@@ -112,6 +119,7 @@ class DaoContainer extends React.Component<IProps, IState> {
       this.setState(() => ({
         modalParentPath: "/dao/:daoAvatarAddress/scheme/:schemeId",
         schemeId,
+        proposalWindowType: PROPOSAL_WINDOW_TYPE.SPECIFIC_PLUGIN,
       }), () => {
         this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
       });
@@ -119,11 +127,21 @@ class DaoContainer extends React.Component<IProps, IState> {
       this.setState(() => ({
         modalParentPath: "/dao/:daoAvatarAddress",
         schemeId: "",
+        proposalWindowType: PROPOSAL_WINDOW_TYPE.PROPOSAL_LIST,
       }), () => {
         this.props.history.push(`/dao/${daoAvatarAddress}/proposals/create`);
       });
     }
   };
+
+  public handleProposalWindowClose = (parentPath: string) => {
+    const { history } = this.props;
+    history.push(parentPath);
+    this.setState({
+      schemeId: "",
+      proposalWindowType: null,
+    });
+  }
 
   private daoMembersRoute = (routeProps: any) => <DaoMembersPage {...routeProps} daoState={this.props.data[0]} />;
   private daoProposalRoute = (routeProps: any) =>
@@ -160,6 +178,7 @@ class DaoContainer extends React.Component<IProps, IState> {
   private createProposalRoute = (routeProps: any) => (
     <CreateProposalPage
       {...routeProps}
+      onBackToParent={this.handleProposalWindowClose}
       dao={this.props.data[0].dao}
       currentAccountAddress={this.props.currentAccountAddress}
     />
@@ -215,7 +234,7 @@ class DaoContainer extends React.Component<IProps, IState> {
             <Route path="/dao/:daoAvatarAddress/crx/proposal/:proposalId"
               render={this.daoCrxProposalRoute} />
 
-            <Route exact={!this.state.schemeId} path="/dao/:daoAvatarAddress/scheme/:schemeId"
+            <Route exact={this.state.proposalWindowType === PROPOSAL_WINDOW_TYPE.PROPOSAL_LIST} path="/dao/:daoAvatarAddress/scheme/:schemeId"
               render={this.schemeRoute} />
 
             <Route exact path="/dao/:daoAvatarAddress/schemes"
