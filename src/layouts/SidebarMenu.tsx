@@ -198,8 +198,9 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
       [css.noDAO]: !this.props.daoAvatarAddress,
       clearfix: true,
     });
+    const daoAddress = this.props.daoAvatarAddress ?? this.props.data?.dao.id;
 
-    const network = this.props.daoAvatarAddress ? this.props.daoAvatarAddress : targetedNetwork();
+    const network = daoAddress ? getNetworkByDAOAddress(daoAddress) : targetedNetwork();
     const testNet = !((network === "main") || (network === "xdai"));
 
     return (
