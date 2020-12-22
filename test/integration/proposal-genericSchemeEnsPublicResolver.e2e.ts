@@ -1,6 +1,6 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
-import { getArc, gotoDaoSchemes } from "./utils";
+import { getArc, gotoDaoSchemes, hideCookieAcceptWindow} from "./utils";
 
 describe("Proposals ENS Resolver", () => {
   let daoAddress: string;
@@ -15,7 +15,7 @@ describe("Proposals ENS Resolver", () => {
 
   it("Create a ENSPublicResolver proposal and check that the data is submitted correctly", async () => {
     await gotoDaoSchemes(daoAddress);
-
+    await hideCookieAcceptWindow();
     const ensTitle = await $("h2=GenericSchemeENSPublicResolver");
     await ensTitle.waitForExist();
     await ensTitle.click();
