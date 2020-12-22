@@ -623,8 +623,7 @@ export function ensureHttps(url: string) {
   return url;
 }
 
-export function isAddress(_address: Address, allowNulls = false): boolean {
-  const address = _address?.toLowerCase();
+export function isAddress(address: Address, allowNulls = false): boolean {
   return Web3.utils.isAddress(address) && (allowNulls || (Number(address) > 0));
 }
 
