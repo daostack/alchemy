@@ -476,7 +476,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                           placeholder="e.g. 0x0000000000000000000000000000000000000000000000000000000000001234"
                           name="parametersHash"
                           className={touched.parametersHash && errors.parametersHash ? css.error : null}
-                          validate={async () => { return await this.verifyParametersHash(arc, this.props.scheme.address, values.parametersHash); }}
+                          validate={async () => { return await this.verifyParametersHash(arc, values.schemeToAdd?values.schemeToAdd:values.schemeToEdit, values.parametersHash); }}
                         />
                       </div>}
 
