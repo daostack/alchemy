@@ -1,6 +1,6 @@
 import { IDAOState, IProposalState, IProposalType } from "@daostack/arc.js";
 import classNames from "classnames";
-import { getNetworkByDAOAddress, getNetworkName, linkToEtherScan } from "lib/util";
+import { getNetworkByDAOAddress, linkToEtherScan } from "lib/util";
 import CopyToClipboard from "components/Shared/CopyToClipboard";
 import { schemeNameAndAddress } from "lib/schemeUtils";
 import * as React from "react";
@@ -22,18 +22,6 @@ interface IState {
 type IProps = IExternalProps;
 
 export default class ProposalSummary extends React.Component<IProps, IState> {
-
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      network: "",
-    };
-
-  }
-
-  public async componentDidMount(): Promise<void> {
-    this.setState({ network: (await getNetworkName()).toLowerCase() });
-  }
 
   public render(): RenderOutput {
     const { proposal, detailView, transactionModal } = this.props;

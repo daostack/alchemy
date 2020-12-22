@@ -18,6 +18,7 @@ interface IProps {
 
 export default (props: IProps) => {
   const { canRewardNone, canRewardOnlySome, currentAccountAddress, contributionRewards, dao, gpRewards, id, proposal } = props;
+  const network = getNetworkByDAOAddress(dao.id);
 
   const messageDiv = (canRewardNone || canRewardOnlySome) ? <div className={css.message}>
     <img className={css.icon} src="/assets/images/Icon/Alert-yellow-b.svg" />
@@ -49,7 +50,7 @@ export default (props: IProps) => {
     c = <div key={id + "_staker_tokens"}>
       <strong>For staking on the proposal you are due to receive:</strong>
       <ul>
-        <li>{fromWei(gpRewards.tokensForStaker)} {genName()}</li>
+        <li>{fromWei(gpRewards.tokensForStaker)} {genName(network)}</li>
       </ul>
     </div>;
     rewardComponents.push(c);
@@ -58,7 +59,7 @@ export default (props: IProps) => {
     c = <div key={id + "_staker_bounty"}>
       <strong>For staking on the proposal you are due to receive:</strong>
       <ul>
-        <li>{fromWei(gpRewards.daoBountyForStaker)} {genName()} as bounty from {dao.name}
+        <li>{fromWei(gpRewards.daoBountyForStaker)} {genName(network)} as bounty from {dao.name}
         </li>
       </ul>
     </div >;
@@ -79,12 +80,12 @@ export default (props: IProps) => {
           <ul>
             {contributionRewards["eth"] ?
               <li>
-                {formatTokens(contributionReward.ethReward, baseTokenName(getNetworkByDAOAddress(dao.address)))}
+                {formatTokens(contributionReward.ethReward, baseTokenName(network))}
               </li> : ""
             }
             {contributionRewards["externalToken"] ?
               <li>
-                {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken, getNetworkByDAOAddress(dao.id)), tokenDecimals(contributionReward.externalToken, getNetworkByDAOAddress(dao.id)))}
+                {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken, network), tokenDecimals(contributionReward.externalToken, network))}
               </li> : ""
             }
             {contributionRewards["rep"] ? <li><Reputation reputation={contributionRewards["rep"]} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
