@@ -625,7 +625,6 @@ export function ensureHttps(url: string) {
 
 export function isAddress(_address: Address, allowNulls = false): boolean {
   const address = _address?.toLowerCase();
-  console.log("after lower case address", { address });
   return Web3.utils.isAddress(address) && (allowNulls || (Number(address) > 0));
 }
 
