@@ -39,7 +39,7 @@ describe("SchemeRegistrar Proposals", () => {
     await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
     const schemeToAddInput = await $("*[id=\"schemeToAddInput\"]");
-    await schemeToAddInput.setValue("0xb2287ca4a461a9bb73817fdd38fd14b59b8fb714");
+    await schemeToAddInput.setValue("0x4a1d2a5060c782049ef966d9412f1239e95183b7");
 
     const parametersHashInput = await $("*[id=\"parametersHashInput\"]");
     await parametersHashInput.setValue(GOOD_PARAMS_HASH);
