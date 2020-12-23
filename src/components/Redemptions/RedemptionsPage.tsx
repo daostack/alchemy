@@ -90,7 +90,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
                   onClick={this.redeemAll}
                 >
                   <img src="/assets/images/Icon/redeem.svg" />
-                Redeem all from {this.props.network}
+                Redeem {this.props.network && `all from ${this.props.network}`}
                 </button>
               </div>
               : ""
@@ -163,8 +163,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
   }
 
   private renderTotalRewards(): RenderOutput {
-    const { currentAccountAddress, data: proposals } = this.props;
-
+    const { network, currentAccountAddress, data: proposals } = this.props;
     const genReward = new BN(0);
     const ethReward = new BN(0);
     const externalTokenRewards: { [symbol: string]: BN } = {};
@@ -209,10 +208,10 @@ class RedemptionsPage extends React.Component<IProps, null> {
 
     const totalRewards: any[] = [];
     if (!ethReward.isZero()) {
-      totalRewards.push(formatTokens(ethReward, baseTokenName()));
+      totalRewards.push(formatTokens(ethReward, baseTokenName(network)));
     }
     if (!genReward.isZero()) {
-      totalRewards.push(formatTokens(genReward, genName()));
+      totalRewards.push(formatTokens(genReward, genName(network)));
     }
     Object.keys(externalTokenRewards).forEach((tokenAddress) => {
       totalRewards.push(formatTokens(externalTokenRewards[tokenAddress], tokenSymbol(tokenAddress), tokenDecimals(tokenAddress)));
@@ -247,7 +246,8 @@ const SubscribedRedemptionsPage = withSubscription({
       {
         proposals(
           where: {
-            accountsWithUnclaimedRewards_contains: ["${currentAccountAddress}"]
+            accountsWithUnclaimedRewards_contains: ["${currentAccountAddress}"],
+            stage_in:["Executed"]
           },
           orderBy: closingAt
         ) {

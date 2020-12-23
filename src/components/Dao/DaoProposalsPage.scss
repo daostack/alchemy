@@ -1,0 +1,104 @@
+.wrapper {
+  position: relative;
+  top: -30px;
+  .topBarWrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: sticky;
+    background-color: $accent-6;
+    z-index: 2;
+    padding-top: 30px;
+    top: 15px;
+    padding-bottom: 15px;
+    .top {
+      border-bottom: 1px solid $gray-2;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      align-items: center;
+      margin-bottom: 30px;
+      .title {
+        color: $light-blue;
+      }
+      .createProposalButton {
+        color: $white;
+        cursor: pointer;
+        background-color: $accent-1;
+        border-radius: 15px;
+        padding: 8px 15px;
+
+        &:hover {
+          opacity: 0.8;
+        }
+
+        &.disabled,
+        &.disabled:hover {
+          background-color: $gray-1;
+          cursor: not-allowed;
+        }
+      }
+    }
+    .searchBox {
+      margin-bottom: 20px;
+      width: fit-content;
+      border-radius: 20px;
+      background: url("/assets/images/Icon/search.svg") $white no-repeat left 6px center;
+      background-size: 18px;
+      padding-left: 30px;
+  
+      input:-webkit-autofill {
+        transition: all 5000s ease-in-out 0s;
+      }
+  
+      &.filtering {
+        background: url("/assets/images/Icon/buttonLoadingBlue.gif") $white no-repeat left 6px center;
+      }
+  
+      input {
+        border: none;
+        font-family: "AccordBold", sans-serif;
+        height: 30px;
+        width: 400px;
+        font-size: 15px;
+        color: #4f6176;
+        border-radius: 20px;
+      }
+  
+      input:focus {
+        outline: none;
+      }
+  
+      button {
+        height: 26px;
+        display: inline-block;
+        position: relative;
+        top: 2px;
+        border: none;
+        outline: none;
+        background-color: transparent;
+  
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .tableContainer {
+    position: relative;
+    table {
+      text-align: left;
+      position: relative;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th {
+      background: $white;
+      position: sticky;
+      top: 220px; /* required for the stickiness */
+      box-shadow: 0 2px 2px -1px $black-halftone; // change to global color
+      padding: 10px;
+    }
+  }
+}

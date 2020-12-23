@@ -1,3 +1,22 @@
+## 1.0.4
+  - Features Added
+    - Brand new Proposals Page
+
+  - Improvements
+    - Verify parameters hash
+    - Whitelist PrimeDAO Token
+    - Use subgraph v41_4 and arc.js 0.2.80
+    - Some UI/UX improvements
+    - Alchemy 2.0 banners are removed
+
+  - Bugs Fixed
+    - Execute Calls button is displayed in Generic Scheme proposal before it passed
+    - Issue connecting to WalletConnect
+    - Can't create multi-call proposal in some cases due to old migration version
+
+  - Features Removed
+    - Dao History Page
+
 ## 1.0.3
   - Features Added
     - Support multiple networks

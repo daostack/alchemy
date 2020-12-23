@@ -10,6 +10,7 @@ interface IProps {
   detailView?: boolean;
   proposal: IProposalState;
   schemeView?: boolean;
+  proposalsPage?: boolean;
   onEnd?(): any;
 }
 
@@ -28,7 +29,7 @@ export default class ProposalCountdown extends React.Component<IProps, IState> {
   public componentDidMount() {
     // update every five seconds
     this.interval = setInterval(() => {
-      const countdownState = calculateCountdown(closingTime(this.props.proposal));
+      const countdownState = calculateCountdown(closingTime(this.props.proposal, this.props.proposalsPage));
       this.setState(countdownState);
 
       if (countdownState.complete) {

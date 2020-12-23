@@ -35,9 +35,6 @@
     width: 67px;
   }
 
-  &.expanded button.executeButton {
-    width: 86px;
-  }
 }
 
 .wrapper.detailView {
@@ -67,6 +64,7 @@
 div.tooltipWhenDisabledContainer {
   display: "inline-block";
   cursor: "not-allowed";
+  margin: 0px 5px;
 }
 
 .redeemButton {

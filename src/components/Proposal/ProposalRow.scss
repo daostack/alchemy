@@ -1,0 +1,70 @@
+.row {
+  background-color: $white;
+  border-bottom: 1px solid $gray-2;
+  height: 60px;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+  }
+  td {
+    padding: 10px;
+  }
+
+  .titleWrapper {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    .title {
+      font-size: $sub-title;
+    }
+    .tagsWrapper {
+      display: flex;
+      margin-top: 5px;
+      .tag {
+        font-size: $body;
+        background-color: $gray-2;
+        border-radius: 20px;
+        width: fit-content;
+        padding: 5px 10px;
+        margin: 0px 5px;
+        line-height: 20px;
+        white-space: pre;
+        &:first-child {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+
+  .boostedWrapper {
+    display: flex;
+    align-items: center;
+    .boostedLabel {
+      margin-left: 5px;
+    }
+  }
+
+  .statusWrapper {
+    .statusLabel {
+      background-color: $gray-1;
+      text-align: center;
+      border-radius: 20px;
+      padding: 5px 10px;
+      color: $white;
+      &.passing {
+        background-color: $accent-3;
+      }
+      &.failing {
+        background-color: $accent-2;
+      }
+    }
+    .statusTime {
+      text-align: center;
+    }
+  }
+
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+

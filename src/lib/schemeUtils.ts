@@ -1,7 +1,9 @@
 /* eslint-disable no-bitwise */
 import { // Address,
   IContractInfo,
-  ISchemeState} from "@daostack/arc.js";
+  ISchemeState,
+  Scheme,
+} from "@daostack/arc.js";
 import { rewarderContractName } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 
@@ -11,7 +13,7 @@ import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import "moment";
 import * as moment from "moment-timezone";
 
-import { getArcByAddress, splitCamelCase } from "lib/util";
+import { getArcByAddress, getNetworkByDAOAddress, splitCamelCase } from "lib/util";
 
 export enum SchemePermissions {
   None = 0,
@@ -51,6 +53,14 @@ export const KNOWN_SCHEME_NAMES = [
   "GenericSchemeMultiCall",
 ];
 
+export const getKnownSchemes = (schemes: Scheme[]) => {
+  return (schemes || []).filter((scheme: Scheme) => KNOWN_SCHEME_NAMES.indexOf(scheme?.staticState?.name) >= 0);
+};
+
+export const getUnknownSchemes = (schemes: Scheme[]) => {
+  return (schemes || []).filter((scheme: Scheme) => KNOWN_SCHEME_NAMES.indexOf(scheme?.staticState?.name) === -1);
+};
+
 export const PROPOSAL_SCHEME_NAMES = [
   "ContributionReward",
   "GenericScheme",
@@ -61,33 +71,13 @@ export const PROPOSAL_SCHEME_NAMES = [
   "GenericSchemeMultiCall",
 ];
 
-// /**
-//  * return true if the address is the address of a known scheme (which we know how to represent)
-//  * @param  address [description]
-//  * @return         [description]
-//  */
-// export function isKnownScheme(address: Address) {
-//   const arc = getArc();
-//   let contractInfo;
-//   try {
-//     contractInfo = arc.getContractInfo(address);
-//   } catch (err) {
-//     if (err.message.match(/no contract/i)) {
-//       return false;
-//     }
-//     throw err;
-//   }
-
-//   if (KNOWN_SCHEME_NAMES.includes(contractInfo.name)) {
-//     return true;
-//   } else {
-//     return false;
-//   }
-// }
 
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
+  if (!scheme) {
+    return undefined;
+  }
   let name: string;
-  const contractInfo = (scheme as IContractInfo).alias ? scheme as IContractInfo : getArcByAddress(scheme.address).getContractInfo(scheme.address);
+  const contractInfo = (scheme as IContractInfo).alias ? scheme as IContractInfo : getArcByAddress(scheme.address)?.getContractInfo(scheme.address);
 
   const alias = contractInfo?.alias;
 
@@ -103,7 +93,9 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       } else {
         contractToCall = schemeState.uGenericSchemeParams.contractToCall;
       }
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
+
+      const network = getNetworkByDAOAddress(typeof schemeState.dao === "string" ? schemeState.dao : (schemeState.dao as any).id);
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall, network);
       if (genericSchemeInfo) {
         name = genericSchemeInfo.specs.name;
       } else {
@@ -139,7 +131,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
   } else {
     name = alias ?? fallback;
   }
-  return name;
+  return name || scheme.name;
 }
 
 /**

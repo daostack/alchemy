@@ -1,6 +1,6 @@
 // tslint:disable:max-classes-per-file
 import * as BN from "bn.js";
-import { Networks, targetedNetwork } from "lib/util";
+import { Networks } from "lib/util";
 
 const Web3 = require("web3");
 const namehash = require("eth-ens-namehash");
@@ -271,10 +271,7 @@ export class GenericSchemeRegistry {
    * @param  address an ethereum address
    * @return an object [specs to be written..]
    */
-  public getSchemeInfo(address: string, network?: Networks): GenericSchemeInfo {
-    if (!network) {
-      network = targetedNetwork();
-    }
+  public getSchemeInfo(address: string, network: Networks): GenericSchemeInfo {
     const spec = SCHEMEADDRESSES[network][address.toLowerCase()];
     if (spec) {
       return new GenericSchemeInfo(spec);

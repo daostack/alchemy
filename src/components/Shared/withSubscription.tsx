@@ -53,7 +53,7 @@ interface IWithSubscriptionOptions<Props extends ISubscriptionProps<ObservableTy
   /**
    * Optional component to display while waiting for the first bit of data to arrive
    */
-  loadingComponent?: React.ReactElement<any> | React.ComponentType<Props>;
+  loadingComponent?: React.ReactElement<any> | React.ComponentType<Props> | ((props: Props) => JSX.Element);
   /**
    * Optional as a hacky way to determine if when paging there is more data to load.
    */
@@ -209,10 +209,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
 
     // Combine the previousState with the results of the new observable from fetchMore
     private _fetchMoreCombine(oldState: ObservableType, newData: any): ObservableType {
-      // Kind of hacky way of figuring out if there is more data to load
-      if (newData.length < options.pageSize) {
-        this.setState({ hasMoreToLoad: false });
-      }
+
 
       if (options.fetchMoreCombine) {
         return options.fetchMoreCombine(oldState, newData);

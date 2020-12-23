@@ -169,7 +169,6 @@ class StakeButtons extends React.Component<IProps, IState> {
       [css.predictions]: true,
       [css.detailView]: parentPage === Page.ProposalDetails,
       [css.contextMenu]: contextMenu,
-      [css.historyView]: parentPage === Page.DAOHistory,
       [css.unconfirmedPrediction]: isPredicting,
     });
 

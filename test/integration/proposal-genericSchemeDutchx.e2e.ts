@@ -1,6 +1,6 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
-import { getArc, gotoDaoSchemes } from "./utils";
+import { getArc, gotoDaoSchemes, hideCookieAcceptWindow } from "./utils";
 
 describe("Proposals", () => {
   let daoAddress: string;
@@ -18,6 +18,7 @@ describe("Proposals", () => {
 
   it("Create a DutchX Generic Scheme proposal, vote for it, stake on it", async () => {
     await gotoDaoSchemes(daoAddress);
+    await hideCookieAcceptWindow();
 
     const schemeTitle = await $("h2=GenericSchemeDutchX");
     await schemeTitle.click();
@@ -56,6 +57,7 @@ describe("Proposals", () => {
 
   it("Export a DutchX Generic Scheme proposal", async () => {
     await gotoDaoSchemes(daoAddress);
+    await hideCookieAcceptWindow();
 
     const schemeTitle = await $("h2=GenericSchemeDutchX");
     await schemeTitle.click();
