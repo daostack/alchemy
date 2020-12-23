@@ -44,6 +44,7 @@ interface IState {
   modalParentPath: string;
   schemeId: string|null;
   proposalWindowType: PROPOSAL_WINDOW_TYPE|null;
+  loading: boolean;
 }
 
 interface IDispatchProps {
@@ -76,6 +77,7 @@ class DaoContainer extends React.Component<IProps, IState> {
       modalParentPath: "/dao/:daoAvatarAddress",
       schemeId: "",
       proposalWindowType: null,
+      loading: false,
     };
   }
   public daoSubscription: any;
@@ -108,6 +110,12 @@ class DaoContainer extends React.Component<IProps, IState> {
       return { id: dao.dao.id, name: dao.dao.name };
     });
     this.setState({ memberDaos: memberDaos });
+  }
+
+  componentDidUpdate(prevProps: IProps) {
+    if (this.props.data[0] !== prevProps.data[0]){
+      this.setState({ loading: false });
+    }
   }
 
   public handleNewProposal = async (schemeId?: string): Promise<void> => {
@@ -188,12 +196,15 @@ class DaoContainer extends React.Component<IProps, IState> {
       .replace(":daoAvatarAddress", route.params.daoAvatarAddress)
       .replace(":schemeId", this.state.schemeId);
   };
-  private onFollwingDaosListChange = (daoAddress: string, history: any) => history.push(`/dao/${daoAddress}`);
+  private onFollwingDaosListChange = (daoAddress: string, history: any) => {
+    this.setState({ loading: true });
+    history.push(`/dao/${daoAddress}`);
+  };
 
   public render(): RenderOutput {
     const daoState = this.props.data[0];
     const { followingDaosAddresses } = this.props;
-    const { memberDaos } = this.state;
+    const { memberDaos, loading } = this.state;
 
     const followingDaos = followingDaosAddresses?.filter(address => getDAONameByID(address) !== undefined)
     .map(daoAddress => {
@@ -205,7 +216,8 @@ class DaoContainer extends React.Component<IProps, IState> {
     const myDaosAddresses = [] as any;
     const myDaosOptions = myDaos?.map(dao => {
       myDaosAddresses.push(dao.id);
-      return <option key={dao.id} selected={dao.id === daoState.address ? true : false} value={dao.id}>{dao.name}</option>;
+      const currentDaoAddress = window.location.pathname.substring( window.location.pathname.lastIndexOf("/") + 1);
+      return <option key={dao.id} selected={dao.id === currentDaoAddress ? true : false} value={dao.id}>{dao.name}</option>;
     });
 
     if (!myDaosAddresses.includes(daoState.id)){
@@ -223,7 +235,7 @@ class DaoContainer extends React.Component<IProps, IState> {
           <meta name="twitter:description" content={daoState.name + " | Managed on Alchemy by DAOstack"} />
         </Helmet>
 
-        <div className={css.wrapper}>
+        {!loading ? <div className={css.wrapper}>
           <Switch>
             <Route exact path="/dao/:daoAvatarAddress/members"
               render={this.daoMembersRoute} />
@@ -257,7 +269,7 @@ class DaoContainer extends React.Component<IProps, IState> {
             component={this.createProposalRoute}
           />
 
-        </div>
+        </div> : <Loading />}
       </div>
     );
   }
