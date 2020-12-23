@@ -212,11 +212,11 @@ class DaoContainer extends React.Component<IProps, IState> {
     });
 
     const myDaos = followingDaos?.concat(memberDaos);
-
+    const currentDaoAddress = window.location.pathname.split("/")[2];
     const myDaosAddresses = [] as any;
     const myDaosOptions = myDaos?.map(dao => {
       myDaosAddresses.push(dao.id);
-      return <option key={dao.id} selected={dao.id === daoState.address ? true : false} value={dao.id}>{dao.name}</option>;
+      return <option key={dao.id} selected={dao.id === currentDaoAddress ? true : false} value={dao.id}>{dao.name}</option>;
     });
 
     if (!myDaosAddresses.includes(daoState.id)){
