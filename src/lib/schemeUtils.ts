@@ -71,31 +71,11 @@ export const PROPOSAL_SCHEME_NAMES = [
   "GenericSchemeMultiCall",
 ];
 
-// /**
-//  * return true if the address is the address of a known scheme (which we know how to represent)
-//  * @param  address [description]
-//  * @return         [description]
-//  */
-// export function isKnownScheme(address: Address) {
-//   const arc = getArc();
-//   let contractInfo;
-//   try {
-//     contractInfo = arc.getContractInfo(address);
-//   } catch (err) {
-//     if (err.message.match(/no contract/i)) {
-//       return false;
-//     }
-//     throw err;
-//   }
-
-//   if (KNOWN_SCHEME_NAMES.includes(contractInfo.name)) {
-//     return true;
-//   } else {
-//     return false;
-//   }
-// }
 
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
+  if (!scheme) {
+    return undefined;
+  }
   let name: string;
   const contractInfo = (scheme as IContractInfo).alias ? scheme as IContractInfo : getArcByAddress(scheme.address)?.getContractInfo(scheme.address);
 
@@ -113,7 +93,9 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
       } else {
         contractToCall = schemeState.uGenericSchemeParams.contractToCall;
       }
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall, getNetworkByDAOAddress(schemeState.dao));
+
+      const network = getNetworkByDAOAddress(typeof schemeState.dao === "string" ? schemeState.dao : (schemeState.dao as any).id);
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall, network);
       if (genericSchemeInfo) {
         name = genericSchemeInfo.specs.name;
       } else {
