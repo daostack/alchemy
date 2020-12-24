@@ -1,7 +1,7 @@
 import * as Redux from "redux";
 
-import { IRootState } from "reducers";
-import { ActionTypes } from "reducers/uiReducer";
+import { IRootState } from "@store/index";
+import { ActionTypes } from "@store/ui/uiReducer";
 import { ISimpleMessagePopupProps } from "components/Shared/SimpleMessagePopup";
 
 export function showTour() {

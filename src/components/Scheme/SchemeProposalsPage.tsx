@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Observable, combineLatest } from "rxjs";
 import { connect } from "react-redux";
-import { showNotification } from "reducers/notifications";
+import { showNotification } from "@store/notifications/notifications.reducer";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./SchemeProposals.scss";

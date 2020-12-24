@@ -7,7 +7,7 @@ import Reputation from "components/Account/Reputation";
 import { getNetworkByDAOAddress } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
-import { showNotification } from "reducers/notifications";
+import { showNotification } from "@store/notifications/notifications.reducer";
 import * as css from "./VoteBreakdown.scss";
 
 interface IExternalProps {

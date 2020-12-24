@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { IDAOState, ISchemeState, Address } from "@daostack/arc.js";
-import { createProposal } from "actions/arcActions";
+import { createProposal } from "@store/arc/arcActions";
 import { enableWalletProvider } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -10,7 +10,7 @@ import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Analytics from "lib/analytics";
 import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { showNotification, NotificationStatus } from "@store/notifications/notifications.reducer";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "./MarkdownField";

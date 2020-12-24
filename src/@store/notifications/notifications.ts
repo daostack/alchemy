@@ -1,6 +1,6 @@
-import { INotificationsState, INotification } from "reducers/notifications";
+import { INotificationsState, INotification } from "@store/notifications/notifications.reducer";
 import { createSelector } from "reselect";
-import { IRootState } from "../reducers";
+import { IRootState } from "@store/index";
 
 const notifications = (state: IRootState): INotificationsState => state.notifications;
 

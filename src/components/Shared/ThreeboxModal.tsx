@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import ModalPopup from "components/Shared/ModalPopup";
-import { showNotification } from "reducers/notifications";
+import { showNotification } from "@store/notifications/notifications.reducer";
 import * as css from "./ThreeboxModal.scss";
 
 interface IProps {

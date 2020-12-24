@@ -1,6 +1,6 @@
 import { createDataURL } from "ethereum-blockies-png";
 import * as React from "react";
-import { IProfileState } from "reducers/profilesReducer";
+import { IProfileState } from "@store/profiles/profilesReducer";
 
 import * as css from "./Account.scss";
 

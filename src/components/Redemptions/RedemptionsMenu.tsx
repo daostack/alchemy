@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalState, IRewardState, Proposal, Reward } from "@daostack/arc.js";
 import { enableWalletProvider } from "arc";
-import { redeemProposal } from "actions/arcActions";
+import { redeemProposal } from "@store/arc/arcActions";
 
 import * as BN from "bn.js";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -12,9 +12,9 @@ import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { IRootState } from "reducers";
-import { showNotification } from "reducers/notifications";
-import { IProfileState } from "reducers/profilesReducer";
+import { IRootState } from "@store";
+import { showNotification } from "@store/notifications/notifications.reducer";
+import { IProfileState } from "@store/profiles/profilesReducer";
 import { combineLatest, concat, Observable, of } from "rxjs";
 import { defaultIfEmpty, map, mergeMap } from "rxjs/operators";
 import * as css from "./RedemptionsMenu.scss";

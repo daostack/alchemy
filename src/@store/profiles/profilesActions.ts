@@ -1,11 +1,11 @@
 import * as Box from "3box";
 
-import { AsyncActionSequence, IAsyncAction } from "actions/async";
+import { AsyncActionSequence, IAsyncAction } from "@store/async";
 import { getWeb3Provider } from "arc";
 import Analytics from "lib/analytics";
 
-import { NotificationStatus, showNotification } from "reducers/notifications";
-import { ActionTypes, FollowType, newProfile } from "reducers/profilesReducer";
+import { NotificationStatus, showNotification } from "@store/notifications/notifications.reducer";
+import { ActionTypes, FollowType, newProfile } from "@store/profiles/profilesReducer";
 import { arrayRemove } from "lib/util";
 
 // Load account profile data from our database for all the "members" of the DAO
