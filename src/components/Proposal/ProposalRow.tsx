@@ -31,7 +31,7 @@ const ProposalRow = (props: IProps) => {
         <div className={css.title} title={title}>{title}</div>
         {tagsLables.length > 0 && <div className={css.tagsWrapper}>{tagsLables}</div>}
       </td>
-      <td>{schemeName(scheme)}</td>
+      <td>{schemeName(scheme) ?? "Unknown"}</td>
       <td>{boostedAt && (status === IProposalStatus.Passing || status === IProposalStatus.Failing) && <div className={css.boostedWrapper}><img width="12px" src="/assets/images/Icon/boosted.svg" /> <span className={css.boostedLabel}>Boosted</span></div>}</td>
       <td className={css.statusWrapper}>
         <div className={statusLabelClass}>{status}</div>

@@ -74,7 +74,7 @@ export const PROPOSAL_SCHEME_NAMES = [
 
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   if (!scheme) {
-    return "Unknown";
+    return undefined;
   }
   let name: string;
   const contractInfo = (scheme as IContractInfo).alias ? scheme as IContractInfo : getArcByAddress(scheme.address)?.getContractInfo(scheme.address);
