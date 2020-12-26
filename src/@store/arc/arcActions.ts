@@ -1,9 +1,9 @@
 import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/arc.js";
-import { IAsyncAction } from "actions/async";
+import { IAsyncAction } from "@store/async";
 import { toWei, getArcByDAOAddress } from "lib/util";
 import { IRedemptionState } from "lib/proposalHelpers";
-import { IRootState } from "reducers/index";
-import { NotificationStatus, showNotification } from "reducers/notifications";
+import { IRootState } from "@store/index";
+import { NotificationStatus, showNotification } from "@store/notifications/notifications.reducer";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 

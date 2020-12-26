@@ -1,6 +1,6 @@
 import * as update from "immutability-helper";
 
-import { AsyncActionSequence } from "actions/async";
+import { AsyncActionSequence } from "@store/async";
 
 export enum ActionTypes {
   GET_PROFILE_DATA = "GET_PROFILE_DATA",

@@ -13,8 +13,8 @@ import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Modal } from "react-router-modal";
-import { showNotification } from "reducers/notifications";
-import { IProfileState } from "reducers/profilesReducer";
+import { showNotification } from "@store/notifications/notifications.reducer";
+import { IProfileState } from "@store/profiles/profilesReducer";
 import * as css from "./PreTransactionModal.scss";
 
 export enum ActionTypes {

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { Prompt } from "react-router-dom";
-import { showNotification } from "reducers/notifications";
+import { showNotification } from "@store/notifications/notifications.reducer";
 import { enableWalletProvider, getWeb3Provider } from "arc";
 import { getNetworkName } from "lib/util";
 

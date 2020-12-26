@@ -10,8 +10,8 @@ import { ThunkAction } from "redux-thunk";
 
 import * as moment from "moment";
 import { getArc } from "arc";
-import { operationNotifierObserver } from "actions/arcActions";
-import { IRootState } from "reducers";
+import { operationNotifierObserver } from "@store/arc/arcActions";
+import { IRootState } from "@store";
 import { Observable, of } from "rxjs";
 import { map, mergeMap, toArray, first } from "rxjs/operators";
 import { GRAPH_POLL_INTERVAL } from "../../../../settings";

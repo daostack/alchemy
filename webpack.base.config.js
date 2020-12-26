@@ -19,8 +19,8 @@ module.exports = {
 
     alias: {
       arc: resolve("src/arc"),
-      actions: resolve("src/actions"),
       components: resolve("src/components"),
+      "@store": resolve("src/@store"),
       constants: resolve("src/constants"),
       data: resolve("data"),
       genericSchemeRegistry: resolve("src/genericSchemeRegistry"),
@@ -28,8 +28,6 @@ module.exports = {
       layouts: resolve("src/layouts"),
       lib: resolve("src/lib"),
       pages: resolve("src/pages"),
-      reducers: resolve("src/reducers"),
-      selectors: resolve("src/selectors"),
       src: resolve("src"),
       "ipfs-api": "ipfs-api/dist",
       "bn.js": "bn.js/lib/bn.js"

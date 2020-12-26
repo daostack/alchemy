@@ -10,7 +10,7 @@ import UserSearchField from "components/Shared/UserSearchField";
 import { ICreateSubmissionOptions } from "./utils";
 import * as css from "./Competitions.scss";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { showNotification, NotificationStatus } from "@store/notifications/notifications.reducer";
 import { connect } from "react-redux";
 
 interface IDispatchProps {

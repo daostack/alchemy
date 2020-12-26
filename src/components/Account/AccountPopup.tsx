@@ -1,6 +1,6 @@
 import { Address, IDAOState, IMemberState } from "@daostack/arc.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getProfile } from "actions/profilesActions";
+import { getProfile } from "@store/profiles/profilesActions";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
@@ -9,8 +9,8 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import CopyToClipboard, { IconColor } from "components/Shared/CopyToClipboard";
 import * as React from "react";
 import { connect } from "react-redux";
-import { IRootState } from "reducers";
-import { IProfileState } from "reducers/profilesReducer";
+import { IRootState } from "@store";
+import { IProfileState } from "@store/profiles/profilesReducer";
 
 import * as BN from "bn.js";
 

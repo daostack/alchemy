@@ -1,5 +1,5 @@
 import { IDAOState, Token } from "@daostack/arc.js";
-import { hideMenu } from "actions/uiActions";
+import { hideMenu } from "@store/ui/uiActions";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 
 import * as BN from "bn.js";
@@ -13,7 +13,7 @@ import { parse } from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
 import { first } from "rxjs/operators";
-import { IRootState } from "reducers";
+import { IRootState } from "@store";
 import { connect } from "react-redux";
 import { of } from "rxjs";
 

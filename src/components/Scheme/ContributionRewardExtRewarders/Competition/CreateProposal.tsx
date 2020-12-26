@@ -1,5 +1,5 @@
 import { IDAOState, ISchemeState, IProposalCreateOptionsCompetition } from "@daostack/arc.js";
-import * as arcActions from "actions/arcActions";
+import * as arcActions from "@store/arc/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
@@ -7,7 +7,7 @@ import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isVali
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { showNotification, NotificationStatus } from "@store/notifications/notifications.reducer";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "components/Proposal/Create/CreateProposal.scss";

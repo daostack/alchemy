@@ -4,7 +4,7 @@ import { GenericSchemeInfo } from "genericSchemeRegistry";
 import { linkToEtherScan, formatTokens, truncateWithEllipses, getNetworkByDAOAddress } from "lib/util";
 import CopyToClipboard from "components/Shared/CopyToClipboard";
 import * as React from "react";
-import { IProfileState } from "reducers/profilesReducer";
+import { IProfileState } from "@store/profiles/profilesReducer";
 import * as css from "./ProposalSummary.scss";
 import ProposalSummaryDutchX from "./ProposalSummaryDutchX";
 import ProposalSummaryStandardBounties from "./ProposalSummaryStandardBounties";

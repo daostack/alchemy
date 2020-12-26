@@ -1,5 +1,5 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/arc.js";
-import { voteOnProposal } from "actions/arcActions";
+import { voteOnProposal } from "@store/arc/arcActions";
 import { enableWalletProvider } from "arc";
 
 import * as BN from "bn.js";
@@ -11,7 +11,7 @@ import { fromWei, getNetworkByDAOAddress } from "lib/util";
 import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
-import { showNotification } from "reducers/notifications";
+import { showNotification } from "@store/notifications/notifications.reducer";
 import * as css from "./VoteButtons.scss";
 
 interface IExternalProps {

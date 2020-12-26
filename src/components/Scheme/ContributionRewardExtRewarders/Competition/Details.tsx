@@ -1,10 +1,10 @@
-import { IRootState } from "reducers";
-import { IProfilesState } from "reducers/profilesReducer";
+import { IRootState } from "@store";
+import { IProfilesState } from "@store/profiles/profilesReducer";
 import { humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens, isAddress, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import { schemeName } from "lib/schemeUtils";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
-import { showNotification } from "reducers/notifications";
+import { showNotification } from "@store/notifications/notifications.reducer";
 import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import AccountPopup from "components/Account/AccountPopup";
