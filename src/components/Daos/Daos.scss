@@ -49,7 +49,7 @@
   .otherDaos {
     .headerWrapper {
       position: sticky;
-      top: 132px;
+      top: 130px;
       z-index: 1;
     }
 
@@ -101,20 +101,19 @@
 
       .daoTitle {
         border-radius: 15px 15px 0 0;
-        padding-top: 38px;
-        padding-bottom: 38px;
-        padding-left: 30px;
-        padding-right: 12px;
-        margin: 0;
+        padding: 10px 10px 10px 30px;
         margin-bottom: 10px;
         color: $white;
-        background-repeat: repeat;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
 
         .daoName {
-          font-size: 28px;
+          font-size: 25px;
           font-weight: bold;
           display: inline-block;
           overflow-x: hidden;
+          margin-right: 5px;
         }
 
         .inactiveFeedback {
@@ -137,10 +136,10 @@
         font-size: $body;
         width: 100%;
         display: inline-block;
-        padding: 30px 0;
+        padding: 20px 0;
 
         b {
-          font-size: 30px;
+          font-size: 25px;
           text-align: center;
           display: block;
         }
@@ -152,16 +151,10 @@
           color: $gray-1;
         }
       }
-
-      .followButton {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-      }
     }
 
     .dao {
-      width: 480px;
+      width: 335px;
       background-color: $white;
       border-radius: 15px;
       display: inline-block;
@@ -269,11 +262,7 @@
       }
 
       a.daoLink .daoTitle {
-        padding-top: 16px;
-        padding-bottom: 16px;
-        padding-left: 18px;
-        margin: 0;
-        margin-bottom: 10px;
+        padding: 10px 10px 10px 30px;
       }
 
       table.daoInfoContainer {

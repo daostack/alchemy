@@ -36,17 +36,12 @@ const DaoCard = (props: IProps) => {
         [css.dao]: true,
         [css.daoInactive]: inActive})}>
         <div className={css.daoTitle}
-          style={{backgroundImage: bgPattern.toDataUrl()}}>
-
+          style={{backgroundColor: bgPattern.color}}>
           <div className={css.daoName}>{daoState.name}</div>
-
+          <FollowButton id={dao.id} type="daos" style="white" network={getNetworkByDAOAddress(daoState.address)} />
           {inActive ? <div className={css.inactiveFeedback} ><div className={css.time}>{ dxDaoActivationDate.format("MMM Do")}&nbsp;
             {dxDaoActivationDate.format("h:mma z")}</div><img src="/assets/images/Icon/alarm.svg"></img></div> : ""}
         </div>
-
-        <span className={css.followButton}>
-          <FollowButton id={dao.id} type="daos" style="white" network={getNetworkByDAOAddress(daoState.address)} />
-        </span>
 
         <div className={"clearfix " + css.daoInfoContainer}>
           <table className={css.daoInfoContainer}>
