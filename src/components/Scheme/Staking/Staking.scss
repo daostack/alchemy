@@ -1,0 +1,35 @@
+.wrapper {
+  position: relative;
+  //top: -30px;
+  .tableTitleWrapper {
+    margin-bottom: 10px;
+    display: flex;
+    .title {
+      margin-right: 20px;
+      cursor: pointer;
+      &.active {
+        text-decoration: underline;
+      }
+      &:hover{
+        opacity: 0.8;
+      }
+    }
+
+  }
+  .tableContainer {
+    position: relative;
+    table {
+      text-align: left;
+      position: relative;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th {
+      background: $white;
+      position: sticky;
+      top: 220px; /* required for the stickiness */
+      box-shadow: 0 2px 2px -1px $black-halftone; // change to global color
+      padding: 10px;
+    }
+  }
+}

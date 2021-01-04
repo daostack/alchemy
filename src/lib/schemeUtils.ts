@@ -51,6 +51,7 @@ export const KNOWN_SCHEME_NAMES = [
   "Competition",
   "ContributionRewardExt",
   "GenericSchemeMultiCall",
+  "ContinuousLocking4Reputation",
 ];
 
 export const getKnownSchemes = (schemes: Scheme[]) => {

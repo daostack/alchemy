@@ -23,6 +23,7 @@ import SchemeProposalsPage from "./SchemeProposalsPage";
 import SchemeOpenBountyPage from "./SchemeOpenBountyPage";
 import * as css from "./Scheme.scss";
 import { standardPolling, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
+import Staking from "components/Scheme/Staking/Staking";
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -88,6 +89,8 @@ class SchemeContainer extends React.Component<IProps, IState> {
     return <this.state.crxListComponent {...props} daoState={this.props.daoState} scheme={this.props.data[0]} proposals={this.props.data[2]} />;
   };
 
+  private stakingRouth = (props: any) => { return <Staking {...props} currentAccountAddress={this.props.currentAccountAddress} daoState={this.props.daoState} scheme={this.props.data[0]} />; };
+
   public async componentDidMount() {
 
     const newState = {};
@@ -127,8 +130,10 @@ class SchemeContainer extends React.Component<IProps, IState> {
     const isActive = getSchemeIsActive(schemeState);
     const isProposalScheme = PROPOSAL_SCHEME_NAMES.includes(schemeState.name);
     const isBountyScheme = schemeName(schemeState, schemeState.address) === "Standard Bounties";
+    const isStaking = schemeState.name === "ContinuousLocking4Reputation";
+    const pathname = this.props.location.pathname;
     // checking the special case here where the information tab is the default
-    const inInfoTab = this.props.location.pathname.match(/info\/*$/i) || !(isProposalScheme || isBountyScheme || this.state.crxRewarderProps);
+    const inInfoTab = pathname.match(/info\/*$/i) || !(isProposalScheme || isBountyScheme || this.state.crxRewarderProps);
 
     if (schemeState.name === "ReputationFromToken") {
       return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
@@ -136,20 +141,23 @@ class SchemeContainer extends React.Component<IProps, IState> {
 
     const proposalsTabClass = classNames({
       [css.proposals]: true,
-      [css.active]: isProposalScheme && !inInfoTab && !this.props.location.pathname.includes("crx") && !this.props.location.pathname.includes("open"),
+      [css.active]: isProposalScheme && !inInfoTab && !pathname.includes("crx") && !pathname.includes("open"),
     });
     const infoTabClass = classNames({
       [css.info]: true,
-      [css.active]: !isProposalScheme || inInfoTab,
+      [css.active]: (!isProposalScheme || inInfoTab) && !pathname.includes("staking"),
     });
     const openBountiesTabClass = classNames({
       [css.openbounty]: true,
-      [css.active]: this.props.location.pathname.includes("openbounties"),
+      [css.active]: pathname.includes("openbounties"),
     });
-
     const crxTabClass = classNames({
       [css.crx]: true,
-      [css.active]: this.props.location.pathname.includes("crx"),
+      [css.active]: pathname.includes("crx"),
+    });
+    const stakingTabClass = classNames({
+      [css.staking]: true,
+      [css.active]: pathname.includes("staking"),
     });
     const schemeFriendlyName = schemeName(schemeState, schemeState.address);
 
@@ -178,6 +186,10 @@ class SchemeContainer extends React.Component<IProps, IState> {
                     <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
                     : ""}
 
+                {
+                  isStaking && <Link className={stakingTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/staking/`}>Staking</Link>
+                }
+
                 { // Information tab
                   <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
                     <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Information</Link>
@@ -197,6 +209,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
                     </TrainingTooltip>
                     : ""
                 }
+
               </div>
 
               {isProposalScheme ?
@@ -242,6 +255,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
               <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/crx" render={this.contributionsRewardExtTabHtml()} />
               : ""
           }
+          <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/staking" render={this.stakingRouth}>Staking</Route>
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId" render={isProposalScheme ? this.schemeProposalsPageHtml(isActive, this.state.crxRewarderProps) : this.schemeInfoPageHtml} />
         </Switch>
       </div>
