@@ -818,3 +818,12 @@ export const getContractName = (address: string, daoAddress: string): string => 
     return "unknown name";
   }
 };
+
+/** Convert the number representation of RealMath.sol to real numbers
+ * @param  r a BN instance of a real number in the RealMath representation
+ */
+export const realMathToNumber = (r: BN): number => {
+  const REAL_FBITS = 40;
+  const fraction = r.maskn(REAL_FBITS).toNumber() / Math.pow(2, REAL_FBITS);
+  return r.shrn(REAL_FBITS).toNumber() + fraction;
+};

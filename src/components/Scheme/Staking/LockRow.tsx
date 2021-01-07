@@ -1,22 +1,22 @@
 import * as React from "react";
 import * as css from "./LockRow.scss";
-import { ICL4RLock } from "./Staking";
+import { getLockingBatch, ICL4RLock, ICL4RParams } from "./Staking";
 
 interface IProps {
-  data: ICL4RLock;
+  schemeParams: ICL4RParams;
+  lockData: ICL4RLock;
 }
 
-
 const LockRow = (props: IProps) => {
-  const { data } = props;
+  const { lockData, schemeParams } = props;
 
   return (
     <tr className={css.row}>
-      <td>{data.period}</td>
-      <td>{data.amount}</td>
-      <td>{data.lockingTime}</td>
-      <td>{data.redeemed}</td>
-      <td>{data.released}</td>
+      <td>{getLockingBatch(Number(lockData.lockingTime), Number(schemeParams.startTime), Number(schemeParams.batchTime))}</td>
+      <td>{lockData.amount}</td>
+      <td>{((Number(lockData.period) * Number(schemeParams.batchTime)) / 86400).toFixed(2)} days ({lockData.period} Periods)</td>
+      <td></td>
+      <td></td>
     </tr>
   );
 };

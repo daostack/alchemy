@@ -1,12 +1,12 @@
 {
-  "http_main": "https://api.thegraph.com/subgraphs/name/daostack/v41_5",
-  "ws_main": "wss://api.thegraph.com/subgraphs/name/daostack/v41_5",
-  "http_rinkeby": "https://api.thegraph.com/subgraphs/name/daostack/v41_5_rinkeby",
-  "ws_rinkeby": "wss://api.thegraph.com/subgraphs/name/daostack/v41_5_rinkeby",
-  "http_kovan": "https://api.thegraph.com/subgraphs/name/daostack/v41_5_kovan",
-  "ws_kovan": "wss://api.thegraph.com/subgraphs/name/daostack/v41_5_kovan",
-  "http_xdai": "https://api.thegraph.com/subgraphs/name/daostack/v41_5_xdai",
-  "ws_xdai": "wss://api.thegraph.com/subgraphs/name/daostack/v41_5_xdai",
+  "http_main": "https://api.thegraph.com/subgraphs/name/daostack/v41_6",
+  "ws_main": "wss://api.thegraph.com/subgraphs/name/daostack/v41_6",
+  "http_rinkeby": "https://api.thegraph.com/subgraphs/name/daostack/v41_6_rinkeby",
+  "ws_rinkeby": "wss://api.thegraph.com/subgraphs/name/daostack/v41_6_rinkeby",
+  "http_kovan": "https://api.thegraph.com/subgraphs/name/daostack/v41_6_kovan",
+  "ws_kovan": "wss://api.thegraph.com/subgraphs/name/daostack/v41_6_kovan",
+  "http_xdai": "https://api.thegraph.com/subgraphs/name/daostack/v41_6_xdai",
+  "ws_xdai": "wss://api.thegraph.com/subgraphs/name/daostack/v41_6_xdai",
   "http_ganache": "http://127.0.0.1:8000/subgraphs/name/daostack",
   "ws_ganache": "ws://127.0.0.1:8001/subgraphs/name/daostack"
 }
