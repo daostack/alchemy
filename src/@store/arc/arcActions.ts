@@ -1,4 +1,4 @@
-import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/arc.js";
+import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme, CL4RScheme } from "@daostack/arc.js";
 import { IAsyncAction } from "@store/async";
 import { toWei, getArcByDAOAddress } from "lib/util";
 import { IRedemptionState } from "lib/proposalHelpers";
@@ -6,6 +6,7 @@ import { IRootState } from "@store/index";
 import { NotificationStatus, showNotification } from "@store/notifications/notifications.reducer";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
+import BN from "bn.js";
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
@@ -210,3 +211,61 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
     }
   };
 }
+
+/**
+ * Locks tokens in a CL4R scheme
+ * @param {CL4RScheme} cl4rScheme
+ * @param {BN} lockAmount
+ * @param {number} lockDuration
+ * @param {number} currentLockingBatch
+ * @param {string} agreementHash
+ */
+export const lock = (cl4rScheme: CL4RScheme, lockAmount: BN, lockDuration: number, currentLockingBatch: number, agreementHash: string) => {
+  return async (dispatch: Redux.Dispatch<any, any>) => {
+    try {
+      const observer = operationNotifierObserver(dispatch, "Lock");
+      await cl4rScheme.lock(lockAmount, lockDuration, currentLockingBatch, agreementHash).subscribe(...observer);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  };
+};
+
+/**
+ * Releases a lock in a CL4R scheme
+ * @param {CL4RScheme} cl4rScheme
+ * @param {string} beneficiary
+ * @param {number} lockingId
+ */
+export const release = (cl4rScheme: CL4RScheme, beneficiary: string, lockingId: number) => {
+  return async (dispatch: Redux.Dispatch<any, any>) => {
+    try {
+      const observer = operationNotifierObserver(dispatch, "Release");
+      await cl4rScheme.release(beneficiary, lockingId).subscribe(...observer);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  };
+};
+
+/**
+ * Extends an existing lock in a CL4R scheme
+ * @param {CL4RScheme} cl4rScheme
+ * @param {number} extendPeriod
+ * @param {number} batchIndexToLockIn
+ * @param {number} lockingId
+ * @param {string} agreementHash
+ */
+export const extendLocking = (cl4rScheme: CL4RScheme, extendPeriod: number, batchIndexToLockIn: number, lockingId: number, agreementHash: string) => {
+  return async (dispatch: Redux.Dispatch<any, any>) => {
+    try {
+      const observer = operationNotifierObserver(dispatch, "Extend Locking");
+      await cl4rScheme.extendLocking(extendPeriod, batchIndexToLockIn, lockingId, agreementHash).subscribe(...observer);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  };
+};
