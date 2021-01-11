@@ -14,7 +14,7 @@ export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarA
  * // @ts-ignore
  * transaction.send().observer(...operationNotifierObserver(dispatch, "Whatever"))
  */
-export const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescription = ""): [(update: ITransactionUpdate<any>) => void, (err: Error) => void] => {
+export const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescription = "", onSuccess?: any, onError?: any): [(update: ITransactionUpdate<any>) => void, (err: Error) => void] => {
   return [
     (update: ITransactionUpdate<any>) => {
       let msg: string;
@@ -27,6 +27,9 @@ export const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, tx
       } else if (update.confirmations === 3) {
         msg = `${txDescription} transaction confirmed`;
         dispatch(showNotification(NotificationStatus.Success, msg));
+        if (onSuccess) {
+          onSuccess();
+        }
       }
     },
     (err: Error) => {
@@ -34,6 +37,9 @@ export const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, tx
       // eslint-disable-next-line no-console
       console.warn(msg);
       dispatch(showNotification(NotificationStatus.Failure, msg));
+      if (onError) {
+        onError();
+      }
     },
   ];
 };
@@ -219,16 +225,13 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
  * @param {number} lockDuration
  * @param {number} currentLockingBatch
  * @param {string} agreementHash
+ * @param {function} setIsLocking
  */
-export const lock = (cl4rScheme: CL4RScheme, lockAmount: BN, lockDuration: number, currentLockingBatch: number, agreementHash: string) => {
+export const lock = (cl4rScheme: CL4RScheme, lockAmount: BN, lockDuration: number, currentLockingBatch: number, agreementHash: string, setIsLocking: any) => {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    try {
-      const observer = operationNotifierObserver(dispatch, "Lock");
-      await cl4rScheme.lock(lockAmount, lockDuration, currentLockingBatch, agreementHash).subscribe(...observer);
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
+    setIsLocking(true);
+    const observer = operationNotifierObserver(dispatch, "Lock", () => setIsLocking(false), () => setIsLocking(false));
+    cl4rScheme.lock(lockAmount, lockDuration, currentLockingBatch, agreementHash).subscribe(...observer);
   };
 };
 
@@ -237,16 +240,13 @@ export const lock = (cl4rScheme: CL4RScheme, lockAmount: BN, lockDuration: numbe
  * @param {CL4RScheme} cl4rScheme
  * @param {string} beneficiary
  * @param {number} lockingId
+ * @param {function} setIsReleasing
  */
-export const release = (cl4rScheme: CL4RScheme, beneficiary: string, lockingId: number) => {
+export const release = (cl4rScheme: CL4RScheme, beneficiary: string, lockingId: number, setIsReleasing: any) => {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    try {
-      const observer = operationNotifierObserver(dispatch, "Release");
-      await cl4rScheme.release(beneficiary, lockingId).subscribe(...observer);
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
+    setIsReleasing(true);
+    const observer = operationNotifierObserver(dispatch, "Release", () => setIsReleasing(false), () => setIsReleasing(false));
+    cl4rScheme.release(beneficiary, lockingId).subscribe(...observer);
   };
 };
 
@@ -260,12 +260,7 @@ export const release = (cl4rScheme: CL4RScheme, beneficiary: string, lockingId: 
  */
 export const extendLocking = (cl4rScheme: CL4RScheme, extendPeriod: number, batchIndexToLockIn: number, lockingId: number, agreementHash: string) => {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    try {
-      const observer = operationNotifierObserver(dispatch, "Extend Locking");
-      await cl4rScheme.extendLocking(extendPeriod, batchIndexToLockIn, lockingId, agreementHash).subscribe(...observer);
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
+    const observer = operationNotifierObserver(dispatch, "Extend Locking");
+    cl4rScheme.extendLocking(extendPeriod, batchIndexToLockIn, lockingId, agreementHash).subscribe(...observer);
   };
 };

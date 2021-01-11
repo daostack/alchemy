@@ -16,6 +16,7 @@ import { enableWalletProvider } from "arc";
 import { lock, release, extendLocking } from "@store/arc/arcActions";
 import { showNotification } from "@store/notifications/notifications.reducer";
 import { connect } from "react-redux";
+import Tooltip from "rc-tooltip";
 
 export interface ICL4RParams {
   id: Address;
@@ -68,18 +69,6 @@ type IExternalProps = {
   currentAccountAddress: Address;
 } & RouteComponentProps<any>;
 
-/**
- * Given locking time, scheme start time and scheme batch time returns the period the lock was created.
- * @param {number} lockingTime
- * @param {numebr} startTime
- * @param {number} batchTime
- * @returns {number} the period the lock was created.
- */
-export const getLockingBatch = (lockingTime: number, startTime: number, batchTime: number): number => {
-  const timeElapsed = lockingTime - startTime;
-  return Math.trunc(timeElapsed / batchTime);
-};
-
 const Staking = (props: IProps) => {
   const { data, daoState } = props;
   const [loading, setLoading] = React.useState(true);
@@ -91,17 +80,27 @@ const Staking = (props: IProps) => {
   const [isLocking, setIsLocking] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(moment().unix());
 
-  // console.log(schemeParams);
-  // console.log((data as any).data.cl4Rlocks);
+  const getLockingBatch = React.useCallback((lockingTime: number, startTime: number, batchTime: number): number => {
+    const timeElapsed = lockingTime - startTime;
+    return Math.trunc(timeElapsed / batchTime);
+  }, [schemeParams]);
 
-  const isLockingStarted = React.useCallback(() => {
+  const isLockingStarted = React.useMemo(() => {
     return (moment().unix() >= Number(schemeParams.startTime));
   }, [schemeParams]);
 
+  const endTime = React.useMemo(() => {
+    return Number(schemeParams.startTime) + (Number(schemeParams.batchTime) * Number(schemeParams.batchesIndexCap));
+  }, [schemeParams]);
+
   const isLockingEnded = React.useMemo(() => {
-    const endTime = Number(schemeParams.startTime) + (Number(schemeParams.batchTime) * Number(schemeParams.batchesIndexCap));
     return (moment().unix() >= endTime);
   }, [schemeParams]);
+
+  const handleRelease = React.useCallback(async (lockingId: number, setIsReleasing: any) => {
+    if (!await enableWalletProvider({ showNotification: props.showNotification }, getNetworkByDAOAddress(daoState.address))) { return; }
+    props.release(cl4rScheme, props.currentAccountAddress, lockingId, setIsReleasing);
+  }, [cl4rScheme]);
 
   React.useEffect(() => {
     const getSchemeInfo = async () => {
@@ -136,14 +135,18 @@ const Staking = (props: IProps) => {
 
   const durations = [];
   for (let duration = 1; duration <= Number(schemeParams.maxLockingBatches); duration++) {
-    durations.push(<option key={duration} value={duration} selected={duration === 1}>{duration}</option>);
+    if (moment().unix() + (duration * Number(schemeParams.batchTime)) <= endTime) {
+      durations.push(<option key={duration} value={duration} selected={duration === 1}>{duration}</option>);
+    }
   }
 
   const lockings = ((data as any).data.cl4Rlocks?.map((lock: any) => {
     return <LockRow
       key={lock.id}
       schemeParams={schemeParams}
-      lockData={lock} />;
+      lockData={lock}
+      handleRelease={handleRelease}
+      getLockingBatch={getLockingBatch} />;
   }));
 
   const startTime = Number(schemeParams.startTime);
@@ -152,13 +155,8 @@ const Staking = (props: IProps) => {
   const nextBatchStartTime = moment.unix(startTime + ((currentLockingBatch + 1) * Number(schemeParams.batchTime)));
 
   const handleLock = React.useCallback(async () => {
-    if (!await enableWalletProvider({ showNotification: props.showNotification }, getNetworkByDAOAddress(daoState.address))) {
-      setIsLocking(false);
-      return;
-    }
-    setIsLocking(true);
-    props.lock(cl4rScheme, toWei(Number(lockAmount)), lockDuration, currentLockingBatch, await cl4rScheme.getAgreementHash()); // TO DO: wait until Ben indexes the agreementHash to the subgraph
-    setIsLocking(false);
+    if (!await enableWalletProvider({ showNotification: props.showNotification }, getNetworkByDAOAddress(daoState.address))) { return; }
+    props.lock(cl4rScheme, toWei(Number(lockAmount)), lockDuration, currentLockingBatch, await cl4rScheme.getAgreementHash(), setIsLocking); // TO DO: wait until Ben indexes the agreementHash to the subgraph
   }, [cl4rScheme, lockAmount, lockDuration, currentLockingBatch]);
 
   const periods = [];
@@ -170,13 +168,14 @@ const Staking = (props: IProps) => {
       lockData={(data as any).data.cl4Rlocks}
       cl4rScheme={cl4rScheme}
       currentLockingBatch={currentLockingBatch}
-      isLockingEnded={isLockingEnded} />);
+      isLockingEnded={isLockingEnded}
+      getLockingBatch={getLockingBatch} />);
   }
   periods.reverse();
 
   let prefix = "Next in";
 
-  if (!isLockingStarted()) {
+  if (!isLockingStarted) {
     prefix = "Starts in";
   }
 
@@ -198,6 +197,7 @@ const Staking = (props: IProps) => {
     [css.lockButton]: true,
     [css.disabled]: !lockAmount || !lockDuration || isLocking,
   });
+
   return (
     !loading ? <div className={css.wrapper}>
       <div className={css.leftWrapper}>
@@ -212,7 +212,7 @@ const Staking = (props: IProps) => {
             <table>
               <thead>
                 <tr>
-                  <th>Period</th>
+                  <th style={{ padding: "10px" }}>Period</th>
                   <th>Amount</th>
                   <th>Duration</th>
                   <th>Releasable</th>
@@ -223,14 +223,14 @@ const Staking = (props: IProps) => {
                 {lockings}
               </tbody>
             </table>
-            : <span>No locks yet.</span> :
+            : <span className={css.noLockLabel}>No locks yet.</span> :
             <table>
               <thead>
                 <tr>
-                  <th>Period</th>
+                  <th style={{ padding: "10px" }}>Period</th>
                   <th>You Locked</th>
-                  <th>Total Reputation (REP)</th>
-                  <th>You Will Receive (REP)</th>
+                  <th>Total Reputation</th>
+                  <th>You Will Receive</th>
                 </tr>
               </thead>
               <tbody>
@@ -240,13 +240,16 @@ const Staking = (props: IProps) => {
         }
       </div>
       {!isLockingEnded && <div className={css.lockWrapper}>
-        <span>Lock Duration (Days)</span>
+        <div className={css.lockDurationLabel}>
+          <span style={{marginRight: "5px"}}>Lock Duration</span>
+          <Tooltip trigger={["hover"]} overlay={`Period: ${schemeParams.batchTime} seconds`}><img width="15px" src="/assets/images/Icon/question-help.svg" /></Tooltip>
+        </div>
         <select onChange={(e: any) => setLockDuration(e.target.value)}>
           {durations}
         </select>
-        <span>Lock Amount ({schemeParams.tokenSymbol})</span>
+        <span style={{ marginBottom: "5px" }}>Lock Amount ({schemeParams.tokenSymbol})</span>
         <input type="number" onChange={(e: any) => setLockAmount(e.target.value)} />
-        {<span>Releasable: {moment().add(lockDuration, "days").format("DD.MM.YYYY HH:mm")}</span>}
+        {<span>Releasable: {moment().add(lockDuration * Number(schemeParams.batchTime), "seconds").format("DD.MM.YYYY HH:mm")}</span>}
         <button onClick={handleLock} className={lockButtonClass} disabled={!lockAmount || !lockDuration}>Lock</button>
       </div>}
     </div> : <Loading />

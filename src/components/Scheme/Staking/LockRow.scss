@@ -5,4 +5,27 @@
   td {
     padding: 10px;
   }
+  .actionsWrapper {
+    display: flex;
+    flex-direction: column;
+    .actionButton {
+      background: none;
+      border: none;
+      color: $blue-link;
+      cursor: pointer;
+      text-decoration: underline;
+      &:hover {
+        opacity: 0.8;
+      }
+      &.disabled {
+        pointer-events: none;
+        color: $gray-1;
+      }
+    }
+  }
+  .releasedLabel {
+    display: flex;
+    flex-direction: column;
+    color: $gray-label;
+  }
 }
