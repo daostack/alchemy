@@ -10,13 +10,17 @@ interface IProps {
   schemeParams: ICL4RParams;
   lockData: ICL4RLock;
   handleRelease: (lockingId: number, setIsReleasing: any) => any;
+  handleExtend: (extendPeriod: number, batchIndexToLockIn: number, lockingId: number, setIsExtending: any) => any;
   getLockingBatch: any;
+  durations: Array<any>;
+  currentLockingBatch: number;
 }
 
 const LockRow = (props: IProps) => {
-  const { lockData, schemeParams, handleRelease, getLockingBatch } = props;
+  const { lockData, schemeParams, handleRelease, handleExtend, getLockingBatch, durations, currentLockingBatch } = props;
   const [isReleasing, setIsReleasing] = React.useState(false);
   const [isExtending, setIsExtending] = React.useState(false);
+  const [lockDuration, setLockDuration] = React.useState(1);
 
   const releasable = React.useMemo(() => {
     return moment.unix(Number(lockData.lockingTime)).add(Number(lockData.period) * Number(schemeParams.batchTime), "seconds");
@@ -26,6 +30,8 @@ const LockRow = (props: IProps) => {
     return moment() >= releasable && !lockData.released;
   }, [lockData]);
 
+  const lockingBatch = getLockingBatch(Number(lockData.lockingTime), Number(schemeParams.startTime), Number(schemeParams.batchTime)) + 1;
+
   const actionButtonClass = classNames({
     [css.actionButton]: true,
     [css.disabled]: isReleasing || isExtending,
@@ -33,7 +39,7 @@ const LockRow = (props: IProps) => {
 
   return (
     <tr className={css.row}>
-      <td>{getLockingBatch(Number(lockData.lockingTime), Number(schemeParams.startTime), Number(schemeParams.batchTime)) + 1}</td>
+      <td>{lockingBatch}</td>
       <td>{`${numberWithCommas(formatTokens(new BN(lockData.amount)))} ${schemeParams.tokenSymbol}`}</td>
       <td>{lockData.period} Periods</td>
       <td>{!lockData.released ? <span>{releasable.format("DD.MM.YYYY HH:mm")}</span> :
@@ -45,7 +51,12 @@ const LockRow = (props: IProps) => {
       <td>
         {!lockData.released && release && <div className={css.actionsWrapper}>
           <button onClick={() => handleRelease(Number(lockData.lockingId), setIsReleasing)} className={actionButtonClass} disabled={isReleasing || isExtending}>Release</button>
-          <button className={actionButtonClass} disabled={isReleasing || isExtending}>Extend Lock</button>
+          <div className={css.extendWrapper}>
+            <button onClick={() => handleExtend(lockDuration, currentLockingBatch + 1, Number(lockData.lockingId), setIsExtending)} className={actionButtonClass} disabled={isReleasing || isExtending}>Extend Lock</button>
+            <select onChange={(e: any) => setLockDuration(e.target.value)} disabled={isReleasing || isExtending}>
+              {durations}
+            </select>
+          </div>
         </div>}
       </td>
     </tr>

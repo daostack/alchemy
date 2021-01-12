@@ -30,6 +30,7 @@ export interface ICL4RParams {
   repRewardConstA: string;
   repRewardConstB: string;
   batchesIndexCap: string;
+  agreementHash: string;
 }
 
 export interface ICL4RLock {
@@ -102,6 +103,11 @@ const Staking = (props: IProps) => {
     props.release(cl4rScheme, props.currentAccountAddress, lockingId, setIsReleasing);
   }, [cl4rScheme]);
 
+  const handleExtend = React.useCallback(async (extendPeriod: number, batchIndexToLockIn: number, lockingId: number, setIsExtending: any) => {
+    if (!await enableWalletProvider({ showNotification: props.showNotification }, getNetworkByDAOAddress(daoState.address))) { return; }
+    props.extendLocking(cl4rScheme, extendPeriod, batchIndexToLockIn, lockingId, schemeParams.agreementHash, setIsExtending);
+  }, [cl4rScheme, schemeParams]);
+
   React.useEffect(() => {
     const getSchemeInfo = async () => {
       const arc = getArcByDAOAddress(daoState.id);
@@ -120,6 +126,7 @@ const Staking = (props: IProps) => {
             repRewardConstA
             repRewardConstB
             batchesIndexCap
+            agreementHash
           }
         }
       }
@@ -133,21 +140,12 @@ const Staking = (props: IProps) => {
     getSchemeInfo();
   }, []);
 
-  const durations = [];
+  const durations = [] as any;
   for (let duration = 1; duration <= Number(schemeParams.maxLockingBatches); duration++) {
     if (moment().unix() + (duration * Number(schemeParams.batchTime)) <= endTime) {
       durations.push(<option key={duration} value={duration} selected={duration === 1}>{duration}</option>);
     }
   }
-
-  const lockings = ((data as any).data.cl4Rlocks?.map((lock: any) => {
-    return <LockRow
-      key={lock.id}
-      schemeParams={schemeParams}
-      lockData={lock}
-      handleRelease={handleRelease}
-      getLockingBatch={getLockingBatch} />;
-  }));
 
   const startTime = Number(schemeParams.startTime);
   const timeElapsed = currentTime - startTime;
@@ -156,7 +154,7 @@ const Staking = (props: IProps) => {
 
   const handleLock = React.useCallback(async () => {
     if (!await enableWalletProvider({ showNotification: props.showNotification }, getNetworkByDAOAddress(daoState.address))) { return; }
-    props.lock(cl4rScheme, toWei(Number(lockAmount)), lockDuration, currentLockingBatch, await cl4rScheme.getAgreementHash(), setIsLocking); // TO DO: wait until Ben indexes the agreementHash to the subgraph
+    props.lock(cl4rScheme, toWei(Number(lockAmount)), lockDuration, currentLockingBatch, schemeParams.agreementHash, setIsLocking);
   }, [cl4rScheme, lockAmount, lockDuration, currentLockingBatch]);
 
   const periods = [];
@@ -172,6 +170,18 @@ const Staking = (props: IProps) => {
       getLockingBatch={getLockingBatch} />);
   }
   periods.reverse();
+
+  const lockings = ((data as any).data.cl4Rlocks?.map((lock: any) => {
+    return <LockRow
+      key={lock.id}
+      schemeParams={schemeParams}
+      lockData={lock}
+      handleRelease={handleRelease}
+      handleExtend={handleExtend}
+      getLockingBatch={getLockingBatch}
+      durations={durations}
+      currentLockingBatch={currentLockingBatch} />;
+  }));
 
   let prefix = "Next in";
 

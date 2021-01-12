@@ -8,6 +8,7 @@
   .actionsWrapper {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     .actionButton {
       background: none;
       border: none;
@@ -21,6 +22,13 @@
         pointer-events: none;
         color: $gray-1;
       }
+    }
+    .extendWrapper {
+      width: 140px;
+      display: flex;
+      justify-content: space-between;
+      margin-right: 10px;
+      margin-top: 5px;
     }
   }
   .releasedLabel {

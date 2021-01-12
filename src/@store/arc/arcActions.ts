@@ -258,9 +258,10 @@ export const release = (cl4rScheme: CL4RScheme, beneficiary: string, lockingId: 
  * @param {number} lockingId
  * @param {string} agreementHash
  */
-export const extendLocking = (cl4rScheme: CL4RScheme, extendPeriod: number, batchIndexToLockIn: number, lockingId: number, agreementHash: string) => {
+export const extendLocking = (cl4rScheme: CL4RScheme, extendPeriod: number, batchIndexToLockIn: number, lockingId: number, agreementHash: string, setIsExtending: any) => {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    const observer = operationNotifierObserver(dispatch, "Extend Locking");
+    setIsExtending(true);
+    const observer = operationNotifierObserver(dispatch, "Extend Locking", () => setIsExtending(false), () => setIsExtending(false));
     cl4rScheme.extendLocking(extendPeriod, batchIndexToLockIn, lockingId, agreementHash).subscribe(...observer);
   };
 };
