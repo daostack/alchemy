@@ -68,31 +68,15 @@
   z-index: 15;
   background-color: white;
   display: inline-block;
+  display: flex;
+  align-items: center;
 
   .accountAddress {
     padding-left: 10px;
-    position: relative;
-    top: -3px;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-}
-
-.reputationLine {
-  border-bottom: 1px dashed rgba(233, 238, 244, 1.000);
-  height: 2px;
-  position: absolute;
-  z-index: 0;
-  width: 90%;
-  top: 23px;
-  left: 10px;
-  z-index: 0;
-}
-
-.reputationAmount {
-  position: absolute;
-  background-color: white;
-  z-index: 10;
-  right: 10px;
-  top: 12px;
 }
 
 .reputation {
@@ -162,6 +146,8 @@
           font-size: 13px;
           color: rgba(80, 97, 118, 1.000);
           font-weight: normal;
+          display: flex;
+          justify-content: space-between;
 
           a {
             color: rgba(80, 97, 118, 1.000);

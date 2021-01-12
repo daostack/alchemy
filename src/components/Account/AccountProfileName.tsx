@@ -27,7 +27,7 @@ export default class AccountProfileName extends React.Component<IProps, null> {
     });
 
     return (
-      <Link className={accountNameClass} to={"/profile/" + accountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
+      <Link title={accountProfile && accountProfile.name} className={accountNameClass} to={"/profile/" + accountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
         {accountProfile && accountProfile.name ? accountProfile.name : accountAddress.substr(0, 8) + "..."}
       </Link>
     );
