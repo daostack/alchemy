@@ -120,6 +120,8 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
     } else {
       name = "Plugin Manager";
     }
+  } else if (scheme.name === "ContinuousLocking4Reputation") {
+    name = "Locking Tokens for Reputation";
   } else if (scheme.name) {
     if (scheme.name === "ContributionRewardExt") {
       /**

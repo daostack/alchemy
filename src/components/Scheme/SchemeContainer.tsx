@@ -171,7 +171,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
           <meta name="twitter:description" content={daoState.name + " | " + schemeState.name + " proposals | Managed on Alchemy by DAOstack"} />
         </Helmet>
 
-        <Sticky enabled top={50} innerZ={9}>
+        <Sticky enabled top={50} innerZ={2}>
           <h2 className={css.schemeName}>
             {schemeFriendlyName}
           </h2>

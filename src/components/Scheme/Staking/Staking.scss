@@ -23,6 +23,7 @@
       .title {
         margin-right: 20px;
         cursor: pointer;
+        font-size: $sub-title;
         &.active {
           text-decoration: underline;
         }
@@ -59,6 +60,10 @@
     border-left: $gray-border-2;
     padding-left: 40px;
     margin-left: 40px;
+    .lockTitle {
+      font-size: $title;
+      margin-bottom: 15px;
+    }
     .lockDurationLabel {
       display: flex;
       align-items: center;

@@ -26,7 +26,7 @@ const PeriodRow = (props: IProps) => {
   let youLocked = new BN(0);
   for (const lock of lockData) {
     const lockingBatch = getLockingBatch(Number(lock.lockingTime), Number(schemeParams.startTime), Number(schemeParams.batchTime));
-    if (lockingBatch === period) {
+    if (lockingBatch === period + 1) {
       youLocked = youLocked.add(new BN(lock.amount));
       lockingIds.push(Number(lock.lockingId));
     }
@@ -46,7 +46,7 @@ const PeriodRow = (props: IProps) => {
       <td>{period + 1}</td>
       <td>{`${numberWithCommas(formatTokens(new BN(youLocked)))} ${schemeParams.tokenSymbol}`}</td>
       <td>{`${numberWithCommas(repuationRewardForBatch)} REP`}</td>
-      <td>{currentLockingBatch === period && !isLockingEnded ? <span className={css.inProgressLabel}>In Progress</span> : `${numberWithCommas(repuationRewardForLockings)} REP`}</td>
+      <td>{currentLockingBatch === period + 1 && !isLockingEnded ? <span className={css.inProgressLabel}>In Progress</span> : `${numberWithCommas(repuationRewardForLockings)} REP`}</td>
     </tr>
   );
 };

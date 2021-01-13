@@ -149,7 +149,7 @@ const Staking = (props: IProps) => {
 
   const startTime = Number(schemeParams.startTime);
   const timeElapsed = currentTime - startTime;
-  const currentLockingBatch = isLockingEnded ? Number(schemeParams.batchesIndexCap) - 1 : Math.trunc(timeElapsed / Number(schemeParams.batchTime));
+  const currentLockingBatch = isLockingEnded ? Number(schemeParams.batchesIndexCap) : Math.trunc(timeElapsed / Number(schemeParams.batchTime));
   const nextBatchStartTime = moment.unix(startTime + ((currentLockingBatch + 1) * Number(schemeParams.batchTime)));
 
   const handleLock = React.useCallback(async () => {
@@ -158,7 +158,7 @@ const Staking = (props: IProps) => {
   }, [cl4rScheme, lockAmount, lockDuration, currentLockingBatch]);
 
   const periods = [];
-  for (let period = 0; period <= currentLockingBatch; period++) {
+  for (let period = 0; period < currentLockingBatch; period++) {
     periods.push(<PeriodRow
       key={period}
       period={period}
@@ -180,7 +180,8 @@ const Staking = (props: IProps) => {
       handleExtend={handleExtend}
       getLockingBatch={getLockingBatch}
       durations={durations}
-      currentLockingBatch={currentLockingBatch} />;
+      currentLockingBatch={currentLockingBatch}
+      isLockingEnded={isLockingEnded} />;
   }));
 
   let prefix = "Next in";
@@ -211,7 +212,7 @@ const Staking = (props: IProps) => {
   return (
     !loading ? <div className={css.wrapper}>
       <div className={css.leftWrapper}>
-        <div className={css.currentPeriod}>Current Period: {currentLockingBatch + 1} of {schemeParams.batchesIndexCap}</div>
+        <div className={css.currentPeriod}>Current Period: {currentLockingBatch} of {schemeParams.batchesIndexCap}</div>
         <div className={css.nextPeriod}>{isLockingEnded ? "Locking Ended" : <div>{prefix} <Countdown toDate={nextBatchStartTime} onEnd={() => setCurrentTime(moment().unix())} /></div>}</div>
         <div className={css.tableTitleWrapper}>
           <div className={periodsClass} onClick={() => setShowYourLocks(false)}>All Periods</div>
@@ -250,6 +251,7 @@ const Staking = (props: IProps) => {
         }
       </div>
       {!isLockingEnded && <div className={css.lockWrapper}>
+        <div className={css.lockTitle}>New Lock</div>
         <div className={css.lockDurationLabel}>
           <span style={{marginRight: "5px"}}>Lock Duration</span>
           <Tooltip trigger={["hover"]} overlay={`Period: ${schemeParams.batchTime} seconds`}><img width="15px" src="/assets/images/Icon/question-help.svg" /></Tooltip>
