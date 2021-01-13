@@ -179,7 +179,7 @@ const Staking = (props: IProps) => {
       handleRelease={handleRelease}
       handleExtend={handleExtend}
       getLockingBatch={getLockingBatch}
-      durations={durations}
+      endTime={endTime}
       currentLockingBatch={currentLockingBatch}
       isLockingEnded={isLockingEnded} />;
   }));

@@ -20,8 +20,8 @@ interface IProps {
 
 const PeriodRow = (props: IProps) => {
   const { lockData, schemeParams, period, currentLockingBatch, isLockingEnded, getLockingBatch } = props;
-  const [repuationRewardForLockings, setRepuationRewardForLockings] = React.useState("0.00");
-  const [repuationRewardForBatch, setRepuationRewardForBatch] = React.useState("0.00");
+  const [repuationRewardForLockings, setRepuationRewardForLockings] = React.useState("-");
+  const [repuationRewardForBatch, setRepuationRewardForBatch] = React.useState("-");
   const lockingIds: Array<number> = [];
   let youLocked = new BN(0);
   for (const lock of lockData) {
