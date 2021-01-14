@@ -149,7 +149,7 @@ const Staking = (props: IProps) => {
 
   const startTime = Number(schemeParams.startTime);
   const timeElapsed = currentTime - startTime;
-  const currentLockingBatch = isLockingEnded ? Number(schemeParams.batchesIndexCap) : Math.trunc(timeElapsed / Number(schemeParams.batchTime));
+  const currentLockingBatch = Math.trunc(timeElapsed / Number(schemeParams.batchTime));
   const nextBatchStartTime = moment.unix(startTime + ((currentLockingBatch + 1) * Number(schemeParams.batchTime)));
 
   const handleLock = React.useCallback(async () => {
@@ -212,7 +212,7 @@ const Staking = (props: IProps) => {
   return (
     !loading ? <div className={css.wrapper}>
       <div className={css.leftWrapper}>
-        <div className={css.currentPeriod}>Current Period: {currentLockingBatch + 1} of {schemeParams.batchesIndexCap}</div>
+        <div className={css.currentPeriod}>Current Period: {isLockingEnded ? Number(schemeParams.batchesIndexCap) : currentLockingBatch + 1} of {schemeParams.batchesIndexCap}</div>
         <div className={css.nextPeriod}>{isLockingEnded ? "Locking Ended" : <div>{prefix} <Countdown toDate={nextBatchStartTime} onEnd={() => setCurrentTime(moment().unix())} /></div>}</div>
         <div className={css.tableTitleWrapper}>
           <div className={periodsClass} onClick={() => setShowYourLocks(false)}>All Periods</div>
