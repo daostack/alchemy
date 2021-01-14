@@ -158,7 +158,7 @@ const Staking = (props: IProps) => {
   }, [cl4rScheme, lockAmount, lockDuration, currentLockingBatch]);
 
   const periods = [];
-  for (let period = 0; period < currentLockingBatch; period++) {
+  for (let period = 0; period <= currentLockingBatch; period++) {
     periods.push(<PeriodRow
       key={period}
       period={period}
@@ -212,7 +212,7 @@ const Staking = (props: IProps) => {
   return (
     !loading ? <div className={css.wrapper}>
       <div className={css.leftWrapper}>
-        <div className={css.currentPeriod}>Current Period: {currentLockingBatch} of {schemeParams.batchesIndexCap}</div>
+        <div className={css.currentPeriod}>Current Period: {currentLockingBatch + 1} of {schemeParams.batchesIndexCap}</div>
         <div className={css.nextPeriod}>{isLockingEnded ? "Locking Ended" : <div>{prefix} <Countdown toDate={nextBatchStartTime} onEnd={() => setCurrentTime(moment().unix())} /></div>}</div>
         <div className={css.tableTitleWrapper}>
           <div className={periodsClass} onClick={() => setShowYourLocks(false)}>All Periods</div>

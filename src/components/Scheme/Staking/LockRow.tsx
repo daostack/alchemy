@@ -48,7 +48,7 @@ const LockRow = (props: IProps) => {
 
   return (
     <tr className={css.row}>
-      <td>{lockingBatch}</td>
+      <td>{lockingBatch + 1}</td>
       <td>{`${numberWithCommas(formatTokens(new BN(lockData.amount)))} ${schemeParams.tokenSymbol}`}</td>
       <td>{lockData.period} Periods</td>
       <td>{!lockData.released ? <span>{releasable.format("DD.MM.YYYY HH:mm")}</span> :
