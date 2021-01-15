@@ -4,7 +4,7 @@ import { formatTokens, numberWithCommas } from "lib/util";
 import moment from "moment-timezone";
 import * as React from "react";
 import * as css from "./LockRow.scss";
-import { ICL4RLock, ICL4RParams } from "./Staking";
+import { ICL4RLock, ICL4RParams } from "./CL4R";
 
 interface IProps {
   schemeParams: ICL4RParams;

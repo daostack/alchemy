@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as css from "./Staking.scss";
+import * as css from "./CL4R.scss";
 import gql from "graphql-tag";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -70,7 +70,7 @@ type IExternalProps = {
   currentAccountAddress: Address;
 } & RouteComponentProps<any>;
 
-const Staking = (props: IProps) => {
+const CL4R = (props: IProps) => {
   const { data, daoState } = props;
   const [loading, setLoading] = React.useState(true);
   const [schemeParams, setSchemeParams] = React.useState({} as ICL4RParams);
@@ -149,7 +149,7 @@ const Staking = (props: IProps) => {
 
   const startTime = Number(schemeParams.startTime);
   const timeElapsed = currentTime - startTime;
-  const currentLockingBatch = Math.trunc(timeElapsed / Number(schemeParams.batchTime));
+  const currentLockingBatch = isLockingEnded ? Number(schemeParams.batchesIndexCap) : Math.trunc(timeElapsed / Number(schemeParams.batchTime));
   const nextBatchStartTime = moment.unix(startTime + ((currentLockingBatch + 1) * Number(schemeParams.batchTime)));
 
   const handleLock = React.useCallback(async () => {
@@ -169,6 +169,11 @@ const Staking = (props: IProps) => {
       isLockingEnded={isLockingEnded}
       getLockingBatch={getLockingBatch} />);
   }
+
+  if (isLockingEnded) {
+    periods.splice(-1, 1);
+  }
+
   periods.reverse();
 
   const lockings = ((data as any).data.cl4Rlocks?.map((lock: any) => {
@@ -268,8 +273,8 @@ const Staking = (props: IProps) => {
   );
 };
 
-const SubscribedStaking = withSubscription({
-  wrappedComponent: Staking,
+const SubscribedCL4R = withSubscription({
+  wrappedComponent: CL4R,
   loadingComponent: <Loading />,
   errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["currentAccountAddress"],
@@ -299,4 +304,4 @@ const SubscribedStaking = withSubscription({
 export default connect(
   null,
   mapDispatchToProps,
-)(SubscribedStaking);
+)(SubscribedCL4R);

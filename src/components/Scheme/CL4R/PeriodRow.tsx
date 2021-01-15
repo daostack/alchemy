@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as css from "./PeriodRow.scss";
-import { ICL4RLock, ICL4RParams } from "./Staking";
+import { ICL4RLock, ICL4RParams } from "./CL4R";
 import { formatTokens, numberWithCommas } from "lib/util";
 import { CL4RScheme } from "@daostack/arc.js";
 import Decimal from "decimal.js";
