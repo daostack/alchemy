@@ -13,51 +13,25 @@ import * as moment from "moment";
 import Countdown from "components/Shared/Countdown";
 import { first } from "rxjs/operators";
 import { enableWalletProvider } from "arc";
-import { lock, release, extendLocking } from "@store/arc/arcActions";
+import { lock, releaseLocking, extendLocking, redeemLocking } from "@store/arc/arcActions";
 import { showNotification } from "@store/notifications/notifications.reducer";
 import { connect } from "react-redux";
 import Tooltip from "rc-tooltip";
-
-export interface ICL4RParams {
-  id: Address;
-  batchTime: string;
-  startTime: string;
-  token: Address;
-  redeemEnableTime: string;
-  tokenName: string;
-  tokenSymbol: string;
-  maxLockingBatches: string;
-  repRewardConstA: string;
-  repRewardConstB: string;
-  batchesIndexCap: string;
-  agreementHash: string;
-}
-
-export interface ICL4RLock {
-  id: Address;
-  lockingId: string;
-  locker: string;
-  amount: string;
-  lockingTime: string;
-  period: string;
-  redeemed: boolean;
-  redeemedAt: string;
-  released: boolean;
-  releasedAt: string;
-  batchIndexRedeemed: string;
-}
+import { getCL4RParams, ICL4RParams } from "./CL4RHelper";
 
 interface IDispatchProps {
   lock: typeof lock;
-  release: typeof release;
+  releaseLocking: typeof releaseLocking;
   extendLocking: typeof extendLocking;
+  redeemLocking: typeof redeemLocking;
   showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
   lock,
-  release,
+  releaseLocking,
   extendLocking,
+  redeemLocking,
   showNotification,
 };
 
@@ -87,7 +61,7 @@ const CL4R = (props: IProps) => {
   }, [schemeParams]);
 
   const isLockingStarted = React.useMemo(() => {
-    return (moment().unix() >= Number(schemeParams.startTime));
+    return (moment().isAfter(moment.unix(Number(schemeParams.startTime))));
   }, [schemeParams]);
 
   const endTime = React.useMemo(() => {
@@ -95,12 +69,12 @@ const CL4R = (props: IProps) => {
   }, [schemeParams]);
 
   const isLockingEnded = React.useMemo(() => {
-    return (moment().unix() >= endTime);
+    return (moment().isAfter(moment.unix(endTime)));
   }, [schemeParams]);
 
   const handleRelease = React.useCallback(async (lockingId: number, setIsReleasing: any) => {
     if (!await enableWalletProvider({ showNotification: props.showNotification }, getNetworkByDAOAddress(daoState.address))) { return; }
-    props.release(cl4rScheme, props.currentAccountAddress, lockingId, setIsReleasing);
+    props.releaseLocking(cl4rScheme, props.currentAccountAddress, lockingId, setIsReleasing);
   }, [cl4rScheme]);
 
   const handleExtend = React.useCallback(async (extendPeriod: number, batchIndexToLockIn: number, lockingId: number, setIsExtending: any) => {
@@ -108,31 +82,15 @@ const CL4R = (props: IProps) => {
     props.extendLocking(cl4rScheme, extendPeriod, batchIndexToLockIn, lockingId, schemeParams.agreementHash, setIsExtending);
   }, [cl4rScheme, schemeParams]);
 
+  const handleRedeem = React.useCallback(async (lockingId: number[], setIsRedeeming: any) => {
+    if (!await enableWalletProvider({ showNotification: props.showNotification }, getNetworkByDAOAddress(daoState.address))) { return; }
+    props.redeemLocking(cl4rScheme, props.currentAccountAddress, lockingId, setIsRedeeming);
+  }, [cl4rScheme, schemeParams]);
+
   React.useEffect(() => {
     const getSchemeInfo = async () => {
       const arc = getArcByDAOAddress(daoState.id);
-      const schemeInfoQuery = gql`
-      query SchemeInfo {
-        controllerSchemes(where: {id: "${props.scheme.id}"}) {
-          continuousLocking4ReputationParams {
-            id
-            startTime
-            redeemEnableTime
-            batchTime
-            token
-            tokenName
-            tokenSymbol
-            maxLockingBatches
-            repRewardConstA
-            repRewardConstB
-            batchesIndexCap
-            agreementHash
-          }
-        }
-      }
-      `;
-      const schemeInfoParams = await arc.sendQuery(schemeInfoQuery);
-      setSchemeParams(schemeInfoParams.data.controllerSchemes[0].continuousLocking4ReputationParams);
+      setSchemeParams(await getCL4RParams(daoState.id, props.scheme.id));
       const schemes = await arc.schemes({ where: { id: props.scheme.id.toLowerCase() } }).pipe(first()).toPromise();
       setCL4RScheme(schemes[0].CTL4R as CL4RScheme);
       setLoading(false);
@@ -167,7 +125,8 @@ const CL4R = (props: IProps) => {
       cl4rScheme={cl4rScheme}
       currentLockingBatch={currentLockingBatch}
       isLockingEnded={isLockingEnded}
-      getLockingBatch={getLockingBatch} />);
+      getLockingBatch={getLockingBatch}
+      handleRedeem={handleRedeem} />);
   }
 
   if (isLockingEnded) {
@@ -247,6 +206,7 @@ const CL4R = (props: IProps) => {
                   <th>You Locked</th>
                   <th>Total Reputation</th>
                   <th>You Will Receive</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -255,7 +215,7 @@ const CL4R = (props: IProps) => {
             </table>
         }
       </div>
-      {!isLockingEnded && <div className={css.lockWrapper}>
+      {!isLockingEnded && isLockingStarted && <div className={css.lockWrapper}>
         <div className={css.lockTitle}>New Lock</div>
         <div className={css.lockDurationLabel}>
           <span style={{marginRight: "5px"}}>Lock Duration</span>
@@ -275,29 +235,31 @@ const CL4R = (props: IProps) => {
 
 const SubscribedCL4R = withSubscription({
   wrappedComponent: CL4R,
-  loadingComponent: <Loading />,
+  loadingComponent: (props: any) => !props.currentAccountAddress ? <div>Please Login</div> : <Loading />,
   errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["currentAccountAddress"],
   createObservable: async (props: IProps) => {
-    const arc = getArcByDAOAddress(props.daoState.id);
-    const locksQuery = gql`
-    query Locks {
-      cl4Rlocks(where: {scheme: "${props.scheme.id.toLowerCase()}", locker: "${props.currentAccountAddress}"}) {
-        id
-        lockingId
-        locker
-        amount
-        lockingTime
-        period
-        redeemed
-        redeemedAt
-        released
-        releasedAt
-        batchIndexRedeemed
+    if (props.currentAccountAddress) {
+      const arc = getArcByDAOAddress(props.daoState.id);
+      const locksQuery = gql`
+      query Locks {
+        cl4Rlocks(where: {scheme: "${props.scheme.id.toLowerCase()}", locker: "${props.currentAccountAddress}"}) {
+          id
+          lockingId
+          locker
+          amount
+          lockingTime
+          period
+          redeemed
+          redeemedAt
+          released
+          releasedAt
+          batchIndexRedeemed
+        }
       }
+      `;
+      return arc.getObservable(locksQuery, standardPolling());
     }
-    `;
-    return arc.getObservable(locksQuery, standardPolling());
   },
 });
 

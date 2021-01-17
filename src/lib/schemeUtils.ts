@@ -72,6 +72,9 @@ export const PROPOSAL_SCHEME_NAMES = [
   "GenericSchemeMultiCall",
 ];
 
+export const getProposalSchemes = (schemes: Scheme[]) => {
+  return (schemes || []).filter((scheme: Scheme) => PROPOSAL_SCHEME_NAMES.indexOf(scheme?.staticState?.name) >= 0);
+};
 
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   if (!scheme) {

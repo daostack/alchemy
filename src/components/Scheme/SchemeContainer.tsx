@@ -133,7 +133,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
     const isLocking = schemeState.name === "ContinuousLocking4Reputation";
     const pathname = this.props.location.pathname;
     // checking the special case here where the information tab is the default
-    const inInfoTab = pathname.match(/info\/*$/i) || !(isProposalScheme || isBountyScheme || this.state.crxRewarderProps);
+    const inInfoTab = pathname.match(/info\/*$/i) || !(isLocking || isProposalScheme || isBountyScheme || this.state.crxRewarderProps);
 
     if (schemeState.name === "ReputationFromToken") {
       return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
@@ -145,7 +145,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
     });
     const infoTabClass = classNames({
       [css.info]: true,
-      [css.active]: (!isProposalScheme || inInfoTab) && !pathname.includes("locking"),
+      [css.active]: inInfoTab,
     });
     const openBountiesTabClass = classNames({
       [css.openbounty]: true,
@@ -157,7 +157,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
     });
     const lockingTabClass = classNames({
       [css.locking]: true,
-      [css.active]: pathname.includes("locking"),
+      [css.active]: !inInfoTab || pathname.includes("locking"),
     });
     const schemeFriendlyName = schemeName(schemeState, schemeState.address);
 
@@ -246,7 +246,6 @@ class SchemeContainer extends React.Component<IProps, IState> {
         </Sticky>
 
         <Switch>
-
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/openbounties"
             render={(props) => <SchemeOpenBountyPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info" render={this.schemeInfoPageHtml} />
@@ -255,8 +254,8 @@ class SchemeContainer extends React.Component<IProps, IState> {
               <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/crx" render={this.contributionsRewardExtTabHtml()} />
               : ""
           }
-          <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/locking" render={this.lockingRouth}>Locking</Route>
-          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId" render={isProposalScheme ? this.schemeProposalsPageHtml(isActive, this.state.crxRewarderProps) : this.schemeInfoPageHtml} />
+          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId/locking" render={this.lockingRouth}>Locking</Route>
+          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId" render={isProposalScheme ? this.schemeProposalsPageHtml(isActive, this.state.crxRewarderProps) : isLocking ? this.lockingRouth : this.schemeInfoPageHtml} />
         </Switch>
       </div>
     );

@@ -4,7 +4,7 @@ import { formatTokens, numberWithCommas } from "lib/util";
 import moment from "moment-timezone";
 import * as React from "react";
 import * as css from "./LockRow.scss";
-import { ICL4RLock, ICL4RParams } from "./CL4R";
+import { ICL4RLock, ICL4RParams } from "./CL4RHelper";
 
 interface IProps {
   schemeParams: ICL4RParams;
@@ -36,7 +36,7 @@ const LockRow = (props: IProps) => {
   }, [lockData]);
 
   const release = React.useMemo(() => {
-    return moment() >= releasable && !lockData.released;
+    return moment().isSameOrAfter(releasable);
   }, [lockData]);
 
   const lockingBatch = getLockingBatch(Number(lockData.lockingTime), Number(schemeParams.startTime), Number(schemeParams.batchTime));
@@ -60,7 +60,7 @@ const LockRow = (props: IProps) => {
       <td>
         <div className={css.actionsWrapper}>
           {!lockData.released && release && <button onClick={() => handleRelease(Number(lockData.lockingId), setIsReleasing)} className={actionButtonClass} disabled={isReleasing || isExtending}>Release</button>}
-          {!isLockingEnded && moment() <= releasable && extendDurations.length > 0 && <div className={css.extendWrapper}>
+          {!isLockingEnded && !release && extendDurations.length > 0 && <div className={css.extendWrapper}>
             <button onClick={() => handleExtend(lockDuration, currentLockingBatch, Number(lockData.lockingId), setIsExtending)} className={actionButtonClass} disabled={isReleasing || isExtending}>Extend Lock</button>
             <select onChange={(e: any) => setLockDuration(e.target.value)} disabled={isReleasing || isExtending}>
               {extendDurations}

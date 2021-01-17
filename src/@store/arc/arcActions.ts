@@ -242,10 +242,10 @@ export const lock = (cl4rScheme: CL4RScheme, lockAmount: BN, lockDuration: numbe
  * @param {number} lockingId
  * @param {function} setIsReleasing
  */
-export const release = (cl4rScheme: CL4RScheme, beneficiary: string, lockingId: number, setIsReleasing: any) => {
+export const releaseLocking = (cl4rScheme: CL4RScheme, beneficiary: string, lockingId: number, setIsReleasing: any) => {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     setIsReleasing(true);
-    const observer = operationNotifierObserver(dispatch, "Release", () => setIsReleasing(false), () => setIsReleasing(false));
+    const observer = operationNotifierObserver(dispatch, "Release Locking", () => setIsReleasing(false), () => setIsReleasing(false));
     cl4rScheme.release(beneficiary, lockingId).subscribe(...observer);
   };
 };
@@ -257,11 +257,27 @@ export const release = (cl4rScheme: CL4RScheme, beneficiary: string, lockingId: 
  * @param {number} batchIndexToLockIn
  * @param {number} lockingId
  * @param {string} agreementHash
+ * @param {function} setIsExtending
  */
 export const extendLocking = (cl4rScheme: CL4RScheme, extendPeriod: number, batchIndexToLockIn: number, lockingId: number, agreementHash: string, setIsExtending: any) => {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     setIsExtending(true);
     const observer = operationNotifierObserver(dispatch, "Extend Locking", () => setIsExtending(false), () => setIsExtending(false));
     cl4rScheme.extendLocking(extendPeriod, batchIndexToLockIn, lockingId, agreementHash).subscribe(...observer);
+  };
+};
+
+/**
+ * Redeems reputation from a lock in a CL4R scheme
+ * @param {CL4RScheme} cl4rScheme
+ * @param {string} beneficiary
+ * @param {int[]} lockingIds
+ * @param {function} setIsRedeeming
+ */
+export const redeemLocking = (cl4rScheme: CL4RScheme, beneficiary: string, lockingIds: number[], setIsRedeeming: any) => {
+  return async (dispatch: Redux.Dispatch<any, any>) => {
+    setIsRedeeming(true);
+    const observer = operationNotifierObserver(dispatch, "Redeem Locking", () => setIsRedeeming(false), () => setIsRedeeming(false));
+    cl4rScheme.redeem(beneficiary, lockingIds).subscribe(...observer);
   };
 };

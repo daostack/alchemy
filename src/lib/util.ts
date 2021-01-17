@@ -23,6 +23,8 @@ const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
 const Web3 = require("web3");
 
+export const WEI = "1000000000000000000";
+
 export function getExchangesList() {
   return exchangesList;
 }
