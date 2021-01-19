@@ -1,10 +1,22 @@
+## 1.0.5
+  - Improvements
+     - Whitelist PrimeDAO Token
+     - Use arc.js 0.2.82
+     - Eliminate unnecessary WebSocket calls to the graph
+     - Some UI/UX improvements:
+        - New loader to match Alchemy color
+        - Rounded borders to proposals, votes and stakes cards in all 4 corners
+        - Eliminate DAOs pattern background and thinner cards (3 in a row)
+
+  - Bugs Fixed
+    - Bug where a scheme can be undefined due to an unknown issue
+
 ## 1.0.4
   - Features Added
     - Brand new Proposals Page
 
   - Improvements
     - Verify parameters hash
-    - Whitelist PrimeDAO Token
     - Use subgraph v41_4 and arc.js 0.2.80
     - Some UI/UX improvements
     - Alchemy 2.0 banners are removed
