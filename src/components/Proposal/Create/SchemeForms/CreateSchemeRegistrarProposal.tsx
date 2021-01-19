@@ -6,8 +6,8 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 
-import { createProposal } from "actions/arcActions";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { createProposal } from "@store/arc/arcActions";
+import { showNotification, NotificationStatus } from "@store/notifications/notifications.reducer";
 import Analytics from "lib/analytics";
 import { isValidUrl, getNetworkByDAOAddress, getArcByAddress, getArcByDAOAddress } from "lib/util";
 import { GetSchemeIsActiveActions, getSchemeIsActive, REQUIRED_SCHEME_PERMISSIONS, schemeNameAndAddress, SchemePermissions, schemeNameFromAddress } from "lib/schemeUtils";

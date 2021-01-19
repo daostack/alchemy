@@ -73,8 +73,8 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       "DAO Name": this.props.daoState.name,
       "Proposal Hash": this.props.proposal.id,
       "Proposal Title": this.props.proposal.title,
-      "Scheme Address": this.props.proposal.scheme.id,
-      "Scheme Name": this.props.proposal.scheme.name,
+      "Scheme Address": this.props.proposal.scheme?.id,
+      "Scheme Name": this.props.proposal.scheme?.name,
     });
 
     this.crxContractName = rewarderContractName(this.props.proposal.scheme);
@@ -135,7 +135,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     }
     return (
       <div className={css.wrapper}>
-        <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme.id}`}>{schemeName(proposal.scheme, proposal.scheme.address)}</BreadcrumbsItem>
+        <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme?.id}`}>{schemeName(proposal.scheme, proposal.scheme?.address) ?? "Unknown"}</BreadcrumbsItem>
         <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal, 40)}</BreadcrumbsItem>
         <div className={this.proposalClass} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>

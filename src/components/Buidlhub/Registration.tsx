@@ -1,7 +1,7 @@
 import * as css from "./Registration.scss";
 import * as React from "react";
 import {connect} from "react-redux";
-import { IRootState } from "reducers";
+import { IRootState } from "@store";
 import cn from "classnames";
 import BuidlhubClient, {IBuidlhubClient} from "./BuidlhubClient";
 

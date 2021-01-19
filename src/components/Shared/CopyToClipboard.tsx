@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NotificationStatus, showNotification } from "reducers/notifications";
+import { NotificationStatus, showNotification } from "@store/notifications/notifications.reducer";
 import * as css from "./CopyToClipboard.scss";
 import { connect } from "react-redux";
 import { copyToClipboard } from "lib/util";

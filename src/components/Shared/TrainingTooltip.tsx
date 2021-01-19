@@ -1,7 +1,7 @@
 import {default as Tooltip, RCTooltip} from "rc-tooltip";
 import * as React from "react";
 import "./TrainingTooltip.scss";
-import { IRootState } from "reducers";
+import { IRootState } from "@store";
 import { connect } from "react-redux";
 
 interface IAppStateProps {

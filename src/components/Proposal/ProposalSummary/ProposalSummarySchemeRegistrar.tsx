@@ -4,7 +4,7 @@ import { getNetworkByDAOAddress, linkToEtherScan } from "lib/util";
 import CopyToClipboard from "components/Shared/CopyToClipboard";
 import { schemeNameAndAddress } from "lib/schemeUtils";
 import * as React from "react";
-import { IProfileState } from "reducers/profilesReducer";
+import { IProfileState } from "@store/profiles/profilesReducer";
 import * as css from "./ProposalSummary.scss";
 
 interface IExternalProps {

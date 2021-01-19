@@ -1,7 +1,11 @@
 .loading {
+  width: 50px;
+  display: block;
+  margin: auto;
   &.global {
     position: fixed;
-    top: calc(50vh - 100px);
-    left: calc(50vw - 100px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 }

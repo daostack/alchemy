@@ -1,5 +1,5 @@
 import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, Stake } from "@daostack/arc.js";
-import { approveStakingGens, stakeProposal } from "actions/arcActions";
+import { approveStakingGens, stakeProposal } from "@store/arc/arcActions";
 import { enableWalletProvider } from "arc";
 
 import * as BN from "bn.js";
@@ -12,8 +12,8 @@ import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Modal } from "react-router-modal";
-import { showNotification } from "reducers/notifications";
-import { IProfileState } from "reducers/profilesReducer";
+import { showNotification } from "@store/notifications/notifications.reducer";
+import { IProfileState } from "@store/profiles/profilesReducer";
 
 import * as css from "./StakeButtons.scss";
 
