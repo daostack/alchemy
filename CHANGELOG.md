@@ -10,6 +10,9 @@
 
   - Bugs Fixed
     - Bug where a scheme can be undefined due to an unknown issue
+    - Updated DAO creator:
+        - Can't create DAO in xDai
+        - New DAO URL is now lowercase
 
 ## 1.0.4
   - Features Added

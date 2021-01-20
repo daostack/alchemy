@@ -209,9 +209,10 @@
 
   .enablePredictions {
     button {
-      width: 120px;
-      white-space: nowrap;
+      width: fit-content;
       height: auto;
+      padding-left: 10px;
+      padding-right: 10px;
     }
   }
 }
