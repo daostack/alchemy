@@ -42,7 +42,7 @@ export const requireValue = (value: any): string => {
  */
 export const validateParamValue = (type: string, value: string): undefined | string => {
   if (isAddressType(type)) {
-    if (!isAddress(value,true)) {
+    if (!isAddress(value, true)) {
       return "Must be a valid address";
     }
   }
