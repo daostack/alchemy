@@ -1,4 +1,4 @@
-import { NotificationStatus } from "reducers/notifications";
+import { NotificationStatus } from "@store/notifications/notifications.reducer";
 import { getNetworkId, getNetworkName, targetedNetwork, targetNetworks, Networks } from "./lib/util";
 import { settings } from "./settings";
 import { Address, Arc } from "@daostack/arc.js";

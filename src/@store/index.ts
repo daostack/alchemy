@@ -1,9 +1,9 @@
 import { routerReducer } from "react-router-redux";
 import { combineReducers } from "redux";
-import { INotificationsState, notificationsReducer } from "./notifications";
-import profilesReducer, { IProfilesState } from "./profilesReducer";
-import uiReducer, { IUIState } from "./uiReducer";
-import web3Reducer, { IWeb3State } from "./web3Reducer";
+import { INotificationsState, notificationsReducer } from "@store/notifications/notifications.reducer";
+import profilesReducer, { IProfilesState } from "@store/profiles/profilesReducer";
+import uiReducer, { IUIState } from "@store/ui/uiReducer";
+import web3Reducer, { IWeb3State } from "@store/web3/web3Reducer";
 
 export interface IRootState {
   notifications: INotificationsState;

@@ -11,7 +11,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { IRootState } from "reducers";
+import { IRootState } from "@store";
 import { combineLatest, of } from "rxjs";
 import { first } from "rxjs/operators";
 import cn from "classnames";

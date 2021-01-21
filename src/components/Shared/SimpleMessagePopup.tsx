@@ -1,9 +1,9 @@
-import * as uiActions from "actions/uiActions";
+import * as uiActions from "@store/ui/uiActions";
 import ModalPopup from "./ModalPopup";
 import * as React from "react";
 import * as css from "./SimpleMessagePopup.scss";
 import { connect } from "react-redux";
-import { IRootState } from "reducers";
+import { IRootState } from "@store";
 
 interface IDispatchProps {
   hideSimpleMessage: typeof uiActions.hideSimpleMessage;

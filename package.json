@@ -1,6 +1,6 @@
 {
   "name": "alchemy-client",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "An app for collaborative networks (DAOs), based on the DAO stack.",
   "author": "DAOstack",
   "license": "GPL-3.0",
@@ -35,16 +35,14 @@
     "moduleNameMapper": {
       "\\.(scss|css|less|svg|png|jpg)$": "identity-obj-proxy",
       "^arc": "<rootDir>/src/arc",
-      "^actions/(.*)$": "<rootDir>/src/actions/$1",
       "^components(.*)$": "<rootDir>/src/components$1",
+      "^@store(.*)$": "<rootDir>/src/@store$1",
       "^data/(.*)$": "<rootDir>/data/$1",
       "^genericSchemeRegistry(.*)$": "<rootDir>/src/genericSchemeRegistry$1",
       "^crxRegistry(.*)$": "<rootDir>/src/crxRegistry$1",
       "^layouts/(.*)$": "<rootDir>/src/layouts/$1",
       "^lib/(.*)$": "<rootDir>/src/lib/$1",
       "^pages": "<rootDir>/src/pages",
-      "^reducers/(.*)$": "<rootDir>/src/reducers/$1",
-      "^selectors/(.*)$": "<rootDir>/src/selectors/$1",
       "^src/(.*)$": "<rootDir>/src/$1"
     },
     "setupFiles": [
@@ -81,8 +79,8 @@
   "dependencies": {
     "3box": "1.20.2",
     "@burner-wallet/burner-connect-provider": "^0.1.1",
-    "@daostack/arc.js": "0.2.80",
-    "@dorgtech/daocreator-ui": "1.0.21",
+    "@daostack/arc.js": "0.2.82",
+    "@dorgtech/daocreator-ui": "1.0.22",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
     "@fortawesome/react-fontawesome": "^0.1.3",

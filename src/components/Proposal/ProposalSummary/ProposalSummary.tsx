@@ -2,7 +2,7 @@ import { IDAOState, IProposalState, IProposalType } from "@daostack/arc.js";
 import classNames from "classnames";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import * as React from "react";
-import { IProfileState } from "reducers/profilesReducer";
+import { IProfileState } from "@store/profiles/profilesReducer";
 import * as css from "./ProposalSummary.scss";
 import ProposalSummaryContributionReward from "./ProposalSummaryContributionReward";
 import ProposalSummaryKnownGenericScheme from "./ProposalSummaryKnownGenericScheme";

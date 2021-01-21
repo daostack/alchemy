@@ -6,9 +6,9 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import * as moment from "moment";
 import * as React from "react";
 import { connect } from "react-redux";
-import { IRootState } from "reducers";
+import { IRootState } from "@store";
 import { closingTime } from "lib/proposalHelpers";
-import { IProfileState } from "reducers/profilesReducer";
+import { IProfileState } from "@store/profiles/profilesReducer";
 import { combineLatest, concat, of, Observable } from "rxjs";
 import { map, mergeMap } from "rxjs/operators";
 

@@ -2,7 +2,7 @@ import { IDAOState, IProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
 import { linkToEtherScan, baseTokenName, truncateWithEllipses, buf2hex, getContractName, fromWei, getNetworkByDAOAddress, Networks } from "lib/util";
 import * as React from "react";
-import { IProfileState } from "reducers/profilesReducer";
+import { IProfileState } from "@store/profiles/profilesReducer";
 import * as css from "./ProposalSummary.scss";
 import * as BN from "bn.js";
 import CopyToClipboard from "components/Shared/CopyToClipboard";
@@ -85,7 +85,7 @@ const DecodedData = (props: IDecodedDataProps) => {
     <div>
       {lodaing ? <div className={css.loadingMethodInfo}><div className={css.loader} /><i>Loading method info...</i></div> :
         <React.Fragment>
-          <div>Method: <pre>{parseMethodSignature(decodedData)}</pre></div>
+          <div>Method: <pre style={{ whiteSpace: "break-spaces" }}>{parseMethodSignature(decodedData)}</pre></div>
           {methodParams}
         </React.Fragment>}
     </div>

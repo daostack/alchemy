@@ -2,7 +2,7 @@ import { IDAOState, IProposalState } from "@daostack/arc.js";
 import classNames from "classnames";
 import { linkToEtherScan, formatTokens, getNetworkByDAOAddress } from "lib/util";
 import * as React from "react";
-import { IProfileState } from "reducers/profilesReducer";
+import { IProfileState } from "@store/profiles/profilesReducer";
 import * as css from "./ProposalSummary.scss";
 
 interface IProps {

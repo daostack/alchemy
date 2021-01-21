@@ -1,9 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { Prompt } from "react-router-dom";
-import { showNotification } from "reducers/notifications";
-import { enableWalletProvider, getWeb3Provider } from "arc";
-import { getNetworkName } from "lib/util";
+import { showNotification } from "@store/notifications/notifications.reducer";
 
 const DAOcreator = React.lazy(() => import("@dorgtech/daocreator-ui"));
 
@@ -41,13 +39,6 @@ class DaoCreator extends React.Component<IProps> {
           message={"Are you sure you want to leave?"}
         />
         <DAOcreator
-          setWeb3Provider={async (): Promise<any> => {
-            if (!await enableWalletProvider({ showNotification: this.props.showNotification }, await getNetworkName())) {
-              return undefined;
-            }
-
-            return await getWeb3Provider();
-          }}
           noDAOstackLogo
           redirectURL={process.env.BASE_URL}
           networks={process.env.NETWORKS.replace("main", "mainnet")}

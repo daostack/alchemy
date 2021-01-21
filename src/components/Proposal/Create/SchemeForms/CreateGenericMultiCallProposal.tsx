@@ -1,11 +1,11 @@
 import { ISchemeState } from "@daostack/arc.js";
-import { createProposal } from "actions/arcActions";
+import { createProposal } from "@store/arc/arcActions";
 import { enableWalletProvider } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps, FieldArray } from "formik";
 import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { showNotification, NotificationStatus } from "@store/notifications/notifications.reducer";
 import { baseTokenName, isValidUrl, isAddress, linkToEtherScan, getContractName, toWei, getNetworkByDAOAddress, getArcByDAOAddress, Networks} from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
