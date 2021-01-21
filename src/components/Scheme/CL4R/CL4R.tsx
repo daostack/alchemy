@@ -59,7 +59,7 @@ const CL4R = (props: IProps) => {
   const [isLocking, setIsLocking] = React.useState(false);
   const [isApprovingToken, setIsApprovingToken] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(moment().unix());
-  const isAllowance = data[1].gt(new BN(0));
+  const isAllowance = data[1]?.gt(new BN(0));
   const isEnoughBalance = fromWei(data[2]) >= lockAmount;
   const cl4Rlocks = (data as any)[0].data.cl4Rlocks;
 
@@ -167,7 +167,7 @@ const CL4R = (props: IProps) => {
     prefix = "Starts in";
   }
 
-  if (currentLockingBatch === Number(schemeParams.batchesIndexCap)) {
+  if (currentLockingBatch + 1 === Number(schemeParams.batchesIndexCap)) {
     prefix = "Ends in";
   }
 
