@@ -26,11 +26,17 @@ export interface ICL4RLock {
   amount: string;
   lockingTime: string;
   period: string;
-  redeemed: boolean;
-  redeemedAt: string;
+  redeemed: Array<ICL4RRedeem>;
   released: boolean;
   releasedAt: string;
-  batchIndexRedeemed: string;
+}
+
+export interface ICL4RRedeem {
+  id: Address;
+  lock: ICL4RLock;
+  amount: string;
+  redeemedAt: string;
+  batchIndex: string;
 }
 
 export const getCL4RParams = async (daoAddress: string, schemeId: string) => {

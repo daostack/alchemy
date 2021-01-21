@@ -1,4 +1,4 @@
-import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme, CL4RScheme } from "@daostack/arc.js";
+import Arc, { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme, CL4RScheme, Token } from "@daostack/arc.js";
 import { IAsyncAction } from "@store/async";
 import { toWei, getArcByDAOAddress } from "lib/util";
 import { IRedemptionState } from "lib/proposalHelpers";
@@ -281,3 +281,22 @@ export const redeemLocking = (cl4rScheme: CL4RScheme, beneficiary: string, locki
     cl4rScheme.redeem(beneficiary, lockingIds).subscribe(...observer);
   };
 };
+
+/**
+ * A generic function to approve spending of a token in a scheme.
+ * The default allowance is 100,000 tokens.
+ * @param {Address} spender
+ * @param {Arc} arc
+ * @param {string} token
+ * @param {string} tokenSymbol
+ * @param {function} setIsApproving
+ * @param {number} amount
+ */
+export function approveTokens(spender: Address, arc: Arc, token: string, tokenSymbol: string, setIsApproving: any, amount = 100000) {
+  return async (dispatch: Redux.Dispatch<any, any>, ) => {
+    const tokenObj = new Token(token, arc);
+    setIsApproving(true);
+    const observer = operationNotifierObserver(dispatch, `Approve ${tokenSymbol}`, () => setIsApproving(false), () => setIsApproving(false));
+    tokenObj.approveForStaking(spender, toWei(amount)).subscribe(...observer);
+  };
+}

@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as css from "./PeriodRow.scss";
-import { ICL4RLock, ICL4RParams } from "./CL4RHelper";
+import { ICL4RLock, ICL4RParams, ICL4RRedeem } from "./CL4RHelper";
 import { formatTokens, numberWithCommas, WEI } from "lib/util";
 import { CL4RScheme } from "@daostack/arc.js";
 import Decimal from "decimal.js";
@@ -26,6 +26,7 @@ const PeriodRow = (props: IProps) => {
   const [isRedeeming, setIsRedeeming] = React.useState(false);
   const lockingIds: Array<number> = [];
   const lockingIdsForRedeem: Array<number> = [];
+  const redeemData: Array<ICL4RRedeem> = [];
 
   let youLocked = new BN(0);
   for (const lock of lockData) {
@@ -39,7 +40,22 @@ const PeriodRow = (props: IProps) => {
         lockingIdsForRedeem.push(Number(lock.lockingId));
       }
     }
+    redeemData.push(...lock.redeemed);
   }
+
+  const isPeriodRedeemed = youLocked.gt(new BN(0)) && Number(repuationRewardForLockings) === 0;
+  let redeemedAt;
+  let amountRedeemed = new BN(0);
+  if (isPeriodRedeemed) {
+    // Traverse the redeemed data to extract the redeem time and amount.
+    for (const redeem of redeemData) {
+      if (redeem.redeemedAt && period === Number(redeem.batchIndex)) {
+        redeemedAt = moment.unix(Number(redeem.redeemedAt)).format("DD.MM.YYYY HH:mm");
+        amountRedeemed = amountRedeemed.add(new BN(redeem.amount));
+      }
+    }
+  }
+
   React.useEffect(() => {
     const getRepuationData = async () => {
       const repuationRewardForBatch = (await props.cl4rScheme.getRepuationRewardForBatch(schemeParams.repRewardConstA, schemeParams.repRewardConstB, period));
@@ -52,7 +68,12 @@ const PeriodRow = (props: IProps) => {
 
   const inProgress = currentLockingBatch === period && !isLockingEnded;
   const redeemable = moment().isSameOrAfter(moment.unix(Number(schemeParams.redeemEnableTime)));
-  const reputationToReceive = youLocked.gt(new BN(0)) && Number(repuationRewardForLockings) === 0 ? <span className={css.inProgressLabel}>Redeemed</span> : `${numberWithCommas(repuationRewardForLockings)} REP`;
+  const reputationToReceive = isPeriodRedeemed ?
+    <div className={css.redeemedLabel}>
+      <span className={css.inProgressLabel}>{`${numberWithCommas(formatTokens(amountRedeemed))} REP Redeemed`}</span>
+      <span>{redeemedAt}</span>
+    </div> :
+    `${numberWithCommas(repuationRewardForLockings)} REP`;
 
   const actionButtonClass = classNames({
     [css.actionButton]: true,
@@ -62,7 +83,7 @@ const PeriodRow = (props: IProps) => {
   return (
     <tr className={css.row}>
       <td>{period + 1}</td>
-      <td>{`${numberWithCommas(formatTokens(new BN(youLocked)))} ${schemeParams.tokenSymbol}`}</td>
+      <td>{`${numberWithCommas(formatTokens(youLocked))} ${schemeParams.tokenSymbol}`}</td>
       <td>{`${numberWithCommas(repuationRewardForBatch)} REP`}</td>
       <td>{inProgress ? <span className={css.inProgressLabel}>In Progress</span> : reputationToReceive}</td>
       <td>{!inProgress && redeemable && Number(repuationRewardForLockings) > 0 && <button className={actionButtonClass} onClick={() => handleRedeem(lockingIdsForRedeem, setIsRedeeming)} disabled={isRedeeming}>Redeem</button>}</td>

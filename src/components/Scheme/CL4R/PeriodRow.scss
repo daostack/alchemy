@@ -22,4 +22,9 @@
       color: $gray-1;
     }
   }
+  .redeemedLabel {
+    display: flex;
+    flex-direction: column;
+    color: $gray-label;
+  }
 }

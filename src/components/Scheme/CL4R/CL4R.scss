@@ -76,8 +76,14 @@
     }
     input {
       height: 25px;
-      margin-bottom: 20px;
       text-indent: 5px;
+    }
+    .lowBalanceLabel {
+      color: $accent-2;
+      margin-top: 3px;
+    }
+    .releasableLable {
+      margin-top: 20px;
     }
     .lockButton {
       border: none;

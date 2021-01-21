@@ -18,15 +18,16 @@ interface IProps {
 }
 
 const LockRow = (props: IProps) => {
-  const { lockData, schemeParams, handleRelease, handleExtend, getLockingBatch, endTime, currentLockingBatch, isLockingEnded } = props;
+  const { lockData, schemeParams, handleRelease, handleExtend, getLockingBatch, currentLockingBatch, isLockingEnded } = props;
   const [isReleasing, setIsReleasing] = React.useState(false);
   const [isExtending, setIsExtending] = React.useState(false);
   const [lockDuration, setLockDuration] = React.useState(1);
+  const lockingBatch = getLockingBatch(Number(lockData.lockingTime), Number(schemeParams.startTime), Number(schemeParams.batchTime));
 
   // This is to avoid an option to extend more then the max locking batch.
   const extendDurations = [] as any;
   for (let duration = 1; duration <= Number(schemeParams.maxLockingBatches); duration++) {
-    if ((moment().unix() + (duration * Number(schemeParams.batchTime)) <= endTime) && (duration + Number(lockData.period) <= Number(schemeParams.maxLockingBatches))) {
+    if ((duration + Number(lockData.period) <= Number(schemeParams.maxLockingBatches)) && (lockingBatch + Number(lockData.period) + duration < schemeParams.batchesIndexCap)) {
       extendDurations.push(<option key={duration} value={duration} selected={duration === 1}>{duration}</option>);
     }
   }
@@ -38,8 +39,6 @@ const LockRow = (props: IProps) => {
   const release = React.useMemo(() => {
     return moment().isSameOrAfter(releasable);
   }, [lockData]);
-
-  const lockingBatch = getLockingBatch(Number(lockData.lockingTime), Number(schemeParams.startTime), Number(schemeParams.batchTime));
 
   const actionButtonClass = classNames({
     [css.actionButton]: true,
