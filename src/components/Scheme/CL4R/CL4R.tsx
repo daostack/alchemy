@@ -3,7 +3,7 @@ import * as css from "./CL4R.scss";
 import gql from "graphql-tag";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { getArcByDAOAddress, standardPolling, getNetworkByDAOAddress, toWei, ethErrorHandler, fromWei } from "lib/util";
+import { getArcByDAOAddress, standardPolling, getNetworkByDAOAddress, toWei, ethErrorHandler, fromWei, formatTokens } from "lib/util";
 import { Address, CL4RScheme, IDAOState, ISchemeState, Token } from "@daostack/arc.js";
 import { RouteComponentProps } from "react-router-dom";
 import LockRow from "./LockRow";
@@ -18,7 +18,7 @@ import { lock, releaseLocking, extendLocking, redeemLocking, approveTokens } fro
 import { showNotification } from "@store/notifications/notifications.reducer";
 import { connect } from "react-redux";
 import Tooltip from "rc-tooltip";
-import { getCL4RParams, ICL4RParams } from "./CL4RHelper";
+import { calculateTotalRedeemedAmount, getCL4RParams, ICL4RParams, secondsToDays } from "./CL4RHelper";
 import BN from "bn.js";
 
 interface IDispatchProps {
@@ -58,27 +58,25 @@ const CL4R = (props: IProps) => {
   const [cl4rScheme, setCL4RScheme] = React.useState<CL4RScheme>();
   const [isLocking, setIsLocking] = React.useState(false);
   const [isApprovingToken, setIsApprovingToken] = React.useState(false);
+  const [isRedeeming, setIsRedeeming] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(moment().unix());
   const isAllowance = data[1]?.gt(new BN(0));
   const isEnoughBalance = fromWei(data[2]) >= lockAmount;
   const cl4Rlocks = (data as any)[0].data.cl4Rlocks;
-
-  const getLockingBatch = React.useCallback((lockingTime: number, startTime: number, batchTime: number): number => {
-    const timeElapsed = lockingTime - startTime;
-    return Math.trunc(timeElapsed / batchTime);
-  }, [schemeParams]);
+  const [redeemableAmount, setRedeemableAmount] = React.useState(0);
+  const [allLockingIdsForRedeem, setAllLockingIdsForRedeem] = React.useState<Set<number>>(new Set());
 
   const isLockingStarted = React.useMemo(() => {
     return (moment().isAfter(moment.unix(Number(schemeParams.startTime))));
   }, [schemeParams]);
 
   const endTime = React.useMemo(() => {
-    return Number(schemeParams.startTime) + (Number(schemeParams.batchTime) * Number(schemeParams.batchesIndexCap));
+    return Number(schemeParams.startTime) + (schemeParams.batchTime * schemeParams.batchesIndexCap);
   }, [schemeParams]);
 
   const isLockingEnded = React.useMemo(() => {
     return (moment().isAfter(moment.unix(endTime)));
-  }, [schemeParams]);
+  }, [schemeParams, currentTime]);
 
   const handleRelease = React.useCallback(async (lockingId: number, setIsReleasing: any) => {
     if (!await enableWalletProvider({ showNotification: props.showNotification }, getNetworkByDAOAddress(daoState.address))) { return; }
@@ -90,9 +88,9 @@ const CL4R = (props: IProps) => {
     props.extendLocking(cl4rScheme, extendPeriod, batchIndexToLockIn, lockingId, schemeParams.agreementHash, setIsExtending);
   }, [cl4rScheme, schemeParams]);
 
-  const handleRedeem = React.useCallback(async (lockingId: number[], setIsRedeeming: any) => {
+  const handleRedeem = React.useCallback(async (lockingIds: number[], setIsRedeeming: any) => {
     if (!await enableWalletProvider({ showNotification: props.showNotification }, getNetworkByDAOAddress(daoState.address))) { return; }
-    props.redeemLocking(cl4rScheme, props.currentAccountAddress, lockingId, setIsRedeeming);
+    props.redeemLocking(cl4rScheme, props.currentAccountAddress, lockingIds, setIsRedeeming);
   }, [cl4rScheme, schemeParams]);
 
   const handleTokenApproving = React.useCallback(async () => {
@@ -111,17 +109,22 @@ const CL4R = (props: IProps) => {
     getSchemeInfo();
   }, []);
 
+  const redeemedAmount = React.useMemo(() => {
+    return calculateTotalRedeemedAmount(cl4Rlocks);
+  }, [schemeParams, cl4Rlocks]);
+
   const durations = [] as any;
-  for (let duration = 1; duration <= Number(schemeParams.maxLockingBatches); duration++) {
-    if (moment().unix() + (duration * Number(schemeParams.batchTime)) <= endTime) {
+  for (let duration = 1; duration <= schemeParams.maxLockingBatches; duration++) {
+    if (moment().unix() + (duration * schemeParams.batchTime) <= endTime) {
       durations.push(<option key={duration} value={duration} selected={duration === 1}>{duration}</option>);
     }
   }
 
   const startTime = Number(schemeParams.startTime);
   const timeElapsed = currentTime - startTime;
-  const currentLockingBatch = isLockingEnded ? Number(schemeParams.batchesIndexCap) : Math.trunc(timeElapsed / Number(schemeParams.batchTime));
-  const nextBatchStartTime = moment.unix(startTime + ((currentLockingBatch + 1) * Number(schemeParams.batchTime)));
+  const currentLockingBatch = isLockingEnded ? schemeParams.batchesIndexCap : Math.trunc(timeElapsed / schemeParams.batchTime);
+  const nextBatchStartTime = moment.unix(startTime + ((currentLockingBatch + 1) * schemeParams.batchTime));
+  const redeemable = moment().isSameOrAfter(moment.unix(Number(schemeParams.redeemEnableTime)));
 
   const handleLock = React.useCallback(async () => {
     if (!await enableWalletProvider({ showNotification: props.showNotification }, getNetworkByDAOAddress(daoState.address))) { return; }
@@ -138,10 +141,11 @@ const CL4R = (props: IProps) => {
       cl4rScheme={cl4rScheme}
       currentLockingBatch={currentLockingBatch}
       isLockingEnded={isLockingEnded}
-      getLockingBatch={getLockingBatch}
-      handleRedeem={handleRedeem} />);
+      redeemableAmount={redeemableAmount}
+      setRedeemableAmount={setRedeemableAmount}
+      allLockingIdsForRedeem={allLockingIdsForRedeem}
+      setAllLockingIdsForRedeem={setAllLockingIdsForRedeem} />);
   }
-
   if (isLockingEnded) {
     periods.splice(-1, 1);
   }
@@ -155,7 +159,6 @@ const CL4R = (props: IProps) => {
       lockData={lock}
       handleRelease={handleRelease}
       handleExtend={handleExtend}
-      getLockingBatch={getLockingBatch}
       endTime={endTime}
       currentLockingBatch={currentLockingBatch}
       isLockingEnded={isLockingEnded} />;
@@ -167,7 +170,7 @@ const CL4R = (props: IProps) => {
     prefix = "Starts in";
   }
 
-  if (currentLockingBatch + 1 === Number(schemeParams.batchesIndexCap)) {
+  if (currentLockingBatch + 1 === schemeParams.batchesIndexCap) {
     prefix = "Ends in";
   }
 
@@ -182,22 +185,38 @@ const CL4R = (props: IProps) => {
   });
 
   const lockButtonClass = classNames({
-    [css.lockButton]: true,
+    [css.actionButton]: true,
     [css.disabled]: !lockAmount || !lockDuration || isLocking || !isEnoughBalance,
   });
 
   const approveTokenButtonClass = classNames({
-    [css.lockButton]: true,
+    [css.actionButton]: true,
     [css.disabled]: isApprovingToken,
+  });
+
+  const actionButtonClass = classNames({
+    [css.actionButton]: true,
+    [css.disabled]: isRedeeming || !redeemable || redeemableAmount === 0,
   });
 
   return (
     !loading ? <div className={css.wrapper}>
       <div className={css.leftWrapper}>
-        <div className={css.currentPeriod}>Current Period: {isLockingEnded ? Number(schemeParams.batchesIndexCap) : currentLockingBatch + 1} of {schemeParams.batchesIndexCap}</div>
-        <div className={css.nextPeriod}>{isLockingEnded ? "Locking Ended" : <div>{prefix} <Countdown toDate={nextBatchStartTime} onEnd={() => setCurrentTime(moment().unix())} /></div>}</div>
+        <div className={css.top}>
+          <div className={css.countersWrapper}>
+            <div className={css.currentPeriod}>Current Period: {isLockingEnded ? schemeParams.batchesIndexCap : currentLockingBatch + 1} of {schemeParams.batchesIndexCap}</div>
+            <div className={css.nextPeriod}>{isLockingEnded ? "Locking Ended" : <div>{prefix} <Countdown toDate={nextBatchStartTime} onEnd={() => setCurrentTime(moment().unix())} /></div>}</div>
+          </div>
+          <div className={css.redeemWrapper}>
+            <button
+              className={actionButtonClass}
+              onClick={() => handleRedeem(Array.from(allLockingIdsForRedeem), setIsRedeeming)}
+              disabled={isRedeeming || !redeemable || redeemableAmount === 0}>{`Redeem ${formatTokens(toWei(redeemableAmount))} REP`}</button>
+            <div className={css.redeemedAmountLabel}>{`Total Redeemed: ${formatTokens(redeemedAmount, "REP")}`}</div>
+          </div>
+        </div>
         <div className={css.tableTitleWrapper}>
-          <div className={periodsClass} onClick={() => setShowYourLocks(false)}>All Periods</div>
+          <div className={periodsClass} onClick={() => { setShowYourLocks(false); setRedeemableAmount(0); }}>All Periods</div>
           <div className={locksClass} onClick={() => setShowYourLocks(true)}>Your Locks</div>
         </div>
         {
@@ -224,7 +243,6 @@ const CL4R = (props: IProps) => {
                   <th>You Locked</th>
                   <th>Total Reputation</th>
                   <th>You Will Receive</th>
-                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -237,7 +255,7 @@ const CL4R = (props: IProps) => {
         <div className={css.lockTitle}>New Lock</div>
         <div className={css.lockDurationLabel}>
           <span style={{ marginRight: "5px" }}>Lock Duration</span>
-          <Tooltip trigger={["hover"]} overlay={`Period: ${schemeParams.batchTime} seconds`}><img width="15px" src="/assets/images/Icon/question-help.svg" /></Tooltip>
+          <Tooltip trigger={["hover"]} overlay={`Period: ${secondsToDays(schemeParams.batchTime).toFixed(2)} days`}><img width="15px" src="/assets/images/Icon/question-help.svg" /></Tooltip>
         </div>
         <select onChange={(e: any) => setLockDuration(e.target.value)} disabled={!isAllowance}>
           {durations}
@@ -245,7 +263,7 @@ const CL4R = (props: IProps) => {
         <span style={{ marginBottom: "5px" }}>Lock Amount ({schemeParams.tokenSymbol})</span>
         <input type="number" onChange={(e: any) => setLockAmount(e.target.value)} disabled={!isAllowance} />
         {!isEnoughBalance && <span className={css.lowBalanceLabel}>{`Not enough ${schemeParams.tokenSymbol}!`}</span>}
-        {<span className={css.releasableLable}>Releasable: {moment().add(lockDuration * Number(schemeParams.batchTime), "seconds").format("DD.MM.YYYY HH:mm")}</span>}
+        {<span className={css.releasableLable}>Releasable: {moment().add(lockDuration * schemeParams.batchTime, "seconds").format("DD.MM.YYYY HH:mm")}</span>}
         {isAllowance && <button onClick={handleLock} className={lockButtonClass} disabled={!lockAmount || !lockDuration}>Lock</button>}
         {!isAllowance && <Tooltip trigger={["hover"]} overlay={`Upon activation, the smart contract will be authorized to receive up to 100,000 ${schemeParams.tokenSymbol}`}>
           <button onClick={handleTokenApproving} className={approveTokenButtonClass} disabled={isApprovingToken}>Enable Locking</button>

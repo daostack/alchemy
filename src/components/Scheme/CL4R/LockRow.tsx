@@ -4,21 +4,20 @@ import { formatTokens, numberWithCommas } from "lib/util";
 import moment from "moment-timezone";
 import * as React from "react";
 import * as css from "./LockRow.scss";
-import { ICL4RLock, ICL4RParams } from "./CL4RHelper";
+import { getLockingBatch, ICL4RLock, ICL4RParams } from "./CL4RHelper";
 
 interface IProps {
   schemeParams: ICL4RParams;
   lockData: ICL4RLock;
   handleRelease: (lockingId: number, setIsReleasing: any) => any;
   handleExtend: (extendPeriod: number, batchIndexToLockIn: number, lockingId: number, setIsExtending: any) => any;
-  getLockingBatch: any;
   currentLockingBatch: number;
   isLockingEnded: boolean;
   endTime: number;
 }
 
 const LockRow = (props: IProps) => {
-  const { lockData, schemeParams, handleRelease, handleExtend, getLockingBatch, currentLockingBatch, isLockingEnded } = props;
+  const { lockData, schemeParams, handleRelease, handleExtend, currentLockingBatch, isLockingEnded } = props;
   const [isReleasing, setIsReleasing] = React.useState(false);
   const [isExtending, setIsExtending] = React.useState(false);
   const [lockDuration, setLockDuration] = React.useState(1);
@@ -26,14 +25,14 @@ const LockRow = (props: IProps) => {
 
   // This is to avoid an option to extend more then the max locking batch.
   const extendDurations = [] as any;
-  for (let duration = 1; duration <= Number(schemeParams.maxLockingBatches); duration++) {
-    if ((duration + Number(lockData.period) <= Number(schemeParams.maxLockingBatches)) && (lockingBatch + Number(lockData.period) + duration < schemeParams.batchesIndexCap)) {
+  for (let duration = 1; duration <= schemeParams.maxLockingBatches; duration++) {
+    if ((duration + Number(lockData.period) <= schemeParams.maxLockingBatches) && (lockingBatch + Number(lockData.period) + duration < schemeParams.batchesIndexCap)) {
       extendDurations.push(<option key={duration} value={duration} selected={duration === 1}>{duration}</option>);
     }
   }
 
   const releasable = React.useMemo(() => {
-    return moment.unix(Number(lockData.lockingTime)).add(Number(lockData.period) * Number(schemeParams.batchTime), "seconds");
+    return moment.unix(Number(lockData.lockingTime)).add(Number(lockData.period) * schemeParams.batchTime, "seconds");
   }, [lockData]);
 
   const release = React.useMemo(() => {

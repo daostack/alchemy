@@ -1,21 +1,22 @@
-import { getArcByDAOAddress } from "lib/util";
+import { formatTokens, getArcByDAOAddress } from "lib/util";
 import gql from "graphql-tag";
 import * as React from "react";
 import moment from "moment-timezone";
 import { Address } from "@daostack/arc.js";
+import BN from "bn.js";
 
 export interface ICL4RParams {
   id: Address;
-  batchTime: string;
+  batchTime: number;
   startTime: string;
   token: Address;
   redeemEnableTime: string;
   tokenName: string;
   tokenSymbol: string;
-  maxLockingBatches: string;
+  maxLockingBatches: number;
   repRewardConstA: string;
   repRewardConstB: string;
-  batchesIndexCap: string;
+  batchesIndexCap: number;
   agreementHash: string;
 }
 
@@ -62,26 +63,42 @@ export const getCL4RParams = async (daoAddress: string, schemeId: string) => {
   }
   `;
   const schemeInfoParams = await arc.sendQuery(schemeInfoQuery);
-  return schemeInfoParams.data.controllerSchemes[0].continuousLocking4ReputationParams;
+  const schemeInfoParamsObject = schemeInfoParams.data.controllerSchemes[0].continuousLocking4ReputationParams as ICL4RParams;
+  schemeInfoParamsObject.batchTime = Number(schemeInfoParamsObject.batchTime);
+  schemeInfoParamsObject.maxLockingBatches = Number(schemeInfoParamsObject.maxLockingBatches);
+  schemeInfoParamsObject.batchesIndexCap = Number(schemeInfoParamsObject.batchesIndexCap);
+  return schemeInfoParamsObject;
+};
+
+export const secondsToDays = (seconds: number): number => {
+  return seconds / 86400;
 };
 
 export const renderCL4RParams = (CL4RParams: ICL4RParams) => {
   const activationTime = moment.unix(Number(CL4RParams.startTime)).utc();
   const redeemEnableTime = moment.unix(Number(CL4RParams.redeemEnableTime)).utc();
-  const endTime = moment.unix(Number(CL4RParams.startTime) + (Number(CL4RParams.batchTime) * Number(CL4RParams.batchesIndexCap)));
+  const endTime = moment.unix(Number(CL4RParams.startTime) + (CL4RParams.batchTime * CL4RParams.batchesIndexCap));
   return (<React.Fragment>
     <div>ID</div><div>{CL4RParams.id}</div>
-    <div>Token Name</div><div>{CL4RParams.tokenName}</div>
+    <div>Token</div><div>{`${CL4RParams.token} (${CL4RParams.tokenName})`}</div>
     <div>Token Symbol</div><div>{CL4RParams.tokenSymbol}</div>
-    <div>Token</div><div>{CL4RParams.token}</div>
     <div>Start Time</div><div>{activationTime.format("h:mm A [UTC] on MMMM Do, YYYY")} {moment().isSameOrAfter(activationTime) && endTime.isAfter(moment()) ? "(active)" : "(inactive)"}</div>
     <div>End Time</div><div>{endTime.format("h:mm A [UTC] on MMMM Do, YYYY")}</div>
     <div>Redeem Enable Time</div><div>{`${redeemEnableTime.format("h:mm A [UTC] on MMMM Do, YYYY")} ${redeemEnableTime.isSameOrBefore(moment()) ? "(redeemable)" : "(not redeemable)"}`}</div>
-    <div>Batch Time</div><div>{CL4RParams.batchTime} seconds</div>
+    <div>Batch Time</div><div>{`${secondsToDays(CL4RParams.batchTime).toFixed(2)} days`}</div>
     <div>Max Locking Batches</div><div>{CL4RParams.maxLockingBatches}</div>
     <div>Batches Index Cap</div><div>{CL4RParams.batchesIndexCap}</div>
-    <div>Reputation Reward Const A</div><div>{CL4RParams.repRewardConstA}</div>
-    <div>Reputation Reward Const B</div><div>{CL4RParams.repRewardConstB}</div>
+    <div>Reputation Reward Const A</div><div>{formatTokens(new BN(CL4RParams.repRewardConstA), "REP")}</div>
+    <div>Reputation Reward Const B</div><div>{formatTokens(new BN(CL4RParams.repRewardConstB))}</div>
     <div>Agreement Hash</div><div>{CL4RParams.agreementHash}</div>
   </React.Fragment>);
+};
+
+export const getLockingBatch = (lockingTime: number, startTime: number, batchTime: number) => {
+  const timeElapsed = lockingTime - startTime;
+  return Math.trunc(timeElapsed / batchTime);
+};
+
+export const calculateTotalRedeemedAmount = (cl4Rlocks: Array<ICL4RLock>) => {
+  return cl4Rlocks.map((value: ICL4RLock) => value.redeemed).flat().map((value: ICL4RRedeem) => new BN(value.amount)).reduce((a: BN, b: BN) => a.add(b), new BN(0));
 };
