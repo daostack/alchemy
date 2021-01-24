@@ -18,7 +18,7 @@ import { lock, releaseLocking, extendLocking, redeemLocking, approveTokens } fro
 import { showNotification } from "@store/notifications/notifications.reducer";
 import { connect } from "react-redux";
 import Tooltip from "rc-tooltip";
-import { calculateTotalRedeemedAmount, getCL4RParams, ICL4RParams, secondsToDays } from "./CL4RHelper";
+import { calculateTotalRedeemedAmount, getCL4RParams, getLockingIdsForRedeem, ICL4RParams, secondsToDays } from "./CL4RHelper";
 import BN from "bn.js";
 
 interface IDispatchProps {
@@ -64,11 +64,9 @@ const CL4R = (props: IProps) => {
   const isEnoughBalance = fromWei(data[2]) >= lockAmount;
   const cl4Rlocks = (data as any)[0].data?.cl4Rlocks ?? [];
   const [redeemableAmount, setRedeemableAmount] = React.useState(0);
-  const [allLockingIdsForRedeem, setAllLockingIdsForRedeem] = React.useState<Set<number>>(new Set());
 
   React.useEffect(() => {
     setRedeemableAmount(0);
-    setAllLockingIdsForRedeem(new Set());
   }, [currentAccountAddress]);
 
   const isLockingStarted = React.useMemo(() => {
@@ -95,7 +93,7 @@ const CL4R = (props: IProps) => {
 
   const handleRedeem = React.useCallback(async (lockingIds: number[], setIsRedeeming: any) => {
     if (!await enableWalletProvider({ showNotification: props.showNotification }, getNetworkByDAOAddress(daoState.address))) { return; }
-    props.redeemLocking(cl4rScheme, currentAccountAddress, lockingIds, setIsRedeeming);
+    props.redeemLocking(cl4rScheme, currentAccountAddress, lockingIds, setIsRedeeming, setRedeemableAmount);
   }, [cl4rScheme, schemeParams, currentAccountAddress]);
 
   const handleTokenApproving = React.useCallback(async () => {
@@ -136,6 +134,10 @@ const CL4R = (props: IProps) => {
     props.lock(cl4rScheme, toWei(Number(lockAmount)), lockDuration, currentLockingBatch, schemeParams.agreementHash, setIsLocking);
   }, [cl4rScheme, lockAmount, lockDuration, currentLockingBatch]);
 
+  const allLockingIdsForRedeem = React.useMemo(() => {
+    return getLockingIdsForRedeem(cl4Rlocks, currentLockingBatch, schemeParams.startTime, schemeParams.batchTime);
+  }, [cl4Rlocks, currentAccountAddress, currentTime, schemeParams]);
+
   const periods = [];
   for (let period = 0; period <= currentLockingBatch; period++) {
     periods.push(<PeriodRow
@@ -147,9 +149,7 @@ const CL4R = (props: IProps) => {
       currentLockingBatch={currentLockingBatch}
       isLockingEnded={isLockingEnded}
       redeemableAmount={redeemableAmount}
-      setRedeemableAmount={setRedeemableAmount}
-      allLockingIdsForRedeem={allLockingIdsForRedeem}
-      setAllLockingIdsForRedeem={setAllLockingIdsForRedeem} />);
+      setRedeemableAmount={setRedeemableAmount} />);
   }
   if (isLockingEnded) {
     periods.splice(-1, 1);
@@ -216,7 +216,7 @@ const CL4R = (props: IProps) => {
             <div className={css.redeemButtonWrapper}>
               <button
                 className={actionButtonClass}
-                onClick={() => handleRedeem(Array.from(allLockingIdsForRedeem), setIsRedeeming)}
+                onClick={() => handleRedeem(allLockingIdsForRedeem, setIsRedeeming)}
                 disabled={isRedeeming || !redeemable || redeemableAmount === 0}>{`Redeem ${formatTokens(toWei(redeemableAmount))} REP`}
               </button>
               {!redeemable && <Tooltip trigger={["hover"]} overlay={`Redeem Enable Time: ${moment.unix(Number(schemeParams.redeemEnableTime)).utc().format("h:mm A [UTC] on MMMM Do, YYYY")}`}>

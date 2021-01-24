@@ -15,12 +15,10 @@ interface IProps {
   isLockingEnded: boolean;
   redeemableAmount: number;
   setRedeemableAmount: any;
-  allLockingIdsForRedeem: Set<number>;
-  setAllLockingIdsForRedeem: any;
 }
 
 const PeriodRow = (props: IProps) => {
-  const { lockData, schemeParams, period, currentLockingBatch, isLockingEnded, redeemableAmount, setRedeemableAmount, allLockingIdsForRedeem, setAllLockingIdsForRedeem } = props;
+  const { lockData, schemeParams, period, currentLockingBatch, isLockingEnded, redeemableAmount, setRedeemableAmount } = props;
   const [repuationRewardForLockings, setRepuationRewardForLockings] = React.useState("0.00");
   const [repuationRewardForBatch, setRepuationRewardForBatch] = React.useState("0.00");
   const lockingIds: Array<number> = [];
@@ -36,16 +34,11 @@ const PeriodRow = (props: IProps) => {
   let youLocked = new BN(0);
   for (const lock of lockData) {
     const lockingBatch = getLockingBatch(Number(lock.lockingTime), Number(schemeParams.startTime), schemeParams.batchTime);
-    if (lockingBatch <= period && (Number(lockingBatch) + Number(lock.period)) >= Number(period)) {
+    if (lockingBatch <= period && (lockingBatch + Number(lock.period)) >= period) {
       if (lockingBatch === period) {
         youLocked = youLocked.add(new BN(lock.amount));
       }
       lockingIds.push(Number(lock.lockingId));
-
-      if (lock.redeemed.length === 0 || (lockingBatch + Number(lock.period)) > period) {
-        allLockingIdsForRedeem.add(Number(lock.lockingId));
-        setAllLockingIdsForRedeem(allLockingIdsForRedeem.add(Number(lock.lockingId)));
-      }
     }
     if (lock.redeemed.length > 0) {
       if (getBatchIndexesRedeemed(lock.redeemed).includes(String(period))) {

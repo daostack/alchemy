@@ -105,5 +105,15 @@ export const calculateTotalRedeemedAmount = (cl4Rlocks: Array<ICL4RLock>) => {
 };
 
 export const getBatchIndexesRedeemed = (redeemData: Array<ICL4RRedeem>) => {
-  return redeemData.map((value: any) => value.batchIndex);
+  return redeemData.map((value: ICL4RRedeem) => value.batchIndex);
+};
+
+export const getLockingIdsForRedeem = (cl4Rlocks: Array<ICL4RLock>, currentLockingBatch: number, schemeStartTime: string, schemeBatchTime: number) => {
+  const lockingIdsForRedeem: number[] = [];
+  for (const lock of cl4Rlocks){
+    if ((lock.redeemed.length < Number(lock.period)) && (getLockingBatch(Number(lock.lockingTime), Number(schemeStartTime), schemeBatchTime) < currentLockingBatch)) {
+      lockingIdsForRedeem.push(Number(lock.lockingId));
+    }
+  }
+  return lockingIdsForRedeem;
 };

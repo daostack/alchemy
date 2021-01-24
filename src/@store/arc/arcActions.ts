@@ -273,11 +273,12 @@ export const extendLocking = (cl4rScheme: CL4RScheme, extendPeriod: number, batc
  * @param {string} beneficiary
  * @param {int[]} lockingIds
  * @param {function} setIsRedeeming
+ * @param {function} setRedeemableAmount
  */
-export const redeemLocking = (cl4rScheme: CL4RScheme, beneficiary: string, lockingIds: number[], setIsRedeeming: any) => {
+export const redeemLocking = (cl4rScheme: CL4RScheme, beneficiary: string, lockingIds: number[], setIsRedeeming: any, setRedeemableAmount: any) => {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     setIsRedeeming(true);
-    const observer = operationNotifierObserver(dispatch, "Redeem Locking", () => setIsRedeeming(false), () => setIsRedeeming(false));
+    const observer = operationNotifierObserver(dispatch, "Redeem Locking", () => { setIsRedeeming(false); setRedeemableAmount(0); }, () => setIsRedeeming(false));
     cl4rScheme.redeem(beneficiary, lockingIds).subscribe(...observer);
   };
 };
