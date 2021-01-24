@@ -828,3 +828,15 @@ export const getContractName = (address: string, daoAddress: string): string => 
 export const numberWithCommas = (num: string | number): string => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
+
+export const realMathToNumber = (t: BN): number => {
+  const REAL_FBITS = 40;
+  const fraction = t.maskn(REAL_FBITS).toNumber() / Math.pow(2, REAL_FBITS);
+  return t.shrn(REAL_FBITS).toNumber() + fraction;
+};
+
+export const realMathToBN = (t: BN): BN => {
+  const REAL_FBITS = 40;
+  const fraction = t.maskn(REAL_FBITS).div((new BN("2")).pow(new BN(REAL_FBITS.toString())));
+  return t.shrn(REAL_FBITS).add(fraction);
+};

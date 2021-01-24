@@ -12,7 +12,7 @@ import * as classNames from "classnames";
 import * as moment from "moment";
 import Countdown from "components/Shared/Countdown";
 import { first } from "rxjs/operators";
-import { combineLatest } from "rxjs";
+import { combineLatest, of } from "rxjs";
 import { enableWalletProvider } from "arc";
 import { lock, releaseLocking, extendLocking, redeemLocking, approveTokens } from "@store/arc/arcActions";
 import { showNotification } from "@store/notifications/notifications.reducer";
@@ -62,7 +62,7 @@ const CL4R = (props: IProps) => {
   const [currentTime, setCurrentTime] = React.useState(moment().unix());
   const isAllowance = data[1]?.gt(new BN(0));
   const isEnoughBalance = fromWei(data[2]) >= lockAmount;
-  const cl4Rlocks = (data as any)[0].data.cl4Rlocks;
+  const cl4Rlocks = (data as any)[0].data?.cl4Rlocks ?? [];
   const [redeemableAmount, setRedeemableAmount] = React.useState(0);
   const [allLockingIdsForRedeem, setAllLockingIdsForRedeem] = React.useState<Set<number>>(new Set());
 
@@ -275,7 +275,7 @@ const CL4R = (props: IProps) => {
 
 const SubscribedCL4R = withSubscription({
   wrappedComponent: CL4R,
-  loadingComponent: (props: any) => !props.currentAccountAddress ? <div>Please Login</div> : <Loading />,
+  loadingComponent: <Loading />,
   errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["currentAccountAddress"],
   createObservable: async (props: IProps) => {
@@ -322,6 +322,8 @@ const SubscribedCL4R = withSubscription({
         allowance.pipe(ethErrorHandler()),
         balanceOf.pipe(ethErrorHandler())
       );
+    } else {
+      return of([[], new BN(0), new BN(0)] as SubscriptionData);
     }
   },
 });

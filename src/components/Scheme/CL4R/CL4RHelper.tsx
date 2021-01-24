@@ -1,9 +1,10 @@
-import { formatTokens, getArcByDAOAddress } from "lib/util";
+import { getArcByDAOAddress, numberWithCommas, realMathToBN, realMathToNumber, WEI } from "lib/util";
 import gql from "graphql-tag";
 import * as React from "react";
 import moment from "moment-timezone";
 import { Address } from "@daostack/arc.js";
 import BN from "bn.js";
+import Decimal from "decimal.js";
 
 export interface ICL4RParams {
   id: Address;
@@ -82,14 +83,14 @@ export const renderCL4RParams = (CL4RParams: ICL4RParams) => {
     <div>ID</div><div>{CL4RParams.id}</div>
     <div>Token</div><div>{`${CL4RParams.token} (${CL4RParams.tokenName})`}</div>
     <div>Token Symbol</div><div>{CL4RParams.tokenSymbol}</div>
-    <div>Start Time</div><div>{activationTime.format("h:mm A [UTC] on MMMM Do, YYYY")} {moment().isSameOrAfter(activationTime) && endTime.isAfter(moment()) ? "(active)" : "(inactive)"}</div>
+    <div>Start Time</div><div>{activationTime.format("h:mm A [UTC] on MMMM Do, YYYY")}</div>
     <div>End Time</div><div>{endTime.format("h:mm A [UTC] on MMMM Do, YYYY")}</div>
     <div>Redeem Enable Time</div><div>{`${redeemEnableTime.format("h:mm A [UTC] on MMMM Do, YYYY")} ${redeemEnableTime.isSameOrBefore(moment()) ? "(redeemable)" : "(not redeemable)"}`}</div>
     <div>Batch Time</div><div>{`${secondsToDays(CL4RParams.batchTime).toFixed(2)} days`}</div>
     <div>Max Locking Batches</div><div>{CL4RParams.maxLockingBatches}</div>
     <div>Batches Index Cap</div><div>{CL4RParams.batchesIndexCap}</div>
-    <div>Reputation Reward Const A</div><div>{formatTokens(new BN(CL4RParams.repRewardConstA), "REP")}</div>
-    <div>Reputation Reward Const B</div><div>{formatTokens(new BN(CL4RParams.repRewardConstB))}</div>
+    <div>Reputation Reward Const A</div><div>{`${numberWithCommas(new Decimal(realMathToBN(new BN(CL4RParams.repRewardConstA)).toString()).div(new Decimal(WEI)).toFixed(2))} REP`}</div>
+    <div>Reputation Reward Const B</div><div>{new Decimal(realMathToNumber(new BN(CL4RParams.repRewardConstB)).toString()).toFixed(2)}</div>
     <div>Agreement Hash</div><div>{CL4RParams.agreementHash}</div>
   </React.Fragment>);
 };
