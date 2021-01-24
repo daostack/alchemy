@@ -103,3 +103,7 @@ export const getLockingBatch = (lockingTime: number, startTime: number, batchTim
 export const calculateTotalRedeemedAmount = (cl4Rlocks: Array<ICL4RLock>) => {
   return cl4Rlocks.map((value: ICL4RLock) => value.redeemed).flat().map((value: ICL4RRedeem) => new BN(value.amount)).reduce((a: BN, b: BN) => a.add(b), new BN(0));
 };
+
+export const getBatchIndexesRedeemed = (redeemData: Array<ICL4RRedeem>) => {
+  return redeemData.map((value: any) => value.batchIndex);
+};

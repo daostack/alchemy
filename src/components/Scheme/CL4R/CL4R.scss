@@ -27,6 +27,10 @@
       .redeemWrapper {
         display: flex;
         flex-direction: column;
+        .redeemButtonWrapper {
+          display: flex;
+          align-items: center;
+        }
         .redeemedAmountLabel {
           color: $gray-label;
         }

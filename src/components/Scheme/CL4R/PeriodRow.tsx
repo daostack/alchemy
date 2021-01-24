@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as css from "./PeriodRow.scss";
-import { getLockingBatch, ICL4RLock, ICL4RParams } from "./CL4RHelper";
+import { getBatchIndexesRedeemed, getLockingBatch, ICL4RLock, ICL4RParams } from "./CL4RHelper";
 import { formatTokens, numberWithCommas, WEI } from "lib/util";
 import { CL4RScheme } from "@daostack/arc.js";
 import Decimal from "decimal.js";
@@ -24,9 +24,13 @@ const PeriodRow = (props: IProps) => {
   const [repuationRewardForLockings, setRepuationRewardForLockings] = React.useState("0.00");
   const [repuationRewardForBatch, setRepuationRewardForBatch] = React.useState("0.00");
   const lockingIds: Array<number> = [];
+  let isPeriodRedeemed = false;
 
   React.useEffect(() => {
-    setRedeemableAmount(redeemableAmount + Number(repuationRewardForLockings));
+    // The user can't redeem reputation from the current batch.
+    if (period < currentLockingBatch) {
+      setRedeemableAmount(redeemableAmount + Number(repuationRewardForLockings));
+    }
   }, [repuationRewardForLockings]);
 
   let youLocked = new BN(0);
@@ -38,14 +42,17 @@ const PeriodRow = (props: IProps) => {
       }
       lockingIds.push(Number(lock.lockingId));
 
-      if (lock.redeemed.length === 0) {
+      if (lock.redeemed.length === 0 || (lockingBatch + Number(lock.period)) > period) {
         allLockingIdsForRedeem.add(Number(lock.lockingId));
         setAllLockingIdsForRedeem(allLockingIdsForRedeem.add(Number(lock.lockingId)));
       }
     }
+    if (lock.redeemed.length > 0) {
+      if (getBatchIndexesRedeemed(lock.redeemed).includes(String(period))) {
+        isPeriodRedeemed = true;
+      }
+    }
   }
-
-  const isPeriodRedeemed = youLocked.gt(new BN(0)) && Number(repuationRewardForLockings) === 0;
 
   React.useEffect(() => {
     const getRepuationData = async () => {
