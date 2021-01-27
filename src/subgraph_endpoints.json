@@ -5,8 +5,8 @@
   "ws_rinkeby": "wss://api.thegraph.com/subgraphs/name/daostack/v41_4_rinkeby",
   "http_kovan": "https://api.thegraph.com/subgraphs/name/daostack/v41_4_kovan",
   "ws_kovan": "wss://api.thegraph.com/subgraphs/name/daostack/v41_4_kovan",
-  "http_xdai": "https://api.thegraph.com/subgraphs/name/daostack/v41_4_xdai",
-  "ws_xdai": "wss://api.thegraph.com/subgraphs/name/daostack/v41_4_xdai",
+  "http_xdai": "https://api.thegraph.com/subgraphs/name/daostack/v41_7_xdai",
+  "ws_xdai": "wss://api.thegraph.com/subgraphs/name/daostack/v41_7_xdai",
   "http_ganache": "http://127.0.0.1:8000/subgraphs/name/daostack",
   "ws_ganache": "ws://127.0.0.1:8001/subgraphs/name/daostack"
 }
