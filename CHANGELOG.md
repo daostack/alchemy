@@ -7,6 +7,7 @@
     - UI/UX improvements:
       - Notifications with long text is overflowed
       - Voting percentage is hidden when voter name is long
+      - Better UI for proposal card action buttons
 
 ## 1.0.5
   - Improvements
