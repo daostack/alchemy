@@ -85,7 +85,7 @@ const DecodedData = (props: IDecodedDataProps) => {
     <div>
       {lodaing ? <div className={css.loadingMethodInfo}><div className={css.loader} /><i>Loading method info...</i></div> :
         <React.Fragment>
-          <div>Method: <pre>{parseMethodSignature(decodedData)}</pre></div>
+          <div>Method: <pre style={{ whiteSpace: "break-spaces" }}>{parseMethodSignature(decodedData)}</pre></div>
           {methodParams}
         </React.Fragment>}
     </div>
