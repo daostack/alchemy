@@ -35,10 +35,7 @@ class VoteRow extends React.Component<IVoteRowProps, null> {
               <AccountProfileName accountAddress={voteState.voter} accountProfile={accountProfile} daoAvatarAddress={dao.address} />
             </span>
           </div>
-          <div className={css.reputationAmount}>
-            <Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={voteState.amount} hideSymbol />
-          </div>
-          <div className={css.reputationLine}></div>
+          <Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={voteState.amount} hideSymbol />
         </div>
       </div>
     );

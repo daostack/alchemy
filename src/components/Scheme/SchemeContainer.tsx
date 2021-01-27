@@ -23,6 +23,7 @@ import SchemeProposalsPage from "./SchemeProposalsPage";
 import SchemeOpenBountyPage from "./SchemeOpenBountyPage";
 import * as css from "./Scheme.scss";
 import { standardPolling, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
+import CL4R from "components/Scheme/CL4R/CL4R";
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -88,6 +89,8 @@ class SchemeContainer extends React.Component<IProps, IState> {
     return <this.state.crxListComponent {...props} daoState={this.props.daoState} scheme={this.props.data[0]} proposals={this.props.data[2]} />;
   };
 
+  private lockingRouth = (props: any) => { return <CL4R {...props} currentAccountAddress={this.props.currentAccountAddress} daoState={this.props.daoState} scheme={this.props.data[0]} />; };
+
   public async componentDidMount() {
 
     const newState = {};
@@ -127,8 +130,10 @@ class SchemeContainer extends React.Component<IProps, IState> {
     const isActive = getSchemeIsActive(schemeState);
     const isProposalScheme = PROPOSAL_SCHEME_NAMES.includes(schemeState.name);
     const isBountyScheme = schemeName(schemeState, schemeState.address) === "Standard Bounties";
+    const isLocking = schemeState.name === "ContinuousLocking4Reputation";
+    const pathname = this.props.location.pathname;
     // checking the special case here where the information tab is the default
-    const inInfoTab = this.props.location.pathname.match(/info\/*$/i) || !(isProposalScheme || isBountyScheme || this.state.crxRewarderProps);
+    const inInfoTab = pathname.match(/info\/*$/i) || !(isLocking || isProposalScheme || isBountyScheme || this.state.crxRewarderProps);
 
     if (schemeState.name === "ReputationFromToken") {
       return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
@@ -136,20 +141,23 @@ class SchemeContainer extends React.Component<IProps, IState> {
 
     const proposalsTabClass = classNames({
       [css.proposals]: true,
-      [css.active]: isProposalScheme && !inInfoTab && !this.props.location.pathname.includes("crx") && !this.props.location.pathname.includes("open"),
+      [css.active]: isProposalScheme && !inInfoTab && !pathname.includes("crx") && !pathname.includes("open"),
     });
     const infoTabClass = classNames({
       [css.info]: true,
-      [css.active]: !isProposalScheme || inInfoTab,
+      [css.active]: inInfoTab,
     });
     const openBountiesTabClass = classNames({
       [css.openbounty]: true,
-      [css.active]: this.props.location.pathname.includes("openbounties"),
+      [css.active]: pathname.includes("openbounties"),
     });
-
     const crxTabClass = classNames({
       [css.crx]: true,
-      [css.active]: this.props.location.pathname.includes("crx"),
+      [css.active]: pathname.includes("crx"),
+    });
+    const lockingTabClass = classNames({
+      [css.locking]: true,
+      [css.active]: !inInfoTab || pathname.includes("locking"),
     });
     const schemeFriendlyName = schemeName(schemeState, schemeState.address);
 
@@ -163,7 +171,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
           <meta name="twitter:description" content={daoState.name + " | " + schemeState.name + " proposals | Managed on Alchemy by DAOstack"} />
         </Helmet>
 
-        <Sticky enabled top={50} innerZ={10000}>
+        <Sticky enabled top={50} innerZ={2}>
           <h2 className={css.schemeName}>
             {schemeFriendlyName}
           </h2>
@@ -177,6 +185,10 @@ class SchemeContainer extends React.Component<IProps, IState> {
                   isProposalScheme ?
                     <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
                     : ""}
+
+                {
+                  isLocking && <Link className={lockingTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/locking/`}>Locking</Link>
+                }
 
                 { // Information tab
                   <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
@@ -197,6 +209,7 @@ class SchemeContainer extends React.Component<IProps, IState> {
                     </TrainingTooltip>
                     : ""
                 }
+
               </div>
 
               {isProposalScheme ?
@@ -233,7 +246,6 @@ class SchemeContainer extends React.Component<IProps, IState> {
         </Sticky>
 
         <Switch>
-
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/openbounties"
             render={(props) => <SchemeOpenBountyPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info" render={this.schemeInfoPageHtml} />
@@ -242,7 +254,8 @@ class SchemeContainer extends React.Component<IProps, IState> {
               <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/crx" render={this.contributionsRewardExtTabHtml()} />
               : ""
           }
-          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId" render={isProposalScheme ? this.schemeProposalsPageHtml(isActive, this.state.crxRewarderProps) : this.schemeInfoPageHtml} />
+          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId/locking" render={this.lockingRouth}>Locking</Route>
+          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId" render={isProposalScheme ? this.schemeProposalsPageHtml(isActive, this.state.crxRewarderProps) : isLocking ? this.lockingRouth : this.schemeInfoPageHtml} />
         </Switch>
       </div>
     );

@@ -1,4 +1,4 @@
-import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/arc.js";
+import Arc, { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme, CL4RScheme, Token } from "@daostack/arc.js";
 import { IAsyncAction } from "@store/async";
 import { toWei, getArcByDAOAddress } from "lib/util";
 import { IRedemptionState } from "lib/proposalHelpers";
@@ -6,6 +6,7 @@ import { IRootState } from "@store/index";
 import { NotificationStatus, showNotification } from "@store/notifications/notifications.reducer";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
+import BN from "bn.js";
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
@@ -13,7 +14,7 @@ export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarA
  * // @ts-ignore
  * transaction.send().observer(...operationNotifierObserver(dispatch, "Whatever"))
  */
-export const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescription = ""): [(update: ITransactionUpdate<any>) => void, (err: Error) => void] => {
+export const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescription = "", onSuccess?: any, onError?: any): [(update: ITransactionUpdate<any>) => void, (err: Error) => void] => {
   return [
     (update: ITransactionUpdate<any>) => {
       let msg: string;
@@ -26,6 +27,9 @@ export const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, tx
       } else if (update.confirmations === 3) {
         msg = `${txDescription} transaction confirmed`;
         dispatch(showNotification(NotificationStatus.Success, msg));
+        if (onSuccess) {
+          onSuccess();
+        }
       }
     },
     (err: Error) => {
@@ -33,6 +37,9 @@ export const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, tx
       // eslint-disable-next-line no-console
       console.warn(msg);
       dispatch(showNotification(NotificationStatus.Failure, msg));
+      if (onError) {
+        onError();
+      }
     },
   ];
 };
@@ -208,5 +215,89 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
         reputationFromTokenScheme.redeem(addressToRedeem, agreementHash).subscribe(observer[0], observer[1], redemptionSucceededCallback);
       }
     }
+  };
+}
+
+/**
+ * Locks tokens in a CL4R scheme
+ * @param {CL4RScheme} cl4rScheme
+ * @param {BN} lockAmount
+ * @param {number} lockDuration
+ * @param {number} currentLockingBatch
+ * @param {string} agreementHash
+ * @param {function} setIsLocking
+ */
+export const lock = (cl4rScheme: CL4RScheme, lockAmount: BN, lockDuration: number, currentLockingBatch: number, agreementHash: string, setIsLocking: any) => {
+  return async (dispatch: Redux.Dispatch<any, any>) => {
+    setIsLocking(true);
+    const observer = operationNotifierObserver(dispatch, "Lock", () => setIsLocking(false), () => setIsLocking(false));
+    cl4rScheme.lock(lockAmount, lockDuration, currentLockingBatch, agreementHash).subscribe(...observer);
+  };
+};
+
+/**
+ * Releases a lock in a CL4R scheme
+ * @param {CL4RScheme} cl4rScheme
+ * @param {string} beneficiary
+ * @param {number} lockingId
+ * @param {function} setIsReleasing
+ */
+export const releaseLocking = (cl4rScheme: CL4RScheme, beneficiary: string, lockingId: number, setIsReleasing: any) => {
+  return async (dispatch: Redux.Dispatch<any, any>) => {
+    setIsReleasing(true);
+    const observer = operationNotifierObserver(dispatch, "Release Locking", () => setIsReleasing(false), () => setIsReleasing(false));
+    cl4rScheme.release(beneficiary, lockingId).subscribe(...observer);
+  };
+};
+
+/**
+ * Extends an existing lock in a CL4R scheme
+ * @param {CL4RScheme} cl4rScheme
+ * @param {number} extendPeriod
+ * @param {number} batchIndexToLockIn
+ * @param {number} lockingId
+ * @param {string} agreementHash
+ * @param {function} setIsExtending
+ */
+export const extendLocking = (cl4rScheme: CL4RScheme, extendPeriod: number, batchIndexToLockIn: number, lockingId: number, agreementHash: string, setIsExtending: any) => {
+  return async (dispatch: Redux.Dispatch<any, any>) => {
+    setIsExtending(true);
+    const observer = operationNotifierObserver(dispatch, "Extend Locking", () => setIsExtending(false), () => setIsExtending(false));
+    cl4rScheme.extendLocking(extendPeriod, batchIndexToLockIn, lockingId, agreementHash).subscribe(...observer);
+  };
+};
+
+/**
+ * Redeems reputation from a lock in a CL4R scheme
+ * @param {CL4RScheme} cl4rScheme
+ * @param {string} beneficiary
+ * @param {int[]} lockingIds
+ * @param {function} setIsRedeeming
+ * @param {function} setRedeemableAmount
+ */
+export const redeemLocking = (cl4rScheme: CL4RScheme, beneficiary: string, lockingIds: number[], setIsRedeeming: any, setRedeemableAmount: any) => {
+  return async (dispatch: Redux.Dispatch<any, any>) => {
+    setIsRedeeming(true);
+    const observer = operationNotifierObserver(dispatch, "Redeem Locking", () => { setIsRedeeming(false); setRedeemableAmount(0); }, () => setIsRedeeming(false));
+    cl4rScheme.redeem(beneficiary, lockingIds).subscribe(...observer);
+  };
+};
+
+/**
+ * A generic function to approve spending of a token in a scheme.
+ * The default allowance is 100,000 tokens.
+ * @param {Address} spender
+ * @param {Arc} arc
+ * @param {string} token
+ * @param {string} tokenSymbol
+ * @param {function} setIsApproving
+ * @param {number} amount
+ */
+export function approveTokens(spender: Address, arc: Arc, token: string, tokenSymbol: string, setIsApproving: any, amount = 100000) {
+  return async (dispatch: Redux.Dispatch<any, any>, ) => {
+    const tokenObj = new Token(token, arc);
+    setIsApproving(true);
+    const observer = operationNotifierObserver(dispatch, `Approve ${tokenSymbol}`, () => setIsApproving(false), () => setIsApproving(false));
+    tokenObj.approveForStaking(spender, toWei(amount)).subscribe(...observer);
   };
 }

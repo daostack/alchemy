@@ -4,7 +4,7 @@ import { RouteComponentProps } from "react-router-dom";
 
 import { DAO, ISchemeState, Scheme } from "@daostack/arc.js";
 
-import { getKnownSchemes, getUnknownSchemes } from "lib/schemeUtils";
+import { getUnknownSchemes, getProposalSchemes } from "lib/schemeUtils";
 import Select from "react-select";
 
 import SelectProposalLabel from "components/Proposal/Create/SelectProposal/SelectProposalLabel";
@@ -33,26 +33,26 @@ export const SelectProposal: React.FC<IProps> = ({
     history.push(`/dao/${match.params.daoAvatarAddress}/scheme/${schemeId}/proposals/create`);
   }, [daoAvatarAddress, history, match]);
 
-  const knownSchemes = useMemo(() => {
-    return getKnownSchemes(schemes);
+  const knownProposalSchemes = useMemo(() => {
+    return getProposalSchemes(schemes);
   }, [schemes]);
 
   useEffect(() => {
-    if (!scheme && knownSchemes?.length) {
-      handleChange({ value: knownSchemes[0].staticState.id });
+    if (!scheme && knownProposalSchemes?.length) {
+      handleChange({ value: knownProposalSchemes[0].staticState.id });
     }
-  }, [handleChange, scheme, knownSchemes]);
+  }, [handleChange, scheme, knownProposalSchemes]);
 
   const unknownSchemes = useMemo(() => {
     return getUnknownSchemes(schemes);
   }, [schemes]);
 
   const options = useMemo(() => {
-    return knownSchemes.map(({staticState}: Scheme) => ({
+    return knownProposalSchemes.map(({staticState}: Scheme) => ({
       label: staticState,
       value: staticState.id,
     }));
-  }, [knownSchemes]);
+  }, [knownProposalSchemes]);
 
   const currentOption = useMemo(() => {
     if (scheme?.id) {

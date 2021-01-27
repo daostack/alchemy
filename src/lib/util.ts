@@ -23,6 +23,8 @@ const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
 const Web3 = require("web3");
 
+export const WEI = "1000000000000000000";
+
 export function getExchangesList() {
   return exchangesList;
 }
@@ -817,4 +819,24 @@ export const getContractName = (address: string, daoAddress: string): string => 
   } catch (e) {
     return "unknown name";
   }
+};
+
+/**
+ * Given a number adds comma if necessary
+ * @param {string | number} num
+ */
+export const numberWithCommas = (num: string | number): string => {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+export const realMathToNumber = (t: BN): number => {
+  const REAL_FBITS = 40;
+  const fraction = t.maskn(REAL_FBITS).toNumber() / Math.pow(2, REAL_FBITS);
+  return t.shrn(REAL_FBITS).toNumber() + fraction;
+};
+
+export const realMathToBN = (t: BN): BN => {
+  const REAL_FBITS = 40;
+  const fraction = t.maskn(REAL_FBITS).div((new BN("2")).pow(new BN(REAL_FBITS.toString())));
+  return t.shrn(REAL_FBITS).add(fraction);
 };

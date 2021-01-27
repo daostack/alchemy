@@ -40,6 +40,7 @@
       .proposals,
       .info,
       .crx,
+      .locking,
       .openbounty {
         border-bottom: 2px solid rgba(34, 128, 254, 0);
         /* TODO: for .crx this left/right padding may not be appropriate for all CrX rewarder contracts. */
@@ -49,6 +50,7 @@
       .proposals.active,
       .info.active,
       .crx.active,
+      .locking.active,
       .openbounty.active {
         border-bottom: 2px solid rgba(34, 128, 254, 1);
       }
@@ -56,6 +58,7 @@
       .proposals:hover,
       .info:hover,
       .crx:hover,
+      .locking:hover,
       .openbounty:hover {
         border-bottom: 2px solid rgba(34, 128, 254, 0.5);
       }

@@ -10,6 +10,8 @@ import { schemeName } from "lib/schemeUtils";
 import * as moment from "moment";
 import Tooltip from "rc-tooltip";
 import * as css from "./SchemeInfo.scss";
+import { getCL4RParams, renderCL4RParams } from "./CL4R/CL4RHelper";
+import { ICL4RParams } from "./CL4R/CL4RHelper";
 
 interface IExternalProps {
   daoState: IDAOState;
@@ -18,12 +20,32 @@ interface IExternalProps {
   schemeManager: ISchemeState;
 }
 
+interface IState {
+  CL4RParams: ICL4RParams;
+}
+
 type IProps = IExternalProps;
 
-export default class SchemeInfo extends React.Component<IProps, null> {
+export default class SchemeInfo extends React.Component<IProps, IState> {
+
+  constructor(props: IProps) {
+    super(props);
+
+    this.state = {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      CL4RParams: {} as ICL4RParams,
+    };
+  }
+
+  public async componentDidMount() {
+    if (this.props.scheme.name === "ContinuousLocking4Reputation") {
+      this.setState({ CL4RParams: await getCL4RParams(this.props.daoState.id, this.props.scheme.id) });
+    }
+  }
 
   public render(): RenderOutput {
     const { daoState, scheme } = this.props;
+    const { CL4RParams } = this.state;
     const daoAvatarAddress = daoState.address;
     const network = getNetworkByDAOAddress(daoAvatarAddress);
 
@@ -64,7 +86,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         return <>
           <div>Address:</div>
           <div>
-            <a href={linkToEtherScan(votingMachine, network)} target="_blank" rel="noopener noreferrer">{ votingMachine }</a>
+            <a href={linkToEtherScan(votingMachine, network)} target="_blank" rel="noopener noreferrer">{votingMachine}</a>
           </div>
         </>;
       }
@@ -243,6 +265,16 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         </div>
         : ""
       }
+
+      {scheme.name === "ContinuousLocking4Reputation" &&
+        <div className={css.schemeInfoContainer}>
+          <h3>Continuous Locking for Reputation Params</h3>
+          <div className={css.infoCardContent}>
+            <div className={css.gpRowsContainer}>
+              {renderCL4RParams(CL4RParams)}
+            </div>
+          </div>
+        </div>}
     </div>;
   }
 }
