@@ -5,6 +5,7 @@
   background-color: $white;
   transition: all 0.25s ease;
   line-height: 13px;
+  overflow-wrap: break-word;
 
   &:hover {
     background-color: $notifications-hover-white;

@@ -1,0 +1,30 @@
+.row {
+  background-color: $white;
+  border-bottom: 1px solid $gray-2;
+  height: 60px;
+  .inProgressLabel {
+    color: $gray-label;
+  }
+  td {
+    padding: 10px;
+  }
+  .actionButton {
+    background: none;
+    border: none;
+    color: $blue-link;
+    cursor: pointer;
+    text-decoration: underline;
+    &:hover {
+      opacity: 0.8;
+    }
+    &.disabled {
+      pointer-events: none;
+      color: $gray-1;
+    }
+  }
+  .redeemedLabel {
+    display: flex;
+    flex-direction: column;
+    color: $gray-label;
+  }
+}

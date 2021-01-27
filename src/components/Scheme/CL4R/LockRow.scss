@@ -1,0 +1,39 @@
+.row {
+  background-color: $white;
+  border-bottom: 1px solid $gray-2;
+  height: 60px;
+  td {
+    padding: 10px;
+  }
+  .actionsWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    .actionButton {
+      background: none;
+      border: none;
+      color: $blue-link;
+      cursor: pointer;
+      text-decoration: underline;
+      &:hover {
+        opacity: 0.8;
+      }
+      &.disabled {
+        pointer-events: none;
+        color: $gray-1;
+      }
+    }
+    .extendWrapper {
+      width: 140px;
+      display: flex;
+      justify-content: space-between;
+      margin-right: 10px;
+      margin-top: 5px;
+    }
+  }
+  .releasedLabel {
+    display: flex;
+    flex-direction: column;
+    color: $gray-label;
+  }
+}
