@@ -169,13 +169,9 @@
   }
 
   .contextMenu {
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-    position: relative;
-    left: 3px;
-    float: right;
     text-align: center;
+    margin-left: 10px;
+    position:relative;
 
     .menuIcon {
       width: 18px;
@@ -227,13 +223,10 @@
 }
 
 .actionButton {
-  float: left;
-  width: 50%;
-  text-align: right;
-  font-size: 12px;
   position: absolute;
   top: 10px;
   right: 10px;
+  display: flex;
 }
 
 .proposalActions {
