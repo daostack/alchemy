@@ -3,11 +3,14 @@
     - Support CL4R Scheme
 
   - Improvements
-    - Use subgraph v41_7 and arc.js 0.2.87
+    - Use subgraph v41_8 and arc.js 0.2.87
     - UI/UX improvements:
       - Notifications with long text is overflowed
       - Voting percentage is hidden when voter name is long
       - Better UI for proposal card action buttons
+  
+  - Bugs Fixed
+    - Show GP address in Multicall info page
 
 ## 1.0.5
   - Improvements

@@ -128,7 +128,8 @@ export default class SchemeInfo extends React.Component<IProps, IState> {
       (scheme.uGenericSchemeParams && scheme.uGenericSchemeParams.votingMachine) ||
       (scheme.contributionRewardParams && scheme.contributionRewardParams.votingMachine) ||
       (scheme.schemeRegistrarParams && scheme.schemeRegistrarParams.votingMachine) ||
-      (scheme.contributionRewardExtParams && scheme.contributionRewardExtParams.votingMachine)
+      (scheme.contributionRewardExtParams && scheme.contributionRewardExtParams.votingMachine) ||
+      (scheme.genericSchemeMultiCallParams && scheme.genericSchemeMultiCallParams.votingMachine)
     );
     return <div>
       <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>Info</BreadcrumbsItem>
