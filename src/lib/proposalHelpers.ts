@@ -85,29 +85,26 @@ export const closingTime = (proposal: IProposalState, proposalsPage?: boolean) =
  * @returns {ProposalStatus}
  */
 export const calculateProposalStatus = (proposal: IProposalState): IProposalStatus => {
-  const { winningOutcome, executedAt, boostedAt } = proposal;
-  const endDateMoment = moment(closingTime(proposal));
-  const now = new Date();
-  const complete = endDateMoment.diff(now) <= 0 ? true : false;
+  const { winningOutcome } = proposal;
+  const stage = castProposalStageToNumberRepresentation(String(proposal.stage));
 
-  if (String(winningOutcome) === "Pass") {
-    if (!boostedAt && !complete) {
-      return IProposalStatus.Failing;
-    }
-    if (!complete) {
-      return IProposalStatus.Passing;
-    }
-    if (executedAt) {
-      return IProposalStatus.Executed;
-    }
-    return IProposalStatus.Executable;
-
-  } else {
-    if (!complete) {
-      return IProposalStatus.Failing;
-    }
+  if (stage === IProposalStage.ExpiredInQueue) {
     return IProposalStatus.Failed;
   }
+
+  if (stage === IProposalStage.Executed) {
+    if (proposal.genericSchemeMultiCall) {
+      if (!proposal.genericSchemeMultiCall.executed) {
+        return IProposalStatus.Executable;
+      }
+    }
+    return IProposalStatus.Executed;
+  }
+
+  if (String(winningOutcome) === "Pass") {
+    return IProposalStatus.Passing;
+  }
+  return IProposalStatus.Failing;
 };
 
 export function proposalExpired(proposal: IProposalState) {
