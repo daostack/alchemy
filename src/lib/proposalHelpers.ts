@@ -88,7 +88,7 @@ export const calculateProposalStatus = (proposal: IProposalState): IProposalStat
   const { winningOutcome } = proposal;
   const stage = castProposalStageToNumberRepresentation(String(proposal.stage));
 
-  if (stage === IProposalStage.ExpiredInQueue) {
+  if (stage === IProposalStage.ExpiredInQueue || (stage === IProposalStage.Queued && closingTime(proposal) <= moment())) {
     return IProposalStatus.Failed;
   }
 
