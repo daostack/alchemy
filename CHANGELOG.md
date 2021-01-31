@@ -8,9 +8,12 @@
       - Notifications with long text is overflowed
       - Voting percentage is hidden when voter name is long
       - Better UI for proposal card action buttons
+      - Better approach to calculate a proposal status
   
   - Bugs Fixed
     - Show GP address in Multicall info page
+    - Proposal status is not always accurate
+    - Show 'Executable' proposals first
 
 ## 1.0.5
   - Improvements

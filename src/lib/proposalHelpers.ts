@@ -98,7 +98,10 @@ export const calculateProposalStatus = (proposal: IProposalState): IProposalStat
         return IProposalStatus.Executable;
       }
     }
-    return IProposalStatus.Executed;
+    if (String(winningOutcome) === "Pass") {
+      return IProposalStatus.Executed;
+    }
+    return IProposalStatus.Failed;
   }
 
   if (String(winningOutcome) === "Pass") {
