@@ -3,7 +3,7 @@
     - Support CL4R Scheme
 
   - Improvements
-    - Use subgraph v41_8 and arc.js 0.2.87
+    - Use subgraph v41_9 and arc.js 0.2.87
     - UI/UX improvements:
       - Notifications with long text is overflowed
       - Voting percentage is hidden when voter name is long
