@@ -78,7 +78,7 @@ export const secondsToDays = (seconds: number): number => {
 export const renderCL4RParams = (CL4RParams: ICL4RParams) => {
   const activationTime = moment.unix(Number(CL4RParams.startTime)).utc();
   const redeemEnableTime = moment.unix(Number(CL4RParams.redeemEnableTime)).utc();
-  const endTime = moment.unix(Number(CL4RParams.startTime) + (CL4RParams.batchTime * CL4RParams.batchesIndexCap));
+  const endTime = moment.unix(Number(CL4RParams.startTime) + (CL4RParams.batchTime * CL4RParams.batchesIndexCap)).utc();
   return (<React.Fragment>
     <div>ID</div><div>{CL4RParams.id}</div>
     <div>Token</div><div>{`${CL4RParams.token} (${CL4RParams.tokenName})`}</div>
