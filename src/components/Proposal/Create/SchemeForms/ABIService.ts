@@ -6,6 +6,11 @@ import { Networks } from "lib/util";
 const InputDataDecoder = require("ethereum-input-data-decoder");
 import { isArrayParameter } from "./Validators";
 
+const PROXY_IMPLEMENTATIONS: {[address: string]: string} = {
+  "0xa1d65e8fb6e87b60feccbc582f7f97804b725521": "0x845856776d110a200cf41f35c9428c938e72e604",
+};
+
+
 export interface IAllowedAbiItem extends AbiItem {
   name: string;
   type: "function";
@@ -87,7 +92,7 @@ export const extractABIMethods = (abi: AbiItem[]): IAbiItemExtended[] => {
  * @param {Networks} network
  */
 export const getABIByContract = async (contractAddress: string, network: Networks): Promise<Array<any>> => {
-  const url = getUrl(contractAddress, network);
+  const url = getUrl(PROXY_IMPLEMENTATIONS[contractAddress] ? PROXY_IMPLEMENTATIONS[contractAddress]:contractAddress, network);
   try {
     const response = await axios({ url: url, method: "GET" }).then(res => { return res.data; });
     if (response.status === "0") {
