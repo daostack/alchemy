@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as css from "./PeriodRow.scss";
 import { getBatchIndexesRedeemed, getLockingBatch, ICL4RLock, ICL4RParams } from "./CL4RHelper";
-import { formatTokens, numberWithCommas, WEI } from "lib/util";
+import { formatTokens, toWei, WEI } from "lib/util";
 import { CL4RScheme } from "@daostack/arc.js";
 import Decimal from "decimal.js";
 import BN from "bn.js";
@@ -19,15 +19,15 @@ interface IProps {
 
 const PeriodRow = (props: IProps) => {
   const { lockData, schemeParams, period, currentLockingBatch, isLockingEnded, redeemableAmount, setRedeemableAmount } = props;
-  const [repuationRewardForLockings, setRepuationRewardForLockings] = React.useState("0.00");
-  const [repuationRewardForBatch, setRepuationRewardForBatch] = React.useState("0.00");
+  const [repuationRewardForLockings, setRepuationRewardForLockings] = React.useState(new Decimal(0));
+  const [repuationRewardForBatch, setRepuationRewardForBatch] = React.useState(new Decimal(0));
   const lockingIds: Array<number> = [];
   let isPeriodRedeemed = false;
 
   React.useEffect(() => {
     // The user can't redeem reputation from the current batch.
     if (period < currentLockingBatch) {
-      setRedeemableAmount(redeemableAmount + Number(repuationRewardForLockings));
+      setRedeemableAmount(redeemableAmount + repuationRewardForLockings.toNumber());
     }
   }, [repuationRewardForLockings]);
 
@@ -50,22 +50,22 @@ const PeriodRow = (props: IProps) => {
   React.useEffect(() => {
     const getRepuationData = async () => {
       const repuationRewardForBatch = (await props.cl4rScheme.getRepuationRewardForBatch(schemeParams.repRewardConstA, schemeParams.repRewardConstB, period));
-      setRepuationRewardForBatch(repuationRewardForBatch.div(new Decimal(WEI)).toFixed(2));
+      setRepuationRewardForBatch(repuationRewardForBatch.div(new Decimal(WEI)));
       const repuationRewardForLockings = await props.cl4rScheme.getReputationRewardForLockingIds(lockingIds, period, repuationRewardForBatch);
-      setRepuationRewardForLockings(repuationRewardForLockings.div(new Decimal(WEI)).toFixed(2));
+      setRepuationRewardForLockings(repuationRewardForLockings.div(new Decimal(WEI)));
     };
     getRepuationData();
   }, [period, lockData]);
 
   const inProgress = currentLockingBatch === period && !isLockingEnded;
 
-  const reputationToReceive = isPeriodRedeemed ? <div className={css.redeemedLabel}>Redeemed</div> : `${numberWithCommas(repuationRewardForLockings)} REP`;
+  const reputationToReceive = isPeriodRedeemed ? <div className={css.redeemedLabel}>Redeemed</div> : formatTokens(toWei(repuationRewardForLockings.toNumber()), "REP");
 
   return (
     <tr className={css.row}>
       <td>{period + 1}</td>
       <td>{formatTokens(youLocked, schemeParams.tokenSymbol)}</td>
-      <td>{`${numberWithCommas(repuationRewardForBatch)} REP`}</td>
+      <td>{formatTokens(toWei(repuationRewardForBatch.toNumber()), "REP")}</td>
       <td>{inProgress ? <span className={css.inProgressLabel}>In Progress</span> : reputationToReceive}</td>
     </tr>
   );
