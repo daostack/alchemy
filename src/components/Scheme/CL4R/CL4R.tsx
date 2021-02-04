@@ -18,8 +18,9 @@ import { lock, releaseLocking, extendLocking, redeemLocking, approveTokens } fro
 import { showNotification } from "@store/notifications/notifications.reducer";
 import { connect } from "react-redux";
 import Tooltip from "rc-tooltip";
-import { calculateTotalRedeemedAmount, getCL4RParams, getLockingIdsForRedeem, ICL4RParams, secondsToDays } from "./CL4RHelper";
+import { calculateTotalRedeemedAmount, getCL4RParams, getLockingIdsForRedeem, ICL4RParams } from "./CL4RHelper";
 import BN from "bn.js";
+import humanizeDuration from "humanize-duration";
 
 interface IDispatchProps {
   lock: typeof lock;
@@ -266,7 +267,7 @@ const CL4R = (props: IProps) => {
         <div className={css.lockTitle}>New Lock</div>
         <div className={css.lockDurationLabel}>
           <span style={{ marginRight: "5px" }}>Lock Duration</span>
-          <Tooltip trigger={["hover"]} overlay={`Period: ${secondsToDays(schemeParams.batchTime).toFixed(2)} days`}>
+          <Tooltip trigger={["hover"]} overlay={`Period: ${humanizeDuration(schemeParams.batchTime * 1000)}`}>
             <img width="15px" src="/assets/images/Icon/question-help.svg" />
           </Tooltip>
         </div>

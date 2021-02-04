@@ -1,6 +1,6 @@
 import BN from "bn.js";
 import classNames from "classnames";
-import { formatTokens, numberWithCommas } from "lib/util";
+import { formatTokens } from "lib/util";
 import moment from "moment-timezone";
 import * as React from "react";
 import * as css from "./LockRow.scss";
@@ -47,7 +47,7 @@ const LockRow = (props: IProps) => {
   return (
     <tr className={css.row}>
       <td>{lockingBatch + 1}</td>
-      <td>{`${numberWithCommas(formatTokens(new BN(lockData.amount)))} ${schemeParams.tokenSymbol}`}</td>
+      <td>{formatTokens(new BN(lockData.amount), schemeParams.tokenSymbol)}</td>
       <td>{lockData.period} Periods</td>
       <td>{!lockData.released ? <span>{releasable.format("DD.MM.YYYY HH:mm")}</span> :
         <div className={css.releasedLabel}>

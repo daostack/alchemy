@@ -1,10 +1,11 @@
-import { getArcByDAOAddress, numberWithCommas, realMathToBN, realMathToNumber, WEI } from "lib/util";
+import { formatTokens, getArcByDAOAddress, realMathToBN, realMathToNumber, toWei, WEI } from "lib/util";
 import gql from "graphql-tag";
 import * as React from "react";
 import moment from "moment-timezone";
 import { Address } from "@daostack/arc.js";
 import BN from "bn.js";
 import Decimal from "decimal.js";
+import humanizeDuration from "humanize-duration";
 
 export interface ICL4RParams {
   id: Address;
@@ -71,10 +72,6 @@ export const getCL4RParams = async (daoAddress: string, schemeId: string) => {
   return schemeInfoParamsObject;
 };
 
-export const secondsToDays = (seconds: number): number => {
-  return seconds / 86400;
-};
-
 export const renderCL4RParams = (CL4RParams: ICL4RParams) => {
   const activationTime = moment.unix(Number(CL4RParams.startTime)).utc();
   const redeemEnableTime = moment.unix(Number(CL4RParams.redeemEnableTime)).utc();
@@ -86,10 +83,10 @@ export const renderCL4RParams = (CL4RParams: ICL4RParams) => {
     <div>Start Time</div><div>{activationTime.format("h:mm A [UTC] on MMMM Do, YYYY")}</div>
     <div>End Time</div><div>{endTime.format("h:mm A [UTC] on MMMM Do, YYYY")}</div>
     <div>Redeem Enable Time</div><div>{`${redeemEnableTime.format("h:mm A [UTC] on MMMM Do, YYYY")} ${redeemEnableTime.isSameOrBefore(moment()) ? "(redeemable)" : "(not redeemable)"}`}</div>
-    <div>Batch Time</div><div>{`${secondsToDays(CL4RParams.batchTime).toFixed(2)} days`}</div>
+    <div>Batch Time</div><div>{humanizeDuration(CL4RParams.batchTime * 1000)}</div>
     <div>Max Locking Batches</div><div>{CL4RParams.maxLockingBatches}</div>
     <div>Batches Index Cap</div><div>{CL4RParams.batchesIndexCap}</div>
-    <div>Reputation Reward Const A</div><div>{`${numberWithCommas(new Decimal(realMathToBN(new BN(CL4RParams.repRewardConstA)).toString()).div(new Decimal(WEI)).toFixed(2))} REP`}</div>
+    <div>Reputation Reward Const A</div><div>{formatTokens(toWei(new Decimal(realMathToBN(new BN(CL4RParams.repRewardConstA)).toString()).div(new Decimal(WEI)).toNumber()), "REP")}</div>
     <div>Reputation Reward Const B</div><div>{new Decimal(realMathToNumber(new BN(CL4RParams.repRewardConstB)).toString()).toFixed(2)}</div>
     <div>Agreement Hash</div><div>{CL4RParams.agreementHash}</div>
   </React.Fragment>);
