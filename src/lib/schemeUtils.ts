@@ -51,6 +51,7 @@ export const KNOWN_SCHEME_NAMES = [
   "Competition",
   "ContributionRewardExt",
   "GenericSchemeMultiCall",
+  "ContinuousLocking4Reputation",
 ];
 
 export const getKnownSchemes = (schemes: Scheme[]) => {
@@ -71,6 +72,9 @@ export const PROPOSAL_SCHEME_NAMES = [
   "GenericSchemeMultiCall",
 ];
 
+export const getProposalSchemes = (schemes: Scheme[]) => {
+  return (schemes || []).filter((scheme: Scheme) => PROPOSAL_SCHEME_NAMES.indexOf(scheme?.staticState?.name) >= 0);
+};
 
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   if (!scheme) {
@@ -119,6 +123,8 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
     } else {
       name = "Plugin Manager";
     }
+  } else if (scheme.name === "ContinuousLocking4Reputation") {
+    name = "Locking Tokens for Reputation";
   } else if (scheme.name) {
     if (scheme.name === "ContributionRewardExt") {
       /**
