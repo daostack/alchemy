@@ -13,6 +13,7 @@
   display: flex;
   flex-direction: column;
   background-color: $sky;
+  overflow-y: scroll;
 
   .daoNameWrapper {
     display: flex;
