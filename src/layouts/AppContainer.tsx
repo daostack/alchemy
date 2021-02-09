@@ -18,7 +18,6 @@ import { matchPath, Link, Route, RouteComponentProps, Switch } from "react-route
 import { ModalContainer } from "react-router-modal";
 import { History } from "history";
 import classNames from "classnames";
-import { captureException, withScope } from "@sentry/browser";
 import { Address } from "@daostack/arc.js";
 import { sortedNotifications } from "@store/notifications/notifications";
 import * as css from "./App.scss";
@@ -80,7 +79,6 @@ type IProps = IExternalProps & IStateProps & IDispatchProps;
 
 interface IState {
   error: Error;
-  sentryEventId: string;
 }
 
 class AppContainer extends React.Component<IProps, IState> {
@@ -92,7 +90,6 @@ class AppContainer extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       error: null,
-      sentryEventId: null,
     };
   }
 
@@ -100,16 +97,8 @@ class AppContainer extends React.Component<IProps, IState> {
     this.props.showSimpleMessage(options);
   }
 
-  public componentDidCatch(error: Error, errorInfo: any): void {
+  public componentDidCatch(error: Error): void {
     this.setState({ error });
-
-    if (process.env.NODE_ENV === "production") {
-      withScope((scope): void => {
-        scope.setExtras(errorInfo);
-        const sentryEventId = captureException(error);
-        this.setState({ sentryEventId });
-      });
-    }
   }
 
   public async componentDidMount(): Promise<void> {
@@ -180,7 +169,7 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   private clearError = () => {
-    this.setState({ error: null, sentryEventId: null });
+    this.setState({ error: null });
   }
 
   private dismissNotif = (id: string) => () => this.props.dismissNotification(id);
@@ -224,7 +213,7 @@ class AppContainer extends React.Component<IProps, IState> {
       // eslint-disable-next-line no-console
       console.error(this.state.error);
       return <div>
-        <ErrorUncaught errorMessage={this.state.error.message} sentryEventId={this.state.sentryEventId} goHome={this.clearError}></ErrorUncaught>
+        <ErrorUncaught errorMessage={this.state.error.message} goHome={this.clearError}></ErrorUncaught>
       </div>;
     } else {
       const hasAcceptedCookies = !!localStorage.getItem(AppContainer.hasAcceptedCookiesKey);
