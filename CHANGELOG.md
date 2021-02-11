@@ -5,6 +5,7 @@
     - Vertical scrolling is added to the sidebar when content is hidden
   
   - Features Removed
+    - Training tooltip
     - sentry.io
 
 ## 1.0.6
