@@ -1,5 +1,4 @@
 import { getWeb3ProviderInfo, getProviderNetworkName } from "arc";
-import * as Sentry from "@sentry/browser";
 import * as Redux from "redux";
 
 import Analytics from "lib/analytics";
@@ -22,12 +21,6 @@ export function setCurrentAccount(accountAddress: string, network?: string) {
       payload,
     };
     dispatch(action);
-
-    if (process.env.NODE_ENV === "production") {
-      Sentry.configureScope((scope) => {
-        scope.setUser({ id: accountAddress || "" });
-      });
-    }
 
     // if the accountAddress is undefined, we are done
     if (accountAddress === undefined) {
