@@ -2,7 +2,6 @@ import { CompetitionScheme, IDAOState, ISchemeState, Scheme } from "@daostack/ar
 import { enableWalletProvider } from "arc";
 import classNames from "classnames";
 import Loading from "components/Shared/Loading";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UnknownSchemeCard from "components/Dao/UnknownSchemeCard";
 import Analytics from "lib/analytics";
@@ -115,21 +114,18 @@ class DaoSchemesPage extends React.Component<IProps, null> {
 
         <Sticky enabled top={50} innerZ={10000}>
           <h1>Plugins</h1>
-          { schemeManager ?
-            <TrainingTooltip placement="topLeft" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
-              <a className={
-                classNames({
-                  [css.addPluginButton]: true,
-                  [css.disabled]: !schemeManagerActive,
-                })}
-              data-test-id="createProposal"
-              href="#!"
-              onClick={schemeManagerActive ? this.handleNewProposal(schemeManager.id) : null}
-              >
-                Add a Plugin
-              </a>
-            </TrainingTooltip>
-            : ""}
+          {Boolean(schemeManager) &&
+            <a className={
+              classNames({
+                [css.addPluginButton]: true,
+                [css.disabled]: !schemeManagerActive,
+              })}
+            data-test-id="createProposal"
+            href="#!"
+            onClick={schemeManagerActive ? this.handleNewProposal(schemeManager.id) : null}
+            >
+              Add a Plugin
+            </a>}
         </Sticky>
         {(allKnownSchemes.length + unknownSchemes.length) === 0
           ? <div>

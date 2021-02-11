@@ -14,7 +14,6 @@ import * as Sticky from "react-stickynode";
 import { showNotification } from "@store/notifications/notifications.reducer";
 import { IRootState } from "@store";
 import { connect } from "react-redux";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { combineLatest, Observable, of } from "rxjs";
 import { ICrxRewarderProps, getCrxRewarderProps, hasRewarderContract, CrxRewarderComponentType, getCrxRewarderComponent } from "components/Scheme/ContributionRewardExtRewarders/rewardersProps";
 import ReputationFromToken from "./ReputationFromToken";
@@ -182,32 +181,21 @@ class SchemeContainer extends React.Component<IProps, IState> {
               <div className={css.tabs}>
 
                 { // Proposals tab
-                  isProposalScheme ?
-                    <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
-                    : ""}
+                  Boolean(isProposalScheme) && <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
+                }
 
                 {
                   isLocking && <Link className={lockingTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/locking/`}>Locking</Link>
                 }
 
-                { // Information tab
-                  <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
-                    <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Information</Link>
-                  </TrainingTooltip>
-                }
+                <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Information</Link>
 
                 { // Standard Bounties scheme tab
-                  isBountyScheme ?
-                    <Link className={openBountiesTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/openbounties/`}>Open Bounties</Link>
-                    : ""
+                  Boolean(isBountyScheme) && <Link className={openBountiesTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/openbounties/`}>Open Bounties</Link>
                 }
 
                 { // Competition scheme tab
-                  this.state.crxRewarderProps ?
-                    <TrainingTooltip placement="top" overlay={this.state.crxRewarderProps.shortDescription}>
-                      <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/crx/`}>{this.state.crxRewarderProps.friendlyName} ({approvedProposals.length})</Link>
-                    </TrainingTooltip>
-                    : ""
+                  Boolean(this.state.crxRewarderProps) && <Link className={crxTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/crx/`}>{this.state.crxRewarderProps.friendlyName} ({approvedProposals.length})</Link>
                 }
 
               </div>
@@ -215,29 +203,25 @@ class SchemeContainer extends React.Component<IProps, IState> {
               {isProposalScheme ?
                 inInfoTab ?
                   <div className={css.editPlugin}>
-                    <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
-                      <a
-                        data-test-id="createProposal"
-                        href="#!"
-                        onClick={this.handleEditPlugin}
-                      >
-                      Edit Plugin
-                      </a>
-                    </TrainingTooltip>
+                    <a
+                      data-test-id="createProposal"
+                      href="#!"
+                      onClick={this.handleEditPlugin}
+                    >
+                    Edit Plugin
+                    </a>
                   </div>
                   :
                   <div className={css.createProposal}>
-                    <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
-                      <a className={
-                        classNames({
-                          [css.disabled]: !isActive,
-                        })}
-                      data-test-id="createProposal"
-                      href="#!"
-                      onClick={isActive ? this.handleNewProposal : null}
-                      >
-                        + New Proposal</a>
-                    </TrainingTooltip>
+                    <a className={
+                      classNames({
+                        [css.disabled]: !isActive,
+                      })}
+                    data-test-id="createProposal"
+                    href="#!"
+                    onClick={isActive ? this.handleNewProposal : null}
+                    >
+                      + New Proposal</a>
                   </div>
                 : ""
               }

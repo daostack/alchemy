@@ -15,7 +15,6 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Observable, combineLatest } from "rxjs";
 import { connect } from "react-redux";
 import { showNotification } from "@store/notifications/notifications.reducer";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./SchemeProposals.scss";
 import { standardPolling, getNetworkByDAOAddress } from "lib/util";
@@ -78,13 +77,11 @@ class SchemeProposalsPreboosted extends React.Component<IPropsPreBoosted, null> 
   public render(): RenderOutput {
     const proposalsPreBoosted = this.props.data;
     const { currentAccountAddress, daoState, fetchMore, scheme } = this.props;
-    let proposalCount = 0;
-
     const preBoostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
         {proposalsPreBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
+            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -93,9 +90,7 @@ class SchemeProposalsPreboosted extends React.Component<IPropsPreBoosted, null> 
     return (
       <div className={css.regularContainer}>
         <div className={css.proposalsHeader}>
-          <TrainingTooltip placement="bottom" overlay={"Pending boosting proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
-            <span>Pending Boosting Proposals ({scheme.numberOfPreBoostedProposals})</span>
-          </TrainingTooltip>
+          <span>Pending Boosting Proposals ({scheme.numberOfPreBoostedProposals})</span>
           {proposalsPreBoosted.length === 0
             ?
             <div>
@@ -167,13 +162,11 @@ class SchemeProposalsQueued extends React.Component<IPropsQueued, null> {
   public render(): RenderOutput {
     const proposalsQueued = this.props.data;
     const { currentAccountAddress, daoState, fetchMore, scheme } = this.props;
-    let proposalCount = 0;
-
     const queuedProposalsHTML = (
       <TransitionGroup className="queued-proposals-list">
         {proposalsQueued.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
+            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -182,9 +175,7 @@ class SchemeProposalsQueued extends React.Component<IPropsQueued, null> {
     return (
       <div className={css.regularContainer}>
         <div className={css.proposalsHeader}>
-          <TrainingTooltip placement="bottom" overlay={"Regular proposals are passed or failed via absolute majority over a configured voting period. If enough GEN is staked predicting they will pass, they can move to the pending and then boosted queues."}>
-            <span>Regular Proposals ({scheme.numberOfQueuedProposals})</span>
-          </TrainingTooltip>
+          <span>Regular Proposals ({scheme.numberOfQueuedProposals})</span>
           {proposalsQueued.length === 0
             ?
             <div>
@@ -262,16 +253,13 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
     const { data } = this.props;
-
     const [proposalsBoosted, allProposals] = data;
     const { currentAccountAddress, daoState, scheme } = this.props;
-    let proposalCount = 0;
-
     const boostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
         { proposalsBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
+            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -302,9 +290,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
           <div>
             <div className={css.boostedContainer}>
               <div className={css.proposalsHeader}>
-                <TrainingTooltip placement="bottom" overlay={"Boosted proposals are passed or failed via relative majority over a configured voting period"}>
-                  <span>Boosted Proposals ({scheme.numberOfBoostedProposals})</span>
-                </TrainingTooltip>
+                <span>Boosted Proposals ({scheme.numberOfBoostedProposals})</span>
                 {proposalsBoosted.length === 0
                   ?
                   <div>
