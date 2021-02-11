@@ -15,6 +15,7 @@ import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
 import { getABIByContract, extractABIMethods, encodeABI } from "./ABIService";
 import * as Validators from "./Validators";
+import CopyToClipboard from "components/Shared/CopyToClipboard";
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -415,18 +416,22 @@ class CreateGenericMultiCallScheme extends React.Component<IProps, IStateProps> 
                                 Contract Address
                               <ErrorMessage name={`contracts.${index}.address`}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                             </label>
-                            <Field // eslint-disable-next-line react/jsx-no-bind
-                              onChange={async (e: any) => { setFieldValue(`contracts.${index}.address`, e.target.value); await this.getContractABI(e.target.value, setFieldValue, index, network); }}
-                              component="select"
-                              name={`contracts.${index}.address`}
-                              type="text"
-                              validate={Validators.requireValue}
-                            >
-                              <option value="" disabled>-- Choose contract --</option>
-                              <optgroup label={whitelistedContracts.length > 0 ? "Whitelisted contracts" : "Custom contracts"}>
-                                {contractsOptions}
-                              </optgroup>
-                            </Field>
+                            <div style={{ display: "flex" }}>
+                              <Field // eslint-disable-next-line react/jsx-no-bind
+                                onChange={async (e: any) => { setFieldValue(`contracts.${index}.address`, e.target.value); await this.getContractABI(e.target.value, setFieldValue, index, network); }}
+                                component="select"
+                                name={`contracts.${index}.address`}
+                                type="text"
+                                validate={Validators.requireValue}
+                                style={{ marginRight: "5px" }}
+                              >
+                                <option value="" disabled>-- Choose contract --</option>
+                                <optgroup label={whitelistedContracts.length > 0 ? "Whitelisted contracts" : "Custom contracts"}>
+                                  {contractsOptions}
+                                </optgroup>
+                              </Field>
+                              <CopyToClipboard value={values.contracts[index].address} />
+                            </div>
                           </div>
 
                           {
