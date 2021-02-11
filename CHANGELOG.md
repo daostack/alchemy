@@ -1,3 +1,12 @@
+## 1.0.7
+  - Improvements
+    - Use subgraph v41_10
+    - Copy to clipboard option near the selected contract in the multi-call scheme
+    - Vertical scrolling is added to the sidebar when content is hidden
+  
+  - Features Removed
+    - sentry.io
+
 ## 1.0.6
   - Features Added
     - Support CL4R Scheme
