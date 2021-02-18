@@ -17,7 +17,6 @@ import { Breadcrumbs } from "react-breadcrumbs-dynamic";
 import { of } from "rxjs";
 import classNames from "classnames";
 import { Address, IDAOState } from "@daostack/arc.js";
-import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 import ProviderConfigButton from "layouts/ProviderConfigButton";
 import Tooltip from "rc-tooltip";
@@ -28,7 +27,6 @@ interface IExternalProps extends RouteComponentProps<any> {
 }
 
 interface IStateProps {
-  showRedemptionsButton: boolean;
   currentAccountProfile: IProfileState;
   currentAccountAddress: string | null;
   daoAvatarAddress: Address;
@@ -44,18 +42,8 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
   });
   const queryValues = parse(ownProps.location.search);
 
-  // TODO: this is a temporary hack to send less requests during the ethDenver conference:
-  // we hide the demptionsbutton when the URL contains "crx". Should probably be disabled at later date..
-  let showRedemptionsButton;
-  if (ETHDENVER_OPTIMIZATION) {
-    showRedemptionsButton = (ownProps.location.pathname.indexOf("crx") === -1);
-  } else {
-    showRedemptionsButton = true;
-  }
-
   return {
     ...ownProps,
-    showRedemptionsButton,
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
@@ -150,11 +138,9 @@ class Header extends React.Component<IProps, null> {
               compare={this.breadCrumbCompare}
             />
           </div>
-          {
-            Boolean(this.props.showRedemptionsButton) && <div className={css.redemptionsButton}>
-              <RedemptionsButton currentAccountAddress={currentAccountAddress} />
-            </div>
-          }
+          <div className={css.redemptionsButton}>
+            <RedemptionsButton currentAccountAddress={currentAccountAddress} />
+          </div>
           <div className={css.accountInfo}>
             {currentAccountAddress ?
               <span>
