@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as css from "./DaoProposalsPage.scss";
 import { Address, IDAOState, Proposal } from "@daostack/arc.js";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import Loading from "components/Shared/Loading";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -72,7 +71,6 @@ const DaoProposalsPage = (props: IProps) => {
 
   return (
     <div className={css.wrapper}>
-      <BreadcrumbsItem to={`/dao/${daoState.address}`}>Proposals</BreadcrumbsItem>
       <div className={css.topBarWrapper}>
         <div className={css.top}>
           <h1 className={css.title}>Proposals</h1>

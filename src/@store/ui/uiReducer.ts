@@ -18,8 +18,6 @@ export interface IUIState {
   simpleMessageOpen: boolean;
   simpleMessageOptions: ISimpleMessagePopupProps;
   tourVisible: boolean;
-  trainingTooltipsOnHover: boolean;
-  trainingTooltipsShowAll: boolean;
 }
 
 const initialState: IUIState = {
@@ -27,8 +25,6 @@ const initialState: IUIState = {
   simpleMessageOpen: false,
   simpleMessageOptions: { body: "" },
   tourVisible: false,
-  trainingTooltipsOnHover: true,
-  trainingTooltipsShowAll: false,
 };
 
 const uiReducer = (state = initialState, action: any) => {
@@ -51,18 +47,6 @@ const uiReducer = (state = initialState, action: any) => {
 
     case ActionTypes.HIDE_SIMPLE_MESSAGE:
       return { ...state, simpleMessageOpen: false };
-
-    case ActionTypes.ENABLE_TRAINING_TOOLTIPS_ON_HOVER:
-      return { ...state, trainingTooltipsOnHover: true };
-
-    case ActionTypes.DISABLE_TRAINING_TOOLTIPS_ON_HOVER:
-      return { ...state, trainingTooltipsOnHover: false };
-
-    case ActionTypes.ENABLE_TRAINING_TOOLTIPS_SHOW_ALL:
-      return { ...state, trainingTooltipsShowAll: true };
-
-    case ActionTypes.DISABLE_TRAINING_TOOLTIPS_SHOW_ALL:
-      return { ...state, trainingTooltipsShowAll: false };
 
     default: {
       return state;

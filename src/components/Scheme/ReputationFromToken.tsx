@@ -12,14 +12,12 @@ import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { fromWei, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import { schemeName } from "lib/schemeUtils";
 import * as React from "react";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as Sticky from "react-stickynode";
 import { connect } from "react-redux";
 import { IRootState } from "@store";
 import { showNotification } from "@store/notifications/notifications.reducer";
 import * as schemeCss from "./Scheme.scss";
 import * as css from "./ReputationFromToken.scss";
-
 import * as BN from "bn.js";
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -276,8 +274,6 @@ class ReputationFromToken extends React.Component<IProps, IState> {
 
     return (
       <div className={schemeCss.schemeContainer}>
-        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeState.id}`}>{schemeName(schemeState, schemeState.address)}</BreadcrumbsItem>
-
         <Sticky enabled top={50} innerZ={10000}>
           <h2 className={schemeCss.schemeName}>
             {schemeName(schemeState, schemeState.address)}

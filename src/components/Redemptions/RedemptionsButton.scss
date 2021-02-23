@@ -8,12 +8,15 @@
   .notification {
     display: inline-block;
     position: absolute;
-    top: 2px;
-    right: -3px;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background-color: #f65050;
+    top: 11px;
+    right: -11px;
+    width: 15px;
+    height: 15px;
+    border-radius: 20%;
+    background-color: $accent-2;
+    text-align: center;
+    font-size: $caption;
+    line-height: initial;
   }
 }
 

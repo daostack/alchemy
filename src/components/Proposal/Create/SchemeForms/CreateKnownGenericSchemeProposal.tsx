@@ -3,23 +3,17 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { IProposalType, ISchemeState } from "@daostack/arc.js";
 import { enableWalletProvider } from "arc";
-
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import * as classNames from "classnames";
 import Interweave from "interweave";
-
 import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";
-
 import { IRootState } from "@store";
 import { NotificationStatus, showNotification } from "@store/notifications/notifications.reducer";
 import * as arcActions from "@store/arc/arcActions";
-
 import Analytics from "lib/analytics";
 import { isValidUrl, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
-
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
@@ -286,7 +280,6 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
     const actions = this.state.actions;
     const currentAction = this.state.currentAction;
-    const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
     return (
       <div className={css.containerWithSidebar}>
@@ -410,15 +403,14 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                     className={touched.title && errors.title ? css.error : null}
                   />
 
-                  <TrainingTooltip overlay={fnDescription} placement="right">
-                    <label htmlFor="descriptionInput">
-                      <div className={css.proposalDescriptionLabelText}>
-                        <div className={css.requiredMarker}>*</div>
-                        <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
-                      </div>
-                      <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                    </label>
-                  </TrainingTooltip>
+                  <label htmlFor="descriptionInput">
+                    <div className={css.proposalDescriptionLabelText}>
+                      <div className={css.requiredMarker}>*</div>
+                      <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                    </div>
+                    <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  </label>
+
                   <Field
                     component={MarkdownField}
                     onChange={(value: any) => { setFieldValue("description", value); }}
@@ -473,19 +465,11 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   </div>
 
                   <div className={css.createProposalActions}>
-                    <TrainingTooltip overlay="Export proposal" placement="top">
-                      <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
-                        <img src="/assets/images/Icon/share-blue.svg" />
-                      </button>
-                    </TrainingTooltip>
-                    <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
-                      Cancel
+                    <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                      <img src="/assets/images/Icon/share-blue.svg" />
                     </button>
-                    <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
-                      <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                        Submit proposal
-                      </button>
-                    </TrainingTooltip>
+                    <button className={css.exitProposalCreation} type="button" onClick={handleClose}>Cancel</button>
+                    <button className={css.submitProposal} type="submit" disabled={isSubmitting}>Submit proposal</button>
                   </div>
                 </Form>
               );

@@ -8,7 +8,6 @@ import { schemeName } from "lib/schemeUtils";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { combineLatest } from "rxjs";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "./SchemeCard.scss";
 
 interface IExternalProps {
@@ -30,26 +29,10 @@ const ProposalSchemeCard = (props: IProps) => {
   const proposalsHTML = proposals.map((proposal: Proposal) => <SubscribedProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
   const headerHtml = <h2>{schemeName(schemeState, "[Unknown]")}</h2>;
 
-  let trainingTooltipMessage: string;
-
-  switch (schemeState.name) {
-    case "ContributionReward":
-    case "ContributionRewardExt":
-      trainingTooltipMessage = "Use this scheme to reward users (rep and/or funds) for their contributions to the DAO";
-      break;
-    case "SchemeRegistrar":
-      trainingTooltipMessage = "Use this scheme to install, remove or edit the schemes of the DAO";
-      break;
-  }
-
   return (
     <div className={css.wrapper} data-test-id={`schemeCard-${schemeState.name}`}>
       <Link className={css.headerLink} to={`/dao/${dao.address}/scheme/${schemeState.id}`}>
-        { trainingTooltipMessage ?
-          <TrainingTooltip placement="topLeft" overlay={trainingTooltipMessage}>
-            {headerHtml}
-          </TrainingTooltip> : headerHtml
-        }
+        {headerHtml}
         <div>
           <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending Boosting</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
         </div>

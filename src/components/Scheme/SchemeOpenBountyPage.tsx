@@ -2,9 +2,7 @@
 /*tslint:disable:max-classes-per-file*/
 
 import * as React from "react";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState } from "@daostack/arc.js";
-import { schemeName } from "lib/schemeUtils";
 import { getNetworkName } from "lib/util";
 import * as css from "./SchemeInfo.scss";
 
@@ -79,7 +77,6 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { daoAvatarAddress, scheme } = this.props;
     const createCard = () => {
 
       // Shows open bounty with bounty details if API returns bounty, else, shows "no open bounty" message
@@ -109,10 +106,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
 
     return (
       <div>
-        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
-        {
-          createCard()
-        }
+        {createCard()}
         <div className={css.pageSelectionContainer}>
           {this.state.page - 25 > 0 && (
             <button className={css.pageButton} onClick={this.prevPage}>

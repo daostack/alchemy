@@ -9,18 +9,14 @@ import CopyToClipboard from "components/Shared/CopyToClipboard";
 import { IRootState } from "@store";
 import { showNotification } from "@store/notifications/notifications.reducer";
 import { IProfileState } from "@store/profiles/profilesReducer";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import { parse } from "query-string";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom";
 import { Breadcrumbs } from "react-breadcrumbs-dynamic";
 import { of } from "rxjs";
-import Toggle from "react-toggle";
-import { RefObject } from "react";
 import classNames from "classnames";
 import { Address, IDAOState } from "@daostack/arc.js";
-import { ETHDENVER_OPTIMIZATION } from "../settings";
 import * as css from "./App.scss";
 import ProviderConfigButton from "layouts/ProviderConfigButton";
 import Tooltip from "rc-tooltip";
@@ -31,7 +27,6 @@ interface IExternalProps extends RouteComponentProps<any> {
 }
 
 interface IStateProps {
-  showRedemptionsButton: boolean;
   currentAccountProfile: IProfileState;
   currentAccountAddress: string | null;
   daoAvatarAddress: Address;
@@ -47,18 +42,8 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
   });
   const queryValues = parse(ownProps.location.search);
 
-  // TODO: this is a temporary hack to send less requests during the ethDenver conference:
-  // we hide the demptionsbutton when the URL contains "crx". Should probably be disabled at later date..
-  let showRedemptionsButton;
-  if (ETHDENVER_OPTIMIZATION) {
-    showRedemptionsButton = (ownProps.location.pathname.indexOf("crx") === -1);
-  } else {
-    showRedemptionsButton = true;
-  }
-
   return {
     ...ownProps,
-    showRedemptionsButton,
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
@@ -71,22 +56,12 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
 interface IDispatchProps {
   showNotification: typeof showNotification;
   toggleMenu: typeof uiActions.toggleMenu;
-  toggleTrainingTooltipsOnHover: typeof uiActions.toggleTrainingTooltipsOnHover;
-  enableTrainingTooltipsOnHover: typeof uiActions.enableTrainingTooltipsOnHover;
-  disableTrainingTooltipsOnHover: typeof uiActions.disableTrainingTooltipsOnHover;
-  enableTrainingTooltipsShowAll: typeof uiActions.enableTrainingTooltipsShowAll;
-  disableTrainingTooltipsShowAll: typeof uiActions.disableTrainingTooltipsShowAll;
   threeBoxLogout: typeof threeBoxLogout;
 }
 
 const mapDispatchToProps = {
   showNotification,
   toggleMenu: uiActions.toggleMenu,
-  toggleTrainingTooltipsOnHover: uiActions.toggleTrainingTooltipsOnHover,
-  enableTrainingTooltipsOnHover: uiActions.enableTrainingTooltipsOnHover,
-  disableTrainingTooltipsOnHover: uiActions.disableTrainingTooltipsOnHover,
-  enableTrainingTooltipsShowAll: uiActions.enableTrainingTooltipsShowAll,
-  disableTrainingTooltipsShowAll: uiActions.disableTrainingTooltipsShowAll,
   threeBoxLogout,
 };
 
@@ -96,23 +71,9 @@ class Header extends React.Component<IProps, null> {
 
   constructor (props: IProps) {
     super(props);
-    this.toggleDiv = React.createRef();
-    this.initializeTrainingTooltipsToggle();
   }
 
-  private static trainingTooltipsEnabledKey = "trainingTooltipsEnabled";
-  private toggleDiv: RefObject<HTMLDivElement>;
-
   public componentDidMount() {
-    if (this.toggleDiv.current) {
-      this.toggleDiv.current.onmouseenter = (_ev: MouseEvent) => {
-        this.props.enableTrainingTooltipsShowAll();
-      };
-      this.toggleDiv.current.onmouseleave = (_ev: MouseEvent) => {
-        this.props.disableTrainingTooltipsShowAll();
-      };
-    }
-
     this.setState({ alchemyVersion: PACKAGE_VERSION ?? "Not found" });
   }
 
@@ -139,31 +100,6 @@ class Header extends React.Component<IProps, null> {
     this.props.toggleMenu();
   }
 
-  private handleTrainingTooltipsEnabled = (event: any): void => {
-    /**
-     * maybe making this asynchronous can address reports of the button responding very slowly
-     */
-    const checked = event.target.checked;
-    setTimeout(() => {
-      localStorage.setItem(Header.trainingTooltipsEnabledKey, checked);
-      this.props.toggleTrainingTooltipsOnHover();
-    }, 0);
-  }
-
-  private getTrainingTooltipsEnabled(): boolean {
-    const trainingTooltipsOnSetting = localStorage.getItem(Header.trainingTooltipsEnabledKey);
-    return (trainingTooltipsOnSetting === null) || trainingTooltipsOnSetting === "true";
-  }
-
-  private initializeTrainingTooltipsToggle() {
-    const trainingTooltipsOn = this.getTrainingTooltipsEnabled();
-    if (trainingTooltipsOn) {
-      this.props.enableTrainingTooltipsOnHover();
-    } else {
-      this.props.disableTrainingTooltipsOnHover();
-    }
-  }
-
   private breadCrumbCompare = (a: any, b: any): number => a.weight ? a.weight - b.weight : a.to.length - b.to.length;
 
   public render(): RenderOutput {
@@ -178,7 +114,6 @@ class Header extends React.Component<IProps, null> {
     const accountIsEnabled = getAccountIsEnabled();
     const web3ProviderInfo = getWeb3ProviderInfo();
     const web3Provider = getWeb3Provider();
-    const trainingTooltipsOn = this.getTrainingTooltipsEnabled();
 
     return (
       <div className={css.headerContainer}>
@@ -203,19 +138,9 @@ class Header extends React.Component<IProps, null> {
               compare={this.breadCrumbCompare}
             />
           </div>
-          <TrainingTooltip placement="left" overlay={"Show / hide tooltips on hover"} alwaysAvailable>
-            <div className={css.toggleButton} ref={this.toggleDiv}>
-              <Toggle
-                defaultChecked={trainingTooltipsOn}
-                onChange={this.handleTrainingTooltipsEnabled}
-                icons={{ checked: <img src='/assets/images/Icon/checked.svg' />, unchecked: <img src='/assets/images/Icon/unchecked.svg' /> }} />
-            </div>
-          </TrainingTooltip>
-          {
-            this.props.showRedemptionsButton ? <div className={css.redemptionsButton}>
-              <RedemptionsButton currentAccountAddress={currentAccountAddress} />
-            </div> : ""
-          }
+          <div className={css.redemptionsButton}>
+            <RedemptionsButton currentAccountAddress={currentAccountAddress} />
+          </div>
           <div className={css.accountInfo}>
             {currentAccountAddress ?
               <span>
@@ -279,19 +204,15 @@ class Header extends React.Component<IProps, null> {
             }
             {!currentAccountAddress ?
               <div className={css.web3ProviderLogin}>
-                <TrainingTooltip placement="bottomLeft" overlay={"Click here to connect your wallet provider"}>
-                  <button onClick={this.handleClickLogin} data-test-id="loginButton">
-                    Log in <img src="/assets/images/Icon/login-white.svg" />
-                  </button>
-                </TrainingTooltip>
+                <button onClick={this.handleClickLogin} data-test-id="loginButton">
+                  Log in <img src="/assets/images/Icon/login-white.svg" />
+                </button>
               </div>
               : (!accountIsEnabled) ?
                 <div className={css.web3ProviderLogin}>
-                  <TrainingTooltip placement="bottomLeft" overlay={"Click here to connect your wallet provider"}>
-                    <button onClick={this.handleConnect} data-test-id="connectButton">
-                      <span className={css.connectButtonText}>Connect</span><img src="/assets/images/Icon/login-white.svg" />
-                    </button>
-                  </TrainingTooltip>
+                  <button onClick={this.handleConnect} data-test-id="connectButton">
+                    <span className={css.connectButtonText}>Connect</span><img src="/assets/images/Icon/login-white.svg" />
+                  </button>
                 </div>
                 : ""
             }

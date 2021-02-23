@@ -9,7 +9,6 @@ import { showNotification, NotificationStatus } from "@store/notifications/notif
 import { baseTokenName, isValidUrl, getNetworkByDAOAddress, getArcByDAOAddress } from "lib/util";
 import { exportUrl, importUrlValues } from "lib/proposalUtils";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 import HelpButton from "components/Shared/HelpButton";
@@ -102,8 +101,6 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
     const { handleClose } = this.props;
     const network = getNetworkByDAOAddress(this.props.daoAvatarAddress);
 
-    const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
-
     return (
       <div className={css.containerNoSidebar}>
         <Formik
@@ -167,13 +164,12 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
             values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
-              <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
-                <label htmlFor="titleInput">
-                  <div className={css.requiredMarker}>*</div>
+              <label htmlFor="titleInput">
+                <div className={css.requiredMarker}>*</div>
                 Title
-                  <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-              </TrainingTooltip>
+                <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+              </label>
+
               <Field
                 autoFocus
                 id="titleInput"
@@ -184,15 +180,14 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
                 className={touched.title && errors.title ? css.error : null}
               />
 
-              <TrainingTooltip overlay={fnDescription} placement="right">
-                <label htmlFor="descriptionInput">
-                  <div className={css.proposalDescriptionLabelText}>
-                    <div className={css.requiredMarker}>*</div>
-                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
-                  </div>
-                  <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-              </TrainingTooltip>
+              <label htmlFor="descriptionInput">
+                <div className={css.proposalDescriptionLabelText}>
+                  <div className={css.requiredMarker}>*</div>
+                  <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                </div>
+                <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+              </label>
+
               <Field
                 component={MarkdownField}
                 onChange={(value: any) => { setFieldValue("description", value); }}
@@ -202,22 +197,19 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
                 className={touched.description && errors.description ? css.error : null}
               />
 
-              <TrainingTooltip overlay="Add some tags to give context about your proposal e.g. idea, signal, bounty, research, etc" placement="right">
-                <label className={css.tagSelectorLabel}>
+              <label className={css.tagSelectorLabel}>
                 Tags
-                </label>
-              </TrainingTooltip>
+              </label>
 
               <div className={css.tagSelectorContainer}>
                 <TagsSelector onChange={this.onTagsChange} arc={getArcByDAOAddress(this.props.daoAvatarAddress)}></TagsSelector>
               </div>
 
-              <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
-                <label htmlFor="urlInput">
+              <label htmlFor="urlInput">
                 URL
-                  <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-              </TrainingTooltip>
+                <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+              </label>
+
               <Field
                 id="urlInput"
                 maxLength={120}
@@ -262,19 +254,11 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
               </div>
 
               <div className={css.createProposalActions}>
-                <TrainingTooltip overlay="Export proposal" placement="top">
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
-                    <img src="/assets/images/Icon/share-blue.svg" />
-                  </button>
-                </TrainingTooltip>
-                <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
-                  Cancel
+                <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                  <img src="/assets/images/Icon/share-blue.svg" />
                 </button>
-                <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
-                  <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                  Submit proposal
-                  </button>
-                </TrainingTooltip>
+                <button className={css.exitProposalCreation} type="button" onClick={handleClose}>Cancel</button>
+                <button className={css.submitProposal} type="submit" disabled={isSubmitting}>Submit proposal</button>
               </div>
             </Form>
           }
