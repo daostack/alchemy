@@ -13,7 +13,6 @@
   display: flex;
   flex-direction: column;
   background-color: $sky;
-  overflow-y: scroll;
 
   .daoNameWrapper {
     display: flex;
@@ -188,9 +187,6 @@
 
   .siteLinksWrapper {
     min-height: 315px;
-    &.testNet {
-      min-height: 270px;
-    }
     left: 0;
     width: 100%;
     border-top: 2px solid rgba(78, 137, 208, 1);
@@ -240,7 +236,7 @@
           transition: all 0.25s ease;
           padding: 10px 0 10px 0;
           background-color: rgba(255, 255, 255, 1);
-          border-radius: 0 10px 10px 0;
+          border-radius: 10px;
 
           .diamond {
             width: 10px;
@@ -286,7 +282,7 @@
         &:hover ul {
           left: -8px;
           opacity: 1;
-          top: -160px;
+          top: -140px;
           transform: translateX(100%) scale(1);
           background-color: rgba(255, 255, 255, 1);
         }
