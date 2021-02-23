@@ -1,5 +1,3 @@
-// disables some UI elements for a less resource-intensive page load
-export const ETHDENVER_OPTIMIZATION = true;
 export const GRAPH_POLL_INTERVAL = 30000;
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import WalletConnectProvider from "@walletconnect/web3-provider";

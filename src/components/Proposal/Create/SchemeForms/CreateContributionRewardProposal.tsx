@@ -7,7 +7,6 @@ import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UserSearchField from "components/Shared/UserSearchField";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Analytics from "lib/analytics";
 import { baseTokenName, supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, isAddress, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
 import { showNotification, NotificationStatus } from "@store/notifications/notifications.reducer";
@@ -106,8 +105,6 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       tags: this.initialFormValues.tags,
     };
   }
-
-  private fnDescription = (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
 
   public handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification }, getNetworkByDAOAddress(this.props.daoAvatarAddress))) { return; }
@@ -234,13 +231,11 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <div className={css.description}>This proposal can send eth / erc20 token, mint new DAO tokens ({dao.tokenSymbol}) and mint / slash reputation in the DAO. Each proposal can have one of each of these actions. e.g. 100 rep for completing a project + 0.05 ETH for covering expenses.</div>
-              <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
-                <label htmlFor="titleInput">
-                  <div className={css.requiredMarker}>*</div>
+              <label htmlFor="titleInput">
+                <div className={css.requiredMarker}>*</div>
                 Title
-                  <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-              </TrainingTooltip>
+                <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+              </label>
               <Field
                 autoFocus
                 id="titleInput"
@@ -250,16 +245,13 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 type="text"
                 className={touched.title && errors.title ? css.error : null}
               />
-
-              <TrainingTooltip overlay={this.fnDescription} placement="right">
-                <label htmlFor="descriptionInput">
-                  <div className={css.proposalDescriptionLabelText}>
-                    <div className={css.requiredMarker}>*</div>
-                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
-                  </div>
-                  <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-              </TrainingTooltip>
+              <label htmlFor="descriptionInput">
+                <div className={css.proposalDescriptionLabelText}>
+                  <div className={css.requiredMarker}>*</div>
+                  <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                </div>
+                <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+              </label>
               <Field
                 component={MarkdownField}
                 onChange={(value: any) => { setFieldValue("description", value); }}
@@ -268,23 +260,15 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 name="description"
                 className={touched.description && errors.description ? css.error : null}
               />
-
-              <TrainingTooltip overlay="Add some tags to give context about your proposal e.g. idea, signal, bounty, research, etc" placement="right">
-                <label className={css.tagSelectorLabel}>
-                Tags
-                </label>
-              </TrainingTooltip>
-
+              <label className={css.tagSelectorLabel}>Tags</label>
               <div className={css.tagSelectorContainer}>
                 <TagsSelector onChange={this.onTagsChange()} tags={this.state.tags} arc={getArcByDAOAddress(dao.address)}></TagsSelector>
               </div>
 
-              <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
-                <label htmlFor="urlInput">
+              <label htmlFor="urlInput">
                 URL
-                  <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-              </TrainingTooltip>
+                <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+              </label>
               <Field
                 id="urlInput"
                 maxLength={120}
@@ -295,12 +279,11 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               />
 
               <div>
-                <TrainingTooltip overlay="Ethereum Address or Alchemy Username to receive rewards, if not you" placement="right">
-                  <label htmlFor="beneficiary">
-                    Recipient, if not you
-                    <ErrorMessage name="beneficiary">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  </label>
-                </TrainingTooltip>
+                <label htmlFor="beneficiary">
+                  Recipient, if not you
+                  <ErrorMessage name="beneficiary">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                </label>
+
                 <UserSearchField
                   daoAvatarAddress={daoAvatarAddress}
                   name="beneficiary"
@@ -395,19 +378,11 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 }
               </div>
               <div className={css.createProposalActions}>
-                <TrainingTooltip overlay="Export proposal" placement="top">
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
-                    <img src="/assets/images/Icon/share-blue.svg" />
-                  </button>
-                </TrainingTooltip>
-                <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
-                  Cancel
+                <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                  <img src="/assets/images/Icon/share-blue.svg" />
                 </button>
-                <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
-                  <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                    Submit proposal
-                  </button>
-                </TrainingTooltip>
+                <button className={css.exitProposalCreation} type="button" onClick={handleClose}>Cancel</button>
+                <button className={css.submitProposal} type="submit" disabled={isSubmitting}>Submit proposal</button>
               </div>
             </Form>
           }

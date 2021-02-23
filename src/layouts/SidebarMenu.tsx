@@ -1,6 +1,5 @@
 import { IDAOState, Token } from "@daostack/arc.js";
 import { hideMenu } from "@store/ui/uiActions";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as BN from "bn.js";
 import classNames from "classnames";
 import FollowButton from "components/Shared/FollowButton";
@@ -146,19 +145,17 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
               </Link>
             </li>
             <li>
-              <TrainingTooltip placement="right" overlay={"List of entities (DAOs and individuals) that have voting power in the DAO"}>
-                <Link to={"/dao/" + dao.address + "/members/"} onClick={this.handleCloseMenu}>
-                  <span className={css.menuDot} />
-                  <span className={
-                    classNames({
-                      [css.notification]: true,
-                      [css.holdersNotification]: true,
-                    })
-                  }></span>
-                  <img src="/assets/images/Icon/menu/holders.svg" />
-                  Members
-                </Link>
-              </TrainingTooltip>
+              <Link to={"/dao/" + dao.address + "/members/"} onClick={this.handleCloseMenu}>
+                <span className={css.menuDot} />
+                <span className={
+                  classNames({
+                    [css.notification]: true,
+                    [css.holdersNotification]: true,
+                  })
+                }></span>
+                <img src="/assets/images/Icon/menu/holders.svg" />
+                Members
+              </Link>
             </li>
           </ul>
         </div>

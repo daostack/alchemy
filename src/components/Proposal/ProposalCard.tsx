@@ -11,7 +11,6 @@ import TrackVisibility from "react-on-screen";
 import { Link } from "react-router-dom";
 import { closingTime } from "lib/proposalHelpers";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
 import StakeButtons from "./Staking/StakeButtons";
@@ -21,14 +20,12 @@ import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
-
 import * as css from "./ProposalCard.scss";
 
 interface IExternalProps {
   currentAccountAddress: Address;
   daoState: IDAOState;
   proposal: Proposal;
-  suppressTrainingTooltips?: boolean;
 }
 
 type IProps = IExternalProps;
@@ -237,17 +234,8 @@ export default class ProposalCard extends React.Component<IProps, null> {
 
           <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id}>
             <div className={css.proposalActions + " clearfix"}>
-              { this.props.suppressTrainingTooltips ? votingHtml :
-                (<TrainingTooltip placement="topLeft" overlay={"Percentage of voting power currently voting for and against"}>
-                  {votingHtml}
-                </TrainingTooltip>)
-              }
-
-              { this.props.suppressTrainingTooltips ? stakingHtml :
-                (<TrainingTooltip placement="right" overlay={"GEN tokens staked to predict the proposal will pass or fail"}>
-                  {stakingHtml}
-                </TrainingTooltip>)
-              }
+              {votingHtml}
+              {stakingHtml}
             </div>
           </Link>
         </div>;

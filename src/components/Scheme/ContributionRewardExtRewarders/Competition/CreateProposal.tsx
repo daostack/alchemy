@@ -9,7 +9,6 @@ import { connect } from "react-redux";
 import Select from "react-select";
 import { showNotification, NotificationStatus } from "@store/notifications/notifications.reducer";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "components/Proposal/Create/CreateProposal.scss";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 import { checkTotalPercent } from "lib/util";
@@ -212,8 +211,6 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
     this.setState({tags});
   }
 
-  private fnDescription = (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
-
   public render(): RenderOutput {
     const { data, handleClose } = this.props;
 
@@ -361,13 +358,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               <div className={css.description}>This competition proposal can distribute funds, mint new DAO tokens, or assign Reputation. Additionally, you may determine how many winners are rewarded, as well as their proportional distribution.
                   Each proposal may specify one of each action, e.g. &quot;3 ETH and 100 Reputation in total rewards, 3 total winners, 50/25/25% reward distribution&quot;.</div>
 
-              <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
-                <label htmlFor="titleInput">
-                  <div className={css.requiredMarker}>*</div>
-                  Title
-                  <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-              </TrainingTooltip>
+              <label htmlFor="titleInput">
+                <div className={css.requiredMarker}>*</div>
+                Title
+                <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+              </label>
+
               <Field
                 autoFocus
                 id="titleInput"
@@ -378,15 +374,14 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 className={touched.title && errors.title ? css.error : null}
               />
 
-              <TrainingTooltip overlay={this.fnDescription} placement="right">
-                <label htmlFor="descriptionInput">
-                  <div className={css.proposalDescriptionLabelText}>
-                    <div className={css.requiredMarker}>*</div>
-                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
-                  </div>
-                  <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-              </TrainingTooltip>
+              <label htmlFor="descriptionInput">
+                <div className={css.proposalDescriptionLabelText}>
+                  <div className={css.requiredMarker}>*</div>
+                  <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                </div>
+                <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+              </label>
+
               <Field
                 component={MarkdownField}
                 onChange={(value: any) => { setFieldValue("description", value); }}
@@ -395,22 +390,19 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 name="description"
               />
 
-              <TrainingTooltip overlay="Add some tags to give context about your proposal e.g. idea, signal, bounty, research, etc" placement="right">
-                <label className={css.tagSelectorLabel}>
+              <label className={css.tagSelectorLabel}>
                 Tags
-                </label>
-              </TrainingTooltip>
+              </label>
 
               <div className={css.tagSelectorContainer}>
                 <TagsSelector onChange={this.onTagsChange} tags={this.state.tags} arc={getArcByDAOAddress(this.props.daoAvatarAddress)}></TagsSelector>
               </div>
 
-              <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
-                <label htmlFor="urlInput">
+              <label htmlFor="urlInput">
                 URL
-                  <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-              </TrainingTooltip>
+                <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+              </label>
+
               <Field
                 id="urlInput"
                 maxLength={120}
@@ -421,13 +413,11 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               />
 
               <div>
-                <TrainingTooltip overlay="The anticipated number of winning Submissions for this competition" placement="right">
-                  <label htmlFor="numWinnersInput">
-                    <div className={css.requiredMarker}>*</div>
-                    Number of winners
-                    <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  </label>
-                </TrainingTooltip>
+                <label htmlFor="numWinnersInput">
+                  <div className={css.requiredMarker}>*</div>
+                  Number of winners
+                  <ErrorMessage name="numWinners">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                </label>
 
                 <Field
                   id="numWinnersInput"
@@ -440,12 +430,10 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               </div>
 
               <div>
-                <TrainingTooltip overlay="Percentage distribution of rewards to beneficiaries" placement="right">
-                  <label htmlFor="rewardSplitInput">
-                  Winner reward distribution (%)
-                    <ErrorMessage name="rewardSplit">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  </label>
-                </TrainingTooltip>
+                <label htmlFor="rewardSplitInput">
+                Winner reward distribution (%)
+                  <ErrorMessage name="rewardSplit">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                </label>
 
                 <Field
                   id="rewardSplitInput"
@@ -458,13 +446,11 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               </div>
 
               <div>
-                <TrainingTooltip overlay="Number of Submissions for which each member can vote" placement="right">
-                  <label htmlFor="numVotesInput">
-                    <div className={css.requiredMarker}>*</div>
-                    Number of votes per reputation holder
-                    <ErrorMessage name="numberOfVotesPerVoter">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  </label>
-                </TrainingTooltip>
+                <label htmlFor="numVotesInput">
+                  <div className={css.requiredMarker}>*</div>
+                  Number of votes per reputation holder
+                  <ErrorMessage name="numberOfVotesPerVoter">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                </label>
 
                 <Field
                   id="numVotesInput"
@@ -477,13 +463,12 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
               </div>
 
               <div className={css.proposerIsAdminCheckbox}>
-                <TrainingTooltip overlay="You are the only account that will be able to create submissions" placement="right">
-                  <label htmlFor="proposerIsAdmin">
-                    <div className={css.requiredMarker}>*</div>
-                    Submissions can only be created by you
-                    <ErrorMessage name="proposerIsAdmin">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  </label>
-                </TrainingTooltip>
+                <label htmlFor="proposerIsAdmin">
+                  <div className={css.requiredMarker}>*</div>
+                  Submissions can only be created by you
+                  <ErrorMessage name="proposerIsAdmin">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                </label>
+
                 <Field
                   id="proposerIsAdmin"
                   name="proposerIsAdmin"
@@ -630,19 +615,11 @@ class CreateProposal extends React.Component<IProps, IStateProps> {
                 <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
               }
               <div className={css.createProposalActions}>
-                <TrainingTooltip overlay="Export proposal" placement="top">
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
-                    <img src="/assets/images/Icon/share-blue.svg" />
-                  </button>
-                </TrainingTooltip>
-                <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
-                  Cancel
+                <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                  <img src="/assets/images/Icon/share-blue.svg" />
                 </button>
-                <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
-                  <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                  Submit proposal
-                  </button>
-                </TrainingTooltip>
+                <button className={css.exitProposalCreation} type="button" onClick={handleClose}>Cancel</button>
+                <button className={css.submitProposal} type="submit" disabled={isSubmitting}>Submit proposal</button>
               </div>
             </Form>
           }

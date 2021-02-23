@@ -3,7 +3,6 @@ import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { isValidUrl, getNetworkByDAOAddress, getArcByDAOAddress} from "lib/util";
 import * as React from "react";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
-import TrainingTooltip from "components/Shared/TrainingTooltip";
 import MarkdownField from "components/Proposal/Create/SchemeForms/MarkdownField";
 import { getArc } from "arc";
 import UserSearchField from "components/Shared/UserSearchField";
@@ -79,8 +78,6 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
     this.setState({tags});
   }
 
-  private fnDescription = (<span>Short description of the submission.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
-
   public render(): RenderOutput {
     const { handleCancel, proposalState } = this.props;
     const arc = getArc(getNetworkByDAOAddress(this.props.daoState.dao.id));
@@ -135,13 +132,11 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
             values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
-              <TrainingTooltip overlay="The title is the header of the submission and will be the first visible information about your suggestion" placement="right">
-                <label htmlFor="titleInput">
-                  <div className={css.requiredMarker}>*</div>
-                Title
-                  <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-              </TrainingTooltip>
+              <label htmlFor="titleInput">
+                <div className={css.requiredMarker}>*</div>
+              Title
+                <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+              </label>
               <Field
                 autoFocus
                 id="titleInput"
@@ -152,15 +147,13 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
                 className={touched.title && errors.title ? css.error : null}
               />
 
-              <TrainingTooltip overlay={this.fnDescription} placement="right">
-                <label htmlFor="descriptionInput">
-                  <div className={css.proposalDescriptionLabelText}>
-                    <div className={css.requiredMarker}>*</div>
-                    <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
-                  </div>
-                  <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-              </TrainingTooltip>
+              <label htmlFor="descriptionInput">
+                <div className={css.proposalDescriptionLabelText}>
+                  <div className={css.requiredMarker}>*</div>
+                  <div className={css.body}>Description</div><HelpButton text={HelpButton.helpTextProposalDescription} />
+                </div>
+                <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+              </label>
               <Field
                 component={MarkdownField}
                 onChange={(value: any) => { setFieldValue("description", value); }}
@@ -169,23 +162,16 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
                 name="description"
                 className={touched.description && errors.description ? css.error : null}
               />
-
-              <TrainingTooltip overlay="Add some tags to give context for your submission" placement="right">
-                <label className={css.tagSelectorLabel}>
-                Tags
-                </label>
-              </TrainingTooltip>
-
+              <label className={css.tagSelectorLabel}>
+              Tags
+              </label>
               <div className={css.tagSelectorContainer}>
                 <TagsSelector onChange={this.onTagsChange} tags={this.state.tags} arc={getArcByDAOAddress(this.props.daoState.address)}></TagsSelector>
               </div>
-
-              <TrainingTooltip overlay="Link to the fully detailed description of your submission" placement="right">
-                <label htmlFor="urlInput">
-                URL
-                  <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-              </TrainingTooltip>
+              <label htmlFor="urlInput">
+              URL
+                <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+              </label>
               <Field
                 id="urlInput"
                 maxLength={120}
@@ -196,12 +182,10 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
               />
 
               <div>
-                <TrainingTooltip overlay="Ethereum Address or Alchemy Username to receive rewards, if not you" placement="right">
-                  <label htmlFor="beneficiary">
-                    Recipient, if not you
-                    <ErrorMessage name="beneficiary">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  </label>
-                </TrainingTooltip>
+                <label htmlFor="beneficiary">
+                  Recipient, if not you
+                  <ErrorMessage name="beneficiary">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                </label>
                 <UserSearchField
                   daoAvatarAddress={this.props.daoState.address}
                   name="beneficiary"
@@ -213,19 +197,15 @@ class CreateSubmission extends React.Component<IProps, IStateProps> {
               </div>
 
               <div className={css.createProposalActions}>
-                <TrainingTooltip overlay="Export proposal" placement="top">
-                  <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
-                    <img src="/assets/images/Icon/share-blue.svg" />
-                  </button>
-                </TrainingTooltip>
+                <button id="export-proposal" className={css.exportProposal} type="button" onClick={() => this.exportFormValues(values)}>
+                  <img src="/assets/images/Icon/share-blue.svg" />
+                </button>
                 <button className={css.exitProposalCreation} type="button" onClick={handleCancel}>
                   Cancel
                 </button>
-                <TrainingTooltip overlay="Once the submission is submitted it cannot be edited or deleted" placement="top">
-                  <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
+                <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                   Submit submission
-                  </button>
-                </TrainingTooltip>
+                </button>
               </div>
             </Form>
           }

@@ -5,7 +5,6 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import Analytics from "lib/analytics";
 import { Page } from "pages";
 import * as React from "react";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
@@ -71,7 +70,6 @@ class DaoMembersPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.membersContainer}>
-        <BreadcrumbsItem to={"/dao/" + daoState.address + "/members"}>DAO Members</BreadcrumbsItem>
         <Sticky enabled top={50} innerZ={10000}>
           <h2>DAO Members</h2>
         </Sticky>

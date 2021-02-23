@@ -2,7 +2,6 @@
 
 import { History } from "history";
 import * as React from "react";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState, IGenesisProtocolParams, IDAOState } from "@daostack/arc.js";
 import { fromWei, getNetworkByDAOAddress, linkToEtherScan, roundUp } from "lib/util";
 import CopyToClipboard from "components/Shared/CopyToClipboard";
@@ -132,8 +131,6 @@ export default class SchemeInfo extends React.Component<IProps, IState> {
       (scheme.genericSchemeMultiCallParams && scheme.genericSchemeMultiCallParams.votingMachine)
     );
     return <div>
-      <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>Info</BreadcrumbsItem>
-
       <div className={css.schemeInfoContainer}>
         <h3>{schemeName(scheme, scheme.address)}</h3>
         <div className={css.infoCardContent}>

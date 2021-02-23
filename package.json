@@ -1,6 +1,6 @@
 {
   "name": "alchemy-client",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "An app for collaborative networks (DAOs), based on the DAO stack.",
   "author": "DAOstack",
   "license": "GPL-3.0",
@@ -133,7 +133,6 @@
     "react-stickynode": "^2.1.1",
     "react-tag-input": "^6.4.1",
     "react-through": "^1.1.1",
-    "react-toggle": "^4.1.1",
     "react-transition-group": "^2.5.1",
     "redux": "^4.0.4",
     "redux-devtools-extension": "^2.13.7",
@@ -179,7 +178,6 @@
     "@types/react-select": "^3.0.2",
     "@types/react-stickynode": "^1.4.0",
     "@types/react-tag-input": "^6.1.2",
-    "@types/react-toggle": "^4.0.2",
     "@types/react-transition-group": "^2.0.15",
     "@types/storybook__react": "^4.0.1",
     "@types/uuid": "3.4.9",

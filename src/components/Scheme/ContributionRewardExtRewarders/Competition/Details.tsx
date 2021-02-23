@@ -1,7 +1,6 @@
 import { IRootState } from "@store";
 import { IProfilesState } from "@store/profiles/profilesReducer";
 import { humanProposalTitle, formatFriendlyDateForLocalTimezone, formatTokens, isAddress, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
-import { schemeName } from "lib/schemeUtils";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import RewardsString from "components/Proposal/RewardsString";
 import { showNotification } from "@store/notifications/notifications.reducer";
@@ -23,7 +22,6 @@ import {
   CompetitionSuggestion, Proposal, Scheme,
 } from "@daostack/arc.js";
 import gql from "graphql-tag";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as React from "react";
 import { ICreateSubmissionOptions, getProposalSubmissions, competitionStatus, CompetitionStatus, getCompetitionVotes } from "./utils";
 import CreateSubmission from "./CreateSubmission";
@@ -276,11 +274,7 @@ class CompetitionDetails extends React.Component<IProps, IStateProps> {
     this.disqusConfig.identifier = `competition-${proposalState.id}`;
 
     return <React.Fragment>
-      <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposalState.scheme.id}/crx`}>{schemeName(proposalState.scheme, proposalState.scheme.address)}</BreadcrumbsItem>
-      <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/crx/proposal/${proposalState.id}`}>{humanProposalTitle(proposalState, 40)}</BreadcrumbsItem>
-
       <div className={css.competitionDetailsContainer}>
-
         <div className={css.topSection}>
           <div className={css.header}>
             <StatusBlob competition={competition}></StatusBlob>

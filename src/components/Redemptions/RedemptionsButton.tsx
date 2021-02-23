@@ -23,7 +23,7 @@ class RedemptionsButton extends React.Component<IProps, null> {
   public render(): RenderOutput {
     const { data: redeemableProposals } = this.props;
 
-    if (redeemableProposals === null) {
+    if (redeemableProposals === null || redeemableProposals.length === 0) {
       return null;
     }
 
@@ -38,10 +38,8 @@ class RedemptionsButton extends React.Component<IProps, null> {
   private renderDirectLink(): RenderOutput {
     const { data: redeemableProposals } = this.props;
     return <Link to="/redemptions">
-      <img src="/assets/images/Icon/menu/redemption.svg" />
-      {redeemableProposals.length > 0 ?
-        <span className={css.notification}></span>
-        : ""}
+      Redemptions
+      <span className={css.notification}>{redeemableProposals.length}</span>
     </Link>;
   }
 
@@ -63,10 +61,8 @@ class RedemptionsButton extends React.Component<IProps, null> {
       overlay={menu}
     >
       <div>
-        <img src="/assets/images/Icon/menu/redemption.svg" />
-        {redeemableProposals.length > 0 ?
-          <span className={css.notification}></span>
-          : ""}
+        Redemptions
+        <span className={css.notification}>{redeemableProposals.length}</span>
       </div>
     </Tooltip>;
   }
