@@ -4,7 +4,7 @@
     - Copy to clipboard option near the selected contract in the multi-call scheme
     - Vertical scrolling is added to the sidebar when content is hidden
     - Everything past the DAO dropdown list in the breadcrumb is now removed
-    - Updated to the redemptions button
+    - Updates to the redemptions button
   
   - Features Removed
     - Training tooltip
