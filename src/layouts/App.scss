@@ -213,6 +213,12 @@ body {
     .redemptionsButton {
       margin: 13px 0 14px 20px;
       margin-left: auto;
+      line-height: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      &:hover{
+        opacity: 0.8;
+      }
     }
 
     .toggleButton {
@@ -234,6 +240,7 @@ body {
       padding: 0 20px;
       transition: all 0.25s ease;
       height: 50px;
+      margin-left: 15px;
 
       .title {
         font-weight: bold;
