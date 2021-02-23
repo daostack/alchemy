@@ -1,42 +1,37 @@
 [
-    {
-      "name": "Bitfinex",
-      "url": "https://www.bitfinex.com/",
-      "logo": "/assets/images/Exchanges/bitfinex.png"
-    },
-    {
-      "name": "Ethfinex",
-      "url": "https://www.ethfinex.com/",
-      "logo": "/assets/images/Exchanges/ethfinex.svg"
-    },
-    {
-      "name": "IDEX",
-      "url": "https://idex.market/eth/gen/",
-      "logo": "/assets/images/Exchanges/idex.png"
-    },
-    {
-      "name": "Slow Trade",
-      "url": "https://slow.trade",
-      "logo": "/assets/images/Exchanges/slow-trade.png"
-    },
-    {
-      "name": "Uniswap",
-      "url": "https://uniswap.exchange/swap",
-      "logo": "/assets/images/Exchanges/uniswap.png"
-    },
-    {
-      "name": "Kyber",
-      "url": "https://kyberswap.com/swap/eth-gen",
-      "logo": "/assets/images/Exchanges/kyber.png"
-    },
-    {
-      "name": "Liquid",
-      "url": "https://app.liquid.com/exchange/GENETH",
-      "logo": "/assets/images/Exchanges/liquid.svg"
-    },
-    {
-      "name": "Coinswitch",
-      "url": "https://coinswitch.co/coins/daostack/ethereum-to-daostack",
-      "logo": "/assets/images/Exchanges/coinswitch.png"
-    }
+  {
+    "name": "Uniswap",
+    "url": "https://uniswap.exchange/swap",
+    "logo": "/assets/images/Exchanges/uniswap.png"
+  },
+  {
+    "name": "Bitfinex",
+    "url": "https://www.bitfinex.com/",
+    "logo": "/assets/images/Exchanges/bitfinex.png"
+  },
+  {
+    "name": "Ethfinex",
+    "url": "https://www.ethfinex.com/",
+    "logo": "/assets/images/Exchanges/ethfinex.svg"
+  },
+  {
+    "name": "IDEX",
+    "url": "https://idex.market/eth/gen/",
+    "logo": "/assets/images/Exchanges/idex.png"
+  },
+  {
+    "name": "Kyber",
+    "url": "https://kyberswap.com/swap/eth-gen",
+    "logo": "/assets/images/Exchanges/kyber.png"
+  },
+  {
+    "name": "Liquid",
+    "url": "https://app.liquid.com/exchange/GENETH",
+    "logo": "/assets/images/Exchanges/liquid.svg"
+  },
+  {
+    "name": "Coinswitch",
+    "url": "https://coinswitch.co/coins/daostack/ethereum-to-daostack",
+    "logo": "/assets/images/Exchanges/coinswitch.png"
+  }
 ]

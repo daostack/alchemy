@@ -6,7 +6,7 @@ import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { generate } from "geopattern";
 import Analytics from "lib/analytics";
-import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWei, ethBalance, linkToEtherScan, standardPolling, targetedNetwork, getArcByDAOAddress, getNetworkByDAOAddress} from "lib/util";
+import { baseTokenName, ethErrorHandler, formatTokens, genName, getExchangesList, supportedTokens, fromWei, ethBalance, linkToEtherScan, standardPolling, getArcByDAOAddress, getNetworkByDAOAddress} from "lib/util";
 import { parse } from "query-string";
 import * as React from "react";
 import { matchPath, Link, RouteComponentProps } from "react-router-dom";
@@ -14,7 +14,6 @@ import { first } from "rxjs/operators";
 import { IRootState } from "@store";
 import { connect } from "react-redux";
 import { of } from "rxjs";
-
 import Tooltip from "rc-tooltip";
 import * as css from "./SidebarMenu.scss";
 
@@ -194,22 +193,17 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
       [css.noDAO]: !this.props.daoAvatarAddress,
       clearfix: true,
     });
-    const daoAddress = this.props.daoAvatarAddress ?? this.props.data?.dao.id;
-
-    const network = daoAddress ? getNetworkByDAOAddress(daoAddress) : targetedNetwork();
-    const testNet = !((network === "main") || (network === "xdai"));
 
     return (
       <div className={sidebarClass}>
         <div className={css.menuContent}>
           {this.props.daoAvatarAddress && this.props.data ? this.daoMenu() : ""}
 
-          <div className={`${css.siteLinksWrapper} ${testNet ? css.testNet : ""}`}>
+          <div className={css.siteLinksWrapper}>
             <ul>
-              <li><Link to="/" onClick={this.handleCloseMenu}>Home</Link></li>
-              <li><a className="externalLink" href="https://xgen.daostack.io/" target="_blank" rel="noopener noreferrer">xGEN / GEN</a></li>
+              <li><a className="externalLink" href="https://xgen.daostack.io/" target="_blank" rel="noopener noreferrer">GEN xDai Bridge</a></li>
               <li>
-                <a>$ Buy GEN</a>
+                <a>Buy GEN</a>
                 <ul>
                   <div className={css.diamond}></div>
                   {
@@ -226,17 +220,9 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
                   }
                 </ul>
               </li>
-              <li><a className="externalLink" href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">Help Center</a></li>
-              <li><a className="externalLink" href="https://daotalk.org/" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
-              <li><Link to="/daos/create" onClick={this.handleCloseMenu}>Create A DAO</Link></li>
               <li><Link to="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link></li>
-              {!testNet &&
-                <>
-                  <li><a className="externalLink"
-                    href={(network === "main") ? process.env.ALCHEMY_V2_URL_MAINNET : process.env.ALCHEMY_V2_URL_XDAI}
-                    target="_blank" rel="noopener noreferrer">Switch to v2</a></li>
-                </>
-              }
+              <li><a className="externalLink" href="https://t.me/joinchat/TN3uBj86c1fMe2MJ" target="_blank" rel="noopener noreferrer">Support</a></li>
+              <li><a className="externalLink" href="https://daotalk.org/" target="_blank" rel="noopener noreferrer">Community</a></li>
               <li className={css.daoStack}>
                 <a className="externalLink" href="http://daostack.io" target="_blank" rel="noopener noreferrer">
                   <img src={(this.props.menuOpen || (this.props.daoAvatarAddress && this.props.data)) ?
