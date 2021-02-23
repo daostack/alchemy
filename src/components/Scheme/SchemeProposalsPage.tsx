@@ -8,7 +8,6 @@ import Analytics from "lib/analytics";
 import { schemeName } from "lib/schemeUtils";
 import { Page } from "pages";
 import * as React from "react";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Link } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
@@ -269,9 +268,6 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
     return (
       <>
-        <BreadcrumbsItem to={`/dao/${daoState.address}/schemes`}>Plugins</BreadcrumbsItem>
-        <BreadcrumbsItem to={`/dao/${daoState.address}/scheme/${scheme.id}`}>{schemeFriendlyName}</BreadcrumbsItem>
-
         {(allProposals.length === 0)
           ?
           <div className={css.noDecisions}>

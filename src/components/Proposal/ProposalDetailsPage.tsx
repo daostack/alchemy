@@ -6,12 +6,9 @@ import ProposalCountdown from "components/Shared/ProposalCountdown";
 import FollowButton from "components/Shared/FollowButton";
 import { DiscussionEmbed } from "disqus-react";
 import { humanProposalTitle, ensureHttps, formatFriendlyDateForLocalTimezone, safeMoment, getArcByDAOAddress, getNetworkByDAOAddress } from "lib/util";
-import { schemeName } from "lib/schemeUtils";
 import Analytics from "lib/analytics";
 import { Page } from "pages";
 import * as React from "react";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-
 import { Link, RouteComponentProps } from "react-router-dom";
 import { closingTime, proposalEnded } from "lib/proposalHelpers";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
@@ -135,8 +132,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     }
     return (
       <div className={css.wrapper}>
-        <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme?.id}`}>{schemeName(proposal.scheme, proposal.scheme?.address) ?? "Unknown"}</BreadcrumbsItem>
-        <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal, 40)}</BreadcrumbsItem>
         <div className={this.proposalClass} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
             <div>

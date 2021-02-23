@@ -13,7 +13,6 @@ import {
 } from "lib/schemeUtils";
 import { Page } from "pages";
 import * as React from "react";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
@@ -110,8 +109,6 @@ class DaoSchemesPage extends React.Component<IProps, null> {
 
     return (
       <div className={css.wrapper}>
-        <BreadcrumbsItem to={`/dao/${dao.address}/schemes`}>Plugins</BreadcrumbsItem>
-
         <Sticky enabled top={50} innerZ={10000}>
           <h1>Plugins</h1>
           {Boolean(schemeManager) &&
