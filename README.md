@@ -1,3 +1,5 @@
+***DEVELOPMENT OF THIS PACKAGE HAS MOVED TO: https://github.com/daostack/alchemy-monorepo/tree/dev/packages/alchemy***
+
 # DAOStack Alchemy
 
 [![Build Status](https://travis-ci.org/daostack/alchemy.svg?branch=dev)](https://travis-ci.org/daostack/alchemy)
