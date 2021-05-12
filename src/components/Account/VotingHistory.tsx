@@ -53,7 +53,7 @@ export const VotingHistory: React.FunctionComponent<IExternalProps> = (
             .pipe(first())
             .toPromise();
           const obj = { [v.staticState.proposal]: proposalValue };
-          setProposalMap(proposalMap => ({ ...proposalMap, ...obj }));
+          setProposalMap((proposalMap) => ({ ...proposalMap, ...obj }));
         })
       );
       setVotes(votes);
@@ -63,7 +63,9 @@ export const VotingHistory: React.FunctionComponent<IExternalProps> = (
 
   return (
     <>
-      <div><i>Total votes: {votes.length}</i></div>
+      <div>
+        <i>Total votes: {votes.length}</i>
+      </div>
       <table>
         <tr>
           <th>Proposal</th>
@@ -82,8 +84,8 @@ export const VotingHistory: React.FunctionComponent<IExternalProps> = (
                     {humanProposalTitle(proposalMap[vote.proposal])}
                   </Link>
                 </td>
-                <td>{vote.outcome ? "For" : "Against"}</td>
-                <td>{moment.unix(vote.createdAt).format('lll')}</td>
+                <td>{vote.outcome ? 'For' : 'Against'}</td>
+                <td>{moment.unix(vote.createdAt).format("lll")}</td>
               </tr>
             </>
           );
