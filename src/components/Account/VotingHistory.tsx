@@ -84,7 +84,7 @@ export const VotingHistory: React.FunctionComponent<IExternalProps> = (
                     {humanProposalTitle(proposalMap[vote.proposal])}
                   </Link>
                 </td>
-                <td>{vote.outcome ? 'For' : 'Against'}</td>
+                <td>{vote.outcome ? "For" : "Against"}</td>
                 <td>{moment.unix(vote.createdAt).format("lll")}</td>
               </tr>
             </>
