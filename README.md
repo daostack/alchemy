@@ -7,6 +7,8 @@
 ## URLs
 https://alchemy.daostack.io - alchemy v1 on mainnet and xdai
 
+https://alchemy-dev-rinkeby.herokuapp.com/ - alchemy v1 on rinkeby
+
 **Alchemy 2.0** ⚠️ Deprecated! - please use Alchemy v1
 
 Alchemy 2.0 source code can be found [here](https://github.com/daostack/alchemy_2).
