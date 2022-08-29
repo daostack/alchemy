@@ -17,9 +17,9 @@ https://alchemy.do - alchemy 2.0 on mainnet
 
 https://xdai.alchemy.do - alchemy 2.0 on xdai 
 
-https://rinkeby.alchemy.do - alchemy 2.0 on kovan
+https://rinkeby.alchemy.do - alchemy 2.0 on rinkeby
 
-https://kovan.alchemy.do - alchemy 2.0 on rinkeby
+https://kovan.alchemy.do - alchemy 2.0 on kovan
 
 
 
